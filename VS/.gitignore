@@ -1,0 +1,12 @@
+# VS: build output
+Release/
+Debug/
+
+# VS: VS local & temp.
+*.ncb
+*.userprefs
+*.user
+*.APS
+*.suo
+*.sdf
+*.opensdf

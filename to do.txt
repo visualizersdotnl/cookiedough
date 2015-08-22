@@ -1,0 +1,37 @@
+
+priority:
+- move to SDL 2.0 (also try to replace DevIL)
+  + replace WinMain() with main()
+  + focus issues w/debugging in (fake) full screen
+- OSX build (SDL and BASSMOD are available, use CMake!)
+- fix 64-bit build: 64-bit BASSMOD(?) & SDL
+- Audio_Rocket_Sync() now assumes 64 rows in a pattern
+- review effects
+  + polar: loop can be tighter
+  + ball: see top
+  + landscape: rewrite, see top
+    http://alwaysbusycorner.com/2014/08/08/xojo-building-commanche-3d-in-100-lines
+	http://simulationcorner.net/index.php?page=comanche
+  + twister: rewrite
+  + cspan.h: speed (divide)
+
+this would be nice:
+- move effect initialization to demo.cpp?
+- deprecate shared.cpp?
+- update Rocket (see TPB-xxx)
+- implement Heartquake water (rev. engineering notes are on MacBook)
+- for the voxel ball, the non-stop Ibiza experience seems to simply add a static environment map
+- do something about tedious deletes & error checks (upgrade C++)
+- add generic crash handler (see TPB-xxx) & design build (for full speed sync.)
+- add application icon
+
+in case you're bored, add:
+- free-directional FX with fast interpolation & map mixing
+- fancy font writers (also: scroller)
+- radial blur
+- scaling
+- lens, plane distort, et cetera
+- 3D
+- adlib (or SID?) playback
+
+assets:
