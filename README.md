@@ -1,4 +1,4 @@
 # cookiedough
 
-Retro(ish) demoscene stuff (software rendering).  
-Please see code/main.cpp for more information!
+This is a little testbed I set up to experiment with some retro (demoscene) graphics effects.  
+It's built using Visual Studio 2012.

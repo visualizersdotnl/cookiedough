@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// check for SSE2
 	if (false == SDL_HasSSE2())
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Processor does not support SSE2 instructions.", "Error!", nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE2 instructions.", nullptr);
 		return 1;
 	}
 
@@ -143,7 +143,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	if (false == s_lastErr.empty())
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, s_lastErr.c_str(), "Error!", nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, s_lastErr.c_str(), nullptr);
 		return 1;
 	}
 	
