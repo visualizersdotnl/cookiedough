@@ -13,7 +13,7 @@ uint32_t *g_renderTarget;
 bool Shared_Create()
 {
 	// load logo #3
-	g_pDesireLogo3 = Image_Load32("content/dsr_640x136.png");
+	g_pDesireLogo3 = Image_Load32("assets/dsr_640x136.png");
 	if (g_pDesireLogo3 == nullptr)
 		return false;
 

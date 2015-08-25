@@ -149,9 +149,9 @@ bool Twister_Create()
 	vtwister_precalc();
 
 	// load maps
-	s_pHeightMap = Image_Load8("content/twister/hmap_2.jpg");
-	s_pColorMap = Image_Load32("content/twister/colormap.jpg");
-	s_pBeamMap = Image_Load32("content/ball/beammap.jpg");
+	s_pHeightMap = Image_Load8("assets/twister/hmap_2.jpg");
+	s_pColorMap = Image_Load32("assets/twister/colormap.jpg");
+	s_pBeamMap = Image_Load32("assets/ball/beammap.jpg");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL || s_pBeamMap == NULL)
 		return false;
 

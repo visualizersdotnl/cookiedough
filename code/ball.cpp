@@ -185,11 +185,11 @@ static void vball_precalc()
 
 const char *kHeightMapPaths[5] =
 {
-	"content/ball/hmap_1.jpg",
-	"content/ball/hmap_2.jpg",
-	"content/ball/hmap_3.jpg",
-	"content/ball/hmap_4.jpg",
-	"content/ball/hmap_5.jpg"
+	"assets/ball/hmap_1.jpg",
+	"assets/ball/hmap_2.jpg",
+	"assets/ball/hmap_3.jpg",
+	"assets/ball/hmap_4.jpg",
+	"assets/ball/hmap_5.jpg"
 };
 
 bool Ball_Create()
@@ -207,13 +207,13 @@ bool Ball_Create()
 	}
 	
 	// load color map
-	s_pColorMap = Image_Load32("content/ball/colormap.jpg");
+	s_pColorMap = Image_Load32("assets/ball/colormap.jpg");
 	if (s_pColorMap == NULL)
 		return false;
 
 	// load beam map
-//	s_pBeamMap = Image_Load32("content/unused/ibiza_rip/x11.jpg");
-	s_pBeamMap = Image_Load32("content/ball/beammap.jpg");
+//	s_pBeamMap = Image_Load32("assets/unused/ibiza_rip/x11.jpg");
+	s_pBeamMap = Image_Load32("assets/ball/beammap.jpg");
 	if (s_pBeamMap == NULL)
 		return false;
 

@@ -139,13 +139,13 @@ static void vscape(uint32_t *pDest, float time)
 bool Landscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("content/scape/D1.png");
-	s_pColorMap = Image_Load32("content/scape/C1W.png");
+	s_pHeightMap = Image_Load8("assets/scape/D1.png");
+	s_pColorMap = Image_Load32("assets/scape/C1W.png");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 
 	// load fog gradient (8-bit LUT)
-	s_pFogGradient = Image_Load32("content/scape/foggradient.jpg");
+	s_pFogGradient = Image_Load32("assets/scape/foggradient.jpg");
 	if (s_pFogGradient == NULL)
 		return false;
 		

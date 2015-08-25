@@ -7,11 +7,12 @@ priority:
 - fix 64-bit build: 64-bit BASSMOD(?) & SDL
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
 - review effects
+  + blur: fix bias flaw
   + polar: loop can be tighter
   + ball: see top
   + landscape: rewrite, see top
     http://alwaysbusycorner.com/2014/08/08/xojo-building-commanche-3d-in-100-lines
-	http://simulationcorner.net/index.php?page=comanche
+    http://simulationcorner.net/index.php?page=comanche
   + twister: rewrite
   + cspan.h: speed (divide)
 

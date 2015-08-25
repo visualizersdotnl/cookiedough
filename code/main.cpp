@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	{
 		if (Demo_Create())
 		{
-			if (Audio_Create(-1, "content/moby_-_eliminator-tribute.mod", GetForegroundWindow())) // FIXME? (GetForegroundWindow())
+			if (Audio_Create(-1, "assets/moby_-_eliminator-tribute.mod", GetForegroundWindow())) // FIXME? (GetForegroundWindow())
 			{
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
