@@ -6,7 +6,7 @@
 
 #include "main.h"
 #include <windows.h> // for audio.h
-#include "../3rdparty/rocket-0.9/sync/sync.h"
+#include "../3rdparty/rocket/lib/sync.h"
 // #include "demo.h"
 #include "audio.h"
 // #include "timer.h"
@@ -37,7 +37,7 @@ bool Demo_Create()
 	s_hRocket = sync_create_device("sync");
 
 #ifndef SYNC_PLAYER
-	sync_set_callbacks(s_hRocket, &s_rocketCallbacks, NULL);
+//	sync_set_callbacks(s_hRocket, &s_rocketCallbacks, NULL);
 	if (sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT) != 0)
 	{
 		SetLastError("Can not connect to GNU Rocket client.");
@@ -63,7 +63,7 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 	int rocketRow = Audio_Rocket_Sync(modOrder, modRow, modRowAlpha);
 
 #ifndef SYNC_PLAYER
-	if (sync_update(s_hRocket, rocketRow))
+	if (sync_update(s_hRocket, rocketRow, &s_rocketCallbacks, nullptr))
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 

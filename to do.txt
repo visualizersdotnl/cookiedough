@@ -3,7 +3,7 @@ priority:
 - move to SDL 2.0 (also try to replace DevIL)
   + replace WinMain() with main()
   + focus issues w/debugging in (fake) full screen
-- OSX/Linux build (SDL and BASSMOD are available, use CMake!)
+- OSX/Linux build (SDL and BASSMOD are available, use CMake?)
 - fix 64-bit build: 64-bit BASSMOD(?) & SDL
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
 - review effects
@@ -19,7 +19,6 @@ priority:
 this would be nice:
 - move effect initialization to demo.cpp?
 - deprecate shared.cpp?
-- update Rocket (see TPB-xxx)
 - implement Heartquake water (rev. engineering notes are on MacBook)
 - for the voxel ball, the non-stop Ibiza experience seems to simply add a static environment map
 - do something about tedious deletes & error checks (upgrade C++)
