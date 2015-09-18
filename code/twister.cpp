@@ -14,8 +14,6 @@ static uint8_t *s_pHeightMap = NULL;
 static uint32_t *s_pColorMap = NULL;
 static uint32_t *s_pBeamMap = NULL;
 
-static unsigned int s_angleScale[256];
-
 // -- voxel renderer --
 
 // adjust to map resolution
