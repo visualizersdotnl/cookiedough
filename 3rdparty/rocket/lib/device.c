@@ -167,7 +167,7 @@ struct sync_device *sync_create_device(const char *base)
 	if (!d)
 		return NULL;
 
-	d->base = strdup(base);
+	d->base = _strdup(base);
 	if (!d->base) {
 		free(d);
 		return NULL;
@@ -217,7 +217,7 @@ static int get_track_data(struct sync_device *d, struct sync_track *t)
 	if (!fp)
 		return -1;
 
-	d->io_cb.read(&t->num_keys, sizeof(size_t), 1, fp);
+	d->io_cb.read(&t->num_keys, sizeof(int), 1, fp);
 	t->keys = malloc(sizeof(struct track_key) * t->num_keys);
 	if (!t->keys)
 		return -1;
@@ -244,7 +244,7 @@ static int save_track(const struct sync_track *t, const char *path)
 	if (!fp)
 		return -1;
 
-	fwrite(&t->num_keys, sizeof(size_t), 1, fp);
+	fwrite(&t->num_keys, sizeof(int), 1, fp);
 	for (i = 0; i < (int)t->num_keys; ++i) {
 		char type = (char)t->keys[i].type;
 		fwrite(&t->keys[i].row, sizeof(int), 1, fp);
@@ -424,7 +424,7 @@ static int create_track(struct sync_device *d, const char *name)
 	assert(find_track(d, name) < 0);
 
 	t = malloc(sizeof(*t));
-	t->name = strdup(name);
+	t->name = _strdup(name);
 	t->keys = NULL;
 	t->num_keys = 0;
 
