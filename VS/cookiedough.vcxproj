@@ -207,7 +207,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\3rdparty\rocket\lib\data.c" />
     <ClCompile Include="..\3rdparty\rocket\lib\device.c" />
     <ClCompile Include="..\3rdparty\rocket\lib\track.c" />
     <ClCompile Include="..\code\audio.cpp" />
@@ -227,7 +226,6 @@
   <ItemGroup>
     <ClInclude Include="..\3rdparty\bassmod20\c\bassmod.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\base.h" />
-    <ClInclude Include="..\3rdparty\rocket\lib\data.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\device.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\sync.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\track.h" />

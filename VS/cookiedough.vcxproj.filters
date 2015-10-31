@@ -81,9 +81,6 @@
     <ClCompile Include="..\code\polar.cpp">
       <Filter>/code</Filter>
     </ClCompile>
-    <ClCompile Include="..\3rdparty\rocket\lib\data.c">
-      <Filter>/3rdparty\/rocket\/lib</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdparty\rocket\lib\device.c">
       <Filter>/3rdparty\/rocket\/lib</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
       <Filter>/code</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket\lib\base.h">
-      <Filter>/3rdparty\/rocket\/lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdparty\rocket\lib\data.h">
       <Filter>/3rdparty\/rocket\/lib</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket\lib\device.h">
