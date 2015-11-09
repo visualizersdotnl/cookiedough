@@ -84,8 +84,13 @@ static struct Library *socket_base = NULL;
 
 static SOCKET server_connect(const char *host, unsigned short nport)
 {
+#ifdef USE_GETADDRINFO
+	struct addrinfo *addr;
+	char port[6];
+#else
 	struct hostent *he;
 	char **ap;
+#endif
 
 #ifdef WIN32
 	static int need_init = 1;
@@ -103,24 +108,43 @@ static SOCKET server_connect(const char *host, unsigned short nport)
 	}
 #endif
 
+#ifdef USE_GETADDRINFO
+
+	snprintf(port, sizeof(port), "%u", nport);
+	if (getaddrinfo(host, port, 0, &addr) != 0)
+		return INVALID_SOCKET;
+		
+	for (; addr; addr = addr->ai_next) {
+		SOCKET sock;
+		int family = addr->ai_family;
+		struct sockaddr *sa = addr->ai_addr;
+		int sa_len = (int) addr->ai_addrlen; /* cast eliminates warning for (Windows) x64: size_t vs. int */
+
+#else
+
 	he = gethostbyname(host);
 	if (!he)
 		return INVALID_SOCKET;
 
 	for (ap = he->h_addr_list; *ap; ++ap) {
 		SOCKET sock;
-		struct sockaddr_in sa;
+		int family = he->h_addrtype;
+		struct sockaddr_in sin;
+		struct sockaddr *sa = (struct sockaddr *)&sin;
+		int sa_len = sizeof(*sa);
 
-		sa.sin_family = he->h_addrtype;
-		sa.sin_port = htons(nport);
-		memcpy(&sa.sin_addr, *ap, he->h_length);
-		memset(&sa.sin_zero, 0, sizeof(sa.sin_zero));
+		sin.sin_family = he->h_addrtype;
+		sin.sin_port = htons(nport);
+		memcpy(&sin.sin_addr, *ap, he->h_length);
+		memset(&sin.sin_zero, 0, sizeof(sin.sin_zero));
 
-		sock = socket(he->h_addrtype, SOCK_STREAM, 0);
+#endif
+
+		sock = socket(family, SOCK_STREAM, 0);
 		if (sock == INVALID_SOCKET)
 			continue;
 
-		if (connect(sock, (struct sockaddr *)&sa, sizeof(sa)) >= 0) {
+		if (connect(sock, sa, sa_len) >= 0) {
 			char greet[128];
 
 			if (xsend(sock, CLIENT_GREET, strlen(CLIENT_GREET), 0) ||
@@ -167,11 +191,7 @@ struct sync_device *sync_create_device(const char *base)
 	if (!d)
 		return NULL;
 
-#if _MSC_VER >= 1700
-	d->base = _strdup(base);
-#else
 	d->base = strdup(base);
-#endif
 	if (!d->base) {
 		free(d);
 		return NULL;
@@ -428,13 +448,7 @@ static int create_track(struct sync_device *d, const char *name)
 	assert(find_track(d, name) < 0);
 
 	t = malloc(sizeof(*t));
-
-#if _MSC_VER >= 1700
-	t->name = _strdup(name);
-#else
 	t->name = strdup(name);
-#endif
-
 	t->keys = NULL;
 	t->num_keys = 0;
 
