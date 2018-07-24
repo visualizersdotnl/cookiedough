@@ -2,7 +2,7 @@
 // cookiedough -- demo flow (640x480)
 
 // def. for sync. replay (instead of edit) mode
-#define SYNC_PLAYER
+// #define SYNC_PLAYER
 
 #include "main.h"
 #include <windows.h> // for audio.h
@@ -67,8 +67,9 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
+	Twister_Draw(pDest, sysTimer);
 //	Landscape_Draw(pDest, sysTimer);
-	Ball_Draw(pDest, sysTimer);
+//	Ball_Draw(pDest, sysTimer);
 
 	MixSrc32(pDest, g_pDesireLogo3, 640*136);
 

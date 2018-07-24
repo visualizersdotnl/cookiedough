@@ -242,13 +242,13 @@ void Ball_Draw(uint32_t *pDest, float time)
 	Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t *>(pMap2), 512*512/4, mapMixAlpha);	
 
 	// static height map
-//	memcpy_fast(s_heightMapMix, s_pHeightMap[2], 512*512);
+	// memcpy_fast(s_heightMapMix, s_pHeightMap[2], 512*512);
 
 	// render unwrapped ball
 	vball(g_renderTarget, time);
 
 	// radial blur
-	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, 640, 480, 0.01f);
+	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, 640, 480, 0.01628f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);

@@ -56,7 +56,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 
 		// fetch, accumulate & add beam (separate map)
 		{
-//			const __m128i beam = bsamp32(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+			const __m128i beam = bsamp32(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 //			const __m128i beam = c2vISSE(s_pBeamMap[U0+V0]);
 //			beamAccum = _mm_adds_epu16(beamAccum, beam);
 			
@@ -69,7 +69,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 //			color = vminISSE(_mm_adds_epu16(color, beamAccum), g_gradientUnp[255]);
 
 			// just add (overflow "trick")
-//			color = _mm_adds_epu16(color, beamAccum);
+			color = _mm_adds_epu16(color, beamAccum);
 		}
 		
 		// project height
@@ -165,7 +165,7 @@ void Twister_Destroy()
 void Twister_Draw(uint32_t *pDest, float time)
 {
 	// render twister
-	memset32(g_renderTarget, 0x1f00ab, 640*480);
+	memset32(g_renderTarget, 0x1f0053, 640*480);
 	vtwister(g_renderTarget, time);
 
 	// (radial) blur

@@ -2,11 +2,6 @@
 // cookiedough (2011) -- lo-fi demoscene testbed
 // property of visualizers.nl (http://www.visualizers.nl)
 
-// TO DO:
-// - fix .gitignore
-// - build new Rocket editor
-// - there is no BASSMOD for x64?
-
 // third party:
 // - GNU Rocket by Erik Faye-Lund & Egbert Teeselink (modified)
 // - Developer's Image Library (DevIL)
