@@ -2,6 +2,11 @@
 // cookiedough (2011) -- lo-fi demoscene testbed
 // property of visualizers.nl (http://www.visualizers.nl)
 
+// TO DO:
+// - fix .gitignore
+// - build new Rocket editor
+// - there is no BASSMOD for x64?
+
 // third party:
 // - GNU Rocket by Erik Faye-Lund & Egbert Teeselink (modified)
 // - Developer's Image Library (DevIL)
@@ -73,8 +78,24 @@ static bool HandleEvents()
 	return true;
 }
 
+#define WIN32_CRT_BREAK_ALLOC -1
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 {
+#if defined(_DEBUG)
+	// Dump leak report at any possible exit.
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | 
+	_CRTDBG_LEAK_CHECK_DF);
+	
+	// Report all to debug pane.
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+
+	if (-1 != WIN32_CRT_BREAK_ALLOC)
+		_CrtSetBreakAlloc(WIN32_CRT_BREAK_ALLOC);
+#endif
+
 	if (0 != SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER))
 	{
 		MessageBox(NULL, SDL_GetError(), "Can't initialize SDL!", MB_OK | MB_ICONEXCLAMATION);

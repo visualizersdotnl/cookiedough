@@ -1,20 +1,25 @@
 
+I'm unsure how up-to-date this is.
+Check main.cpp's top for what needs to be done now.
+
+-- Old list --
+
 priority:
 - move to SDL 2.0 (also try to replace DevIL)
-  + replace WinMain() with main()
-  + focus issues w/debugging in (fake) full screen
+	+ replace WinMain() with main()
+	+ focus issues w/debugging in (fake) full screen
 - OSX/Linux build (SDL and BASSMOD are available, use CMake?)
 - fix 64-bit build: 64-bit BASSMOD(?) & SDL
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
 - review effects
-  + blur: fix bias flaw
-  + polar: loop can be tighter
-  + ball: see top
-  + landscape: rewrite, see top
-    http://alwaysbusycorner.com/2014/08/08/xojo-building-commanche-3d-in-100-lines
-    http://simulationcorner.net/index.php?page=comanche
-  + twister: rewrite
-  + cspan.h: speed (divide)
+	+ blur: fix bias flaw
+	+ polar: loop can be tighter
+	+ ball: see top
+	+ landscape: rewrite, see top
+	http://alwaysbusycorner.com/2014/08/08/xojo-building-commanche-3d-in-100-lines
+	http://simulationcorner.net/index.php?page=comanche
+	+ twister: rewrite
+	+ cspan.h: speed (divide)
 
 this would be nice:
 - move effect initialization to demo.cpp?
@@ -35,3 +40,4 @@ in case you're bored, add:
 - adlib (or SID?) playback
 
 assets:
+- ...

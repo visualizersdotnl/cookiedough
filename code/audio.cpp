@@ -1,6 +1,7 @@
 
 // cookiedough -- audio: module replay (with BASS)
 
+#include <Windows.h>
 #include "main.h"
 #include "../3rdparty/bassmod20/c/bassmod.h"
 // #include "audio.h"

@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="/3rdparty-x86">
+      <UniqueIdentifier>{bb162820-f141-46ae-9fda-46a460fc6688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty-rocket">
+      <UniqueIdentifier>{a9730659-b3f1-40e8-ad58-efc6efe5bd4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty-x64">
+      <UniqueIdentifier>{e493f479-3ad3-4c26-a0d9-c582a11f9f62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\ball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\boxblur.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\heartquake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\landscape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\polar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\shared.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\twister.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\rocket\lib\device.c">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\rocket\lib\track.c">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\code\audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\ball.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\bilinear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\boxblur.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\cspan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\demo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\heartquake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\landscape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\polar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\twister.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket\lib\base.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket\lib\device.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket\lib\sync.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket\lib\track.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
+      <Filter>/3rdparty-x86</Filter>
+    </Library>
+    <Library Include="..\3rdparty\DevIL-SDK-x86-1.7.8\lib\DevIL.lib">
+      <Filter>/3rdparty-x86</Filter>
+    </Library>
+    <Library Include="..\3rdparty\SDL2-2.0.3\lib\x86\SDL2.lib">
+      <Filter>/3rdparty-x86</Filter>
+    </Library>
+    <Library Include="..\3rdparty\DevIL-SDK-x64-1.7.8\DevIL.lib">
+      <Filter>/3rdparty-x64</Filter>
+    </Library>
+    <Library Include="..\3rdparty\SDL2-2.0.3\lib\x64\SDL2.lib">
+      <Filter>/3rdparty-x64</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\to do.txt" />
+  </ItemGroup>
+</Project>
