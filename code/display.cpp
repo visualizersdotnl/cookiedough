@@ -30,6 +30,9 @@ bool Display::Open(const std::string &title, unsigned int xRes, unsigned int yRe
 		// set output resolution (regardless of what we're blitting to)
 		SDL_RenderSetLogicalSize(m_renderer, xRes, yRes);
 
+		// set title
+		SDL_SetWindowTitle(m_window, title.c_str());
+
 		m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xRes, yRes);
 		m_pitch = xRes*4;
 
