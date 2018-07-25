@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel ball (2-pass approach, 640x480)
+// cookiedough -- voxel ball (2-pass approach)
 
 #ifndef _BALL_H_
 #define _BALL_H_

@@ -57,9 +57,6 @@
     <ClCompile Include="..\code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\shared.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
     <ClCompile Include="..\code\tunnelscape.cpp">
       <Filter>Source Files\effects</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\shared-resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -105,9 +105,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\shared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\timer.h">
@@ -163,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\code\voxel-shared.h">
       <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\shared-resources.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

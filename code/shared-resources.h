@@ -1,18 +1,21 @@
 
 // cookiedough -- shared resources (FX)
 
-#ifndef _SHARED_H_
-#define _SHARED_H_
+#pragma once
 
 extern uint32_t *g_pDesireLogo3; // 640x136 (alpha)
 
 // linear grayscale gradient (unpacked)
 extern __m128i g_gradientUnp[256];
 
-// 640x480 render target
+// render target
 extern uint32_t *g_renderTarget;
+
+// render target resolution
+const size_t kTargetResX = 640;
+const size_t kTargetResY = 480;
+constexpr size_t kTargetSize = kTargetResX*kTargetResY;
+constexpr size_t kTargetBytes = kTargetSize*sizeof(uint32_t);
 
 bool Shared_Create();
 void Shared_Destroy();
-
-#endif // _SHARED_H_

@@ -2,7 +2,6 @@
 // cookiedough -- shared resources (FX)
 
 #include "main.h"
-// #include "shared.h"
 #include "image.h"
 
 uint32_t *g_pDesireLogo3 = nullptr;
@@ -21,8 +20,8 @@ bool Shared_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		g_gradientUnp[iPixel] = c2vISSE(iPixel * 0x01010101);
 
-	// allocate render target (FIXME: define size somewhere?)
-	g_renderTarget = static_cast<uint32_t*>(mallocAligned(640*480*sizeof(uint32_t), kCacheLine));
+	// allocate render target
+	g_renderTarget = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
 
 	return true;
 }

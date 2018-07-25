@@ -31,7 +31,7 @@
     <ClCompile Include="..\code\landscape.cpp" />
     <ClCompile Include="..\code\main.cpp" />
     <ClCompile Include="..\code\polar.cpp" />
-    <ClCompile Include="..\code\shared.cpp" />
+    <ClCompile Include="..\code\shared-resources.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\tunnelscape.cpp" />
     <ClCompile Include="..\code\util.cpp" />
@@ -55,7 +55,7 @@
     <ClInclude Include="..\code\landscape.h" />
     <ClInclude Include="..\code\main.h" />
     <ClInclude Include="..\code\polar.h" />
-    <ClInclude Include="..\code\shared.h" />
+    <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />
     <ClInclude Include="..\code\tunnelscape.h" />

@@ -10,7 +10,6 @@
 #include "image.h"
 #include "cspan.h"
 #include "bilinear.h"
-#include "shared.h"
 #include "polar.h"
 #include "boxblur.h"
 #include "voxel-shared.h"
@@ -93,13 +92,12 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 // expected sizes:
 // - maps: 1024x1024
-// - render target: 640x480
 static void tscape(uint32_t *pDest, float time)
 {
 	float mapX = 0.f; 
-	const float mapStepX = 1024.f/479.f; // tile (for blit)
+	const float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
 
-	for (unsigned int iRay = 0; iRay < 480; ++iRay)
+	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float fromX = mapX + time*66.f;
 		const float fromY = 512.f + time*214.f;
@@ -109,7 +107,7 @@ static void tscape(uint32_t *pDest, float time)
 		dY = 1.f;
 
 		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY));
-		pDest += kResX;
+		pDest += kTargetResX;
 
 		mapX += mapStepX;
 	}

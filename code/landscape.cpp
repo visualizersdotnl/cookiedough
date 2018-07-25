@@ -1,8 +1,8 @@
 
-// cookiedough -- voxel landscape (640x480)
+// cookiedough -- voxel landscape
 
 /*
-	- more fixed point!
+	- more fixed point (+ LUT)
 	- some XInput fanciness?
 */
 
@@ -11,7 +11,6 @@
 #include "image.h"
 #include "cspan.h"
 #include "bilinear.h"
-#include "shared.h"
 #include "polar.h"
 #include "boxblur.h"
 #include "voxel-shared.h"
@@ -145,8 +144,8 @@ static void vscape(uint32_t *pDest, float time)
 bool Landscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D15.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C15.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D24.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C24W.png");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 

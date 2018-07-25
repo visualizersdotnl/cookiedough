@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel ball (2-pass approach, 640x480)
+// cookiedough -- voxel ball (2-pass approach)
 
 /*
 	- FIXMEs
@@ -10,7 +10,6 @@
 #include "image.h"
 #include "cspan.h"
 #include "bilinear.h"
-#include "shared.h"
 #include "boxblur.h"
 #include "polar.h"
 #include "voxel-shared.h"
@@ -111,33 +110,33 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 #if 1
 	// opaque
-	for (int iPixel = lastDrawnHeight; iPixel < 640; ++iPixel)
+	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
 		pDest[iPixel] = 0;
 #endif
 
 #if 0
 	// beam-only (debug)
-	const unsigned int remainder = 640;
+	const unsigned int remainder = kTargetResX;
 	cspanISSE_noclip(pDest, 1, remainder, beamAccum, _mm_setzero_si128()); 
 #endif
 
 #if 0
 	// beams (fade out, also works with overflowing beam)
-	const unsigned int remainder = 640-lastDrawnHeight;
+	const unsigned int remainder = kTargetResX-lastDrawnHeight;
 	cspanISSE_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
 #endif
 
 #if 0
 	// beams (full brightness)
 	const uint32_t color = v2cISSE(beamAccum);
-	for (int iPixel = lastDrawnHeight; iPixel < 640; ++iPixel)
+	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
 		pDest[iPixel] = color;
 #endif
 
 #if	0
 	// glow (only looks good with unclamped overflowing beam!)
  	const __m128i beamSub = g_gradientUnp[4];
-	for (int iPixel = lastDrawnHeight; iPixel < 640; ++iPixel)
+	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
 	{
 		pDest[iPixel] = v2cISSE(beamAccum);
 		beamAccum = _mm_subs_epu16(beamAccum, beamSub);
@@ -146,7 +145,6 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 }
 
 // expected sizes:
-// - render target: 640x480
 // - maps: 512x512
 static void vball(uint32_t *pDest, float time)
 {
@@ -156,15 +154,15 @@ static void vball(uint32_t *pDest, float time)
 
 	// FOV (full circle)
 	const float fovAngle = kPI*2.f;
-	const float delta = fovAngle/480.f;
+	const float delta = fovAngle/kTargetResY;
 	float curAngle = 0.f;
 
 	// cast rays
-	for (unsigned int iRay = 0; iRay < 480; ++iRay)
+	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		float dX, dY;
 		calc_fandeltas(curAngle, dX, dY);
-		vball_ray(pDest + iRay*640, fromX, fromY, ftof24(dX), ftof24(dY));
+		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftof24(dX), ftof24(dY));
 		curAngle += delta;
 	}
 }
@@ -253,7 +251,7 @@ void Ball_Draw(uint32_t *pDest, float time)
 	vball(g_renderTarget, time);
 
 	// radial blur
-	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, 640, 480, 0.01628f);
+	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.01628f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);
@@ -263,8 +261,8 @@ void Ball_Draw(uint32_t *pDest, float time)
 	const uint32_t *pSrc = g_renderTarget;
 	for (unsigned int iY = 0; iY < kResY; ++iY)
 	{
-		memcpy(pDest, pSrc, 640*4);
-		pSrc += 640;
+		memcpy(pDest, pSrc, kTargetResX*4);
+		pSrc += kTargetResX;
 		pDest += kResX;
 	}
 #endif

@@ -20,11 +20,10 @@
 #include <smmintrin.h> // 4
 
 // output resolution
-#define kResX 640
-#define kResY 480
-#define kHalfResX (kResX/2)
-#define kHalfResY (kResY/2)
-
+const size_t kResX = 640;
+const size_t kResY = 480;
+constexpr size_t kHalfResX = kResX/2;
+constexpr size_t kHalfResY = kResY/2;
 constexpr size_t kOutputSize = kResX*kResY;
 constexpr size_t kOutputBytes = kOutputSize*sizeof(uint32_t);
 
@@ -33,5 +32,8 @@ void SetLastError(const std::string &description);
 
 // basic utilities (memory, graphics, ...)
 #include "util.h"
+
+// (few) shared resources
+#include "shared-resources.h"
 
 #endif // _MAIN_H_

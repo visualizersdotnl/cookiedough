@@ -11,7 +11,6 @@
 #include "audio.h"
 // #include "timer.h"
 
-#include "shared.h"
 #include "boxblur.h"
 #include "polar.h"
 
@@ -57,6 +56,7 @@ void Demo_Destroy()
 
 void Demo_Draw(uint32_t *pDest, float sysTimer)
 {
+	// for this production:
 	VIZ_ASSERT(kResX == 640 && kResY == 480);
 
 	unsigned int modOrder, modRow;
@@ -69,11 +69,11 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 #endif
 
 //	Twister_Draw(pDest, sysTimer);
-//	Landscape_Draw(pDest, sysTimer);
+	Landscape_Draw(pDest, sysTimer);
 //	Ball_Draw(pDest, sysTimer);
-	Tunnelscape_Draw(pDest, sysTimer);
+//	Tunnelscape_Draw(pDest, sysTimer);
 
-	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
+//	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
 
 	return;
 }

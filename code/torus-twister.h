@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel torus twister (640x480)
+// cookiedough -- voxel torus twister
 
 #ifndef _TORUS_TWISTER_H_
 #define _TORUS_TWISTER_H_

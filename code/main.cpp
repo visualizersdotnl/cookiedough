@@ -13,7 +13,7 @@
 // - use multi-threaded CRT (non-DLL)
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision)
-// - enabling /arch:SSE2 isn't very beneficial
+// - enabling /arch:SSE2 et cetera isn't very beneficial
 // - use multi-byte character set (i.e. no _UNICODE)
 
 // Undef. for (Windows only?) CRT leak check
@@ -27,7 +27,6 @@
 #include "display.h"
 #include "timer.h"
 #include "image.h"
-#include "shared.h"
 #include "audio.h"
 #include "polar.h"
 #include "demo.h"

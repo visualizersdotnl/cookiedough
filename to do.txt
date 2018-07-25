@@ -2,7 +2,6 @@
 -- new list (2018) --
 
 do:
-- parametrize size of render target
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
 - upscale to?

@@ -44,6 +44,8 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
+	VIZ_ASSERT(xRes <= 640); // FIXME: support variable resolutions
+
 	// calculate actual kernel span
 	const unsigned int kernelSpan = (unsigned int) (strength * (float) xRes);
 	if (kernelSpan == 0) 

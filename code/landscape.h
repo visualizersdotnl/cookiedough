@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel landscape (640x480)
+// cookiedough -- voxel landscape
 
 #ifndef _LANDSCAPE_H_
 #define _LANDSCAPE_H_
