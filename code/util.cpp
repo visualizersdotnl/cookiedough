@@ -6,10 +6,9 @@
 
 #if !_WIN64
 
-// memcpy_fast() & memset32()
-// - lifted from http://www.stereopsis.com/memcpy.html, though I wrote similar ones back in the day
-// - approx. twice faster than their CRT counterparts on a 2009 netbook with 1.66GHz Intel Atom CPU
-// - combined writes (MOVNTQ) perform favorably for most usage patterns
+// memcpy_fast()
+// - approx. twice faster than it's CRT counterpart on a 2009 netbook with 1.66GHz Intel Atom CPU
+// - combined writes (MOVNTQ) perform favorably for intended usage pattern
 
 void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes)
 {
@@ -52,6 +51,7 @@ void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes)
 	_mm_empty();
 }
 
+/*
 void memset32(void *pDest, uint32_t value, size_t numInts)
 {
 	// must be a multiple of 16 bytes -- use memset() for general purpose
@@ -77,6 +77,7 @@ void memset32(void *pDest, uint32_t value, size_t numInts)
 
 	_mm_empty();
 }
+*/
 
 #endif
 

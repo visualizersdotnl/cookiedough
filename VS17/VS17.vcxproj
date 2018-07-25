@@ -32,7 +32,7 @@
     <ClCompile Include="..\code\main.cpp" />
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared.cpp" />
-    <ClCompile Include="..\code\twister.cpp" />
+    <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,9 +40,11 @@
     <ClInclude Include="..\3rdparty\rocket\lib\device.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\sync.h" />
     <ClInclude Include="..\3rdparty\rocket\lib\track.h" />
+    <ClInclude Include="..\code\alloc-aligned.h" />
     <ClInclude Include="..\code\audio.h" />
     <ClInclude Include="..\code\ball.h" />
     <ClInclude Include="..\code\bilinear.h" />
+    <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\cspan.h" />
     <ClInclude Include="..\code\demo.h" />
@@ -54,7 +56,7 @@
     <ClInclude Include="..\code\polar.h" />
     <ClInclude Include="..\code\shared.h" />
     <ClInclude Include="..\code\timer.h" />
-    <ClInclude Include="..\code\twister.h" />
+    <ClInclude Include="..\code\torus-twister.h" />
     <ClInclude Include="..\code\util.h" />
   </ItemGroup>
   <ItemGroup>

@@ -21,8 +21,8 @@ bool Shared_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		g_gradientUnp[iPixel] = c2vISSE(iPixel * 0x01010101);
 
-	// allocate 640x480 render target
-	g_renderTarget = new uint32_t[640*480];
+	// allocate render target (FIXME: define size somewhere?)
+	g_renderTarget = static_cast<uint32_t*>(mallocAligned(640*480*sizeof(uint32_t), kCacheLine));
 
 	return true;
 }
@@ -30,5 +30,5 @@ bool Shared_Create()
 void Shared_Destroy()
 {
 	delete[] g_pDesireLogo3;
-	delete[] g_renderTarget;
+	freeAligned(g_renderTarget);
 }

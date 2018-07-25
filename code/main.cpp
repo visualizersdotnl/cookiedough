@@ -19,6 +19,10 @@
 // ignore:
 #pragma warning(disable:4018) // signed <-> unsigned mismatch (PixelToaster)
 
+// Undef. for (Windows only?) CRT leak check
+// #define WIN32_CRT_LEAK_CHECK
+#define WIN32_CRT_BREAK_ALLOC -1
+
 #include "main.h" // always include first!
 #include <windows.h>
 #include "../3rdparty/SDL2-2.0.8/include/SDL.h"
@@ -32,7 +36,7 @@
 #include "demo.h"
 
 // effects
-#include "twister.h"
+#include "torus-twister.h"
 #include "landscape.h"
 #include "ball.h"
 #include "heartquake.h"
@@ -73,11 +77,9 @@ static bool HandleEvents()
 	return true;
 }
 
-#define WIN32_CRT_BREAK_ALLOC -1
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 {
-#if defined(_DEBUG)
+#if defined(_DEBUG) && defined(CRT_LEAK_CHECK)
 	// Dump leak report at any possible exit.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | 
 	_CRTDBG_LEAK_CHECK_DF);
@@ -130,14 +132,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					Timer timer;
 
 					// frame buffer
-					std::unique_ptr<uint32_t> pixels(new uint32_t[kResX*kResY]);
-					memset(pixels.get(), 0, kResX*kResY*4);
+					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
+					memset32(pDest, 0, kOutputSize);
 
 					while (true == HandleEvents())
 					{
-						Demo_Draw(pixels.get(), timer.Get());
-						display.Update(pixels.get());
+						Demo_Draw(pDest, timer.Get());
+						display.Update(pDest);
 					}
+
+					freeAligned(pDest);
 				}
 			}
 		}

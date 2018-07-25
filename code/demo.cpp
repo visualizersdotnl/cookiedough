@@ -16,7 +16,7 @@
 
 #include "ball.h"
 #include "landscape.h"
-#include "twister.h"
+#include "torus-twister.h"
 #include "heartquake.h"
 // #include "polar.h"
 
@@ -67,8 +67,8 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-//	Twister_Draw(pDest, sysTimer);
-	Landscape_Draw(pDest, sysTimer);
+	Twister_Draw(pDest, sysTimer);
+//	Landscape_Draw(pDest, sysTimer);
 //	Ball_Draw(pDest, sysTimer);
 
 	MixSrc32(pDest, g_pDesireLogo3, 640*136);

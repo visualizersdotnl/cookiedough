@@ -25,6 +25,9 @@
 #define kHalfResX (kResX/2)
 #define kHalfResY (kResY/2)
 
+constexpr size_t kOutputSize = kResX*kResY;
+constexpr size_t kOutputBytes = kOutputSize*sizeof(uint32_t);
+
 // set description on failure (reported on shutdown)
 void SetLastError(const std::string &description);
 

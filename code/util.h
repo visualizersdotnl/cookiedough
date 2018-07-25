@@ -4,6 +4,12 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#include "bit-tricks.h"
+#include "alloc-aligned.h"
+
+// size of cache line
+constexpr size_t kCacheLine = sizeof(size_t)<<3;
+
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
 	#define VIZ_ASSERT(condition) if (!(condition)) __debugbreak()
@@ -14,36 +20,33 @@
 // PI
 const float kPI = 3.1415926535897932384626433832795f;
 
-// unsigned integer is-power-of-2 check
-inline const bool IsPow2(unsigned value)
-{
-	return value != 0 && !(value & (value - 1));
-}
+// memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
+// - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*
+// - align addresses to 8 byte boundary
 
 #if _WIN64
 
-// memcpy_fast() and memset32() are both MMX & inline assembler (unsupported)
-// also, according to a blog post, memcpy() has been optimized (http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx)
-
-#define memcpy_fast memcpy
-
-__forceinline void memset32(void *pDest, uint32_t value, size_t numInts)
-{
-	uint32_t *pDest32 = static_cast<uint32_t*>(pDest);
-	while (numInts--) *pDest32++ = value;
-}
+	// memcpy() has been optimized: http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx
+	#define memcpy_fast memcpy
 
 #else
 
-// memcpy_fast() & memset32() are MMX-optimized versions of memcpy() and memset()
-// - functions are not 64-bit compliant (size_t won't fit in a 32-bit register) 
-// - *only* intended for copying large batches (size restrictions apply)
-// - preferrably align addresses to 8 byte boundary
+// only for multiples of 64 bytes
+void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes); 
 
-void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes); // only for multiples of 64 bytes
-void memset32(void *pDest, uint32_t value, size_t numInts);       // only for multiples of 16 bytes (or 4 integers)
+#endif
 
-#endif // _WIN64
+__forceinline void memset32(void *pDest, int value, size_t numInts)
+{
+	// must be a multiple of 16 bytes -- use memset() for general purpose
+	VIZ_ASSERT(!(numInts & 3));
+
+	// an 8-byte boundary gaurantees correctly aligned writes
+	VIZ_ASSERT(!(reinterpret_cast<uint32_t>(pDest) & 7));
+
+	int *pInt = static_cast<int*>(pDest);
+	while (numInts--) _mm_stream_si32(pInt++, value);
+}
 
 // blend 32-bit color buffers
 void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_t alpha);

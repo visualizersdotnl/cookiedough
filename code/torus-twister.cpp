@@ -2,7 +2,7 @@
 // cookiedough -- voxel torus twister (640x480)
 
 #include "main.h"
-// #include "twister.h"
+// #include "torus-twister.h"
 #include "image.h"
 #include "cspan.h"
 #include "bilinear.h"

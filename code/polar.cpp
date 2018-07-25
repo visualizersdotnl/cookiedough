@@ -5,10 +5,12 @@
 // #include "polar.h"
 #include "bilinear.h"
 
-static int s_polarMap[kResX*kResY][2];
+static int *s_pPolarMap = nullptr;
 
 bool Polar_Create()
 {
+	s_pPolarMap = static_cast<int*>(mallocAligned(kResX*kResY*sizeof(int)*2, kCacheLine));
+
 	// calculate cartesian-to-polar transform map (640x480 -> kResX*kResY)
 	const float maxDist = sqrtf(kHalfResX*kHalfResX + kHalfResY*kHalfResY);
 	for (unsigned int iPixel = 0, iY = 0; iY < kResY; ++iY)
@@ -27,33 +29,36 @@ bool Polar_Create()
 
 			// non-zero edges must be patched in absence of tiling logic
 			// it's a simple reverse (read previous pixel first & invert weight)
-			
+
 			if (U == 639.f)
-				s_polarMap[iPixel][0] = 638<<8 | 0xff;
+				s_pPolarMap[iPixel] = 638<<8 | 0xff;
 			else
-				s_polarMap[iPixel][0] = ftof24(U);
+				s_pPolarMap[iPixel] = ftof24(U);
 
 			if (V == 479.f)
-				s_polarMap[iPixel][1] = 478<<8 | 0xff;
+				s_pPolarMap[iPixel+1] = 478<<8 | 0xff;
 			else
-				s_polarMap[iPixel][1] = ftof24(V);
+				s_pPolarMap[iPixel+1] = ftof24(V);
 
-
-			++iPixel;
+			iPixel += 2;
 		}
 	}
 
 	return true;
 }
 
-void Polar_Destroy() {}
+void Polar_Destroy() 
+{
+	freeAligned(s_pPolarMap);
+}
 
 void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest)
 {
+	int *pRead = s_pPolarMap;
 	for (unsigned int iPixel = 0; iPixel < kResX*kResY; ++iPixel)
 	{
-		const int U = s_polarMap[iPixel][0];
-		const int V = s_polarMap[iPixel][1];
+		const int U = *pRead++;
+		const int V = *pRead++;
 
 		// prepare UVs
 		const unsigned int U0 = U >> 8;

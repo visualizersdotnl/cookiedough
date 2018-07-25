@@ -22,15 +22,27 @@
     <Filter Include="/3rdparty-x64">
       <UniqueIdentifier>{e493f479-3ad3-4c26-a0d9-c582a11f9f62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\effects">
+      <UniqueIdentifier>{ed58cfc0-fd7e-4539-86ce-0b14b40282c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\filters &amp; blitters">
+      <UniqueIdentifier>{08039b36-fc7e-4617-8488-5a01ce1efc3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\effects">
+      <UniqueIdentifier>{407bf6b8-3494-43a0-8ec7-444a7a658b6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\filters &amp; blitters">
+      <UniqueIdentifier>{dedf52bb-28aa-4623-a4f9-f8d5481ef1f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\draw">
+      <UniqueIdentifier>{fa9b85ab-e8e3-40fc-8024-46536daa423d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\in-util">
+      <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\ball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\boxblur.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\code\demo.cpp">
@@ -39,25 +51,13 @@
     <ClCompile Include="..\code\display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\heartquake.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\landscape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\code\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\polar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\shared.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\twister.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\code\util.cpp">
@@ -69,21 +69,27 @@
     <ClCompile Include="..\3rdparty\rocket\lib\track.c">
       <Filter>/3rdparty-rocket</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\heartquake.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\ball.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\torus-twister.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\landscape.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\polar.cpp">
+      <Filter>Source Files\filters &amp; blitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\boxblur.cpp">
+      <Filter>Source Files\filters &amp; blitters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\ball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\bilinear.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\boxblur.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\cspan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\demo.h">
@@ -92,28 +98,16 @@
     <ClInclude Include="..\code\display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\heartquake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\landscape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\polar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\shared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\twister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\code\util.h">
@@ -130,6 +124,36 @@
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket\lib\track.h">
       <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\heartquake.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\landscape.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\ball.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\polar.h">
+      <Filter>Header Files\filters &amp; blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\boxblur.h">
+      <Filter>Header Files\filters &amp; blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\bilinear.h">
+      <Filter>Header Files\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\cspan.h">
+      <Filter>Header Files\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\bit-tricks.h">
+      <Filter>Header Files\in-util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\alloc-aligned.h">
+      <Filter>Header Files\in-util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\torus-twister.h">
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

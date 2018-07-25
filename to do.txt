@@ -1,16 +1,15 @@
 
-I'm unsure how up-to-date this is, so I'll split it in a new and old list.
+-- new list (2018) --
 
--- New list --
+- pick another X64-compatible module player
+- upgrade Rocket
+- upscale to?
+- optimize landscape (eliminate floating point as much as possible)
+- implement Heartquake water
+- multithreading? (supersampling, render targets)
+- there's probably a lot of duplicate voxel code you can stash in a header (voxel-shared.h?)
 
-- BASSMOD x64 or another library?
-- Upscale to?
-- Optimize landscape (eliminate floating point as much as possible).
-- Implement Heartquake water.
-- Multithreading? Idea: supersampling, render targets.
-- There's probably a lot of duplicate voxel code you can stash in a header (voxel-shared.h?).
-
--- Old list --
+-- old list (cross off what no longer applies) --
 
 priority:
 - move to SDL 2.0 (also try to replace DevIL)
@@ -33,7 +32,6 @@ this would be nice:
 - deprecate shared.cpp?
 - implement Heartquake water (rev. engineering notes are on MacBook)
 - for the voxel ball, the non-stop Ibiza experience seems to simply add a static environment map
-- do something about tedious deletes & error checks (upgrade C++)
 - add generic crash handler (see TPB-xxx) & design build (for full speed sync.)
 - add application icon
 
