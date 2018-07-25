@@ -16,9 +16,6 @@
 // - enabling /arch:SSE2 isn't very beneficial
 // - use multi-byte character set (i.e. no _UNICODE)
 
-// ignore:
-#pragma warning(disable:4018) // signed <-> unsigned mismatch (PixelToaster)
-
 // Undef. for (Windows only?) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
@@ -40,6 +37,7 @@
 #include "landscape.h"
 #include "ball.h"
 #include "heartquake.h"
+#include "tunnelscape.h"
 
 // display config.
 const char *kTitle = "cocktails at Kurt Bevacqua's";
@@ -77,6 +75,7 @@ static bool HandleEvents()
 	return true;
 }
 
+// int SDL_main(int argc, char *argv[])
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 {
 #if defined(_DEBUG) && defined(CRT_LEAK_CHECK)
@@ -119,6 +118,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	demoInit &= Landscape_Create();
 	demoInit &= Ball_Create();
 	demoInit &= Heartquake_Create();
+	demoInit &= Tunnelscape_Create();
 
 	if (demoInit)
 	{
@@ -154,6 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	Landscape_Destroy();
 	Ball_Destroy();
 	Heartquake_Destroy();
+	Tunnelscape_Destroy();
 
 	Image_Destroy();
 	Shared_Destroy();

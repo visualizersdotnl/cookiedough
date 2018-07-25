@@ -1,15 +1,17 @@
 
-// cookiedough -- polar blit (640x480 -> kResX*kResY)
+// cookiedough -- polar blits (640x480 -> kResX*kResY)
 
 #include "main.h"
 // #include "polar.h"
 #include "bilinear.h"
 
 static int *s_pPolarMap = nullptr;
+static int *s_pInvPolarMap = nullptr;
 
 bool Polar_Create()
 {
-	s_pPolarMap = static_cast<int*>(mallocAligned(kResX*kResY*sizeof(int)*2, kCacheLine));
+	s_pPolarMap    = static_cast<int*>(mallocAligned(kResX*kResY*sizeof(int)*2, kCacheLine));
+	s_pInvPolarMap = static_cast<int*>(mallocAligned(kResX*kResY*sizeof(int)*2, kCacheLine));
 
 	// calculate cartesian-to-polar transform map (640x480 -> kResX*kResY)
 	const float maxDist = sqrtf(kHalfResX*kHalfResX + kHalfResY*kHalfResY);
@@ -19,26 +21,32 @@ bool Polar_Create()
 		{
 			const float X = (float) iX - kHalfResX;
 			const float Y = (float) iY - kHalfResY;
-			/* const */ float distance = sqrtf(X*X + Y*Y) / maxDist;
-//			distance = 1.f-distance;
+			const float distance = sqrtf(X*X + Y*Y) / maxDist;
 			float theta = atan2f(Y, X);
 			theta += kPI;
 			theta /= kPI*2.f;
-			const float U = distance * 639.f;
-			const float V =    theta * 479.f;
+			const float U    = distance * 639.f;
+			const float invU = (1.f-distance) * 639.f;
+			const float V    = theta * 479.f;
 
 			// non-zero edges must be patched in absence of tiling logic
 			// it's a simple reverse (read previous pixel first & invert weight)
 
 			if (U == 639.f)
+			{
 				s_pPolarMap[iPixel] = 638<<8 | 0xff;
+				s_pInvPolarMap[iPixel] = 638<<8 | 0xff;
+			}
 			else
+			{
 				s_pPolarMap[iPixel] = ftof24(U);
+				s_pInvPolarMap[iPixel] = ftof24(invU);
+			}
 
 			if (V == 479.f)
-				s_pPolarMap[iPixel+1] = 478<<8 | 0xff;
+				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = 478<<8 | 0xff;
 			else
-				s_pPolarMap[iPixel+1] = ftof24(V);
+				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ftof24(V);
 
 			iPixel += 2;
 		}
@@ -50,11 +58,12 @@ bool Polar_Create()
 void Polar_Destroy() 
 {
 	freeAligned(s_pPolarMap);
+	freeAligned(s_pInvPolarMap);
 }
 
-void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest)
+void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
 {
-	int *pRead = s_pPolarMap;
+	int *pRead = (!inverse) ? s_pPolarMap : s_pInvPolarMap;
 	for (unsigned int iPixel = 0; iPixel < kResX*kResY; ++iPixel)
 	{
 		const int U = *pRead++;

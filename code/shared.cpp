@@ -8,7 +8,7 @@
 uint32_t *g_pDesireLogo3 = nullptr;
 
 __m128i g_gradientUnp[256];
-uint32_t *g_renderTarget;
+uint32_t *g_renderTarget = nullptr;
 
 bool Shared_Create()
 {
@@ -29,6 +29,6 @@ bool Shared_Create()
 
 void Shared_Destroy()
 {
-	delete[] g_pDesireLogo3;
+	Image_Free(g_pDesireLogo3);
 	freeAligned(g_renderTarget);
 }

@@ -1,31 +1,24 @@
 
 -- new list (2018) --
 
-- pick another X64-compatible module player
+do:
+- parametrize size of render target
+- finish 'tunnelscape'
+- optimize landscape & tunnelscape (eliminate floating point as much as possible)
+- pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
 - upscale to?
-- optimize landscape (eliminate floating point as much as possible)
 - implement Heartquake water
 - multithreading? (supersampling, render targets)
 - there's probably a lot of duplicate voxel code you can stash in a header (voxel-shared.h?)
+- idea: parametrize all relevant values so they can be Rocket-controlled (including map constants et cetera)
+
+remember:
+- blur bias flaw
+- Audio_Rocket_Sync() now assumes 64 rows in a pattern
+- OSX/Linux build (SDL and BASSMOD are available, use CMake?)
 
 -- old list (cross off what no longer applies) --
-
-priority:
-- move to SDL 2.0 (also try to replace DevIL)
-	+ replace WinMain() with main()
-	+ focus issues w/debugging in (fake) full screen
-- OSX/Linux build (SDL and BASSMOD are available, use CMake?)
-- fix 64-bit build: 64-bit BASSMOD(?) & SDL
-- Audio_Rocket_Sync() now assumes 64 rows in a pattern
-- review effects
-	+ blur: fix bias flaw
-	+ polar: loop can be tighter
-	+ ball: see top
-	+ landscape: for maps:
-	http://simulationcorner.net/index.php?page=comanche
-	+ twister: rewrite
-	+ cspan.h: speed (divide)
 
 this would be nice:
 - move effect initialization to demo.cpp?
@@ -35,7 +28,7 @@ this would be nice:
 - add generic crash handler (see TPB-xxx) & design build (for full speed sync.)
 - add application icon
 
-in case you're bored, add:
+in case you're bored:
 - free-directional FX with fast interpolation & map mixing
 - fancy font writers (also: scroller)
 - radial blur
@@ -43,6 +36,3 @@ in case you're bored, add:
 - lens, plane distort, et cetera
 - 3D
 - adlib (or SID?) playback
-
-assets:
-- ...

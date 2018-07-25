@@ -2,7 +2,6 @@
 // cookiedough -- voxel ball (2-pass approach, 640x480)
 
 /*
-	- lastHeight: projected? is first span interpolated correctly?
 	- FIXMEs
 */
 
@@ -14,12 +13,12 @@
 #include "shared.h"
 #include "boxblur.h"
 #include "polar.h"
+#include "voxel-shared.h"
 
-static uint8_t *s_pHeightMap[5] = { NULL };
-static uint32_t *s_pColorMap = NULL;
-static uint32_t *s_pBeamMap = NULL;
-
-static uint8_t s_heightMapMix[512*512];
+static uint8_t *s_pHeightMap[5] = { nullptr };
+static uint32_t *s_pColorMap = nullptr;
+static uint32_t *s_pBeamMap = nullptr;
+static uint8_t *s_heightMapMix = nullptr;
 
 // -- voxel renderer --
 
@@ -37,7 +36,7 @@ static unsigned int s_heightProj[kRayLength];
 const float kBallRadius = 510.f;
 
 // scale applied to each beam sample
-const uint8_t kBeamMul = 255;
+const uint8_t kBeamMul = 128;
 
 static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
@@ -72,15 +71,15 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 			beamAccum = _mm_adds_epu16(beamAccum, beam);
 			
 			// pre-multiply
-//			__m128i beamMul = g_gradientUnp[kBeamMul];
-//			beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
+			__m128i beamMul = g_gradientUnp[kBeamMul];
+			beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
 
 			// clamps & add
 //			beamAccum = vminISSE(beamAccum, g_gradientUnp[255]);
 //			color = vminISSE(_mm_adds_epu16(color, beamAccum), g_gradientUnp[255]);
 
 			// just add (overflow "trick")
-			color = _mm_adds_epu16(color, beamAccum);
+//			color = _mm_adds_epu16(color, beamAccum);
 		}
 
 		// accumulate & add beam (alpha channel)
@@ -110,7 +109,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		lastColor = color;
 	}
 
-#if 0
+#if 1
 	// opaque
 	for (int iPixel = lastDrawnHeight; iPixel < 640; ++iPixel)
 		pDest[iPixel] = 0;
@@ -122,7 +121,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	cspanISSE_noclip(pDest, 1, remainder, beamAccum, _mm_setzero_si128()); 
 #endif
 
-#if 1
+#if 0
 	// beams (fade out, also works with overflowing beam)
 	const unsigned int remainder = 640-lastDrawnHeight;
 	cspanISSE_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
@@ -160,11 +159,11 @@ static void vball(uint32_t *pDest, float time)
 	const float delta = fovAngle/480.f;
 	float curAngle = 0.f;
 
-	// cast rays (FIXME?)
+	// cast rays
 	for (unsigned int iRay = 0; iRay < 480; ++iRay)
 	{
-		const float dX = cosf(curAngle);
-		const float dY = sinf(curAngle);
+		float dX, dY;
+		calc_fandeltas(curAngle, dX, dY);
 		vball_ray(pDest + iRay*640, fromX, fromY, ftof24(dX), ftof24(dY));
 		curAngle += delta;
 	}
@@ -217,14 +216,20 @@ bool Ball_Create()
 	if (s_pBeamMap == NULL)
 		return false;
 
+	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kCacheLine));
+
 	return true;
 }
 
 void Ball_Destroy()
 {
-	for (int iMap = 0; iMap < 5; ++iMap) delete[] s_pHeightMap[iMap];
-	delete[] s_pColorMap;
-	delete[] s_pBeamMap;
+	for (int iMap = 0; iMap < 5; ++iMap) 
+		Image_Free(s_pHeightMap[iMap]);
+	
+	Image_Free(s_pColorMap);
+	Image_Free(s_pBeamMap);
+
+	freeAligned(s_heightMapMix);
 }
 
 void Ball_Draw(uint32_t *pDest, float time)
@@ -248,7 +253,7 @@ void Ball_Draw(uint32_t *pDest, float time)
 	vball(g_renderTarget, time);
 
 	// radial blur
-	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, 640, 480, 0.01628f);
+	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, 640, 480, 0.01628f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);

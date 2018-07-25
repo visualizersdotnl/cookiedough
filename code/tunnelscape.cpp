@@ -1,9 +1,9 @@
 
-// cookiedough -- voxel landscape (640x480)
+// cookiedough -- voxel tunnel (640x480)
 
 /*
-	- to fixed point (vscape_ray(), mostly)
-	- some XInput fanciness?
+	- create inverse polar table!
+	- for future fixes et cetera, see landscape.cpp, as the innerloop is much the same
 */
 
 #include "main.h"
@@ -25,29 +25,21 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-const int kMapViewHeight = 80;
-const int kMapTilt = 160;
-const int kMapScale = 180;
+const int kMapViewHeight = 110;
+const int kMapTilt = 120;
+const int kMapScale = 200;
 
-// adjust to map resolution
+// adjust to map resolution (1024x1024)
 const unsigned int kMapAnd = 1023;                                         
 const unsigned int kMapShift = 10;
 
 // max. depth
-const unsigned int kRayLength = 256;
+const unsigned int kRayLength = 512; // 256 -- used for fog table!
 
-// sample height (filtered)
-__forceinline unsigned int vscape_shf(int U, int V)
+static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, float fishMul)
 {
-	unsigned int U0, V0, U1, V1, fracU, fracV;
-	bsamp_prepUVs(U, V, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
-	return bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
-}
-
-static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, float fishMul)
-{
-	int lastHeight = kResY;
-	int lastDrawnHeight = kResY;
+	int lastHeight = kResX;
+	int lastDrawnHeight = kResX;
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
@@ -55,7 +47,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	fishMul = fabsf(fishMul);
 	// const int fpFishMul = ftof24(fabsf(fishMul));
 	
-	for (unsigned int iStep = 1; iStep <= kRayLength; ++iStep)
+	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
 		// advance!
 		curX += dX;
@@ -70,31 +62,34 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep-1]);
+//		color = _mm_mullo_epi16(color, s_fogGradientUnp[255-iStep]);
 //		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive, no clamp: can overflow)
-		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep-1]);
+//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
 
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 
 //		// FIXME
 		float fHeight = (float) height;
-		fHeight /= fishMul*iStep;
+		fHeight /= fishMul*(iStep+1);
 		height = ftof24(fHeight);
 
 		height *= kMapScale;
 		height >>= 8;
 		height += kMapTilt;
 
+		if (height<0)height=0;
+
 		// voxel visible?
 		if (height < lastDrawnHeight)
 		{
-			// draw span (vertical)
+			// draw span (horizontal)
 			const unsigned int drawLength = lastDrawnHeight - height;
-			cspanISSE(pDest + height*kResX, kResX, lastHeight - height, drawLength, color, lastColor);
+			cspanISSE(pDest, 1, lastHeight - height, drawLength, color, lastColor);
 			lastDrawnHeight = height;
+			pDest += drawLength;
 		}
 
 		// comment for non-clipped span draw
@@ -105,46 +100,37 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 // expected sizes:
 // - maps: 1024x1024
-static void vscape(uint32_t *pDest, float time)
+static void tscape(uint32_t *pDest, float time)
 {
-	const float viewAngle = time*0.0614f;
-	const float angCos = cosf(viewAngle);
-	const float angSin = sinf(viewAngle);
+	float mapX = 256.f; 
+	const float mapStepX = 512.f/480.f;
 
-	float origX = 512.f;
-	float origY = 800.f + time*30.f;
-
-	float rayY = 270.f;
-
-	// FIXME: make this fixed point if at some point you care enough
-	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
+	for (unsigned int iRay = 0; iRay < 480; ++iRay)
 	{
-		const float rayX = (kPI*0.25f)*(iRay - kResX*0.5f);
+		const int fromX = mapX;
+		const int fromY = 512.f + time*20.f;
 
-		const float rotX = angCos*rayX + angSin*rayY;
-		const float rotY = -angSin*rayX + angCos*rayY;
-
-		const float X1 = origX;
-		const float Y1 = origY;
-		const float X2 = origX+rotX;
-		const float Y2 = origY+rotY;
-
-		// normalize step value
-		float dX = X2-X1;
-		float dY = Y2-Y1;
-		normalize_vdeltas(dX, dY);
+		float dX, dY;
+		dX = 0.f;
+		dY = 1.f;
 
 		// counteract fisheye effect
-		float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
-		
-		vscape_ray(pDest+iRay, ftof24(X1), ftof24(Y1), ftof24(dX), ftof24(dY), fishMul);
+		const float rayX = fromX+dX;
+		const float rayY = fromY+dY;
+		const float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
 
+		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY), fishMul);
+		pDest += kResX;
+
+		mapX += mapStepX;
 	}
+
+	return;
 }
 
 // -- composition --
 
-bool Landscape_Create()
+bool Tunnelscape_Create()
 {
 	// load maps
 	s_pHeightMap = Image_Load8("assets/scape/maps/D15.png");
@@ -164,16 +150,20 @@ bool Landscape_Create()
 	return true;
 }
 
-void Landscape_Destroy()
+void Tunnelscape_Destroy()
 {
 	Image_Free(s_pHeightMap);
 	Image_Free(s_pColorMap);
 	Image_Free(s_pFogGradient);
 }
 
-void Landscape_Draw(uint32_t *pDest, float time)
+void Tunnelscape_Draw(uint32_t *pDest, float time)
 {
-	memset32(pDest, s_pFogGradient[255], kResX*kResY);
-	vscape(pDest, time);
-}
+	memset32(g_renderTarget, s_pFogGradient[255], kResX*kResY);
+	tscape(g_renderTarget, time);
 
+	// polar blit
+	Polar_Blit(g_renderTarget, pDest, true);
+
+//	tscape(pDest, time);
+}

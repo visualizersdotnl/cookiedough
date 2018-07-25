@@ -13,12 +13,13 @@
 
 #include "shared.h"
 #include "boxblur.h"
+#include "polar.h"
 
 #include "ball.h"
 #include "landscape.h"
 #include "torus-twister.h"
 #include "heartquake.h"
-// #include "polar.h"
+#include "tunnelscape.h"
 
 static sync_device *s_hRocket;
 
@@ -67,11 +68,12 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-	Twister_Draw(pDest, sysTimer);
+//	Twister_Draw(pDest, sysTimer);
 //	Landscape_Draw(pDest, sysTimer);
 //	Ball_Draw(pDest, sysTimer);
+	Tunnelscape_Draw(pDest, sysTimer);
 
-	MixSrc32(pDest, g_pDesireLogo3, 640*136);
+//	MixSrc32(pDest, g_pDesireLogo3, 640*136);
 
 	return;
 }

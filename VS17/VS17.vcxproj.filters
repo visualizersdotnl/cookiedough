@@ -87,6 +87,9 @@
     <ClCompile Include="..\code\boxblur.cpp">
       <Filter>Source Files\filters &amp; blitters</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\tunnelscape.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -153,6 +156,12 @@
       <Filter>Header Files\in-util</Filter>
     </ClInclude>
     <ClInclude Include="..\code\torus-twister.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\tunnelscape.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\voxel-shared.h">
       <Filter>Header Files\effects</Filter>
     </ClInclude>
   </ItemGroup>

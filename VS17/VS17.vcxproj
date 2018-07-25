@@ -33,6 +33,7 @@
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
+    <ClCompile Include="..\code\tunnelscape.cpp" />
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -57,7 +58,9 @@
     <ClInclude Include="..\code\shared.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />
+    <ClInclude Include="..\code\tunnelscape.h" />
     <ClInclude Include="..\code\util.h" />
+    <ClInclude Include="..\code\voxel-shared.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

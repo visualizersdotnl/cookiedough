@@ -116,15 +116,22 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 // - maps: 512x512
 static void vtwister(uint32_t *pDest, float time)
 {
-	// cast parallel rays (FIXME)
-	float mapY = 0.f; const float mapStepY = 512.f/480.f; // must tile! (for polar blit)
+	// cast parallel rays (FIXME, look at tunnelscape.cpp!)
+
+	// must tile! (for polar blit)
+	float mapY = 0.f; 
+	const float mapStepY = 512.f/480.f; 
+
 	for (unsigned int iRay = 0; iRay < 480; ++iRay)
 	{
-		const float shearAngle = (float) iRay * (2.f*kPI / 479.f);
+		const float shearAngle = (float) iRay * (2.f*kPI / 480.f);
+
 		const int fromX = ftof24(256.f + 140.f*sinf(time*1.1f + shearAngle));
 		const int fromY = ftof24(mapY + time*25.f);
+
 		vtwister_ray(pDest + iRay*640 + 320, fromX, fromY,  256);
 		vtwister_ray(pDest + iRay*640 + 319, fromX, fromY, -256);
+
 		mapY += mapStepY;
 	}
 }
@@ -158,8 +165,9 @@ bool Twister_Create()
 
 void Twister_Destroy()
 {
-	delete[] s_pHeightMap;
-	delete[] s_pColorMap;
+	Image_Free(s_pHeightMap);
+	Image_Free(s_pColorMap);
+	Image_Free(s_pBeamMap);
 }
 
 void Twister_Draw(uint32_t *pDest, float time)
