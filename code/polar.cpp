@@ -25,14 +25,14 @@ bool Polar_Create()
 			float theta = atan2f(Y, X);
 			theta += kPI;
 			theta /= kPI*2.f;
-			const float U    = distance * kTargetResX-1.f;
-			const float invU = (1.f-distance) * kTargetResX-1.f;
-			const float V    = theta * kTargetResY-1.f;
+			const float U    = distance * (kTargetResX-1.f);
+			const float invU = (1.f-distance) * (kTargetResX-1.f);
+			const float V    = theta * (kTargetResY-1.f);
 
 			// non-zero edges must be patched in absence of tiling logic
 			// it's a simple reverse (read previous pixel first & invert weight)
 
-			if (U == 639.f)
+			if (U == kTargetResX-1.f)
 				s_pInvPolarMap[iPixel] = s_pPolarMap[iPixel] = (kTargetResX-2)<<8 | 0xff;
 			else
 			{
@@ -40,7 +40,7 @@ bool Polar_Create()
 				s_pInvPolarMap[iPixel] = ftof24(invU);
 			}
 
-			if (V == 479.f)
+			if (V == kTargetResY-1.f)
 				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = (kTargetResY-2)<<8 | 0xff;
 			else
 				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ftof24(V);
