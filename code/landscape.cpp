@@ -2,10 +2,7 @@
 // cookiedough -- voxel landscape (640x480)
 
 /*
-	- glitches: at the bottom (due to bilerp?)
-	- fisheye artifacts
 	- to fixed point (vscape_ray(), mostly)
-	- traverse entire ray
 	- some XInput fanciness?
 */
 
@@ -31,7 +28,7 @@ const unsigned int kMapAnd = 1023;
 const unsigned int kMapShift = 10;
 
 // max. depth
-const unsigned int kRayLength = 160;
+const unsigned int kRayLength = 256;
 
 // sample height (filtered)
 __forceinline unsigned int vscape_shf(int U, int V)
@@ -47,34 +44,35 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	int lastDrawnHeight = kResY;
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-//	__m128i lastColor = c2vISSE(0xffffff);
-	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
+	__m128i lastColor = bsamp32(s_pColorMap, U, V, U, V, 0, 0);
 	
 	for (unsigned int iStep = 1; iStep <= kRayLength; ++iStep)
 	{
+		// advance!
+		curX += dX;
+		curY += dY;
+
 		// prepare UVs
 		unsigned int U0, V0, U1, V1, fracU, fracV;
 		bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 
 		// fetch height & color
-//		const unsigned int mapHeight = s_pHeightMap[U0|V0];
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
 		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
-//		 __m128i color = c2vISSE(mapHeight * 0x010001);
 
 		// apply fog (modulate)
 //		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep]);
 //		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive, no clamp: can overflow)
-//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
+		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep-1]);
 		
 		float fHeight = 256.f-mapHeight;
 		fHeight = fHeight - 128.f;
 		fHeight += -50.f;
 		fHeight /= fabsf(D)*iStep;
-		fHeight *= 110.f;
-		fHeight -= -100.f;
+		fHeight *= 160.f;
+		fHeight -= -150.f;
 
 		int height = (int) fHeight;
 		if (height < 0) height = 0;
@@ -82,19 +80,18 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		// voxel visible?
 		if (height < lastDrawnHeight)
 		{
+			const unsigned int drawLength = lastDrawnHeight - height;
+
 			// draw span (vertical)
-			cspanISSE_noclip(pDest + height*kResX, kResX, lastDrawnHeight - height, color, lastColor);
+//			cspanISSE_noclip(pDest + height*kResX, kResX, lastDrawnHeight - height, color, lastColor);
+			cspanISSE(pDest + height*kResX, kResX, lastHeight - height, drawLength, color, lastColor);
 			lastDrawnHeight = height;
 			lastColor = color;
 		}
 
 		// for later... (clipping)
-//		lastHeight = height;
-//		lastColor = color;
-
-		// advance
-		curX += dX;
-		curY += dY;
+		lastHeight = height;
+		lastColor = color;
 	}
 }
 
@@ -102,12 +99,12 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 // - maps: 1024x1024
 static void vscape(uint32_t *pDest, float time)
 {
-	float viewAngle = 0.f;
+	float viewAngle = time*0.0314f;
 
 	float origX = 512.f;
-	float origY = 800.f + time*10.f;
+	float origY = 800.f + time*19.f;
 
-	float rayY = 400.f;
+	float rayY = 270.f;
 
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
@@ -129,7 +126,7 @@ static void vscape(uint32_t *pDest, float time)
 
 		float D = rayY / sqrtf(rayX*rayX + rayY*rayY);
 
-		vscape_ray(pDest+iRay, ftof24(X1), ftof24(Y1), ftof24(dX), ftof24(dY), D);
+		vscape_ray(pDest+iRay, ftof24(X1+dX), ftof24(Y1+dY), ftof24(dX), ftof24(dY), D);
 
 	}
 }
@@ -166,7 +163,7 @@ void Landscape_Destroy()
 void Landscape_Draw(uint32_t *pDest, float time)
 {
 	// FIXME
-	memset(pDest, 0, kResX*kResY*4);
+	memset(pDest, s_pFogGradient[255], kResX*kResY*4);
 
 	vscape(pDest, time);
 }

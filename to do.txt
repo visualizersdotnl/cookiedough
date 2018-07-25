@@ -4,10 +4,10 @@ I'm unsure how up-to-date this is, so I'll split it in a new and old list.
 -- New list --
 
 - Update SDL? BASSMOD x64 or another library?
-- Fix that landscape.
-- Implement Heartquake water.
 - Upscale to 1024x768.
-- Multithreading?
+- Optimize landscape.
+- Implement Heartquake water.
+- Multithreading? Idea: supersampling
 - There's probably a lot of duplicate code you can stash in a header (that SSE stuff).
 
 -- Old list --
