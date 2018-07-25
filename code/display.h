@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../3rdparty/SDL2-2.0.3/include/SDL.h"
+#include "../3rdparty/SDL2-2.0.8/include/SDL.h"
 
 class Display
 {

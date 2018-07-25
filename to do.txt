@@ -3,12 +3,12 @@ I'm unsure how up-to-date this is, so I'll split it in a new and old list.
 
 -- New list --
 
-- Update SDL? BASSMOD x64 or another library?
-- Upscale to 1024x768.
-- Optimize landscape.
+- BASSMOD x64 or another library?
+- Upscale to?
+- Optimize landscape (eliminate floating point as much as possible).
 - Implement Heartquake water.
-- Multithreading? Idea: supersampling
-- There's probably a lot of duplicate code you can stash in a header (that SSE stuff).
+- Multithreading? Idea: supersampling, render targets.
+- There's probably a lot of duplicate voxel code you can stash in a header (voxel-shared.h?).
 
 -- Old list --
 
