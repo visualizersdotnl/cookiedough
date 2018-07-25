@@ -33,10 +33,7 @@ bool Polar_Create()
 			// it's a simple reverse (read previous pixel first & invert weight)
 
 			if (U == 639.f)
-			{
-				s_pPolarMap[iPixel] = 638<<8 | 0xff;
-				s_pInvPolarMap[iPixel] = 638<<8 | 0xff;
-			}
+				s_pInvPolarMap[iPixel] = s_pPolarMap[iPixel] = 638<<8 | 0xff;
 			else
 			{
 				s_pPolarMap[iPixel] = ftof24(U);

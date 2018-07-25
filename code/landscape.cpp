@@ -2,8 +2,7 @@
 // cookiedough -- voxel landscape (640x480)
 
 /*
-	- add a few assertions, perhaps, to prevent out-of-bounds crashes when switching maps
-	- to fixed point (vscape_ray(), mostly)
+	- more fixed point!
 	- some XInput fanciness?
 */
 
@@ -27,8 +26,8 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize)
 const int kMapViewHeight = 80;
-const int kMapTilt = 160;
-const int kMapScale = 180;
+const int kMapTilt = 60;
+const int kMapScale = 200;
 
 // adjust to map resolution
 const unsigned int kMapAnd = 1023;                                         
@@ -53,8 +52,8 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
 
-	fishMul = fabsf(fishMul);
-	// const int fpFishMul = ftof24(fabsf(fishMul));
+	// fishMul = fabsf(fishMul);
+	const int fpFishMul = ftof24(fabsf(fishMul));
 	
 	for (unsigned int iStep = 1; iStep <= kRayLength; ++iStep)
 	{
@@ -79,15 +78,13 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
-
-//		// FIXME
-		float fHeight = (float) height;
-		fHeight /= fishMul*iStep;
-		height = ftof24(fHeight);
-
+		height <<= 16;
+		height /= fpFishMul*(iStep+1); // FIXME
 		height *= kMapScale;
 		height >>= 8;
 		height += kMapTilt;
+
+		VIZ_ASSERT(height >= 0);
 
 		// voxel visible?
 		if (height < lastDrawnHeight)
@@ -115,12 +112,12 @@ static void vscape(uint32_t *pDest, float time)
 	float origX = 512.f;
 	float origY = 800.f + time*30.f;
 
-	float rayY = 270.f;
+	float rayY = 370.f;
 
 	// FIXME: make this fixed point if at some point you care enough
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		const float rayX = (kPI*0.25f)*(iRay - kResX*0.5f);
+		const float rayX = (kPI*0.35f)*(iRay - kResX*0.5f);
 
 		const float rotX = angCos*rayX + angSin*rayY;
 		const float rotY = -angSin*rayX + angCos*rayY;

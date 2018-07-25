@@ -64,19 +64,16 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		// apply fog (additive, no clamp: can overflow)
 		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
 
+		// FIXME: now this is just a little convoluted :)
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
-
-//		// FIXME
-		float fHeight = (float) height;
-		fHeight /= iStep+1;
-		height = ftof24(fHeight);
-
+		height <<= 8;
+		height /= iStep+1; // FIXME
 		height *= kMapScale;
 		height >>= 8;
 		height += kMapTilt;
 
-		if (height<0)height=0;
+		VIZ_ASSERT(height >= 0);
 
 		// voxel visible?
 		if (height < lastDrawnHeight)
