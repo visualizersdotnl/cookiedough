@@ -51,6 +51,9 @@ __forceinline void memset32(void *pDest, int value, size_t numInts)
 // blend 32-bit color buffers
 void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_t alpha);
 
+// add 32-bit color buffers (source onto destination)
+void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+
 // blend 32-bit color buffers using the source buffer's alpha
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 

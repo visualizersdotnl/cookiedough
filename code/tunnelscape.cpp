@@ -146,7 +146,7 @@ void Tunnelscape_Destroy()
 
 void Tunnelscape_Draw(uint32_t *pDest, float time)
 {
-	memset32(g_renderTarget, s_pFogGradient[255], kResX*kResY);
+	memset32(g_renderTarget, s_pFogGradient[255], kTargetResX*kTargetResY);
 	tscape(g_renderTarget, time);
 
 	// polar blit

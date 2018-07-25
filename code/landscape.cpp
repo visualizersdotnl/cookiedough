@@ -3,7 +3,7 @@
 
 /*
 	- more fixed point (+ LUT)
-	- some XInput fanciness?
+	- lace with controller input & airship HUD for fun!
 */
 
 #include "main.h"
@@ -15,9 +15,10 @@
 #include "boxblur.h"
 #include "voxel-shared.h"
 
-static uint8_t *s_pHeightMap = NULL;
-static uint32_t *s_pColorMap = NULL;
-static uint32_t *s_pFogGradient = NULL;
+static uint8_t *s_pHeightMap = nullptr;
+static uint32_t *s_pColorMap = nullptr;
+static uint32_t *s_pHUD = nullptr;
+static uint32_t *s_pFogGradient = nullptr;
 
 static __m128i s_fogGradientUnp[256];
 
@@ -54,7 +55,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	// fishMul = fabsf(fishMul);
 	const int fpFishMul = ftof24(fabsf(fishMul));
 	
-	for (unsigned int iStep = 1; iStep <= kRayLength; ++iStep)
+	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
 		// advance!
 		curX += dX;
@@ -69,11 +70,12 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep-1]);
+//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep]);
 //		color = _mm_srli_epi16(color, 8);
 
-		// apply fog (additive, no clamp: can overflow)
-		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep-1]);
+		// apply fog (additive/subtractive, no clamp: can overflow)
+//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
+		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep]);
 
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
@@ -143,10 +145,13 @@ static void vscape(uint32_t *pDest, float time)
 
 bool Landscape_Create()
 {
+	VIZ_ASSERT(kResX == 800 && kResY == 600);
+
 	// load maps
 	s_pHeightMap = Image_Load8("assets/scape/maps/D24.png");
 	s_pColorMap = Image_Load32("assets/scape/maps/C24W.png");
-	if (s_pHeightMap == NULL || s_pColorMap == NULL)
+	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
+	if (nullptr == s_pHeightMap || nullptr == s_pColorMap|| nullptr == s_pHUD)
 		return false;
 
 	// load fog gradient (8-bit LUT)
@@ -165,12 +170,17 @@ void Landscape_Destroy()
 {
 	Image_Free(s_pHeightMap);
 	Image_Free(s_pColorMap);
+	Image_Free(s_pHUD);
 	Image_Free(s_pFogGradient);
 }
 
 void Landscape_Draw(uint32_t *pDest, float time)
 {
-	memset32(pDest, s_pFogGradient[255], kResX*kResY);
+	// render landscape (FIXME: take input)
+	memset32(pDest, s_pFogGradient[0], kResX*kResY);
 	vscape(pDest, time);
+
+	// overlay HUD
+	Add32(pDest, s_pHUD, kResX*kResY);
 }
 

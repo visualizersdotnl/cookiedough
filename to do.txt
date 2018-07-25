@@ -2,13 +2,13 @@
 -- new list (2018) --
 
 do:
+- finish small helicopter voxel game!
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
-- upscale to?
 - implement Heartquake water
 - multithreading? (supersampling, render targets)
 - there's probably more duplicate voxel code you can stash in a header (voxel-shared.h?)
-- idea: parametrize all relevant values so they can be Rocket-controlled (including map constants et cetera)
+- parametrize all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - there's always room for optimization, this is old stuff
 
 remember:
@@ -16,12 +16,10 @@ remember:
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
 - OSX/Linux build (SDL and BASSMOD are available, use CMake?)
 
--- old list (cross off what no longer applies) --
+-- old list (2007-2009, cross off what no longer applies) --
 
 this would be nice:
 - move effect initialization to demo.cpp?
-- deprecate shared.cpp?
-- implement Heartquake water (rev. engineering notes are on MacBook)
 - for the voxel ball, the non-stop Ibiza experience seems to simply add a static environment map
 - add generic crash handler (see TPB-xxx) & design build (for full speed sync.)
 - add application icon

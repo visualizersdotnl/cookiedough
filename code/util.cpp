@@ -128,6 +128,19 @@ void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_
 #endif
 }
 
+void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
+{
+	const __m128i zero = _mm_setzero_si128();
+	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
+	{
+		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
+		const __m128i delta = srcColor;
+		const __m128i color = _mm_add_epi16(destColor, delta);
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+	}
+}
+
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();

@@ -57,7 +57,7 @@ void Demo_Destroy()
 void Demo_Draw(uint32_t *pDest, float sysTimer)
 {
 	// for this production:
-	VIZ_ASSERT(kResX == 640 && kResY == 480);
+	// VIZ_ASSERT(kResX == 640 && kResY == 480);
 
 	unsigned int modOrder, modRow;
 	float modRowAlpha;

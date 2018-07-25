@@ -20,8 +20,8 @@
 #include <smmintrin.h> // 4
 
 // output resolution
-const size_t kResX = 640;
-const size_t kResY = 480;
+const size_t kResX = 800;
+const size_t kResY = 600;
 constexpr size_t kHalfResX = kResX/2;
 constexpr size_t kHalfResY = kResY/2;
 constexpr size_t kOutputSize = kResX*kResY;
