@@ -73,7 +73,7 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 //	Ball_Draw(pDest, sysTimer);
 	Tunnelscape_Draw(pDest, sysTimer);
 
-//	MixSrc32(pDest, g_pDesireLogo3, 640*136);
+	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
 
 	return;
 }

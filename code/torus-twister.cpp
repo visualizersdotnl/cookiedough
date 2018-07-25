@@ -116,11 +116,8 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 // - maps: 512x512
 static void vtwister(uint32_t *pDest, float time)
 {
-	// cast parallel rays (FIXME, look at tunnelscape.cpp!)
-
-	// must tile! (for polar blit)
 	float mapY = 0.f; 
-	const float mapStepY = 512.f/480.f; 
+	const float mapStepY = 512.f/479.f; // tile (for blit)
 
 	for (unsigned int iRay = 0; iRay < 480; ++iRay)
 	{

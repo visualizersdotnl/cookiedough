@@ -3,7 +3,6 @@
 
 do:
 - parametrize size of render target
-- finish 'tunnelscape'
 - optimize landscape & tunnelscape (eliminate floating point as much as possible)
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket

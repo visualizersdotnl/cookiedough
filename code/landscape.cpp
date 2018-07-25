@@ -2,6 +2,7 @@
 // cookiedough -- voxel landscape (640x480)
 
 /*
+	- add a few assertions, perhaps, to prevent out-of-bounds crashes when switching maps
 	- to fixed point (vscape_ray(), mostly)
 	- some XInput fanciness?
 */

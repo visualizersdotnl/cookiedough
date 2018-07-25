@@ -2,7 +2,6 @@
 // cookiedough -- voxel tunnel (640x480)
 
 /*
-	- create inverse polar table!
 	- for future fixes et cetera, see landscape.cpp, as the innerloop is much the same
 */
 
@@ -36,16 +35,13 @@ const unsigned int kMapShift = 10;
 // max. depth
 const unsigned int kRayLength = 512; // 256 -- used for fog table!
 
-static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, float fishMul)
+static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
 	int lastHeight = kResX;
 	int lastDrawnHeight = kResX;
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
-
-	fishMul = fabsf(fishMul);
-	// const int fpFishMul = ftof24(fabsf(fishMul));
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
@@ -62,18 +58,18 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[255-iStep]);
+//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep>>1]);
 //		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive, no clamp: can overflow)
-//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
+		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
 
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 
 //		// FIXME
 		float fHeight = (float) height;
-		fHeight /= fishMul*(iStep+1);
+		fHeight /= iStep+1;
 		height = ftof24(fHeight);
 
 		height *= kMapScale;
@@ -100,26 +96,22 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 // expected sizes:
 // - maps: 1024x1024
+// - render target: 640x480
 static void tscape(uint32_t *pDest, float time)
 {
-	float mapX = 256.f; 
-	const float mapStepX = 512.f/480.f;
+	float mapX = 0.f; 
+	const float mapStepX = 1024.f/479.f; // tile (for blit)
 
 	for (unsigned int iRay = 0; iRay < 480; ++iRay)
 	{
-		const int fromX = mapX;
-		const int fromY = 512.f + time*20.f;
+		const float fromX = mapX + time*66.f;
+		const float fromY = 512.f + time*214.f;
 
 		float dX, dY;
 		dX = 0.f;
 		dY = 1.f;
 
-		// counteract fisheye effect
-		const float rayX = fromX+dX;
-		const float rayY = fromY+dY;
-		const float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
-
-		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY), fishMul);
+		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY));
 		pDest += kResX;
 
 		mapX += mapStepX;
@@ -164,6 +156,4 @@ void Tunnelscape_Draw(uint32_t *pDest, float time)
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, true);
-
-//	tscape(pDest, time);
 }
