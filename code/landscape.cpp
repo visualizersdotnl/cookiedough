@@ -61,17 +61,17 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep]);
+//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep-1]);
 //		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive, no clamp: can overflow)
 		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep-1]);
 		
 		float fHeight = 256.f-mapHeight;
-		fHeight = fHeight - 128.f;
+		fHeight = fHeight - 28.f;
 		fHeight += -50.f;
 		fHeight /= fabsf(D)*iStep;
-		fHeight *= 160.f;
+		fHeight *= 120.f;
 		fHeight -= -150.f;
 
 		int height = (int) fHeight;
@@ -102,7 +102,7 @@ static void vscape(uint32_t *pDest, float time)
 	float viewAngle = time*0.0314f;
 
 	float origX = 512.f;
-	float origY = 800.f + time*19.f;
+	float origY = 800.f + time*30.f;
 
 	float rayY = 270.f;
 
@@ -136,8 +136,8 @@ static void vscape(uint32_t *pDest, float time)
 bool Landscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/D1.png");
-	s_pColorMap = Image_Load32("assets/scape/C1W.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D17.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C17W.png");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 

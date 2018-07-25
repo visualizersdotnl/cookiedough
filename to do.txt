@@ -23,8 +23,7 @@ priority:
 	+ blur: fix bias flaw
 	+ polar: loop can be tighter
 	+ ball: see top
-	+ landscape: rewrite, see top
-	http://alwaysbusycorner.com/2014/08/08/xojo-building-commanche-3d-in-100-lines
+	+ landscape: for maps:
 	http://simulationcorner.net/index.php?page=comanche
 	+ twister: rewrite
 	+ cspan.h: speed (divide)
