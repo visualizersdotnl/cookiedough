@@ -17,8 +17,10 @@
 // - use multi-byte character set (i.e. no _UNICODE)
 
 // important to know:
-// - always include main.h on top
-// - there's kResX and soforth telling you about the size of the output buffer
+// - executables are built to target/x86|x64/, run from that directory!
+// - keep DLLs (see above) up to date for each build
+// - (almost) always include main.h on top
+// - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for the render target(s) there's kTargetX et cetera
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
 

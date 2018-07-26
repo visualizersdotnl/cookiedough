@@ -45,9 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\code\audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -107,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="..\code\heartquake.cpp">
       <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\audio-bassmod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\audio.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +227,12 @@
       <Filter>/3rdparty-x86</Filter>
     </Library>
     <Library Include="..\3rdparty\SDL2-2.0.8\lib\x64\SDL2.lib">
+      <Filter>/3rdparty-x64</Filter>
+    </Library>
+    <Library Include="..\3rdparty\bass24-stripped\c\bass.lib">
+      <Filter>/3rdparty-x86</Filter>
+    </Library>
+    <Library Include="..\3rdparty\bass24-stripped\c\x64\bass.lib">
       <Filter>/3rdparty-x64</Filter>
     </Library>
   </ItemGroup>

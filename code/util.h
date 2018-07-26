@@ -17,13 +17,13 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 // Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
 #ifdef  _WIN32
 	#ifdef _DEBUG
-		#define VIZ_INLINE
+		#define VIZ_INLINE static
 	#else
 		#define VIZ_INLINE __forceinline
 	#endif
 #else // elif defined(__GNUC__)
 	#ifdef _DEBUG
-		#define VIZ_INLINE
+		#define VIZ_INLINE static
 	#else
 		#define VIZ_INLINE inline
 	#endif
@@ -57,7 +57,7 @@ VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 	VIZ_ASSERT(!(numInts & 3));
 
 	// an 8-byte boundary gaurantees correctly aligned writes
-	VIZ_ASSERT(!(reinterpret_cast<uint32_t>(pDest) & 7));
+	VIZ_ASSERT(!(reinterpret_cast<size_t>(pDest) & 7));
 
 	int *pInt = static_cast<int*>(pDest);
 	while (numInts--) _mm_stream_si32(pInt++, value);

@@ -3,31 +3,27 @@
 
 #include <Windows.h>
 #include "main.h"
-#include "../3rdparty/bassmod20/c/bassmod.h"
+#include "../3rdparty/bass24-stripped/c/bass.h"
 // #include "audio.h"
+
+static HMUSIC s_hMusic = NULL;
 
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 {
 	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
 	VIZ_ASSERT(hWnd != NULL);
 
-	// correct DLL version?
-	if (BASSMOD_GetVersion() != MAKELONG(2,0))
-	{
-		SetLastError("Incorrect version of BASSMOD DLL loaded.");
-		return false;
-	}
-
 	// BASS device IDs:
 	//  0 = No sound (causes functionality to be limited, so -1 is the better pick).
 	// -1 = Default.
 	// >0 = As enumerated.
-	if (!BASSMOD_Init((iDevice == -1) ? -1 : iDevice + 1, 44100, BASS_DEVICE_MONO))
+	if (!BASS_Init(iDevice, 44100, BASS_DEVICE_LATENCY, hWnd, NULL))
 	{ 
-		switch (BASSMOD_ErrorGetCode())
+		switch (BASS_ErrorGetCode())
 		{
 		case BASS_ERROR_DEVICE:
 		case BASS_ERROR_ALREADY:
+		case BASS_ERROR_NO3D:
 		case BASS_ERROR_UNKNOWN:
 		case BASS_ERROR_MEM:
 			VIZ_ASSERT(0);
@@ -39,9 +35,10 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
-	if (FALSE == BASSMOD_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN))
+	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN, 0);
+	if (NULL == s_hMusic)
 	{
-		switch (BASSMOD_ErrorGetCode())
+		switch (BASS_ErrorGetCode())
 		{
 		case BASS_ERROR_INIT:
 		case BASS_ERROR_NOTAVAIL:
@@ -58,37 +55,35 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
-	// timing precision
-	BASSMOD_MusicSetPositionScaler(256);
-
 	return true;
 }
 
 void Audio_Destroy()
 {
-	BASSMOD_Free();
+	BASS_Free();
 }
 
 void Audio_Rocket_Pause(void *, int mustPause)
 {
 	if (mustPause)
-		BASSMOD_MusicPause();
-	else
-		BASSMOD_MusicPlay();	
+		BASS_ChannelPause(s_hMusic);
+ 	else
+		BASS_ChannelPlay(s_hMusic, FALSE);
 }
 
 void Audio_Rocket_SetRow(void *, int row)
 {
-	BASSMOD_MusicSetPosition(row>>6 | (row&63)<<16);
+//	BASSMOD_MusicSetPosition(row>>6 | (row&63)<<16);
 }
 
 int Audio_Rocket_IsPlaying(void *)
 {
-	return BASSMOD_MusicIsActive();
+	return BASS_ChannelIsActive(s_hMusic);
 }
 
 int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
 {
+/*
 	const DWORD fullPos = BASSMOD_MusicGetPosition();
 	const DWORD order = LOWORD(fullPos);
 	const DWORD row = HIWORD(fullPos)/256;
@@ -99,4 +94,7 @@ int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRo
 	modRowAlpha = rowPart/256.f;
 
 	return order*64 + row; // FIXME
+*/
+
+	return 0;
 }

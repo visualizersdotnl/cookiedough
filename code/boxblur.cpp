@@ -44,7 +44,7 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(xRes <= 640); // FIXME: support variable resolutions
+	VIZ_ASSERT(xRes <= kResX);
 
 	// calculate actual kernel span
 	const unsigned int kernelSpan = (unsigned int) (strength * (float) xRes);
@@ -64,8 +64,8 @@ void HorizontalBoxBlur32(
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
-	static __m128i edgeDivs[640];
-	VIZ_ASSERT(kernelMedian < 640);
+	static __m128i edgeDivs[kResX];
+	VIZ_ASSERT(kernelMedian < kResX);
 	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3); // see note below!
 	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
 	{

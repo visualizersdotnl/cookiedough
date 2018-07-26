@@ -2,7 +2,7 @@
 -- new list (2018) --
 
 do:
-- bug: tunnel looks weird if render target resolution lower than output res.
+- fix module sync.
 - implement: Heartquake water, Clone meets clone tunnels
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - pick another X64-compatible module player and fix 64-bit build
@@ -10,15 +10,13 @@ do:
 - implement Heartquake water
 - multithreading? (supersampling, render targets)
 - there's always room for optimization, this is old stuff
-- OSX/Linux build
+- garbage collect resources (and eradicate a ton of repetitive shit)
 - generic crash handler
 - application icon
-- garbage collect resources (and eradicate a ton of repetitive shit)
 
 remember:
 - blur bias flaw
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
-- there's probably more duplicate voxel code you can stash in a header (voxel-shared.h?)
 - if I want multiple instances of effects I'll have to wrap them in objects
 
 effect ideas:
@@ -27,3 +25,7 @@ effect ideas:
 - lens distort
 - true 3D
 - adlib playback
+
+OSX/Linux build:
+- switch module player
+

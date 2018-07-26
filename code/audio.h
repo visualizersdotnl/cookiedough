@@ -1,5 +1,5 @@
 
-// cookiedough -- audio: module replay (with BASS)
+// cookiedough -- audio: module replay
 
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
