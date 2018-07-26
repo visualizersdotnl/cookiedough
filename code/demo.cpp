@@ -69,8 +69,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 #endif
 
 //	Twister_Draw(pDest, timer, delta);
-	Landscape_Draw(pDest, timer, delta);
-//	Ball_Draw(pDest, timer, delta);
+//	Landscape_Draw(pDest, timer, delta);
+	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600

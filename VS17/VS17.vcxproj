@@ -27,6 +27,7 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
+    <ClCompile Include="..\code\clonetunnels.cpp" />
     <ClCompile Include="..\code\demo.cpp" />
     <ClCompile Include="..\code\display.cpp" />
     <ClCompile Include="..\code\gamepad.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
+    <ClInclude Include="..\code\clonetunnels.h" />
     <ClInclude Include="..\code\cspan.h" />
     <ClInclude Include="..\code\demo.h" />
     <ClInclude Include="..\code\display.h" />

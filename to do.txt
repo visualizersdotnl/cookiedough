@@ -2,8 +2,9 @@
 -- new list (2018) --
 
 do:
-- add Std3DMath
+- add environment map to voxel ball
 - bug: tunnel looks weird if render target resolution lower than output res.
+- implement: Heartquake water, Clone meets clone tunnels
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
@@ -11,6 +12,8 @@ do:
 - multithreading? (supersampling, render targets)
 - there's always room for optimization, this is old stuff
 - OSX/Linux build
+- generic crash handler
+- application icon
 
 remember:
 - blur bias flaw
@@ -18,19 +21,9 @@ remember:
 - there's probably more duplicate voxel code you can stash in a header (voxel-shared.h?)
 - if I want multiple instances of effects I'll have to wrap them in objects
 
--- old list (2007-2009, cross off what no longer applies) --
-
-this would be nice:
-- move effect initialization to demo.cpp?
-- for the voxel ball, the non-stop Ibiza experience seems to simply add a static environment map
-- add generic crash handler (see TPB-xxx) & design build (for full speed sync.)
-- add application icon
-
-in case you're bored:
-- free-directional FX with fast interpolation & map mixing
-- fancy font writers (also: scroller)
-- radial blur
-- scaling
-- lens, plane distort, et cetera
-- 3D
-- adlib (or SID?) playback
+effect ideas:
+- raymarched/raytraced stuff (with interpolation or multi-threading)
+- scaling routines
+- lens distort
+- true 3D
+- adlib playback

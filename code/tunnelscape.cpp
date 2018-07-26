@@ -84,7 +84,6 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 			pDest += drawLength;
 		}
 
-		// comment for non-clipped span draw
 		lastHeight = height;
 		lastColor = color;
 	}

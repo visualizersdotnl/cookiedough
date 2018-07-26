@@ -1,5 +1,5 @@
 
-// cookiedough -- Heartquake-style water (640x480)
+// cookiedough -- Heartquake-style water
 
 #include "main.h"
 // #include "heartquake.h"

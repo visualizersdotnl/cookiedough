@@ -3,6 +3,7 @@
 
 /*
 	- more fixed point (+ LUT)
+	- procedural fog LUT
 */
 
 #include "main.h"
@@ -98,7 +99,6 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 			lastDrawnHeight = height;
 		}
 
-		// comment for non-clipped span draw
 		lastHeight = height;
 		lastColor = color;
 	}

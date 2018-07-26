@@ -69,9 +69,6 @@
     <ClCompile Include="..\3rdparty\rocket\lib\track.c">
       <Filter>/3rdparty-rocket</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\heartquake.cpp">
-      <Filter>Source Files\effects</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\ball.cpp">
       <Filter>Source Files\effects</Filter>
     </ClCompile>
@@ -104,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Vector3.cpp">
       <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\clonetunnels.cpp">
+      <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\heartquake.cpp">
+      <Filter>Source Files\effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector4.h">
       <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\clonetunnels.h">
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

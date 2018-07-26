@@ -1,5 +1,5 @@
 
-// cookiedough -- Heartquake-style water (640x480)
+// cookiedough -- Heartquake-style water
 
 #ifndef _HEARTQUAKE_H_
 #define _HEARTQUAKE_H_
