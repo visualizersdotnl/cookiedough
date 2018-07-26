@@ -3,7 +3,6 @@
 
 /*
 	- FIXMEs
-	- add fast way to switch between different beam and map behaviour
 */
 
 #include "main.h"
@@ -18,9 +17,13 @@
 static uint8_t *s_pHeightMap[5] = { nullptr };
 static uint32_t *s_pColorMap = nullptr;
 static uint32_t *s_pBeamMap = nullptr;
+static uint32_t *s_pEnvMap = nullptr;
 static uint8_t *s_heightMapMix = nullptr;
 
 // -- voxel renderer --
+
+// beam map configurations (defines for now, FIXME)
+// #define NO_BEAMS
 
 // adjust to map resolution
 const unsigned int kMapAnd = 511;                                          
@@ -36,7 +39,7 @@ static unsigned int s_heightProj[kRayLength];
 const float kBallRadius = 510.f;
 
 // scale applied to each beam sample
-const uint8_t kBeamMul = 12;
+const uint8_t kBeamMul = 3;
 
 static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
@@ -49,11 +52,18 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	__m128i beamAccum = _mm_setzero_si128();
 	__m128i beamMul = g_gradientUnp[kBeamMul];
 
+	int envU = ((kMapAnd+1)>>1)<<8;
+	int envV = envU;
+
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
-		// advance!
+		// advance
 		curX += dX;
 		curY += dY;
+
+		// advance env. map UV
+		envU += dX;
+		envV += dY;
 
 		// prepare UVs
 		unsigned int U0, V0, U1, V1, fracU, fracV;
@@ -63,29 +73,31 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		const unsigned int mapHeight = bsamp8(s_heightMapMix, U0, V0, U1, V1, fracU, fracV);
 		__m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
+		// sample env. map (without filtering)
+		const unsigned int U = envU >> 8 & kMapAnd, V = (envV >> 8 & kMapAnd) << kMapShift;
+		const __m128i additive = c2vISSE(s_pEnvMap[U+V]);
+		color = _mm_adds_epu16(color, additive);
+
+#if !defined(NO_BEAMS)
+		if (iStep > kRayLength>>1)
 		// fetch, accumulate & add beam (separate map)
 		{
-//			const __m128i beam = bsamp32(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+			const __m128i beam = bsamp32(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 //			const __m128i beam = c2vISSE(s_pBeamMap[U0+V0]);
 
-#if 0			
 			// pre-multiply
 			beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
 			color = _mm_adds_epu16(color, beamAccum);
-#endif
 
-#if 0
 			// clamps & add
-			beamAccum = vminISSE(beamAccum, g_gradientUnp[255]);
-			color = vminISSE(_mm_adds_epu16(color, beamAccum), g_gradientUnp[255]);
-#endif
+//			beamAccum = vminISSE(beamAccum, g_gradientUnp[255]);
+//			color = vminISSE(_mm_adds_epu16(color, beamAccum), g_gradientUnp[255]);
 
-#if 0
 			// just add (overflow "trick")
-			beamAccum = _mm_adds_epu16(beamAccum, beam);
-			color = _mm_adds_epu16(color, beamAccum);
-#endif
+//			beamAccum = _mm_adds_epu16(beamAccum, beam);
+//			color = _mm_adds_epu16(color, beamAccum);
 		}
+#endif
 
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
@@ -104,39 +116,30 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		lastColor = color;
 	}
 
-#if 1
-	// opaque
-	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
-		pDest[iPixel] = 0;
-#endif
+#if defined(NO_BEAMS)
 
-#if 0
-	// beam-only (debug)
-	const unsigned int remainder = kTargetResX;
-	cspanISSE_noclip(pDest, 1, remainder, beamAccum, _mm_setzero_si128()); 
-#endif
+	while (lastDrawnHeight < kTargetResX)
+		pDest[lastDrawnHeight++] = 0;
 
-#if 0
+#else
+
 	// beams (fade out, also works with overflowing beam)
-	const unsigned int remainder = kTargetResX-lastDrawnHeight;
-	cspanISSE_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
-#endif
+//	const unsigned int remainder = kTargetResX-lastDrawnHeight;
+//	cspanISSE_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
 
-#if 0
 	// beams (full brightness)
-	const uint32_t color = v2cISSE(beamAccum);
-	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
-		pDest[iPixel] = color;
-#endif
+//	const uint32_t color = v2cISSE(beamAccum);
+//	while (lastDrawnHeight < kTargetResX)
+//		pDest[lastDrawnHeight++] = color;
 
-#if	0
 	// glow (only looks good with unclamped overflowing beam!)
- 	const __m128i beamSub = g_gradientUnp[4];
-	for (int iPixel = lastDrawnHeight; iPixel < kTargetResX; ++iPixel)
+ 	const __m128i beamSub = g_gradientUnp[3];
+	while (lastDrawnHeight < kTargetResX)
 	{
-		pDest[iPixel] = v2cISSE(beamAccum);
+		pDest[lastDrawnHeight++] = v2cISSE(beamAccum);
 		beamAccum = _mm_subs_epu16(beamAccum, beamSub);
 	}
+
 #endif
 }
 
@@ -209,6 +212,11 @@ bool Ball_Create()
 	if (s_pBeamMap == NULL)
 		return false;
 
+	// load env. map #1
+	s_pEnvMap = Image_Load32("assets/ball/envmap2.jpg");
+	if (s_pEnvMap == NULL)
+		return false;
+
 	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kCacheLine));
 
 	return true;
@@ -221,13 +229,14 @@ void Ball_Destroy()
 	
 	Image_Free(s_pColorMap);
 	Image_Free(s_pBeamMap);
+	Image_Free(s_pEnvMap);
 
 	freeAligned(s_heightMapMix);
 }
 
 void Ball_Draw(uint32_t *pDest, float time, float delta)
 {
-#if 0
+#if 1
 	// mix height map (FIXME)
 	float mapMix = fmodf(time*2.f, 128.f) / 16.f;
 	if (mapMix > 4.f) mapMix = 4.f - (mapMix - 4.f);
@@ -242,7 +251,7 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// static height map
-	memcpy_fast(s_heightMapMix, s_pHeightMap[4], 512*512);
+	// memcpy_fast(s_heightMapMix, s_pHeightMap[4], 512*512);
 
 	// render unwrapped ball
 	vball(g_renderTarget, time);

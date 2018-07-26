@@ -2,7 +2,6 @@
 -- new list (2018) --
 
 do:
-- add environment map to voxel ball
 - bug: tunnel looks weird if render target resolution lower than output res.
 - implement: Heartquake water, Clone meets clone tunnels
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
@@ -14,6 +13,7 @@ do:
 - OSX/Linux build
 - generic crash handler
 - application icon
+- garbage collect resources (and eradicate a ton of repetitive shit)
 
 remember:
 - blur bias flaw

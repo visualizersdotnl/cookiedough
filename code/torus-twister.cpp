@@ -136,7 +136,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 	vtwister(g_renderTarget, time);
 
 	// (radial) blur
-	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.04f);
+	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.04f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);

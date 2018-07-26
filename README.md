@@ -8,4 +8,6 @@ It's built using Visual Studio 2017.
 - 25/07/2018: got it running, back in production.
 - Use Ground Control as sync. editor for Win10 (https://github.com/edoreshef/ground-control)
 
-Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit!
+Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
+
+** Has content from Comanche (videogame) & The Non-stop Ibiza Experience (demoscene, Orange), not intended for release. **
