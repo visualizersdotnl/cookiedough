@@ -3,6 +3,7 @@
 
 do:
 - finish small helicopter voxel game!
+- move generic controller code to gamepad.cpp
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
 - implement Heartquake water

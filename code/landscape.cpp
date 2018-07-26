@@ -3,7 +3,7 @@
 
 /*
 	- more fixed point (+ LUT)
-	- lace with controller input & airship HUD for fun!
+	- fix proper controller input & airship HUD for fun, then move generic code out
 */
 
 #include "main.h"
@@ -14,6 +14,7 @@
 #include "polar.h"
 #include "boxblur.h"
 #include "voxel-shared.h"
+#include "gamepad.h"
 
 static uint8_t *s_pHeightMap = nullptr;
 static uint32_t *s_pColorMap = nullptr;
@@ -104,24 +105,40 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 // expected sizes:
 // - maps: 1024x1024
+// FIXME: make this fixed point if at some point you care enough
 static void vscape(uint32_t *pDest, float time)
 {
-	const float viewAngle = time*0.0614f;
+	// to do right here:
+	// - gamepad poll should return a simple structure
+	// - move lowpass to util.h
+	// - scale leftY so speed remains constant while navigating (use hypothenuse)
+	// - add some banking
+
+	float leftX, leftY, rightX, rightY;
+	Gamepad_Update(leftX, leftY, rightX, rightY);
+
+	static float lowpass = 0.f;
+	lowpass = 0.125f*leftX + 0.875f*lowpass;
+
+	const float viewAngle = -lowpass*0.25f*kPI;
 	const float angCos = cosf(viewAngle);
 	const float angSin = sinf(viewAngle);
 
-	float origX = 512.f;
-	float origY = 800.f + time*30.f;
+	static float origX = 512.f;
+	static float origY = 512.f;
 
+	origX += 0.f;
+	origY -= leftY;
+
+	// FIXME: formalize as parameter
 	float rayY = 370.f;
 
-	// FIXME: make this fixed point if at some point you care enough
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		const float rayX = (kPI*0.35f)*(iRay - kResX*0.5f);
+		const float rayX = (kPI*0.45f)*(iRay - kResX*0.5f);
 
-		const float rotX = angCos*rayX + angSin*rayY;
-		const float rotY = -angSin*rayX + angCos*rayY;
+		const float rotX = angCos*rayX - angSin*rayY;
+		const float rotY = angSin*rayX + angCos*rayY;
 
 		const float X1 = origX;
 		const float Y1 = origY;

@@ -90,6 +90,9 @@
     <ClCompile Include="..\code\shared-resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\gamepad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -162,6 +165,9 @@
       <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="..\code\shared-resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\gamepad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

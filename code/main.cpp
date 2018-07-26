@@ -28,8 +28,10 @@
 #include "timer.h"
 #include "image.h"
 #include "audio.h"
-#include "polar.h"
 #include "demo.h"
+#include "gamepad.h"
+
+#include "polar.h"
 
 // effects
 #include "torus-twister.h"
@@ -119,6 +121,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	demoInit &= Heartquake_Create();
 	demoInit &= Tunnelscape_Create();
 
+	Gamepad_Create();
+
 	if (demoInit)
 	{
 		if (Demo_Create())
@@ -145,6 +149,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 			}
 		}
 	}
+
+	Gamepad_Destroy();
 
 	Audio_Destroy();
 	Demo_Destroy();
