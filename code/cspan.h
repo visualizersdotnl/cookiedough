@@ -5,7 +5,7 @@
 #define _CSPAN_H_
 
 // draw span (straight line) with interpolated color (ISSE-optimized)
-__forceinline void cspan(
+VIZ_INLINE void cspan(
 	uint32_t *pDest, 
 	int destIncr, 
 	unsigned int length,     // length of span
@@ -43,7 +43,7 @@ __forceinline void cspan(
 
 // copy of cspan(), takes pre-unpacked colors as __m128i
 // for better integration with ISSE-optimized caller
-__forceinline void cspanISSE(
+VIZ_INLINE void cspanISSE(
 	uint32_t *pDest,
 	int destIncr, 
 	unsigned int length,     // length of span
@@ -74,7 +74,7 @@ __forceinline void cspanISSE(
 }
 
 // copy of cspanISSE() without clipping (slightly faster)
-__forceinline void cspanISSE_noclip(
+VIZ_INLINE void cspanISSE_noclip(
 	uint32_t *pDest,
 	int destIncr, 
 	unsigned int length,  // length of span

@@ -8,13 +8,13 @@
 // #include "boxblur.h"
 
 // convert 28:4 fixed point weight to 16-bit divisor
-__forceinline uint32_t WeightToDiv(unsigned int weight)
+VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
 	return (65535*256 / weight) >> 4;
 }
 
 // add pixel to accumulator
-__forceinline void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
+VIZ_INLINE void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
 {
 	const __m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
 	accumulator = _mm_adds_epu16(accumulator, remainder);
@@ -23,7 +23,7 @@ __forceinline void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel,
 }
 
 // subtract pixel from accumulator
-__forceinline void Sub(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
+VIZ_INLINE void Sub(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
 {
 	const __m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
 	accumulator = _mm_subs_epu16(accumulator, remainder);
@@ -32,7 +32,7 @@ __forceinline void Sub(__m128i &accumulator, __m128i &remainder, uint32_t pixel,
 }
 
 // divide accumulator by weight, pack it, and return pixel
-__forceinline uint32_t Div(__m128i accumulator, __m128i weightDiv)
+VIZ_INLINE uint32_t Div(__m128i accumulator, __m128i weightDiv)
 {
 	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_mulhi_epu16(accumulator, weightDiv), _mm_setzero_si128()));
 }

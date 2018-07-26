@@ -5,12 +5,12 @@
 #define _BIT_TRICKS_H_
 
 // unsigned integer is-power-of-2 check
-inline const bool IsPow2(unsigned value)
+VIZ_INLINE const bool IsPow2(unsigned value)
 {
 	return value != 0 && !(value & (value - 1));
 }
 
-inline unsigned RoundPow2_32(unsigned value)
+VIZ_INLINE unsigned RoundPow2_32(unsigned value)
 {
 	--value;
 	value |= value >> 1;
@@ -23,7 +23,7 @@ inline unsigned RoundPow2_32(unsigned value)
 
 #ifdef _WIN64
 
-inline size_t RoundPow2_64(size_t value)
+VIZ_INLINE size_t RoundPow2_64(size_t value)
 {
 	--value;
 	value |= value >> 1;
@@ -40,7 +40,7 @@ inline size_t RoundPow2_64(size_t value)
 #pragma warning(disable:4146) // unary minus operator applied, result still unsigned (IsZero())
 
 // Thank you Bit Twiddling Hacks.
-inline unsigned IsNotZero(unsigned value) { return ((value | (~value + 1)) >> 31) & 1; }
-inline unsigned IsZero(unsigned value) { return 1 + (value >> 31) - (-value >> 31); }
+VIZ_INLINE unsigned IsNotZero(unsigned value) { return ((value | (~value + 1)) >> 31) & 1; }
+VIZ_INLINE unsigned IsZero(unsigned value) { return 1 + (value >> 31) - (-value >> 31); }
 
 #endif // _BIT_TRICKS_H_

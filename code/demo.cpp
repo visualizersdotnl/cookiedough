@@ -68,10 +68,20 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-//	Twister_Draw(pDest, timer, delta);
-	Landscape_Draw(pDest, timer, delta);
+	Twister_Draw(pDest, timer, delta);
+//	Landscape_Draw(pDest, timer, delta);
 //	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
+
+	// blit logo to 800x600
+	uint32_t *pWrite = pDest + 800*430;
+	for (int iY = 0; iY < 136; ++iY)
+	{
+		pWrite += 80;
+//		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
+		pWrite += 800-80;
+
+	}
 
 //	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
 

@@ -40,7 +40,7 @@ const unsigned int kRayLength = 512;
 static int s_mapTilt = kMapTilt;
 
 // sample height (filtered)
-__forceinline unsigned int vscape_shf(int U, int V)
+VIZ_INLINE unsigned int vscape_shf(int U, int V)
 {
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(U, V, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
@@ -164,8 +164,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify
-		float rotRayX = rayX;
-		float rotRayY = rayY;
+		float rotRayX = rayX, rotRayY = rayY;
 		vrot2D(viewCos, viewSin, rotRayX, rotRayY);
 		float X2 = X1+rotRayX;
 		float Y2 = Y1+rotRayY;

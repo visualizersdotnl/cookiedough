@@ -4,9 +4,6 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#include "bit-tricks.h"
-#include "alloc-aligned.h"
-
 // size of cache line
 constexpr size_t kCacheLine = sizeof(size_t)<<3;
 
@@ -17,10 +14,26 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 	#define VIZ_ASSERT(condition)
 #endif
 
-// Epsilon (FIXME: replaced later by Std3DMath)
-const float kEpsilon = 0.000001f;
+// Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
+#ifdef  _WIN32
+	#ifdef _DEBUG
+		#define VIZ_INLINE
+	#else
+		#define VIZ_INLINE __forceinline
+	#endif
+#else // elif defined(__GNUC__)
+	#ifdef _DEBUG
+		#define VIZ_INLINE
+	#else
+		#define VIZ_INLINE inline
+	#endif
+#endif
 
-// PI
+#include "bit-tricks.h"
+#include "alloc-aligned.h"
+
+// Epsilon+PI (FIXME: replaced later by Std3DMath)
+const float kEpsilon = 0.000001f;
 const float kPI = 3.1415926535897932384626433832795f;
 
 // memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
@@ -39,7 +52,7 @@ void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes);
 
 #endif
 
-__forceinline void memset32(void *pDest, int value, size_t numInts)
+VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 {
 	// must be a multiple of 16 bytes -- use memset() for general purpose
 	VIZ_ASSERT(!(numInts & 3));
@@ -64,19 +77,19 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);
 
 // convert 32-bit color to unpacked (16-bit) ISSE vector
-__forceinline __m128i c2vISSE(uint32_t color) 
+VIZ_INLINE __m128i c2vISSE(uint32_t color) 
 {
 	return  _mm_unpacklo_epi8(_mm_cvtsi32_si128(color), _mm_setzero_si128());
 }
 
 // convert unpacked (16-bit) ISSE vector to 32-bit color
-__forceinline uint32_t v2cISSE(__m128i color)
+VIZ_INLINE uint32_t v2cISSE(__m128i color)
 {
 	return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128()));
 }
 
 // ISSE vector (16-bit) minimum
-__forceinline __m128i vminISSE(__m128i A, __m128i B)
+VIZ_INLINE __m128i vminISSE(__m128i A, __m128i B)
 {
 	// SSE4
 	return _mm_min_epu16(A, B);
@@ -87,6 +100,6 @@ __forceinline __m128i vminISSE(__m128i A, __m128i B)
 }
 
 // simple floating point to 24:8 fixed point conversion
-__forceinline int ftof24(float value) { return (int) (value*256.f); }
+VIZ_INLINE int ftof24(float value) { return (int) (value*256.f); }
 
 #endif // _UTIL_H_

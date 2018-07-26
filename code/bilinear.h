@@ -7,7 +7,7 @@
 // derive required sampling parameters from 24:8 fixed point UV:
 // - U and V can be signed, as long as they have the 8-bit fractional part
 // - target texture(s) expected to have an equal power-of-2 dimension
-__forceinline void bsamp_prepUVs(
+VIZ_INLINE void bsamp_prepUVs(
 	int U, int V,
 	unsigned int mapAnd, unsigned int mapShift,
 	unsigned int &U0, unsigned int &V0,
@@ -31,7 +31,7 @@ __forceinline void bsamp_prepUVs(
 }
 
 // sample 8-bit texture
-__forceinline unsigned int bsamp8(
+VIZ_INLINE unsigned int bsamp8(
 	const uint8_t *pTexture, 
 	unsigned int U0, unsigned int V0, 
 	unsigned int U1, unsigned int V1, 
@@ -53,7 +53,7 @@ __forceinline unsigned int bsamp8(
 
 // sample 32-bit texture (ISSE-optimized)
 // color is returned as unpacked (16-bit) ISSE vector
-__forceinline __m128i bsamp32(
+VIZ_INLINE __m128i bsamp32(
 	const uint32_t *pTexture, 
 	unsigned int U0, unsigned int V0, 
 	unsigned int U1, unsigned int V1, 

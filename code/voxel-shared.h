@@ -5,7 +5,7 @@
 
 #pragma once
 
-inline void vrot2D(float cosine, float sine, float &X, float &Y)
+VIZ_INLINE void vrot2D(float cosine, float sine, float &X, float &Y)
 {
 	const float rotX = cosine*X - sine*Y;
 	const float rotY = sine*X + cosine*Y;
@@ -13,7 +13,7 @@ inline void vrot2D(float cosine, float sine, float &X, float &Y)
 	Y = rotY;
 }
 
-inline void vnorm2D(float &X, float &Y)
+VIZ_INLINE void vnorm2D(float &X, float &Y)
 {
 	if (X+Y != 0.f)
 	{
@@ -23,7 +23,7 @@ inline void vnorm2D(float &X, float &Y)
 	}
 }
 
-inline void calc_fandeltas(float curAngle, float &dX, float &dY)
+VIZ_INLINE void calc_fandeltas(float curAngle, float &dX, float &dY)
 {
 	dX = cosf(curAngle); 
 	dY = sinf(curAngle);

@@ -254,7 +254,7 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.01628f);
 
 	// polar blit
-	Polar_Blit(g_renderTarget, pDest);
+	Polar_Blit(g_renderTarget, pDest, false);
 
 #if 0
 	// debug blit: unwrapped

@@ -24,8 +24,8 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize)
 const int kMapViewHeight = 110;
-const int kMapTilt = 120;
-const int kMapScale = 200;
+const int kMapTilt = 140;
+const int kMapScale = 220;
 
 // adjust to map resolution (1024x1024)
 const unsigned int kMapAnd = 1023;                                         
@@ -103,8 +103,8 @@ static void tscape(uint32_t *pDest, float time)
 		const float fromY = 512.f + time*214.f;
 
 		float dX, dY;
-		dX = 0.f;
-		dY = 1.f;
+		dX = 0.5f;
+		dY = 1.f; // FIXME: parametrize
 
 		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY));
 		pDest += kTargetResX;
@@ -148,6 +148,9 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 {
 	memset32(g_renderTarget, s_pFogGradient[255], kTargetResX*kTargetResY);
 	tscape(g_renderTarget, time);
+
+	// radial blur
+	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.00314f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, true);
