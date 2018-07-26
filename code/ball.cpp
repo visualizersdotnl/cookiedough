@@ -230,7 +230,7 @@ void Ball_Destroy()
 	freeAligned(s_heightMapMix);
 }
 
-void Ball_Draw(uint32_t *pDest, float time)
+void Ball_Draw(uint32_t *pDest, float time, float delta)
 {
 	// mix height map (FIXME)
 	float mapMix = fmodf(time*2.f, 128.f) / 16.f;

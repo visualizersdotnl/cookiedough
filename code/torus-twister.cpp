@@ -82,7 +82,7 @@ static void vtwister(uint32_t *pDest, float time)
 
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
-		const float shearAngle = (float) iRay * (2.f*kPI / 480.f);
+		const float shearAngle = (float) iRay * (2.f*kPI / kTargetResY);
 
 		const int fromX = ftof24(256.f + 140.f*sinf(time*1.1f + shearAngle));
 		const int fromY = ftof24(mapY + time*25.f);
@@ -129,7 +129,7 @@ void Twister_Destroy()
 	Image_Free(s_pBeamMap);
 }
 
-void Twister_Draw(uint32_t *pDest, float time)
+void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render twister
 	memset32(g_renderTarget, 0x1f0053, kTargetSize);

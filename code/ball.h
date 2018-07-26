@@ -6,6 +6,6 @@
 
 bool Ball_Create();
 void Ball_Destroy();
-void Ball_Draw(uint32_t *pDest, float time);
+void Ball_Draw(uint32_t *pDest, float time, float delta);
 
 #endif // _BALL_H_

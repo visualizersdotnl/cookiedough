@@ -54,9 +54,9 @@ void Demo_Destroy()
 		sync_destroy_device(s_hRocket);
 }
 
-void Demo_Draw(uint32_t *pDest, float sysTimer)
+void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
-	// for this production:
+	// for this production (FIXME)
 	// VIZ_ASSERT(kResX == 640 && kResY == 480);
 
 	unsigned int modOrder, modRow;
@@ -68,10 +68,10 @@ void Demo_Draw(uint32_t *pDest, float sysTimer)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-//	Twister_Draw(pDest, sysTimer);
-	Landscape_Draw(pDest, sysTimer);
-//	Ball_Draw(pDest, sysTimer);
-//	Tunnelscape_Draw(pDest, sysTimer);
+//	Twister_Draw(pDest, timer, delta);
+	Landscape_Draw(pDest, timer, delta);
+//	Ball_Draw(pDest, timer, delta);
+//	Tunnelscape_Draw(pDest, timer, delta);
 
 //	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
 

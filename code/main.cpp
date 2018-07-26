@@ -16,6 +16,12 @@
 // - enabling /arch:SSE2 et cetera isn't very beneficial
 // - use multi-byte character set (i.e. no _UNICODE)
 
+// important to know:
+// - always include main.h on top
+// - there's kResX and soforth telling you about the size of the output buffer
+// - for the render target(s) there's kTargetX et cetera
+// - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
+
 // Undef. for (Windows only?) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
@@ -138,10 +144,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
 					memset32(pDest, 0, kOutputSize);
 
+					float oldTime = 0.f, newTime = 0.f;
 					while (true == HandleEvents())
 					{
-						Demo_Draw(pDest, timer.Get());
+						oldTime = newTime;
+						newTime = timer.Get();
+						Demo_Draw(pDest, newTime, (newTime-oldTime)*100.f);
 						display.Update(pDest);
+
 					}
 
 					freeAligned(pDest);

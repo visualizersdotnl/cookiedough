@@ -3,7 +3,7 @@
 
 /*
 	- more fixed point (+ LUT)
-	- fix proper controller input & airship HUD for fun, then move generic code out
+	- fix proper controller input & airship HUD for fun: fix banking and ship rotation!
 */
 
 #include "main.h"
@@ -25,10 +25,11 @@ static __m128i s_fogGradientUnp[256];
 
 // -- voxel renderer --
 
-// adjust to map (FIXME: parametrize)
-const int kMapViewHeight = 80;
-const int kMapTilt = 60;
-const int kMapScale = 200;
+// adjust to map (FIXME: parametrize, document)
+const float kMapViewLenScale = 0.314f;
+const int kMapViewHeight = 30;
+const int kMapTilt = 120;
+const int kMapScale = 160;
 
 // adjust to map resolution
 const unsigned int kMapAnd = 1023;                                         
@@ -53,7 +54,6 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
 
-	// fishMul = fabsf(fishMul);
 	const int fpFishMul = ftof24(fabsf(fishMul));
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
@@ -78,7 +78,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
 		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep]);
 
-		int height = 256-mapHeight;		
+		int height = 255-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 16;
 		height /= fpFishMul*(iStep+1); // FIXME
@@ -103,47 +103,48 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	}
 }
 
-// expected sizes:
-// - maps: 1024x1024
-// FIXME: make this fixed point if at some point you care enough
-static void vscape(uint32_t *pDest, float time)
+static void vscape(uint32_t *pDest, float time, float delta)
 {
-	// to do right here:
-	// - gamepad poll should return a simple structure
-	// - move lowpass to util.h
-	// - scale leftY so speed remains constant while navigating (use hypothenuse)
-	// - add some banking
-
+	// grab gamepad input
 	float leftX, leftY, rightX, rightY;
-	Gamepad_Update(leftX, leftY, rightX, rightY);
+	Gamepad_Update(delta, leftX, leftY, rightX, rightY);
 
-	static float lowpass = 0.f;
-	lowpass = 0.125f*leftX + 0.875f*lowpass;
-
-	const float viewAngle = -lowpass*0.25f*kPI;
+	// calc. view angle sine & cosine	
+	static float viewAngle = 0.f;
 	const float angCos = cosf(viewAngle);
 	const float angSin = sinf(viewAngle);
 
-	static float origX = 512.f;
-	static float origY = 512.f;
+	// strafe
+	static float strafe = 0.f;
+	strafe += rightX;
+	float strafeX = angCos*strafe; // - angSin*0.f;
+	float strafeY = angSin*strafe; // + angCos*0.f;
 
-	origX += 0.f;
-	origY -= leftY;
+	// move
+	static float move = 0.f;
+	move -= leftY;
+	float moveX = -angSin*move; // angCos*0.f - angSin*move;
+	float moveY = angCos*move;  // angSin*0.f + angCos*move;
 
-	// FIXME: formalize as parameter
-	float rayY = 370.f;
+	// origin
+	const float origX = 0.f;
+	const float origY = 0.f;
+	const float X1 = origX+strafeX+moveX;
+	const float Y1 = origY+strafeY+moveY;
+	const int fpX1 = ftof24(X1);
+	const int fpY1 = ftof24(Y1);
 
+	const float rayY = (kMapAnd+1)*kMapViewLenScale;
+
+	// FIXME: get it to work, then take out as much float math as possible
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		const float rayX = (kPI*0.45f)*(iRay - kResX*0.5f);
+		float rayX = (kPI*0.45f)*(iRay - kResX*0.5f);
 
-		const float rotX = angCos*rayX - angSin*rayY;
-		const float rotY = angSin*rayX + angCos*rayY;
-
-		const float X1 = origX;
-		const float Y1 = origY;
-		const float X2 = origX+rotX;
-		const float Y2 = origY+rotY;
+		const float rotRayX = angCos*rayX - angSin*rayY;
+		const float rotRayY = angSin*rayX + angCos*rayY;
+		const float X2 = X1+rotRayX;
+		const float Y2 = Y1+rotRayY;
 
 		// normalize step value
 		float dX = X2-X1;
@@ -151,10 +152,9 @@ static void vscape(uint32_t *pDest, float time)
 		normalize_vdeltas(dX, dY);
 
 		// counteract fisheye effect
-		float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
+		const float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
 		
-		vscape_ray(pDest+iRay, ftof24(X1), ftof24(Y1), ftof24(dX), ftof24(dY), fishMul);
-
+		vscape_ray(pDest+iRay, fpX1, fpY1, ftof24(dX), ftof24(dY), fishMul);
 	}
 }
 
@@ -162,7 +162,7 @@ static void vscape(uint32_t *pDest, float time)
 
 bool Landscape_Create()
 {
-	VIZ_ASSERT(kResX == 800 && kResY == 600);
+	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
 	s_pHeightMap = Image_Load8("assets/scape/maps/D24.png");
@@ -191,11 +191,11 @@ void Landscape_Destroy()
 	Image_Free(s_pFogGradient);
 }
 
-void Landscape_Draw(uint32_t *pDest, float time)
+void Landscape_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render landscape (FIXME: take input)
 	memset32(pDest, s_pFogGradient[0], kResX*kResY);
-	vscape(pDest, time);
+	vscape(pDest, time, delta);
 
 	// overlay HUD
 	Add32(pDest, s_pHUD, kResX*kResY);

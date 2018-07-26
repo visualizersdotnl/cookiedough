@@ -1,11 +1,11 @@
 
-// cookiedough -- basic gamepad support (uses the first one detected)
+// cookiedough -- *very* basic gamepad support (uses the first device detected)
 
 #pragma once
 
 void Gamepad_Create();
 void Gamepad_Destroy();
 
-// call this yourself on demand to poll the L+R analog sticks (values range from -1 to 1, deadzone is taken care of)
-// returns false if there's no input available
-bool Gamepad_Update(float &leftX, float &leftY, float &rightX, float &rightY);
+// call this on demand to poll the left and right analog sticks
+// returns false (and zeroes) if there's nothing available, otherwise between -1 and 1 with dead zone taken care of
+bool Gamepad_Update(float delta, float &leftX, float &leftY, float &rightX, float &rightY);

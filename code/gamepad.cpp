@@ -1,5 +1,5 @@
 
-// cookiedough -- basic gamepad support (uses the first one detected)
+// cookiedough -- *very* basic gamepad support (uses the first device detected)
 
 #include "main.h"
 #include "../3rdparty/SDL2-2.0.8/include/SDL.h"
@@ -35,7 +35,7 @@ inline float ClampAxisDeadzone(int input)
 	return (input > docDeadZone || input < -docDeadZone) ? input / (float) SDL_JOYSTICK_AXIS_MAX : 0.f;
 }
 
-bool Gamepad_Update(float &leftX, float &leftY, float &rightX, float &rightY)
+bool Gamepad_Update(float delta, float &leftX, float &leftY, float &rightX, float &rightY)
 {
 	if (nullptr != s_pPad)
 	{
@@ -53,10 +53,10 @@ bool Gamepad_Update(float &leftX, float &leftY, float &rightX, float &rightY)
 		int iRightX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX);
 		int iRightY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY);
 
-		leftX = ClampAxisDeadzone(iLeftX);
-		leftY = ClampAxisDeadzone(iLeftY);
-		rightX = ClampAxisDeadzone(iRightX);
-		rightY = ClampAxisDeadzone(iRightY);
+		leftX  = delta*ClampAxisDeadzone(iLeftX);
+		leftY  = delta*ClampAxisDeadzone(iLeftY);
+		rightX = delta*ClampAxisDeadzone(iRightX);
+		rightY = delta*ClampAxisDeadzone(iRightY);
 
 		return true;
 	}
@@ -67,3 +67,4 @@ bool Gamepad_Update(float &leftX, float &leftY, float &rightX, float &rightY)
 
 	return false;
 }
+

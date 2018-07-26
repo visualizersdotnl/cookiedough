@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel tunnel (640x480)
+// cookiedough -- voxel tunnel
 
 /*
 	- for future fixes et cetera, see landscape.cpp, as the innerloop is much the same
@@ -144,7 +144,7 @@ void Tunnelscape_Destroy()
 	Image_Free(s_pFogGradient);
 }
 
-void Tunnelscape_Draw(uint32_t *pDest, float time)
+void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 {
 	memset32(g_renderTarget, s_pFogGradient[255], kTargetResX*kTargetResY);
 	tscape(g_renderTarget, time);

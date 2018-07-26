@@ -6,6 +6,6 @@
 
 bool Heartquake_Create();
 void Heartquake_Destroy();
-void Heartquake_Draw(uint32_t *pDest, float time);
+void Heartquake_Draw(uint32_t *pDest, float time, float delta);
 
 #endif // _HEARTQUAKE_H_
