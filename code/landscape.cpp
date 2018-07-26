@@ -3,7 +3,6 @@
 
 /*
 	- more fixed point (+ LUT)
-	- fix proper controller input & airship HUD for fun: fix banking and ship rotation!
 */
 
 #include "main.h"
@@ -27,9 +26,9 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize, document)
 const float kMapViewLenScale = 0.314f;
-const int kMapViewHeight = 60;
+const int kMapViewHeight = 20;
 const int kMapTilt = 160;
-const int kMapScale = 180;
+const int kMapScale = 220;
 
 // adjust to map resolution
 const unsigned int kMapAnd = 1023;                                         
@@ -37,6 +36,8 @@ const unsigned int kMapShift = 10;
 
 // max. depth
 const unsigned int kRayLength = 512;
+
+static int s_mapTilt = kMapTilt;
 
 // sample height (filtered)
 __forceinline unsigned int vscape_shf(int U, int V)
@@ -51,7 +52,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	int lastHeight = kResY;
 	int lastDrawnHeight = kResY;
 
-	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
+	const unsigned int U = (curX>>8) & kMapAnd, V = ((curY>>8) & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
 
 	const int fpFishMul = ftof24(fabsf(fishMul));
@@ -84,7 +85,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		height /= fpFishMul*(iStep+1); // FIXME
 		height *= kMapScale;
 		height >>= 8;
-		height += kMapTilt;
+		height += s_mapTilt;
 
 		VIZ_ASSERT(height >= 0);
 
@@ -106,50 +107,71 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 static void vscape(uint32_t *pDest, float time, float delta)
 {
 	// grab gamepad input
-	float leftX, leftY, rightX, rightY;
-	Gamepad_Update(delta, leftX, leftY, rightX, rightY);
+	PadState pad;
+	Gamepad_Update(pad);
 
-	// calc. view angle sine & cosine	
-	static float viewAngle = 33.f;
-	const float angCos = cosf(viewAngle);
-	const float angSin = sinf(viewAngle);
+	// tilt
+	static float tilt = 0.f;
+	const float maxTilt = 90.f;
+	const float tiltStep = std::min(delta, 1.f);
+	if (tilt < maxTilt && pad.rightY > 0.f)
+		tilt += tiltStep;
+	if (tilt > -maxTilt && pad.rightY < 0.f)
+		tilt -= tiltStep;
+	s_mapTilt = kMapTilt + int(tilt);
+
+	// calc. view angle + it's sine & cosine	
+	static float viewAngle = 0.f;
+	const float maxAng = kPI;
+	const float angStep = std::min(delta*0.01f, 1.f);
+	if (viewAngle < maxAng)
+		viewAngle += angStep*pad.lShoulder;
+	if (viewAngle > -maxAng)
+		viewAngle -= angStep*pad.rShoulder;
+
+	const float viewCos = cosf(viewAngle);
+	const float viewSin = sinf(viewAngle);
 
 	// strafe
-	static float strafe = 0.f;
-	strafe += rightX;
-	float strafeX = angCos*strafe; // - angSin*0.f;
-	float strafeY = angSin*strafe; // + angCos*0.f;
+	static float strafeX = 0.f;
+	static float strafeY = 0.f;
+	if (pad.rightX != 0.f)
+	{
+		const float strafe = pad.rightX*delta;
+		strafeX += viewCos*strafe;
+		strafeY += viewSin*strafe;
+	}
 
 	// move
-	static float move = 0.f;
-	move -= leftY;
-	float moveX = -angSin*move; // angCos*0.f - angSin*move;
-	float moveY = angCos*move;  // angSin*0.f + angCos*move;
+	static float moveX = 0.f;
+	static float moveY = 0.f;
+	if (pad.leftY != 0.f)
+	{
+		const float move = -pad.leftY*delta;
+		moveX += -viewSin*move;
+		moveY +=  viewCos*move;
+	}
 
 	// origin
-	const float origX = 0.f;
-	const float origY = 0.f;
-	const float X1 = origX+strafeX+moveX;
-	const float Y1 = origY+strafeY+moveY;
+	float X1 = moveX+strafeX;
+	float Y1 = moveY+strafeY;
 	const int fpX1 = ftof24(X1);
 	const int fpY1 = ftof24(Y1);
 
-	const float rayY = (kMapAnd+1)*kMapViewLenScale;
-
-	// FIXME: get it to work, then take out as much float math as possible
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		float rayX = (0.814f)*(iRay - kResX*0.5f);
+		float rayY = (kMapAnd+1)*kMapViewLenScale;
+		float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
 
-		const float rotRayX = angCos*rayX - angSin*rayY;
-		const float rotRayY = angSin*rayX + angCos*rayY;
-		const float X2 = X1+rotRayX;
-		const float Y2 = Y1+rotRayY;
-
-		// normalize step value
+		// FIXME: simplify
+		float rotRayX = rayX;
+		float rotRayY = rayY;
+		vrot2D(viewCos, viewSin, rotRayX, rotRayY);
+		float X2 = X1+rotRayX;
+		float Y2 = Y1+rotRayY;
 		float dX = X2-X1;
 		float dY = Y2-Y1;
-		normalize_vdeltas(dX, dY);
+		vnorm2D(dX, dY);
 
 		// counteract fisheye effect (FIXME: real-time parameter?)
 		const float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
@@ -165,8 +187,8 @@ bool Landscape_Create()
 	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D1.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C1W.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D21.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C23W.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap|| nullptr == s_pHUD)
 		return false;

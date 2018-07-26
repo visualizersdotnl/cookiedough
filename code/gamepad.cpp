@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "../3rdparty/SDL2-2.0.8/include/SDL.h"
+#include "gamepad.h"
 
 static SDL_GameController *s_pPad = nullptr;
 
@@ -35,8 +36,11 @@ inline float ClampAxisDeadzone(int input)
 	return (input > docDeadZone || input < -docDeadZone) ? input / (float) SDL_JOYSTICK_AXIS_MAX : 0.f;
 }
 
-bool Gamepad_Update(float delta, float &leftX, float &leftY, float &rightX, float &rightY)
+bool Gamepad_Update(PadState &state)
 {
+	// small courtesy so you don't really have to check
+	memset(&state, 0, sizeof(PadState));
+
 	if (nullptr != s_pPad)
 	{
 		SDL_GameControllerUpdate();
@@ -47,23 +51,26 @@ bool Gamepad_Update(float delta, float &leftX, float &leftY, float &rightX, floa
 			return false;
 		}
 
-		// FIXME: you could check if the controller has these but come on, it's 2018
 		int iLeftX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX);
 		int iLeftY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY);
 		int iRightX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX);
 		int iRightY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY);
 
-		leftX  = delta*ClampAxisDeadzone(iLeftX);
-		leftY  = delta*ClampAxisDeadzone(iLeftY);
-		rightX = delta*ClampAxisDeadzone(iRightX);
-		rightY = delta*ClampAxisDeadzone(iRightY);
+		const float delta = 1.f;
+		state.leftX  = delta*ClampAxisDeadzone(iLeftX);
+		state.leftY  = delta*ClampAxisDeadzone(iLeftY);
+		state.rightX = delta*ClampAxisDeadzone(iRightX);
+		state.rightY = delta*ClampAxisDeadzone(iRightY);
+
+		state.lShoulder = SDL_GameControllerGetButton(s_pPad, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+		state.rShoulder = SDL_GameControllerGetButton(s_pPad, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+
+		// with PS4 on Win10 it's binary, but let's also make it so for any other pad
+		state.lShoulder = std::min(state.lShoulder, 1);
+		state.rShoulder = std::min(state.rShoulder, 1);
 
 		return true;
 	}
-
-	// small courtesy so you don't really have to check
-	leftX = leftY = 0.f;
-	rightX = rightY = 0.f;
 
 	return false;
 }

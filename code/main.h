@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 // SSE intrinsics
 #include <xmmintrin.h> // 1

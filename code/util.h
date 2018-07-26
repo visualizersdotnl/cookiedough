@@ -17,6 +17,9 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 	#define VIZ_ASSERT(condition)
 #endif
 
+// Epsilon (FIXME: replaced later by Std3DMath)
+const float kEpsilon = 0.000001f;
+
 // PI
 const float kPI = 3.1415926535897932384626433832795f;
 

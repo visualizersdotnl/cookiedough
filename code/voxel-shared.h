@@ -1,18 +1,32 @@
 
 // cookiedough -- voxel shared
 
+// FIXME: most of the math stuff can (and should) go when Std3DMath is integrated
+
 #pragma once
 
-__forceinline void normalize_vdeltas(float &dX, float &dY)
+inline void vrot2D(float cosine, float sine, float &X, float &Y)
 {
-	const float rayHypo = 1.f/sqrtf(dX*dX + dY*dY);
-	dX *= rayHypo; 
-	dY *= rayHypo;
+	const float rotX = cosine*X - sine*Y;
+	const float rotY = sine*X + cosine*Y;
+	X = rotX;
+	Y = rotY;
 }
 
-__forceinline void calc_fandeltas(float curAngle, float &dX, float &dY)
+inline void vnorm2D(float &X, float &Y)
+{
+	if (X+Y != 0.f)
+	{
+		const float length = 1.f/sqrtf(X*X + Y*Y);
+		X *= length;
+		Y *= length;
+	}
+}
+
+inline void calc_fandeltas(float curAngle, float &dX, float &dY)
 {
 	dX = cosf(curAngle); 
 	dY = sinf(curAngle);
-	return normalize_vdeltas(dX, dY);
+	return vnorm2D(dX, dY);
 }
+	

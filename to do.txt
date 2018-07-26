@@ -2,17 +2,18 @@
 -- new list (2018) --
 
 do:
-- 1. finish small helicopter voxel game!
-- 2. move much if not all generic controller code to gamepad.cpp
-- tunnel looks weird if render target resolution lower than output res.
+- move any generic controller patterns to gamepad.h/gamepad.cpp
+- add Std3DMath
+- bug: tunnel looks weird if render target resolution lower than output res.
 - make Timer use SDL timer
-- parametrize all relevant values so they can be Rocket-controlled (including map constants et cetera)
+- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
 - implement Heartquake water
 - multithreading? (supersampling, render targets)
 - there's probably more duplicate voxel code you can stash in a header (voxel-shared.h?)
 - there's always room for optimization, this is old stuff
+- slowly replace __forceinline for inline in non Windows-specific spots
 
 remember:
 - blur bias flaw
