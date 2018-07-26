@@ -27,9 +27,9 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize, document)
 const float kMapViewLenScale = 0.314f;
-const int kMapViewHeight = 30;
-const int kMapTilt = 120;
-const int kMapScale = 160;
+const int kMapViewHeight = 60;
+const int kMapTilt = 160;
+const int kMapScale = 180;
 
 // adjust to map resolution
 const unsigned int kMapAnd = 1023;                                         
@@ -110,7 +110,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	Gamepad_Update(delta, leftX, leftY, rightX, rightY);
 
 	// calc. view angle sine & cosine	
-	static float viewAngle = 0.f;
+	static float viewAngle = 33.f;
 	const float angCos = cosf(viewAngle);
 	const float angSin = sinf(viewAngle);
 
@@ -151,8 +151,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		float dY = Y2-Y1;
 		normalize_vdeltas(dX, dY);
 
-		// counteract fisheye effect
-		const float fishMul = rayY / sqrtf(rayX*rayX + rayY*rayY);
+		// counteract fisheye effect (FIXME: real-time parameter?)
+		const float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
 		
 		vscape_ray(pDest+iRay, fpX1, fpY1, ftof24(dX), ftof24(dY), fishMul);
 	}
@@ -165,8 +165,8 @@ bool Landscape_Create()
 	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D22.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C22W.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D1.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C1W.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap|| nullptr == s_pHUD)
 		return false;
