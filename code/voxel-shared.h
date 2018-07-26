@@ -1,7 +1,5 @@
 
-// cookiedough -- voxel shared
-
-// FIXME: most of the math stuff can (and should) go when Std3DMath is integrated
+// cookiedough -- voxel shared (FIXME: most of the math stuff can (and should) go and replaced by Std3DMath)
 
 #pragma once
 
@@ -29,4 +27,3 @@ VIZ_INLINE void calc_fandeltas(float curAngle, float &dX, float &dY)
 	dY = sinf(curAngle);
 	return vnorm2D(dX, dY);
 }
-	

@@ -32,9 +32,8 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 #include "bit-tricks.h"
 #include "alloc-aligned.h"
 
-// Epsilon+PI (FIXME: replaced later by Std3DMath)
-const float kEpsilon = 0.000001f;
-const float kPI = 3.1415926535897932384626433832795f;
+// full 3D math library (last updated 26/07/2018)
+#include "../3rdparty/Std3DMath-stripped/Math.h"
 
 // memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*

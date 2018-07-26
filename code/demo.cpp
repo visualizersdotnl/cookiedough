@@ -68,8 +68,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-	Twister_Draw(pDest, timer, delta);
-//	Landscape_Draw(pDest, timer, delta);
+//	Twister_Draw(pDest, timer, delta);
+	Landscape_Draw(pDest, timer, delta);
 //	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 

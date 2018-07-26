@@ -40,6 +40,9 @@
     <Filter Include="Header Files\in-util">
       <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/3rdparty/Std3Dmath-stripped">
+      <UniqueIdentifier>{a4caaf39-6164-487c-882c-4369703c7175}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\audio.cpp">
@@ -92,6 +95,15 @@
     </ClCompile>
     <ClCompile Include="..\code\gamepad.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\Std3DMath-stripped\Matrix44.cpp">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\Std3DMath-stripped\Quaternion.cpp">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\Std3DMath-stripped\Vector3.cpp">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +181,27 @@
     </ClInclude>
     <ClInclude Include="..\code\gamepad.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Dependencies.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Math.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Matrix44.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Quaternion.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector2.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector3.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector4.h">
+      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
