@@ -36,7 +36,7 @@ const unsigned int kMapAnd = 1023;
 const unsigned int kMapShift = 10;
 
 // max. depth
-const unsigned int kRayLength = 256;
+const unsigned int kRayLength = 512;
 
 // sample height (filtered)
 __forceinline unsigned int vscape_shf(int U, int V)
@@ -76,7 +76,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
-		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep]);
+		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
 
 		int height = 255-mapHeight;		
 		height -= kMapViewHeight;
@@ -139,7 +139,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	// FIXME: get it to work, then take out as much float math as possible
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		float rayX = (kPI*0.45f)*(iRay - kResX*0.5f);
+		float rayX = (0.814f)*(iRay - kResX*0.5f);
 
 		const float rotRayX = angCos*rayX - angSin*rayY;
 		const float rotRayY = angSin*rayX + angCos*rayY;
@@ -165,8 +165,8 @@ bool Landscape_Create()
 	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D24.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C24W.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D22.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C22W.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap|| nullptr == s_pHUD)
 		return false;
