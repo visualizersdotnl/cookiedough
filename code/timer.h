@@ -1,48 +1,33 @@
 
+// cookiedough -- high perf. timer (SDL)
+
 #pragma once
 
-// #include <Windows.h>
+#include "../3rdparty/SDL2-2.0.8/include/SDL.h"
 
 class Timer
 {
 public:
-	Timer() :
-		m_isHighFreq(QueryPerformanceFrequency(&m_pcFrequency) != 0)
+	Timer()
 	{
 		Reset();
 	}
 
 	void Reset()
 	{
-		if (!m_isHighFreq)
-		{
-			m_offset.LowPart = GetTickCount();
-			m_oneOverFreq = 0.001f;
-		}
-		else
-		{
-			QueryPerformanceCounter(&m_offset);
-			m_oneOverFreq = 1.f / (float) m_pcFrequency.QuadPart;
-		}
+		m_frequency = SDL_GetPerformanceFrequency();
+		m_oneOverFreq = 1.f/m_frequency;
+		m_offset = SDL_GetPerformanceCounter();
 	}
 
 	float Get() const 
 	{
-		if (!m_isHighFreq)
-		{
-			return (float) (GetTickCount() - m_offset.LowPart) * m_oneOverFreq;
-		}
-		else
-		{
-			LARGE_INTEGER curCount;
-			QueryPerformanceCounter(&curCount); 
-			return (float) (curCount.QuadPart - m_offset.QuadPart) * m_oneOverFreq;
-		}
+		const uint64_t time = SDL_GetPerformanceCounter();
+		return (time-m_offset)*m_oneOverFreq;
 	}
 
 private:
-	const bool m_isHighFreq;
-	LARGE_INTEGER m_pcFrequency; 
-	LARGE_INTEGER m_offset;
+	uint64_t m_frequency; 
+	uint64_t m_offset;
 	float m_oneOverFreq;
 };

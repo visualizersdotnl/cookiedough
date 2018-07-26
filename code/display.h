@@ -13,7 +13,7 @@ public:
 
 	bool Open(const std::string &title, unsigned int xRes, unsigned int yRes, bool fullScreen);
 
-	// pass a xRes*yRes ARGB8888 buffer or NULL to just clear the screen
+	// pass a kResX*kResY ARGB8888 buffer or NULL to just clear the screen
 	void Update(const uint32_t *pPixels);
 
 private:
