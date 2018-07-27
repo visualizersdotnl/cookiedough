@@ -55,6 +55,8 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
+	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 256); 
+
 	return true;
 }
 
@@ -73,7 +75,7 @@ void Audio_Rocket_Pause(void *, int mustPause)
 
 void Audio_Rocket_SetRow(void *, int row)
 {
-//	BASSMOD_MusicSetPosition(row>>6 | (row&63)<<16);
+	BASS_ChannelSetPosition(s_hMusic, BASS_POS_MUSIC_ORDER, row>>6|(row&63)<<16); // FIXME: hardcoded 64
 }
 
 int Audio_Rocket_IsPlaying(void *)
@@ -83,8 +85,7 @@ int Audio_Rocket_IsPlaying(void *)
 
 int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
 {
-/*
-	const DWORD fullPos = BASSMOD_MusicGetPosition();
+	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
 	const DWORD order = LOWORD(fullPos);
 	const DWORD row = HIWORD(fullPos)/256;
 	const DWORD rowPart = HIWORD(fullPos)%256;
@@ -93,8 +94,5 @@ int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRo
 	modRow = row;
 	modRowAlpha = rowPart/256.f;
 
-	return order*64 + row; // FIXME
-*/
-
-	return 0;
+	return order*64 + row; // FIXME: hardcoded 64
 }

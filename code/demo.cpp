@@ -1,5 +1,5 @@
 
-// cookiedough -- demo flow (640x480)
+// cookiedough -- demo flow: messy code allowed!
 
 // def. for sync. replay (instead of edit) mode
 // #define SYNC_PLAYER
@@ -9,16 +9,18 @@
 #include "../3rdparty/rocket/lib/sync.h"
 // #include "demo.h"
 #include "audio.h"
-// #include "timer.h"
 
+// filters & blitters
 #include "boxblur.h"
 #include "polar.h"
 
+// effects
 #include "ball.h"
 #include "landscape.h"
 #include "torus-twister.h"
 #include "heartquake.h"
 #include "tunnelscape.h"
+#include "clonetunnels.h"
 
 static sync_device *s_hRocket;
 
@@ -45,13 +47,28 @@ bool Demo_Create()
 	}
 #endif // !SYNC_PLAYER
 
-	return true;
+	bool fxInit = true;
+	fxInit &= Twister_Create();
+	fxInit &= Landscape_Create();
+	fxInit &= Ball_Create();
+	fxInit &= Heartquake_Create();
+	fxInit &= Tunnelscape_Create();
+	fxInit &= CloneTunnels_Create();
+
+	return fxInit;
 }
 
 void Demo_Destroy()
 {
 	if (s_hRocket != NULL)
 		sync_destroy_device(s_hRocket);
+
+	Twister_Destroy();
+	Landscape_Destroy();
+	Ball_Destroy();
+	Heartquake_Destroy();
+	Tunnelscape_Destroy();
+	CloneTunnels_Destroy();
 }
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
@@ -70,15 +87,15 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 //	Twister_Draw(pDest, timer, delta);
 //	Landscape_Draw(pDest, timer, delta);
-//	Ball_Draw(pDest, timer, delta);
-	Tunnelscape_Draw(pDest, timer, delta);
+	Ball_Draw(pDest, timer, delta);
+//	Tunnelscape_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600
 	uint32_t *pWrite = pDest + 800*430;
 	for (int iY = 0; iY < 136; ++iY)
 	{
 		pWrite += 80;
-//		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
+		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
 		pWrite += 800-80;
 
 	}

@@ -1,23 +1,23 @@
 
 -- new list (2018) --
 
+possible announcement for the Shader Superfights Heavyweight GP 2019!
+
 do:
-- fix module sync.
 - implement: Heartquake water, Clone meets clone tunnels
-- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
-- pick another X64-compatible module player and fix 64-bit build
 - upgrade Rocket
+- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - implement Heartquake water
 - multithreading? (supersampling, render targets)
-- there's always room for optimization, this is old stuff
 - garbage collect resources (and eradicate a ton of repetitive shit)
 - generic crash handler
 - application icon
+- when out of ideas: optimize + FIXMEs
 
 remember:
-- blur bias flaw
+- blur bias flaw (invisible, but it's there)
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
-- if I want multiple instances of effects I'll have to wrap them in objects
+- if I want flexible multiple instances of effects I'll at least have to put their parameters in objects
 
 effect ideas:
 - raymarched/raytraced stuff (with interpolation or multi-threading)
@@ -28,4 +28,3 @@ effect ideas:
 
 OSX/Linux build:
 - switch module player
-

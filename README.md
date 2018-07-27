@@ -1,7 +1,7 @@
 # cookiedough
 
 This is a little testbed I set up to experiment with some retro (demoscene) graphics effects, back in 2007-2009.
-Especially the stuff I didn't really grasped as an early teenager: voxels.
+It shall henceforth be reffered to as 'cocktails at Kurt Bevacqua's' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
 It's built using Visual Studio 2017.
 
@@ -10,4 +10,8 @@ It's built using Visual Studio 2017.
 
 Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
 
-** Has content from Comanche (videogame) & The Non-stop Ibiza Experience (demoscene, Orange), not intended for release. **
+** Has content from Comanche (videogame by Novalogic in the early 1990s).  
+** Has content from The Non-stop Ibiza Experience (demoscene, Orange).
+
+Said content will not be spread in the form of a release.
+

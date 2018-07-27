@@ -1,5 +1,5 @@
 
-// cookiedough -- demo flow (640x480)
+// cookiedough -- demo flow
 
 #ifndef _DEMO_H_
 #define _DEMO_H_

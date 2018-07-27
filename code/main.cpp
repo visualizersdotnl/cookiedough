@@ -1,11 +1,11 @@
 
-// cookiedough (2011) -- lo-fi demoscene testbed
+// cookiedough (2009-2018) -- lo-fi demoscene testbed
 // property of visualizers.nl (http://www.visualizers.nl)
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & Egbert Teeselink (modified)
 // - Developer's Image Library (DevIL)
-// - BASSMOD audio library by Ian Luck
+// - BASS(MOD) audio library by Ian Luck
 // - SDL 2.0
 
 // compiler settings for Visual C++:
@@ -13,11 +13,10 @@
 // - use multi-threaded CRT (non-DLL)
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision)
-// - enabling /arch:SSE2 et cetera isn't very beneficial
 // - use multi-byte character set (i.e. no _UNICODE)
 
 // important to know:
-// - executables are built to target/x86|x64/, run from that directory!
+// - executables are built to target/x86/ or target/x64/ -- run from that directory!
 // - keep DLLs (see above) up to date for each build
 // - (almost) always include main.h on top
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
@@ -38,18 +37,10 @@
 #include "audio.h"
 #include "demo.h"
 #include "gamepad.h"
-
 #include "polar.h"
 
-// effects
-#include "torus-twister.h"
-#include "landscape.h"
-#include "ball.h"
-#include "heartquake.h"
-#include "tunnelscape.h"
-
 // display config.
-const char *kTitle = "cocktails at Kurt Bevacqua's";
+const char *kTitle = "powered by cocktails at Kurt Bevacqua's";
 const bool kFullScreen = false;
 
 static std::string s_lastErr;
@@ -117,21 +108,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		return 1;
 	}
 
-	bool demoInit = true;
+	bool utilInit = true;
 
-	demoInit &= Image_Create();
-	demoInit &= Shared_Create();
-	demoInit &= Polar_Create();
-
-	demoInit &= Twister_Create();
-	demoInit &= Landscape_Create();
-	demoInit &= Ball_Create();
-	demoInit &= Heartquake_Create();
-	demoInit &= Tunnelscape_Create();
-
+	utilInit &= Image_Create();
+	utilInit &= Shared_Create();
+	utilInit &= Polar_Create();
 	Gamepad_Create();
 
-	if (demoInit)
+	if (utilInit)
 	{
 		if (Demo_Create())
 		{
@@ -162,17 +146,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		}
 	}
 
-	Gamepad_Destroy();
-
 	Audio_Destroy();
 	Demo_Destroy();
 
-	Twister_Destroy();
-	Landscape_Destroy();
-	Ball_Destroy();
-	Heartquake_Destroy();
-	Tunnelscape_Destroy();
-
+	Gamepad_Destroy();
 	Image_Destroy();
 	Shared_Destroy();
 	Polar_Destroy();
