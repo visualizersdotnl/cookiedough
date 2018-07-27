@@ -4,7 +4,9 @@
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 to do w/priority:
-- implement: simple marched plasma
+- need a faster ftol()!
+- finish up: simple marched plasma
+  + an easy way to multithread certain effects by tiling or entirely (latter can be done later)
 - garbage collect resources (and eradicate a ton of repetitive shit)
 - look if cspan() can be optimized (I think it's very possible)
 - look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
@@ -12,9 +14,7 @@ to do w/priority:
 - implement: Heartquake water
 
 to do:
-- add aspect ratio constant
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
-- an easy way to multithread certain effects by tiling or entirely
 - generic crash handler
 - application icon
 
