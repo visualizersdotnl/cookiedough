@@ -19,14 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\3rdparty\rocket\lib\device.c">
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotSet</EnableEnhancedInstructionSet>
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <ClCompile Include="..\3rdparty\rocket\lib\track.c">
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotSet</EnableEnhancedInstructionSet>
-      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
+    <ClCompile Include="..\3rdparty\rocket-stripped\lib\device.c" />
+    <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c" />
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Matrix44.cpp">
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
@@ -69,10 +63,10 @@
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\3rdparty\rocket\lib\base.h" />
-    <ClInclude Include="..\3rdparty\rocket\lib\device.h" />
-    <ClInclude Include="..\3rdparty\rocket\lib\sync.h" />
-    <ClInclude Include="..\3rdparty\rocket\lib\track.h" />
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h" />
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h" />
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\sync.h" />
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\track.h" />
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Dependencies.h" />
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Math.h" />
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Matrix44.h" />

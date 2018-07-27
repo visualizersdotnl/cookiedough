@@ -6,7 +6,7 @@
 
 #include "main.h"
 #include <windows.h> // for audio.h
-#include "../3rdparty/rocket/lib/sync.h"
+#include "../3rdparty/rocket-stripped/lib/sync.h"
 // #include "demo.h"
 #include "audio.h"
 
@@ -40,7 +40,7 @@ bool Demo_Create()
 
 #ifndef SYNC_PLAYER
 //	sync_set_callbacks(s_hRocket, &s_rocketCallbacks, NULL);
-	if (sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT) != 0)
+	if (sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT) != 0)
 	{
 		SetLastError("Can not connect to GNU Rocket client.");
 		return false;
@@ -82,7 +82,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 #ifndef SYNC_PLAYER
 	if (sync_update(s_hRocket, rocketRow, &s_rocketCallbacks, nullptr))
-		sync_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
+		sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
 //	Twister_Draw(pDest, timer, delta);

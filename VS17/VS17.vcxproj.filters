@@ -60,12 +60,6 @@
     <ClCompile Include="..\code\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\3rdparty\rocket\lib\device.c">
-      <Filter>/3rdparty-rocket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3rdparty\rocket\lib\track.c">
-      <Filter>/3rdparty-rocket</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\ball.cpp">
       <Filter>Source Files\effects</Filter>
     </ClCompile>
@@ -111,6 +105,12 @@
     <ClCompile Include="..\code\audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\3rdparty\rocket-stripped\lib\device.c">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -133,18 +133,6 @@
     </ClInclude>
     <ClInclude Include="..\code\util.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdparty\rocket\lib\base.h">
-      <Filter>/3rdparty-rocket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdparty\rocket\lib\device.h">
-      <Filter>/3rdparty-rocket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdparty\rocket\lib\sync.h">
-      <Filter>/3rdparty-rocket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\3rdparty\rocket\lib\track.h">
-      <Filter>/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\code\heartquake.h">
       <Filter>Header Files\effects</Filter>
@@ -211,6 +199,18 @@
     </ClInclude>
     <ClInclude Include="..\code\clonetunnels.h">
       <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\sync.h">
+      <Filter>/3rdparty-rocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\rocket-stripped\lib\track.h">
+      <Filter>/3rdparty-rocket</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

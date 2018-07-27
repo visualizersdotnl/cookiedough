@@ -5,9 +5,7 @@ possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 do:
 - implement: Heartquake water, Clone meets clone tunnels
-- upgrade Rocket
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
-- implement Heartquake water
 - multithreading? (supersampling, render targets)
 - garbage collect resources (and eradicate a ton of repetitive shit)
 - generic crash handler
@@ -28,3 +26,4 @@ effect ideas:
 
 OSX/Linux build:
 - switch module player
+- CMake?

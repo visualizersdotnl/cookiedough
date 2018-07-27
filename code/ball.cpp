@@ -36,7 +36,7 @@ const unsigned int kRayLength = 384;
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kBallRadius = 510.f;
+const float kBallRadius = 610.f;
 
 // scale applied to each beam sample
 const uint8_t kBeamMul = 3;
