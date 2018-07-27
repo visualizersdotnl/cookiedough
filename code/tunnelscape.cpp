@@ -28,8 +28,9 @@ const int kMapTilt = 140;
 const int kMapScale = 220;
 
 // adjust to map resolution (1024x1024)
-const unsigned int kMapAnd = 1023;                                         
-const unsigned int kMapShift = 10;
+const unsigned kMapSize = 1024;
+constexpr unsigned kMapAnd = kMapSize-1;                                          
+const unsigned kMapShift = 10;
 
 // max. depth
 const unsigned int kRayLength = 512; // 256 -- used for fog table!

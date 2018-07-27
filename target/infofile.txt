@@ -1,0 +1,42 @@
+
+	:                                                               :
+	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
+	:                                                             ·:¦
+	.               ______      ___  ____  ____  ____               :
+				_/_  \_ \/\__/   \_\_  \/  __\/  __\
+				/  / _/  /  /  /  / __  /\__ \/\__ \
+				/  _  /  /  /  ___/  /  /  /  /  /  /
+				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
+	:                  /__/                                         .
+	¦:.                                                             :
+	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
+	:       BYPASS presents SHADER HEAVYWEIGHT GRAND PRIX 2019      :
+	:        a retrosexual promotion in co-operation with TPB       :
+
+
+	system requirements:
+		- decent x64 CPU (4 cores recommended)
+		- Windows 10 (not tested on earlier versions)
+		- a working default audio adapter
+
+	"who's doing it?"
+		- graphics by Nytrik/Cocoon
+		- C, C++, assembler & SSE: Superplek/Bypass
+		- soundtrack by Dascon/Deadliners
+
+	how to enjoy:
+		- turn up the volume, dim the lights
+		- go to /target/x64, run VS17.exe or VS17-windowed.exe
+
+	third party libraries used:
+		- SDL 2.0
+		- GNU Rocket by Kusma & contributors
+		- DevIL
+		- BASS sound system by Ian Luck
+		- cookiedough a.k.a "cocktails with Kurt Bevacqua" & Std3DMath by http://www.visualizers.nl
+
+	Q: who is Kurt Bevacqua? 
+	A: https://en.wikipedia.org/wiki/Kurt_Bevacqua
+	
+	Q: crash!
+	A: please report on Pouet.net

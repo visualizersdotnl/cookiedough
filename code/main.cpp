@@ -1,12 +1,26 @@
 
+/*
+	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
+	:                                                             ·:¦
+	.               ______      ___  ____  ____  ____               :
+				_/_  \_ \/\__/   \_\_  \/  __\/  __\
+				/  / _/  /  /  /  / __  /\__ \/\__ \
+				/  _  /  /  /  ___/  /  /  /  /  /  /
+				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
+	:                  /__/                                         .
+	¦:.                                                             :
+	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
+	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
+*/
+
 // cookiedough (2009-2018) -- lo-fi demoscene testbed
 // property of visualizers.nl (http://www.visualizers.nl)
 
 // third party:
-// - GNU Rocket by Erik Faye-Lund & Egbert Teeselink (modified)
+// - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
 // - Developer's Image Library (DevIL)
-// - BASS(MOD) audio library by Ian Luck
-// - SDL 2.0
+// - BASS audio library by Ian Luck
+// - SDL 2.0.8
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -40,7 +54,7 @@
 #include "polar.h"
 
 // display config.
-const char *kTitle = "powered by cocktails at Kurt Bevacqua's";
+const char *kTitle = "powered by cocktails with Kurt Bevacqua";
 const bool kFullScreen = false;
 
 static std::string s_lastErr;

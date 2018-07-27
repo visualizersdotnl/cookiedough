@@ -4,6 +4,9 @@
 	(c) visualizers.nl
 
 	Please check README.md for more information.
+
+	Added (backport to main branch):
+	- Matrix44::FromArray33()
 */
 
 #if !defined(STD_3D_MATH)

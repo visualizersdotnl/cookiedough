@@ -20,5 +20,7 @@ void Heartquake_Destroy()
 
 void Heartquake_Draw(uint32_t *pDest, float time, float delta)
 {
+	// Implement!
+	VIZ_ASSERT(0);
 }
 

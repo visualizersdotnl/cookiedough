@@ -174,6 +174,16 @@
 	return matrix;
 }
 
+/* static */ const Matrix44 Matrix44::FromArray33(const float floats[9])
+{
+	Matrix44 matrix;
+	matrix.rows[0] = Vector4(floats[0], floats[1], floats[2], 0.f);
+	matrix.rows[1] = Vector4(floats[3], floats[4], floats[5], 0.f);
+	matrix.rows[2] = Vector4(floats[6], floats[7], floats[8], 0.f);
+	matrix.rows[3] = Vector4(      0.f,       0.f,       0.f, 1.f);
+	return matrix;
+}
+
 Matrix44& Matrix44::Scale(const Vector3 &scale)
 {
 	Multiply(Scaling(scale)); // FIXME: do this in-place.

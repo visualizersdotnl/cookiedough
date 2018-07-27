@@ -16,8 +16,9 @@ static uint32_t *s_pBeamMap = NULL;
 // -- voxel renderer --
 
 // adjust to map resolution
-const unsigned int kMapAnd = 511;                                          
-const unsigned int kMapShift = 9;
+const unsigned kMapSize = 512;
+constexpr unsigned kMapAnd = kMapSize-1;                                          
+const unsigned kMapShift = 9;
 
 // max. depth
 const unsigned int kRayLength = 256;

@@ -8,6 +8,9 @@
 
 static HMUSIC s_hMusic = NULL;
 
+const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
+const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
+
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 {
 	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
@@ -35,7 +38,7 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
-	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN, 0);
+	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, kMusicFlagsMisc, 0);
 	if (NULL == s_hMusic)
 	{
 		switch (BASS_ErrorGetCode())

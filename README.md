@@ -1,7 +1,7 @@
 # cookiedough
 
 This is a little testbed I set up to experiment with some retro (demoscene) graphics effects, back in 2007-2009.
-It shall henceforth be reffered to as 'cocktails at Kurt Bevacqua's' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
+It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
 It's built using Visual Studio 2017.
 

@@ -33,6 +33,7 @@ public:
 	static const Matrix44 Perspective(float yFOV, float aspectRatio, float zNear = 0.1f, float zFar = 10000.f);
 	static const Matrix44 Orthographic(const Vector2 &topLeft, const Vector2 &bottomRight, float zNear, float zFar);
 	static const Matrix44 FromArray(const float floats[16]);
+	static const Matrix44 FromArray33(const float floats[9]);
 
 public:
 	Vector4 rows[4];

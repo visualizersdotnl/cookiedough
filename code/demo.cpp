@@ -20,11 +20,11 @@
 #include "torus-twister.h"
 #include "heartquake.h"
 #include "tunnelscape.h"
-#include "clonetunnels.h"
+#include "plasma.h"
 
 static sync_device *s_hRocket;
 
-#ifndef SYNC_PLAYER
+#if !defined(SYNC_PLAYER)
 
 static sync_cb s_rocketCallbacks = {
 	Audio_Rocket_Pause,
@@ -33,6 +33,8 @@ static sync_cb s_rocketCallbacks = {
 };
 
 #endif // !SYNC_PLAYER
+
+static const sync_track *s_mainTrack;
 
 bool Demo_Create()
 {
@@ -53,7 +55,9 @@ bool Demo_Create()
 	fxInit &= Ball_Create();
 	fxInit &= Heartquake_Create();
 	fxInit &= Tunnelscape_Create();
-	fxInit &= CloneTunnels_Create();
+	fxInit &= Plasma_Create();
+
+	s_mainTrack = sync_get_track(s_hRocket, "main");
 
 	return fxInit;
 }
@@ -68,7 +72,7 @@ void Demo_Destroy()
 	Ball_Destroy();
 	Heartquake_Destroy();
 	Tunnelscape_Destroy();
-	CloneTunnels_Destroy();
+	Plasma_Destroy();
 }
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
@@ -87,11 +91,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 //	Twister_Draw(pDest, timer, delta);
 //	Landscape_Draw(pDest, timer, delta);
-	Ball_Draw(pDest, timer, delta);
+//	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
+	Plasma_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600
-	uint32_t *pWrite = pDest + 800*430;
+	uint32_t *pWrite = pDest + 800*50;
 	for (int iY = 0; iY < 136; ++iY)
 	{
 		pWrite += 80;

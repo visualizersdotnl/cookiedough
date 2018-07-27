@@ -39,16 +39,10 @@
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
-    <ClCompile Include="..\code\audio-bassmod.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
-    <ClCompile Include="..\code\clonetunnels.cpp" />
+    <ClCompile Include="..\code\plasma.cpp" />
     <ClCompile Include="..\code\demo.cpp" />
     <ClCompile Include="..\code\display.cpp" />
     <ClCompile Include="..\code\gamepad.cpp" />
@@ -80,7 +74,7 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
-    <ClInclude Include="..\code\clonetunnels.h" />
+    <ClInclude Include="..\code\plasma.h" />
     <ClInclude Include="..\code\cspan.h" />
     <ClInclude Include="..\code\demo.h" />
     <ClInclude Include="..\code\display.h" />
@@ -90,6 +84,7 @@
     <ClInclude Include="..\code\landscape.h" />
     <ClInclude Include="..\code\main.h" />
     <ClInclude Include="..\code\polar.h" />
+    <ClInclude Include="..\code\shadertoy-util.h" />
     <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />
@@ -133,6 +128,8 @@
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\bypasszs-ascii.txt" />
+    <Text Include="..\target\infofile.txt" />
     <Text Include="..\to do.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

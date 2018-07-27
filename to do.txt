@@ -3,14 +3,20 @@
 
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
-do:
-- implement: Heartquake water, Clone meets clone tunnels
-- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
-- multithreading? (supersampling, render targets)
+to do w/priority:
+- implement: simple marched plasma
 - garbage collect resources (and eradicate a ton of repetitive shit)
+- look if cspan() can be optimized (I think it's very possible)
+- look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
+- create sampling functions that don't require a prepare call first?
+- implement: Heartquake water
+
+to do:
+- add aspect ratio constant
+- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
+- an easy way to multithread certain effects by tiling or entirely
 - generic crash handler
 - application icon
-- when out of ideas: optimize + FIXMEs
 
 remember:
 - blur bias flaw (invisible, but it's there)
@@ -18,12 +24,14 @@ remember:
 - if I want flexible multiple instances of effects I'll at least have to put their parameters in objects
 
 effect ideas:
-- raymarched/raytraced stuff (with interpolation or multi-threading)
-- scaling routines
-- lens distort
+- #1) create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
+- #2) create a framework (class) that makes it very easy to port and thread Shadertoy/GLSL
+- #3) scaling routines
+- #4) particles, requested by Nytrik (ask him what he likes best)
 - true 3D
-- adlib playback
 
 OSX/Linux build:
 - switch module player
 - CMake?
+
+when out of ideas: optimize + FIXMEs

@@ -27,6 +27,7 @@ constexpr size_t kHalfResX = kResX/2;
 constexpr size_t kHalfResY = kResY/2;
 constexpr size_t kOutputSize = kResX*kResY;
 constexpr size_t kOutputBytes = kOutputSize*sizeof(uint32_t);
+constexpr float kAspect = (float)kResY/kResX;
 
 // set description on failure (reported on shutdown)
 void SetLastError(const std::string &description);

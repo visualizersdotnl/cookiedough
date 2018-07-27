@@ -11,7 +11,7 @@ extern __m128i g_gradientUnp[256];
 // render target
 extern uint32_t *g_renderTarget;
 
-// render target resolution
+// render target resolution (let us agree to keep it's aspect ratio identical to the output resolution)
 const size_t kTargetResX = kResX;
 const size_t kTargetResY = kResY;
 constexpr size_t kTargetSize = kTargetResX*kTargetResY;

@@ -32,8 +32,9 @@ const int kMapTilt = 160;
 const int kMapScale = 220;
 
 // adjust to map resolution
-const unsigned int kMapAnd = 1023;                                         
-const unsigned int kMapShift = 10;
+const unsigned kMapSize = 1024;
+constexpr unsigned kMapAnd = kMapSize-1;                                          
+const unsigned kMapShift = 10;
 
 // max. depth
 const unsigned int kRayLength = 512;
@@ -160,7 +161,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		float rayY = (kMapAnd+1)*kMapViewLenScale;
+		float rayY = kMapSize*kMapViewLenScale;
 		float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify

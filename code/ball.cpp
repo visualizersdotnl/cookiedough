@@ -26,8 +26,9 @@ static uint8_t *s_heightMapMix = nullptr;
 // #define NO_BEAMS
 
 // adjust to map resolution
-const unsigned int kMapAnd = 511;                                          
-const unsigned int kMapShift = 9;
+const unsigned kMapSize = 512;
+constexpr unsigned kMapAnd = kMapSize-1;                                          
+const unsigned kMapShift = 9;
 
 // max. depth
 const unsigned int kRayLength = 384;
@@ -52,7 +53,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	__m128i beamAccum = _mm_setzero_si128();
 	__m128i beamMul = g_gradientUnp[kBeamMul];
 
-	int envU = ((kMapAnd+1)>>1)<<8;
+	int envU = (kMapSize>>1)<<8;
 	int envV = envU;
 
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
@@ -212,7 +213,7 @@ bool Ball_Create()
 	if (s_pBeamMap == NULL)
 		return false;
 
-	// load env. map #1
+	// load env. map
 	s_pEnvMap = Image_Load32("assets/ball/envmap2.jpg");
 	if (s_pEnvMap == NULL)
 		return false;
@@ -237,7 +238,7 @@ void Ball_Destroy()
 void Ball_Draw(uint32_t *pDest, float time, float delta)
 {
 #if 1
-	// mix height map (FIXME)
+	// mix height map (FIXME: non-linear rotation looks better)
 	float mapMix = fmodf(time*2.f, 128.f) / 16.f;
 	if (mapMix > 4.f) mapMix = 4.f - (mapMix - 4.f);
 	const float mapMixHi = ceilf(mapMix), mapMixLo = floorf(mapMix);
