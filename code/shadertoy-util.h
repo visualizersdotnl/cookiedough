@@ -8,25 +8,28 @@
 
 #pragma once
 
+// stop compiler from yelling 'two-phase name lookup is not supported for C++/CLI, C++/CX, or OpenMP; use /Zc:twoPhase-' when OpenMP is enabled
+#pragma warning(disable:4199)
+
 namespace Shadertoy
 {
 
-	VIZ_INLINE const Vector2 ToUV(unsigned iX, unsigned iY)
+	VIZ_INLINE const Vector2 ToUV(unsigned iX, unsigned iY, float scale = 2.f)
 	{
 		float fX = (float) iX;
 		float fY = (float) iY;
 		fX *= 1.f/kResX;
 		fY *= 1.f/kResY;
-		return Vector2((fX-0.5f)*2.f, (fY-0.5f)*2.f);
+		return Vector2((fX-0.5f)*scale, (fY-0.5f)*scale);
 	}
 
-	VIZ_INLINE const Vector2 ToUV_RT(unsigned iX, unsigned iY)
+	VIZ_INLINE const Vector2 ToUV_RT(unsigned iX, unsigned iY, float scale = 2.f)
 	{
 		float fX = (float) iX;
 		float fY = (float) iY;
 		fX *= 1.f/kTargetResX;
 		fY *= 1.f/kTargetResY;
-		return Vector2((fX-0.5f)*2.f, (fY-0.5f)*2.f);
+		return Vector2((fX-0.5f)*scale, (fY-0.5f)*scale);
 	}
 
 	/*

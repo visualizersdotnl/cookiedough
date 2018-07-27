@@ -46,6 +46,9 @@
     <Filter Include="Header Files\render">
       <UniqueIdentifier>{fa9b85ab-e8e3-40fc-8024-46536daa423d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\effects\OpenMP">
+      <UniqueIdentifier>{fde79a22-febc-4b5e-be0d-fe77f61ded15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\demo.cpp">
@@ -109,7 +112,7 @@
       <Filter>/3rdparty-rocket</Filter>
     </ClCompile>
     <ClCompile Include="..\code\plasma.cpp">
-      <Filter>Source Files\effects</Filter>
+      <Filter>Source Files\effects\OpenMP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
