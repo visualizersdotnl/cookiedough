@@ -161,7 +161,7 @@ static void vball(uint32_t *pDest, float time)
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		float dX, dY;
-		calc_fandeltas(curAngle, dX, dY);
+		voxel::calc_fandeltas(curAngle, dX, dY);
 		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftof24(dX), ftof24(dY));
 		curAngle += delta;
 	}

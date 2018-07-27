@@ -7,6 +7,7 @@
 
 	Added (backport to main branch):
 	- Matrix44::FromArray33()
+	- Forced 16-byte alignment for Vector4
 */
 
 #if !defined(STD_3D_MATH)

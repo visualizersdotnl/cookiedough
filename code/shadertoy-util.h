@@ -1,8 +1,10 @@
 
 // cookiedough -- utility functions to easily port Shadertoy
 
-// missing:
-// - sign()
+/*
+	FIXME:
+		- add sign() function, among others
+*/
 
 #pragma once
 
@@ -27,9 +29,9 @@ namespace Shadertoy
 		return Vector2((fX-0.5f)*2.f, (fY-0.5f)*2.f);
 	}
 
-	VIZ_INLINE uint32_t ToPixel(Vector3 color)
+	/*
+	VIZ_INLINE uint32_t ToPixel_Ref(Vector3 color)
 	{
-		// FIXME: use SSE!
 		color.x = fabsf(color.x);
 		color.y = fabsf(color.y);
 		color.z = fabsf(color.z);
@@ -40,5 +42,26 @@ namespace Shadertoy
 		int G = int(color.y*255.f);
 		int B = int(color.z*255.f);
 		return B | G<<8 | R<<16;
+	}
+	*/
+
+	// - writes 4 pixels at once (their clamped absolute value)
+	// - assumes aligned input
+	// - FIXME: swap R and B here?
+	VIZ_INLINE __m128i ToPixel4(const Vector4 *colors)
+	{
+		const __m128 scale = _mm_set1_ps(255.f);
+
+		__m128 A = _mm_load_ps(colors[0].GetData());
+		__m128 B = _mm_load_ps(colors[1].GetData());
+		__m128 C = _mm_load_ps(colors[2].GetData());
+		__m128 D = _mm_load_ps(colors[3].GetData());
+		__m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(scale, A)));
+		__m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(scale, B)));
+		__m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(scale, C)));
+		__m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(scale, D)));
+		__m128i AB = _mm_packs_epi32(iA, iB);
+		__m128i CD = _mm_packs_epi32(iC, iD);
+		return (_mm_packus_epi16(AB, CD));
 	}
 }

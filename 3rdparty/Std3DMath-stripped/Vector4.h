@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <xmmintrin.h>
+
 class Vector4
 {
 public:
@@ -24,7 +26,16 @@ public:
 	}
 
 public:
-	float x, y, z, w;
+	union
+	{
+		struct
+		{
+			float x, y, z, w;
+		};
+		
+		// 28/07/2018 - Basically just added this to gaurantee alignment.
+		__m128 vSIMD;
+	};
 
 	Vector4() {}
 	virtual ~Vector4() {}

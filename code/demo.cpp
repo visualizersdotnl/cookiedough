@@ -1,5 +1,5 @@
 
-// cookiedough -- demo flow: messy code allowed!
+// cookiedough -- demo flow for: <?> by Bypass (Shader Superfights Grand Prix 2019 commercial)
 
 // def. for sync. replay (instead of edit) mode
 // #define SYNC_PLAYER
