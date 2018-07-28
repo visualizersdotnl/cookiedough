@@ -29,11 +29,11 @@
 		- go to /target/x64, run VS17.exe or VS17-windowed.exe
 
 	third party libraries used:
-		- SDL 2.0
+		- SDL 2.0 & DevIL
 		- GNU Rocket by Kusma & contributors
-		- DevIL
 		- BASS sound system by Ian Luck
-		- cookiedough a.k.a "cocktails with Kurt Bevacqua" & Std3DMath by http://www.visualizers.nl
+		- Std3DMath by http://www.visualizers.nl
+
 
 	Q: who is Kurt Bevacqua? 
 	A: https://en.wikipedia.org/wiki/Kurt_Bevacqua

@@ -4,6 +4,7 @@
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 to do w/priority:
+- decent specular
 - need a faster ftol()!
 - finish up: simple marched plasma
   + an easy way to multithread certain effects by tiling or entirely (latter can be done later)

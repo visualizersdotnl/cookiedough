@@ -13,15 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="/3rdparty-x86">
-      <UniqueIdentifier>{bb162820-f141-46ae-9fda-46a460fc6688}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/3rdparty-rocket">
-      <UniqueIdentifier>{a9730659-b3f1-40e8-ad58-efc6efe5bd4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/3rdparty-x64">
-      <UniqueIdentifier>{e493f479-3ad3-4c26-a0d9-c582a11f9f62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\effects">
       <UniqueIdentifier>{ed58cfc0-fd7e-4539-86ce-0b14b40282c1}</UniqueIdentifier>
     </Filter>
@@ -37,9 +28,6 @@
     <Filter Include="Header Files\in-util">
       <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/3rdparty/Std3Dmath-stripped">
-      <UniqueIdentifier>{a4caaf39-6164-487c-882c-4369703c7175}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/target">
       <UniqueIdentifier>{8c4b42ea-a1bd-4bfd-aa8b-f06f8178e8f0}</UniqueIdentifier>
     </Filter>
@@ -48,6 +36,21 @@
     </Filter>
     <Filter Include="Source Files\effects\OpenMP">
       <UniqueIdentifier>{fde79a22-febc-4b5e-be0d-fe77f61ded15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty">
+      <UniqueIdentifier>{14d0d8fe-65f1-40a1-89b5-0827532095da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty\/3rdparty/Std3Dmath-stripped">
+      <UniqueIdentifier>{a4caaf39-6164-487c-882c-4369703c7175}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty\/3rdparty-rocket">
+      <UniqueIdentifier>{a9730659-b3f1-40e8-ad58-efc6efe5bd4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty\/3rdparty-x64">
+      <UniqueIdentifier>{e493f479-3ad3-4c26-a0d9-c582a11f9f62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/3rdparty\/3rdparty-x86">
+      <UniqueIdentifier>{bb162820-f141-46ae-9fda-46a460fc6688}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -91,13 +94,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Matrix44.cpp">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Quaternion.cpp">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Vector3.cpp">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClCompile>
     <ClCompile Include="..\code\heartquake.cpp">
       <Filter>Source Files\effects</Filter>
@@ -106,10 +109,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\device.c">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClCompile>
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClCompile>
     <ClCompile Include="..\code\plasma.cpp">
       <Filter>Source Files\effects\OpenMP</Filter>
@@ -180,37 +183,37 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Dependencies.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Math.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Matrix44.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Quaternion.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector2.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector3.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Vector4.h">
-      <Filter>/3rdparty/Std3Dmath-stripped</Filter>
+      <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\sync.h">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\track.h">
-      <Filter>/3rdparty-rocket</Filter>
+      <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\code\shadertoy-util.h">
       <Filter>Header Files\render</Filter>
@@ -221,25 +224,25 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
-      <Filter>/3rdparty-x86</Filter>
+      <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
     <Library Include="..\3rdparty\DevIL-SDK-x86-1.7.8\lib\DevIL.lib">
-      <Filter>/3rdparty-x86</Filter>
+      <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
     <Library Include="..\3rdparty\DevIL-SDK-x64-1.7.8\DevIL.lib">
-      <Filter>/3rdparty-x64</Filter>
+      <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
     <Library Include="..\3rdparty\SDL2-2.0.8\lib\x86\SDL2.lib">
-      <Filter>/3rdparty-x86</Filter>
+      <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
     <Library Include="..\3rdparty\SDL2-2.0.8\lib\x64\SDL2.lib">
-      <Filter>/3rdparty-x64</Filter>
+      <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
     <Library Include="..\3rdparty\bass24-stripped\c\bass.lib">
-      <Filter>/3rdparty-x86</Filter>
+      <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
     <Library Include="..\3rdparty\bass24-stripped\c\x64\bass.lib">
-      <Filter>/3rdparty-x64</Filter>
+      <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
