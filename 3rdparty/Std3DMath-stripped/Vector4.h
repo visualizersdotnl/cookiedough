@@ -5,22 +5,20 @@
 
 #pragma once
 
-#include <xmmintrin.h>
-
 class Vector4
 {
 public:
-	static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return Vector4(A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w); }
-	static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return Vector4(A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w); }
-	static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return Vector4(A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w); }
-	static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return Vector4(A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w); }
+	VIZ_INLINE static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return Vector4(A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w); }
+	VIZ_INLINE static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return Vector4(A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w); }
+	VIZ_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return Vector4(A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w); }
+	VIZ_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return Vector4(A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w); }
 
-	static const Vector4 Scale(const Vector4 &A, float B)
+	VIZ_INLINE static const Vector4 Scale(const Vector4 &A, float B)
 	{
 		return Vector4(A.x*B, A.y*B, A.z*B, A.w*B);
 	}
 
-	static float Dot(const Vector4 &A, const Vector4 &B)
+	VIZ_INLINE static float Dot(const Vector4 &A, const Vector4 &B)
 	{
 		return A.x*B.x + A.y*B.y + A.z*B.z + A.w*B.w;
 	}
@@ -36,10 +34,9 @@ public:
 		// 28/07/2018 - Basically just added this to gaurantee alignment.
 		__m128 vSIMD;
 	};
-
-	Vector4() {}
-	virtual ~Vector4() {}
 	
+	Vector4() {}
+
 	explicit Vector4(float scalar) : 
 		x(scalar), y(scalar), z(scalar), w(scalar) {}
 

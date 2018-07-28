@@ -9,6 +9,8 @@
 	- Matrix44::FromArray33()
 	- Forced 16-byte alignment for Vector4
 	- kPI et cetera are now 'constexpr'.
+	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for VIZ_INLINE.
+	- Removed empty constructors & destructors, except for Vector4.
 */
 
 #if !defined(STD_3D_MATH)

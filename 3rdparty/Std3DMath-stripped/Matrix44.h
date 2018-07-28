@@ -38,8 +38,6 @@ public:
 public:
 	Vector4 rows[4];
 
-	~Matrix44() {}
-
 	// In-place operations (much faster than a mere multiplication).
 	Matrix44& Scale(const Vector3 &scale);
 	Matrix44& Translate(const Vector3 &translation);

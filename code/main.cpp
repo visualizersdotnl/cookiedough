@@ -122,7 +122,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);
 		return 1;
 	}
-	
+
+	// set OpenMP threads to cores plus one (which is best for calculation-heavy threads, could yield more when threads are missing cache)
+	omp_set_num_threads(std::thread::hardware_concurrency()+1);
+
 	// set simplest rounding mode, since we do a fair bit of ftol()
 	_controlfp(_MCW_RC, _RC_CHOP);
 

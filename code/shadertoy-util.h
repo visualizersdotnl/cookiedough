@@ -3,18 +3,15 @@
 
 /*
 	FIXME:
-		- add sign() function, among others
-		- restrict number of threads OMP may use?
+		- add sign() function
 */
 
 #pragma once
 
-// OMP
-#include <omp.h>
+// #include <omp.h>
 
 namespace Shadertoy
 {
-
 	VIZ_INLINE const Vector2 ToUV(unsigned iX, unsigned iY, float scale = 2.f)
 	{
 		float fX = (float) iX;
@@ -53,23 +50,15 @@ namespace Shadertoy
 
 	// - writes 4 pixels at once (their clamped absolute value)
 	// - assumes aligned input
-	// - FIXME: swap R and B here?
+	// - FIXME: swap R and B here? / shift, not scale
 	VIZ_INLINE __m128i ToPixel4(const Vector4 *colors)
 	{
-		__m128   A = _mm_load_ps(colors[0].GetData());
-		__m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, A)));
-		__m128   B = _mm_load_ps(colors[1].GetData());
-		__m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, B)));
-		__m128   C = _mm_load_ps(colors[2].GetData());
-		__m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, C)));
-
+		__m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
+		__m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
+		__m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
+		__m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
 		__m128i AB = _mm_packs_epi32(iA, iB);
-
-		__m128   D = _mm_load_ps(colors[3].GetData());
-		__m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, D)));
-
 		__m128i CD = _mm_packs_epi32(iC, iD);
-
 		return (_mm_packus_epi16(AB, CD));
 	}
-}
+} 

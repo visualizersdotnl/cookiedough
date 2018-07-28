@@ -4,15 +4,13 @@
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 for today:
-- do away with _controlfp() warning
-- plasma 1: speed
+- plasma 1: more speed!
 - plasma 2: decent specular
-- verify: does your Std3DMath class inline correctly?
 
+- verify: does your Std3DMath class inline correctly?
+  answer: seems like mostly, though I added some Win32 __forceinline here and there to help it along
 
 to do w/priority:
-- finish up: simple marched plasma
-  + an easy way to multithread certain effects by tiling or entirely (latter can be done later)
 - garbage collect resources (and eradicate a ton of repetitive shit)
 - look if cspan() can be optimized (I think it's very possible)
 - look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
@@ -23,11 +21,11 @@ to do:
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
 - generic crash handler
 - application icon
+- SDL offers enough tools to create a configuration dialog
 
 remember:
-- blur bias flaw (invisible, but it's there)
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
-- if I want flexible multiple instances of effects I'll at least have to put their parameters in objects
+- blur bias flaw (invisible, but it's there)
 
 effect ideas:
 - #1) create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!

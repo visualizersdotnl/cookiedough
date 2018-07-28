@@ -26,7 +26,7 @@ void Plasma_Destroy()
 VIZ_INLINE float march(Vector3 point, float time)
 {
 	point.z += 5.f*time;
-	const float sine = 0.2f*lutsinf(ftofp24(point.x-point.y));
+	const float sine = 0.314f*lutsinf(ftofp24(point.x-point.y));
 	const int x = ftofp24(point.x*0.33f);
 	const int y = ftofp24(point.y*0.33f);
 	const int z = ftofp24(point.z*0.33f);
@@ -40,14 +40,18 @@ void Plasma_1_Draw(uint32_t *pDest, float time, float delta)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 colMulA(0.3f, 0.15f, 0.1f);
-	const Vector3 colMulB(0.1f, 0.05f, 0.f);
+//	const Vector3 colMulA(0.3f, 0.15f, 0.1f);
+//	const Vector3 colMulB(0.1f, 0.05f, 0.f);
 
+	// swapped R and B
+	const Vector3 colMulA(0.1f, 0.15f, 0.3f);
+	const Vector3 colMulB(0.0f, 0.05f, 0.1f);
+
+	#pragma omp parallel for
 	for (int iY = 0; iY < kResY; ++iY)
 	{
 		const int yIndex = iY*kResX;
 
-		#pragma omp parallel for
 		for (int iX = 0; iX < kResX; iX += 4)
 		{	
 			// FIXME
@@ -55,14 +59,14 @@ void Plasma_1_Draw(uint32_t *pDest, float time, float delta)
 
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				const Vector3 direction(Shadertoy::ToUV(iX+iColor+20, iY+kHalfResY, 1.f), 0.75f);
+				const Vector3 direction(Shadertoy::ToUV(iX+iColor+20, iY+kHalfResY, 1.f), 0.5f);
 				Vector3 origin = direction;
 
-				for (int step = 0; step < 64; ++step)
+				for (int step = 0; step < 32; ++step)
 					origin += direction*march(origin, time);
 
 				const Vector3 color = ( colMulA*march(origin+direction, time)+colMulB*march(origin*0.5f, time) ) * (8.f - origin.x/2.f);
-				colors[iColor] = Vector4(color.z, color.y, color.x, 1.f);
+				colors[iColor].vSIMD = color.vSIMD;
 			}
 
 			const int index = (yIndex+iX)>>2;

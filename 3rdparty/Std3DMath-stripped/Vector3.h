@@ -8,22 +8,22 @@
 class Vector3
 {
 public:
-	static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return Vector3(A.x+B.x, A.y+B.y, A.z+B.z); }
-	static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return Vector3(A.x-B.x, A.y-B.y, A.z-B.z); }
-	static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return Vector3(A.x*B.x, A.y*B.y, A.z*B.z); }
-	static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return Vector3(A.x/B.x, A.y/B.y, A.z/B.z); }
+	VIZ_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return Vector3(A.x+B.x, A.y+B.y, A.z+B.z); }
+	VIZ_INLINE static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return Vector3(A.x-B.x, A.y-B.y, A.z-B.z); }
+	VIZ_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return Vector3(A.x*B.x, A.y*B.y, A.z*B.z); }
+	VIZ_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return Vector3(A.x/B.x, A.y/B.y, A.z/B.z); }
 
-	static const Vector3 Scale(const Vector3 &A, float B)
+	VIZ_INLINE static const Vector3 Scale(const Vector3 &A, float B)
 	{
 		return Vector3(A.x*B, A.y*B, A.z*B);
 	}
 
-	static float Dot(const Vector3 &A, const Vector3 &B)
+	VIZ_INLINE static float Dot(const Vector3 &A, const Vector3 &B)
 	{
 		return A.x*B.x + A.y*B.y + A.z*B.z;
 	}
 
-	static const Vector3 Cross(const Vector3 &A, const Vector3 &B)
+	VIZ_INLINE static const Vector3 Cross(const Vector3 &A, const Vector3 &B)
 	{
 		return Vector3(
 			A.y*B.z - A.z*B.y,
@@ -32,10 +32,17 @@ public:
 	}
 
 public:
-	float x, y, z;
-
-	Vector3() {}
-	~Vector3() {}
+	union
+	{
+		struct
+		{
+			float x, y, z;
+			float padding;
+		};
+		
+		// 28/07/2018 - Basically just added this to gaurantee alignment.
+		__m128 vSIMD;
+	};
 	
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar) {}

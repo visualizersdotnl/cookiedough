@@ -4,7 +4,11 @@
 #include "main.h"
 // #include "sincos-lut.h"
 
-float g_cosLUT[kCosTabSize];
+#ifdef _WIN32
+	__declspec(align(kCacheLine)) float g_cosLUT[kCosTabSize];
+#else
+	float g_cosLUT[kCosTabSize];
+#endif
 
 void CalculateCosLUT()
 {

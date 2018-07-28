@@ -25,9 +25,6 @@ public:
 
 public:
 	float x, y;
-
-	Vector2() {}
-	~Vector2() {}
 	
 	explicit Vector2(float scalar) : 
 		x(scalar), y(scalar) {}

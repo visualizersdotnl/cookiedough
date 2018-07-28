@@ -23,8 +23,8 @@ Display::~Display()
 bool Display::Open(const std::string &title, unsigned int xRes, unsigned int yRes, bool fullScreen)
 {
 	const int result = (false == fullScreen)
-		? SDL_CreateWindowAndRenderer(xRes, yRes, 0, &m_window, &m_renderer)
-		: SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP, &m_window, &m_renderer);
+		? SDL_CreateWindowAndRenderer(xRes, yRes, SDL_RENDERER_ACCELERATED, &m_window, &m_renderer)
+		: SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_RENDERER_ACCELERATED, &m_window, &m_renderer);
 	if (-1 != result)
 	{
 		// set output resolution (regardless of what we're blitting to)

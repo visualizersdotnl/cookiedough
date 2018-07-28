@@ -5,7 +5,8 @@
 #define _MAIN_H_
 
 // ignore:
-#pragma warning(disable:4530) // unwind semantics missing
+#pragma warning(disable:4530)   // unwind semantics missing
+#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
 
 // CRT & STL
 #include <stdint.h>
@@ -14,6 +15,10 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <thread>
+
+// OpenMP
+#include <omp.h>
 
 // SSE intrinsics
 #include <xmmintrin.h> // 1
