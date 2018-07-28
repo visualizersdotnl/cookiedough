@@ -4,12 +4,13 @@
 /*
 	FIXME:
 		- add sign() function
+		- add UV function that supplies offset and delta instead
 */
 
 #pragma once
 
 // #include <omp.h>
-#pragma warning(disable:4199)
+#include "map-blitter.h"
 
 namespace Shadertoy
 {
@@ -28,6 +29,15 @@ namespace Shadertoy
 		float fY = (float) iY;
 		fX *= 1.f/kTargetResX;
 		fY *= 1.f/kTargetResY;
+		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
+	}
+
+	VIZ_INLINE const Vector2 ToUV_FX(unsigned iX, unsigned iY, float scale = 2.f)
+	{
+		float fX = (float) iX;
+		float fY = (float) iY;
+		fX *= 1.f/kFXMapResX;
+		fY *= 1.f/kFXMapResY;
 		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
 

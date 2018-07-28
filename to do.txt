@@ -4,9 +4,13 @@
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 for now:
+- fix OpenMP parallel loops (test on x86)
 - create map interpolator for speedy 2D and marching effects
+  + colors first, finish it with a custom ISSE loop!
+  + textured version
+  + interlaced looks cool to have as an option!
 - plasma 1 can definitely be more optimized, but is it worth it?
-- nautilus?
+- try Nautilus by Weyland!
 
 to do w/priority:
 - garbage collect resources (and eradicate a ton of repetitive shit)
@@ -33,6 +37,7 @@ effect ideas:
 - #2) create a framework (class) that makes it very easy to port and thread Shadertoy/GLSL
 - #3) scaling routines
 - #4) particles, requested by Nytrik (ask him what he likes best)
+- #5) VHS distortion?
 - true 3D
 
 OSX/Linux build:

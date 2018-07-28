@@ -8,22 +8,22 @@
 class Vector3
 {
 public:
-	VIZ_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return Vector3(A.x+B.x, A.y+B.y, A.z+B.z); }
-	VIZ_INLINE static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return Vector3(A.x-B.x, A.y-B.y, A.z-B.z); }
-	VIZ_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return Vector3(A.x*B.x, A.y*B.y, A.z*B.z); }
-	VIZ_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return Vector3(A.x/B.x, A.y/B.y, A.z/B.z); }
+	S3D_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return Vector3(A.x+B.x, A.y+B.y, A.z+B.z); }
+	S3D_INLINE static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return Vector3(A.x-B.x, A.y-B.y, A.z-B.z); }
+	S3D_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return Vector3(A.x*B.x, A.y*B.y, A.z*B.z); }
+	S3D_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return Vector3(A.x/B.x, A.y/B.y, A.z/B.z); }
 
-	VIZ_INLINE static const Vector3 Scale(const Vector3 &A, float B)
+	S3D_INLINE static const Vector3 Scale(const Vector3 &A, float B)
 	{
 		return Vector3(A.x*B, A.y*B, A.z*B);
 	}
 
-	VIZ_INLINE static float Dot(const Vector3 &A, const Vector3 &B)
+	S3D_INLINE static float Dot(const Vector3 &A, const Vector3 &B)
 	{
 		return A.x*B.x + A.y*B.y + A.z*B.z;
 	}
 
-	VIZ_INLINE static const Vector3 Cross(const Vector3 &A, const Vector3 &B)
+	S3D_INLINE static const Vector3 Cross(const Vector3 &A, const Vector3 &B)
 	{
 		return Vector3(
 			A.y*B.z - A.z*B.y,
@@ -86,12 +86,12 @@ public:
 		return LengthSq() < B.LengthSq();
 	}
 
-	float LengthSq() const 
+	S3D_INLINE float LengthSq() const 
 	{ 
 		return Dot(*this, *this); 
 	}
 
-	float Length() const
+	S3D_INLINE float Length() const
 	{
 		return sqrtf(Dot(*this, *this));
 	}
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	float Angle(const Vector3 &B) const
+	S3D_INLINE float Angle(const Vector3 &B) const
 	{
 		return acosf(Dot(*this, B));
 	}
@@ -150,7 +150,7 @@ public:
 	static const float kRefractPlastic;
 	static const float kRefractDiamond;
 
-	const Vector3 Perpendicular(const Vector3 &B) const
+	S3D_INLINE const Vector3 Perpendicular(const Vector3 &B) const
 	{
 		return Cross(*this, B);
 	}

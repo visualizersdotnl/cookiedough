@@ -8,17 +8,17 @@
 class Vector4
 {
 public:
-	VIZ_INLINE static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return Vector4(A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w); }
-	VIZ_INLINE static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return Vector4(A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w); }
-	VIZ_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return Vector4(A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w); }
-	VIZ_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return Vector4(A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w); }
+	S3D_INLINE static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return Vector4(A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w); }
+	S3D_INLINE static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return Vector4(A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w); }
+	S3D_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return Vector4(A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w); }
+	S3D_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return Vector4(A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w); }
 
-	VIZ_INLINE static const Vector4 Scale(const Vector4 &A, float B)
+	S3D_INLINE static const Vector4 Scale(const Vector4 &A, float B)
 	{
 		return Vector4(A.x*B, A.y*B, A.z*B, A.w*B);
 	}
 
-	VIZ_INLINE static float Dot(const Vector4 &A, const Vector4 &B)
+	S3D_INLINE static float Dot(const Vector4 &A, const Vector4 &B)
 	{
 		return A.x*B.x + A.y*B.y + A.z*B.z + A.w*B.w;
 	}
@@ -81,12 +81,12 @@ public:
 		return LengthSq() < B.LengthSq();
 	}
 
-	float LengthSq() const
+	S3D_INLINE float LengthSq() const
 	{
 		return Dot(*this, *this);
 	}
 
-	float Length() const
+	S3D_INLINE float Length() const
 	{
 		return sqrtf(LengthSq());
 	}

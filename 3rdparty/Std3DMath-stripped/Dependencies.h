@@ -1,8 +1,8 @@
 
 #pragma once
 
-// Hack for 'cookiedough' (FIXME: Windows-only)
-#define VIZ_INLINE __forceinline
+// Hack for 'cookiedough' (FIXME)
+#define S3D_INLINE __inline
 
 // CRT & STL:
 #include <assert.h>

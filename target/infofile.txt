@@ -15,7 +15,7 @@
 
 
 	system requirements:
-		- decent x64 CPU (4 cores recommended)
+		- decent, recent x64 CPU (4-8 cores recommended)
 		- Windows 10 (not tested on earlier versions)
 		- a working default audio adapter
 
@@ -34,9 +34,14 @@
 		- BASS sound system by Ian Luck
 		- Std3DMath by http://www.visualizers.nl
 
+	** Q&A **
 
-	Q: who is Kurt Bevacqua? 
+	Q: who is "fucking Kurt Bevacqua"? 
 	A: https://en.wikipedia.org/wiki/Kurt_Bevacqua
 	
-	Q: crash!
+	Q: crashes!
 	A: please report on Pouet.net
+
+	Q: doesn't perform well
+	A: it's built on a 10+ year old codebase which I carefully reviewed and added to, but that
+	   doesn't mean it doesn't have flaws, be a doll and tell me so I can solve it!
