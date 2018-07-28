@@ -3,12 +3,10 @@
 
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
-for today:
-- plasma 1: more speed!
-- plasma 2: decent specular
-
-- verify: does your Std3DMath class inline correctly?
-  answer: seems like mostly, though I added some Win32 __forceinline here and there to help it along
+for now:
+- create map interpolator for speedy 2D and marching effects
+- plasma 1 can definitely be more optimized, but is it worth it?
+- nautilus?
 
 to do w/priority:
 - garbage collect resources (and eradicate a ton of repetitive shit)
@@ -16,6 +14,9 @@ to do w/priority:
 - look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
 - create sampling functions that don't require a prepare call first?
 - implement: Heartquake water
+
+- verify: does your Std3DMath class inline correctly?
+  answer: seems like mostly, though I added some Win32 __forceinline here and there to help it along
 
 to do:
 - *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)

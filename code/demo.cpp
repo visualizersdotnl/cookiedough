@@ -20,7 +20,7 @@
 #include "torus-twister.h"
 #include "heartquake.h"
 #include "tunnelscape.h"
-#include "plasma.h"
+#include "shadertoy.h"
 
 static sync_device *s_hRocket;
 
@@ -55,7 +55,7 @@ bool Demo_Create()
 	fxInit &= Ball_Create();
 	fxInit &= Heartquake_Create();
 	fxInit &= Tunnelscape_Create();
-	fxInit &= Plasma_Create();
+	fxInit &= Shadertoy_Create();
 
 	s_mainTrack = sync_get_track(s_hRocket, "main");
 
@@ -72,7 +72,7 @@ void Demo_Destroy()
 	Ball_Destroy();
 	Heartquake_Destroy();
 	Tunnelscape_Destroy();
-	Plasma_Destroy();
+	Shadertoy_Destroy();
 }
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
@@ -94,7 +94,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 //	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 	Plasma_1_Draw(pDest, timer, delta);
-//	Plasma_2_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600
 	uint32_t *pWrite = pDest + 800*50;

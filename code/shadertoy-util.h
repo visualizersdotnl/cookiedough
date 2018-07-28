@@ -9,6 +9,7 @@
 #pragma once
 
 // #include <omp.h>
+#pragma warning(disable:4199)
 
 namespace Shadertoy
 {

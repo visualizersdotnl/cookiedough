@@ -37,7 +37,7 @@ constexpr float kAspect = (float)kResY/kResX;
 // set description on failure (reported on shutdown)
 void SetLastError(const std::string &description);
 
-// basic utilities (memory, graphics, ...)
+// basic utilities (memory, graphics, ISSE et cetera)
 #include "util.h"
 
 // (few) shared resources

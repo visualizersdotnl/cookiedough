@@ -52,7 +52,10 @@
 #include "audio.h"
 #include "demo.h"
 #include "gamepad.h"
+
+// filters & blitters
 #include "polar.h"
+#include "map-blitter.h"
 
 // display config.
 const char *kTitle = "powered by cocktails with Kurt Bevacqua";
@@ -137,6 +140,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Image_Create();
 	utilInit &= Shared_Create();
 	utilInit &= Polar_Create();
+	utilInit &= MapBlitter_Create();
 	Gamepad_Create();
 
 	if (utilInit)

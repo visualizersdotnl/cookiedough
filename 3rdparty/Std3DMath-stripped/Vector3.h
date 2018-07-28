@@ -45,13 +45,13 @@ public:
 	};
 	
 	explicit Vector3(float scalar) : 
-		x(scalar), y(scalar), z(scalar) {}
+		x(scalar), y(scalar), z(scalar), padding(0.f) {}
 
 	Vector3(float x, float y, float z) :
-		x(x), y(y), z(z) {}
+		x(x), y(y), z(z), padding(0.f) {}
 
  	Vector3(const Vector2 &vec2D, float z = 1.f) :
-		x(vec2D.x), y(vec2D.y), z(z) {}
+		x(vec2D.x), y(vec2D.y), z(z), padding(0.f) {}
 
 	const Vector3 operator +(const Vector3 &B) const { return Add(*this, B); }
 	const Vector3 operator +(float B)          const { return Add(*this, Vector3(B)); }

@@ -114,11 +114,14 @@
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c">
       <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\plasma.cpp">
-      <Filter>Source Files\effects\OpenMP</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\sincos-lut.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\shadertoy.cpp">
+      <Filter>Source Files\effects\OpenMP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\map-blitter.cpp">
+      <Filter>Source Files\filters &amp; blitters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,11 +224,17 @@
     <ClInclude Include="..\code\shadertoy-util.h">
       <Filter>Header Files\render</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\plasma.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\sincos-lut.h">
       <Filter>Header Files\included-in-util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\shadertoy.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\q3-rsqrt.h">
+      <Filter>Header Files\included-in-util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\map-blitter.h">
+      <Filter>Header Files\filters &amp; blitters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

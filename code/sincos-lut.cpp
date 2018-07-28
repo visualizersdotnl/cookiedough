@@ -5,7 +5,7 @@
 // #include "sincos-lut.h"
 
 #ifdef _WIN32
-	__declspec(align(kCacheLine)) float g_cosLUT[kCosTabSize];
+	__declspec(align(16)) float g_cosLUT[kCosTabSize];
 #else
 	float g_cosLUT[kCosTabSize];
 #endif
