@@ -3,11 +3,9 @@
 
 /*
 	to do:
-		- use as testbed for multi-threading & other optimizations
-		- cosf() is a big offender in the expensive plasma
+		- testbed for multi-threading & other optimizations (what makes it so slow?)
 		- try to find a way to store and swap colors to SIMD earlier on
 		- I might have to resort to interpolation anyway?
-		- tip: optimizations that may look obvious are seldom big offenders, so keep profiling
 */
 
 #include "main.h"
@@ -28,8 +26,14 @@ void Plasma_Destroy()
 VIZ_INLINE float march(Vector3 point, float time)
 {
 	point.z += 5.f*time;
-	float sine = 0.2f*sin(point.x-point.y);
-	return Vector3(sine+cos(point.x*0.33f), sine+cos(point.y*0.33f), sine+cos(point.z*0.33f)).Length() - 0.8f;
+	const float sine = 0.2f*lutsinf(ftofp24(point.x-point.y));
+	const int x = ftofp24(point.x*0.33f);
+	const int y = ftofp24(point.y*0.33f);
+	const int z = ftofp24(point.z*0.33f);
+	const float fX = sine + lutcosf(x);
+	const float fY = sine + lutcosf(y);
+	const float fZ = sine + lutcosf(z);
+	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
 
 void Plasma_1_Draw(uint32_t *pDest, float time, float delta)
@@ -39,10 +43,11 @@ void Plasma_1_Draw(uint32_t *pDest, float time, float delta)
 	const Vector3 colMulA(0.3f, 0.15f, 0.1f);
 	const Vector3 colMulB(0.1f, 0.05f, 0.f);
 
-	#pragma omp parallel for
 	for (int iY = 0; iY < kResY; ++iY)
 	{
 		const int yIndex = iY*kResX;
+
+		#pragma omp parallel for
 		for (int iX = 0; iX < kResX; iX += 4)
 		{	
 			// FIXME
@@ -53,7 +58,7 @@ void Plasma_1_Draw(uint32_t *pDest, float time, float delta)
 				const Vector3 direction(Shadertoy::ToUV(iX+iColor+20, iY+kHalfResY, 1.f), 0.75f);
 				Vector3 origin = direction;
 
-				for (int step = 0; step < 48; ++step)
+				for (int step = 0; step < 64; ++step)
 					origin += direction*march(origin, time);
 
 				const Vector3 color = ( colMulA*march(origin+direction, time)+colMulB*march(origin*0.5f, time) ) * (8.f - origin.x/2.f);
@@ -94,6 +99,7 @@ void Plasma_2_Draw(uint32_t *pDest, float time, float delta)
 					0.5f + 0.5f*cosf(total+0.5f),
 					0.5f + 0.5f*cosf(total+0.9f));
 
+				// FIXME: get a real slope value!
 				float specZ = (color.z*color.z)/length;
 				specZ = std::max(specZ, 0.f);
 				specZ = powf(specZ, 4.f);

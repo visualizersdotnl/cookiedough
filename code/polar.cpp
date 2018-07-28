@@ -36,14 +36,14 @@ bool Polar_Create()
 				s_pInvPolarMap[iPixel] = s_pPolarMap[iPixel] = (kTargetResX-2)<<8 | 0xff;
 			else
 			{
-				s_pPolarMap[iPixel] = ftof24(U);
-				s_pInvPolarMap[iPixel] = ftof24(invU);
+				s_pPolarMap[iPixel] = ftofp24(U);
+				s_pInvPolarMap[iPixel] = ftofp24(invU);
 			}
 
 			if (V == kTargetResY-1.f)
 				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = (kTargetResY-2)<<8 | 0xff;
 			else
-				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ftof24(V);
+				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ftofp24(V);
 
 			iPixel += 2;
 		}

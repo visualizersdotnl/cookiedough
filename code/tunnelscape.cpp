@@ -106,7 +106,7 @@ static void tscape(uint32_t *pDest, float time)
 		dX = 0.5f;
 		dY = 1.f; // FIXME: parametrize
 
-		tscape_ray(pDest, ftof24(fromX), ftof24(fromY), ftof24(dX), ftof24(dY));
+		tscape_ray(pDest, ftofp24(fromX), ftofp24(fromY), ftofp24(dX), ftofp24(dY));
 		pDest += kTargetResX;
 
 		mapX += mapStepX;

@@ -85,8 +85,8 @@ static void vtwister(uint32_t *pDest, float time)
 	{
 		const float shearAngle = (float) iRay * (2.f*kPI / kTargetResY);
 
-		const int fromX = ftof24(256.f + 140.f*sinf(time*1.1f + shearAngle));
-		const int fromY = ftof24(mapY + time*25.f);
+		const int fromX = ftofp24(256.f + 140.f*sinf(time*1.1f + shearAngle));
+		const int fromY = ftofp24(mapY + time*25.f);
 
 		const size_t xOffs = kTargetResX/2;
 		vtwister_ray(pDest + iRay*kTargetResX + xOffs, fromX, fromY,  256);

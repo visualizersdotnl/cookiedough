@@ -57,7 +57,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	const unsigned int U = (curX>>8) & kMapAnd, V = ((curY>>8) & kMapAnd) << kMapShift;
 	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
 
-	const int fpFishMul = ftof24(fabsf(fishMul));
+	const int fpFishMul = ftofp24(fabsf(fishMul));
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
@@ -156,8 +156,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	// origin
 	float X1 = moveX+strafeX;
 	float Y1 = moveY+strafeY;
-	const int fpX1 = ftof24(X1);
-	const int fpY1 = ftof24(Y1);
+	const int fpX1 = ftofp24(X1);
+	const int fpY1 = ftofp24(Y1);
 
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
@@ -176,7 +176,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		// counteract fisheye effect (FIXME: real-time parameter?)
 		const float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
 		
-		vscape_ray(pDest+iRay, fpX1, fpY1, ftof24(dX), ftof24(dY), fishMul);
+		vscape_ray(pDest+iRay, fpX1, fpY1, ftofp24(dX), ftofp24(dY), fishMul);
 	}
 }
 

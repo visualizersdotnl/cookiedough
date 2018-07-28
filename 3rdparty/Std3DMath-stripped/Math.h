@@ -8,6 +8,7 @@
 	Added (backport to main branch):
 	- Matrix44::FromArray33()
 	- Forced 16-byte alignment for Vector4
+	- kPI et cetera are now 'constexpr'.
 */
 
 #if !defined(STD_3D_MATH)
@@ -16,10 +17,10 @@
 #include "Dependencies.h"
 
 // A few meaningful constants.
-const float kPI = 3.1415926535897932384626433832795f;
-const float kHalfPI = kPI*0.5f;
-const float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
-const float kGoldenRatio = 1.61803398875f;
+constexpr float kPI = 3.1415926535897932384626433832795f;
+constexpr float kHalfPI = kPI*0.5f;
+constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
+constexpr float kGoldenRatio = 1.61803398875f;
 
 // Generic floating point random.
 // Has poor distribution due to rand() being 16-bit, so don't use it when proper distribution counts.

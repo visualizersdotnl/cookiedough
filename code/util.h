@@ -31,6 +31,7 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 
 #include "bit-tricks.h"
 #include "alloc-aligned.h"
+#include "sincos-lut.h"
 
 // full 3D math library (last updated 26/07/2018)
 #include "../3rdparty/Std3DMath-stripped/Math.h"
@@ -113,6 +114,9 @@ VIZ_INLINE __m128i vminISSE(__m128i A, __m128i B)
 }
 
 // simple floating point to 24:8 fixed point conversion
-VIZ_INLINE int ftof24(float value) { return (int) (value*256.f); }
+VIZ_INLINE int ftofp24(float value) { return (int) (value*256.f); }
+
+// arbitrary floating point to integer conversion
+VIZ_INLINE int ftofp(float value, float multiplier) { return (int) (value*multiplier); }
 
 #endif // _UTIL_H_

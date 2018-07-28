@@ -25,9 +25,6 @@
     <Filter Include="Header Files\filters &amp; blitters">
       <UniqueIdentifier>{dedf52bb-28aa-4623-a4f9-f8d5481ef1f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\in-util">
-      <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/target">
       <UniqueIdentifier>{8c4b42ea-a1bd-4bfd-aa8b-f06f8178e8f0}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,9 @@
     </Filter>
     <Filter Include="/3rdparty\/3rdparty-x86">
       <UniqueIdentifier>{bb162820-f141-46ae-9fda-46a460fc6688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\included-in-util">
+      <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +117,9 @@
     <ClCompile Include="..\code\plasma.cpp">
       <Filter>Source Files\effects\OpenMP</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\sincos-lut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -162,10 +165,10 @@
       <Filter>Header Files\render</Filter>
     </ClInclude>
     <ClInclude Include="..\code\bit-tricks.h">
-      <Filter>Header Files\in-util</Filter>
+      <Filter>Header Files\included-in-util</Filter>
     </ClInclude>
     <ClInclude Include="..\code\alloc-aligned.h">
-      <Filter>Header Files\in-util</Filter>
+      <Filter>Header Files\included-in-util</Filter>
     </ClInclude>
     <ClInclude Include="..\code\torus-twister.h">
       <Filter>Header Files\effects</Filter>
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="..\code\plasma.h">
       <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\sincos-lut.h">
+      <Filter>Header Files\included-in-util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

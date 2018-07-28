@@ -43,6 +43,7 @@
 
 #include "main.h" // always include first!
 #include <windows.h>
+#include <float.h>
 #include "../3rdparty/SDL2-2.0.8/include/SDL.h"
 
 #include "display.h"
@@ -121,6 +122,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);
 		return 1;
 	}
+	
+	// set simplest rounding mode, since we do a fair bit of ftol()
+	_controlfp(_MCW_RC, _RC_CHOP);
+
+	// calculate cosine LUT
+	CalculateCosLUT();
 
 	bool utilInit = true;
 

@@ -149,8 +149,8 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 static void vball(uint32_t *pDest, float time)
 {
 	// move ray origin to fake hacky rotation (FIXME)
-	const int fromX = ftof24(256.f*sinf(time*0.28f) + 256.f);
-	const int fromY = ftof24(256.f*cosf(time*0.25f) + 256.f);
+	const int fromX = ftofp24(256.f*sinf(time*0.28f) + 256.f);
+	const int fromY = ftofp24(256.f*cosf(time*0.25f) + 256.f);
 
 	// FOV (full circle)
 	const float fovAngle = kPI*2.f;
@@ -162,7 +162,7 @@ static void vball(uint32_t *pDest, float time)
 	{
 		float dX, dY;
 		voxel::calc_fandeltas(curAngle, dX, dY);
-		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftof24(dX), ftof24(dY));
+		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
 		curAngle += delta;
 	}
 }

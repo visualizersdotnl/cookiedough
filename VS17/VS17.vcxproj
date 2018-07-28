@@ -57,6 +57,7 @@
     <ClCompile Include="..\code\main.cpp" />
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared-resources.cpp" />
+    <ClCompile Include="..\code\sincos-lut.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\tunnelscape.cpp" />
     <ClCompile Include="..\code\util.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="..\code\polar.h" />
     <ClInclude Include="..\code\shadertoy-util.h" />
     <ClInclude Include="..\code\shared-resources.h" />
+    <ClInclude Include="..\code\sincos-lut.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />
     <ClInclude Include="..\code\tunnelscape.h" />
@@ -216,6 +218,10 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>false</OpenMPSupport>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -235,6 +241,10 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <OpenMPSupport>false</OpenMPSupport>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -265,6 +275,9 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>false</OpenMPSupport>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -297,6 +310,9 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>false</OpenMPSupport>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
