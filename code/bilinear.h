@@ -53,6 +53,7 @@ VIZ_INLINE unsigned int bsamp8(
 
 // sample 32-bit texture (ISSE-optimized)
 // color is returned as unpacked (16-bit) ISSE vector
+// FIXME: I think I can take a few instructions off here by 'packing my unpacking'
 VIZ_INLINE __m128i bsamp32(
 	const uint32_t *pTexture, 
 	unsigned int U0, unsigned int V0, 

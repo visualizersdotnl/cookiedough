@@ -4,17 +4,15 @@
 possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 for now:
+- optimize map blitter & try to get it OpenMP-compatible as a way to test it with Shadertoy ports too
+- create textured mapped version of map blitter
+- add some tricks to map blitter, like interlacing
+- bring new optimizations over to cspan() and bsamp32() (packing instructions)
 - fix OpenMP parallel loops (test on x86)
-- create map interpolator for speedy 2D and marching effects
-  + colors first, finish it with a custom ISSE loop!
-  + textured version
-  + interlaced looks cool to have as an option!
 - if that's done: try Nautilus
 
 to do w/priority:
 - garbage collect resources (and eradicate a ton of repetitive shit)
-- look if cspan() can be rid of the division in it's setup
-- look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
 - create sampling functions that don't require a prepare call first?
 - implement: Heartquake water
 

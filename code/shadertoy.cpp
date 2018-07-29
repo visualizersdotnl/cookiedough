@@ -66,7 +66,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				for (int step = 0; step < 42; ++step)
 					origin += direction*fPlasma(origin, time);
 
-				colors[iColor] = colMulA*fPlasma(origin+direction, time);
+				colors[iColor]  = colMulA*fPlasma(origin+direction, time);
 				colors[iColor] += colMulB*fPlasma(origin*0.5f, time); 
 				colors[iColor] *= 8.f - origin.x*0.5f;
 			}
