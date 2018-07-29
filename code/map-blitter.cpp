@@ -78,7 +78,7 @@ static void MapBlitter_Colors_Mono_Ref(uint32_t* pDest, uint32_t* pSrc)
 void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 {
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(8192);
+	const __m128i divisor = _mm_set1_epi16(32768/kFXMapDiv);
 
 	unsigned yIndex = 0;
 	for (int iY = 0; iY < kFXMapResY-1; ++iY)

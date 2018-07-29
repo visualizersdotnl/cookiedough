@@ -3,8 +3,9 @@
 
 #pragma once
 
-const size_t kFXMapResX = kResX/4;
-const size_t kFXMapResY = kResY/4;
+constexpr unsigned kFXMapDiv = 4;
+constexpr size_t kFXMapResX = kResX/kFXMapDiv;
+constexpr size_t kFXMapResY = kResY/kFXMapDiv;
 constexpr size_t kHalfFXMapResX = kFXMapResX/2;
 constexpr size_t kHalfFXMapResY = kFXMapResY/2;
 constexpr size_t kFXMapSize = kFXMapResX*kFXMapResY;
