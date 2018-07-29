@@ -31,9 +31,6 @@
     <Filter Include="Header Files\render">
       <UniqueIdentifier>{fa9b85ab-e8e3-40fc-8024-46536daa423d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\effects\OpenMP">
-      <UniqueIdentifier>{fde79a22-febc-4b5e-be0d-fe77f61ded15}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/3rdparty">
       <UniqueIdentifier>{14d0d8fe-65f1-40a1-89b5-0827532095da}</UniqueIdentifier>
     </Filter>
@@ -51,9 +48,6 @@
     </Filter>
     <Filter Include="Header Files\included-in-util">
       <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\filters &amp; blitters\OpenMP">
-      <UniqueIdentifier>{d3cab67a-6f36-40d1-beff-2fb5f93b4d6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,11 +114,11 @@
     <ClCompile Include="..\code\sincos-lut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\shadertoy.cpp">
-      <Filter>Source Files\effects\OpenMP</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\map-blitter.cpp">
-      <Filter>Source Files\filters &amp; blitters\OpenMP</Filter>
+      <Filter>Source Files\filters &amp; blitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\shadertoy.cpp">
+      <Filter>Source Files\effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

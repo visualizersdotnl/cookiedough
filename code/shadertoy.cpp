@@ -5,6 +5,7 @@
 	to do:
 		- fix a *working* OpenMP implementation of the plasma (are it the split writes in 64-bit?)
 		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
+		- just optimize!
 */
 
 #include "main.h"
@@ -12,19 +13,15 @@
 #include "image.h"
 // #include "bilinear.h"
 #include "shadertoy-util.h"
-
-static uint32_t *s_pFXMap = nullptr;
+#include "boxblur.h"
 
 bool Shadertoy_Create()
 {
-	s_pFXMap = static_cast<uint32_t*>(mallocAligned(kFXMapBytes, kCacheLine));
-
 	return true;
 }
 
 void Shadertoy_Destroy()
 {
-	freeAligned(s_pFXMap);
 }
 
 //
@@ -52,22 +49,22 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 	const Vector3 colMulA(0.11f, 0.15f, 0.29f);
 	const Vector3 colMulB(0.01f, 0.05f, 0.12f);
 
-	for (int iY = 0; iY < kFXMapResY; ++iY)
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
 	{
-		const int yIndex = iY*kFXMapResX;
-		for (int iX = 0; iX < kFXMapResX; iX += 4)
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				const Vector3 direction(Shadertoy::ToUV_FX(iX+iColor+30, iY+166, 0.5f+0.214f), 0.614f);
+				const Vector3 direction(Shadertoy::ToUV_FX_2x2(iX+iColor+30, iY+166, 0.5f+0.214f), 0.614f);
 
 				Vector3 origin = direction;
 				for (int step = 0; step < 42; ++step)
 					origin += direction*fPlasma(origin, time);
-
-				colors[iColor]  = colMulA*fPlasma(origin+direction, time);
-				colors[iColor] += colMulB*fPlasma(origin*0.5f, time); 
+				
+				colors[iColor] = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
 				colors[iColor] *= 8.f - origin.x*0.5f;
 			}
 
@@ -79,22 +76,86 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 void Plasma_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderPlasmaMap(s_pFXMap, time);
-	MapBlitter_Colors(pDest, s_pFXMap);
+	RenderPlasmaMap(g_pFXFine, time);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+//	HorizontalBoxBlur32(pDest, pDest, kResX, kResY, 0.01f);
 }
 
 //
-// Nautilus Redux by Weyland (Michiel v/d Berg)
-// FIXME: implement from Shadertoy (https://www.shadertoy.com/view/MdXGz4)
+// Nautilus by Weyland Yutani (Michiel v/d Berg)
 //
+// FIXME: use cosine LUT & eradicate redundant operations
+// FIXME: improve look using more recent code (and look at chat for that Aura for Laura SDF)
+// FIXME: more shader ports!
+//
+
+VIZ_INLINE float fNautilus(Vector3 position, float time)
+{
+	float cosX = cosf(cosf(position.x + time*0.125f)*position.x - cosf(position.y + time/9.f)*position.y);
+	float cosY = cosf(position.z/3.f*position.x - cosf(time/7.f)*position.y);
+	float cosZ = cosf(position.x + position.y/1.25f + time);
+	Vector3 squared(cosX*cosX, cosY*cosY, cosZ*cosZ);
+	return squared*Vector3(1.f) - 1.f;
+}
 
 static void RenderNautilusMap(uint32_t *pDest, float time)
 {
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
+	{
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
+		{	
+			Vector4 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f);
+
+				Vector3 origin(UV.x, UV.y+cosf(time*0.66f)*0.414f, 0.f);
+				Vector3 direction(UV.x + cosf(time)*0.314f, UV.y, 1.f);
+				direction *= 1.f/64.f;
+
+				Vector3 hit(0.f);
+
+				float march = 1.f;
+				float total = 0.f;
+				for (int iStep = 0; iStep < 64; ++iStep)
+				{
+					if (march > .4f) // FIXE: slow!
+					{
+						total = (1.f+iStep)*2.f;
+						hit = origin + direction*total;
+						march = fNautilus(hit, time);
+					}
+				}
+
+				float nOffs = .001f;
+				Vector3 normal(
+					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+
+				Vector3 vLight(0.f, 0.5f, -0.5f);
+//				float light = fNautilus(hit + vLight, time);
+				float light = normal*vLight;
+
+				Vector3 colorization(.1f-cosf(time/3.f)/19.f, .1f, .1f-cosf(time/14.f)/8.f);
+				colorization *= total*0.0314f;
+				colorization += light*0.1f;
+	
+				colors[iColor].vSIMD = colorization.vSIMD;
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
 }
 
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderNautilusMap(pDest, time);
-	// RenderNautilusMap(s_pFXMap, time);
-	// MapBlitter_Colors(pDest, s_pFXMap);
+	RenderNautilusMap(g_pFXFine, time);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 }

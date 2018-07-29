@@ -1,19 +1,40 @@
 
-// cookiedough -- old school 4x4 map interpolation blitters (mainly for computationally heavy effects)
+// cookiedough -- old school 2x2+4x4 map interpolation blitters plus buffers to use (for heavier effects)
+
+// IMPORTANT: assumes output resolution for blit destination!
 
 #pragma once
 
-constexpr unsigned kFXMapDiv = 4;
-constexpr size_t kFXMapResX = kResX/kFXMapDiv;
-constexpr size_t kFXMapResY = kResY/kFXMapDiv;
-constexpr size_t kHalfFXMapResX = kFXMapResX/2;
-constexpr size_t kHalfFXMapResY = kFXMapResY/2;
-constexpr size_t kFXMapSize = kFXMapResX*kFXMapResY;
-constexpr size_t kFXMapBytes = kFXMapSize*sizeof(uint32_t); // FIXME: will this do for UVs?
+namespace FXMAP
+{
+	// fine: 2x2
+	constexpr unsigned kFineDiv = 2;
+	constexpr size_t kFineResX = kResX/kFineDiv;
+	constexpr size_t kFineResY = kResY/kFineDiv;
+	constexpr size_t kHalfFineX = kFineResX/2;
+	constexpr size_t kHalfFineY = kFineResY/2;
+	constexpr size_t kFineSize = kFineResX*kFineResY;
+	constexpr size_t kFineBytes = kFineSize*sizeof(uint32_t);
+
+	// coarse: 4x4
+	constexpr unsigned kCoarseDiv = 4;
+	constexpr size_t kCoarseResX = kResX/kCoarseDiv;
+	constexpr size_t kCoarseResY = kResY/kCoarseDiv;
+	constexpr size_t kHalfCoarseX = kCoarseResX/2;
+	constexpr size_t kHalfCoarseY = kCoarseResY/2;
+	constexpr size_t kCoarseSize = kCoarseResX*kCoarseResY;
+	constexpr size_t kCoarseBytes = kCoarseSize*sizeof(uint32_t);
+}
+
+extern uint32_t *g_pFXFine;
+extern uint32_t *g_pFXCoarse;
 
 bool MapBlitter_Create();
 void MapBlitter_Destroy();
 
-// FIXME: assumes output resolution, might be a problem if shared render target is smaller or bigger
-void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc);
+void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc);
+void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc);
+
+// FIXME: implement
 // void MapBlitter_UV(...);
+// ...

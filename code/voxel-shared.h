@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel shared (FIXME: most of this (math) stuff can (and should) go and replaced by Std3DMath)
+// cookiedough -- voxel shared (FIXME: most of this (math) stuff can be replaced by Std3DMath)
 
 #pragma once
 

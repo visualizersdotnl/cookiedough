@@ -162,7 +162,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						newTime = timer.Get();
 						Demo_Draw(pDest, newTime, (newTime-oldTime)*100.f);
 						display.Update(pDest);
-
 					}
 
 					freeAligned(pDest);

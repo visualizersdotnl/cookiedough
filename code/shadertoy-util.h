@@ -4,13 +4,13 @@
 /*
 	FIXME:
 		- add sign() function
-		- add UV function that supplies offset and delta instead (only if dropping OpenMP)
+		- add UV function that supplies offset and delta instead (only makes sense if dropping OpenMP)
 */
 
 #pragma once
 
-// #include <omp.h>
 #include "map-blitter.h"
+using namespace FXMAP;
 
 namespace Shadertoy
 {
@@ -32,36 +32,31 @@ namespace Shadertoy
 		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
 
-	VIZ_INLINE const Vector2 ToUV_FX(unsigned iX, unsigned iY, float scale = 2.f)
+	VIZ_INLINE const Vector2 ToUV_FX_2x2(unsigned iX, unsigned iY, float scale = 2.f)
 	{
 		float fX = (float) iX;
 		float fY = (float) iY;
-		fX *= 1.f/kFXMapResX;
-		fY *= 1.f/kFXMapResY;
+		fX *= 1.f/FXMAP::kFineResX;
+		fY *= 1.f/FXMAP::kFineResY;
 		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
 
-	/*
-	VIZ_INLINE uint32_t ToPixel_Ref(Vector3 color)
+	VIZ_INLINE const Vector2 ToUV_FX_4x4(unsigned iX, unsigned iY, float scale = 2.f)
 	{
-		color.x = fabsf(color.x);
-		color.y = fabsf(color.y);
-		color.z = fabsf(color.z);
-		if (color.x > 1.f) color.x = 1.f;
-		if (color.y > 1.f) color.y = 1.f;
-		if (color.z > 1.f) color.z = 1.f;
-		int R = int(color.x*255.f);
-		int G = int(color.y*255.f);
-		int B = int(color.z*255.f);
-		return B | G<<8 | R<<16;
+		float fX = (float) iX;
+		float fY = (float) iY;
+		fX *= 1.f/FXMAP::kCoarseResX;
+		fY *= 1.f/FXMAP::kCoarseResY;
+		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
-	*/
 
 	const __m128 chanScale = _mm_set1_ps(255.f);
 
 	// - writes 4 pixels at once (their clamped absolute value)
 	// - assumes aligned input
-	// - FIXME: swap R and B here? / shift, not scale
+	// - FIXME: swap R and B here?
+	// - FIXME: shift instead of scale?
+	// - FIXME: use max. instead of absolute?
 	VIZ_INLINE __m128i ToPixel4(const Vector4 *colors)
 	{
 		__m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));

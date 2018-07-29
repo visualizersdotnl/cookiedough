@@ -1,45 +1,34 @@
 
 -- new list (2018) --
 
-possible announcement for the Shader Superfights Heavyweight GP 2019!
+** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
-for now:
-- optimize map blitter & try to get it OpenMP-compatible as a way to test it with Shadertoy ports too
-  (try 2x2?)
-- create textured mapped version of map blitter
+working on now:
+- check lutcosf()'s correctness
+- why does OpenMP work on x64 and completely fail on x86?
+- create texture mapping version of map blitters
 - add some tricks to map blitter, like interlacing
-- bring new optimizations over to cspan() and bsamp32() (packing instructions)
-- fix OpenMP parallel loops (test on x86)
-- if that's done: try Nautilus
-
-to do w/priority:
-- garbage collect resources (and eradicate a ton of repetitive shit)
-- create sampling functions that don't require a prepare call first?
-- implement: Heartquake water
-
-- verify: does your Std3DMath class inline correctly?
-  answer: seems like mostly, though I added some Win32 __forceinline here and there to help it along
+- bring new optimization over to bsamp32() (packing instructions)
 
 to do:
-- *parametrize* all relevant values so they can be Rocket-controlled (including map constants et cetera)
-- generic crash handler
-- application icon
-- SDL offers enough tools to create a configuration dialog
+- garbage collect images (instead of having to free them manually all the time)
+- implement: Heartquake water
+- find a way to parametrize relevant values of each effect in a readable way so they can be controlled
+  by Rocket
+ 
+low priority / remember:
+- app. icon
+- configuration dialog
+- Audio_Rocket_Sync() has 64 rows per pattern hardcoded momentarily
+- 2007 horizontal blur has bias flaw
 
-remember:
-- it's very possible to optimize cspan() to handle 4-pixels-at-once cases, but right now there's no priority
-- Audio_Rocket_Sync() now assumes 64 rows in a pattern
-- blur bias flaw (invisible, but it's there)
+effects to make:
+- create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
+- particles, requested by Nytrik (ask him what he likes best)
+- VHS distortion
+- true 3D?
 
-effect ideas:
-- #1) create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
-- #2) create a framework (class) that makes it very easy to port and thread Shadertoy/GLSL
-- #3) scaling routines
-- #4) particles, requested by Nytrik (ask him what he likes best)
-- #5) VHS distortion?
-- true 3D
-
-OSX/Linux build:
+for OSX/Linux build:
 - switch module player
 - CMake?
 

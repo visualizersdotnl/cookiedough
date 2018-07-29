@@ -23,6 +23,7 @@
 		- graphics by Nytrik/Cocoon
 		- C, C++, assembler & SSE: Superplek/Bypass
 		- soundtrack by Dascon/Deadliners
+		- shader support: Weyland Yutani
 
 	how to enjoy:
 		- turn up the volume, dim the lights
