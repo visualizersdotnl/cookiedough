@@ -4,7 +4,7 @@
 /*
 	FIXME:
 		- add sign() function
-		- add UV function that supplies offset and delta instead
+		- add UV function that supplies offset and delta instead (only if dropping OpenMP)
 */
 
 #pragma once

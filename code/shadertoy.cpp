@@ -3,8 +3,8 @@
 
 /*
 	to do:
-		- fix a *working* OpenMP implementation of the plasma
-		- create functions that allow me to loop over the UVs using increments instead of calculating it per pixel
+		- fix a *working* OpenMP implementation of the plasma (are it the split writes in 64-bit?)
+		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 */
 
 #include "main.h"
@@ -45,7 +45,7 @@ VIZ_INLINE float fPlasma(Vector3 point, float time)
 	return 1.f/Q_rsqrt(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
 
-void RenderPlasmaMap(uint32_t *pDest, float time)
+static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
@@ -81,4 +81,20 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderPlasmaMap(s_pFXMap, time);
 	MapBlitter_Colors(pDest, s_pFXMap);
+}
+
+//
+// Nautilus Redux by Weyland (Michiel v/d Berg)
+// FIXME: implement from Shadertoy (https://www.shadertoy.com/view/MdXGz4)
+//
+
+static void RenderNautilusMap(uint32_t *pDest, float time)
+{
+}
+
+void Nautilus_Draw(uint32_t *pDest, float time, float delta)
+{
+	RenderNautilusMap(pDest, time);
+	// RenderNautilusMap(s_pFXMap, time);
+	// MapBlitter_Colors(pDest, s_pFXMap);
 }

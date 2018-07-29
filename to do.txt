@@ -9,12 +9,11 @@ for now:
   + colors first, finish it with a custom ISSE loop!
   + textured version
   + interlaced looks cool to have as an option!
-- plasma 1 can definitely be more optimized, but is it worth it?
-- try Nautilus by Weyland!
+- if that's done: try Nautilus
 
 to do w/priority:
 - garbage collect resources (and eradicate a ton of repetitive shit)
-- look if cspan() can be optimized (I think it's very possible)
+- look if cspan() can be rid of the division in it's setup
 - look if bsamp*() can be optimized, I think I can do with only a single AND-clamp!
 - create sampling functions that don't require a prepare call first?
 - implement: Heartquake water
@@ -29,6 +28,7 @@ to do:
 - SDL offers enough tools to create a configuration dialog
 
 remember:
+- it's very possible to optimize cspan() to handle 4-pixels-at-once cases, but right now there's no priority
 - Audio_Rocket_Sync() now assumes 64 rows in a pattern
 - blur bias flaw (invisible, but it's there)
 

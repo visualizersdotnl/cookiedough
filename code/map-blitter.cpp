@@ -15,7 +15,7 @@ void MapBlitter_Destroy()
 
 }
 
-// FIXME: tight ISSE loop!
+// FIXME: tight ISSE loop (use the 4-pixels-at-a-time packing method!)
 void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 {
 	for (int iY = 0; iY < kFXMapResY; ++iY)
@@ -24,7 +24,7 @@ void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 		for (int iX = 1; iX < kFXMapResX; ++iX)
 		{
 			__m128i to = c2vISSE(pSrc[iX]);
-			cspanISSE_noclip(pDest, 1, 4, from, to);
+			cspanISSE_noclip_4(pDest, from, to);
 			from = to;
 
 			pDest += 4;

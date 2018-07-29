@@ -1,6 +1,12 @@
 
 // cookiedough -- cspan() & friends: colored span draw functions
 
+/*
+	possible optimizations (FIXME):
+		- write 4 pixels at a time (using the packing optimally, like in shadertoy-util.h)
+		- 
+*/
+
 #ifndef _CSPAN_H_
 #define _CSPAN_H_
 
@@ -98,6 +104,28 @@ VIZ_INLINE void cspanISSE_noclip(
 		pDest += destIncr;
 		A = _mm_add_epi32(A, step);
 	}
+}
+
+// copy of cspanISSE_noclip() that handles only 4 horizontal pixels
+// FIXME: it's a test case for an optimization and I temporarily use it in map-blitter.cpp
+VIZ_INLINE void cspanISSE_noclip_4(
+	uint32_t *pDest,
+	__m128i A, __m128i B) // colors, unpacked to 16-bit	
+{
+	const __m128i zero = _mm_setzero_si128();
+	const __m128i divisor = _mm_set1_epi16(32768/4);
+	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
+	const __m128i step = _mm_madd_epi16(delta, divisor);
+	A = _mm_unpacklo_epi16(A, zero);
+	A = _mm_slli_epi32(A, 15);
+
+	const __m128i pixel1 = _mm_srli_epi32(A, 15); A = _mm_add_epi32(A, step);
+	const __m128i pixel2 = _mm_srli_epi32(A, 15); A = _mm_add_epi32(A, step);
+	const __m128i AB = _mm_packs_epi32(pixel1, pixel2);
+	const __m128i pixel3 = _mm_srli_epi32(A, 15); A = _mm_add_epi32(A, step);
+	const __m128i pixel4 = _mm_srli_epi32(A, 15);
+	const __m128i CD = _mm_packs_epi32(pixel3, pixel4);
+	*reinterpret_cast<__m128i*>(pDest) = _mm_packus_epi16(AB, CD);
 }
 
 #endif // _CSPAN_H_

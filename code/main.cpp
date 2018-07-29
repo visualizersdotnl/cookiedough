@@ -13,7 +13,7 @@
 	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
 */
 
-// cookiedough (2009-2018) -- lo-fi demoscene testbed
+// codename: cookiedough (2009-2018)
 // property of visualizers.nl (http://www.visualizers.nl)
 
 // third party:
@@ -26,7 +26,7 @@
 // - GNU Rocket depends on ws2_32.lib
 // - use multi-threaded CRT (non-DLL)
 // - disable C++ exceptions
-// - fast floating point model (i.e. single precision)
+// - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
 
 // important to know:
