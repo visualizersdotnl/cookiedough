@@ -56,8 +56,8 @@ static void MapBlitter_Colors_Mono_Ref(uint32_t* pDest, uint32_t* pSrc)
 			uint32_t *pCopy = pDest;
 			for (int blockY = 0; blockY < 4; ++blockY)
 			{
-				int colA = (startX)>>15;
-				int colB = (endX)>>15;
+				int colA = startX>>15;
+				int colB = endX>>15;
 				cspanISSE_noclip_4(pCopy, c2vISSE(colA*0x010101), c2vISSE(colB*0x010101));
 				pCopy  += kResX;
 				startX += dStartX;
@@ -72,9 +72,9 @@ static void MapBlitter_Colors_Mono_Ref(uint32_t* pDest, uint32_t* pSrc)
 	}
 }
 
-// FIXME, optimize:
-// - unroll innerloop and write 4 colors at a time
-// - remember, there's a sliding window here that you're not yet using
+// FIXME: 
+// - try OpenMP
+// - use sliding window
 void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 {
 	const __m128i zero = _mm_setzero_si128();
@@ -104,17 +104,26 @@ void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 			__m128i fpB = _mm_unpacklo_epi16(colB, zero);
 			fpB = _mm_slli_epi32(fpB, 15);
 
-			uint32_t *pCopy = pDest;
+			__m128i *pCopy = reinterpret_cast<__m128i*>(pDest);
 			for (int blockY = 0; blockY < 4; ++blockY)
 			{
-				cspanISSE_noclip_4(pCopy, 
-					_mm_packs_epi32(_mm_srli_epi32(fpA, 15), zero), 
-					_mm_packs_epi32(_mm_srli_epi32(fpB, 15), zero));
-
+				__m128i delta = _mm_sub_epi32(fpB, fpA);
+				delta = _mm_srli_epi32(delta, 15);
+				__m128i step = _mm_madd_epi16(delta, divisor);
+				__m128i color = fpA;
+				__m128i pixel1 = _mm_srli_epi32(color, 15); 
+				color = _mm_add_epi32(color, step);
+				__m128i pixel2 = _mm_srli_epi32(color, 15); 
+				color = _mm_add_epi32(color, step);
+				__m128i AB = _mm_packs_epi32(pixel1, pixel2);
+				__m128i pixel3 = _mm_srli_epi32(color, 15); 
+				color = _mm_add_epi32(color, step);
+				__m128i pixel4 = _mm_srli_epi32(color, 15);
+				__m128i CD = _mm_packs_epi32(pixel3, pixel4);
+				*reinterpret_cast<__m128i*>(pCopy) = _mm_packus_epi16(AB, CD);
 				fpA = _mm_add_epi32(fpA, stepL);
 				fpB = _mm_add_epi32(fpB, stepR);
-
-				pCopy  += kResX;
+				pCopy += kResX>>2;
 			}
 
 			pDest += 4;
@@ -124,34 +133,6 @@ void MapBlitter_Colors(uint32_t* pDest, uint32_t* pSrc)
 		yIndex += kFXMapResX;
 	}
 }
-
-#if 0
-// copy of cspanISSE_noclip() that handles only 4 horizontal pixels
-// FIXME: it's a test case for an optimization and I temporarily use it in map-blitter.cpp
-// FIXME: optimize to interpolate two pixels at a time
-VIZ_INLINE void cspanISSE_noclip_4(
-	uint32_t *pDest,
-	__m128i A, __m128i B) // colors, unpacked to 16-bit	
-{
-	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(8192);
-	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
-	const __m128i step = _mm_madd_epi16(delta, divisor);
-	A = _mm_unpacklo_epi16(A, zero);
-	A = _mm_slli_epi32(A, 15);
-		
-	const __m128i pixel1 = _mm_srli_epi32(A, 15); 
-	A = _mm_add_epi32(A, step);
-	const __m128i pixel2 = _mm_srli_epi32(A, 15); 
-	A = _mm_add_epi32(A, step);
-	const __m128i AB = _mm_packs_epi32(pixel1, pixel2);
-	const __m128i pixel3 = _mm_srli_epi32(A, 15); 
-	A = _mm_add_epi32(A, step);
-	const __m128i pixel4 = _mm_srli_epi32(A, 15);
-	const __m128i CD = _mm_packs_epi32(pixel3, pixel4);
-	*reinterpret_cast<__m128i*>(pDest) = _mm_packus_epi16(AB, CD);
-}
-#endif
 
 /*
 void MapBlitter_UV(...)

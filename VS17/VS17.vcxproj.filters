@@ -52,6 +52,9 @@
     <Filter Include="Header Files\included-in-util">
       <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\filters &amp; blitters\OpenMP">
+      <UniqueIdentifier>{d3cab67a-6f36-40d1-beff-2fb5f93b4d6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\demo.cpp">
@@ -121,7 +124,7 @@
       <Filter>Source Files\effects\OpenMP</Filter>
     </ClCompile>
     <ClCompile Include="..\code\map-blitter.cpp">
-      <Filter>Source Files\filters &amp; blitters</Filter>
+      <Filter>Source Files\filters &amp; blitters\OpenMP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

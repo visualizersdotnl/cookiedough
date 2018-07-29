@@ -5,6 +5,7 @@ possible announcement for the Shader Superfights Heavyweight GP 2019!
 
 for now:
 - optimize map blitter & try to get it OpenMP-compatible as a way to test it with Shadertoy ports too
+  (try 2x2?)
 - create textured mapped version of map blitter
 - add some tricks to map blitter, like interlacing
 - bring new optimizations over to cspan() and bsamp32() (packing instructions)
