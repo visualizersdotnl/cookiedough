@@ -92,11 +92,11 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
-	float cosX = cosf(cosf(position.x + time/8.f)*position.x - cosf(position.y + time/9.f)*position.y);
-	float cosY = cosf(position.z/3.f*position.x - cosf(time/7.f)*position.y);
+	float cosX = cosf(cosf(position.x + time*0.125f)*position.x - cosf(position.y + time*0.11f)*position.y);
+	float cosY = cosf(position.z/3.f*position.x - cosf(time*0.142)*position.y);
 	float cosZ = cosf(position.x + position.y + position.z/1.25f + time);
 	float total = cosX*cosX + cosY*cosY + cosZ*cosZ;
-	return total-1.f;
+	return total-0.814f; // -1.f
 }
 
 // supposed "Aura for Laura" function
@@ -109,6 +109,11 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
+	const Vector3 colorization(
+		.1f-cosf(time*0.33f)*0.05f,
+		.1f, 
+		.1314f+cosf(time*0.08f)*.0125f); 
+
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
 	{
@@ -118,10 +123,12 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f);
+				// trick learned: larger grids create these Rez-style depths
+//				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY,  1.f);
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, -3.14f);
 
-				Vector3 origin(cosf(time)*0.5f, -sinf(time)*0.5f, 0.f);
-				Vector3 direction(UV.x, UV.y + origin.x*0.25f, 1.f);
+				Vector3 origin(0.f);
+				Vector3 direction(UV.x, UV.y, 1.f);
 				direction *= 1.f/64.f;
 
 				Vector3 hit(0.f);
@@ -138,29 +145,26 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 					}
 				}
 
-				float nOffs = .1f;
+				float nOffs = .01f;
 				Vector3 normal(
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-				Vector3 light(0.f, 0.5f, -0.5f);
+				Vector3 light(0.f, 0.5f, -.5f);
 				float origVerLight = normal*light; // std::max(0.f, normal*light);
-
-				Vector3 colorization(
-					.1f-cosf(time*0.33f)*0.05f,
-					.1f, 
-					.1314f+cosf(time*0.08f)*.0125f); 
 				
-				colorization *= total/41.f;
-				colorization += origVerLight;
+				Vector3 color = colorization;
+				color *= total/41.f;
+//				color *= total*0.1f;
+				color += origVerLight;
 
 //				const float gamma = 1.88f;
 //				colorization.x = powf(colorization.x, gamma);
 //				colorization.y = powf(colorization.y, gamma);
 //				colorization.z = powf(colorization.x, gamma);
 				
-				colors[iColor].vSIMD = colorization.vSIMD;
+				colors[iColor].vSIMD = color.vSIMD;
 			}
 
 			const int index = (yIndex+iX)>>2;
