@@ -109,6 +109,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
+	// FIXME: parametrize (or at least a blend between sets)
 	const Vector3 colorization(
 		.1f-lutcosf(time/3.f)/19.f, 
 		.1f, 
@@ -123,13 +124,13 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 1.614f);
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				direction.Normalize();
 
-				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.x, direction.y);
+				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.y, direction.x);
 
 				Vector3 hit(0.f);
 
@@ -138,7 +139,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				{
 					hit = origin + direction*total;
 					march = fNautilus(hit, time);
-					total += march*0.7f;
+					total += march*(0.314f+0.314f);
 
 //					if (fabsf(march) < 0.001f*(total*0.125f + 1.f) || total>20.f)
 //						break;
@@ -149,21 +150,27 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+//				normal.Normalize();
+				normal *= 1.f/normal.Length();
 
-				float diffuse = -0.5f*normal.z + -0.5f*normal.y + 0.5f*normal.z;
+//				float diffuse = normal.x*0.f + normal.y*0.5f + normal.z*-0.5f;
+//				float diffuse = normal.x*0.3f + normal.y*0.2f + normal.z*0.5f;
+//				float diffuse = normal.z*1.f;
+				float diffuse = normal.z*0.1f;
+				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
-				// gebruik normal en hit om slopes uit te rekenen!				
+//				Vector3 color(diffuse*0.1f);
+				Vector3 color(diffuse);
+				color += colorization*(1.56f*total + specular);
+				color += specular*0.314f;
 
-				Vector3 color(diffuse*0.1f);
-				color += colorization*(1.56f*total);
-
-				const float gamma = 2.20f;
+				const float gamma = 2.22f;
 				color.x = powf(color.x, gamma);
 				color.y = powf(color.y, gamma);
 				color.z = powf(color.z, gamma);
 
-//				colors[iColor].vSIMD = color.vSIMD;
-				colors[iColor].vSIMD = Vector3(diffuse).vSIMD;
+				colors[iColor].vSIMD = color.vSIMD;
+//				colors[iColor].vSIMD = Vector3(diffuse+specular).vSIMD;
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -183,7 +190,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	RenderNautilusMap_2x2(g_pFXFine, time);
 	
 	// FIXME: this looks amazing if timed!
-	// HorizontalBoxBlur32(g_pFXFine, g_pFXFine, kFineResX, kFineResY, fabsf(0.0314f*2.f*sin(time)));
+	// HorizontalBoxBlur32(g_pFXFine, g_pFXFine, kFineResX, kFineResY, fabsf(0.1314f*sin(time)));
 	
 	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 

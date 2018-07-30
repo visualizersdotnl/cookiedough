@@ -91,10 +91,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 //	Twister_Draw(pDest, timer, delta);
 //	Landscape_Draw(pDest, timer, delta);
-	Ball_Draw(pDest, timer, delta);
+//	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 //	Plasma_Draw(pDest, timer, delta);
-//	Nautilus_Draw(pDest, timer, delta);
+	Nautilus_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600
 	uint32_t *pWrite = pDest + 800*10;
