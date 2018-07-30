@@ -10,7 +10,7 @@ working on now:
 - why does OpenMP work on x64 and completely fail on x86?
 
 to do:
-- create texture mapping version of map blitters (?)W
+- create texture mapping version of map blitters (?)
 - add some tricks to map blitter, like interlacing
 - garbage collect images (instead of having to free them manually all the time)
 - implement: Heartquake water

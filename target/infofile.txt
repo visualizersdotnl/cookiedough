@@ -18,13 +18,13 @@
 		- decent, recent x64 CPU (4-8 cores recommended)
 		- Windows 10 (not tested on earlier versions)
 		- a working default audio adapter
-		- a GPU that can handle your desktop environment will do
-
+		- low grade integrated graphics will do
+		
 	"who's doing it?"
 		- graphics by Nytrik/Cocoon
 		- C, C++, assembler & SSE: Superplek/Bypass
 		- soundtrack by Dascon/Deadliners
-		- shader support: Weyland Yutani
+		- shading support by Weyland Yutani
 
 	how to enjoy:
 		- turn up the volume, dim the lights
@@ -36,7 +36,8 @@
 		- BASS sound system by Ian Luck
 		- Std3DMath by http://www.visualizers.nl
 
-	** Q&A **
+
+	Q&A time!
 
 	Q: who is "fucking Kurt Bevacqua"? 
 	A: https://en.wikipedia.org/wiki/Kurt_Bevacqua
