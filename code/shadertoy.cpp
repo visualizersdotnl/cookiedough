@@ -15,13 +15,20 @@
 #include "shadertoy-util.h"
 #include "boxblur.h"
 
+static uint32_t *s_pEnvMap1 = nullptr;
+
 bool Shadertoy_Create()
 {
+	s_pEnvMap1 = Image_Load32("assets/shadertoy/nauti_env.png");
+	if (nullptr == s_pEnvMap1)
+		return false;
+	
 	return true;
 }
 
 void Shadertoy_Destroy()
 {
+	Image_Free(s_pEnvMap1);
 }
 
 //
@@ -91,31 +98,28 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// Nautilus by Michiel v/d Berg (https://www.shadertoy.com/view/MdXGz4)
-//
-// FIXME: eradicate redundant operations
-// FIXME: add fast noise function (see chat with Michiel)
-// FIXME: improve look using more recent code (and look at chat for that Aura for Laura SDF)
+// Nautilus Redux by Michiel v/d Berg
 //
 
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
 	float cosX, cosY, cosZ;
-	cosX = lutcosf(lutcosf(position.x + time*0.125f)*position.x - lutcosf(position.y + time*0.11f)*position.y);
-	cosY = lutcosf(position.z/3.f*position.x - lutcosf(time*0.142f)*position.y);
+	float cosTime7 = lutcosf(time/7.f); // ** i'm getting an internal compiler error if I write this where it should be **
+	cosX = lutcosf(lutcosf(position.x + time*0.125f)*position.x - lutcosf(position.y + time/9.f)*position.y);
+	cosY = lutcosf(position.z*0.33f*position.x - cosTime7*position.y);
 	cosZ = lutcosf(position.x + position.y + position.z/1.25f + time);
-	const float total = cosX*cosX + cosY*cosY + cosZ*cosZ;
-	return total-0.814f; // -1.f
-}
+	const float dotted = cosX*cosX + cosY*cosY + cosZ*cosZ;
+	return dotted*0.5f - .7f;
+};
 
 static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	const Vector3 colorization(
-		.1f-cosf(time*0.33f)*0.05f,
+		.1f-lutcosf(time/3.f)/19.f, 
 		.1f, 
-		.1314f+cosf(time*0.08f)*.0125f); 
+		.1f+lutcosf(time/14.f)/8.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -126,52 +130,45 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				// trick learned: larger grids create these Rez-style depths
-//				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY,  1.f);
-				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, -3.14f);
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 1.614f);
 
 				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(kPI*cos(time*0.036234f), direction.x, direction.z);
-				direction *= 1.f/48.f;
+				direction.Normalize();
+
+				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.x, direction.y);
 
 				Vector3 hit(0.f);
 
-				float march = 0.5f;
-				float total = 1.f;
-				for (int iStep = 1; iStep <= 64*2; ++iStep)
+				float march, total = 0.f;
+				for (int iStep = 0; iStep < 64; ++iStep)
 				{
-					if (march > .4f) // FIXE: slow!
-					{
-						total = iStep*2.f;
-						hit = origin + direction*total;
-						march = fNautilus(hit, time);
+					hit = origin + direction*total;
+					march = fNautilus(hit, time);
+					total += march*0.7f;
 
-						if (march <= kEpsilon)
-							break;
-					}
+//					if (fabsf(march) < 0.001f*(total*0.125f + 1.f) || total>20.f)
+//						break;
 				}
 
-				float nOffs = .012f;
+				float nOffs = 0.001f;
 				Vector3 normal(
-					0.f, // march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-//				Vector3 light(0.f, 0.5f, -.5f);
-//				float origVerLight = normal*light; // std::max(0.f, normal*light);
-				float origVerLight = normal.z*-0.5f + normal.y*0.5f*lutsinf(time*0.44f) + normal.z*0.5f;
+				// Vector3 lightA(0.f, 0.f, -0.5f), lightB(0.f, -0.5f, 0.5f);
+				// float diffuse = std::max(0.f, lightA*normal) + std::max(0.f, lightB*normal);
+				float diffuse = -0.5f*normal.z + -0.5f*normal.y + 0.5f*normal.z;
 				
-				Vector3 color = colorization;
-				color *= total/32.f;
-//				color *= total*0.1f;
-				color += origVerLight;
+				Vector3 color(diffuse*0.1f);
+				color += colorization*(1.56f*total);
 
-				const float gamma = 2.2f;
+				const float gamma = 2.20f;
 				color.x = powf(color.x, gamma);
 				color.y = powf(color.y, gamma);
 				color.z = powf(color.z, gamma);
-				
+
 				colors[iColor].vSIMD = color.vSIMD;
 			}
 
@@ -181,69 +178,10 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 	}
 }
 
-// FIXME: always out of date, the 2x2 version is being worked on
 static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 {
-	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
-
-	const Vector3 colorization(
-		.1f-cosf(time*0.33f)*0.05f,
-		.1f, 
-		.1314f+cosf(time*0.08f)*.0125f); 
-
-	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < kCoarseResY; ++iY)
-	{
-		const int yIndex = iY*kCoarseResX;
-		for (int iX = 0; iX < kCoarseResX; iX += 4)
-		{	
-			Vector4 colors[4];
-			for (int iColor = 0; iColor < 4; ++iColor)
-			{
-				auto UV = Shadertoy::ToUV_FX_4x4(iColor+iX, iY, -3.14f);
-
-				Vector3 origin(0.f);
-				Vector3 direction(UV.x, UV.y, 1.f);
-				direction *= 1.f/64.f;
-
-				Vector3 hit(0.f);
-
-				float march = 1.f;
-				float total = 0.f;
-				for (int iStep = 0; iStep < 64*2; ++iStep)
-				{
-					if (march > .4f) // FIXE: slow!
-					{
-						total = (1.f+iStep)*2.f;
-						hit = origin + direction*total;
-						march = fNautilus(hit, time);
-					}
-				}
-
-				float nOffs = .015f;
-				Vector3 normal(
-					0.f, // march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
-					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
-					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-
-				float origVerLight = normal.z*-0.5f + normal.y*0.5f + normal.z*0.5f;
-				
-				Vector3 color = colorization;
-				color *= total/41.f;
-				color += origVerLight;
-
-				// const float gamma = 1.88f;
-				// color.x = powf(color.x, gamma);
-				// color.y = powf(color.y, gamma);
-				// color.z = powf(color.z, gamma);
-				
-				colors[iColor].vSIMD = color.vSIMD;
-			}
-
-			const int index = (yIndex+iX)>>2;
-			pDest128[index] = Shadertoy::ToPixel4(colors);
-		}
-	}
+	// FIXME: implement
+	VIZ_ASSERT(false);
 }
 
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)

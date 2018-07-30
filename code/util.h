@@ -78,7 +78,20 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);
 
 // convert 32-bit color to unpacked (16-bit) ISSE vector
-VIZ_INLINE __m128i c2vISSE(uint32_t color) { return  _mm_unpacklo_epi8(_mm_cvtsi32_si128(color), _mm_setzero_si128()); }
+VIZ_INLINE __m128i c2vISSE(uint32_t color) 
+{ 
+	return  _mm_unpacklo_epi8(
+		_mm_cvtsi32_si128(color), _mm_setzero_si128()); 
+}
+
+// unpack to floats (SSE 4.1)
+VIZ_INLINE __m128 c2vfISSE(uint32_t color) 
+{ 
+	return  
+		_mm_cvtepi32_ps(
+			_mm_cvtepu8_epi32(_mm_cvtsi32_si128(color))
+			); 
+}
 
 // convert unpacked (16-bit) ISSE vector to 32-bit color
 VIZ_INLINE uint32_t v2cISSE(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); }
