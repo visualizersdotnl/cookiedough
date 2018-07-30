@@ -67,8 +67,6 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					UV.y,
 					dirSin*UV.x + dirCos*0.6f);
 
-//				Vector3 direction(Shadertoy::ToUV_FX_2x2(iX+iColor, iY, 2.f), 0.6f);
-
 				Vector3 origin = direction;
 				for (int step = 0; step < 46; ++step)
 					origin += direction*fPlasma(origin, time);
@@ -128,9 +126,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				direction.Normalize();
-
 				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.y, direction.x);
+				direction *= 1.f/direction.Length();
 
 				Vector3 hit(0.f);
 
@@ -150,16 +147,12 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-//				normal.Normalize();
 				normal *= 1.f/normal.Length();
 
-//				float diffuse = normal.x*0.f + normal.y*0.5f + normal.z*-0.5f;
-//				float diffuse = normal.x*0.3f + normal.y*0.2f + normal.z*0.5f;
 //				float diffuse = normal.z*1.f;
 				float diffuse = normal.z*0.1f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
-//				Vector3 color(diffuse*0.1f);
 				Vector3 color(diffuse);
 				color += colorization*(1.56f*total + specular);
 				color += specular*0.314f;
@@ -170,7 +163,6 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				color.z = powf(color.z, gamma);
 
 				colors[iColor].vSIMD = color.vSIMD;
-//				colors[iColor].vSIMD = Vector3(diffuse+specular).vSIMD;
 			}
 
 			const int index = (yIndex+iX)>>2;
