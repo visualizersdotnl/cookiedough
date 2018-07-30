@@ -5,7 +5,7 @@
 	to do:
 		- fix a *working* OpenMP implementation of the plasma (are it the split writes in 64-bit?)
 		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
-		- just optimize!
+		- just optimize as needed, since all of this is a tad slow
 */
 
 #include "main.h"
@@ -145,14 +145,15 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 					}
 				}
 
-				float nOffs = .01f;
+				float nOffs = .012f;
 				Vector3 normal(
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-				Vector3 light(0.f, 0.5f, -.5f);
-				float origVerLight = normal*light; // std::max(0.f, normal*light);
+//				Vector3 light(0.f, 0.5f, -.5f);
+//				float origVerLight = normal*light; // std::max(0.f, normal*light);
+				float origVerLight = normal.z*-0.5f + normal.y*0.5f + normal.z*0.5f;
 				
 				Vector3 color = colorization;
 				color *= total/41.f;
@@ -173,8 +174,75 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 	}
 }
 
+static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
+{
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	const Vector3 colorization(
+		.1f-cosf(time*0.33f)*0.05f,
+		.1f, 
+		.1314f+cosf(time*0.08f)*.0125f); 
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kCoarseResY; ++iY)
+	{
+		const int yIndex = iY*kCoarseResX;
+		for (int iX = 0; iX < kCoarseResX; iX += 4)
+		{	
+			Vector4 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_4x4(iColor+iX, iY, -3.14f);
+
+				Vector3 origin(0.f);
+				Vector3 direction(UV.x, UV.y, 1.f);
+				direction *= 1.f/64.f;
+
+				Vector3 hit(0.f);
+
+				float march = 1.f;
+				float total = 0.f;
+				for (int iStep = 0; iStep < 64*2; ++iStep)
+				{
+					if (march > .4f) // FIXE: slow!
+					{
+						total = (1.f+iStep)*2.f;
+						hit = origin + direction*total;
+						march = fNautilus(hit, time);
+					}
+				}
+
+				float nOffs = .015f;
+				Vector3 normal(
+					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+
+				float origVerLight = normal.z*-0.5f + normal.y*0.5f + normal.z*0.5f;
+				
+				Vector3 color = colorization;
+				color *= total/41.f;
+				color += origVerLight;
+
+				// const float gamma = 1.88f;
+				// color.x = powf(color.x, gamma);
+				// color.y = powf(color.y, gamma);
+				// color.z = powf(color.x, gamma);
+				
+				colors[iColor].vSIMD = color.vSIMD;
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderNautilusMap(g_pFXFine, time);
-	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+//	RenderNautilusMap(g_pFXFine, time);
+//	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+
+	RenderNautilusMap_4x4(g_pFXCoarse, time);
+	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
 }

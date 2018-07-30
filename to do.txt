@@ -3,13 +3,15 @@
 
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
-working on now:
+with 100% clarity:
 - polar: write 4 pixels at a time
+- bring new optimization over to bsamp32() (packing instructions)
 - check lutcosf()'s correctness
 - why does OpenMP work on x64 and completely fail on x86?
+
+working on now:
 - create texture mapping version of map blitters
 - add some tricks to map blitter, like interlacing
-- bring new optimization over to bsamp32() (packing instructions)
 
 to do:
 - garbage collect images (instead of having to free them manually all the time)
