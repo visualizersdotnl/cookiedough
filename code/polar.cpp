@@ -60,21 +60,23 @@ void Polar_Destroy()
 
 void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
 {
+	// FIXME: write 4 pixels at a time
 	int *pRead = (!inverse) ? s_pPolarMap : s_pInvPolarMap;
-	for (unsigned int iPixel = 0; iPixel < kResX*kResY; ++iPixel)
+	for (unsigned int iPixel = 0; iPixel < (kResX*kResY)/1; ++iPixel)
 	{
-		const int U = *pRead++;
-		const int V = *pRead++;
+		{
+			const int U = *pRead++;
+			const int V = *pRead++;
 
-		// prepare UVs
-		const unsigned int U0 = U >> 8;
-		const unsigned int V0 = (V >> 8) * kTargetResX; // remove multiply (FIXME)
-		const unsigned int fracU = (U & 0xff) * 0x01010101;
-		const unsigned int fracV = (V & 0xff) * 0x01010101;
+			// prepare UVs
+			const unsigned int U0 = U >> 8;
+			const unsigned int V0 = (V >> 8) * kTargetResX; // remove multiply (FIXME)
+			const unsigned int fracU = (U & 0xff) * 0x01010101;
+			const unsigned int fracV = (V & 0xff) * 0x01010101;
 
-		// sample & store
-		const __m128i color = bsamp32(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
-		pDest[iPixel] = v2cISSE(color);
-//		pDest[iPixel] = pSrc[U0+V0];
+			// sample & store
+			const __m128i color = bsamp32(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
+			pDest[iPixel] = v2cISSE(color);
+		}
 	}
 }

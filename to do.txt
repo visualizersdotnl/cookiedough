@@ -4,6 +4,7 @@
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
 working on now:
+- polar: write 4 pixels at a time
 - check lutcosf()'s correctness
 - why does OpenMP work on x64 and completely fail on x86?
 - create texture mapping version of map blitters
@@ -26,6 +27,7 @@ effects to make:
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
 - particles, requested by Nytrik (ask him what he likes best)
 - VHS distortion
+- font writer
 - true 3D?
 
 for OSX/Linux build:

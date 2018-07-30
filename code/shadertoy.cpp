@@ -120,8 +120,8 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f);
 
-				Vector3 origin(0.f);
-				Vector3 direction(UV.x, UV.y, 1.f);
+				Vector3 origin(cosf(time)*0.5f, -sinf(time)*0.5f, 0.f);
+				Vector3 direction(UV.x, UV.y + origin.x*0.25f, 1.f);
 				direction *= 1.f/64.f;
 
 				Vector3 hit(0.f);
@@ -144,21 +144,21 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-				Vector3 light(0.f, 0.5f, 0.6f);
+				Vector3 light(0.f, 0.5f, -0.5f);
 				float origVerLight = normal*light; // std::max(0.f, normal*light);
 
 				Vector3 colorization(
-					.1f-cosf(time/3.f)/19.f,
+					.1f-cosf(time*0.33f)*0.05f,
 					.1f, 
-					.1f+cosf(time/14.f)/8.f); 
+					.1314f+cosf(time*0.08f)*.0125f); 
 				
 				colorization *= total/41.f;
 				colorization += origVerLight;
 
-				// const float gamma = 2.20f;
-				// colorization.x = powf(colorization.x, gamma);
-				// colorization.y = powf(colorization.y, gamma);
-				// colorization.z = powf(colorization.x, gamma);
+//				const float gamma = 1.88f;
+//				colorization.x = powf(colorization.x, gamma);
+//				colorization.y = powf(colorization.y, gamma);
+//				colorization.z = powf(colorization.x, gamma);
 				
 				colors[iColor].vSIMD = colorization.vSIMD;
 			}
