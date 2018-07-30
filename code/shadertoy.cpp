@@ -93,7 +93,7 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 //
 // Nautilus by Michiel v/d Berg (https://www.shadertoy.com/view/MdXGz4)
 //
-// FIXME: radicate redundant operations
+// FIXME: eradicate redundant operations
 // FIXME: add fast noise function (see chat with Michiel)
 // FIXME: improve look using more recent code (and look at chat for that Aura for Laura SDF)
 //
@@ -108,13 +108,7 @@ VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 	return total-0.814f; // -1.f
 }
 
-// supposed "Aura for Laura" function
-VIZ_INLINE float fLaura(const Vector3 &position)
-{
-	return cosf(position.x)+cosf(position.y*1.f)+cosf(position.z)+cosf(position.y*20.f)*0.5f;
-}
-
-static void RenderNautilusMap(uint32_t *pDest, float time)
+static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
@@ -137,20 +131,24 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, -3.14f);
 
 				Vector3 origin(0.f);
-				Vector3 direction(UV.x, UV.y, 1.f);
-				direction *= 1.f/64.f;
+				Vector3 direction(UV.x, UV.y, 1.f); 
+				Shadertoy::rot2D(kPI*cos(time*0.036234f), direction.x, direction.z);
+				direction *= 1.f/48.f;
 
 				Vector3 hit(0.f);
 
-				float march = 1.f;
-				float total = 0.f;
-				for (int iStep = 0; iStep < 64*2; ++iStep)
+				float march = 0.5f;
+				float total = 1.f;
+				for (int iStep = 1; iStep <= 64*2; ++iStep)
 				{
 					if (march > .4f) // FIXE: slow!
 					{
-						total = (1.f+iStep)*2.f;
+						total = iStep*2.f;
 						hit = origin + direction*total;
 						march = fNautilus(hit, time);
+
+						if (march <= kEpsilon)
+							break;
 					}
 				}
 
@@ -162,17 +160,17 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 
 //				Vector3 light(0.f, 0.5f, -.5f);
 //				float origVerLight = normal*light; // std::max(0.f, normal*light);
-				float origVerLight = normal.z*-0.5f + normal.y*0.5f + normal.z*0.5f;
+				float origVerLight = normal.z*-0.5f + normal.y*0.5f*lutsinf(time*0.44f) + normal.z*0.5f;
 				
 				Vector3 color = colorization;
-				color *= total/41.f;
+				color *= total/32.f;
 //				color *= total*0.1f;
 				color += origVerLight;
 
-//				const float gamma = 1.88f;
-//				colorization.x = powf(colorization.x, gamma);
-//				colorization.y = powf(colorization.y, gamma);
-//				colorization.z = powf(colorization.x, gamma);
+				const float gamma = 2.2f;
+				color.x = powf(color.x, gamma);
+				color.y = powf(color.y, gamma);
+				color.z = powf(color.z, gamma);
 				
 				colors[iColor].vSIMD = color.vSIMD;
 			}
@@ -183,6 +181,7 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 	}
 }
 
+// FIXME: always out of date, the 2x2 version is being worked on
 static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
@@ -223,7 +222,7 @@ static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 
 				float nOffs = .015f;
 				Vector3 normal(
-					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					0.f, // march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
@@ -236,7 +235,7 @@ static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 				// const float gamma = 1.88f;
 				// color.x = powf(color.x, gamma);
 				// color.y = powf(color.y, gamma);
-				// color.z = powf(color.x, gamma);
+				// color.z = powf(color.z, gamma);
 				
 				colors[iColor].vSIMD = color.vSIMD;
 			}
@@ -249,9 +248,127 @@ static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderNautilusMap(g_pFXFine, time);
+	RenderNautilusMap_2x2(g_pFXFine, time);
+	
+	// FIXME: this looks amazing if timed!
+	// HorizontalBoxBlur32(g_pFXFine, g_pFXFine, kFineResX, kFineResY, fabsf(0.0314f*2.f*sin(time)));
+	
 	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 
 //	RenderNautilusMap_4x4(g_pFXCoarse, time);
 //	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
 }
+
+//
+// Confetti canon by Flopine (https://www.shadertoy.com/view/MddyWX)
+//
+
+void Flowerine_Draw(uint32_t *pDest, float time, float delta)
+{
+}
+
+#if 0
+
+#define PI 3.141592
+#define TAU 2.*PI
+
+mat2 rot (float a)
+{
+    float c = cos(a);
+    float s = sin(a);
+    return mat2(c,s,-s,c);
+}
+
+
+vec2 moda (vec2 p, float per)
+{
+    float a = atan(p.y,p.x);
+    float l = length(p);
+    a = mod(a-per/2.,per)-per/2.;
+    return vec2 (cos(a),sin(a))*l;
+}
+
+// iq's palette http://www.iquilezles.org/www/articles/palettes/palettes.htm
+vec3 palette( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
+{
+    return a + b*cos(TAU*(c*t+d));
+}
+
+
+float sphe (vec3 p, float r)
+{
+    return length(p)-r;
+}
+
+float box (vec3 p, vec3 c)
+{
+    return length(max(abs(p)-c,0.));
+}
+
+float prim (vec3 p)
+{
+    float b = box(p, vec3(1.));
+    float s = sphe(p,1.3);
+    return max(-s, b);
+}
+
+float row (vec3 p, float per)
+{
+	p.y = mod(p.y-per/2., per)-per/2.;
+    return prim(p);
+}
+
+float squid (vec3 p)
+{
+    p.xz *= rot(PI/2.);
+    p.yz = moda(p.yz, TAU/5.);
+    p.z += sin(p.y+iTime*2.);
+    return row(p,1.5);
+}
+
+float SDF(vec3 p)
+{
+    p.xz *= rot (iTime*.8);
+    p.yz *= rot(iTime*0.2);
+    p.xz = moda(p.xz, TAU/12.);
+    return squid(p);
+}
+
+
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = 2.*(fragCoord/iResolution.xy)-1.;
+	uv.x *= iResolution.x/iResolution.y;
+    
+    vec3 p = vec3 (0.01,3.,-8.);
+    vec3 dir = normalize(vec3(uv*2.,1.));
+    
+    float shad = 1.;
+    
+    for (int i=0;i<60;i++)
+    {
+        float d = SDF(p);
+        if (d<0.001)
+        {
+            shad = float(i)/60.;
+            break;
+        }
+        p += d*dir*0.5;
+    }
+    
+    vec3 pal = palette(p.z,
+        				vec3(0.5),
+                      vec3(0.5),
+                      vec3(.2),
+                      vec3(0.,0.3,0.5)
+                      );
+    // Time varying pixel color
+    vec3 col = vec3(1.-shad)*pal;
+
+    // Output to screen
+    fragColor = vec4(pow(col, vec3(0.45)),1.0);
+}
+
+#endif

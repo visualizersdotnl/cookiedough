@@ -10,13 +10,13 @@
 
 const size_t kCosTabSize = 2048;
 constexpr size_t kCosTabAnd = kCosTabSize-1;
-constexpr unsigned kTabSinPhase = kCosTabSize/4;
+constexpr unsigned kCosTabSinPhase = kCosTabSize/4;
 extern float g_cosLUT[kCosTabSize];
 
 void CalculateCosLUT();
 
 VIZ_INLINE float lutcosf(int angleIndex) { return g_cosLUT[angleIndex&kCosTabAnd];  }
-VIZ_INLINE float lutsinf(int angleIndex) { return lutcosf((int) kTabSinPhase+angleIndex); }
+VIZ_INLINE float lutsinf(int angleIndex) { return lutcosf((int) kCosTabSinPhase+angleIndex); }
 
 // always try to use this whenever using the angle more than once
 VIZ_INLINE int tocosindex(float angle)

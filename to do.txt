@@ -3,17 +3,15 @@
 
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
-with 100% clarity:
+working on now:
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
 - add TinyMT
 - why does OpenMP work on x64 and completely fail on x86?
 
-working on now:
+to do:
 - create texture mapping version of map blitters
 - add some tricks to map blitter, like interlacing
-
-to do:
 - garbage collect images (instead of having to free them manually all the time)
 - implement: Heartquake water
 - find a way to parametrize relevant values of each effect in a readable way so they can be controlled
