@@ -6,7 +6,7 @@
 with 100% clarity:
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
-- check lutcosf()'s correctness
+- add TinyMT
 - why does OpenMP work on x64 and completely fail on x86?
 
 working on now:

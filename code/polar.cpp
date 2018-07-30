@@ -62,7 +62,7 @@ void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false *
 {
 	// FIXME: write 4 pixels at a time
 	int *pRead = (!inverse) ? s_pPolarMap : s_pInvPolarMap;
-	for (unsigned int iPixel = 0; iPixel < (kResX*kResY)/1; ++iPixel)
+	for (unsigned int iPixel = 0; iPixel < (kResX*kResY)>>0; ++iPixel)
 	{
 		{
 			const int U = *pRead++;

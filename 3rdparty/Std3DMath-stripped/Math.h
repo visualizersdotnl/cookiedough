@@ -11,6 +11,7 @@
 	- kPI et cetera are now 'constexpr'.
 	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for S3D_INLINE.
 	- Removed empty constructors & destructors, except for Vector4.
+	- Added "2*kPI" and angle normalization.
 */
 
 #if !defined(STD_3D_MATH)
@@ -21,6 +22,7 @@
 // A few meaningful constants.
 constexpr float kPI = 3.1415926535897932384626433832795f;
 constexpr float kHalfPI = kPI*0.5f;
+constexpr float k2PI = 2.f*kPI;
 constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
 constexpr float kGoldenRatio = 1.61803398875f;
 

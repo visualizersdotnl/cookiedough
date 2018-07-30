@@ -31,13 +31,10 @@ void Shadertoy_Destroy()
 VIZ_INLINE float fPlasma(Vector3 point, float time)
 {
 	point.z += 5.f*time;
-	const float sine = 0.314f*lutsinf(ftofp24(point.x-point.y));
-	const int x = ftofp24(point.x*0.33f);
-	const int y = ftofp24(point.y*0.33f);
-	const int z = ftofp24(point.z*0.33f);
-	const float fX = sine + lutcosf(x);
-	const float fY = sine + lutcosf(y);
-	const float fZ = sine + lutcosf(z);
+	const float sine = 0.2f*lutsinf(point.x-point.y);
+	const float fX = sine + lutcosf(point.x*0.33f);
+	const float fY = sine + lutcosf(point.y*0.33f);
+	const float fZ = sine + lutcosf(point.z*0.33f);
 //	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 	return 1.f/Q_rsqrt(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
@@ -46,8 +43,8 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 colMulA(0.11f, 0.15f, 0.29f);
-	const Vector3 colMulB(0.01f, 0.05f, 0.12f);
+	const Vector3 colMulA(0.1f, 0.15f, 0.3f);
+	const Vector3 colMulB(0.05f, 0.05f, 0.1f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -58,10 +55,22 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				const Vector3 direction(Shadertoy::ToUV_FX_2x2(iX+iColor+30, iY+166, 0.5f+0.214f), 0.614f);
+
+				auto& UV = Shadertoy::ToUV_FX_2x2(iX+iColor, iY, 2.f);
+
+				const int cosIndex = tocosindex(time*0.314f);
+				const float dirCos = lutcosf(cosIndex);
+				const float dirSin = lutsinf(cosIndex);
+
+				Vector3 direction(
+					dirCos*UV.x - dirSin*0.6f,
+					UV.y,
+					dirSin*UV.x + dirCos*0.6f);
+
+//				Vector3 direction(Shadertoy::ToUV_FX_2x2(iX+iColor, iY, 2.f), 0.6f);
 
 				Vector3 origin = direction;
-				for (int step = 0; step < 42; ++step)
+				for (int step = 0; step < 46; ++step)
 					origin += direction*fPlasma(origin, time);
 				
 				colors[iColor] = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
@@ -84,18 +93,18 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 //
 // Nautilus by Michiel v/d Berg (https://www.shadertoy.com/view/MdXGz4)
 //
-// FIXME: use cosine LUT & eradicate redundant operations
+// FIXME: radicate redundant operations
 // FIXME: add fast noise function (see chat with Michiel)
 // FIXME: improve look using more recent code (and look at chat for that Aura for Laura SDF)
-// FIXME: more shader ports!
 //
 
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
-	float cosX = cosf(cosf(position.x + time*0.125f)*position.x - cosf(position.y + time*0.11f)*position.y);
-	float cosY = cosf(position.z/3.f*position.x - cosf(time*0.142)*position.y);
-	float cosZ = cosf(position.x + position.y + position.z/1.25f + time);
-	float total = cosX*cosX + cosY*cosY + cosZ*cosZ;
+	float cosX, cosY, cosZ;
+	cosX = lutcosf(lutcosf(position.x + time*0.125f)*position.x - lutcosf(position.y + time*0.11f)*position.y);
+	cosY = lutcosf(position.z/3.f*position.x - lutcosf(time*0.142f)*position.y);
+	cosZ = lutcosf(position.x + position.y + position.z/1.25f + time);
+	const float total = cosX*cosX + cosY*cosY + cosZ*cosZ;
 	return total-0.814f; // -1.f
 }
 
@@ -147,7 +156,7 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 
 				float nOffs = .012f;
 				Vector3 normal(
-					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					0.f, // march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
@@ -240,9 +249,9 @@ static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
 
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
-//	RenderNautilusMap(g_pFXFine, time);
-//	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+	RenderNautilusMap(g_pFXFine, time);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 
-	RenderNautilusMap_4x4(g_pFXCoarse, time);
-	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
+//	RenderNautilusMap_4x4(g_pFXCoarse, time);
+//	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
 }

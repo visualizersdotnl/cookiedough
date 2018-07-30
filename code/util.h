@@ -29,13 +29,13 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 	#endif
 #endif
 
+// full 3D math library (last updated 26/07/2018)
+#include "../3rdparty/Std3DMath-stripped/Math.h"
+
 #include "bit-tricks.h"
 #include "alloc-aligned.h"
 #include "sincos-lut.h"
 #include "q3-rsqrt.h"
-
-// full 3D math library (last updated 26/07/2018)
-#include "../3rdparty/Std3DMath-stripped/Math.h"
 
 // memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*

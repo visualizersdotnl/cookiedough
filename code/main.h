@@ -17,13 +17,14 @@
 #include <algorithm>
 #include <thread>
 
-// OpenMP
-#include <omp.h>
-
 // SSE intrinsics
+#include <intrin.h>
 #include <xmmintrin.h> // 1
 #include <emmintrin.h> // 2, 3
 #include <smmintrin.h> // 4
+
+// OpenMP
+#include <omp.h>
 
 // output resolution
 constexpr size_t kResX = 800;

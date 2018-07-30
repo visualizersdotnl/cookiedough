@@ -49,6 +49,9 @@
     <Filter Include="Header Files\included-in-util">
       <UniqueIdentifier>{4c99d91c-43b0-4179-85fd-a55812efba91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\effects\not implemented">
+      <UniqueIdentifier>{56eb657b-a43a-4ac4-8f1c-cf7e0c2a85ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\demo.cpp">
@@ -99,9 +102,6 @@
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Vector3.cpp">
       <Filter>/3rdparty\/3rdparty/Std3Dmath-stripped</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\heartquake.cpp">
-      <Filter>Source Files\effects</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -119,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="..\code\shadertoy.cpp">
       <Filter>Source Files\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\heartquake.cpp">
+      <Filter>Source Files\effects\not implemented</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
