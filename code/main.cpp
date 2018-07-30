@@ -28,6 +28,7 @@
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
+// - adv. instruction set: SSE2 for x86, not set for 64-bit
 
 // important to know:
 // - executables are built to target/x86/ or target/x64/ -- run from that directory!
@@ -126,11 +127,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		return 1;
 	}
 
-	// set simplest rounding mode, since we do a fair bit of ftol()
-	_controlfp(_MCW_RC, _RC_CHOP);
-
 	// calculate cosine LUT
 	CalculateCosLUT();
+
+	// set simplest rounding mode, since we do a fair bit of ftol()
+	_controlfp(_MCW_RC, _RC_CHOP);
 
 	bool utilInit = true;
 
@@ -138,6 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Shared_Create();
 	utilInit &= Polar_Create();
 	utilInit &= MapBlitter_Create();
+
 	Gamepad_Create();
 
 	if (utilInit)
@@ -166,17 +168,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 					freeAligned(pDest);
 				}
+
 			}
 		}
 	}
 
+	Gamepad_Destroy();
+
 	Audio_Destroy();
 	Demo_Destroy();
 
-	Gamepad_Destroy();
 	Image_Destroy();
 	Shared_Destroy();
 	Polar_Destroy();
+	MapBlitter_Destroy();
 
 	SDL_Quit();
 

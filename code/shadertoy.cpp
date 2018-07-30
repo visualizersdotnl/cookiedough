@@ -82,20 +82,27 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// Nautilus by Weyland Yutani (Michiel v/d Berg)
+// Nautilus by Michiel v/d Berg (https://www.shadertoy.com/view/MdXGz4)
 //
 // FIXME: use cosine LUT & eradicate redundant operations
+// FIXME: add fast noise function (see chat with Michiel)
 // FIXME: improve look using more recent code (and look at chat for that Aura for Laura SDF)
 // FIXME: more shader ports!
 //
 
-VIZ_INLINE float fNautilus(Vector3 position, float time)
+VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
-	float cosX = cosf(cosf(position.x + time*0.125f)*position.x - cosf(position.y + time/9.f)*position.y);
+	float cosX = cosf(cosf(position.x + time/8.f)*position.x - cosf(position.y + time/9.f)*position.y);
 	float cosY = cosf(position.z/3.f*position.x - cosf(time/7.f)*position.y);
-	float cosZ = cosf(position.x + position.y/1.25f + time);
-	Vector3 squared(cosX*cosX, cosY*cosY, cosZ*cosZ);
-	return squared*Vector3(1.f) - 1.f;
+	float cosZ = cosf(position.x + position.y + position.z/1.25f + time);
+	float total = cosX*cosX + cosY*cosY + cosZ*cosZ;
+	return total-1.f;
+}
+
+// supposed "Aura for Laura" function
+VIZ_INLINE float fLaura(const Vector3 &position)
+{
+	return cosf(position.x)+cosf(position.y*1.f)+cosf(position.z)+cosf(position.y*20.f)*0.5f;
 }
 
 static void RenderNautilusMap(uint32_t *pDest, float time)
@@ -113,15 +120,15 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f);
 
-				Vector3 origin(UV.x, UV.y+cosf(time*0.66f)*0.414f, 0.f);
-				Vector3 direction(UV.x + cosf(time)*0.314f, UV.y, 1.f);
+				Vector3 origin(0.f);
+				Vector3 direction(UV.x, UV.y, 1.f);
 				direction *= 1.f/64.f;
 
 				Vector3 hit(0.f);
 
 				float march = 1.f;
 				float total = 0.f;
-				for (int iStep = 0; iStep < 64; ++iStep)
+				for (int iStep = 0; iStep < 64*2; ++iStep)
 				{
 					if (march > .4f) // FIXE: slow!
 					{
@@ -131,20 +138,28 @@ static void RenderNautilusMap(uint32_t *pDest, float time)
 					}
 				}
 
-				float nOffs = .001f;
+				float nOffs = .1f;
 				Vector3 normal(
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-				Vector3 vLight(0.f, 0.5f, -0.5f);
-//				float light = fNautilus(hit + vLight, time);
-				float light = normal*vLight;
+				Vector3 light(0.f, 0.5f, 0.6f);
+				float origVerLight = normal*light; // std::max(0.f, normal*light);
 
-				Vector3 colorization(.1f-cosf(time/3.f)/19.f, .1f, .1f-cosf(time/14.f)/8.f);
-				colorization *= total*0.0314f;
-				colorization += light*0.1f;
-	
+				Vector3 colorization(
+					.1f-cosf(time/3.f)/19.f,
+					.1f, 
+					.1f+cosf(time/14.f)/8.f); 
+				
+				colorization *= total/41.f;
+				colorization += origVerLight;
+
+				// const float gamma = 2.20f;
+				// colorization.x = powf(colorization.x, gamma);
+				// colorization.y = powf(colorization.y, gamma);
+				// colorization.z = powf(colorization.x, gamma);
+				
 				colors[iColor].vSIMD = colorization.vSIMD;
 			}
 

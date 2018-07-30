@@ -63,7 +63,23 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			fpB = _mm_slli_epi32(fpB, 15);
 
 			int64_t *pCopy = reinterpret_cast<int64_t*>(pDest);
-			for (int blockY = 0; blockY < 2; ++blockY)
+
+			// for (int blockY = 0; blockY < 2; ++blockY)
+			{
+				__m128i delta = _mm_sub_epi32(fpB, fpA);
+				delta = _mm_srli_epi32(delta, 15);
+				__m128i step = _mm_madd_epi16(delta, divisor);
+				__m128i color = fpA;
+				__m128i pixel1 = _mm_srli_epi32(color, 15); 
+				color = _mm_add_epi32(color, step);
+				__m128i pixel2 = _mm_srli_epi32(color, 15); 
+				__m128i AB = _mm_packs_epi32(pixel1, pixel2);
+				*pCopy = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
+				fpA = _mm_add_epi32(fpA, stepL);
+				fpB = _mm_add_epi32(fpB, stepR);
+				pCopy += kResX>>(kFineDiv/2);
+			}
+
 			{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
 				delta = _mm_srli_epi32(delta, 15);
