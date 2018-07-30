@@ -30,7 +30,7 @@ void MapBlitter_Destroy()
 	freeAligned(g_pFXCoarse);
 }
 
-// 2x2 blit (2 pixels per SSE write)
+// 2x2 blit (2 pixels per SSE write, uses 64-bit only intrinsic (FIXME))
 void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
 	const __m128i zero = _mm_setzero_si128();

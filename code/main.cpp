@@ -21,6 +21,7 @@
 // - Developer's Image Library (DevIL)
 // - BASS audio library by Ian Luck
 // - SDL 2.0.8
+// - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -37,6 +38,10 @@
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for the render target(s) there's kTargetX et cetera
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
+
+// 32-bit build temporarily dropped, because of:
+// - OpenMP not working properly
+// - _mm_cvtsi128_si64() not supported (map-blitter.cpp)
 
 // Undef. for (Windows only?) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK

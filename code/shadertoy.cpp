@@ -144,16 +144,16 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 //						break;
 				}
 
-				float nOffs = 0.001f;
+				float nOffs = 0.1f;
 				Vector3 normal(
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 
-				// Vector3 lightA(0.f, 0.f, -0.5f), lightB(0.f, -0.5f, 0.5f);
-				// float diffuse = std::max(0.f, lightA*normal) + std::max(0.f, lightB*normal);
 				float diffuse = -0.5f*normal.z + -0.5f*normal.y + 0.5f*normal.z;
-				
+
+				// gebruik normal en hit om slopes uit te rekenen!				
+
 				Vector3 color(diffuse*0.1f);
 				color += colorization*(1.56f*total);
 
@@ -162,7 +162,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				color.y = powf(color.y, gamma);
 				color.z = powf(color.z, gamma);
 
-				colors[iColor].vSIMD = color.vSIMD;
+//				colors[iColor].vSIMD = color.vSIMD;
+				colors[iColor].vSIMD = Vector3(diffuse).vSIMD;
 			}
 
 			const int index = (yIndex+iX)>>2;

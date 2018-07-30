@@ -6,16 +6,13 @@
 working on now:
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
-- add TinyMT
-- why does OpenMP work on x64 and completely fail on x86?
 
 to do:
-- create texture mapping version of map blitters (?)
-- add some tricks to map blitter, like interlacing
+- create texture mapping version of map blitter(s)
 - garbage collect images (instead of having to free them manually all the time)
-- implement: Heartquake water
 - find a way to parametrize relevant values of each effect in a readable way so they can be controlled
   by Rocket
+- implement: Heartquake water
  
 low priority / remember:
 - app. icon
@@ -29,6 +26,9 @@ effects to make:
 - VHS distortion
 - font writer
 - true 3D?
+
+32-bit build dropped for now:
+- see main.cpp for issues
 
 for OSX/Linux build:
 - switch module player

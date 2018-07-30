@@ -123,6 +123,9 @@
     <ClCompile Include="..\code\heartquake.cpp">
       <Filter>Source Files\effects\not implemented</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="..\code\map-blitter.h">
       <Filter>Header Files\filters &amp; blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\random.h">
+      <Filter>Header Files\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
