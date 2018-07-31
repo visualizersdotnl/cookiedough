@@ -10,9 +10,9 @@ It should be fairly easy to port to another x86/x64 platform; I do use SSE (up t
 - Use Ground Control as sync. editor for Win10 (https://github.com/edoreshef/ground-control)
 
 Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
+Check /code/main.cpp for a list of third party libraries used.
 
 ** Has content from Comanche (videogame by Novalogic in the early 1990s).  
 ** Has content from The Non-stop Ibiza Experience (demoscene, Orange).
 
 Said content will not be spread in the form of a release.
-

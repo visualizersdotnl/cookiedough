@@ -22,6 +22,7 @@
 // - BASS audio library by Ian Luck
 // - SDL 2.0.8
 // - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
+// - sse_mathfun.h by Julien Pommier
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -41,7 +42,7 @@
 
 // 32-bit build temporarily dropped, because of:
 // - OpenMP not working properly
-// - _mm_cvtsi128_si64() not supported (map-blitter.cpp)
+// - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
 
 // Undef. for (Windows only?) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK

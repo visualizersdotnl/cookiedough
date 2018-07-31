@@ -9,11 +9,32 @@
 
 #pragma once
 
+// SIMD versions of log(), exp(), sin(), cos()
+#define USE_SSE2
+#include "../3rdparty/sse_mathfun.h"
+
+// blitters to output resolution
 #include "map-blitter.h"
 using namespace FXMAP;
 
 namespace Shadertoy
 {
+	// -- constants copied from Std3DMath to promote their use, using these values often give *better* looking results --
+
+	constexpr float kPI = 3.1415926535897932384626433832795f;
+	constexpr float kHalfPI = kPI*0.5f;
+	constexpr float k2PI = 2.f*kPI;
+	constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
+	constexpr float kGoldenRatio = 1.61803398875f;
+
+	// refraction indices (you can do a Fresnel refraction using Std3DMath's Vector3)
+	const float kVacuum = 0.f;
+	const float kAir = 1.0003f;
+	const float kWater = 1.3333f;
+	const float kGlass = 1.5f;
+	const float kPlastic = 1.5f;
+	const float kDiamond = 2.417f;
+ 
 	// -- math --
 
 	VIZ_INLINE void rot2D(float angle, float &X, float &Y)
@@ -106,5 +127,14 @@ namespace Shadertoy
 		const float bY = std::max(0.f, fabsf(point.y)-size.y);
 		const float bZ = std::max(0.f, fabsf(point.z)-size.z);
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
+	}
+
+	// -- ISSE color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
+
+	VIZ_INLINE __m128 GammaAdj(const Vector3 &color, float gamma = kGoldenRatio)
+	{
+		// raised = exp(exponent*log(value))
+		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color.vSIMD)));
+
 	}
 } 

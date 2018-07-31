@@ -35,6 +35,7 @@
 		- GNU Rocket by Kusma & contributors
 		- BASS sound system by Ian Luck
 		- Std3DMath by http://www.visualizers.nl
+		- sse_mathfun.h by Julien Pommier
 
 	source code:
 		- https://github.com/visualizersdotnl/cookiedough
