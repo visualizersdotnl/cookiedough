@@ -190,3 +190,84 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 //	RenderNautilusMap_4x4(g_pFXCoarse, time);
 //	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
 }
+
+//
+// Aura for Laura cosine grid.
+//
+// FIXME:
+// - proportions
+// - colors
+// - fog
+// - animation: rig it to Rocket so that it can take a corner over any axis
+//
+
+// cosine blob tunnel
+VIZ_INLINE float fAuraForLaura(const Vector3 &position)
+{
+	return cosf(position.x*2.f)+cosf(position.y*1.f)+cosf(position.z)+cosf(position.y*5.f)*0.5f;
+}
+
+static void RenderLauraMap_2x2(uint32_t *pDest, float time)
+{
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	const Vector3 colorization(1.f);
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
+	{
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
+		{	
+			Vector4 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
+
+				Vector3 origin(0.f, 0.f, time);
+				Vector3 direction(UV.x, UV.y, 1.f); 
+				direction *= 1.f/direction.Length();
+
+				Vector3 hit;
+
+				float march, total = 0.f;
+				for (int iStep = 0; iStep < 64; ++iStep)
+				{
+					hit = origin + direction*total;
+					march = fAuraForLaura(hit);
+					total += march*(0.314f+0.314f);
+				}
+
+				float nOffs = 0.1f;
+				Vector3 normal(
+					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
+					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
+					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
+				normal *= 1.f/normal.Length();
+
+				float diffuse = normal.y*0.1f + normal.z*0.25f;
+				float specular = powf(std::max(0.f, normal*direction), 16.f);
+
+				Vector3 color(diffuse*1.4f +specular);
+				// color += colorization*(1.f*total + specular);
+				// color += specular*0.314f;
+
+				// const float gamma = 2.22f;
+				// color.x = powf(color.x, gamma);
+				// color.y = powf(color.y, gamma);
+				// color.z = powf(color.z, gamma);
+
+				colors[iColor].vSIMD = color.vSIMD;
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
+void Laura_Draw(uint32_t *pDest, float time, float delta)
+{
+	RenderLauraMap_2x2(g_pFXFine, time);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+}

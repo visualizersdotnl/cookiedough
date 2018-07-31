@@ -107,10 +107,4 @@ namespace Shadertoy
 		const float bZ = std::max(0.f, fabsf(point.z)-size.z);
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
 	}
-
-	// cosine blob tunnel
-	VIZ_INLINE float fAuraForLaura(const Vector3 &position)
-	{
-		return cosf(position.x)+cosf(position.y*1.f)+cosf(position.z)+cosf(position.y*20.f)*0.5f;
-	}
 } 

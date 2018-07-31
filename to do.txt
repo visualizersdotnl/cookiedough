@@ -4,6 +4,7 @@
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
 working on now:
+- try Aura for Laura effect
 - fix map blitting so that it fills the entire screen
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
@@ -25,6 +26,7 @@ effects to make:
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
 - particles, requested by Nytrik (ask him what he likes best)
 - VHS distortion
+- marching a height field
 - font writer
 - true 3D?
 
