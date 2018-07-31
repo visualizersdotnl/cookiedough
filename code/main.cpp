@@ -64,7 +64,7 @@
 #include "map-blitter.h"
 
 // display config.
-const char *kTitle = "powered by cocktails with Kurt Bevacqua";
+const char *kTitle = "untitled #SHADERGP19 promotional";
 const bool kFullScreen = false;
 
 static std::string s_lastErr;

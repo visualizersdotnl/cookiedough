@@ -1,14 +1,15 @@
 
-// cookiedough -- simple Shadertoy ports
+// cookiedough -- simple Shadertoy ports & my own shaders
 
 /*
 	important:
 		- R and B are swapped, as in: Vector3 color(B, R, G)
+		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member may you want to parallelize locally
 
 	to do:
-		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 		- just optimize as needed, since all of this is a tad slow
 		- what to do with hardcoded colors, paremeters?
+		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP!
 */
 
 #include "main.h"

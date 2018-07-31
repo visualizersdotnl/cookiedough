@@ -36,6 +36,9 @@
 		- BASS sound system by Ian Luck
 		- Std3DMath by http://www.visualizers.nl
 
+	source code:
+		- https://github.com/visualizersdotnl/cookiedough
+
 	Q&A time!
 
 	Q: why demand a proper CPU, did you not optimize?

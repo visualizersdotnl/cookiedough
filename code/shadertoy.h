@@ -1,5 +1,5 @@
 
-// cookiedough -- simple Shadertoy ports
+// cookiedough -- simple Shadertoy ports & my own shaders
 
 #pragma once
 
