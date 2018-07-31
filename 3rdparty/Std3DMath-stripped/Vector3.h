@@ -43,6 +43,8 @@ public:
 		// 28/07/2018 - Basically just added this to gaurantee alignment.
 		__m128 vSIMD;
 	};
+
+	Vector3() {}
 	
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar), padding(0.f) {}

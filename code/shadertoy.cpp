@@ -55,17 +55,18 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			Vector4 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
+				// FIXME: parametrize (minus gives a black bar on the left, ideal for an old school logo)
+//				auto& UV = Shadertoy::ToUV_FX_2x2(iX+iColor-50, iY+20, 2.f);
+				auto& UV = Shadertoy::ToUV_FX_2x2(iX+iColor+10, iY+20, 2.f);
 
-				auto& UV = Shadertoy::ToUV_FX_2x2(iX+iColor, iY, 2.f);
-
-				const int cosIndex = tocosindex(time*0.314f);
+				const int cosIndex = tocosindex(time*0.314f*0.5f);
 				const float dirCos = lutcosf(cosIndex);
 				const float dirSin = lutsinf(cosIndex);
 
 				Vector3 direction(
-					dirCos*UV.x - dirSin*0.6f,
+					dirCos*UV.x - dirSin*0.75f,
 					UV.y,
-					dirSin*UV.x + dirCos*0.6f);
+					dirSin*UV.x + dirCos*0.75f);
 
 				Vector3 origin = direction;
 				for (int step = 0; step < 46; ++step)
@@ -129,7 +130,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.y, direction.x);
 				direction *= 1.f/direction.Length();
 
-				Vector3 hit(0.f);
+				Vector3 hit;
 
 				float march, total = 0.f;
 				for (int iStep = 0; iStep < 64; ++iStep)

@@ -4,7 +4,6 @@
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
 working on now:
-- add specular to Nautilus 
 - fix map blitting so that it fills the entire screen
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
