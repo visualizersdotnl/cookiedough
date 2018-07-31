@@ -4,6 +4,7 @@
 ** possible announcement for the Shader Superfights Heavyweight GP 2019! **
 
 working on now:
+- fast sqrt()
 - fix map blitting so that it fills the entire screen
 - polar: write 4 pixels at a time
 - bring new optimization over to bsamp32() (packing instructions)
@@ -23,13 +24,12 @@ low priority / remember:
 - 2007 horizontal blur has bias flaw (write or steal new blurs)
 
 effects to make:
-- blur specular highlights (as seen in Aura for Laura)
+- idea: blur specular highlights (as seen in Aura for Laura)
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
 - particles, requested by Nytrik (ask him what he likes best)
 - VHS distortion
 - marching a height field
 - font writer
-- true 3D?
 
 32-bit build dropped for now:
 - see main.cpp for issues

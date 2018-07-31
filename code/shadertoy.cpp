@@ -3,8 +3,8 @@
 
 /*
 	important:
-		- R and B are swapped, as in: Vector3 color(B, R, G)
-		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member may you want to parallelize locally
+		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
+		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member you can use
 
 	to do:
 		- optimize where you can; ideally, in some situation, I'd handle more calculations in SIMD parallel
@@ -254,8 +254,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				color += specular;
 
 				const float distance = origin.z-hit.z;
-				const float fog = 1.f-(expf(-0.006f*distance*distance));
-				color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
+				Shadertoy::ApplyFog(distance, color.vSIMD, fogColor.vSIMD, 0.006f);
 
 				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
 			}
@@ -277,7 +276,7 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 //
 // FIXME:
 // - if breaking out of the march loop, skip lighting calculations and just output fog
-// - colors, animation, ...
+// - animation
 //
 
 VIZ_INLINE float fTest(Vector3 position, float time) 
@@ -333,15 +332,17 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 				normal *= 1.f/normal.Length();
 
-				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.45f;
-				float specular = powf(std::max(0.f, normal*direction), 16.f);
+				const float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
+				const float specular = powf(std::max(0.f, normal*direction), 12.f);
 
-				Vector3 color(diffuse);
-				color += specular;
-
-				// const float distance = origin.z-hit.z;
+				const float distance = origin.z-hit.z;
 				// const float fog = 1.f-(expf(-0.004f*distance*distance));
 				// color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
+
+				// Vector3 color(diffuse);
+				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, 1.f), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
+				color.Multiply(color);
+				color += specular;
 
 				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
 			}

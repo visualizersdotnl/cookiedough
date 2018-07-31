@@ -44,7 +44,7 @@
 // - OpenMP not working properly
 // - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
 
-// Undef. for (Windows only?) CRT leak check
+// Undef. for (Windows - should work on other platforms too) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
@@ -103,7 +103,7 @@ static bool HandleEvents()
 // int SDL_main(int argc, char *argv[])
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 {
-#if defined(_DEBUG) && defined(CRT_LEAK_CHECK)
+#if defined(_DEBUG) && defined(WIN32_CRT_LEAK_CHECK)
 	// Dump leak report at any possible exit.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | 
 	_CRTDBG_LEAK_CHECK_DF);

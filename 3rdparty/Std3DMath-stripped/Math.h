@@ -5,7 +5,7 @@
 
 	Please check README.md for more information.
 
-	Added (backport to main branch):
+	Added and/or modified (backport to main branch):
 	- Matrix44::FromArray33()
 	- Forced 16-byte alignment for Vector4 & Vector3 (padded).
 	- kPI et cetera are now 'constexpr'.
@@ -13,6 +13,7 @@
 	- Removed empty constructors (put it back for Vector3) & destructors, except for Vector4.
 	- Added "2*kPI".
 	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
+	- Added an actual Multiplied()/Multiply() function on Vector3 and Vector4 as I really needed it more often.
 */
 
 #if !defined(STD_3D_MATH)

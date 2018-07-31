@@ -48,7 +48,7 @@ namespace Shadertoy
 		Y = rotY;
 	}
 
-	// use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
+	// SIMD vector interpolate - use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
 	VIZ_INLINE __m128 lerp4(__m128 A, __m128 B, float factor)
 	{
 		__m128 alphaUnp = _mm_set1_ps(factor);
@@ -137,12 +137,46 @@ namespace Shadertoy
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
 	}
 
-	// -- ISSE color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
+	// -- colorization --
 
+	// SIMD color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
 	VIZ_INLINE __m128 GammaAdj(const Vector3 &color, float gamma = kGoldenRatio)
 	{
-		// raised = exp(exponent*log(value))
+		// formula: raised = exp(exponent*log(value))
 		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color.vSIMD)));
 
+	}
+
+	// IQ's palette function
+	VIZ_INLINE const __m128 CosPal(float index, const Vector3 &bias, const Vector3 &scale, const Vector3 &frequency, const Vector3 &phase)
+	{
+		const __m128 vIndex = _mm_set1_ps(index);
+		const __m128 v2PI = _mm_set1_ps(k2PI);
+		const __m128 angles = _mm_mul_ps(_mm_add_ps(_mm_mul_ps(frequency.vSIMD, vIndex), phase.vSIMD), v2PI);
+		const __m128 cosines = cos_ps(angles);
+		return _mm_add_ps(bias.vSIMD, _mm_mul_ps(cosines, scale.vSIMD));
+
+//		Vector3 cosines = (frequency*index + phase)*k2PI;
+//		cosines.x = lutcosf(cosines.x);
+//		cosines.y = lutcosf(cosines.y);
+//		cosines.z = lutcosf(cosines.z);
+//		return bias+cosines.Multiplied(scale);
+	}
+
+	// IQ's palette function (simplified, don't think optimizing it like the one above is helpful)
+	VIZ_INLINE const Vector3 CosPalSimple(float index, const Vector3 &bias, float cosScale, const Vector3 &frequency, float phase)
+	{
+		Vector3 cosines = (frequency*index + phase)*k2PI;
+		cosines.x = lutcosf(cosines.x);
+		cosines.y = lutcosf(cosines.y);
+		cosines.z = lutcosf(cosines.z);
+		return bias + cosines*cosScale;
+	}
+
+	// exponential fog
+	VIZ_INLINE void ApplyFog(float distance, __m128 &color, __m128 fogColor, float scale = 0.004f)
+	{
+		const float fog = 1.f-(expf(-scale*distance*distance));
+		color = Shadertoy::lerp4(color, fogColor, fog);
 	}
 } 

@@ -107,6 +107,16 @@ public:
 		}
 	}
 
+	const Vector4 Multiplied(const Vector4 &B) const
+	{
+		return Mul(*this, B);
+	}
+
+	void Multiply(const Vector4 &B)
+	{
+		*this = Mul(*this, B);
+	}
+
 	// Chiefly intended for constant uploads.
 	const float *GetData() const { return &x; }
 };

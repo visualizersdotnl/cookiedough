@@ -114,6 +114,16 @@ public:
 		}
 	}
 
+	const Vector3 Multiplied(const Vector3 &B) const
+	{
+		return Mul(*this, B);
+	}
+
+	void Multiply(const Vector3 &B)
+	{
+		*this = Mul(*this, B);
+	}
+
 	S3D_INLINE float Angle(const Vector3 &B) const
 	{
 		return acosf(Dot(*this, B));
