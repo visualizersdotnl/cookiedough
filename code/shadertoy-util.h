@@ -73,11 +73,11 @@ namespace Shadertoy
 	// - writes 4 pixels at once
 	// - assumes aligned input
 	// - FIXME: swap R and B here?
-	// - FIXME: shift instead of scale?
 	VIZ_INLINE __m128i ToPixel4(const Vector4 *colors)
 	{
-//		__m128i zero = _mm_setzero_si128();
+		__m128i zero = _mm_setzero_si128();
 
+		// FIXME: shift instead of scale?
 //		__m128i iA = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
 //		__m128i iB = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
 //		__m128i iC = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));

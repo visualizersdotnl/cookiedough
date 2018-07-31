@@ -15,7 +15,7 @@
 
 
 	system requirements:
-		- decent, recent x64 CPU (4-8 cores recommended)
+		- a *fast* x64 CPU (marching & tracing going on)
 		- Windows 10 (not tested on earlier versions)
 		- a working default audio adapter
 		- low grade integrated graphics will do
@@ -36,15 +36,14 @@
 		- BASS sound system by Ian Luck
 		- Std3DMath by http://www.visualizers.nl
 
-
 	Q&A time!
 
-	Q: who is "fucking Kurt Bevacqua"? 
-	A: https://en.wikipedia.org/wiki/Kurt_Bevacqua
-	
-	Q: crashes!
-	A: please report on Pouet.net
+	Q: why demand a proper CPU, did you not optimize?
+	A: I'll make the Github repository public soon so you can see I did, we're
+	   just pulling off some more complicated effects than the standard 1990s fare
 
-	Q: doesn't perform well
-	A: it's built on a 10+ year old codebase which I carefully reviewed and added to, but that
-	   doesn't mean it doesn't have flaws so be a doll and tell me so I can solve it!
+	Q: who is the f*ck is Kurt Bevacqua? 
+	A: someone who does not like that little fat Italian called Tommy Lasorda
+	
+	Q: it crashes or flat out never begins!
+	A: please report on Pouet.net or find me on Facebook

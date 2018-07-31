@@ -102,7 +102,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	for (int iY = 0; iY < 136; ++iY)
 	{
 		pWrite += 80;
-		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
+//		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
 		pWrite += 800-80;
 
 	}

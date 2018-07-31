@@ -2,10 +2,13 @@
 // cookiedough -- simple Shadertoy ports
 
 /*
+	important:
+		- R and B are swapped, as in: Vector3 color(B, R, G)
+
 	to do:
-		- fix a *working* OpenMP implementation of the plasma (are it the split writes in 64-bit?)
 		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 		- just optimize as needed, since all of this is a tad slow
+		- what to do with hardcoded colors, paremeters?
 */
 
 #include "main.h"
@@ -127,7 +130,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(kPI*cos(time*0.06234f), direction.y, direction.x);
+				Shadertoy::rot2D(kPI*lutcosf(time*0.06234f), direction.y, direction.x);
 				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
@@ -195,23 +198,21 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid.
 //
 // FIXME:
-// - proportions
-// - colors
-// - fog
-// - animation: rig it to Rocket so that it can take a corner over any axis
+// - proportions, colors, fog
+// - animation: rig it to Rocket so that it can take a corner over any axis, and banking!
 //
 
 // cosine blob tunnel
 VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 {
-	return cosf(position.x*2.f)+cosf(position.y*1.f)+cosf(position.z)+cosf(position.y*5.f)*0.5f;
+	return lutcosf(position.x*1.f)+lutcosf(position.y*0.314f)+lutcosf(position.z)+lutcosf(position.y*2.5f)*0.5f;
 }
 
 static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 colorization(1.f);
+	Vector3 fogColor(0.3f, 0.2f, 0.1f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -224,18 +225,20 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 origin(0.f, 0.f, time);
+				Vector3 origin(0.f, 0.f, time*8.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
+				Shadertoy::rot2D(time*0.05234f, direction.x, direction.y);
 				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
 
-				float march, total = 0.f;
-				for (int iStep = 0; iStep < 64; ++iStep)
+				float march, total = 0.5f;
+				int iStep;
+				for (iStep = 0; iStep < 48; ++iStep)
 				{
 					hit = origin + direction*total;
 					march = fAuraForLaura(hit);
-					total += march*(0.314f+0.314f);
+					total += march*0.7314f;
 				}
 
 				float nOffs = 0.1f;
@@ -245,17 +248,22 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				normal *= 1.f/normal.Length();
 
-				float diffuse = normal.y*0.1f + normal.z*0.25f;
+				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.25f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
+				float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
 
-				Vector3 color(diffuse*1.4f +specular);
-				// color += colorization*(1.f*total + specular);
-				// color += specular*0.314f;
+				Vector3 color(diffuse);
+				color += specular;
+				color *= yMod;
 
-				// const float gamma = 2.22f;
-				// color.x = powf(color.x, gamma);
-				// color.y = powf(color.y, gamma);
-				// color.z = powf(color.z, gamma);
+				const float distance = origin.z-hit.z;
+				const float fog = 1.f-(expf(-0.006f*distance*distance));
+				color = lerpf(color, fogColor, fog);
+
+				const float gamma = 1.42f;
+				color.x = powf(color.x, gamma);
+				color.y = powf(color.y, gamma);
+				color.z = powf(color.z, gamma);
 
 				colors[iColor].vSIMD = color.vSIMD;
 			}
