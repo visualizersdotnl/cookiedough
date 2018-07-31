@@ -1,5 +1,5 @@
 
-// cookiedough -- utilities to port Shadertoy to CPU
+// cookiedough -- a (messy) collection of values and functions to easily implement Shadertoy(ish) effects
 
 /*
 	FIXME:
@@ -21,21 +21,6 @@ using namespace FXMAP;
 namespace Shadertoy
 {
 	// -- math --
-
-	// constants copied from Std3DMath to promote their use, using these values often yields a more natural look
-	constexpr float kPI = 3.1415926535897932384626433832795f;
-	constexpr float kHalfPI = kPI*0.5f;
-	constexpr float k2PI = 2.f*kPI;
-	constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
-	constexpr float kGoldenRatio = 1.61803398875f;
-
-	// refraction indices (you can do a Fresnel refraction using Std3DMath's Vector3)
-	const float kVacuum = 0.f;
-	const float kAir = 1.0003f;
-	const float kWater = 1.3333f;
-	const float kGlass = 1.5f;
-	const float kPlastic = 1.5f;
-	const float kDiamond = 2.417f;
  
 	VIZ_INLINE void rot2D(float angle, float &X, float &Y)
 	{
@@ -48,12 +33,23 @@ namespace Shadertoy
 		Y = rotY;
 	}
 
-	// SIMD vector interpolate - use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
-	VIZ_INLINE __m128 lerp4(__m128 A, __m128 B, float factor)
+	// vector interpolate - use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
+	VIZ_INLINE __m128 vLerp4(__m128 A, __m128 B, float factor)
 	{
-		__m128 alphaUnp = _mm_set1_ps(factor);
-		__m128 delta = _mm_mul_ps(alphaUnp, _mm_sub_ps(B, A));
+		const __m128 alphaUnp = _mm_set1_ps(factor);
+		const __m128 delta = _mm_mul_ps(alphaUnp, _mm_sub_ps(B, A));
 		return _mm_add_ps(A, delta);
+	}
+
+	VIZ_INLINE float vFastLen3(const Vector3 &vector)
+	{
+		return 1.f/Q_rsqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+	}
+
+	// use this instead of Normalize()/Normalized() on Vector3
+	VIZ_INLINE void vFastNorm3(Vector3 &vector)
+	{
+		vector *= Q_rsqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
 	// -- UVs --
@@ -107,18 +103,18 @@ namespace Shadertoy
 		__m128i zero = _mm_setzero_si128();
 
 		// FIXME: shift instead of scale?
-//		__m128i iA = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
-//		__m128i iB = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
-//		__m128i iC = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
-//		__m128i iD = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
+//		const __m128i iA = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
+//		const __m128i iB = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
+//		const __m128i iC = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
+//		const __m128i iD = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
 
-		__m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
-		__m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
-		__m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
-		__m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
+		const __m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
+		const __m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
+		const __m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
+		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
+		const __m128i AB = _mm_packus_epi32(iA, iB);
+		const __m128i CD = _mm_packus_epi32(iC, iD);
 
-		__m128i AB = _mm_packus_epi32(iA, iB);
-		__m128i CD = _mm_packus_epi32(iC, iD);
 		return (_mm_packus_epi16(AB, CD));
 	}
 
@@ -126,7 +122,7 @@ namespace Shadertoy
 
 	VIZ_INLINE float fSphere(const Vector3 &point, float radius)
 	{
-		return point.Length()-radius;
+		return vFastLen3(point)-radius; // point.Length()-radius;
 	}
 
 	VIZ_INLINE float fBox(const Vector3 &point, const Vector3 size)
@@ -177,6 +173,6 @@ namespace Shadertoy
 	VIZ_INLINE void ApplyFog(float distance, __m128 &color, __m128 fogColor, float scale = 0.004f)
 	{
 		const float fog = 1.f-(expf(-scale*distance*distance));
-		color = Shadertoy::lerp4(color, fogColor, fog);
+		color = Shadertoy::vLerp4(color, fogColor, fog);
 	}
 } 

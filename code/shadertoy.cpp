@@ -132,7 +132,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rot2D(kPI*lutcosf(time*0.06234f), direction.y, direction.x);
-				direction *= 1.f/direction.Length();
+				Shadertoy::vFastNorm3(direction);
+//				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
 
@@ -152,7 +153,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-				normal *= 1.f/normal.Length();
+				Shadertoy::vFastNorm3(normal);
+//				normal *= 1.f/normal.Length();
 
 //				float diffuse = normal.z*1.f;
 				float diffuse = normal.z*0.1f;
@@ -194,7 +196,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid
 //
 // FIXME:
-// - proportions, colors
+// - more animation, better colors?
 // - animation: rig it to Rocket so that it can take a corner over any axis, and banking!
 //
 
@@ -225,7 +227,8 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				Vector3 origin(0.f, 0.f, time*8.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rot2D(time*0.05234f, direction.x, direction.y);
-				direction *= 1.f/direction.Length();
+				Shadertoy::vFastNorm3(direction);
+//				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
 
@@ -243,7 +246,8 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				normal *= 1.f/normal.Length();
+				Shadertoy::vFastNorm3(normal);
+//				normal *= 1.f/normal.Length();
 
 				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.25f;
 				float specular = powf(std::max(0.f, normal*direction), 24.f);
@@ -276,14 +280,14 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 //
 // FIXME:
 // - if breaking out of the march loop, skip lighting calculations and just output fog
-// - animation
+// - animation, more interesting spikes
 //
 
 VIZ_INLINE float fTest(Vector3 position, float time) 
 {
     float phase = 2.5f*time;
     float radius = 1.35f + 0.15f*lutcosf(16.f*position.y - phase) + 0.15f*lutcosf(16.f*position.x + phase);
-    return position.Length() - radius;
+	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
 static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
@@ -307,7 +311,8 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 				Vector3 origin(0.f, 0.f, -2.314f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rot2D(time*0.0314f, direction.x, direction.y);
-				direction *= 1.f/direction.Length();
+				Shadertoy::vFastNorm3(direction);
+//				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
 
@@ -319,10 +324,11 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 					march = fTest(hit, time);
 					total += march*0.16f;
 
-					if (total < 0.01f || total > 10.f)
-					{
-						break;
-					}
+					// enable if not screen-filling, otherwise it just costs a lot of cycles
+//					if (total < 0.01f || total > 10.f)
+//					{
+//						break;
+//					}
 				}
 
 				float nOffs = 0.1f;
@@ -330,7 +336,8 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-				normal *= 1.f/normal.Length();
+				Shadertoy::vFastNorm3(normal);
+//				normal *= 1.f/normal.Length();
 
 				const float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
 				const float specular = powf(std::max(0.f, normal*direction), 12.f);

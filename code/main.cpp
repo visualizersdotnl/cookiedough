@@ -32,7 +32,7 @@
 // - use multi-byte character set (i.e. no _UNICODE)
 // - adv. instruction set: SSE2 for x86, not set for 64-bit
 
-// important to know:
+// important:
 // - executables are built to target/x86/ or target/x64/ -- run from that directory!
 // - keep DLLs (see above) up to date for each build
 // - (almost) always include main.h on top

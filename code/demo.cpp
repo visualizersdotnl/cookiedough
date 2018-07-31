@@ -99,13 +99,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	Spikey_Draw(pDest, timer, delta);
 
 	// blit logo to 800x600
-	uint32_t *pWrite = pDest + 800*10;
+	uint32_t *pWrite = pDest + 800*(600-145);
 	for (int iY = 0; iY < 136; ++iY)
 	{
 		pWrite += 80;
-//		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
+		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
 		pWrite += 800-80;
-
 	}
 
 //	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);

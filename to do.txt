@@ -1,41 +1,33 @@
 
--- new list (2018) --
-
-** possible announcement for the Shader Superfights Heavyweight GP 2019! **
-
-working on now:
-- fast sqrt()
+priority:
 - fix map blitting so that it fills the entire screen
-- polar: write 4 pixels at a time
-- bring new optimization over to bsamp32() (packing instructions)
+- make Laura & Spikey more interesting
+- figure out a neat way to tie parameters to Rocket sync.
 
 to do:
+- implement: Heartquake water
 - create texture mapping version of map blitter(s)
 - garbage collect images (instead of having to free them manually all the time)
-- find a way to parametrize relevant values of each effect in a readable way so they can be controlled
-  by Rocket
-- implement: Heartquake water
-- functions like Mix32() can handle 2 pixels per iteration!
- 
-low priority / remember:
 - app. icon
 - configuration dialog
+
+possible optimizations:
+- bring new optimization over to bsamp32() (packing instructions)
+- polar blit: write 4 pixels at a time
+- functions like Mix32() can handle 2 pixels per iteration!
+
+effect ideas:
+- create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!)
+- blur specular highlights (as seen in Aura for Laura)
+- particles, requested by Nytrik (ask him what he likes best)
+
+remember:
 - Audio_Rocket_Sync() has 64 rows per pattern hardcoded momentarily
 - 2007 horizontal blur has bias flaw (write or steal new blurs)
-
-effects to make:
-- idea: blur specular highlights (as seen in Aura for Laura)
-- create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!), and more of these!
-- particles, requested by Nytrik (ask him what he likes best)
-- VHS distortion
-- marching a height field
-- font writer
-
-32-bit build dropped for now:
-- see main.cpp for issues
+- 32-bit build dropped for now (see main.cpp)
 
 for OSX/Linux build:
 - switch module player
 - CMake?
 
-when out of ideas: optimize + FIXMEs
+always tend to: optimize + FIXMEs
