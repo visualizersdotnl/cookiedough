@@ -11,7 +11,8 @@
 	- kPI et cetera are now 'constexpr'.
 	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for S3D_INLINE.
 	- Removed empty constructors (put it back for Vector3) & destructors, except for Vector4.
-	- Added "2*kPI" and angle normalization.
+	- Added "2*kPI".
+	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
 */
 
 #if !defined(STD_3D_MATH)

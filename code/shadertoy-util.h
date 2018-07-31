@@ -4,6 +4,7 @@
 /*
 	FIXME:
 		- add sign() function
+		- add 4-tap normal
 		- add UV function that supplies offset and delta instead (only makes sense if dropping OpenMP)
 */
 
@@ -19,8 +20,9 @@ using namespace FXMAP;
 
 namespace Shadertoy
 {
-	// -- constants copied from Std3DMath to promote their use, using these values often give *better* looking results --
+	// -- math --
 
+	// constants copied from Std3DMath to promote their use, using these values often yields a more natural look
 	constexpr float kPI = 3.1415926535897932384626433832795f;
 	constexpr float kHalfPI = kPI*0.5f;
 	constexpr float k2PI = 2.f*kPI;
@@ -35,8 +37,6 @@ namespace Shadertoy
 	const float kPlastic = 1.5f;
 	const float kDiamond = 2.417f;
  
-	// -- math --
-
 	VIZ_INLINE void rot2D(float angle, float &X, float &Y)
 	{
 		const int index = tocosindex(angle);
@@ -46,6 +46,14 @@ namespace Shadertoy
 		const float rotY = sine*X + cosine*Y;
 		X = rotX;
 		Y = rotY;
+	}
+
+	// use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
+	VIZ_INLINE __m128 lerp4(__m128 A, __m128 B, float factor)
+	{
+		__m128 alphaUnp = _mm_set1_ps(factor);
+		__m128 delta = _mm_mul_ps(alphaUnp, _mm_sub_ps(B, A));
+		return _mm_add_ps(A, delta);
 	}
 
 	// -- UVs --

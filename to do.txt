@@ -14,6 +14,7 @@ to do:
 - find a way to parametrize relevant values of each effect in a readable way so they can be controlled
   by Rocket
 - implement: Heartquake water
+- functions like Mix32() can handle 2 pixels per iteration!
  
 low priority / remember:
 - app. icon

@@ -7,7 +7,7 @@
 		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member may you want to parallelize locally
 
 	to do:
-		- just optimize as needed, since all of this is a tad slow
+		- optimize where you can; ideally, in some situation, I'd handle more calculations in SIMD parallel
 		- what to do with hardcoded colors, paremeters?
 		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP!
 */
@@ -224,7 +224,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 origin(0.f, 0.f, time*8.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-//				Shadertoy::rot2D(time*0.05234f, direction.x, direction.y);
+				Shadertoy::rot2D(time*0.05234f, direction.x, direction.y);
 				direction *= 1.f/direction.Length();
 
 				Vector3 hit;
@@ -255,7 +255,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 
 				const float distance = origin.z-hit.z;
 				const float fog = 1.f-(expf(-0.006f*distance*distance));
-				color = lerpf(color, fogColor, fog);
+				color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
 
 				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
 			}
@@ -273,15 +273,87 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// Distorted sphere (spherical harmonics)
+// Distorted sphere (spikes)
+//
+// FIXME:
+// - if breaking out of the march loop, skip lighting calculations and just output fog
+// - colors, animation, ...
 //
 
-static void RenderHarmonicaMap_2x2(uint32_t *pDest, float time)
+VIZ_INLINE float fTest(Vector3 position, float time) 
 {
+    float phase = 2.5f*time;
+    float radius = 1.35f + 0.15f*lutcosf(16.f*position.y - phase) + 0.15f*lutcosf(16.f*position.x + phase);
+    return position.Length() - radius;
 }
 
-void Harmonica_Draw(uint32_t *pDest, float time, float delta)
+static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 {
-	RenderHarmonicaMap_2x2(g_pFXFine, time);
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	Vector3 fogColor(0.9f, 0.1f, 0.8f);
+	fogColor *= 0.4314f;
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
+	{
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
+		{	
+			Vector4 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
+
+				Vector3 origin(0.f, 0.f, -2.314f);
+				Vector3 direction(UV.x, UV.y, 1.f); 
+				Shadertoy::rot2D(time*0.0314f, direction.x, direction.y);
+				direction *= 1.f/direction.Length();
+
+				Vector3 hit;
+
+				float march, total = 0.f; 
+				int iStep;
+				for (iStep = 0; iStep < 32; ++iStep)
+				{
+					hit = origin + direction*total;
+					march = fTest(hit, time);
+					total += march*0.16f;
+
+					if (total < 0.01f || total > 10.f)
+					{
+						break;
+					}
+				}
+
+				float nOffs = 0.1f;
+				Vector3 normal(
+					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z), time),
+					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+				normal *= 1.f/normal.Length();
+
+				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.45f;
+				float specular = powf(std::max(0.f, normal*direction), 16.f);
+
+				Vector3 color(diffuse);
+				color += specular;
+
+				// const float distance = origin.z-hit.z;
+				// const float fog = 1.f-(expf(-0.004f*distance*distance));
+				// color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
+
+				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
+void Spikey_Draw(uint32_t *pDest, float time, float delta)
+{
+	RenderSpikeyMap_2x2(g_pFXFine, time);
 	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 }
