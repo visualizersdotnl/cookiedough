@@ -17,6 +17,7 @@ possible optimizations:
 - functions like Mix32() can handle 2 pixels per iteration!
 
 effect ideas:
+- displacing per scanline
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!)
 - blur specular highlights (as seen in Aura for Laura)
 - particles, requested by Nytrik (ask him what he likes best)

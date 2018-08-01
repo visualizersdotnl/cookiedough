@@ -43,13 +43,13 @@ namespace Shadertoy
 
 	VIZ_INLINE float vFastLen3(const Vector3 &vector)
 	{
-		return 1.f/Q_rsqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
 	// use this instead of Normalize()/Normalized() on Vector3
 	VIZ_INLINE void vFastNorm3(Vector3 &vector)
 	{
-		vector *= Q_rsqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		vector *= Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
 	// -- UVs --

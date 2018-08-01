@@ -40,7 +40,7 @@ VIZ_INLINE float fPlasma(Vector3 point, float time)
 	const float fY = sine + lutcosf(point.y*0.33f);
 	const float fZ = sine + lutcosf(point.z*0.33f);
 //	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
-	return 1.f/Q_rsqrt(fX*fX + fY*fY + fZ*fZ)-0.8f;
+	return 1.f/Q3_rsqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
 
 static void RenderPlasmaMap(uint32_t *pDest, float time)
@@ -255,7 +255,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 color(diffuse);
 				color *= yMod;
-				color += specular;
+				color += specular+specular;
 
 				const float distance = origin.z-hit.z;
 				Shadertoy::ApplyFog(distance, color.vSIMD, fogColor.vSIMD, 0.006f);
@@ -279,8 +279,8 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 // Distorted sphere (spikes)
 //
 // FIXME:
+// - animate spikes
 // - if breaking out of the march loop, skip lighting calculations and just output fog
-// - animation, more interesting spikes
 //
 
 VIZ_INLINE float fTest(Vector3 position, float time) 
@@ -347,9 +347,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				// color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
 
 				// Vector3 color(diffuse);
-				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
+				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, (0.314f*kGoldenRatio)*0.314f*fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
 				color.Multiply(color);
-				color += specular;
+				color += specular+specular;
 
 				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
 			}
