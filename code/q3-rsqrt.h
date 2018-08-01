@@ -1,5 +1,5 @@
 
-// cookiedough -- rsqrtf() implemention originating from Carmack/Quake 3 (see https://en.wikipedia.org/wiki/Fast_inverse_square_root)
+// cookiedough -- rsqrtf() implemention by Carmack (Quake III) (see https://en.wikipedia.org/wiki/Fast_inverse_square_root)
 
 #pragma once
 

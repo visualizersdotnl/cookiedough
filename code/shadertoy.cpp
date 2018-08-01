@@ -290,7 +290,7 @@ VIZ_INLINE float fTest(Vector3 position, float time)
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
-static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
+static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
@@ -339,15 +339,15 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 				Shadertoy::vFastNorm3(normal);
 //				normal *= 1.f/normal.Length();
 
-				const float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
-				const float specular = powf(std::max(0.f, normal*direction), 12.f);
+				float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
+				const float specular = powf(std::max(0.f, normal*direction), 8.f);
 
 				const float distance = origin.z-hit.z;
 				// const float fog = 1.f-(expf(-0.004f*distance*distance));
 				// color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
 
 				// Vector3 color(diffuse);
-				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, 1.f), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
+				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
 				color.Multiply(color);
 				color += specular;
 
@@ -360,8 +360,84 @@ static void RenderSpikeyMap_2x2(uint32_t *pDest, float time)
 	}
 }
 
-void Spikey_Draw(uint32_t *pDest, float time, float delta)
+static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 {
-	RenderSpikeyMap_2x2(g_pFXFine, time);
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	Vector3 fogColor(0.9f, 0.1f, 0.8f);
+	fogColor *= 0.4314f;
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
+	{
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
+		{	
+			Vector4 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
+
+				Vector3 origin(0.f, 0.f, -3.314f);
+				Vector3 direction(UV.x, UV.y, 1.f); 
+				Shadertoy::rot2D(time*0.0314f, direction.x, direction.y);
+				Shadertoy::vFastNorm3(direction);
+//				direction *= 1.f/direction.Length();
+
+				Vector3 hit;
+
+				float march, total = 0.f; 
+				int iStep;
+				for (iStep = 0; iStep < 32; ++iStep)
+				{
+					hit = origin + direction*total;
+					march = fTest(hit, time);
+					total += march*0.16f;
+
+					// enable if not screen-filling, otherwise it just costs a lot of cycles
+//					if (total < 0.01f || total > 10.f)
+//					{
+//						break;
+//					}
+				}
+
+				float nOffs = 0.1f;
+				Vector3 normal(
+					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z), time),
+					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z), time),
+					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+				Shadertoy::vFastNorm3(normal);
+//				normal *= 1.f/normal.Length();
+
+				float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
+				const float specular = powf(std::max(0.f, normal*direction), 2.f);
+
+				const float distance = origin.z-hit.z;
+				const float fog = 1.f-(expf(-0.06f*distance*distance));
+
+				// Vector3 color(diffuse);
+				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
+				color.Multiply(color);
+				color += specular;
+
+				// apply fog
+				color.vSIMD = Shadertoy::vLerp4(color.vSIMD, fogColor.vSIMD, fog);
+
+				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
+void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true */)
+{
+	if (close)
+		RenderSpikeyMap_2x2_Close(g_pFXFine, time);
+	else
+		RenderSpikeyMap_2x2_Distant(g_pFXFine, time);
+
 	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 }

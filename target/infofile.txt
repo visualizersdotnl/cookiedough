@@ -37,8 +37,7 @@
 		- Std3DMath by http://www.visualizers.nl
 		- sse_mathfun.h by Julien Pommier
 
-	source code:
-		- https://github.com/visualizersdotnl/cookiedough
+	source code: https://github.com/visualizersdotnl/cookiedough
 
 	Q&A time!
 

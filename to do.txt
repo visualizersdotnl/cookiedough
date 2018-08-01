@@ -20,6 +20,7 @@ effect ideas:
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!)
 - blur specular highlights (as seen in Aura for Laura)
 - particles, requested by Nytrik (ask him what he likes best)
+- trace a high quality radial blur? https://www.shadertoy.com/view/4sfGRn
 
 remember:
 - Audio_Rocket_Sync() has 64 rows per pattern hardcoded momentarily
