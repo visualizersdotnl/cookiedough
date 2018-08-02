@@ -8,14 +8,14 @@
 class Vector2
 {
 public:
-	S3D_INLINE static const Vector2 Add(const Vector2 &A, const Vector2 &B) { return Vector2(A.x+B.x, A.y+B.y); }
-	S3D_INLINE static const Vector2 Sub(const Vector2 &A, const Vector2 &B) { return Vector2(A.x-B.x, A.y-B.y); }
-	S3D_INLINE static const Vector2 Mul(const Vector2 &A, const Vector2 &B) { return Vector2(A.x*B.x, A.y*B.y); }
-	S3D_INLINE static const Vector2 Div(const Vector2 &A, const Vector2 &B) { return Vector2(A.x/B.x, A.y/B.y); }
+	S3D_INLINE static const Vector2 Add(const Vector2 &A, const Vector2 &B) { return {A.x+B.x, A.y+B.y}; }
+	S3D_INLINE static const Vector2 Sub(const Vector2 &A, const Vector2 &B) { return {A.x-B.x, A.y-B.y}; }
+	S3D_INLINE static const Vector2 Mul(const Vector2 &A, const Vector2 &B) { return {A.x*B.x, A.y*B.y}; }
+	S3D_INLINE static const Vector2 Div(const Vector2 &A, const Vector2 &B) { return {A.x/B.x, A.y/B.y}; }
 
 	static const Vector2 Scale(const Vector2 &A, float B)
 	{
-		return Vector2(A.x*B, A.y*B);
+		return { A.x*B, A.y*B };
 	}
 
 	static float Dot(const Vector2 &A, const Vector2 &B)
@@ -37,7 +37,7 @@ public:
 	const Vector2 operator -(const Vector2 &B) const { return Sub(*this, B); }
 	const Vector2 operator -(float B)          const { return Sub(*this, Vector2(B)); }
 	const float   operator *(const Vector2 &B) const { return Dot(*this, B); }
-	const Vector2 operator *(float B)          const { return Mul(*this, Vector2(B)); }
+	const Vector2 operator *(float B)          const { return Scale(*this, B); }
 	const Vector2 operator /(const Vector2 &B) const { return Div(*this, B); }
 	const Vector2 operator /(float B)          const { return Div(*this, Vector2(B)); }
 

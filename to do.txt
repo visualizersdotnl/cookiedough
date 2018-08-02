@@ -15,6 +15,7 @@ possible optimizations:
 - bring new optimization over to bsamp32() (packing instructions)
 - polar blit: write 4 pixels at a time
 - functions like Mix32() can handle 2 pixels per iteration!
+- there's probably more SIMD that can be more efficient using SSE 4.1
 
 effect ideas:
 - displacing per scanline

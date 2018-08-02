@@ -8,14 +8,14 @@
 class Vector3
 {
 public:
-	S3D_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return Vector3(A.x+B.x, A.y+B.y, A.z+B.z); }
-	S3D_INLINE static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return Vector3(A.x-B.x, A.y-B.y, A.z-B.z); }
-	S3D_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return Vector3(A.x*B.x, A.y*B.y, A.z*B.z); }
-	S3D_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return Vector3(A.x/B.x, A.y/B.y, A.z/B.z); }
+	S3D_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return {A.x+B.x, A.y+B.y, A.z+B.z}; }
+	S3D_INLINE static const Vector3 Sub(const Vector3 &A, const Vector3 &B) { return {A.x-B.x, A.y-B.y, A.z-B.z}; }
+	S3D_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return {A.x*B.x, A.y*B.y, A.z*B.z}; }
+	S3D_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return {A.x/B.x, A.y/B.y, A.z/B.z}; }
 
 	S3D_INLINE static const Vector3 Scale(const Vector3 &A, float B)
 	{
-		return Vector3(A.x*B, A.y*B, A.z*B);
+		return { A.x*B, A.y*B, A.z*B };
 	}
 
 	S3D_INLINE static float Dot(const Vector3 &A, const Vector3 &B)
@@ -40,11 +40,15 @@ public:
 			float padding;
 		};
 		
-		// 28/07/2018 - Basically just added this to gaurantee alignment.
+		// 02/08/2018 - Added to gaurantee alignment, but using it for SIMD as well.
 		__m128 vSIMD;
 	};
 
 	Vector3() {}
+
+	// 02/08/2018 - Added for Bevacqua.
+	explicit Vector3(__m128 vSIMD) :
+		vSIMD(vSIMD) {}
 	
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar), padding(0.f) {}
@@ -60,7 +64,7 @@ public:
 	const Vector3 operator -(const Vector3 &B) const { return Sub(*this, B); }
 	const Vector3 operator -(float B)          const { return Sub(*this, Vector3(B)); }
 	const float   operator *(const Vector3 &B) const { return Dot(*this, B); }
-	const Vector3 operator *(float B)          const { return Mul(*this, Vector3(B)); }
+	const Vector3 operator *(float B)          const { return Scale(*this, B); }
 	const Vector3 operator /(const Vector3 &B) const { return Div(*this, B); }
 	const Vector3 operator /(float B)          const { return Div(*this, Vector3(B)); }
 	const Vector3 operator %(const Vector3 &B) const { return Cross(*this, B); }

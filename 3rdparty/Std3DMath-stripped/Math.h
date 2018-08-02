@@ -5,15 +5,21 @@
 
 	Please check README.md for more information.
 
-	Added and/or modified (backport to main branch):
+	Added, fixed and/or modified (backport to main branch):
+	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
 	- Matrix44::FromArray33()
-	- Forced 16-byte alignment for Vector4 & Vector3 (padded).
+	- Forced 16-byte alignment for Vector4 & Vector3 (padded) by unionizing with a SIMD register.
+	  This wasn't a design principle so I'd suggest using 'alignas(16)' when backporting, or re-evaluate if
+	  at least offering SIMD access is nice to have.
 	- kPI et cetera are now 'constexpr'.
 	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for S3D_INLINE.
 	- Removed empty constructors (put it back for Vector3) & destructors, except for Vector4.
 	- Added "2*kPI".
-	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
 	- Added an actual Multiplied()/Multiply() function on Vector3 and Vector4 as I really needed it more often.
+	- Fix: used Scale() function instead of Mul() when multiplying vector by scalar.
+
+	Pay attention to:
+	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
 */
 
 #if !defined(STD_3D_MATH)

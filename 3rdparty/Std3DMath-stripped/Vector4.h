@@ -8,14 +8,14 @@
 class Vector4
 {
 public:
-	S3D_INLINE static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return Vector4(A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w); }
-	S3D_INLINE static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return Vector4(A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w); }
-	S3D_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return Vector4(A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w); }
-	S3D_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return Vector4(A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w); }
+	S3D_INLINE static const Vector4 Add(const Vector4 &A, const Vector4 &B) { return {A.x+B.x, A.y+B.y, A.z+B.z, A.w+B.w}; }
+	S3D_INLINE static const Vector4 Sub(const Vector4 &A, const Vector4 &B) { return {A.x-B.x, A.y-B.y, A.z-B.z, A.w-B.w}; }
+	S3D_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return {A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w}; }
+	S3D_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return {A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w}; }
 
 	S3D_INLINE static const Vector4 Scale(const Vector4 &A, float B)
 	{
-		return Vector4(A.x*B, A.y*B, A.z*B, A.w*B);
+		return { A.x*B, A.y*B, A.z*B, A.w*B };
 	}
 
 	S3D_INLINE static float Dot(const Vector4 &A, const Vector4 &B)
@@ -31,11 +31,15 @@ public:
 			float x, y, z, w;
 		};
 		
-		// 28/07/2018 - Basically just added this to gaurantee alignment.
+		// 02/08/2018 - Added to gaurantee alignment, but using it for SIMD as well.
 		__m128 vSIMD;
 	};
 	
 	Vector4() {}
+
+	// 02/08/2018 - Added for Bevacqua.
+	explicit Vector4(__m128 vSIMD) :
+		vSIMD(vSIMD) {}
 
 	explicit Vector4(float scalar) : 
 		x(scalar), y(scalar), z(scalar), w(scalar) {}
@@ -54,7 +58,7 @@ public:
 	const Vector4 operator -(const Vector4 &B) const { return Sub(*this, B); }
 	const Vector4 operator -(float B)          const { return Sub(*this, Vector4(B)); }
 	const float   operator *(const Vector4 &B) const { return Dot(*this, B); }
-	const Vector4 operator *(float B)          const { return Mul(*this, Vector4(B)); }
+	const Vector4 operator *(float B)          const { return Scale(*this, B); }
 	const Vector4 operator /(const Vector4 &B) const { return Div(*this, B); }
 	const Vector4 operator /(float B)          const { return Div(*this, Vector4(B)); }
 

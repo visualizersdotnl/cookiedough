@@ -100,10 +100,10 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
 	float cosX, cosY, cosZ;
-	float cosTime7 = lutcosf(time/7.f); // ** i'm getting an internal compiler error if I write this where it should be **
+	float cosTime7 = lutcosf(time*0.1428f); // ** i'm getting an internal compiler error if I write this where it should be **
 	cosX = lutcosf(lutcosf(position.x + time*0.125f)*position.x - lutcosf(position.y + time/9.f)*position.y);
 	cosY = lutcosf(position.z*0.33f*position.x - cosTime7*position.y);
-	cosZ = lutcosf(position.x + position.y + position.z/1.25f + time);
+	cosZ = lutcosf(position.x + position.y + position.z*0.8f + time);
 	const float dotted = cosX*cosX + cosY*cosY + cosZ*cosZ;
 	return dotted*0.5f - .7f;
 };
@@ -279,14 +279,15 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 // Distorted sphere (spikes)
 //
 // FIXME:
-// - animate spikes
+// - animate spikes: switching the frequency per axis along with the rotation might look cool
 // - if breaking out of the march loop, skip lighting calculations and just output fog
 //
 
-VIZ_INLINE float fTest(Vector3 position, float time) 
+static Vector4 fTest_global;
+VIZ_INLINE float fTest(Vector3 position) 
 {
-    float phase = 2.5f*time;
-    float radius = 1.35f + 0.15f*lutcosf(16.f*position.y - phase) + 0.15f*lutcosf(16.f*position.x + phase);
+	constexpr float scale = kGoldenRatio*0.1f;
+    const float radius = 1.35f + scale*lutcosf(fTest_global.y*position.y - fTest_global.x) + scale*lutcosf(fTest_global.z*position.x + fTest_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
@@ -296,6 +297,8 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 	Vector3 fogColor(0.9f, 0.1f, 0.8f);
 	fogColor *= 0.4314f;
+
+	fTest_global = Vector4(2.5f*time, 16.f, 24.f, 0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -318,11 +321,11 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				float march, total = 0.f; 
 				int iStep;
-				for (iStep = 0; iStep < 32; ++iStep)
+				for (iStep = 0; iStep < 34; ++iStep)
 				{
 					hit = origin + direction*total;
-					march = fTest(hit, time);
-					total += march*0.16f;
+					march = fTest(hit);
+					total += march*(0.1f*kGoldenRatio);
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
 //					if (total < 0.01f || total > 10.f)
@@ -333,9 +336,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				float nOffs = 0.1f;
 				Vector3 normal(
-					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z), time),
-					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z), time),
-					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z)),
+					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z)),
+					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 //				normal *= 1.f/normal.Length();
 
@@ -347,11 +350,11 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				// color.vSIMD = Shadertoy::lerp4(color.vSIMD, fogColor.vSIMD, fog);
 
 				// Vector3 color(diffuse);
-				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, (0.314f*kGoldenRatio)*0.314f*fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
-				color.Multiply(color);
+				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.5f, 0.f, 0.3f), diffuse, Vector3(0.6f, 0.f, 0.4f), 0.38f);
+				color.vSIMD = Shadertoy::Desaturate(color.vSIMD, 0.77f);
 				color += specular+specular;
 
-				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
+				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, 2.22f);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -360,12 +363,15 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	}
 }
 
+// FIXME: abandoned for a while
 static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	Vector3 fogColor(0.9f, 0.1f, 0.8f);
 	fogColor *= 0.4314f;
+
+	fTest_global = Vector4(2.5f*time, 16.f, 24.f, 0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -388,11 +394,11 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 				float march, total = 0.f; 
 				int iStep;
-				for (iStep = 0; iStep < 32; ++iStep)
+				for (iStep = 0; iStep < 36; ++iStep)
 				{
 					hit = origin + direction*total;
-					march = fTest(hit, time);
-					total += march*0.16f;
+					march = fTest(hit);
+					total += march*(0.1f*kGoldenRatio);
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
 //					if (total < 0.01f || total > 10.f)
@@ -403,21 +409,21 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 				float nOffs = 0.1f;
 				Vector3 normal(
-					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z), time),
-					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z), time),
-					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs), time));
+					march-fTest(Vector3(hit.x+nOffs, hit.y, hit.z)),
+					march-fTest(Vector3(hit.x, hit.y+nOffs, hit.z)),
+					march-fTest(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 //				normal *= 1.f/normal.Length();
 
 				float diffuse = normal.y*0.1f + normal.x*0.25f + normal.z*0.5f;
-				const float specular = powf(std::max(0.f, normal*direction), 2.f);
+				const float specular = powf(std::max(0.f, normal*direction), 3.14f);
 
 				const float distance = origin.z-hit.z;
 				const float fog = 1.f-(expf(-0.06f*distance*distance));
 
 				// Vector3 color(diffuse);
 				Vector3 color = Shadertoy::CosPalSimple(distance, Vector3(0.6f, 0.f, fabsf(lutcosf(time*0.314f))), diffuse, Vector3(0.6f, 0.1f, 0.6f), .5f);
-				color.Multiply(color);
+				color.Multiply(color); // FIXME: ?
 				color += specular;
 
 				// apply fog

@@ -6,6 +6,8 @@
 		- add sign() function
 		- add 4-tap normal
 		- add UV function that supplies offset and delta instead (only makes sense if dropping OpenMP)
+		- there's a bit of a mixture between using SIMD and Vector* parameters (looks messy but indicates if it's parallelized or not)
+		- keep an eye on performance when employing SIMD, it's not always faster
 */
 
 #pragma once
@@ -141,6 +143,8 @@ namespace Shadertoy
 		// formula: raised = exp(exponent*log(value))
 		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color.vSIMD)));
 
+		// profiler proves this to be slower:
+		// return Vector3(powf(color.x, gamma), powf(color.y, gamma), powf(color.z, gamma)).vSIMD;
 	}
 
 	// IQ's palette function
@@ -174,5 +178,13 @@ namespace Shadertoy
 	{
 		const float fog = 1.f-(expf(-scale*distance*distance));
 		color = Shadertoy::vLerp4(color, fogColor, fog);
+	}
+
+	// cheap desaturation (amount [0..1])
+	VIZ_INLINE __m128 Desaturate(__m128 color, float amount)
+	{
+		const Vector3 weights(0.0722f, 0.7152f, 0.2126f); // linear NTSC, R and B swapped (source: Wikipedia)
+		const __m128 luma = _mm_dp_ps(weights.vSIMD, color, 0xff); // SSE 4.1
+		return vLerp4(color, luma, amount);
 	}
 } 
