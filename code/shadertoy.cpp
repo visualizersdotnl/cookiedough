@@ -97,6 +97,7 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 // Nautilus Redux by Michiel v/d Berg
 //
 
+// FIXME: maybe SIMD-ize this?
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
 	float cosX, cosY, cosZ;
@@ -173,12 +174,6 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 	}
 }
 
-static void RenderNautilusMap_4x4(uint32_t *pDest, float time)
-{
-	// FIXME: implement
-	VIZ_ASSERT(false);
-}
-
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderNautilusMap_2x2(g_pFXFine, time);
@@ -187,9 +182,6 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	// HorizontalBoxBlur32(g_pFXFine, g_pFXFine, kFineResX, kFineResY, fabsf(0.1314f*sin(time)));
 	
 	MapBlitter_Colors_2x2(pDest, g_pFXFine);
-
-//	RenderNautilusMap_4x4(g_pFXCoarse, time);
-//	MapBlitter_Colors_4x4(pDest, g_pFXCoarse);
 }
 
 //
