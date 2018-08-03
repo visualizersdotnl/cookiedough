@@ -2,12 +2,13 @@
 // cookiedough -- a (messy) collection of values and functions to easily implement Shadertoy(ish) effects
 
 /*
+	- the rule of thumb now is that once you go to __m128 (color operations, mostly) you don't convert back
+	- keep an eye on performance when employing SIMD, it's not always faster
+
 	FIXME:
 		- add sign() function
 		- add 4-tap normal
 		- add UV function that supplies offset and delta instead (only makes sense if dropping OpenMP)
-		- there's a bit of a mixture between using SIMD and Vector* parameters (looks messy but indicates if it's parallelized or not)
-		- keep an eye on performance when employing SIMD, it's not always faster
 */
 
 #pragma once
@@ -95,26 +96,22 @@ namespace Shadertoy
 	// -- color write --
 
 	const __m128 chanScale = _mm_set1_ps(255.f);
-//	const __m128 chanScale = _mm_set1_ps(1.f);
 
 	// - writes 4 pixels at once
-	// - assumes aligned input
 	// - FIXME: swap R and B here?
-	VIZ_INLINE __m128i ToPixel4(const Vector4 *colors)
+	VIZ_INLINE __m128i ToPixel4(const __m128 *colors)
 	{
-		__m128i zero = _mm_setzero_si128();
-
-		// FIXME: shift instead of scale?
+//		__m128i zero = _mm_setzero_si128();
 //		const __m128i iA = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
 //		const __m128i iB = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
 //		const __m128i iC = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
 //		const __m128i iD = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
 
-		const __m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
-		const __m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
-		const __m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
+		const __m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0])));
+		const __m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1])));
+		const __m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2])));
 		const __m128i AB = _mm_packus_epi32(iA, iB);
-		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
+		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3])));
 		const __m128i CD = _mm_packus_epi32(iC, iD);
 
 		return (_mm_packus_epi16(AB, CD));
@@ -136,16 +133,13 @@ namespace Shadertoy
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
 	}
 
-	// -- colorization --
+	// -- colorization (mostly takes __m128 and doesn't go back, the rest: FIXME!) --
 
 	// SIMD color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
-	VIZ_INLINE __m128 GammaAdj(const Vector3 &color, float gamma = kGoldenRatio)
+	VIZ_INLINE __m128 GammaAdj(__m128 color, float gamma = kGoldenRatio)
 	{
 		// formula: raised = exp(exponent*log(value))
-		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color.vSIMD)));
-
-		// profiler proves this to be slower:
-		// return Vector3(powf(color.x, gamma), powf(color.y, gamma), powf(color.z, gamma)).vSIMD;
+		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color)));
 	}
 
 	// IQ's palette function
@@ -153,9 +147,9 @@ namespace Shadertoy
 	{
 		const __m128 vIndex = _mm_set1_ps(index);
 		const __m128 v2PI = _mm_set1_ps(k2PI);
-		const __m128 angles = _mm_mul_ps(_mm_add_ps(_mm_mul_ps(frequency.vSIMD, vIndex), phase.vSIMD), v2PI);
+		const __m128 angles = _mm_mul_ps(_mm_add_ps(_mm_mul_ps(frequency, vIndex), phase), v2PI);
 		const __m128 cosines = cos_ps(angles);
-		return _mm_add_ps(bias.vSIMD, _mm_mul_ps(cosines, scale.vSIMD));
+		return _mm_add_ps(bias, _mm_mul_ps(cosines, scale));
 
 //		Vector3 cosines = (frequency*index + phase)*k2PI;
 //		cosines.x = lutcosf(cosines.x);
@@ -185,17 +179,17 @@ namespace Shadertoy
 	}
 
 	// exponential fog
-	VIZ_INLINE void ApplyFog(float distance, __m128 &color, __m128 fogColor, float scale = 0.004f)
+	VIZ_INLINE __m128 ApplyFog(float distance, __m128 color, __m128 fogColor, float scale = 0.004f)
 	{
 		const float fog = 1.f-(expf(-scale*distance*distance));
-		color = Shadertoy::vLerp4(color, fogColor, fog);
+		return Shadertoy::vLerp4(color, fogColor, fog);
 	}
 
 	// cheap desaturation (amount [0..1])
 	VIZ_INLINE __m128 Desaturate(__m128 color, float amount)
 	{
 		const Vector3 weights(0.0722f, 0.7152f, 0.2126f); // linear NTSC, R and B swapped (source: Wikipedia)
-		const __m128 luma = _mm_dp_ps(weights.vSIMD, color, 0xff); // SSE 4.1
+		const __m128 luma = _mm_dp_ps(weights, color, 0xff); // SSE 4.1
 		return vLerp4(color, luma, amount);
 	}
 } 

@@ -24,22 +24,19 @@ public:
 	}
 
 public:
+	// 03/08/2018 - Added for Bevacqua.
+	operator __m128() const { return vSSE; }
+
 	union
 	{
-		struct
-		{
+		struct {
 			float x, y, z, w;
 		};
-		
-		// 02/08/2018 - Added to gaurantee alignment, but using it for SIMD as well.
-		__m128 vSIMD;
+
+		__m128 vSSE;
 	};
 	
 	Vector4() {}
-
-	// 02/08/2018 - Added for Bevacqua.
-	explicit Vector4(__m128 vSIMD) :
-		vSIMD(vSIMD) {}
 
 	explicit Vector4(float scalar) : 
 		x(scalar), y(scalar), z(scalar), w(scalar) {}

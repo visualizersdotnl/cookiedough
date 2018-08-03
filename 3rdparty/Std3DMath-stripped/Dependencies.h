@@ -1,8 +1,8 @@
 
 #pragma once
 
-// Hack for 'cookiedough' (FIXME)
-#define S3D_INLINE __inline
+// Hack for 'cookiedough' (FIXME: MSVC doesn't quite listen to even this one!)
+#define S3D_INLINE __forceinline
 
 // CRT & STL:
 #include <assert.h>

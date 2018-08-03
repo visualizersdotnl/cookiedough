@@ -4,13 +4,13 @@
 /*
 	important:
 		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
-		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member you can use
-		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this
+		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed
+		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this (see spikey objects for example)
+		- an obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 
 	to do:
-		- optimize where you can (which does not always mean more SIMD)
+		- optimize where you can (which does not always mean more SIMD, but it *does* for color operations)
 		- what to do with hardcoded colors, paremeters?
-		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP!
 */
 
 #include "main.h"
@@ -56,7 +56,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 		const int yIndex = iY*kFineResX;
 		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
-			Vector4 colors[4];
+			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				// FIXME: parametrize (minus gives a black bar on the left, ideal for an old school logo)
@@ -82,8 +82,10 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					origin += direction*march;
 				}
 				
-				colors[iColor] = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
-				colors[iColor] *= 8.f - origin.x*0.5f;
+				Vector3 color = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
+				color *= 8.f - origin.x*0.5f;
+
+				colors[iColor] = color;
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -131,7 +133,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 		const int yIndex = iY*kFineResX;
 		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
-			Vector4 colors[4];
+			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
@@ -143,11 +145,11 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 hit;
 
-				float march, total = 0.f;
+				float total = 0.f;
+				float march;
 				for (int iStep = 0; iStep < 64; ++iStep)
 				{
 					hit = origin + direction*total;
-//					hit = direction*total;
 					march = fNautilus(hit, time);
 					total += march*0.628f;
 
@@ -173,7 +175,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				color += colorization*(1.56f*total + specular);
 				color += specular*0.314f;
 
-				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, 2.22f);
+				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -219,7 +221,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 		const int yIndex = iY*kFineResX;
 		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
-			Vector4 colors[4];
+			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
@@ -256,9 +258,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				color += specular+specular;
 
 				const float distance = hit.z-origin.z;
-				Shadertoy::ApplyFog(distance, color.vSIMD, fogColor.vSIMD, 0.006f);
+				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.006f);
 
-				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, kGoldenRatio);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -303,7 +305,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 		const int yIndex = iY*kFineResX;
 		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
-			Vector4 colors[4];
+			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
@@ -347,10 +349,10 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 //				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.6f, 0.1f, 0.6f), 0.5314f);
 				color += specular;
 
-//				color.vSIMD = Shadertoy::Desaturate(color.vSIMD, 0.314f);
-				Shadertoy::ApplyFog(distance, color.vSIMD, fogColor.vSIMD, 0.733f);
+//				__m128 desaturated = Shadertoy::Desaturate(color, 0.314f);
+				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.733f);
 
-				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, 1.99f);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, 1.99f);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -373,7 +375,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 		const int yIndex = iY*kFineResX;
 		for (int iX = 0; iX < kFineResX; iX += 4)
 		{	
-			Vector4 colors[4];
+			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
@@ -416,9 +418,9 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				color.Multiply(color);
 				color += specular+specular;
 
-				Shadertoy::ApplyFog(distance, color.vSIMD, fogColor.vSIMD, 0.314f);
+				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.314f);
 
-				colors[iColor].vSIMD = Shadertoy::GammaAdj(color, kGoldenRatio);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, kGoldenRatio);
 			}
 
 			const int index = (yIndex+iX)>>2;

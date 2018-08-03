@@ -5,7 +5,7 @@
 
 #pragma once
 
-class Vector3
+class Vector3 
 {
 public:
 	S3D_INLINE static const Vector3 Add(const Vector3 &A, const Vector3 &B) { return {A.x+B.x, A.y+B.y, A.z+B.z}; }
@@ -32,23 +32,20 @@ public:
 	}
 
 public:
+	// 03/08/2018 - Added for Bevacqua.
+	operator __m128() const { return vSSE; }
+
 	union
 	{
-		struct
-		{
+		struct {
 			float x, y, z;
 			float padding;
 		};
-		
-		// 02/08/2018 - Added to gaurantee alignment, but using it for SIMD as well.
-		__m128 vSIMD;
+
+		__m128 vSSE;
 	};
 
 	Vector3() {}
-
-	// 02/08/2018 - Added for Bevacqua.
-	explicit Vector3(__m128 vSIMD) :
-		vSIMD(vSIMD) {}
 	
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar), padding(0.f) {}

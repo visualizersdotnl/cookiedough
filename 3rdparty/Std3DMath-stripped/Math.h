@@ -7,10 +7,8 @@
 
 	Added, fixed and/or modified (backport to main branch):
 	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
-	- Matrix44::FromArray33()
-	- Forced 16-byte alignment for Vector4 & Vector3 (padded) by unionizing with a SIMD register.
-	  This wasn't a design principle so I'd suggest using 'alignas(16)' when backporting, or re-evaluate if
-	  at least offering SIMD access is nice to have.
+	- Added Matrix44::FromArray33().
+	- Forced 16-byte alignment for Vector4 & Vector3 (padded) by unionizing with __m128 (SSE/SIMD).
 	- kPI et cetera are now 'constexpr'.
 	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for S3D_INLINE.
 	- Removed empty constructors (put it back for Vector3) & destructors, except for Vector4.
@@ -20,6 +18,7 @@
 	- Added fracf().
 
 	Pay attention to:
+	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
 	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
 */
 
