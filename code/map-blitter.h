@@ -2,6 +2,7 @@
 // cookiedough -- old school 2x2+4x4 map interpolation blitters plus buffers to use (for heavier effects)
 
 // IMPORTANT: assumes output resolution for blit destination!
+// IMPORTANT: buffers must be 16-byte aligned
 
 #pragma once
 

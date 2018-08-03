@@ -85,6 +85,12 @@ VIZ_INLINE __m128i c2vISSE(uint32_t color)
 		_mm_cvtsi32_si128(color), _mm_setzero_si128()); 
 }
 
+// convert 32-bit color to unpacked (32-bit) ISSE vector
+VIZ_INLINE __m128i c2vISSE32(uint32_t color) 
+{ 
+	return  _mm_cvtepu8_epi32(_mm_cvtsi32_si128(color));
+}
+
 // unpack to floats (SSE 4.1)
 VIZ_INLINE __m128 c2vfISSE(uint32_t color) 
 { 

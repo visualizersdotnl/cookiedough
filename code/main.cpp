@@ -19,6 +19,7 @@
 // 32-bit build temporarily dropped (as of August 2018), because of:
 // - OpenMP not working properly
 // - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
+// - other potential SSE 4.1 / 64-bit instruction use
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)

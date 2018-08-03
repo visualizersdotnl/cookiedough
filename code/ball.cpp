@@ -250,8 +250,8 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	// render unwrapped ball
 	vball(g_renderTarget, time);
 
-	// radial blur
-	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.01628f);
+	// radial blur (FIXME: parametrize)
+	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.0314f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, false);

@@ -10,11 +10,12 @@ to do:
 - create texture mapping version of map blitter(s)
 - app. icon
 - configuration dialog (at least audio & VSYNC.)
+- rewrite horizontal blur (see below)
 
 possible optimizations:
-- (#1) rewrite old bsamp32(), that can be done with less instructions!
-- (#2) functions like Mix32() can handle at laest 2 pixels per iteration, using a 64-bit write!
-- there's probably more SIMD that can be more efficient using SSE 4.1
+- (#1) rewrite old bsamp32(), that can be done with less instructions (also offer direct-to-32-bit unpack with _mm_cvtepu8_epi32())
+- (#2) functions like Mix32() can handle at least 2 pixels per iteration
+- there's probably more SIMD that can be more efficient using better packing, new instructions et cetera
 
 effect ideas:
 - displacing per scanline

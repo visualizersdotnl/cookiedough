@@ -30,13 +30,13 @@ void MapBlitter_Destroy()
 	freeAligned(g_pFXCoarse);
 }
 
-// 2x2 blit (2 pixels per SSE write, uses 64-bit only intrinsic (FIXME))
+// 2x2 blit (2 pixels per SSE write, uses 64-bit only intrinsic (FIXME?))
 void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
 	VIZ_ASSERT(kFineDiv == 2);
 
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(32768/kFineDiv);
+	const __m128i divisor = _mm_set1_epi32(65536*kFineDiv);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY-1; ++iY)
@@ -48,59 +48,57 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			const unsigned iC = iA+kFineResX;
 			const unsigned iD = iC+1;
 
-			__m128i colA = c2vISSE(pSrc[iA]);
-			__m128i colB = c2vISSE(pSrc[iB]);
-			__m128i colC = c2vISSE(pSrc[iC]);
-			__m128i colD = c2vISSE(pSrc[iD]);
+			__m128i colA = c2vISSE32(pSrc[iA]);
+			__m128i colB = c2vISSE32(pSrc[iB]);
+			__m128i colC = c2vISSE32(pSrc[iC]);
+			__m128i colD = c2vISSE32(pSrc[iD]);
 
-			__m128i stepL = _mm_madd_epi16(_mm_unpacklo_epi16(_mm_sub_epi16(colC, colA), zero), divisor);
-			__m128i stepR = _mm_madd_epi16(_mm_unpacklo_epi16(_mm_sub_epi16(colD, colB), zero), divisor);
+			__m128i stepL = _mm_mul_epi32(_mm_sub_epi32(colC, colA), divisor);
+			__m128i stepR = _mm_mul_epi32(_mm_sub_epi32(colD, colB), divisor);
 
-			__m128i fpA = _mm_unpacklo_epi16(colA, zero);
-			fpA = _mm_slli_epi32(fpA, 15);
-
-			__m128i fpB = _mm_unpacklo_epi16(colB, zero);
-			fpB = _mm_slli_epi32(fpB, 15);
+			__m128i fpA = _mm_slli_epi32(colA, 16);
+			__m128i fpB = _mm_slli_epi32(colB, 16);
 
 			auto destIndex = (iY<<1)*kResX + (iX<<1);
 			destIndex >>= 1;
-			int64_t *pCopy = reinterpret_cast<int64_t*>(pDest);
+
+			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
+
+			__m128i AB, CD;
 
 			{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
-				delta = _mm_srli_epi32(delta, 15);
+				delta = _mm_srli_epi32(delta, 16);
 				__m128i step = _mm_madd_epi16(delta, divisor);
 				__m128i color = fpA;
-				__m128i pixel1 = _mm_srli_epi32(color, 15); 
+				__m128i pixel1 = _mm_srli_epi32(color, 16); 
 				color = _mm_add_epi32(color, step);
-				__m128i pixel2 = _mm_srli_epi32(color, 15); 
-				__m128i AB = _mm_packs_epi32(pixel1, pixel2);
+				__m128i pixel2 = _mm_srli_epi32(color, 16); 
+				AB = _mm_packus_epi32(pixel1, pixel2);
 				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
-				fpA = _mm_add_epi32(fpA, stepL);
-				fpB = _mm_add_epi32(fpB, stepR);
-
 			}
 
+			fpA = _mm_add_epi32(fpA, stepL);
+			fpB = _mm_add_epi32(fpB, stepR);
 			destIndex += kResX>>1;
 
 			{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
-				delta = _mm_srli_epi32(delta, 15);
+				delta = _mm_srli_epi32(delta, 16);
 				__m128i step = _mm_madd_epi16(delta, divisor);
 				__m128i color = fpA;
-				__m128i pixel1 = _mm_srli_epi32(color, 15); 
+				__m128i pixel1 = _mm_srli_epi32(color, 16); 
 				color = _mm_add_epi32(color, step);
-				__m128i pixel2 = _mm_srli_epi32(color, 15); 
-				__m128i AB = _mm_packs_epi32(pixel1, pixel2);
-				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
-				fpA = _mm_add_epi32(fpA, stepL);
-				fpB = _mm_add_epi32(fpB, stepR);
+				__m128i pixel2 = _mm_srli_epi32(color, 16); 
+				CD = _mm_packus_epi32(pixel1, pixel2);
+				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(CD, zero));
 			}
 		}
 	}
 }
 
-// 4x4 blit (almost optimal use of ISSE)
+// 4x4 blit (quasi-optimal use of ISSE)
+// FIXME: won't optimize like the 2x2 version since it's hardly, if ever, used
 void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc) 
 {
 	VIZ_ASSERT(kCoarseDiv == 4);
