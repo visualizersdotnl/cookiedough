@@ -15,16 +15,16 @@
 
 
 	system requirements:
+		- software rendering: office-grade desktop GPU will do
 		- a *fast* x64 CPU (marching & tracing going on)
 		- Windows 10 (not tested on earlier versions)
 		- a working default audio adapter
-		- low grade integrated graphics will do
 		
 	"who's doing it?"
-		- graphics by Nytrik/Cocoon
-		- C, C++, assembler & SSE: Superplek/Bypass
-		- soundtrack by Dascon/Deadliners
-		- shading support by Weyland Yutani
+		- 2D, maps, textures: Nytrik/Cocoon
+		- soundtrack: Dascon/Deadliners
+		- shading support: Weyland Yutani & Flopine
+		- C/C++, assembler, SSE 4.1: Superplek/Bypass
 
 	how to enjoy:
 		- turn up the volume, dim the lights
@@ -37,13 +37,28 @@
 		- Std3DMath by http://www.visualizers.nl
 		- sse_mathfun.h by Julien Pommier
 
+	sync. editor used for rocket: by Emoon/TBL
+
+	Superplek thanks the following people (in no particular order):
+		- Rik Arends (Arcturus)
+		- Alex Bartholomeus (Deadline/Superstition)
+		- Mikael Kalms (Kalms/TBL)
+		- Vincent Bijwaard (Alien/Paradox)
+		- Peter van Rijn (Havoc/Lineout)
+		- Dylan Hallegraef (Numtek/Guideline)
+		- Tom Bakker
+		- Renaldas Zioma (ReJ/TBL)
+		- Marco Foco (Pan/Spinning Kids)
+		- Albert Sandberg (Thec/Outbreak)
+		- Tim van Klooster (Tim/TBL)
+
 	source code: https://github.com/visualizersdotnl/cookiedough
 
 	Q&A time!
 
 	Q: why demand a proper CPU, did you not optimize?
 	A: I'll make the Github repository public soon so you can see I did, we're
-	   just pulling off some more complicated effects than the standard 1990s fare
+	   just pulling off some more complicated effects than the standard software fare
 
 	Q: who is the f*ck is Kurt Bevacqua? 
 	A: someone who does not like that little fat Italian called Tommy Lasorda

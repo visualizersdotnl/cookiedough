@@ -71,6 +71,15 @@ bool Gamepad_Update(PadState &state)
 
 		return true;
 	}
+	else
+	{
+		static int numCalls = 0;
+		if (++numCalls > 60*4) // let us check every 4 frames (assuming we're in candyland and running 60FPS)
+		{
+			Gamepad_Create();
+			numCalls = 0;
+		}
+	}
 
 	return false;
 }

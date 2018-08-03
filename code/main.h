@@ -26,6 +26,9 @@
 // OpenMP
 #include <omp.h>
 
+// list of industry aspect ratios
+#include "../3rdparty/aspectratios.h"
+
 // output resolution
 constexpr size_t kResX = 800;
 constexpr size_t kResY = 600;

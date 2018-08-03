@@ -126,6 +126,9 @@
     <ClCompile Include="..\code\random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\rocket-tracks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\audio.h">
@@ -243,6 +246,12 @@
       <Filter>Header Files\render</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\sse_mathfun.h">
+      <Filter>/3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\rocket-tracks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\aspectratios.h">
       <Filter>/3rdparty</Filter>
     </ClInclude>
   </ItemGroup>

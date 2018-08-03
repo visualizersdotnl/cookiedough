@@ -94,17 +94,18 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 //	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 //	Plasma_Draw(pDest, timer, delta);
-//	Nautilus_Draw(pDest, timer, delta);
+	Nautilus_Draw(pDest, timer, delta);
 //	Laura_Draw(pDest, timer, delta);
-	Spikey_Draw(pDest, timer, delta, true);
+//	Spikey_Draw(pDest, timer, delta, true);
+//	Spikey_Draw(pDest, timer, delta, false);
 
-	// blit logo to 800x600
-	uint32_t *pWrite = pDest + 800*(600-145);
+	// blit logo 
+	uint32_t *pWrite = pDest + kResX*(kResY-145);
 	for (int iY = 0; iY < 136; ++iY)
 	{
-		pWrite += 80;
+		pWrite += (kResX-640)/2;
 		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
-		pWrite += 800-80;
+		pWrite += kResX - (kResX-640)/2;
 	}
 
 //	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);

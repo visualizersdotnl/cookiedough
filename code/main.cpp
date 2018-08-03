@@ -49,6 +49,9 @@
 // #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
+// Undef. for < 60FPS warning
+#define FPS_WARNING
+
 #include "main.h" // always include first!
 #include <windows.h>
 #include <float.h>
@@ -65,9 +68,12 @@
 #include "polar.h"
 #include "map-blitter.h"
 
-// display config.
+// display & audio config.
 const char *kTitle = "untitled #SHADERGP19 promotional";
 const bool kFullScreen = false;
+// const char *kModule = "assets/moby_-_eliminator-tribute.mod";
+// const char *kModule = "assets/theduel.mod";
+const char *kModule = "assets/knulla-kuk.mod";
 
 static std::string s_lastErr;
 
@@ -149,11 +155,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	Gamepad_Create();
 
+	float avgFPS = 0.f;
+
 	if (utilInit)
 	{
 		if (Demo_Create())
 		{
-			if (Audio_Create(-1, "assets/moby_-_eliminator-tribute.mod", GetForegroundWindow())) // FIXME? (GetForegroundWindow())
+			if (Audio_Create(-1, kModule, GetForegroundWindow())) // FIXME? (GetForegroundWindow())
 			{
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
@@ -164,14 +172,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
 					memset32(pDest, 0, kOutputSize);
 
-					float oldTime = 0.f, newTime = 0.f;
+					size_t numFrames = 0;
+					float oldTime = 0.f, newTime = 0.f, totTime = 0.f;
 					while (true == HandleEvents())
 					{
 						oldTime = newTime;
 						newTime = timer.Get();
-						Demo_Draw(pDest, newTime, (newTime-oldTime)*100.f);
+						const float delta = newTime-oldTime;
+						Demo_Draw(pDest, newTime, delta*100.f);
 						display.Update(pDest);
+
+						totTime += delta;
+						++numFrames;
 					}
+
+					avgFPS = numFrames/totTime;
 
 					freeAligned(pDest);
 				}
@@ -197,6 +212,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, s_lastErr.c_str(), nullptr);
 		return 1;
 	}
-	
+
+#if !defined(_DEBUG) && defined(FPS_WARNING)
+	if (avgFPS < 59.f)
+	{
+		char fpsString[256];
+		sprintf(fpsString, "You're dropping below sixty boy, avg. FPS: %f", avgFPS);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, kTitle, fpsString, nullptr);
+	}
+
+	char fpsString[256];
+	sprintf(fpsString, "\n *** avg. FPS: %f ***\n", avgFPS);
+	OutputDebugString(fpsString);
+#endif
+
 	return 0;
 }

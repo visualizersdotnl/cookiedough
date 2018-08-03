@@ -113,8 +113,8 @@ namespace Shadertoy
 		const __m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0].vSIMD)));
 		const __m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1].vSIMD)));
 		const __m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2].vSIMD)));
-		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
 		const __m128i AB = _mm_packus_epi32(iA, iB);
+		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3].vSIMD)));
 		const __m128i CD = _mm_packus_epi32(iC, iD);
 
 		return (_mm_packus_epi16(AB, CD));
@@ -127,6 +127,7 @@ namespace Shadertoy
 		return vFastLen3(point)-radius; // point.Length()-radius;
 	}
 
+	// FIXME: use fast inverse square root!
 	VIZ_INLINE float fBox(const Vector3 &point, const Vector3 size)
 	{
 		const float bX = std::max(0.f, fabsf(point.x)-size.x);

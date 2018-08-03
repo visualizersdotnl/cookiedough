@@ -33,13 +33,12 @@ void Shadertoy_Destroy()
 // Plasma (https://www.shadertoy.com/view/ldSfzm)
 //
 
-VIZ_INLINE float fPlasma(Vector3 point, float time)
+VIZ_INLINE float fPlasma(const Vector3 &point, float time)
 {
-	point.z += 5.f*time;
 	const float sine = 0.2f*lutsinf(point.x-point.y);
 	const float fX = sine + lutcosf(point.x*0.33f);
 	const float fY = sine + lutcosf(point.y*0.33f);
-	const float fZ = sine + lutcosf(point.z*0.33f);
+	const float fZ = sine + lutcosf((5.f*time+point.z)*0.33f);
 //	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 	return 1.f/Q3_rsqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
@@ -74,8 +73,14 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					dirSin*UV.x + dirCos*0.75f);
 
 				Vector3 origin = direction;
-				for (int step = 0; step < 46; ++step)
-					origin += direction*fPlasma(origin, time);
+				for (int step = 0; step < 34; ++step)
+				{
+					float march = fPlasma(origin, time);
+					if (fabsf(march) < 0.001f)
+						break;
+
+					origin += direction*march;
+				}
 				
 				colors[iColor] = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
 				colors[iColor] *= 8.f - origin.x*0.5f;
@@ -144,10 +149,14 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					hit = origin + direction*total;
 //					hit = direction*total;
 					march = fNautilus(hit, time);
-					total += march*(0.314f+0.314f);
+					total += march*0.628f;
 
 //					if (fabsf(march) < 0.001f*(total*0.125f + 1.f) || total>20.f)
 //						break;
+
+					// cheaper, good gain
+					if (fabsf(march) < 0.001f)
+						break;
 				}
 
 				float nOffs = 0.1f;

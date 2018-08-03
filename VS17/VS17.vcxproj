@@ -49,6 +49,7 @@
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OpenMPSupport>
     </ClCompile>
     <ClCompile Include="..\code\random.cpp" />
+    <ClCompile Include="..\code\rocket-tracks.cpp" />
     <ClCompile Include="..\code\shadertoy.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OpenMPSupport>
@@ -70,6 +71,7 @@
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdparty\aspectratios.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\sync.h" />
@@ -91,6 +93,7 @@
     <ClInclude Include="..\code\map-blitter.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
+    <ClInclude Include="..\code\rocket-tracks.h" />
     <ClInclude Include="..\code\shadertoy.h" />
     <ClInclude Include="..\code\cspan.h" />
     <ClInclude Include="..\code\demo.h" />
