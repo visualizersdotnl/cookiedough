@@ -1,14 +1,11 @@
 
 // cookiedough -- demo flow for: <?> by Bypass (Shader Superfights Grand Prix 2019 commercial)
 
-// def. for sync. replay (instead of edit) mode
-// #define SYNC_PLAYER
-
 #include "main.h"
-#include <windows.h> // for audio.h
-#include "../3rdparty/rocket-stripped/lib/sync.h"
-// #include "demo.h"
-#include "audio.h"
+// #include <windows.h> // for audio.h
+#include "demo.h"
+// #include "audio.h"
+#include "rocket.h"
 
 // filters & blitters
 #include "boxblur.h"
@@ -22,32 +19,12 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
-static sync_device *s_hRocket;
-
-#if !defined(SYNC_PLAYER)
-
-static sync_cb s_rocketCallbacks = {
-	Audio_Rocket_Pause,
-	Audio_Rocket_SetRow,
-	Audio_Rocket_IsPlaying
-};
-
-#endif // !SYNC_PLAYER
-
-static const sync_track *s_partTrack;
+Track g_partTrack;
 
 bool Demo_Create()
 {
-	s_hRocket = sync_create_device("sync");
-
-#ifndef SYNC_PLAYER
-//	sync_set_callbacks(s_hRocket, &s_rocketCallbacks, NULL);
-	if (sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT) != 0)
-	{
-		SetLastError("Can not connect to GNU Rocket client.");
+	if (false == Rocket::Launch())
 		return false;
-	}
-#endif // !SYNC_PLAYER
 
 	bool fxInit = true;
 	fxInit &= Twister_Create();
@@ -57,39 +34,31 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
-	s_partTrack = sync_get_track(s_hRocket, "part");
+	g_partTrack = Rocket::AddTrack("part");
 
 	return fxInit;
 }
 
 void Demo_Destroy()
 {
-	if (s_hRocket != NULL)
-		sync_destroy_device(s_hRocket);
-
 	Twister_Destroy();
 	Landscape_Destroy();
 	Ball_Destroy();
 	Heartquake_Destroy();
 	Tunnelscape_Destroy();
 	Shadertoy_Destroy();
+
+	Rocket::Land();
 }
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
 	// for this production (FIXME)
-	// VIZ_ASSERT(kResX == 640 && kResY == 480);
+	// VIZ_ASSERT(kResX == 800 && kResY == 600);
 
-	unsigned int modOrder, modRow;
-	float modRowAlpha;
-	int rocketRow = Audio_Rocket_Sync(modOrder, modRow, modRowAlpha);
+	Rocket::Boost();
 
-#ifndef SYNC_PLAYER
-	if (sync_update(s_hRocket, rocketRow, &s_rocketCallbacks, nullptr))
-		sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
-#endif
-
-	double part = sync_get_val(s_partTrack, (double) rocketRow);
+	double part = Rocket::GetValue(g_partTrack);
 
 	if (part == 1.0)
 		Twister_Draw(pDest, timer, delta);

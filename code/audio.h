@@ -15,6 +15,6 @@ int Audio_Rocket_IsPlaying(void *);
 
 // use Audio_Rocket_Sync() to get full module position
 // feed returned value to Rocket sync_update() as row position!
-int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha);
+double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha);
 
 #endif // _AUDIO_H_	

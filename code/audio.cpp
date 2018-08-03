@@ -86,7 +86,7 @@ int Audio_Rocket_IsPlaying(void *)
 	return BASS_ChannelIsActive(s_hMusic);
 }
 
-int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
+double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
 {
 	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
 	const DWORD order = LOWORD(fullPos);
@@ -97,5 +97,5 @@ int Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRo
 	modRow = row;
 	modRowAlpha = rowPart/256.f;
 
-	return order*64 + row; // FIXME: hardcoded 64
+	return modRowAlpha+(order*64 + row); // FIXME: hardcoded 64
 }
