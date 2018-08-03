@@ -94,9 +94,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 //	Ball_Draw(pDest, timer, delta);
 //	Tunnelscape_Draw(pDest, timer, delta);
 //	Plasma_Draw(pDest, timer, delta);
-	Nautilus_Draw(pDest, timer, delta);
+//	Nautilus_Draw(pDest, timer, delta);
 //	Laura_Draw(pDest, timer, delta);
-//	Spikey_Draw(pDest, timer, delta, true);
+	Spikey_Draw(pDest, timer, delta, false);
 
 	// blit logo to 800x600
 	uint32_t *pWrite = pDest + 800*(600-145);

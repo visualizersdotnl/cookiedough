@@ -163,7 +163,7 @@ namespace Shadertoy
 //		return bias+cosines.Multiplied(scale);
 	}
 
-	// IQ's palette function (simplified, don't think optimizing it like the one above is helpful)
+	// IQ's palette function (simplified)
 	VIZ_INLINE const Vector3 CosPalSimple(float index, const Vector3 &bias, float cosScale, const Vector3 &frequency, float phase)
 	{
 		Vector3 cosines = (frequency*index + phase)*k2PI;
@@ -171,6 +171,16 @@ namespace Shadertoy
 		cosines.y = lutcosf(cosines.y);
 		cosines.z = lutcosf(cosines.z);
 		return bias + cosines*cosScale;
+	}
+
+	// IQ's palette function (simplified)
+	VIZ_INLINE const Vector3 CosPalSimplest(float index, float cosScale, const Vector3 &frequency, float phase)
+	{
+		Vector3 cosines = (frequency*index + phase)*k2PI;
+		cosines.x = lutcosf(cosines.x);
+		cosines.y = lutcosf(cosines.y);
+		cosines.z = lutcosf(cosines.z);
+		return cosines*cosScale;
 	}
 
 	// exponential fog

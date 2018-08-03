@@ -16,6 +16,10 @@
 // codename: cookiedough (2009-2018)
 // property of visualizers.nl (http://www.visualizers.nl)
 
+// 32-bit build temporarily dropped (as of August 2018), because of:
+// - OpenMP not working properly
+// - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
+
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
 // - Developer's Image Library (DevIL)
@@ -31,6 +35,7 @@
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
 // - adv. instruction set: SSE2 for x86, not set for 64-bit
+// - uses C++11
 
 // important:
 // - executables are built to target/x86/ or target/x64/ -- run from that directory!
@@ -39,10 +44,6 @@
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for the render target(s) there's kTargetX et cetera
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
-
-// 32-bit build temporarily dropped, because of:
-// - OpenMP not working properly
-// - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
 
 // Undef. for (Windows - should work on other platforms too) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK

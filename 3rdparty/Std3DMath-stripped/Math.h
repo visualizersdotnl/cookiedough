@@ -17,6 +17,7 @@
 	- Added "2*kPI".
 	- Added an actual Multiplied()/Multiply() function on Vector3 and Vector4 as I really needed it more often.
 	- Fix: used Scale() function instead of Mul() when multiplying vector by scalar.
+	- Added fracf().
 
 	Pay attention to:
 	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
@@ -58,6 +59,9 @@ inline float saturatef(float value)
 {
 	return std::max<float>(0.f, std::min<float>(1.f, value));
 }
+
+// GLSL frac().
+inline float fracf(float value) { return value - std::truncf(value); }
 
 // Scalar interpolation.
 template<typename T>
