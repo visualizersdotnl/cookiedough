@@ -5,9 +5,10 @@
 	important:
 		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
 		- Vector3 and Vector4 are 16-bit aligned and have a vSIMD member you can use
+		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this
 
 	to do:
-		- optimize where you can; ideally, in some situation, I'd handle more calculations in SIMD parallel
+		- optimize where you can (which does not always mean more SIMD)
 		- what to do with hardcoded colors, paremeters?
 		- a minor optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP!
 */
@@ -299,7 +300,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
 				Shadertoy::rot2D(time*0.14f /* FIXME: phase parameter */, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -333,8 +334,8 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				const float distance = hit.z-origin.z;
 
 				Vector3 color(diffuse);
-//				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.2f, 0.1f, 0.6f), 0.5314f);
-				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.6f, 0.1f, 0.6f), 0.5314f);
+				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.2f, 0.1f, 0.6f), 0.5314f);
+//				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.6f, 0.1f, 0.6f), 0.5314f);
 				color += specular;
 
 //				color.vSIMD = Shadertoy::Desaturate(color.vSIMD, 0.314f);
@@ -349,7 +350,6 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	}
 }
 
-// FIXME: abandoned for a while, take hints from the one above
 static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
@@ -370,7 +370,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
 
 				Vector3 origin(0.f, 0.f, -3.314f);
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
 				Shadertoy::rot2D(time*0.0314f, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
