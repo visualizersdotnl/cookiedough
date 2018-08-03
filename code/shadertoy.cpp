@@ -466,5 +466,5 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 	else
 		RenderSpikeyMap_2x2_Distant(g_pFXFine, time);
 
-	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+	MapBlitter_Colors_2x2_interlaced(pDest, g_pFXFine);
 }

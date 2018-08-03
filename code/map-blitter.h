@@ -34,6 +34,7 @@ bool MapBlitter_Create();
 void MapBlitter_Destroy();
 
 void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc);
+void MapBlitter_Colors_2x2_interlaced(uint32_t* pDest, uint32_t* pSrc);
 void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc);
 
 // FIXME: implement

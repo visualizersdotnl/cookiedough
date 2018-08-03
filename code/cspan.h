@@ -1,12 +1,6 @@
 
 // cookiedough -- cspan() & friends: colored span draw functions
 
-/*
-	possible optimizations (FIXME):
-	- write 4 pixels at a time (using the packing optimally, like in shadertoy-util.h)
-	  (testing shows most cases are much smaller, rendering it a useless optimization for now)
-*/
-
 #ifndef _CSPAN_H_
 #define _CSPAN_H_
 

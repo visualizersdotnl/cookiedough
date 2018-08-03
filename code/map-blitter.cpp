@@ -63,7 +63,7 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			destIndex >>= 1;
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
-
+			
 			__m128i AB, CD;
 
 			{
@@ -78,9 +78,10 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
 			}
 
+			destIndex += kResX>>1;
+
 			fpA = _mm_add_epi32(fpA, stepL);
 			fpB = _mm_add_epi32(fpB, stepR);
-			destIndex += kResX>>1;
 
 			{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
@@ -92,6 +93,56 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 				__m128i pixel2 = _mm_srli_epi32(color, 16); 
 				CD = _mm_packus_epi32(pixel1, pixel2);
 				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(CD, zero));
+			}
+		}
+	}
+}
+
+// "interlaced" (read: intentionally broken) version of MapBlitter_Colors_2x2()
+void MapBlitter_Colors_2x2_interlaced(uint32_t* pDest, uint32_t* pSrc)
+{
+	VIZ_ASSERT(kFineDiv == 2);
+
+	const __m128i zero = _mm_setzero_si128();
+	const __m128i divisor = _mm_set1_epi32(65536*kFineDiv);
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY-1; ++iY)
+	{
+		for (int iX = 0; iX < kFineResX-1; ++iX)
+		{
+			const unsigned iA = iY*kFineResX + iX;
+			const unsigned iB = iA+1;
+			const unsigned iC = iA+kFineResX;
+			const unsigned iD = iC+1;
+
+			__m128i colA = c2vISSE32(pSrc[iA]);
+			__m128i colB = c2vISSE32(pSrc[iD]);
+
+			__m128i fpA = _mm_slli_epi32(colA, 16);
+			__m128i fpB = _mm_slli_epi32(colB, 16);
+
+			auto destIndex = (iY<<1)*kResX + (iX<<1);
+			destIndex >>= 1;
+
+			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
+
+			{
+				__m128i delta = _mm_sub_epi32(fpB, fpA);
+				delta = _mm_srli_epi32(delta, 16);
+				__m128i step = _mm_madd_epi16(delta, divisor);
+				__m128i color = fpA;
+				__m128i pixel1 = _mm_srli_epi32(color, 16); 
+				color = _mm_add_epi32(color, step);
+				__m128i pixel2 = _mm_srli_epi32(color, 16); 
+				__m128i AB = _mm_packus_epi32(pixel1, pixel2);
+				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
+			}
+
+			destIndex += kResX>>1;
+
+			{
+				pCopy[destIndex] = pSrc[iC]; 
 			}
 		}
 	}
