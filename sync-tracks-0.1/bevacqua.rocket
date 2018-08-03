@@ -1,21 +1,10 @@
 <sync rows="4096">
 	<tracks>
-		<track name="lauraZ">
-			<key interpolation="3" value="0" row="0"/>
-			<key interpolation="0" value="124" row="128"/>
-		</track>
 		<track name="part">
-			<key interpolation="0" value="7" row="0"/>
-			<key interpolation="0" value="6" row="128"/>
+			<key value="7" row="0" interpolation="0"/>
 		</track>
-		<track name="lauraRoll">
-			<key interpolation="2" value="0" row="0"/>
-			<key interpolation="1" value="0.33" row="32"/>
-			<key interpolation="0" value="0" row="48"/>
-			<key interpolation="0" value="0" row="72"/>
-			<key interpolation="0" value="-0.33" row="88"/>
-			<key interpolation="0" value="0" row="104"/>
-		</track>
+		<track name="lauraZ"/>
+		<track name="lauraRoll"/>
 	</tracks>
 	<bookmarks/>
 </sync>

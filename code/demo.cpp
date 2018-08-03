@@ -41,14 +41,14 @@ bool Demo_Create()
 
 void Demo_Destroy()
 {
+	Rocket::Land();
+
 	Twister_Destroy();
 	Landscape_Destroy();
 	Ball_Destroy();
 	Heartquake_Destroy();
 	Tunnelscape_Destroy();
 	Shadertoy_Destroy();
-
-	Rocket::Land();
 }
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)

@@ -41,7 +41,7 @@ bool Polar_Create()
 			}
 
 			if (V == kTargetResY-1.f)
-				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = (kTargetResY-2)<<8 | 0xff;
+				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ((kTargetResY-2))<<8 | 0xff;
 			else
 				s_pInvPolarMap[iPixel+1] = s_pPolarMap[iPixel+1] = ftofp24(V);
 
@@ -58,26 +58,37 @@ void Polar_Destroy()
 	freeAligned(s_pInvPolarMap);
 }
 
+VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc)
+{
+	const int U = pRead[0];
+	const int V = pRead[1];
+
+	// prepare UVs
+	const unsigned int U0 = U >> 8;
+	const unsigned int V0 = (V >> 8) * kTargetResX;
+	const unsigned int fracU = (U & 0xff) * 0x01010101;
+	const unsigned int fracV = (V & 0xff) * 0x01010101;
+
+	// sample & return
+	const __m128i color = bsamp32(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
+	return _mm_unpacklo_epi16(color, _mm_setzero_si128());
+}
+
 void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
 {
-	// FIXME:
-	// - write 4 pixels at a time
 	int *pRead = (!inverse) ? s_pPolarMap : s_pInvPolarMap;
-	for (unsigned int iPixel = 0; iPixel < (kResX*kResY)>>0; ++iPixel)
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < (kResX*kResY)>>2; ++iPixel)
 	{
-		{
-			const int U = *pRead++;
-			const int V = *pRead++;
-
-			// prepare UVs
-			const unsigned int U0 = U >> 8;
-			const unsigned int V0 = (V >> 8) * kTargetResX; // remove multiply (FIXME)
-			const unsigned int fracU = (U & 0xff) * 0x01010101;
-			const unsigned int fracV = (V & 0xff) * 0x01010101;
-
-			// sample & store
-			const __m128i color = bsamp32(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
-			pDest[iPixel] = v2cISSE(color);
-		}
+		auto mapIndex = iPixel<<3;
+		__m128i A = Fetch(pRead+mapIndex+0, pSrc);
+		__m128i B = Fetch(pRead+mapIndex+2, pSrc);
+		__m128i C = Fetch(pRead+mapIndex+4, pSrc);
+		__m128i D = Fetch(pRead+mapIndex+6, pSrc);
+		__m128i AB = _mm_packs_epi32(A, B);
+		__m128i CD = _mm_packs_epi32(C, D);
+		pDest128[iPixel] = _mm_packus_epi16(AB, CD);
 	}
 }

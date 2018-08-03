@@ -62,7 +62,8 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
-	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 128); 
+	// maximum precision
+	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 256); 
 
 	return true;
 }
@@ -95,12 +96,12 @@ double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &mo
 {
 	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
 	const DWORD order = LOWORD(fullPos);
-	const DWORD row = HIWORD(fullPos)/128;
-	const DWORD rowPart = HIWORD(fullPos)&127;
+	const DWORD row = HIWORD(fullPos)>>8;
+	const DWORD rowPart = HIWORD(fullPos)&255;
 
 	modOrder = order;
 	modRow = row;
-	modRowAlpha = rowPart/128.f;
+	modRowAlpha = rowPart/256.f;
 
 	return modRowAlpha+(order*kRowsPerOrder + row);
 }

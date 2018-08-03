@@ -2,6 +2,7 @@
 // cookiedough -- Rocket wrapper
 
 // def. for sync. replay (instead of edit) mode
+// FIXME: untested
 // #define SYNC_PLAYER
 
 #include "main.h"

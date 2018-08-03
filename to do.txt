@@ -2,7 +2,7 @@
 priority:
 - broken: stupid toroidal twister!
 - fix map blitting so that it fills the entire screen
-- make Laura & Spikey more interesting
+- make Laura & Spikey more interesting (sharp corners, use quaternions and a "global cornering system")
 - shaders should use more SIMD earlier on in color calculation
 
 to do:
@@ -13,9 +13,8 @@ to do:
 - configuration dialog (at least audio & VSYNC.)
 
 possible optimizations:
-- bring new optimization over to bsamp32() (packing instructions)
-- polar blit: write 4 pixels at a time
-- functions like Mix32() can handle 2 pixels per iteration!
+- (#1) rewrite old bsamp32(), that can be done with less instructions!
+- (#2) functions like Mix32() can handle at laest 2 pixels per iteration, using a 64-bit write!
 - there's probably more SIMD that can be more efficient using SSE 4.1
 
 effect ideas:
@@ -26,7 +25,6 @@ effect ideas:
 - trace a high quality radial blur? https://www.shadertoy.com/view/4sfGRn
 
 remember:
-- Audio_Rocket_Sync() has 64 rows per pattern hardcoded momentarily
 - 2007 horizontal blur has bias flaw (write or steal new blurs)
 - 32-bit build dropped for now (see main.cpp)
 

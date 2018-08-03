@@ -71,9 +71,9 @@
 // display & audio config.
 const char *kTitle = "untitled #SHADERGP19 promotional";
 const bool kFullScreen = false;
-const char *kModule = "assets/moby_-_eliminator-tribute.mod";
+// const char *kModule = "assets/moby_-_eliminator-tribute.mod";
 // const char *kModule = "assets/theduel.mod";
-// const char *kModule = "assets/knulla-kuk.mod";
+const char *kModule = "assets/knulla-kuk.mod";
 
 static std::string s_lastErr;
 

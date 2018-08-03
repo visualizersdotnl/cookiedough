@@ -33,6 +33,8 @@ void MapBlitter_Destroy()
 // 2x2 blit (2 pixels per SSE write, uses 64-bit only intrinsic (FIXME))
 void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
+	VIZ_ASSERT(kFineDiv == 2);
+
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi16(32768/kFineDiv);
 
@@ -60,7 +62,7 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			__m128i fpB = _mm_unpacklo_epi16(colB, zero);
 			fpB = _mm_slli_epi32(fpB, 15);
 
-			auto destIndex = (iY*kFineDiv)*kResX + (iX*kFineDiv);
+			auto destIndex = (iY<<1)*kResX + (iX<<1);
 			destIndex >>= 1;
 			int64_t *pCopy = reinterpret_cast<int64_t*>(pDest);
 
@@ -98,9 +100,11 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 	}
 }
 
-// 4x4 blit (seemingly optimal use of ISSE)
+// 4x4 blit (almost optimal use of ISSE)
 void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc) 
 {
+	VIZ_ASSERT(kCoarseDiv == 4);
+
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi16(32768/kCoarseDiv);
 
@@ -128,7 +132,7 @@ void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc)
 			__m128i fpB = _mm_unpacklo_epi16(colB, zero);
 			fpB = _mm_slli_epi32(fpB, 15);
 
-			auto destIndex = (iY*kCoarseDiv)*kResX + (iX*kCoarseDiv);
+			auto destIndex = (iY<<2)*kResX + (iX<<2);
 			destIndex >>= 2;
 			__m128i *pCopy = reinterpret_cast<__m128i*>(pDest);
 
