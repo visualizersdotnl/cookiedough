@@ -110,14 +110,12 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 // Nautilus Redux by Michiel v/d Berg
 //
 
-// FIXME: maybe SIMD-ize this?
+static Vector3 fNautilus_global;
 VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 {
-	float cosX, cosY, cosZ;
-	float cosTime7 = lutcosf(time*0.1428f); // ** i'm getting an internal compiler error if I write this where it should be **
-	cosX = lutcosf(lutcosf(position.x + time*0.125f)*position.x - lutcosf(position.y + time/9.f)*position.y);
-	cosY = lutcosf(position.z*0.33f*position.x - cosTime7*position.y);
-	cosZ = lutcosf(position.x + position.y + position.z*0.8f + time);
+	const float cosX = lutcosf(lutcosf(position.x + fNautilus_global.x)*position.x - lutcosf(position.y + fNautilus_global.y)*position.y);
+	const float cosY = lutcosf(position.z*0.33f*position.x - fNautilus_global.z*position.y);
+	const float cosZ = lutcosf(position.x + position.y + position.z*0.8f + time);
 	const float dotted = cosX*cosX + cosY*cosY + cosZ*cosZ;
 	return dotted*0.5f - .7f;
 };
@@ -125,6 +123,10 @@ VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	fNautilus_global.x = time*0.125f;
+	fNautilus_global.y = time/9.f;
+	fNautilus_global.z = lutcosf(time*0.1428f);
 
 	// FIXME: parametrize (or at least a blend between sets)
 	const Vector3 colorization(
@@ -143,7 +145,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 origin(0.f);
+//				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rot2D(kPI*lutcosf(time*0.06234f), direction.y, direction.x);
 				Shadertoy::vFastNorm3(direction);
@@ -154,10 +156,14 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				float march;
 				for (int iStep = 0; iStep < 64; ++iStep)
 				{
-					hit = origin + direction*total;
+					hit = direction*total;
+//					hit = origin + direction*total;
+//					hit.x = direction.x*total;
+//					hit.y = direction.y*total;
+//					hit.z = direction.z*total;
 					march = fNautilus(hit, time);
 					total += march*0.628f;
-
+					
 //					if (fabsf(march) < 0.001f*(total*0.125f + 1.f) || total>20.f)
 //						break;
 

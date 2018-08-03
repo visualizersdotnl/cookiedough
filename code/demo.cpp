@@ -34,7 +34,7 @@ static sync_cb s_rocketCallbacks = {
 
 #endif // !SYNC_PLAYER
 
-static const sync_track *s_mainTrack;
+static const sync_track *s_partTrack;
 
 bool Demo_Create()
 {
@@ -57,7 +57,7 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
-	s_mainTrack = sync_get_track(s_hRocket, "main");
+	s_partTrack = sync_get_track(s_hRocket, "part");
 
 	return fxInit;
 }
@@ -89,15 +89,34 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 #endif
 
-//	Twister_Draw(pDest, timer, delta);
-//	Landscape_Draw(pDest, timer, delta);
-//	Ball_Draw(pDest, timer, delta);
-//	Tunnelscape_Draw(pDest, timer, delta);
-//	Plasma_Draw(pDest, timer, delta);
-//	Nautilus_Draw(pDest, timer, delta);
-//	Laura_Draw(pDest, timer, delta);
-	Spikey_Draw(pDest, timer, delta, true);
-//	Spikey_Draw(pDest, timer, delta, false);
+	double part = sync_get_val(s_partTrack, (double) rocketRow);
+
+	if (part == 1.0)
+		Twister_Draw(pDest, timer, delta);
+	
+	if (part == 2.0)
+		Landscape_Draw(pDest, timer, delta);
+	
+	if (part == 3.0)
+		Ball_Draw(pDest, timer, delta);
+	
+	if (part == 4.0)
+		Tunnelscape_Draw(pDest, timer, delta);
+	
+	if (part == 5.0)
+		Plasma_Draw(pDest, timer, delta);
+	
+	if (part == 6.0)
+		Nautilus_Draw(pDest, timer, delta);
+	
+	if (part == 7.0)
+		Laura_Draw(pDest, timer, delta);
+	
+	if (part == 8.0)
+		Spikey_Draw(pDest, timer, delta, true);
+	
+	if (part == 9.0)
+		Spikey_Draw(pDest, timer, delta, false);
 
 	// blit logo 
 	uint32_t *pWrite = pDest + kResX*(kResY-145);
@@ -107,8 +126,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		MixSrc32(pWrite, g_pDesireLogo3 + iY*640, 640);
 		pWrite += kResX - (kResX-640)/2;
 	}
-
-//	MixSrc32(pDest + 640*300, g_pDesireLogo3, 640*136);
 
 	return;
 }

@@ -1,5 +1,6 @@
 
 priority:
+- broken: stupid toroidal twister!
 - fix map blitting so that it fills the entire screen
 - make Laura & Spikey more interesting
 - figure out a neat way to tie parameters to Rocket sync.

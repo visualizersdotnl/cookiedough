@@ -21,16 +21,13 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 9;
 
 // max. depth
-const unsigned int kRayLength = 256;
+const unsigned int kRayLength = 255;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
 const float kCylRadius = 300.f;
-
-// scale applied to each beam sample
-const uint8_t kBeamMul = 255;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {
@@ -79,7 +76,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 static void vtwister(uint32_t *pDest, float time)
 {
 	float mapY = 0.f; 
-	const float mapStepY = 512.f/(kTargetResY-1.f); // tile (for blit)
+	const float mapStepY = 512.f/kTargetResY; // tile (for blit)
 
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
@@ -88,9 +85,9 @@ static void vtwister(uint32_t *pDest, float time)
 		const int fromX = ftofp24(256.f + 140.f*sinf(time*1.1f + shearAngle));
 		const int fromY = ftofp24(mapY + time*25.f);
 
-		const size_t xOffs = kTargetResX/2;
+		const size_t xOffs = kTargetResX>>1;
 		vtwister_ray(pDest + iRay*kTargetResX + xOffs, fromX, fromY,  256);
-		vtwister_ray(pDest + iRay*kTargetResX + xOffs-1, fromX, fromY, -256);
+		vtwister_ray(pDest + iRay*kTargetResX + (xOffs), fromX, fromY, -256);
 
 		mapY += mapStepY;
 	}
@@ -134,7 +131,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render twister
 	memset32(g_renderTarget, 0x1f0053, kTargetSize);
-	vtwister(g_renderTarget, time);
+	// vtwister(g_renderTarget, time);
 
 	// (radial) blur
 	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.04f);
