@@ -19,7 +19,7 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
-Track g_partTrack;
+SyncTrack trackPart;
 
 bool Demo_Create()
 {
@@ -34,7 +34,7 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
-	g_partTrack = Rocket::AddTrack("part");
+	trackPart = Rocket::AddTrack("part");
 
 	return fxInit;
 }
@@ -58,33 +58,33 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 	Rocket::Boost();
 
-	double part = Rocket::GetValue(g_partTrack);
+	int part = Rocket::geti(trackPart);
 
-	if (part == 1.0)
+	if (part == 1)
 		Twister_Draw(pDest, timer, delta);
 	
-	if (part == 2.0)
+	if (part == 2)
 		Landscape_Draw(pDest, timer, delta);
 	
-	if (part == 3.0)
+	if (part == 3)
 		Ball_Draw(pDest, timer, delta);
 	
-	if (part == 4.0)
+	if (part == 4)
 		Tunnelscape_Draw(pDest, timer, delta);
 	
-	if (part == 5.0)
+	if (part == 5)
 		Plasma_Draw(pDest, timer, delta);
 	
-	if (part == 6.0)
+	if (part == 6)
 		Nautilus_Draw(pDest, timer, delta);
 	
-	if (part == 7.0)
+	if (part == 7)
 		Laura_Draw(pDest, timer, delta);
 	
-	if (part == 8.0)
+	if (part == 8)
 		Spikey_Draw(pDest, timer, delta, true);
 	
-	if (part == 9.0)
+	if (part == 9)
 		Spikey_Draw(pDest, timer, delta, false);
 
 	// blit logo 

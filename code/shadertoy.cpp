@@ -21,9 +21,16 @@
 // #include "bilinear.h"
 #include "shadertoy-util.h"
 #include "boxblur.h"
+#include "rocket.h"
+
+// Aura for Laura sync.:
+SyncTrack trackLauraZ, trackLauraRoll;
 
 bool Shadertoy_Create()
 {
+	trackLauraZ = Rocket::AddTrack("lauraZ");
+	trackLauraRoll = Rocket::AddTrack("lauraRoll");
+
 	return true;
 }
 
@@ -223,6 +230,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
+	float lauraZ = Rocket::getf(trackLauraZ);
+	float lauraRoll = Rocket::getf(trackLauraRoll);
+
 	Vector3 fogColor(0.8f, 0.9f, 0.1f);
 	fogColor *= 0.4314f;
 
@@ -237,9 +247,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 origin(0.f, 0.f, time*8.f);
+				Vector3 origin(0.f, 0.f, lauraZ);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.05234f, direction.x, direction.y);
+				Shadertoy::rot2D(lauraRoll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;

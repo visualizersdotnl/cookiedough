@@ -6,6 +6,10 @@
 #include "../3rdparty/bass24-stripped/c/bass.h"
 // #include "audio.h"
 
+// FIXME: adjust per module (order also known as pattern)
+//        must be a power of 2
+const int kRowsPerOrder = 64;
+
 static HMUSIC s_hMusic = NULL;
 
 const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
@@ -58,7 +62,7 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 		}
 	}
 
-	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 256); 
+	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 128); 
 
 	return true;
 }
@@ -78,7 +82,8 @@ void Audio_Rocket_Pause(void *, int mustPause)
 
 void Audio_Rocket_SetRow(void *, int row)
 {
-	BASS_ChannelSetPosition(s_hMusic, BASS_POS_MUSIC_ORDER, row>>6|(row&63)<<16); // FIXME: hardcoded 64
+	const int order = row/kRowsPerOrder;
+	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
 }
 
 int Audio_Rocket_IsPlaying(void *)
@@ -90,12 +95,12 @@ double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &mo
 {
 	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
 	const DWORD order = LOWORD(fullPos);
-	const DWORD row = HIWORD(fullPos)/256;
-	const DWORD rowPart = HIWORD(fullPos)%256;
+	const DWORD row = HIWORD(fullPos)/128;
+	const DWORD rowPart = HIWORD(fullPos)&127;
 
 	modOrder = order;
 	modRow = row;
-	modRowAlpha = rowPart/256.f;
+	modRowAlpha = rowPart/128.f;
 
-	return modRowAlpha+(order*64 + row); // FIXME: hardcoded 64
+	return modRowAlpha+(order*kRowsPerOrder + row);
 }

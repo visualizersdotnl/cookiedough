@@ -34,6 +34,8 @@ namespace Rocket
 			return false;
 		}
 	#endif // !SYNC_PLAYER
+
+		return true;
 	}
 
 	void Land()
@@ -53,17 +55,17 @@ namespace Rocket
 		s_rocketRow = Audio_Rocket_Sync(modOrder, modRow, modRowAlpha);
 
 	#ifndef SYNC_PLAYER
-		if (sync_update(s_hRocket, modRow, &s_rocketCallbacks, nullptr))
+		if (sync_update(s_hRocket, int(floor(s_rocketRow)), &s_rocketCallbacks, nullptr))
 			sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT);
 	#endif
 	}
 
-	Track AddTrack(const char *name)
+	const sync_track *AddTrack(const char *name)
 	{
 		return sync_get_track(s_hRocket, name);
 	}
 
-	double GetValue(Track track)
+	double get(const sync_track *track)
 	{
 		return sync_get_val(track, s_rocketRow);
 	}
