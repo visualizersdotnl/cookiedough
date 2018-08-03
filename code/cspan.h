@@ -41,6 +41,8 @@ VIZ_INLINE void cspan(
 	}
 }
 
+#if 0
+
 // copy of cspan(), takes pre-unpacked colors as __m128i
 // for better integration with ISSE-optimized caller
 VIZ_INLINE void cspanISSE(
@@ -72,6 +74,47 @@ VIZ_INLINE void cspanISSE(
 		A = _mm_add_epi32(A, step);
 	}
 }
+
+#else // FIXME: temp. version with slightly better precision
+
+// copy of cspan(), takes pre-unpacked colors as __m128i
+// for better integration with ISSE-optimized caller
+VIZ_INLINE void cspanISSE(
+	uint32_t *pDest,
+	int destIncr, 
+	unsigned int length,     // length of span
+	unsigned int drawLength, // visible length (for correct interpolation)
+	__m128i A, __m128i B)    // colors, unpacked to 16-bit
+{
+	VIZ_ASSERT(drawLength > 0 && length >= drawLength);
+
+	const __m128i zero = _mm_setzero_si128();
+
+	A = _mm_unpacklo_epi16(A, zero);
+	B = _mm_unpacklo_epi16(B, zero);
+
+	const __m128i divisor = _mm_set1_epi32(65536/length);
+	const __m128i delta = _mm_sub_epi32(B, A);
+
+	const unsigned int preSteps = length - drawLength;
+	const __m128i preStep = _mm_madd_epi16(delta, _mm_mul_epi32(divisor, _mm_set1_epi32(preSteps)));
+	const __m128i step = _mm_madd_epi16(delta, divisor);
+
+	A = _mm_slli_epi32(A, 16);
+	A = _mm_add_epi32(A, preStep);
+
+	while (drawLength--)
+	{
+		__m128i color = _mm_srli_epi32(A, 16);
+		color = _mm_packus_epi32(color, zero);
+		color = _mm_packus_epi16(color, zero);
+		*pDest = _mm_cvtsi128_si32(color);
+		pDest += destIncr;
+		A = _mm_add_epi32(A, step);
+	}
+}
+
+#endif
 
 // copy of cspanISSE() without clipping (slightly faster)
 VIZ_INLINE void cspanISSE_noclip(
