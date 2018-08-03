@@ -16,7 +16,7 @@
 
 	system requirements:
 		- software rendering: office-grade desktop GPU will do
-		- a *fast* x64 CPU (marching & tracing going on)
+		- a *fast* x64 CPU (marching & tracing going on) w/SSE 4.1
 		- Windows 10 (not tested on earlier versions)
 		- a working default audio adapter
 		

@@ -134,7 +134,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// change path to target root
 	SetCurrentDirectoryA("../");
 
-	// check for SSE4
+	// check for SSE 4.1
 	if (false == SDL_HasSSE41())
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);
