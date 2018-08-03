@@ -7,7 +7,7 @@ It's built using Visual Studio 2017.
 It should be fairly easy to port to another x86/x64 platform; I do use SSE (up to 4.1) extensively though.
 
 - 25/07/2018: got it running, back in production.
-- Use Ground Control as sync. editor for Win10 (https://github.com/edoreshef/ground-control)
+- Use one of the supplied Rocket editors (Kusma's or Emoon's).
 
 Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
 Check /code/main.cpp for a list of third party libraries used.

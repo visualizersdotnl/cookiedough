@@ -37,8 +37,6 @@
 		- Std3DMath by http://www.visualizers.nl
 		- sse_mathfun.h by Julien Pommier
 
-	sync. editor used for rocket: by Emoon/TBL
-
 	Superplek thanks the following people (in no particular order):
 		- Rik Arends (Arcturus)
 		- Alex Bartholomeus (Deadline/Superstition)
