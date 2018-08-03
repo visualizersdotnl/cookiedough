@@ -207,10 +207,6 @@ bool Landscape_Create()
 
 void Landscape_Destroy()
 {
-	Image_Free(s_pHeightMap);
-	Image_Free(s_pColorMap);
-	Image_Free(s_pHUD);
-	Image_Free(s_pFogGradient);
 }
 
 void Landscape_Draw(uint32_t *pDest, float time, float delta)

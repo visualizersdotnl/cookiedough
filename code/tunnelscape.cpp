@@ -139,9 +139,6 @@ bool Tunnelscape_Create()
 
 void Tunnelscape_Destroy()
 {
-	Image_Free(s_pHeightMap);
-	Image_Free(s_pColorMap);
-	Image_Free(s_pFogGradient);
 }
 
 void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)

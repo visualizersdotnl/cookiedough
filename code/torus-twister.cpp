@@ -122,9 +122,6 @@ bool Twister_Create()
 
 void Twister_Destroy()
 {
-	Image_Free(s_pHeightMap);
-	Image_Free(s_pColorMap);
-	Image_Free(s_pBeamMap);
 }
 
 void Twister_Draw(uint32_t *pDest, float time, float delta)

@@ -225,13 +225,6 @@ bool Ball_Create()
 
 void Ball_Destroy()
 {
-	for (int iMap = 0; iMap < 5; ++iMap) 
-		Image_Free(s_pHeightMap[iMap]);
-	
-	Image_Free(s_pColorMap);
-	Image_Free(s_pBeamMap);
-	Image_Free(s_pEnvMap);
-
 	freeAligned(s_heightMapMix);
 }
 

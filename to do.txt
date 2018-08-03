@@ -8,7 +8,6 @@ priority:
 to do:
 - implement: Heartquake water
 - create texture mapping version of map blitter(s)
-- garbage collect images (instead of having to free them manually all the time)
 - app. icon
 - configuration dialog (at least audio & VSYNC.)
 

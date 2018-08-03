@@ -28,6 +28,5 @@ bool Shared_Create()
 
 void Shared_Destroy()
 {
-	Image_Free(g_pDesireLogo3);
 	freeAligned(g_renderTarget);
 }

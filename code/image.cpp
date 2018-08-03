@@ -11,13 +11,21 @@
 
 #include "image.h"
 
+static std::vector<void*> s_pGC;
+
 bool Image_Create()
 {
 	ilInit();
+	s_pGC.clear();
+
 	return true;
 }
 
-void Image_Destroy() {}
+void Image_Destroy() 
+{
+	for (auto* pImage : s_pGC)
+		freeAligned(pImage);
+}
 
 static void *Image_Load(const std::string &path, bool isGrayscale)
 {
@@ -54,6 +62,8 @@ static void *Image_Load(const std::string &path, bool isGrayscale)
 
 	ilDeleteImages(1, &image);
 
+	s_pGC.push_back(pPixels);
+
 	return pPixels;
 }
 
@@ -65,9 +75,4 @@ uint32_t *Image_Load32(const std::string &path)
 uint8_t *Image_Load8(const std::string &path)
 {
 	return static_cast<uint8_t *>(Image_Load(path, true));
-}
-
-void Image_Free(void *pImage)
-{
-	freeAligned(pImage);
 }
