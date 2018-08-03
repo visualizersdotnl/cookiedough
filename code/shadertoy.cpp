@@ -6,7 +6,9 @@
 		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
 		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed
 		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this (see spikey objects for example)
-		- an obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
+		- when scaling a vector by a scalar in a loop, write it instead of using the operator (which won't inline for one or another reason)
+		- if needed, parts of loops can be parallelized (SIMD), but that's a lot of hassle
+		- another obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 
 	to do:
 		- optimize where you can (which does not always mean more SIMD, but it *does* for color operations)
@@ -79,7 +81,10 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					if (fabsf(march) < 0.001f)
 						break;
 
-					origin += direction*march;
+//					origin += direction*march;
+					origin.x += direction.x*march;
+					origin.y += direction.y*march;
+					origin.z += direction.z*march;
 				}
 				
 				Vector3 color = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
@@ -237,7 +242,10 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				int iStep;
 				for (iStep = 0; iStep < 48; ++iStep)
 				{
-					hit = origin + direction*total;
+					// hit = origin + direction*total;
+					hit.x = origin.x + direction.x*total;
+					hit.y = origin.y + direction.y*total;
+					hit.z = origin.z + direction.z*total;
 					march = fAuraForLaura(hit);
 					total += march*0.7314f;
 				}
@@ -321,7 +329,10 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				int iStep;
 				for (iStep = 0; iStep < 33; ++iStep)
 				{
-					hit = origin + direction*total;
+					// hit = origin + direction*total;
+					hit.x = origin.x + direction.x*total;
+					hit.y = origin.y + direction.y*total;
+					hit.z = origin.z + direction.z*total;
 					march = fTest(hit);
 					total += march*(0.1f*kGoldenRatio);
 
@@ -391,7 +402,10 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				int iStep;
 				for (iStep = 0; iStep < 36; ++iStep)
 				{
-					hit = origin + direction*total;
+					// hit = origin + direction*total;
+					hit.x = origin.x + direction.x*total;
+					hit.y = origin.y + direction.y*total;
+					hit.z = origin.z + direction.z*total;
 					march = fTest(hit);
 					total += march*(0.1f*kGoldenRatio);
 
