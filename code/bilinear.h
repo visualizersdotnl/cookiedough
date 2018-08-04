@@ -123,4 +123,13 @@ VIZ_INLINE __m128i bsamp32_32(
 	return result;
 }
 
+VIZ_INLINE __m128 bsamp32_32f(
+	const uint32_t *pTexture, 
+	unsigned int U0, unsigned int V0, 
+	unsigned int U1, unsigned int V1, 
+	unsigned int fracU, unsigned int fracV)
+{
+	return _mm_cvtepi32_ps(bsamp32_32(pTexture, U0, V0, U1, V1, fracU, fracV));
+}
+
 #endif // _BILINEAR_H_

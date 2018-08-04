@@ -6,7 +6,7 @@
 		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
 		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed
 		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this (see spikey objects for example)
-		- when scaling a vector by a scalar in a loop, write it instead of using the operator (which won't inline for one or another reason)
+		- when scaling a vector by a scalar in a loop, write it in place instead of using the operator (which won't inline for one or another reason)
 		- if needed, parts of loops can be parallelized (SIMD), but that's a lot of hassle
 		- another obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 
@@ -18,10 +18,12 @@
 #include "main.h"
 // #include "shadertoy.h"
 #include "image.h"
-// #include "bilinear.h"
+#include "bilinear.h"
 #include "shadertoy-util.h"
 #include "boxblur.h"
 #include "rocket.h"
+
+// --- Sync. tracks ---
 
 // Aura for Laura sync.:
 SyncTrack trackLauraZ, trackLauraRoll;
@@ -31,6 +33,10 @@ SyncTrack trackNautilusRoll;
 
 // Spike (close) sync.:
 SyncTrack trackSpikeCloseRotJump;
+
+// --------------------
+
+static uint32_t *s_pFDTunnelTex = nullptr;
 
 bool Shadertoy_Create()
 {
@@ -43,6 +49,11 @@ bool Shadertoy_Create()
 
 	// Spikes
 	trackSpikeCloseRotJump = Rocket::AddTrack("cSpikeRotJump");
+
+
+	s_pFDTunnelTex = Image_Load32("assets/shadertoy/fdtun-map.png");
+	if (nullptr == s_pFDTunnelTex)
+		return false;
 
 	return true;
 }
@@ -502,6 +513,11 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 
 	// Vector3 fogColor(0.09f, 0.01f, 0.08f);
 
+	float boxy = 0.7314f;
+	float flowerScale = 0.314f;
+	float flowerFreq = 4.f;
+	float flowerPhase = time;
+
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
 	{
@@ -513,25 +529,41 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 1.f);
 				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.314f, direction.y, direction.z);
+				Shadertoy::rot2D(time*0.314f, direction.x, direction.y);
 
+				// FIXME: this seems very suitable for SIMD, but the FPS is good as it is
 				float A;
 				A = direction.x*direction.x + direction.y*direction.y;
+				A += flowerScale*lutsinf(atan2f(direction.y, direction.x)*flowerFreq + flowerPhase) - flowerScale;
+
+				float absX = fabsf(direction.x);
+				float absY = fabsf(direction.y);
+				float box = absX > absY ? absX : absY;
+				A = lerpf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
-				float radius = 1.f;
+				float radius = 2.314f;
 				float T = radius*A;
 				Vector3 intersection = direction*T;
 
 				float U = atan2f(intersection.y, intersection.x)/kPI;
 				float V = intersection.z;
-				float shade = saturatef(1.f / (T*0.1f));
+				float shade = saturatef(1.f / (T*0.2f));
 
-				colors[iColor] = _mm_set1_ps(shade);
+				int fpU = ftofp24(U*512.f);
+				int fpV = ftofp24(V*16.f);
+
+				unsigned U0, V0, U1, V1, fracU, fracV;
+				bsamp_prepUVs(fpU, fpV, 1023, 10, U0, V0, U1, V1, fracU, fracV);
+				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
+
+				color = _mm_mul_ps(color, _mm_set1_ps(shade));
+
+				colors[iColor] = color;
 			}
 
 			const int index = (yIndex+iX)>>2;
-			pDest128[index] = Shadertoy::ToPixel4(colors);
+			pDest128[index] = Shadertoy::ToPixel4_NoConv(colors);
 		}
 	}
 }
@@ -539,5 +571,5 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderTunnelMap_2x2(g_pFXFine, time);
-	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+	MapBlitter_Colors_2x2_interlaced(pDest, g_pFXFine);
 }
