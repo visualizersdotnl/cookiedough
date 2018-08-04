@@ -10,6 +10,7 @@
 // filters & blitters
 #include "boxblur.h"
 #include "polar.h"
+#include "fx-blitter.h"
 
 // effects
 #include "ball.h"
@@ -102,7 +103,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		default:
-			memset32(pDest, 0, kOutputSize);
+			FxBlitter_DrawTestPattern(pDest);
+			// memset32(pDest, 0, kOutputSize);
 	}
 
 	// blit logo 

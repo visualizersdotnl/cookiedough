@@ -76,9 +76,6 @@
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c">
       <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\map-blitter.cpp">
-      <Filter>/code\filters &amp; blitters</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\shadertoy.cpp">
       <Filter>/code\effects</Filter>
     </ClCompile>
@@ -120,6 +117,9 @@
     </ClCompile>
     <ClCompile Include="..\code\tests.cpp">
       <Filter>/code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\fx-blitter.cpp">
+      <Filter>/code\filters &amp; blitters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +189,6 @@
     <ClInclude Include="..\code\boxblur.h">
       <Filter>/code\filters &amp; blitters</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\map-blitter.h">
-      <Filter>/code\filters &amp; blitters</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\polar.h">
       <Filter>/code\filters &amp; blitters</Filter>
     </ClInclude>
@@ -248,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\code\tests.h">
       <Filter>/code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\fx-blitter.h">
+      <Filter>/code\filters &amp; blitters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

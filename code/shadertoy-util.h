@@ -17,9 +17,8 @@
 #define USE_SSE2
 #include "../3rdparty/sse_mathfun.h"
 
-// blitters to output resolution
-#include "map-blitter.h"
-using namespace FXMAP;
+// blitter(s) to output resolution
+#include "fx-blitter.h"
 
 namespace Shadertoy
 {
@@ -97,21 +96,12 @@ namespace Shadertoy
 		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
 
-	VIZ_INLINE const Vector2 ToUV_FX_2x2(unsigned iX, unsigned iY, float scale = 2.f)
+	VIZ_INLINE const Vector2 ToUV_FxMap(unsigned iX, unsigned iY, float scale = 2.f)
 	{
 		float fX = (float) iX;
 		float fY = (float) iY;
-		fX *= 1.f/FXMAP::kFineResX;
-		fY *= 1.f/FXMAP::kFineResY;
-		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
-	}
-
-	VIZ_INLINE const Vector2 ToUV_FX_4x4(unsigned iX, unsigned iY, float scale = 2.f)
-	{
-		float fX = (float) iX;
-		float fY = (float) iY;
-		fX *= 1.f/FXMAP::kCoarseResX;
-		fY *= 1.f/FXMAP::kCoarseResY;
+		fX *= 1.f/kFxMapResX;
+		fY *= 1.f/kFxMapResY;
 		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
 	}
 

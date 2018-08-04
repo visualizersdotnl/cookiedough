@@ -44,7 +44,7 @@
 // - keep DLLs (see above) up to date for each build
 // - (almost) always include main.h on top
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
-// - for the render target(s) there's kTargetX et cetera
+// - for other targets there are likewise constants
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
 
 // where to configure what?
@@ -53,7 +53,7 @@
 // - module name specified in main.cpp
 // - module rows-per-pattern in audio.cpp
 // - module playback flags in audio.cpp
-// - main resolution in main.h (adjust target and FX sizes in shared-resources.h and map-blitter.h accordingly)
+// - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
 
 // Undef. for (Windows - should work on other platforms too) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK
@@ -77,7 +77,7 @@
 
 // filters & blitters
 #include "polar.h"
-#include "map-blitter.h"
+#include "fx-blitter.h"
 
 // -- display & audio config. -- 
 
@@ -170,7 +170,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Image_Create();
 	utilInit &= Shared_Create();
 	utilInit &= Polar_Create();
-	utilInit &= MapBlitter_Create();
+	utilInit &= FxBlitter_Create();
 
 	Gamepad_Create();
 
@@ -222,7 +222,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	Image_Destroy();
 	Shared_Destroy();
 	Polar_Destroy();
-	MapBlitter_Destroy();
+	FxBlitter_Destroy();
 
 	SDL_Quit();
 
