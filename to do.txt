@@ -13,11 +13,11 @@ to do:
 - take a look at that twister, it's a bit sloppy
 
 possible optimizations:
-- (#1) rewrite old bsamp32(), that can be done with less instructions (also offer direct-to-32-bit unpack with _mm_cvtepu8_epi32())
+- (#1) write new bsamp32() (look at map-blitter.cpp)
 - (#2) functions like Mix32() can handle at least 2 pixels per iteration
-- (#3) cspan() family is up for review too
+- (#3) cspan() family is up for review
 - there's probably more SIMD that can be more efficient using better packing, new instructions et cetera
-- parallelize more FX?
+- some voxel effects can possibly benefit from using the new 32-bit packed functions
 
 effect ideas:
 - displacing per scanline

@@ -75,7 +75,7 @@ VIZ_INLINE void cspanISSE(
 	}
 }
 
-#else // FIXME: temp. version with slightly better precision
+#else // FIXME: temp. version with better precision (unpacks to 32-bit first)
 
 // copy of cspan(), takes pre-unpacked colors as __m128i
 // for better integration with ISSE-optimized caller
@@ -95,11 +95,9 @@ VIZ_INLINE void cspanISSE(
 
 	const __m128i divisor = _mm_set1_epi32(65536/length);
 	const __m128i delta = _mm_sub_epi32(B, A);
-
 	const unsigned int preSteps = length - drawLength;
 	const __m128i preStep = _mm_madd_epi16(delta, _mm_mul_epi32(divisor, _mm_set1_epi32(preSteps)));
 	const __m128i step = _mm_madd_epi16(delta, divisor);
-
 	A = _mm_slli_epi32(A, 16);
 	A = _mm_add_epi32(A, preStep);
 

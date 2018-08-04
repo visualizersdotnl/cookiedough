@@ -213,7 +213,7 @@ void MapBlitter_Colors_4x4(uint32_t* pDest, uint32_t* pSrc)
 	}
 }
 
-#if 0 /* single channel ref. test */
+#if 0 /* single channel reference test */
 
 VIZ_INLINE int Monotone(uint32_t color)
 {
