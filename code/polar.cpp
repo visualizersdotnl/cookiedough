@@ -70,7 +70,7 @@ VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc)
 	const unsigned int fracV = (V & 0xff) * 0x01010101;
 
 	// sample & return
-	const __m128i color = bsamp32(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
+	const __m128i color = bsamp32_16(pSrc, U0, V0, U0+1, V0+kTargetResX, fracU, fracV);
 	return _mm_unpacklo_epi16(color, _mm_setzero_si128());
 }
 

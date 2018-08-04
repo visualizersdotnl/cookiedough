@@ -71,7 +71,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 		// fetch height & color
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
-		 __m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+		 __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
 //		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep]);

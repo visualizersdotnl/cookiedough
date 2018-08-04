@@ -72,7 +72,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// fetch height & unpacked color
 		const unsigned int mapHeight = bsamp8(s_heightMapMix, U0, V0, U1, V1, fracU, fracV);
-		__m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+		__m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// sample env. map (without filtering)
 		const unsigned int U = envU >> 8 & kMapAnd, V = (envV >> 8 & kMapAnd) << kMapShift;
@@ -83,7 +83,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		if (iStep > kRayLength>>1)
 		// fetch, accumulate & add beam (separate map)
 		{
-			const __m128i beam = bsamp32(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+			const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 //			const __m128i beam = c2vISSE(s_pBeamMap[U0+V0]);
 
 			// pre-multiply

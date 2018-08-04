@@ -51,7 +51,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 
 		// fetch height & unpacked color
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
-		__m128i color = bsamp32(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+		__m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 		
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;

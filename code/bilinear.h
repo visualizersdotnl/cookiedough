@@ -25,7 +25,7 @@ VIZ_INLINE void bsamp_prepUVs(
 	fracU = U & 0xff;
 	fracV = V & 0xff;
 
-	// distribute across each byte (aids bsamp32())
+	// distribute across each byte (aids bsamp32_16())
 	fracU *= 0x01010101;
 	fracV *= 0x01010101;
 }
@@ -51,10 +51,10 @@ VIZ_INLINE unsigned int bsamp8(
 	return ((S01<<8)+dY)>>8;
 }
 
-// sample 32-bit texture (ISSE-optimized)
-// color is returned as unpacked (16-bit) ISSE vector
+// sample 32-bit texture
+// color is returned as (unpacked) 16-bit ISSE vector
 // FIXME: I think I can take a few instructions off here by interleaving
-VIZ_INLINE __m128i bsamp32(
+VIZ_INLINE __m128i bsamp32_16(
 	const uint32_t *pTexture, 
 	unsigned int U0, unsigned int V0, 
 	unsigned int U1, unsigned int V1, 
@@ -79,6 +79,17 @@ VIZ_INLINE __m128i bsamp32(
 	const __m128i S23 = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(S2, 8), dX2), 8);
 	const __m128i dY = _mm_mullo_epi16(_mm_sub_epi16(S23, S01), _fracV);
 	return _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(S01, 8), dY), 8);
+}
+
+// same as bsamp32_16(), but slightly optimized and returns a 32-bit ISSE vector
+VIZ_INLINE __m128i bsamp32_32(
+	const uint32_t *pTexture, 
+	unsigned int U0, unsigned int V0, 
+	unsigned int U1, unsigned int V1, 
+	unsigned int fracU, unsigned int fracV)
+{
+	VIZ_ASSERT(false); // implement!
+	return _mm_setzero_si128();
 }
 
 #endif // _BILINEAR_H_

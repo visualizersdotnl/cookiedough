@@ -26,10 +26,23 @@
 // Aura for Laura sync.:
 SyncTrack trackLauraZ, trackLauraRoll;
 
+// Nautilus sync.:
+SyncTrack trackNautilusRoll;
+
+// Spike (close) sync.:
+SyncTrack trackSpikeCloseRotJump;
+
 bool Shadertoy_Create()
 {
+	// Aura for Laura
 	trackLauraZ = Rocket::AddTrack("lauraZ");
 	trackLauraRoll = Rocket::AddTrack("lauraRoll");
+
+	// Nautilus
+	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
+
+	// Spikes
+	trackSpikeCloseRotJump = Rocket::AddTrack("cSpikeRotJump");
 
 	return true;
 }
@@ -141,6 +154,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 		.1f, 
 		.1f+lutcosf(time/14.f)/8.f);
 
+	float roll = Rocket::getf(trackNautilusRoll);
+
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
 	{
@@ -154,7 +169,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 //				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(kPI*lutcosf(time*0.06234f), direction.y, direction.x);
+				Shadertoy::rot2D(roll, direction.y, direction.x);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
@@ -323,6 +338,8 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 	fTest_global = Vector4(2.5f*time, 16.f, 22.f, 0.f);
 
+	float rotJump = Rocket::getf(trackSpikeCloseRotJump);
+
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
 	{
@@ -336,7 +353,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
 				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.14f /* FIXME: phase parameter */, direction.x, direction.y);
+				Shadertoy::rot2D(time*0.314f + rotJump, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
