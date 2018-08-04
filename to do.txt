@@ -27,7 +27,7 @@ effect ideas:
 - trace a high quality radial blur? https://www.shadertoy.com/view/4sfGRn
 
 remember:
-- 2007 horizontal blur has bias flaw (write or steal new blurs)
+- 2007 horizontal blur has bias flaw
 - 32-bit build dropped for now (see main.cpp)
 
 for OSX/Linux build:

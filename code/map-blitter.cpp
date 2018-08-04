@@ -4,12 +4,11 @@
 /*
 	FIXME:
 	- missing a pixel on the side and on the bottom
-	- adding explicit bugs or 'artsy' blitters may look very cool
 */
 
 #include "main.h"
 #include "map-blitter.h"
-#include "cspan.h"
+// #include "cspan.h"
 
 using namespace FXMAP;
 
@@ -63,8 +62,7 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			destIndex >>= 1;
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
-
-			{
+					{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
 				delta = _mm_srli_epi32(delta, 16);
 				__m128i step = _mm_madd_epi16(delta, divisor);
@@ -138,10 +136,7 @@ void MapBlitter_Colors_2x2_interlaced(uint32_t* pDest, uint32_t* pSrc)
 			}
 
 			destIndex += kResX>>1;
-
-			{
-				pCopy[destIndex] = pSrc[iC]; 
-			}
+			pCopy[destIndex] = pSrc[iC]; 
 		}
 	}
 }

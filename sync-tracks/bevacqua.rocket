@@ -1,7 +1,7 @@
-<sync rows="4096">
+<sync rows="128">
 	<tracks>
-		<track name="part">
-			<key value="7" row="0" interpolation="0"/>
+		<track name="effectTest">
+			<key value="9" row="0" interpolation="0"/>
 		</track>
 		<track name="lauraZ"/>
 		<track name="lauraRoll"/>

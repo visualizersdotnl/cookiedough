@@ -19,7 +19,7 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
-SyncTrack trackPart;
+SyncTrack trackEffectTest;
 
 bool Demo_Create()
 {
@@ -34,7 +34,7 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
-	trackPart = Rocket::AddTrack("part");
+	trackEffectTest = Rocket::AddTrack("effectTest");
 
 	return fxInit;
 }
@@ -58,37 +58,51 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 	Rocket::Boost();
 
-	int part = Rocket::geti(trackPart);
+	int effect = Rocket::geti(trackEffectTest);
+	switch (effect)
+	{
+		case 1:
+			Twister_Draw(pDest, timer, delta);
+			break;
+	
+		case 2:
+			Landscape_Draw(pDest, timer, delta);
+			break;
 
-	if (part == 1)
-		Twister_Draw(pDest, timer, delta);
-	
-	if (part == 2)
-		Landscape_Draw(pDest, timer, delta);
-	
-	if (part == 3)
-		Ball_Draw(pDest, timer, delta);
-	
-	if (part == 4)
-		Tunnelscape_Draw(pDest, timer, delta);
-	
-	if (part == 5)
-		Plasma_Draw(pDest, timer, delta);
-	
-	if (part == 6)
-		Nautilus_Draw(pDest, timer, delta);
-	
-	if (part == 7)
-		Laura_Draw(pDest, timer, delta);
-	
-	if (part == 8)
-		Spikey_Draw(pDest, timer, delta, true);
-	
-	if (part == 9)
-		Spikey_Draw(pDest, timer, delta, false);
+		case 3:
+			Ball_Draw(pDest, timer, delta);
+			break;
+
+		case 4:
+			Tunnelscape_Draw(pDest, timer, delta);
+			break;
+		
+		case 5:
+			Plasma_Draw(pDest, timer, delta);
+			break;
+
+		case 6:
+			Nautilus_Draw(pDest, timer, delta);
+			break;
+
+		case 7:	
+			Laura_Draw(pDest, timer, delta);
+			break;
+
+		case 8:			
+			Spikey_Draw(pDest, timer, delta, true);
+			break;
+
+		case 9:
+			Spikey_Draw(pDest, timer, delta, false);
+			break;
+
+		default:
+			memset32(pDest, 0, kOutputSize);
+	}
 
 	// blit logo 
-	uint32_t *pWrite = pDest + kResX*(kResY-145);
+	uint32_t *pWrite = pDest + kResX*(kResY-155);
 	for (int iY = 0; iY < 136; ++iY)
 	{
 		pWrite += (kResX-640)/2;
