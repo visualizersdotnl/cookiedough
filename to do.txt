@@ -1,7 +1,9 @@
 
 priority:
 - fix map blitting so that it fills the entire screen
-- make Laura (camera) & Spikey more interesting (modulate spikes)
+- make Laura prettier
+- make Spikey more interesting
+- rig tunnel parameters, add decent shading
 - shaders should use more SIMD earlier on in color calculation
 
 to do:
@@ -11,6 +13,8 @@ to do:
 - configuration dialog (at least audio & VSYNC.)
 - rewrite horizontal blur (see below)
 - take a look at that twister, it's a bit sloppy
+- write a Rocket track guide (short explanation, ranges, et cetera)
+- figure out a good way to let Nytrik define colors as an asset
 
 possible optimizations:
 - (#1) functions like Mix32() can handle at least 2 pixels per iteration

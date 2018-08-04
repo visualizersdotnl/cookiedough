@@ -35,7 +35,7 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 	VIZ_ASSERT(kFineDiv == 2);
 
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi32(65536*kFineDiv);
+	const __m128i divisor = _mm_set1_epi32(65536/kFineDiv);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY-1; ++iY)
@@ -62,7 +62,8 @@ void MapBlitter_Colors_2x2(uint32_t* pDest, uint32_t* pSrc)
 			destIndex >>= 1;
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
-					{
+
+			{
 				__m128i delta = _mm_sub_epi32(fpB, fpA);
 				delta = _mm_srli_epi32(delta, 16);
 				__m128i step = _mm_madd_epi16(delta, divisor);
@@ -100,7 +101,7 @@ void MapBlitter_Colors_2x2_interlaced(uint32_t* pDest, uint32_t* pSrc)
 	VIZ_ASSERT(kFineDiv == 2);
 
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi32(65536*kFineDiv);
+	const __m128i divisor = _mm_set1_epi32(65536/kFineDiv);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY-1; ++iY)

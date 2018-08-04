@@ -89,8 +89,8 @@ void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false *
 		__m128i B = Fetch(pRead+mapIndex+2, pSrc);
 		__m128i C = Fetch(pRead+mapIndex+4, pSrc);
 		__m128i D = Fetch(pRead+mapIndex+6, pSrc);
-		__m128i AB = _mm_packs_epi32(A, B);
-		__m128i CD = _mm_packs_epi32(C, D);
+		__m128i AB = _mm_packus_epi32(A, B);
+		__m128i CD = _mm_packus_epi32(C, D);
 		pDest128[iPixel] = _mm_packus_epi16(AB, CD);
 	}
 }
