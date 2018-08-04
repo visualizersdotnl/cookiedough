@@ -21,13 +21,13 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 9;
 
 // max. depth
-const unsigned int kRayLength = 255;
+const unsigned int kRayLength = 256;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kCylRadius = 300.f;
+const float kCylRadius = 250.f;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {
@@ -42,6 +42,9 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 	// render ray
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
+		// advance!
+		curX += dX;
+
 		// prepare UVs
 		unsigned int U0, V0, U1, V1, fracU, fracV;
 		bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
@@ -59,15 +62,12 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 			// draw span
 			const unsigned int drawLength = height - lastDrawnHeight;
 			cspanISSE(pDest, direction, height - lastHeight, drawLength, lastColor, color);
-			pDest += drawLength*direction;
+			pDest += int(drawLength)*direction;
 			lastDrawnHeight = height;
 		}
 
 		lastHeight = height;
 		lastColor = color;
-
-		// advance!
-		curX += dX;
 	}
 }
 
@@ -86,9 +86,10 @@ static void vtwister(uint32_t *pDest, float time)
 		const int fromY = ftofp24(mapY + time*25.f);
 
 		const size_t xOffs = kTargetResX>>1;
-		vtwister_ray(pDest + iRay*kTargetResX + xOffs, fromX, fromY,  256);
-		vtwister_ray(pDest + iRay*kTargetResX + (xOffs), fromX, fromY, -256);
+		vtwister_ray(pDest+xOffs, fromX, fromY,  256);
+		vtwister_ray(pDest+(xOffs-1), fromX, fromY, -256);
 
+		pDest += kTargetResX;
 		mapY += mapStepY;
 	}
 }
@@ -98,7 +99,7 @@ void vtwister_precalc()
 	// heights along ray wrap around half a circle
 	for (unsigned int iAngle = 0; iAngle < kRayLength; ++iAngle)
 	{
-		const float angle = kPI/kRayLength * iAngle;
+		const float angle = kPI/(kRayLength-1) * iAngle;
 		const float scale = kCylRadius*sinf(angle);
 		s_heightProj[iAngle] = (unsigned) scale;
 	}
@@ -128,10 +129,10 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render twister
 	memset32(g_renderTarget, 0x1f0053, kTargetSize);
-	// vtwister(g_renderTarget, time);
+	vtwister(g_renderTarget, time);
 
 	// (radial) blur
-	// HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 0.04f);
+	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, kGoldenRatio*0.01f);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);

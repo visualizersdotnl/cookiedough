@@ -172,7 +172,7 @@ static void vball_precalc()
 	// heights along ray wrap around half a circle
 	for (unsigned int iAngle = 0; iAngle < kRayLength; ++iAngle)
 	{
-		const float angle = kPI/kRayLength * iAngle;
+		const float angle = kPI/(kRayLength-1) * iAngle;
 		const float scale = kBallRadius*sinf(angle);
 		s_heightProj[iAngle] = (unsigned) scale;
 	}
