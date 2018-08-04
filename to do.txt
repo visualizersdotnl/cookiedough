@@ -6,6 +6,7 @@ priority:
 - shaders should use more SIMD earlier on in color calculation
 
 to do:
+- polar blit for 2x2 map
 - implement: Heartquake water
 - app. icon
 - configuration dialog (at least audio & VSYNC.)

@@ -319,23 +319,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-#if 0
-				Vector3 reflectHit;
-				Vector3 reflected = direction.Reflect(normal);
-
-				float reflTotal = 0.1f;
-				for (int iStep = 0; iStep < 4; ++iStep)
-				{
-					reflectHit.x = hit.x + reflected.x*reflTotal;
-					reflectHit.y = hit.y + reflected.x*reflTotal;
-					reflectHit.z = hit.z + reflected.x*reflTotal;
-					march = fAuraForLaura(reflectHit);
-					reflTotal += march*0.314f;
-				}
-
-				float reflection = Q3_rsqrtf(reflectHit.x*reflectHit.x + reflectHit.y*reflectHit.y + reflectHit.z*reflectHit.z);
-#endif
-
 				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.35f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 				float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
@@ -343,7 +326,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				Vector3 color(diffuse);
 				color *= yMod;
 				color += specular+specular;
-//				color += reflection;
 
 				const float distance = hit.z-origin.z;
 				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.006f);
@@ -591,9 +573,12 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-				const float specular = warmup*powf(std::max(0.f, normal*direction), specPow);
+				const float distance = hit.z-origin.z;
 
-				colors[iColor] = _mm_set1_ps(specular);
+				const float specular = warmup*powf(std::max(0.f, normal*direction), specPow);
+				__m128 fogged = Shadertoy::ApplyFog(distance, _mm_set1_ps(specular), _mm_setzero_ps(), 0.0733f);
+
+				colors[iColor] = fogged;
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -623,13 +608,9 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		else
 		{
 			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name "warmup")
-//			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap, time, 1.f+warmup);
-//			HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, warmup*0.001f*kGoldenRatio);
-//			Fx_Blit_2x2(pDest, g_pFxMap);
-
 			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap, time, 1.f+warmup);
 			HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, warmup*0.001f*kGoldenRatio);
-			Fx_Blit_2x2(pDest, g_pFxMap);
+			Fx_Blit_2x2_Dithered(pDest, g_pFxMap);
 		}
 	}
 
