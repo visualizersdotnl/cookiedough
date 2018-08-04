@@ -470,3 +470,54 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 
 	MapBlitter_Colors_2x2_interlaced(pDest, g_pFXFine);
 }
+
+//
+// Classic free-directional tunnel (ported from my 2007 codebase).
+// Test case for texture sampling and color interpolation versus UV interpolation.
+//
+
+static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
+{
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	// Vector3 fogColor(0.09f, 0.01f, 0.08f);
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFineResY; ++iY)
+	{
+		const int yIndex = iY*kFineResX;
+		for (int iX = 0; iX < kFineResX; iX += 4)
+		{	
+			__m128 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 1.f);
+				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
+				Shadertoy::rot2D(time*0.314f, direction.y, direction.z);
+
+				float A;
+				A = direction.x*direction.x + direction.y*direction.y;
+				A += kEpsilon;
+				A = 1.f/A;
+				float radius = 1.f;
+				float T = radius*A;
+				Vector3 intersection = direction*T;
+
+				float U = atan2f(intersection.y, intersection.x)/kPI;
+				float V = intersection.z;
+				float shade = saturatef(1.f / (T*0.1f));
+
+				colors[iColor] = _mm_set1_ps(shade);
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
+void Tunnel_Draw(uint32_t *pDest, float time, float delta)
+{
+	RenderTunnelMap_2x2(g_pFXFine, time);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
+}

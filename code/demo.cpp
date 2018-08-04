@@ -97,6 +97,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Spikey_Draw(pDest, timer, delta, false);
 			break;
 
+		case 10:
+			Tunnel_Draw(pDest, timer, delta);
+			break;
+
 		default:
 			memset32(pDest, 0, kOutputSize);
 	}
