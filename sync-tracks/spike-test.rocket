@@ -1,0 +1,41 @@
+<sync rows="4096">
+	<tracks>
+		<track name="lauraSpeed"/>
+		<track name="lauraYaw"/>
+		<track name="lauraPitch"/>
+		<track name="lauraRoll"/>
+		<track name="nautilusRoll"/>
+		<track name="cSpikeRotJump"/>
+		<track name="effectTest">
+			<key row="0" interpolation="0" value="9"/>
+			<key row="128" interpolation="0" value="8"/>
+		</track>
+		<track name="cSpikeSpeed">
+			<key row="0" interpolation="0" value="-1.56"/>
+			<key row="56" interpolation="0" value="3"/>
+			<key row="128" interpolation="0" value="1"/>
+			<key row="192" interpolation="0" value="4"/>
+			<key row="224" interpolation="3" value="4"/>
+			<key row="256" interpolation="0" value="4.2"/>
+		</track>
+		<track name="cSpikeRoll">
+			<key row="0" interpolation="0" value="0"/>
+			<key row="160" interpolation="0" value="3"/>
+			<key row="192" interpolation="0" value="-2"/>
+			<key row="256" interpolation="0" value="0.31"/>
+		</track>
+		<track name="cSpikeSpecular">
+			<key row="0" interpolation="0" value="12"/>
+			<key row="40" interpolation="2" value="12"/>
+			<key row="48" interpolation="1" value="7"/>
+			<key row="55" interpolation="0" value="0.33"/>
+			<key row="56" interpolation="0" value="4.33"/>
+		</track>
+		<track name="cDistSpikeWarmup">
+			<key row="0" interpolation="2" value="31"/>
+			<key row="55" interpolation="0" value="5"/>
+			<key row="56" interpolation="0" value="0"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>

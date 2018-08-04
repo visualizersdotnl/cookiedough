@@ -1,0 +1,22 @@
+<sync rows="128">
+	<tracks>
+		<track name="lauraSpeed">
+			<key row="0" interpolation="0" value="3.14"/>
+		</track>
+		<track name="lauraYaw">
+			<key row="32" interpolation="3" value="0"/>
+			<key row="48" interpolation="0" value="3.14"/>
+		</track>
+		<track name="lauraPitch">
+			<key row="8" interpolation="2" value="0"/>
+			<key row="24" interpolation="0" value="3.14"/>
+		</track>
+		<track name="lauraRoll"/>
+		<track name="nautilusRoll"/>
+		<track name="cSpikeRotJump"/>
+		<track name="effectTest">
+			<key row="0" interpolation="0" value="7"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>
