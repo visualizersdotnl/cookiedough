@@ -93,8 +93,8 @@ VIZ_INLINE __m128i bsamp32_32(
 	__m128i _fracU = _mm_cvtsi32_si128(fracU);
 	__m128i _fracV = _mm_cvtsi32_si128(fracV);
 
-	_fracU = _mm_unpacklo_epi8(_fracU, zero);
-	_fracV = _mm_unpacklo_epi8(_fracV, zero);
+	 _fracU = _mm_unpacklo_epi8(_fracU, zero);
+	 _fracV = _mm_unpacklo_epi8(_fracV, zero);
 
 	_fracU = _mm_unpacklo_epi16(_fracU, zero);
 	_fracV = _mm_unpacklo_epi16(_fracV, zero);
@@ -106,8 +106,8 @@ VIZ_INLINE __m128i bsamp32_32(
 
 	__m128i dX1 = _mm_sub_epi32(S1, S0);
 	__m128i dX2 = _mm_sub_epi32(S3, S2);
-	dX1 = _mm_mul_epi32(dX1, _fracU);
-	dX2 = _mm_mul_epi32(dX2, _fracU);
+	dX1 = _mm_mullo_epi32(dX1, _fracU);
+	dX2 = _mm_mullo_epi32(dX2, _fracU);
 
 	__m128i S01 = _mm_add_epi32(_mm_slli_epi32(S0, 8), dX1);
 	__m128i S23 = _mm_add_epi32(_mm_slli_epi32(S2, 8), dX2);
@@ -115,7 +115,7 @@ VIZ_INLINE __m128i bsamp32_32(
 	S23 = _mm_srli_epi32(S23, 8);
 
 	__m128i dY = _mm_sub_epi32(S23, S01);
-	dY = _mm_mul_epi32(dY, _fracV);
+	dY = _mm_mullo_epi32(dY, _fracV);
 
 	__m128i result = _mm_add_epi32(_mm_slli_epi32(S01, 8), dY);
 	result = _mm_srli_epi32(result, 8);

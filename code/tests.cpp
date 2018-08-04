@@ -19,17 +19,19 @@ bool RunTests()
 
 	auto colorA_16 = v2cISSE16(bsamp32_16(s_tile, 0, 0, 1, 1,   0*0x010101,   0*0x010101));
 	auto colorB_16 = v2cISSE16(bsamp32_16(s_tile, 0, 0, 1, 1, 255*0x010101, 255*0x010101));
-	if (colorA_16 != s_tile[0] || colorB_16 != s_tile[4])
+	auto colorC_16 = v2cISSE16(bsamp32_16(s_tile, 0, 0, 1, 1, 128*0x010101, 128*0x010101));
+	if (colorA_16 != s_tile[0] || colorB_16 != s_tile[4] && colorC_16 == 0x7f7f7f)
 	{
-		SetLastError("RunTests(): bsamp32_16() broken!");
+		SetLastError("bsamp32_16() broken!");
 		return false;
 	}
 
 	auto colorA_32 = v2cISSE32(bsamp32_32(s_tile, 0, 0, 1, 1,   0*0x010101,   0*0x010101));
 	auto colorB_32 = v2cISSE32(bsamp32_32(s_tile, 0, 0, 1, 1, 255*0x010101, 255*0x010101));
-	if (colorA_32 != s_tile[0] || colorB_32 != s_tile[4])
+	auto colorC_32 = v2cISSE32(bsamp32_32(s_tile, 0, 0, 1, 1, 128*0x010101, 128*0x010101));
+	if (colorA_32 != s_tile[0] || colorB_32 != s_tile[4] || colorC_32 != 0x7f7f7f)
 	{
-		SetLastError("RunTests(): bsamp32_32() broken!");
+		SetLastError("bsamp32_32() broken!");
 		return false;
 	}
 
