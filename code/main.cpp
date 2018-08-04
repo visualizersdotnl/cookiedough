@@ -16,10 +16,11 @@
 // codename: cookiedough (2009-2018)
 // property of visualizers.nl (http://www.visualizers.nl)
 
-// 32-bit build temporarily dropped (as of August 2018), because of:
+// 32-bit build DISCONTINUD (as of August 2018), because:
 // - OpenMP not working properly
 // - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
 // - other potential SSE 4.1 / 64-bit instruction use
+// - probably too slow for what I'm doing anyway
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -35,8 +36,8 @@
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
-// - adv. instruction set: SSE2 for x86, not set for 64-bit
-// - uses C++11
+// - adv. instruction set: SSE2 for x86, not set for 64-bit (SSE2 is implied)
+// - uses C++11 (and possibly C++14)
 
 // important:
 // - executables are built to target/x86/ or target/x64/ -- run from that directory!
@@ -45,6 +46,14 @@
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for the render target(s) there's kTargetX et cetera
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
+
+// where to configure what?
+// - windowed mode and window title can be decided in main.cpp
+// - CRT leak check can be toggled in main.cpp
+// - module name specified in main.cpp
+// - module rows-per-pattern in audio.cpp
+// - module playback flags in audio.cpp
+// - main resolution in main.h (adjust target and FX sizes in shared-resources.h and map-blitter.h accordingly)
 
 // Undef. for (Windows - should work on other platforms too) CRT leak check
 // #define WIN32_CRT_LEAK_CHECK
@@ -70,12 +79,20 @@
 #include "polar.h"
 #include "map-blitter.h"
 
-// display & audio config.
+// -- display & audio config. -- 
+
 const char *kTitle = "untitled #SHADERGP19 promotional";
+
 const bool kFullScreen = false;
+
 // const char *kModule = "assets/moby_-_eliminator-tribute.mod";
 // const char *kModule = "assets/theduel.mod";
 const char *kModule = "assets/knulla-kuk.mod";
+
+// when you're working on anything else than synchronization..
+const bool kSilent = true;
+
+// -----------------------------
 
 static std::string s_lastErr;
 
@@ -159,11 +176,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	float avgFPS = 0.f;
 
-	if (utilInit && RunTests())
+	if (utilInit && RunTests() /* just always run the functional tests, never want to run if they fail */)
 	{
 		if (Demo_Create())
 		{
-			if (Audio_Create(-1, kModule, GetForegroundWindow())) // FIXME? (GetForegroundWindow())
+			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))

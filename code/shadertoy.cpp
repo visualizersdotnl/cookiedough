@@ -26,7 +26,8 @@
 // --- Sync. tracks ---
 
 // Aura for Laura sync.:
-SyncTrack trackLauraZ, trackLauraRoll;
+SyncTrack trackLauraSpeed;
+SyncTrack trackLauraYaw, trackLauraPitch, trackLauraRoll;
 
 // Nautilus sync.:
 SyncTrack trackNautilusRoll;
@@ -40,16 +41,17 @@ static uint32_t *s_pFDTunnelTex = nullptr;
 
 bool Shadertoy_Create()
 {
-	// Aura for Laura
-	trackLauraZ = Rocket::AddTrack("lauraZ");
+	// Aura for Laura:
+	trackLauraSpeed = Rocket::AddTrack("lauraSpeed");
+	trackLauraYaw = Rocket::AddTrack("lauraYaw");
+	trackLauraPitch = Rocket::AddTrack("lauraPitch");
 	trackLauraRoll = Rocket::AddTrack("lauraRoll");
 
-	// Nautilus
+	// Nautilus:
 	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
 
-	// Spikes
+	// Spikes:
 	trackSpikeCloseRotJump = Rocket::AddTrack("cSpikeRotJump");
-
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/fdtun-map.png");
 	if (nullptr == s_pFDTunnelTex)
@@ -180,7 +182,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 //				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(roll, direction.y, direction.x);
+				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
@@ -252,17 +254,24 @@ VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 	return lutcosf(position.x*1.314f)+lutcosf(position.y*0.314f)+lutcosf(position.z)+lutcosf(position.y*2.5f)*0.5f;
 }
 
+VIZ_INLINE const Vector2 fLauraPath(float Z)
+{
+	return { lutcosf(Z*0.25f)*0.314f + lutcosf(Z*0.15f)*0.164f, lutsinf(Z*0.25f)*0.314f + lutsinf(Z*0.15f)*0.65f };
+}
+
 static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	float lauraZ = Rocket::getf(trackLauraZ);
-	float lauraRoll = Rocket::getf(trackLauraRoll);
+	const float lauraZ = time*Rocket::getf(trackLauraSpeed);
+	const float lauraYaw = Rocket::getf(trackLauraYaw);
+	const float lauraPitch = Rocket::getf(trackLauraPitch);
+	const float lauraRoll = Rocket::getf(trackLauraRoll);
 
 	Vector3 fogColor(0.8f, 0.9f, 0.1f);
 	fogColor *= 0.4314f;
 
-	Vector3 origin(0.f, 0.f, lauraZ);
+	const Vector3 origin(fLauraPath(lauraZ), lauraZ);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -276,7 +285,12 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rot2D(lauraRoll, direction.x, direction.y);
+				
+				// FIXME: use 3x3 matrix?
+				Shadertoy::rotY(lauraYaw,   direction.x, direction.z);
+				Shadertoy::rotX(lauraPitch, direction.y, direction.z);
+				Shadertoy::rotZ(lauraRoll,  direction.x, direction.y);
+				
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
@@ -300,7 +314,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.25f;
+				float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.35f;
 				float specular = powf(std::max(0.f, normal*direction), 24.f);
 				float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
 
@@ -311,7 +325,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				const float distance = hit.z-origin.z;
 				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.006f);
 
-				colors[iColor] = Shadertoy::GammaAdj(fogged, kGoldenRatio);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, 1.314f);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -365,7 +379,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
 				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.314f + rotJump, direction.x, direction.y);
+				Shadertoy::rotZ(time*0.314f + rotJump, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
@@ -438,7 +452,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 				Vector3 origin(0.f, 0.f, -3.314f);
 				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.0314f, direction.x, direction.y);
+				Shadertoy::rotZ(time*0.0314f, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
@@ -511,12 +525,13 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	// Vector3 fogColor(0.09f, 0.01f, 0.08f);
-
-	float boxy = 0.7314f;
-	float flowerScale = 0.314f;
-	float flowerFreq = 4.f;
+	// FIXME: parametrize
+	float boxy = 1.0f;
+	float flowerScale = 0.14f;
+	float flowerFreq = 5.f;
 	float flowerPhase = time;
+	float speed = 4.f;
+	float roll = 0.f;
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
@@ -529,7 +544,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 1.f);
 				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
-				Shadertoy::rot2D(time*0.314f, direction.x, direction.y);
+				Shadertoy::rotZ(roll, direction.x, direction.y);
 
 				// FIXME: this seems very suitable for SIMD, but the FPS is good as it is
 				float A;
@@ -547,8 +562,8 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				Vector3 intersection = direction*T;
 
 				float U = atan2f(intersection.y, intersection.x)/kPI;
-				float V = intersection.z;
-				float shade = saturatef(1.f / (T*0.2f));
+				float V = intersection.z + time*speed;
+				float shade = expf(-0.003f*T*T);
 
 				int fpU = ftofp24(U*512.f);
 				int fpV = ftofp24(V*16.f);
@@ -571,5 +586,5 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderTunnelMap_2x2(g_pFXFine, time);
-	MapBlitter_Colors_2x2_interlaced(pDest, g_pFXFine);
+	MapBlitter_Colors_2x2(pDest, g_pFXFine);
 }

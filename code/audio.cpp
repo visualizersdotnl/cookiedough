@@ -15,7 +15,7 @@ static HMUSIC s_hMusic = NULL;
 const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
 const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
 
-bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
+bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent)
 {
 	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
 	VIZ_ASSERT(hWnd != NULL);
@@ -64,6 +64,9 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd)
 
 	// maximum precision
 	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 256); 
+
+	if (silent)
+		BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_VOL, 0.f);
 
 	return true;
 }

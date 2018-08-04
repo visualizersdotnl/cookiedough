@@ -25,13 +25,35 @@ namespace Shadertoy
 {
 	// -- math --
  
-	VIZ_INLINE void rot2D(float angle, float &X, float &Y)
+	VIZ_INLINE void rotX(float angle, float &Y, float &Z)
 	{
 		const int index = tocosindex(angle);
 		const float cosine = lutcosf(index);
 		const float sine = lutsinf(index);
-		const float rotX = cosine*X - sine*Y;
-		const float rotY = sine*X + cosine*Y;
+		const float rotY = cosine*Y + -sine*Z;
+		const float rotZ = sine*Y + cosine*Z;
+		Y = rotY;
+		Z = rotZ;
+	}
+
+	VIZ_INLINE void rotY(float angle, float &X, float &Z)
+	{
+		const int index = tocosindex(angle);
+		const float cosine = lutcosf(index);
+		const float sine = lutsinf(index);
+		const float rotX = cosine*X + sine*Z;
+		const float rotZ = -sine*X + cosine*Z;
+		X = rotX;
+		Z = rotZ;
+	}
+
+	VIZ_INLINE void rotZ(float angle, float &X, float &Y)
+	{
+		const int index = tocosindex(angle);
+		const float cosine = lutcosf(index);
+		const float sine = lutsinf(index);
+		const float rotX = cosine*X + sine*Y;
+		const float rotY = -sine*X + cosine*Y;
 		X = rotX;
 		Y = rotY;
 	}

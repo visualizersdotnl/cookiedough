@@ -5,7 +5,7 @@
 #define _AUDIO_H_
 
 // 'iDevice' - valid device index or -1 for system default
-bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd);
+bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent);
 void Audio_Destroy();
 
 // GNU Rocket callbacks

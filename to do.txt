@@ -1,12 +1,12 @@
 
 priority:
 - fix map blitting so that it fills the entire screen
-- make Laura & Spikey more interesting (sharp corners, use quaternions and a "global cornering system")
+- make Laura (camera) & Spikey more interesting (modulate spikes)
 - shaders should use more SIMD earlier on in color calculation
 
 to do:
 - implement: Heartquake water
-- create texture mapping version of map blitter(s)
+- create texture mapping version of map blitter(s): is this necessary?
 - app. icon
 - configuration dialog (at least audio & VSYNC.)
 - rewrite horizontal blur (see below)
