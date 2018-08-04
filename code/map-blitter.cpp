@@ -239,7 +239,7 @@ static void MapBlitter_Colors_Mono_Ref(uint32_t* pDest, uint32_t* pSrc)
 			{
 				int colA = startX>>15;
 				int colB = endX>>15;
-				cspanISSE_noclip_4(pCopy, c2vISSE(colA*0x010101), c2vISSE(colB*0x010101));
+				cspanISSE16_noclip_4(pCopy, c2vISSE16(colA*0x010101), c2vISSE16(colB*0x010101));
 				pCopy  += kResX;
 				startX += dStartX;
 				endX   += dEndX;

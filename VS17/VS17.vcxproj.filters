@@ -118,6 +118,9 @@
     <ClCompile Include="..\code\shared-resources.cpp">
       <Filter>/code</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\tests.cpp">
+      <Filter>/code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -242,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\code\heartquake.h">
       <Filter>/code\effects\not implemented</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\tests.h">
+      <Filter>/code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

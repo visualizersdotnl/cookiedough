@@ -53,7 +53,7 @@ VIZ_INLINE unsigned int bsamp8(
 
 // sample 32-bit texture
 // color is returned as (unpacked) 16-bit ISSE vector
-// FIXME: I think I can take a few instructions off here by interleaving
+// FIXME: this looks like it could be optimized, just like bsamp32_32()
 VIZ_INLINE __m128i bsamp32_16(
 	const uint32_t *pTexture, 
 	unsigned int U0, unsigned int V0, 
@@ -88,8 +88,39 @@ VIZ_INLINE __m128i bsamp32_32(
 	unsigned int U1, unsigned int V1, 
 	unsigned int fracU, unsigned int fracV)
 {
-	VIZ_ASSERT(false); // implement!
-	return _mm_setzero_si128();
+	const __m128i zero = _mm_setzero_si128();
+
+	__m128i _fracU = _mm_cvtsi32_si128(fracU);
+	__m128i _fracV = _mm_cvtsi32_si128(fracV);
+
+	_fracU = _mm_unpacklo_epi8(_fracU, zero);
+	_fracV = _mm_unpacklo_epi8(_fracV, zero);
+
+	_fracU = _mm_unpacklo_epi16(_fracU, zero);
+	_fracV = _mm_unpacklo_epi16(_fracV, zero);
+
+	__m128i S0 = c2vISSE32(pTexture[U0+V0]);
+	__m128i S1 = c2vISSE32(pTexture[U1+V0]);
+	__m128i S2 = c2vISSE32(pTexture[U0+V1]);
+	__m128i S3 = c2vISSE32(pTexture[U1+V1]);
+
+	__m128i dX1 = _mm_sub_epi32(S1, S0);
+	__m128i dX2 = _mm_sub_epi32(S3, S2);
+	dX1 = _mm_mul_epi32(dX1, _fracU);
+	dX2 = _mm_mul_epi32(dX2, _fracU);
+
+	__m128i S01 = _mm_add_epi32(_mm_slli_epi32(S0, 8), dX1);
+	__m128i S23 = _mm_add_epi32(_mm_slli_epi32(S2, 8), dX2);
+	S01 = _mm_srli_epi32(S01, 8);
+	S23 = _mm_srli_epi32(S23, 8);
+
+	__m128i dY = _mm_sub_epi32(S23, S01);
+	dY = _mm_mul_epi32(dY, _fracV);
+
+	__m128i result = _mm_add_epi32(_mm_slli_epi32(S01, 8), dY);
+	result = _mm_srli_epi32(result, 8);
+
+	return result;
 }
 
 #endif // _BILINEAR_H_

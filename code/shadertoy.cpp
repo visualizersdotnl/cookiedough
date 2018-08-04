@@ -251,6 +251,8 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 	Vector3 fogColor(0.8f, 0.9f, 0.1f);
 	fogColor *= 0.4314f;
 
+	Vector3 origin(0.f, 0.f, lauraZ);
+
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFineResY; ++iY)
 	{
@@ -262,7 +264,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FX_2x2(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 origin(0.f, 0.f, lauraZ);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rot2D(lauraRoll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
@@ -491,6 +492,8 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 //
 // Classic free-directional tunnel (ported from my 2007 codebase).
 // Test case for texture sampling and color interpolation versus UV interpolation.
+//
+// Idea for when this one works: https://www.shadertoy.com/view/MsX3RH
 //
 
 static void RenderTunnelMap_2x2(uint32_t *pDest, float time)

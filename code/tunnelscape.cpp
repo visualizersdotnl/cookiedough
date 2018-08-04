@@ -41,7 +41,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	int lastDrawnHeight = kResX;
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-	__m128i lastColor = c2vISSE(s_pColorMap[U|V]);
+	__m128i lastColor = c2vISSE16(s_pColorMap[U|V]);
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
@@ -80,7 +80,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		{
 			// draw span (horizontal)
 			const unsigned int drawLength = lastDrawnHeight - height;
-			cspanISSE(pDest, 1, lastHeight - height, drawLength, color, lastColor);
+			cspanISSE16(pDest, 1, lastHeight - height, drawLength, color, lastColor);
 			lastDrawnHeight = height;
 			pDest += drawLength;
 		}
@@ -132,7 +132,7 @@ bool Tunnelscape_Create()
 		
 	// unpack fog gradient pixels
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
-		s_fogGradientUnp[iPixel] = c2vISSE(s_pFogGradient[iPixel]);
+		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
 
 	return true;
 }

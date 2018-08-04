@@ -13,11 +13,9 @@ to do:
 - take a look at that twister, it's a bit sloppy
 
 possible optimizations:
-- (#1) write bsamp32_32() (look at map-blitter.cpp)
-- (#2) functions like Mix32() can handle at least 2 pixels per iteration
-- (#3) cspan() family is up for review
+- (#1) functions like Mix32() can handle at least 2 pixels per iteration
+- (#2) write (faster?) 32-bit cspan() and use with voxel ball
 - there's probably more SIMD that can be more efficient using better packing, new instructions et cetera
-- some voxel effects (like the ball with it's beams) can possibly benefit from using the new 32-bit packed functions
 
 effect ideas:
 - displacing per scanline

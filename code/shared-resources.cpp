@@ -18,7 +18,7 @@ bool Shared_Create()
 
 	// create linear grayscale gradient (unpacked)
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
-		g_gradientUnp[iPixel] = c2vISSE(iPixel * 0x01010101);
+		g_gradientUnp[iPixel] = c2vISSE16(iPixel * 0x01010101);
 
 	// allocate render target
 	g_renderTarget = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));

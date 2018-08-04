@@ -48,7 +48,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	unsigned int lastDrawnHeight = 0; 
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-	__m128i lastColor = c2vISSE(s_pColorMap[U+V]);
+	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
 
 	__m128i beamAccum = _mm_setzero_si128();
 	__m128i beamMul = g_gradientUnp[kBeamMul];
@@ -76,7 +76,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// sample env. map (without filtering)
 		const unsigned int U = envU >> 8 & kMapAnd, V = (envV >> 8 & kMapAnd) << kMapShift;
-		const __m128i additive = c2vISSE(s_pEnvMap[U+V]);
+		const __m128i additive = c2vISSE16(s_pEnvMap[U+V]);
 		color = _mm_adds_epu16(color, additive);
 
 #if !defined(NO_BEAMS)
@@ -84,7 +84,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		// fetch, accumulate & add beam (separate map)
 		{
 			const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-//			const __m128i beam = c2vISSE(s_pBeamMap[U0+V0]);
+//			const __m128i beam = c2vISSE16(s_pBeamMap[U0+V0]);
 
 			// pre-multiply
 			beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
@@ -109,7 +109,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 			const unsigned int drawLength = height - lastDrawnHeight;
 
 			// draw span (clipped)
-			cspanISSE(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
+			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
 			lastDrawnHeight = height;
 		}
 
@@ -126,10 +126,10 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 	// beams (fade out, also works with overflowing beam)
 //	const unsigned int remainder = kTargetResX-lastDrawnHeight;
-//	cspanISSE_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
+//	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
 
 	// beams (full brightness)
-//	const uint32_t color = v2cISSE(beamAccum);
+//	const uint32_t color = v2cISSE16(beamAccum);
 //	while (lastDrawnHeight < kTargetResX)
 //		pDest[lastDrawnHeight++] = color;
 
@@ -137,7 +137,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
  	const __m128i beamSub = g_gradientUnp[3];
 	while (lastDrawnHeight < kTargetResX)
 	{
-		pDest[lastDrawnHeight++] = v2cISSE(beamAccum);
+		pDest[lastDrawnHeight++] = v2cISSE16(beamAccum);
 		beamAccum = _mm_subs_epu16(beamAccum, beamSub);
 	}
 

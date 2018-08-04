@@ -79,7 +79,7 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);
 
 // convert 32-bit color to unpacked (16-bit) ISSE vector
-VIZ_INLINE __m128i c2vISSE(uint32_t color) 
+VIZ_INLINE __m128i c2vISSE16(uint32_t color) 
 { 
 	return  _mm_unpacklo_epi8(
 		_mm_cvtsi32_si128(color), _mm_setzero_si128()); 
@@ -101,7 +101,11 @@ VIZ_INLINE __m128 c2vfISSE(uint32_t color)
 }
 
 // convert unpacked (16-bit) ISSE vector to 32-bit color
-VIZ_INLINE uint32_t v2cISSE(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); }
+// this is *not* the fast way to do it, so either call it sparingly, or just for tests
+VIZ_INLINE uint32_t v2cISSE16(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); }
+
+// version of v2cISSE16() for 32-bit vectors
+VIZ_INLINE uint32_t v2cISSE32(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_packus_epi32(color, _mm_setzero_si128()), _mm_setzero_si128())); }
 
 // mix 2 unpacked 32-bit pixels by alpha
 VIZ_INLINE __m128i MixPixels32(__m128i A, __m128i B, float alpha)
@@ -120,7 +124,7 @@ VIZ_INLINE uint32_t MixPixels32(uint32_t A, uint32_t B, float alpha)
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i vB = _mm_unpacklo_epi8(_mm_cvtsi32_si128(B), zero);
 	const __m128i vA = _mm_unpacklo_epi8(_mm_cvtsi32_si128(A), zero);
-	return v2cISSE(MixPixels32(vA, vB, alpha));
+	return v2cISSE16(MixPixels32(vA, vB, alpha));
 }
 
 // ISSE vector (16-bit) minimum

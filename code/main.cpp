@@ -64,6 +64,7 @@
 #include "audio.h"
 #include "demo.h"
 #include "gamepad.h"
+#include "tests.h"
 
 // filters & blitters
 #include "polar.h"
@@ -158,7 +159,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	float avgFPS = 0.f;
 
-	if (utilInit)
+	if (utilInit && RunTests())
 	{
 		if (Demo_Create())
 		{

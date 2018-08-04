@@ -10,6 +10,9 @@
 #include <Windows.h> // for audio.h
 #include "audio.h"
 
+// const char *kHost = "localhost";
+const char *kHost = "192.168.87.138";
+
 static sync_device *s_hRocket = nullptr;
 
 #if !defined(SYNC_PLAYER)
@@ -26,10 +29,10 @@ namespace Rocket
 {
 	bool Launch()
 	{
-		s_hRocket = sync_create_device("sync");
+		s_hRocket = sync_create_device("sync"); // FIXME
 
 	#ifndef SYNC_PLAYER
-		if (sync_tcp_connect(s_hRocket, "localhost", SYNC_DEFAULT_PORT) != 0)
+		if (sync_tcp_connect(s_hRocket, kHost, SYNC_DEFAULT_PORT) != 0)
 		{
 			SetLastError("Can not connect to GNU Rocket client.");
 			return false;

@@ -35,7 +35,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 	unsigned int lastDrawnHeight = 0; 
 
 	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-	__m128i lastColor = c2vISSE(s_pColorMap[U+V]);
+	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
 
 	const int direction = (dX < 0) ? -1 : 1;
 
@@ -61,7 +61,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 		{
 			// draw span
 			const unsigned int drawLength = height - lastDrawnHeight;
-			cspanISSE(pDest, direction, height - lastHeight, drawLength, lastColor, color);
+			cspanISSE16(pDest, direction, height - lastHeight, drawLength, lastColor, color);
 			pDest += int(drawLength)*direction;
 			lastDrawnHeight = height;
 		}

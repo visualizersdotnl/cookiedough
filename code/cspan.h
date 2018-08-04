@@ -41,45 +41,10 @@ VIZ_INLINE void cspan(
 	}
 }
 
-#if 0
-
 // copy of cspan(), takes pre-unpacked colors as __m128i
 // for better integration with ISSE-optimized caller
-VIZ_INLINE void cspanISSE(
-	uint32_t *pDest,
-	int destIncr, 
-	unsigned int length,     // length of span
-	unsigned int drawLength, // visible length (for correct interpolation)
-	__m128i A, __m128i B)    // colors, unpacked to 16-bit
-{
-	VIZ_ASSERT(drawLength > 0 && length >= drawLength);
-
-	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(32768 / length);
-	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
-	const unsigned int preSteps = length - drawLength;
-	const __m128i preStep = _mm_madd_epi16(delta, _mm_mullo_epi16(divisor, _mm_set1_epi16(preSteps)));
-	const __m128i step = _mm_madd_epi16(delta, divisor);
-	A = _mm_unpacklo_epi16(A, zero);
-	A = _mm_slli_epi32(A, 15);
-	A = _mm_add_epi32(A, preStep);
-
-	while (drawLength--)
-	{
-		__m128i color = _mm_srli_epi32(A, 15);
-		color = _mm_packs_epi32(color, zero);
-		color = _mm_packus_epi16(color, zero);
-		*pDest = _mm_cvtsi128_si32(color);
-		pDest += destIncr;
-		A = _mm_add_epi32(A, step);
-	}
-}
-
-#else // FIXME: temp. version with better precision (unpacks to 32-bit first)
-
-// copy of cspan(), takes pre-unpacked colors as __m128i
-// for better integration with ISSE-optimized caller
-VIZ_INLINE void cspanISSE(
+// FIXME: temp. version with better precision (unpacks to 32-bit first)
+VIZ_INLINE void cspanISSE16(
 	uint32_t *pDest,
 	int destIncr, 
 	unsigned int length,     // length of span
@@ -112,10 +77,8 @@ VIZ_INLINE void cspanISSE(
 	}
 }
 
-#endif
-
-// copy of cspanISSE() without clipping (slightly faster)
-VIZ_INLINE void cspanISSE_noclip(
+// copy of cspanISSE16() without clipping (slightly faster)
+VIZ_INLINE void cspanISSE16_noclip(
 	uint32_t *pDest,
 	int destIncr, 
 	unsigned int length,  // length of span
@@ -141,8 +104,8 @@ VIZ_INLINE void cspanISSE_noclip(
 	}
 }
 
-// copy of cspanISSE_noclip() that handles only 4 horizontal pixels
-VIZ_INLINE void cspanISSE_noclip_4(
+// copy of cspanISSE16_noclip() that handles only 4 horizontal pixels
+VIZ_INLINE void cspanISSE16_noclip_4(
 	uint32_t *pDest,
 	__m128i A, __m128i B) // colors, unpacked to 16-bit	
 {
