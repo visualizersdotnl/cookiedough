@@ -508,10 +508,10 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				color += Shadertoy::CosPalSimplest(distance, 0.314f + 0.25f*diffuse, Vector3(0.2f, 0.1f, 0.6f), 0.5314f);
 				color += specular+specular;
 
-				__m128 desaturated = Shadertoy::Desaturate(color, 0.814f);
+				__m128 desaturated = Shadertoy::Desaturate(color, 0.614f);
 				__m128 fogged = Shadertoy::ApplyFog(distance, desaturated, fogColor, 0.0733f);
 
-				colors[iColor] = Shadertoy::GammaAdj(fogged, 1.314f);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, 1.714f);
 			}
 
 			const int index = (yIndex+iX)>>2;

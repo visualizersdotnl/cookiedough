@@ -8,7 +8,7 @@
 
 #pragma once
 
-const size_t kCosTabSize = 4096;
+const size_t kCosTabSize = 4096*2;
 constexpr size_t kCosTabAnd = kCosTabSize-1;
 constexpr unsigned kCosTabSinPhase = kCosTabSize/4;
 extern float g_cosLUT[kCosTabSize];

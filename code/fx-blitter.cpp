@@ -3,7 +3,6 @@
 
 #include "main.h"
 #include "fx-blitter.h"
-// #include "cspan.h"
 
 uint32_t *g_pFxMap = nullptr;
 
