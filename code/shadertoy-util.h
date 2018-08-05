@@ -113,14 +113,14 @@ namespace Shadertoy
 	// - FIXME: swap R and B here?
 	VIZ_INLINE __m128i ToPixel4(const __m128 *colors)
 	{
-		const __m128i iA = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0])));
-		const __m128i iB = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1])));
-		const __m128i iC = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2])));
+		__m128i zero = _mm_setzero_si128();
+		__m128i iA = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0])));
+		__m128i iB = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1])));
+		__m128i iC = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2])));
+		__m128i iD = _mm_max_epi32(zero, _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3])));
 		const __m128i AB = _mm_packus_epi32(iA, iB);
-		const __m128i iD = _mm_abs_epi32(_mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[3])));
 		const __m128i CD = _mm_packus_epi32(iC, iD);
-
-		return (_mm_packus_epi16(AB, CD));
+		return _mm_packus_epi16(AB, CD);
 	}
 
 	VIZ_INLINE __m128i ToPixel4_NoConv(const __m128 *colors)
@@ -128,11 +128,10 @@ namespace Shadertoy
 		const __m128i iA = _mm_cvtps_epi32(colors[0]);
 		const __m128i iB = _mm_cvtps_epi32(colors[1]);
 		const __m128i iC = _mm_cvtps_epi32(colors[2]);
-		const __m128i AB = _mm_packus_epi32(iA, iB);
 		const __m128i iD = _mm_cvtps_epi32(colors[3]);
+		const __m128i AB = _mm_packus_epi32(iA, iB);
 		const __m128i CD = _mm_packus_epi32(iC, iD);
-
-		return (_mm_packus_epi16(AB, CD));
+		return _mm_packus_epi16(AB, CD);
 	}
 
 	// -- basic primitives --
@@ -209,5 +208,13 @@ namespace Shadertoy
 		const Vector3 weights(0.0722f, 0.7152f, 0.2126f); // linear NTSC, R and B swapped (source: Wikipedia)
 		const __m128 luma = _mm_dp_ps(weights, color, 0xff); // SSE 4.1
 		return vLerp4(color, luma, amount);
+	}
+
+	VIZ_INLINE __m128 BasicLighting(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
+	{
+		__m128 color = _mm_mul_ps(diffColor, _mm_set1_ps(diffuse));
+		color = _mm_add_ps(color, _mm_mul_ps(diffColor, _mm_set1_ps(specular)));
+		__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, fogginess);
+		return Shadertoy::GammaAdj(fogged, gamma);
 	}
 } 

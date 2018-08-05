@@ -1,16 +1,13 @@
 
 shaders need work:
-- clamp your colors, do not take an absolute and saturate it
 - calculate normals with more precision (stash function in shadertoy-util.h)
 - experiment with different lighting in new shader
-- check if fog and gamma do what they should, and if so, try to do them per 4 pixels
 
 priority:
 - make something nice out of new shader!
 - fix map blitting so that it fills the entire screen
 - make shaders look more interesting
-- rig parameters!
-- shaders should use more SIMD earlier on in color calculation
+- rig more parameters!
 
 to do:
 - polar blit for 2x2 map
