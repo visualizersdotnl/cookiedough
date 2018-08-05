@@ -628,9 +628,9 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	// FIXME: parametrize
-	float boxy = 0.7f;
-	float flowerScale = 0.14f;
-	float flowerFreq = 5.f;
+	float boxy = 0.6f;
+	float flowerScale = 0.0314f;
+	float flowerFreq = 3.f;
 	float flowerPhase = time;
 	float speed = 4.f;
 	float roll = 0.f;
@@ -656,10 +656,10 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				float absX = fabsf(direction.x);
 				float absY = fabsf(direction.y);
 				float box = absX > absY ? absX : absY;
-				A = lerpf(A, box, boxy);
+				A =lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
-				float radius = 2.314f;
+				float radius = 1.f;
 				float T = radius*A;
 				Vector3 intersection = direction*T;
 
@@ -668,7 +668,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				float shade = expf(-0.003f*T*T);
 
 				int fpU = ftofp24(U*256.f);
-				int fpV = ftofp24(V*8.f);
+				int fpV = ftofp24(V*16.f);
 
 				unsigned U0, V0, U1, V1, fracU, fracV;
 				bsamp_prepUVs(fpU, fpV, 255, 8, U0, V0, U1, V1, fracU, fracV);
@@ -690,3 +690,113 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 	RenderTunnelMap_2x2(g_pFxMap, time);
 	Fx_Blit_2x2(pDest, g_pFxMap);
 }
+
+//
+// A blobby grid; stole the idea of forming an object around the camera from Shadertoy's Shane.
+// Yes: https://www.shadertoy.com/view/4ttGDH
+//
+
+VIZ_INLINE const Vector3 fSinPath(float time)
+{
+	const float sine = lutsinf(time * 0.41f);
+	const float cosine = lutcosf(time * 0.44f);
+	return { sine*4.f - cosine*1.5f, cosine*1.7f + sine*1.5f, time };
+}
+
+// FIXME: very optimizable?
+VIZ_INLINE float fSinMap(const Vector3 &point)
+{
+	float pZ = point.z;
+
+	// FIXME: this is costly, fake it!
+	auto& path = fSinPath(pZ);
+
+	float pX = point.x-path.x;
+	float pY = point.y-path.y;
+
+	float aX = pX*0.315f*1.25f + lutsinf(pZ*0.875f*1.25f);
+	float aY = pY*0.315f*1.25f + lutsinf(pX*0.875f*1.25f);
+	float aZ = pZ*0.315f*1.25f + lutsinf(pY*0.875f*1.25f);
+
+	float cosX = lutcosf(aX);
+	float cosY = lutcosf(aY);
+	float cosZ = lutcosf(aZ);
+
+	float length = sqrtf(cosX*cosX + cosY*cosY + cosZ*cosZ);
+
+	return (length - 1.025f)*1.33f;
+}
+
+static void RenderSinMap_2x2(uint32_t *pDest, float time)
+{
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	Vector3 fogColor(1.f, 1.f, 0.8f);
+	fogColor *= 0.314f;
+
+	const Vector3 origin = fSinPath(time);
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < kFxMapResY; ++iY)
+	{
+		const int yIndex = iY*kFxMapResX;
+		for (int iX = 0; iX < kFxMapResX; iX += 4)
+		{	
+			__m128 colors[4];
+			for (int iColor = 0; iColor < 4; ++iColor)
+			{
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
+
+				Vector3 direction(UV.x, UV.y, 0.614f); 
+				Shadertoy::vFastNorm3(direction);
+
+				Vector3 hit;
+
+				float march, total = 0.01f;
+				for (int iStep = 0; iStep < 64; ++iStep)
+				{
+					hit.x = origin.x + direction.x*total;
+					hit.y = origin.y + direction.y*total;
+					hit.z = origin.z + direction.z*total;
+					march = fSinMap(hit);
+
+					if (march < 0.0001f)
+						break;
+
+					total += march*0.814f;
+				}
+
+				float nOffs = 0.1f;
+				Vector3 normal(
+					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
+					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),
+					march-fSinMap(Vector3(hit.x, hit.y, hit.z+nOffs)));
+				Shadertoy::vFastNorm3(normal);
+
+				// FIXME: place light in front of camera, calculate distance, use length as directional light!
+				float diffuse = normal.z*0.75f;
+				float specular = powf(std::max(0.f, normal*direction), 16.f);
+
+				Vector3 color(0.f, diffuse*0.2f, diffuse*0.7f);
+				color += specular;
+
+				const float distance = hit.z-origin.z;
+
+				__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, 0.06f);
+				colors[iColor] = Shadertoy::GammaAdj(fogged, 2.22f);
+			}
+
+			const int index = (yIndex+iX)>>2;
+			pDest128[index] = Shadertoy::ToPixel4(colors);
+		}
+	}
+}
+
+void Sinuses_Draw(uint32_t *pDest, float time, float delta)
+{
+	RenderSinMap_2x2(g_pFxMap, time);
+	Fx_Blit_2x2(pDest, g_pFxMap);
+}
+
+
+

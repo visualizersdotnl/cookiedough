@@ -102,6 +102,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Tunnel_Draw(pDest, timer, delta);
 			break;
 
+		case 11:
+			Sinuses_Draw(pDest, timer, delta);
+			break;
+
 		default:
 			FxBlitter_DrawTestPattern(pDest);
 			// memset32(pDest, 0, kOutputSize);

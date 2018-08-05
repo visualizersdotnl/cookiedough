@@ -11,3 +11,4 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta);
 void Laura_Draw(uint32_t *pDest, float time, float delta);
 void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close = true);
 void Tunnel_Draw(uint32_t *pDest, float time, float delta);
+void Sinuses_Draw(uint32_t *pDest, float time, float delta);
