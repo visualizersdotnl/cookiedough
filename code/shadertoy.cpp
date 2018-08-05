@@ -3,18 +3,18 @@
 
 /*
 	important:
-		- *** R and B are swapped, as in: Vector3 color(B, R, G) ***
+		- *** R and B are swapped, as in: Vector3 color(B, G, R) ***
 		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed
 		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this (see spikey objects for example)
 		  in that case divide UV.x by kAspect
 		- when scaling a vector by a scalar in a loop, write it in place instead of using the operator (which won't inline for some reason)
 		- if needed, parts of loops can be parallelized (SIMD), but that's a lot of hassle
-		- another obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
+		- an obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
+		- be careful (precision, overflow) with normals and lighting calculations (see shadertoy-util.h)
 
 	to do:
 		- optimize where you can (which does not always mean more SIMD)
 		- hardcoded colors should be tweakable through assets
-		- fix a decent normal that has better precision closer to the camera
 */
 
 #include "main.h"
@@ -38,6 +38,7 @@ SyncTrack trackNautilusRoll;
 SyncTrack trackSpikeSpeed;
 SyncTrack trackSpikeRoll;
 SyncTrack trackSpikeSpecular;
+SyncTrack trackSpikeDesaturation;
 SyncTrack trackDistSpikeWarmup; // specular-only glow blur effect, yanked from Aura for Laura
 
 // --------------------
@@ -59,6 +60,7 @@ bool Shadertoy_Create()
 	trackSpikeSpeed = Rocket::AddTrack("cSpikeSpeed");
 	trackSpikeRoll = Rocket::AddTrack("cSpikeRoll");
 	trackSpikeSpecular = Rocket::AddTrack("cSpikeSpecular");
+	trackSpikeDesaturation = Rocket::AddTrack("cSpikeDesaturation");
 	trackDistSpikeWarmup = Rocket::AddTrack("cDistSpikeWarmup");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
@@ -73,7 +75,7 @@ void Shadertoy_Destroy()
 }
 
 //
-// Plasma (https://www.shadertoy.com/view/ldSfzm)
+// Plasma (see https://www.shadertoy.com/view/ldSfzm)
 //
 
 VIZ_INLINE float fPlasma(const Vector3 &point, float time)
@@ -122,7 +124,6 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					if (fabsf(march) < 0.001f)
 						break;
 
-//					origin += direction*march;
 					origin.x += direction.x*march;
 					origin.y += direction.y*march;
 					origin.z += direction.z*march;
@@ -188,7 +189,6 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-//				Vector3 origin(0.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
@@ -203,14 +203,12 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					hit.y = direction.y*total;
 					hit.z = direction.z*total;
 					march = fNautilus(hit, time);
-					total += march*0.628f;
-					
-//					if (fabsf(march) < 0.001f*(total*0.125f + 1.f) || total>20.f)
-//						break;
 
-					// cheaper, good gain
+					// branch gives good speed gain
 					if (fabsf(march) < 0.001f)
 						break;
+
+					total += march*0.628f;
 				}
 
 				float nOffs = 0.15f;
@@ -218,7 +216,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
 				// I will leave the calculations here as made by Michiel:
 
@@ -252,7 +250,8 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid
 //
 // FIXME:
-// - more animation, better colors?
+// - move fog closer?
+// - more animation, better colors
 //
 
 // cosine blob tunnel
@@ -306,7 +305,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				float march, total = 0.1f;
 				for (int iStep = 0; iStep < 48; ++iStep)
 				{
-					// hit = origin + direction*total;
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
@@ -319,13 +317,13 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
 				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.35f;
 				const float specular = powf(std::max(0.f, normal*direction), 16.f);
 				const float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::BasicLighting(diffuse*yMod, specular, distance, 0.006f, 1.614f, _mm_set1_ps(1.f), fogColor);
+				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, specular, distance, 0.006f, 1.614f, _mm_set1_ps(1.f), fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -348,11 +346,11 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 // - if breaking out of the march loop, skip lighting calculations and just output fog (doesn't really apply momentarily)
 //
 
-static Vector4 fTest_global;
+static Vector4 fSpike_global;
 VIZ_INLINE float fSpikey1(const Vector3 &position) 
 {
 	constexpr float scale = kGoldenRatio*0.1f;
-    const float radius = 1.35f + scale*lutcosf(fTest_global.y*position.y - fTest_global.x) + scale*lutcosf(fTest_global.z*position.x + fTest_global.x);
+    const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
@@ -361,13 +359,15 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	const Vector3 fogColor(0.f);
-	const Vector3 diffColor(148.f/256.f, 24.f/256.f, 248.f/256.f);
 
 	const float speed = Rocket::getf(trackSpikeSpeed);
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
+	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 
-	fTest_global = Vector4(speed*time, 16.f, 22.f, 0.f);
+	const __m128 diffColor = Shadertoy::Desaturate(Vector3(148.f/256.f, 24.f/256.f, 248.f/256.f), desaturation);
+
+	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -391,18 +391,18 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				int iStep;
 				for (iStep = 0; iStep < 33; ++iStep)
 				{
-					// hit = origin + direction*total;
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
 					march = fSpikey1(hit);
-					total += march*0.14f;
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
 //					if (total < 0.01f || total > 10.f)
 //					{
 //						break;
 //					}
+
+					total += march*0.14f;
 				}
 
 				float nOffs = 0.15f;
@@ -410,12 +410,12 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					march-fSpikey1(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
 				const float diffuse = normal.z*1.f;
 				const float specular = powf(std::max(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::BasicLighting(diffuse, specular, distance, 0.0333f, 1.71f, diffColor, fogColor);
+				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.0333f, 1.71f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -427,7 +427,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 VIZ_INLINE float fSpikey2(const Vector3 &position) 
 {
 	constexpr float scale = kGoldenRatio*0.1f;
-    const float radius = 1.35f + scale*lutcosf(fTest_global.y*position.y - fTest_global.x) + scale*lutcosf(fTest_global.z*position.x + fTest_global.x);
+    const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
@@ -440,8 +440,9 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const float speed = Rocket::getf(trackSpikeSpeed);
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
+	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 
-	fTest_global = Vector4(speed*time, 8.f, 16.f, 0.f);
+	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -465,18 +466,18 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				int iStep;
 				for (iStep = 0; iStep < 36; ++iStep)
 				{
-					// hit = origin + direction*total;
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
 					march = fSpikey2(hit);
-					total += march*0.314f; // (0.1f*kGoldenRatio);
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
 //					if (total < 0.01f || total > 10.f)
 //					{
 //						break;
 //					}
+
+					total += march*0.314f; // (0.1f*kGoldenRatio);
 				}
 
 				float nOffs = 0.15f;
@@ -484,13 +485,13 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
 				const float diffuse = normal.z*0.8f + normal.y*0.2f;
 				const float specular = powf(std::max(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
-				__m128 diffColor = Shadertoy::Desaturate(Shadertoy::CosPalSimplest(distance, 1.f, Vector3(0.3f, 0.3f, 0.75f), 0.5314f), 1.f);
-				colors[iColor] = Shadertoy::BasicLighting(diffuse, specular, distance, 0.0833f, 1.214f, diffColor, fogColor);
+				__m128 diffColor = Shadertoy::Desaturate(Shadertoy::CosPalSimplest(distance, 1.f, Vector3(0.3f, 0.3f, 0.75f), 0.5314f), desaturation);
+				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.0833f, 1.214f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -507,7 +508,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 
-	fTest_global = Vector4(speed*time, 8.f, 16.f, 0.f);
+	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -531,19 +532,18 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				int iStep;
 				for (iStep = 0; iStep < 36; ++iStep)
 				{
-					// hit = origin + direction*total;
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
 					march = fSpikey2(hit);
-
-					total += march*(0.1f*kGoldenRatio);
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
 //					if (total < 0.01f || total > 10.f)
 //					{
 //						break;
 //					}
+
+					total += march*(0.1f*kGoldenRatio);
 				}
 
 				float nOffs = 0.1f;
@@ -551,7 +551,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
 				const float distance = hit.z-origin.z;
 				const float specular = warmup*powf(std::max(0.f, normal*direction), specPow);
@@ -672,11 +672,8 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// A blobby grid; stole the idea of forming an object around the camera from Shadertoy's Shane.
-//
-// FIXME:
-// - normal
-// - put light in front of path
+// A blobby grid; stole the idea of forming an object around the camera path from Shadertoy's Shane.
+// My Shadertoy version: https://www.shadertoy.com/view/XldyzX
 //
 
 VIZ_INLINE const Vector3 fSinPath(float time)
@@ -718,6 +715,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const Vector3 fogColor(1.f, 1.f, 1.f);
 
 	const Vector3 origin = fSinPath(time);
+	const Vector3 light = Vector3(origin.x, origin.y, origin.z+2.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -754,12 +752,18 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vFastNorm3(normal);
+				Shadertoy::vNorm3(normal);
 
-				const float diffuse = normal.z*1.f;
+				Vector3 lightDir = hit-light;
+				Shadertoy::vFastNorm3(lightDir);
+
+//				const float diffuse = normal.z*1.f;
+				const float diffuse = normal*lightDir;
 				const float specular = powf(std::max(0.f, normal*direction), 4.f);
+//				const float specular = powf(std::max(direction.Reflect(normal)*lightDir, 0.f), 2.314f);
+
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::BasicLighting(diffuse, specular, distance, 0.0384f, 1.314f, diffColor, fogColor);
+				colors[iColor] = Shadertoy::CompLighting_MonoSpec(diffuse, specular, distance, 0.124f, 1.63f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -773,6 +777,5 @@ void Sinuses_Draw(uint32_t *pDest, float time, float delta)
 	RenderSinMap_2x2(g_pFxMap, time);
 	Fx_Blit_2x2(pDest, g_pFxMap);
 }
-
 
 

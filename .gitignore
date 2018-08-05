@@ -1,4 +1,8 @@
-# OSX files
+
+# for now ignore Rocket tracks dumped into target folder
+target/*.track
+
+# -- OSX files --
 .DS_Store
 .DS_Store?
 ._*

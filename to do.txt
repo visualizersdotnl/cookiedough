@@ -1,6 +1,5 @@
 
 shaders need work:
-- calculate normals with more precision (stash function in shadertoy-util.h)
 - experiment with different lighting in new shader
 
 priority:

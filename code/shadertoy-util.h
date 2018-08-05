@@ -4,6 +4,8 @@
 /*
 	- the rule of thumb now is that once you go to __m128 (color operations, mostly) you don't convert back
 	- keep an eye on performance when employing SIMD, it's not always faster
+	- when using the fast normalize and length functions be aware that you'll lose precision
+	  so as a rule of thumb, for your normal, call vNorm3() instead
 
 	FIXME:
 		- add sign() function
@@ -74,6 +76,16 @@ namespace Shadertoy
 	VIZ_INLINE void vFastNorm3(Vector3 &vector)
 	{
 		vector *= Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+	}
+
+	// because Normalize() contains a branch (as of 05/08/2018) and multiplying with a scalar won't inline properly
+	// solid reasons, no? ;)
+	VIZ_INLINE void vNorm3(Vector3 &vector)
+	{
+		float oneOverLen = 1.f/vector.Length();
+		vector.x *= oneOverLen;
+		vector.y *= oneOverLen;
+		vector.z *= oneOverLen;
 	}
 
 	// -- UVs --
@@ -150,7 +162,7 @@ namespace Shadertoy
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
 	}
 
-	// -- colorization (mostly takes __m128 and doesn't go back, the rest: FIXME!) --
+	// -- lighting & colorization (mostly takes __m128 and doesn't go back, the rest: FIXME!) --
 
 	// SIMD color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
 	VIZ_INLINE __m128 GammaAdj(__m128 color, float gamma = kGoldenRatio)
@@ -210,10 +222,20 @@ namespace Shadertoy
 		return vLerp4(color, luma, amount);
 	}
 
-	VIZ_INLINE __m128 BasicLighting(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
+	// most basic lighting
+	VIZ_INLINE __m128 CompLighting(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
 	{
 		__m128 color = _mm_mul_ps(diffColor, _mm_set1_ps(diffuse));
 		color = _mm_add_ps(color, _mm_mul_ps(diffColor, _mm_set1_ps(specular)));
+		__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, fogginess);
+		return Shadertoy::GammaAdj(fogged, gamma);
+	}
+
+	// with monochromatic specular
+	VIZ_INLINE __m128 CompLighting_MonoSpec(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
+	{
+		__m128 color = _mm_mul_ps(diffColor, _mm_set1_ps(diffuse));
+		color = _mm_add_ps(color, _mm_mul_ps(Desaturate(color, 1.f), _mm_set1_ps(specular)));
 		__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, fogginess);
 		return Shadertoy::GammaAdj(fogged, gamma);
 	}
