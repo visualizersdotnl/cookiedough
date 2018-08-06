@@ -1,0 +1,26 @@
+<sync rows="128">
+	<tracks>
+		<track name="lauraSpeed"/>
+		<track name="lauraYaw"/>
+		<track name="lauraPitch"/>
+		<track name="lauraRoll"/>
+		<track name="nautilusRoll"/>
+		<track name="cSpikeSpeed">
+			<key value="2" interpolation="0" row="0"/>
+		</track>
+		<track name="cSpikeRoll"/>
+		<track name="cSpikeSpecular">
+			<key value="22" interpolation="0" row="0"/>
+		</track>
+		<track name="cDistSpikeWarmup">
+			<key value="0" interpolation="0" row="0"/>
+		</track>
+		<track name="effectTest">
+			<key value="8" interpolation="0" row="0"/>
+		</track>
+		<track name="cSpikeDesaturation">
+			<key value="0" interpolation="0" row="0"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>
