@@ -41,6 +41,11 @@ SyncTrack trackSpikeSpecular;
 SyncTrack trackSpikeDesaturation;
 SyncTrack trackDistSpikeWarmup; // specular-only glow blur effect, yanked from Aura for Laura
 
+// Sinuses sync.:
+SyncTrack trackSinusesBrightness;
+SyncTrack trackSinusesRoll;
+SyncTrack trackSinusesSpeed;
+
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
@@ -62,6 +67,11 @@ bool Shadertoy_Create()
 	trackSpikeSpecular = Rocket::AddTrack("cSpikeSpecular");
 	trackSpikeDesaturation = Rocket::AddTrack("cSpikeDesaturation");
 	trackDistSpikeWarmup = Rocket::AddTrack("cDistSpikeWarmup");
+
+	// Sinuses:
+	trackSinusesBrightness = Rocket::AddTrack("sinusesBrightness");
+	trackSinusesRoll = Rocket::AddTrack("sinusesRoll");
+	trackSinusesSpeed = Rocket::AddTrack("sinusesSpeed");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
@@ -302,7 +312,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 hit;
 
-				float march, total = 0.1f;
+				float march, total = 0.f;
 				for (int iStep = 0; iStep < 48; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
@@ -378,10 +388,10 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -673,49 +683,74 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 
 //
 // A blobby grid; stole the idea of forming an object around the camera path from Shadertoy's Shane.
-// My Shadertoy version: https://www.shadertoy.com/view/XldyzX
+// My Shadertoy version: https://www.shadertoy.com/view/XldyzX (private)
+//
+// It's glitchy, it's grainy, but with the right parameters and colors might be useful for a short show. 
 //
 
 VIZ_INLINE const Vector3 fSinPath(float time)
 {
-	const float sine = lutsinf(time * 0.41f);
-	const float cosine = lutcosf(time * 0.44f);
-	return { sine*4.f - cosine*1.5f, cosine*1.7f + sine*1.5f, time };
+	const float sine = lutsinf(time * 0.314f);
+	const float cosine = lutcosf(time * 0.314f);
+	return { sine*2.f*kGoldenRatio - cosine*1.5f, cosine*3.14f + sine*kGoldenRatio, time };
 }
 
-// FIXME: very optimizable?
+// FIXME: try a SIMD version?
 VIZ_INLINE float fSinMap(const Vector3 &point)
 {
 	float pZ = point.z;
 
-	// FIXME: this is costly, fake it!
+	// FIXME: this is costly, fake it?
 	auto& path = fSinPath(pZ);
 
 	float pX = point.x-path.x;
 	float pY = point.y-path.y;
 
-	float aX = pX*0.315f*1.25f + lutsinf(pZ*0.875f*1.25f);
-	float aY = pY*0.315f*1.25f + lutsinf(pX*0.875f*1.25f);
-	float aZ = pZ*0.315f*1.25f + lutsinf(pY*0.875f*1.25f);
+	float aX = pX*0.315f*1.25f + lutsinf(pZ*(0.814f*1.25f));
+	float aY = pY*0.315f*1.25f + lutsinf(pX*(0.814f*1.25f));
+	float aZ = pZ*0.315f*1.25f + lutsinf(pY*(0.814f*1.25f));
 
 	float cosX = lutcosf(aX);
 	float cosY = lutcosf(aY);
 	float cosZ = lutcosf(aZ);
 
 	float length = sqrtf(cosX*cosX + cosY*cosY + cosZ*cosZ);
-
 	return (length - 1.025f)*1.33f;
+}
+
+VIZ_INLINE float fSinShadow(Vector3 position, const Vector3 &direction, unsigned maxSteps)
+{
+	float result = 1.f;
+
+	float march;
+	float total = 0.1f;
+	for (unsigned iStep = 0; iStep < maxSteps; ++iStep)
+	{
+		position += direction*total;
+		march = fSinMap(position);
+		if (march < 0.001f)
+			return 0.f;
+
+		result = std::min(result, 16.f*march/total);
+		total += march;
+	}
+
+	return result;
 }
 
 static void RenderSinMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 diffColor(0.3f, 0.1f, 0.8f);
-	const Vector3 fogColor(1.f, 1.f, 1.f);
+	const float brightness = Rocket::getf(trackSinusesBrightness);
+	const float roll = Rocket::getf(trackSinusesRoll);
+	const float speed = Rocket::getf(trackSinusesSpeed);
 
-	const Vector3 origin = fSinPath(time);
-	const Vector3 light = Vector3(origin.x, origin.y, origin.z+2.f);
+	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
+	const __m128 fogColor = _mm_set1_ps(1.f);
+
+	const Vector3 origin = fSinPath(time*speed);
+	const Vector3 light = Vector3(origin.x, origin.y, origin.z+0.f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -728,13 +763,14 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 direction(UV.x, UV.y, 0.314f); 
+				Vector3 direction(UV.x/kAspect, UV.y, 0.314f); 
+				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
 
 				float march, total = 0.f;
-				for (int iStep = 0; iStep < 64; ++iStep)
+				for (int iStep = 0; iStep < 32; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
@@ -757,13 +793,17 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 				Vector3 lightDir = hit-light;
 				Shadertoy::vFastNorm3(lightDir);
 
-//				const float diffuse = normal.z*1.f;
-				const float diffuse = normal*lightDir;
-				const float specular = powf(std::max(0.f, normal*direction), 4.f);
-//				const float specular = powf(std::max(direction.Reflect(normal)*lightDir, 0.f), 2.314f);
+				float diffuse = normal*lightDir;
+//				float diffuse = normal.z*1.f;
+				float specular = std::max(0.f, normal*direction);
+
+				// const float shadow = fSinShadow(hit, normal, 14);
+				diffuse = 0.2f + 0.8f*diffuse; //  + 0.3f*shadow;
+				specular = powf(specular, 1.f+brightness);
 
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::CompLighting_MonoSpec(diffuse, specular, distance, 0.124f, 1.63f, diffColor, fogColor);
+				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.224f, 2.73f, diffColor, fogColor);
+//				colors[iColor] = Shadertoy::CompLighting_MonoSpec(diffuse, specular, distance, 0.224f, 2.73f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -775,7 +815,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 void Sinuses_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderSinMap_2x2(g_pFxMap, time);
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	Fx_Blit_2x2_Dithered(pDest, g_pFxMap);
 }
 
 

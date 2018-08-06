@@ -283,5 +283,6 @@
       <Filter>/target</Filter>
     </Text>
     <Text Include="..\bypasszs-ascii.txt" />
+    <Text Include="..\rocket-track-guide.txt" />
   </ItemGroup>
 </Project>

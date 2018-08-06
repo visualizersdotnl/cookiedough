@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\bypasszs-ascii.txt" />
+    <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\target\infofile.txt" />
     <Text Include="..\to do.txt" />
   </ItemGroup>

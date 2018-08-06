@@ -1,33 +1,29 @@
 
-shaders need work:
-- experiment with different lighting in new shader
-
 priority:
-- make something nice out of new shader!
 - fix map blitting so that it fills the entire screen
-- make shaders look more interesting
+- make all shaders look more interesting
 - rig more parameters!
+- write a Rocket track guide (short explanation, ranges, et cetera)
+- figure out a good way to let Nytrik define colors as an asset
+- better dithered blit!
 
 to do:
 - polar blit for 2x2 map
-- implement: Heartquake water
 - app. icon
 - configuration dialog (at least audio & VSYNC.)
-- rewrite horizontal blur (see below)
 - take a look at that twister, it's a bit sloppy
-- write a Rocket track guide (short explanation, ranges, et cetera)
-- figure out a good way to let Nytrik define colors as an asset
+- rewrite horizontal blur (see below)
+- implement: Heartquake water
 
 possible optimizations:
 - functions like Mix32() can handle at least 2 pixels per iteration
 - write (faster?) 32-bit cspan() and use with voxel ball
 - there's probably more SIMD that can be more efficient using better packing, new instructions et cetera
 
-effect ideas:
-- displacing per scanline
+effects to make & research (per Nytrik's request):
+- glitch post-processing: chromatic abberation, (partial) overlays, scanline shift
+- text writers (need inspiration)
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!)
-- particles, requested by Nytrik (ask him what he likes best)
-- trace a high quality radial blur? https://www.shadertoy.com/view/4sfGRn
 
 remember:
 - 2007 horizontal blur has bias flaw

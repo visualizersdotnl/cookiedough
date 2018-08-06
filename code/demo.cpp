@@ -111,6 +111,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// memset32(pDest, 0, kOutputSize);
 	}
 
+#if 0
 	// blit logo 
 	uint32_t *pWrite = pDest + kResX*(kResY-137);
 	for (int iY = 0; iY < 136; ++iY)
@@ -118,6 +119,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		MixSrc32(pWrite + (kResX-640)/2, g_pDesireLogo3 + iY*640, 640);
 		pWrite += kResX;
 	}
+#endif
 
 	return;
 }
