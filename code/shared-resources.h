@@ -3,8 +3,6 @@
 
 #pragma once
 
-extern uint32_t *g_pDesireLogo3; // 640x136 (alpha)
-
 // linear grayscale gradient (unpacked)
 extern __m128i g_gradientUnp[256];
 

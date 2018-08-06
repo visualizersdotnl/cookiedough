@@ -155,7 +155,6 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderPlasmaMap(g_pFxMap, time);
 	Fx_Blit_2x2(pDest, g_pFxMap);
-//	HorizontalBoxBlur32(pDest, pDest, kResX, kResY, 0.01f);
 }
 
 //
@@ -260,7 +259,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid
 //
 // FIXME:
-// - move fog closer?
+// - move fog closer, alter shape (lower frequency)
 // - more animation, better colors
 //
 
@@ -333,7 +332,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				const float specular = powf(std::max(0.f, normal*direction), 16.f);
 				const float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, specular, distance, 0.006f, 1.614f, _mm_set1_ps(1.f), fogColor);
+				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, specular*yMod, distance, 0.0214f, 2.22f, _mm_set1_ps(1.f), fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -610,7 +609,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 // Test case for texture sampling and color interpolation versus UV interpolation.
 //
 // FIXME:
-// - make it into some kind of flowery effect that does not look this terrible
+// - make it into some kind of flowery effect (like in Stars) that does not look this terrible
 //
 
 static void RenderTunnelMap_2x2(uint32_t *pDest, float time)

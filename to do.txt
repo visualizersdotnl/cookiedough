@@ -1,7 +1,7 @@
 
 priority:
 - fix map blitting so that it fills the entire screen
-- make all shaders look more interesting
+- make all shaders look more interesting (turn tunnel into flower from Stars/NoooN!)
 - rig more parameters!
 - write a Rocket track guide (short explanation, ranges, et cetera)
 - figure out a good way to let Nytrik define colors as an asset
@@ -21,7 +21,7 @@ possible optimizations:
 - there's probably more SIMD that can be more efficient using better packing, new instructions et cetera
 
 effects to make & research (per Nytrik's request):
-- glitch post-processing: chromatic abberation, (partial) overlays, scanline shift
+- glitch post-processing: think we're going to have to go with precalculated map distorts, mostly
 - text writers (need inspiration)
 - create a ripple blitter (https://www.shadertoy.com/view/ldSSD1 looks nice!)
 
