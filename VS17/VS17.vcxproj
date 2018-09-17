@@ -66,10 +66,17 @@
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared-resources.cpp" />
     <ClCompile Include="..\code\sincos-lut.cpp" />
+    <ClCompile Include="..\code\syntherklaas.cpp" />
     <ClCompile Include="..\code\tests.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\tunnelscape.cpp" />
     <ClCompile Include="..\code\util.cpp" />
+    <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\aspectratios.h" />
@@ -108,12 +115,19 @@
     <ClInclude Include="..\code\shadertoy-util.h" />
     <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\sincos-lut.h" />
+    <ClInclude Include="..\code\syntherklaas.h" />
     <ClInclude Include="..\code\tests.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />
     <ClInclude Include="..\code\tunnelscape.h" />
     <ClInclude Include="..\code\util.h" />
     <ClInclude Include="..\code\voxel-shared.h" />
+    <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bass24-stripped\c\bass.lib" />

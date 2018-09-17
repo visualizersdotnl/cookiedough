@@ -1,12 +1,20 @@
 
-// cookiedough -- audio: module replay
+// cookiedough -- audio: module replay & stream support
 
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
 
+#include "../3rdparty/bass24-stripped/c/bass.h"
+
 // 'iDevice' - valid device index or -1 for system default
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent);
 void Audio_Destroy();
+void Audio_Update();
+
+// for custom stream @ 44100 Hz (chiefly intended for FM synthesis)
+bool Audio_Create_Stream(unsigned int iDevice,  STREAMPROC *pStreamer, HWND hWnd);
+void Audio_Start_Stream();
+bool Audio_Check_Stream();
 
 // GNU Rocket callbacks
 void Audio_Rocket_Pause(void *, int mustPause);

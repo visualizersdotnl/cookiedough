@@ -59,6 +59,9 @@
 // #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
+// ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
+const bool kTestBedForFM = true;
+
 // Undef. for < 60FPS warning
 #define FPS_WARNING
 
@@ -79,7 +82,10 @@
 #include "polar.h"
 #include "fx-blitter.h"
 
-// -- display & audio config. -- 
+// FM synthesizer
+#include "syntherklaas.h"
+
+// -- display & audio config. --
 
 const char *kTitle = "untitled #SHADERGP19 promotional";
 
@@ -90,7 +96,7 @@ const bool kFullScreen = false;
 const char *kModule = "assets/knulla-kuk.mod";
 
 // when you're working on anything else than synchronization..
-const bool kSilent = true;
+const bool kSilent = false;
 
 // -----------------------------
 
@@ -125,6 +131,9 @@ static bool HandleEvents()
 
 	return true;
 }
+
+// Delete after beating Zden in Bratislava.
+// #include "../shaderGP-detour/snatchtiler.h"
 
 // int SDL_main(int argc, char *argv[])
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
@@ -172,47 +181,85 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Polar_Create();
 	utilInit &= FxBlitter_Create();
 
+	if (true == kTestBedForFM)
+		utilInit &= Syntherklaas_Create();
+
 	Gamepad_Create();
+
+	// utilInit &= Snatchtiler();
 
 	float avgFPS = 0.f;
 
 	if (utilInit && RunTests() /* just always run the functional tests, never want to run if they fail */)
 	{
-		if (Demo_Create())
+		if (true == kTestBedForFM)
 		{
-			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
-			{
-				Display display;
-				if (display.Open(kTitle, kResX, kResY, kFullScreen))
-				{
-					Timer timer;
+			// Test code for FM synth.
 
+			Display display;
+			if (display.Open(kTitle, kResX, kResY, kFullScreen))
+			{
+				if (Audio_Create_Stream(-1, Syntherklaas_StreamFunc, GetForegroundWindow()))
+				{
 					// frame buffer
 					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
 					memset32(pDest, 0, kOutputSize);
 
-					size_t numFrames = 0;
-					float oldTime = 0.f, newTime = 0.f, totTime = 0.f;
+					Timer timer;
+
+					float oldTime = 0.f, newTime = 0.f;
 					while (true == HandleEvents())
 					{
 						oldTime = newTime;
 						newTime = timer.Get();
 						const float delta = newTime-oldTime;
-						Demo_Draw(pDest, newTime, delta*100.f);
+						Syntherklaas_Render(pDest, newTime, delta*100.f);
 						display.Update(pDest);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (Demo_Create())
+			{
+				if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
+				{
+					Display display;
+					if (display.Open(kTitle, kResX, kResY, kFullScreen))
+					{
+						// frame buffer
+						uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
+						memset32(pDest, 0, kOutputSize);
 
-						totTime += delta;
-						++numFrames;
+						Timer timer;
+
+						size_t numFrames = 0;
+						float oldTime = 0.f, newTime = 0.f, totTime = 0.f;
+						while (true == HandleEvents())
+						{
+							oldTime = newTime;
+							newTime = timer.Get();
+							const float delta = newTime-oldTime;
+							Demo_Draw(pDest, newTime, delta*100.f);
+							display.Update(pDest);
+
+							totTime += delta;
+							++numFrames;
+						}
+
+						avgFPS = numFrames/totTime;
+
+						freeAligned(pDest);
 					}
 
-					avgFPS = numFrames/totTime;
-
-					freeAligned(pDest);
 				}
-
 			}
 		}
 	}
+
+	if (true == kTestBedForFM)
+		Syntherklaas_Destroy();
 
 	Gamepad_Destroy();
 

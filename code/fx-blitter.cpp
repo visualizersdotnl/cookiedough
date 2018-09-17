@@ -91,12 +91,12 @@ void Fx_Blit_2x2_Dithered(uint32_t* pDest, uint32_t* pSrc)
 			const unsigned iD = iC+1;
 
 			__m128i colA = c2vISSE32(pSrc[iA]);
-			__m128i colB = c2vISSE32(pSrc[iB]);
-			__m128i colC = c2vISSE32(0); // (pSrc[iC]); // *
-			__m128i colD = c2vISSE32(pSrc[iD]);
+			__m128i colB = c2vISSE32(pSrc[iD]);
+			__m128i colC = c2vISSE32(0);
+			__m128i colD = c2vISSE32(0);
 
 			__m128i stepY0 = _mm_madd_epi16(_mm_sub_epi32(colB, colA), divisor);
-			__m128i stepY1 = _mm_madd_epi16(_mm_sub_epi32(colB, colC), divisor); // *
+			__m128i stepY1 = _mm_madd_epi16(_mm_sub_epi32(colD, colC), divisor);
 
 			__m128i fromY0 = _mm_slli_epi32(colA, 16);
 			__m128i fromY1 = _mm_slli_epi32(colC, 16);
@@ -106,8 +106,7 @@ void Fx_Blit_2x2_Dithered(uint32_t* pDest, uint32_t* pSrc)
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
 
-			// FIXME: can save a few instructions by unrolling
-			for (int iPixel = 0; iPixel < 2; ++iPixel)
+			int iPixel = 0; // for (int iPixel = 0; iPixel < 2; ++iPixel)
 			{
 				__m128i step = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(fromY1, fromY0), 16), divisor);
 				__m128i color = fromY0;

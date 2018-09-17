@@ -41,6 +41,12 @@
     <Filter Include="/code\util-lib">
       <UniqueIdentifier>{0bffe2b1-c187-4cbe-b90b-9c653656c0a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/temporary!">
+      <UniqueIdentifier>{a8310a48-84a7-4f0f-bee7-21229ad6efd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM synth.">
+      <UniqueIdentifier>{02b361b2-fc11-49b2-a40d-c1d429408e53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -120,6 +126,12 @@
     </ClCompile>
     <ClCompile Include="..\code\fx-blitter.cpp">
       <Filter>/code\filters &amp; blitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
+      <Filter>/temporary!</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\syntherklaas.cpp">
+      <Filter>/code\/FM synth.</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +260,12 @@
     </ClInclude>
     <ClInclude Include="..\code\fx-blitter.h">
       <Filter>/code\filters &amp; blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
+      <Filter>/temporary!</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\syntherklaas.h">
+      <Filter>/code\/FM synth.</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,14 +3,15 @@
 
 #include <Windows.h>
 #include "main.h"
-#include "../3rdparty/bass24-stripped/c/bass.h"
-// #include "audio.h"
+// #include "../3rdparty/bass24-stripped/c/bass.h"
+#include "audio.h"
 
 // FIXME: adjust per module (order also known as pattern)
 //        must be a power of 2
 const int kRowsPerOrder = 64;
 
 static HMUSIC s_hMusic = NULL;
+static HSTREAM s_hStream = NULL;
 
 const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
 const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
@@ -74,6 +75,65 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 void Audio_Destroy()
 {
 	BASS_Free();
+}
+
+void Audio_Update() {}
+
+// FM prototyping
+bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
+{
+	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
+	VIZ_ASSERT(hWnd != NULL);
+
+	// BASS device IDs:
+	//  0 = No sound (causes functionality to be limited, so -1 is the better pick).
+	// -1 = Default.
+	// >0 = As enumerated.
+	if (!BASS_Init(iDevice, 44100, BASS_DEVICE_LATENCY, hWnd, NULL))
+	{ 
+		switch (BASS_ErrorGetCode())
+		{
+		case BASS_ERROR_DEVICE:
+		case BASS_ERROR_ALREADY:
+		case BASS_ERROR_NO3D:
+		case BASS_ERROR_UNKNOWN:
+		case BASS_ERROR_MEM:
+			VIZ_ASSERT(0);
+
+		case BASS_ERROR_DRIVER:
+		case BASS_ERROR_FORMAT:
+			SetLastError("Can not initialize BASS audio library @ 44.1 kHz.");
+			return false;
+		}
+	}
+
+	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, pStreamer, nullptr);
+	if (0 == s_hStream)
+	{
+		// This is prototyping code, don't need too elaborate error checking.
+		SetLastError("Can not initialize 44100 Hz custom audio stream.");
+		return false;
+	}
+
+	return true;
+}
+
+// Prototyping
+void Audio_Start_Stream()
+{
+	BASS_ChannelPlay(s_hStream, TRUE);
+}
+
+bool Audio_Check_Stream()
+{
+	const DWORD result = BASS_ChannelIsActive(s_hStream);
+	if (BASS_ACTIVE_STALLED == result)
+	{
+		VIZ_ASSERT(false);
+		return false;
+	}
+
+	return true;
 }
 
 void Audio_Rocket_Pause(void *, int mustPause)

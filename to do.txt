@@ -1,4 +1,12 @@
 
+Facebook goals 06/08:
+- 2x2 blitter scanline glitch.
+- Radial blur.
+- Write second draft of Rocket parameter guide.
+- Research glitchy/chromafuck post processing in software (precalculated maps all the way or perhaps rendering to a true retro TV like YUV target first?).
+- Cheaper than cheap noise function for software shaders.
+- Change fugly fdtunnel test into simple flowery mask effect like in Stars/NoooN.
+
 priority:
 - fix map blitting so that it fills the entire screen
 - make all shaders look more interesting (turn tunnel into flower from Stars/NoooN!)
