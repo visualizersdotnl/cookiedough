@@ -4,13 +4,16 @@
 	Important: Rocket not available (for now) in this mode, see main.cpp!
 
 	Missing:
+	- implement: chorus!
 	- ADSR
-	- FIR
 	- Reverb
-	- More waveforms
-	- Multiple notes
-	- Presets
+	- Flanger
+	- More waveforms? Pulse + Triangle!
 	- MIDI support
+	- Multiple notes
+	- FIR (oversample + Hamming/TOP6?)
+
+	- Presets
 */
 
 #include "main.h"
@@ -18,6 +21,7 @@
 // #include "rocket.h"
 
 const float kSampleRate = 44100.f;
+const unsigned kDelayLineLength = 32;
 
 bool Syntherklaas_Create()
 {
@@ -32,16 +36,33 @@ enum WaveForm
 {
 	kSine,
 	kSaw
+	// kTriangle
+	// kPulse
 };
 
-struct FM_Note
+// 4 basic oscillators:
+VIZ_INLINE float oscSine(float beta) { return sinf(beta); }
+VIZ_INLINE float oscSaw(float beta, float period) { return -1.f + fmodf(beta, period); }
+// VIZ_INLINE float oscTriangle(...)
+// VIZ_INLINE float oscPulse(...)
+
+class FM_Note
 {
+public:
+	FM_Note() :
+		carrierPhase(0.f), modulationPhase(0.f) {}
+
 	WaveForm form;
 
 	float amplitude;
 	float carrierFreq;
 	float modulationFreq;
 	float modulationIndex;
+
+	// FIXME: best to just have 1 frequency and check it
+	// FIXME: LFO now just uses oscSine()
+	bool chorus;
+	float chorusFreq;
 
 	// To be initialized and updated during rendering.
 	float carrierPhase;
@@ -70,12 +91,12 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		s_FM.note.form = kSaw;
 		s_FM.note.carrierFreq = 440.f;
 		s_FM.note.amplitude = 1.f;
-		s_FM.note.modulationFreq = 4.f;
-		s_FM.note.modulationIndex = 2.f;
+		s_FM.note.modulationFreq = 2.314f;
+		s_FM.note.modulationIndex = 314.f;
 
-		// Reset phases
-		s_FM.note.carrierPhase = 0.f;
-		s_FM.note.modulationPhase = 0.f;
+		// Turn on chorus
+		s_FM.note.chorus = true;
+		s_FM.note.chorusFreq = kPI;
 
 		Audio_Start_Stream();
 
@@ -101,22 +122,23 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	float carrierStep = period*s_FM.note.carrierFreq/kSampleRate;
 	float modStep = period*s_FM.note.modulationFreq/kSampleRate;
 
+	// FIXME: oversample and FIR!
 	float *pFloats = static_cast<float*>(pDest);
 	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 	{
 		// FM (Chowning)
 		const float modulation = modIndex*sinf(s_FM.note.modulationPhase);
 
-		float waveform;
+		float waveform = 0.f;
 		switch (s_FM.note.form)
 		{
 			default:
 			case kSine:
-				waveform = sinf(s_FM.note.carrierPhase + modulation);
+				waveform += oscSine(s_FM.note.carrierPhase + modulation);
 				break;
 
 			case kSaw:
-				waveform = -1.f + fmodf(s_FM.note.carrierPhase + modulation, period);
+				waveform += oscSaw(s_FM.note.carrierPhase + modulation, period);
 				break;
 		}
 
