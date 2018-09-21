@@ -214,7 +214,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						newTime = timer.Get();
 						const float delta = newTime-oldTime;
 						Syntherklaas_Render(pDest, newTime, delta*100.f);
-						display.Update(pDest);
+
+						// FIXME: why so expensive?
+//						display.Update(pDest);
 					}
 				}
 			}

@@ -9,24 +9,24 @@
 	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
 
-	Priority:
-	- Performance problem with Saw/Square.
-	- Rip off Google's tone LUT and write a simple tone ladder test function.
-	- Ring buffer!
-	- Envelope for carrier, and operations to use it for different voices.
-	- Envelope or Bessel-related multiplier as modulation index (look at some code, basic LFO seems to do, or something derived from the sample level).
+	Current goals:
+	- 1 instrument or 'patch' at a time.
+	- Polyphony: 6 voices at once. Carrier frequency defined by MIDI input.
+	- Patch configuration: carrier waveform, master envelope, master envelope operator, modulation frequency, modulation index LFO (or 'timbre modulation' if you will).
 
-	- Tremolo is cool!
+	Ideas for later:
+	- Vibrato and tremolo (keep in mind to work with amplitude in dB scale).
+	- Global resonance and cutoff.
+	- Maybe: effects.
+	- Maybe: multiple instruments (depends on goal, really; Eurorack won't need it, but that's unlikely).
+	 
+	Keep in mind:
+	- The Slew-limiter Ronny offered might take care of that analogue falloff you have to deal with.
+	- Read IQ's little article on pitch modulation!
 	- Read Ronny's notes.
 	- Read the FM8 manual for design notes.
 	- Don't forget: too clean is not cool.
-	- MIDI support (includes actual notes with their own duration), only then can I start making useful decisions
-	- Lot of this shit is too slow now for embedded, but theory first!
 	- Problem down the line: need a circular or feed buffer probably.
-
-	Decision made:
-	- Aliasing is solved for now because the sinus osc. doesn't have that problem and the others are fixed.
-	- ...
 */
 
 #include "main.h"
@@ -40,8 +40,13 @@
 const unsigned kSampleRate = 44100;
 const unsigned kMaxSamplesPerUpdate = kSampleRate/4;
 
-// Nyquist freq.
+// Reasonable audible spectrum.
+const float kAudibleLowHZ = 20.f;
+const float kAudiobleHighHZ = 22000.f;
+
+// Nyquist frequencies.
 const float kNyquist = kSampleRate/2.f;
+const float kAudibleNyquist = std::min<float>(kAudiobleHighHZ, kNyquist);
 
 /*
 	Global (de-)initialization.
@@ -57,20 +62,27 @@ void Syntherklaas_Destroy()
 }
 
 /* 
-	Number of harmonics calc.
-
-	FIXME: decrease amount to speed up oscillators.
+	Carrier harmonics calculation.
 */
 
-VIZ_INLINE unsigned CalcHarmonics(float frequency)
+// This is quite a steep divider and it gives a pretty mellowed out sound, but perhaps that can be regulated later (FIXME).
+const float kHarmonicsPrecHZ = kAudibleLowHZ;
+
+VIZ_INLINE unsigned GetNumCarrierHarmonics(float frequency)
 {
-	VIZ_ASSERT(frequency > 0.f);
-	return unsigned(kNyquist/frequency);
+	VIZ_ASSERT(frequency >= 20.f);
+	const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
+	return unsigned(lower);
 }
 
 /*
 	Basic oscillators.
-	Nyquist frequency is asserted for sawtooth and square, for sine it doesn't matter.
+
+	Saw and square are a bit more complicated due to harmonics than the sine which is pretty much gauranteed to
+	have no sidebands.
+
+	The saw and square are momentarily not intended to be used for anything else than carrier (tone) generation.
+	They assume a frequency within the (reasonably) audible spectrum.
 */
 
 enum Waveform
@@ -89,25 +101,26 @@ VIZ_INLINE float oscSine(float beta) { return sinf(beta); }
 // Assumes frequency is below below Nyquist!
 // FIXME: optimize both, too costly!
 
-VIZ_INLINE float oscSaw(float beta, float period, unsigned numHarmonics) 
+VIZ_INLINE float oscSaw(float beta, unsigned numHarmonics) 
 { 
 	// Simple implementation:
-	// return -1.f + fmodf(beta, period)/(kPI*0.5f);
+//	return -1.f + fmodf(beta, k2PI)/(kPI*0.5f);
 
-	const float phase = -1.f*beta/k2PI;
+	const float phase = -1.f*beta;
+	float harmonicPhase = phase;
 
-	float state = 0.f;
+	float signal = 0.f;
+
 	for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
 	{
-		const float harmonicStep = (float) iHarmonic + 1.f;
-		const float harmonicPhase = phase*harmonicStep;
-		state += sinf(harmonicPhase * period)/harmonicStep;
+		signal += sinf(harmonicPhase)/(1.f+iHarmonic);
+		harmonicPhase += phase;
 	}
 
 	const float ampMul = 2.f/kPI;
-	state *= ampMul;
+	signal *= ampMul;
 
-	return state;
+	return signal;
 }
 
 // FM can turn this into a PWM-style signal.
@@ -117,20 +130,21 @@ VIZ_INLINE float oscSquare(float beta, unsigned numHarmonics)
 	// const float sine = oscSine(beta);
 	// return (sine >= 0.f) ? 1.f : -1.f;
 
-	const float phase = beta/k2PI;
+	float harmonicPhase = beta;
+	const float hPhaseStep = beta*2.f;
 
-	float state = 0.f;
+	float signal = 0.f;
+
 	for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
 	{
-		const float harmonicStep = (float) iHarmonic + 1.f;
-		const float harmonicPhase = phase*harmonicStep;
-		state += sinf(harmonicPhase * k2PI)/harmonicStep;
+		signal += sinf(harmonicPhase)/(1.f+iHarmonic);
+		harmonicPhase += hPhaseStep;
 	}
 
 	const float ampMul = 4.f/kPI;
-	state *= ampMul;
+	signal *= ampMul;
 
-	return state;
+	return signal;
 }
 
 /*
@@ -145,8 +159,7 @@ VIZ_INLINE float oscAngle(unsigned sampleIdx, float frequency)
 
 /*
 	FM modulator.
-
-	- Ronny says no envelope is necessary.
+	FIXME: Ronny says no envelope is necessary, except of course for the index/timbre.
 */
 
 struct FM_Modulator
@@ -172,8 +185,8 @@ struct FM_Modulator
 /*
 	FM operator.
 
-	FIXME: Ronny says that just a sinus waveform should be sufficient, but let's pretend I'm hard of hearing.
-	FIXME: envelope!
+	FIXME: Ronny says that just a sinus waveform should be sufficient, but let's pretend I'm hard of hearing, so I've got 3.
+	FIXME: master envelope and envelope operators!
 */
 
 struct FM_Operator
@@ -198,6 +211,7 @@ struct FM_Operator
 	{
 		const float modulation = (nullptr != pModulator) ? pModulator->Sample() : 0.f;
 
+		VIZ_ASSERT(frequency >= 1.f);
 		const float beta = oscAngle(sampleIdx++, frequency);
 
 		float signal = 0.f;
@@ -209,12 +223,12 @@ struct FM_Operator
 
 		case kSaw:
 			VIZ_ASSERT(frequency < kNyquist);
-			signal = oscSaw(beta+modulation, k2PI, CalcHarmonics(frequency));
+			signal = oscSaw(beta+modulation, GetNumCarrierHarmonics(frequency));
 			break;
 
 		case kSquare:
 			VIZ_ASSERT(frequency < kNyquist);
-			signal = oscSquare(beta+modulation, CalcHarmonics(frequency));
+			signal = oscSquare(beta+modulation, GetNumCarrierHarmonics(frequency));
 			break;
 
 		default:
@@ -277,13 +291,13 @@ static void WriteToFile(unsigned seconds)
 	FM_Voice &voice = test.voice;
 
 	// Define single voice (indefinite)
-	voice.carrier.form = kSquare;
+	voice.carrier.form = kSaw;
 	voice.carrier.amplitude = 1.f;
-	voice.carrier.frequency = 440.f; // kNyquist*1.25f;
+	voice.carrier.frequency = 100.f;
 	voice.carrier.Prepare();
 
 	voice.modulator.index = 1.f;
-	voice.modulator.frequency = 20.f;
+	voice.modulator.frequency = 1000.f;
 	voice.modulator.Prepare();
 
 	// Render a fixed amount of seconds to a buffer
@@ -310,12 +324,11 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		// Define single voice (indefinite)
 		voice.carrier.form = kSquare;
 		voice.carrier.amplitude = 1.f;
-		voice.carrier.frequency = 1.f;
+		voice.carrier.frequency = 440.f;
 		voice.carrier.Prepare();
 
-		// FIXME: relate these by definition through a value?
-		voice.modulator.index = kPI;
-		voice.modulator.frequency = 440.f;
+		voice.modulator.index = 1.f;
+		voice.modulator.frequency = 400.f*10.f;
 		voice.modulator.Prepare();
 
 		// Start blasting!
@@ -336,7 +349,7 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	const unsigned numSamplesReq = length/sizeof(float);
 	VIZ_ASSERT(length == numSamplesReq*sizeof(float));
 
-	const unsigned numSamples = numSamplesReq; // std::min<unsigned>(numSamplesReq, kMaxSamplesPerUpdate);
+	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kMaxSamplesPerUpdate);
 	RenderVoice(s_FM.voice, static_cast<float*>(pDest), numSamples);
 
 	return numSamples*sizeof(float);
