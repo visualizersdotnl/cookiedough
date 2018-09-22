@@ -13,26 +13,26 @@
 	and in part supplemented by hardware components if that so happens to be a good idea.
 
 	To do:
-	- Check envelopes.
-	- Voice logic seems kind of fucked.
-	- Create saw and square using 'BLEP'.
+	- Use 'BLEP' to filter aliasing.
+	- Implement notes & ADSR.
 
 	Current goals:
-	- 1 instrument or 'patch' at a time.
-	- Polyphony: 6 voices at once. Carrier frequency defined by MIDI input.
-	- Patch configuration: carrier waveform, master envelope, master envelope operator, modulation frequency, modulation index LFO (or 'timbre modulation' if you will).
+	- 1 instrument or 'patch' at a time: so a voice gets used by max. polyphony notes.
+	- Polyphony: 6-12 voices at once. Carrier frequency defined by MIDI input.
+	- Patch configuration: master envelope, master envelope operator, modulation frequencies, modulation index LFO (or 'timbre modulation' if you will).
 
 	Ideas for later:
-	- Stacking and branching of modulators.
+	- Stacking and branching of modulators, or: algorithms.
 	- Vibrato (modulation of carrier) and tremolo (keep in mind to work with amplitude in dB scale).
 	- Global resonance and cutoff.
-	- Maybe: effects.
-	- Maybe: multiple instruments (depends on goal, really; Eurorack won't need it, but that's unlikely).
+
+	Maybe:
+	- Effects like delay and chorus.
 	 
 	Keep in mind:
-	- The Slew-limiter Ronny offered might take care of that analogue falloff you have to deal with (looks great!).
+	- The Slew-limiter Ronny offered.
 	- Read IQ's little article on pitch modulation!
-	- Read Ronny's notes.
+	- Read Ronny's notes again?
 	- Read the FM8 manual for design notes.
 	- Don't forget: too clean is not cool.
 	- Problem down the line: need a circular or feed buffer probably.
@@ -93,15 +93,8 @@ VIZ_INLINE float CalcSinPitch(float frequency)
 	return (frequency*kPeriodLength)/kSampleRate;
 }
 
-// Not necessary for FM_lutsinf()!
-VIZ_INLINE unsigned PhaseToPeriodIndex(float phase)
-{
-	const unsigned iPhase = (unsigned) phase;
-	return iPhase & (kPeriodLength-1);
-}
-
 /* 
-	Prototype envelopes (partially jacked from GR-1 codebase)
+	Prototype envelope(s) (partially jacked from GR-1 codebase)
 */
 
 #include "synth-envelopes.h"
@@ -118,20 +111,18 @@ VIZ_INLINE unsigned PhaseToPeriodIndex(float phase)
 	Envelope is 1 period long for now.
 */
 
-float s_indexEnv[kPeriodLength];
+static float s_indexEnv[kSampleRate];
+
+static void ClearIndexEnvelope()
+{
+	for (int iEnv = 0; iEnv < kSampleRate; ++iEnv)
+		s_indexEnv[iEnv] = 1.f;
+}
 
 /*
-	Basic oscillators.
-
-	FIXME: saw and square.
+	Sinus oscillator.
+	We'll create all other waveforms using FM.
 */
-
-enum Waveform
-{
-	kSine
-//	kSaw,
-//	kSquare
-};
 
 VIZ_INLINE float oscSine(float phase) { return FM_lutsinf(phase); }
 
@@ -141,78 +132,77 @@ VIZ_INLINE float oscSine(float phase) { return FM_lutsinf(phase); }
 
 struct FM_Modulator
 {
-	float index;
-	float pitch;
-	float phase;
+	float m_index;
+	float m_pitch;
+	unsigned m_sample;
 
-	void Prepare(float constIndex, float frequency)
+	void Initialize(float index, float frequency)
 	{
-		index = constIndex;
-		pitch = CalcSinPitch(frequency);
-		phase = 0.f;
+		m_index = index;
+		m_pitch = CalcSinPitch(frequency);
+		m_sample = 0;
 	}
 
-	float Sample()
+	float Sample(const float *pEnv)
 	{
-		const unsigned envIdx = PhaseToPeriodIndex(phase);
-		const float envelope = s_indexEnv[envIdx];
+		const float phase = m_sample*m_pitch;
+
+		float envelope = 1.f;
+		if (pEnv != nullptr)
+		{
+			const unsigned index = m_sample%kSampleRate; // FIXME: slow, make power of 2.
+			envelope = pEnv[index];
+		}
+
+		++m_sample;
+
 		const float modulation = oscSine(phase)*kTabToRad;
-
-		phase += pitch;
-
-		return envelope*index*modulation;
+		return envelope*m_index*modulation;
 	}
 };
 
 /*
-	FM operator.
+	FM carrier.
 */
 
-struct FM_Operator
+struct FM_Carrier
 {
-	Waveform form;
+	float m_amplitude;
+	float m_pitch;
+	unsigned m_sample;
 
-	float amplitude;
-	float pitch;
-	float phase;
-
-	// FIXME: take amplitude in dB?
-	void Prepare(Waveform form, float amplitude, float frequency)
+	void Initialize(float amplitude, float frequency)
 	{
-		VIZ_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
-		this->form = form;
-		this->amplitude = amplitude;
-		pitch = CalcSinPitch(frequency);
-		phase = 0.f;
+		m_amplitude = amplitude;
+		m_pitch = CalcSinPitch(frequency);
+		m_sample = 0;
 	}
 
 	// Classic Chowning FM formula.
-	float Sample(FM_Modulator *pModulator)
+	float Sample(float modulation)
 	{
-		const float modulation = (nullptr != pModulator) ? pModulator->Sample() : 0.f;
+		const float phase = m_sample*m_pitch;
+		++m_sample;
 
 		const float signal = oscSine(phase+modulation);
-		phase += pitch;
-
-		return amplitude*signal;
+		return m_amplitude*signal;
 	}
 };
 
 /*
 	Voice.
-
-	FIXME: tie to / turn into note?
+	FIXME: load with a patch, then 1 instance be used for notes.
 */
 
 struct FM_Voice
 {
-	bool active;
-	FM_Operator carrier;
+	FM_Carrier carrier;
 	FM_Modulator modulator;
 
 	float Sample()
 	{
-		return carrier.Sample(&modulator);
+		float modulation = modulator.Sample(s_indexEnv);
+		return carrier.Sample(modulation);
 	}
 };
 
@@ -222,40 +212,19 @@ struct FM_Voice
 
 struct FM
 {
-	// FIXME: expand when you've got gear.
-	FM_Voice voice[kMaxVoices];
-
-	void Reset()
-	{
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-			voice[iVoice].active = false;
-	}
-
+	// For now there's just 1 indefinite voice.
+	FM_Voice voice;
 } static s_FM;
 
 /*
 	Render functions.
 */
 
-VIZ_INLINE void RenderVoices(FM &voices, float *pWrite, unsigned numSamples)
+VIZ_INLINE void RenderVoices(FM &core, float *pWrite, unsigned numSamples)
 {
 	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 	{
-		float mix = 0.f;
-		float divider = 0.f;
-
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-		{
-			FM_Voice &voice = voices.voice[iVoice];
-			if (true == voice.active)
-			{
-				const float sample = voice.Sample();
-				mix += sample;
-				divider += 1.f;
-			}
-		}
-
-		*pWrite++ = mix/divider;
+		*pWrite++ = core.voice.Sample();
 	}
 }
 
@@ -269,12 +238,8 @@ static bool s_isReady = false;
 static void TestVoice1(FM_Voice &voice)
 {
 	// Define single voice (indefinite)
-	voice.active = true;
-	voice.carrier.Prepare(kSine, 1.f, 100.f);
-	voice.modulator.Prepare(kPI, 1000.f);
-
-	for (int i = 0; i < kPeriodLength; ++i)
-		s_indexEnv[i] = 1.f;
+	voice.carrier.Initialize(1.f, 440.f);
+	voice.modulator.Initialize(2.f, 44.4f);
 }
 
 /*
@@ -297,14 +262,17 @@ static void WriteToFile(unsigned seconds)
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	// Calculate mod. index envelope
+	CalcEnv_Cosine(s_indexEnv, 1.f, 2.f + cosf(time), 2.f);
+
 	if (false == s_isReady)
 	{
-		// Test voice(s)
-		s_FM.Reset();
-		TestVoice1(s_FM.voice[0]);
+		// Test voice
+		TestVoice1(s_FM.voice);
 
 		// Calculate mod. index envelope
-//		CalcEnv_AD(s_indexEnv, 0.25f, 0.75f, 0.f);
+//		CalcEnv_Cosine(s_indexEnv, 1.f, 2.f, 2.f);
+//		ClearIndexEnvelope();		
 
 		// Write test file with basic tone (FIXME: remove, replace)
 		WriteToFile(32);
