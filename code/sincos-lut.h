@@ -15,8 +15,8 @@ extern float g_cosLUT[kCosTabSize];
 
 void CalculateCosLUT();
 
-VIZ_INLINE float lutcosf(int angleIndex) { return g_cosLUT[angleIndex&kCosTabAnd];  }
-VIZ_INLINE float lutsinf(int angleIndex) { return lutcosf((int) kCosTabSinPhase+angleIndex); }
+VIZ_INLINE float lutcosf(int index) { return g_cosLUT[index&kCosTabAnd];  }
+VIZ_INLINE float lutsinf(int index) { return lutcosf((int) kCosTabSinPhase+index); }
 
 // always try to use this whenever using the angle more than once
 VIZ_INLINE int tocosindex(float angle)

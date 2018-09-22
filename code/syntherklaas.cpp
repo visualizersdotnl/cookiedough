@@ -1,13 +1,21 @@
 
 /*
+	Syntherklaas -- FM synthesizer prototype.
+
 	See: http://ccrma.stanford.edu/software/snd/snd/fm.html
+
 	Important: Rocket not available (for now) in this mode, see main.cpp!
 
 	This is intended to be a powerful yet relatively simple FM synthesizer core.
-	Much of it's design is based on a discussion with Ronny Pries.
+	Much of it's design is based on talks with Ronny Pries, Alex Bartholomeus, Tammo Hinrichs & Stijn Haring-Kuipers.
 
 	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
+
+	To do:
+	- Check envelopes.
+	- Voice logic seems kind of fucked.
+	- Create saw and square using 'BLEP'.
 
 	Current goals:
 	- 1 instrument or 'patch' at a time.
@@ -15,13 +23,14 @@
 	- Patch configuration: carrier waveform, master envelope, master envelope operator, modulation frequency, modulation index LFO (or 'timbre modulation' if you will).
 
 	Ideas for later:
-	- Vibrato and tremolo (keep in mind to work with amplitude in dB scale).
+	- Stacking and branching of modulators.
+	- Vibrato (modulation of carrier) and tremolo (keep in mind to work with amplitude in dB scale).
 	- Global resonance and cutoff.
 	- Maybe: effects.
 	- Maybe: multiple instruments (depends on goal, really; Eurorack won't need it, but that's unlikely).
 	 
 	Keep in mind:
-	- The Slew-limiter Ronny offered might take care of that analogue falloff you have to deal with.
+	- The Slew-limiter Ronny offered might take care of that analogue falloff you have to deal with (looks great!).
 	- Read IQ's little article on pitch modulation!
 	- Read Ronny's notes.
 	- Read the FM8 manual for design notes.
@@ -31,6 +40,9 @@
 
 #include "main.h"
 #include "syntherklaas.h"
+
+// Sinus LUT
+#include "synth-sin-lut.h"
 
 /*
 	Constants.
@@ -42,11 +54,20 @@ const unsigned kMaxSamplesPerUpdate = kSampleRate/4;
 
 // Reasonable audible spectrum.
 const float kAudibleLowHZ = 20.f;
-const float kAudiobleHighHZ = 22000.f;
+const float kAudibleHighHZ = 22000.f;
 
 // Nyquist frequencies.
 const float kNyquist = kSampleRate/2.f;
-const float kAudibleNyquist = std::min<float>(kAudiobleHighHZ, kNyquist);
+const float kAudibleNyquist = std::min<float>(kAudibleHighHZ, kNyquist);
+
+// Max. number of voices (FIXME: more!)
+const unsigned kMaxVoices = 6;
+
+// Number of discrete values that make up a period in the sinus LUT.
+const unsigned kPeriodLength = kSinTabSize;
+
+// Useful when using actual radians with sinus LUT;
+const float kTabToRad = (1.f/k2PI)*kPeriodLength;
 
 /*
 	Global (de-)initialization.
@@ -54,6 +75,8 @@ const float kAudibleNyquist = std::min<float>(kAudiobleHighHZ, kNyquist);
 
 bool Syntherklaas_Create()
 {
+	FM_CalculateSinLUT();
+
 	return true;
 }
 
@@ -61,149 +84,106 @@ void Syntherklaas_Destroy()
 {
 }
 
-/* 
-	Carrier harmonics calculation.
+/*
+	A few helper functions to translate between frequency and LUT.
 */
 
-// This is quite a steep divider and it gives a pretty mellowed out sound, but perhaps that can be regulated later (FIXME).
-const float kHarmonicsPrecHZ = kAudibleLowHZ;
-
-VIZ_INLINE unsigned GetNumCarrierHarmonics(float frequency)
+VIZ_INLINE float CalcSinPitch(float frequency)
 {
-	VIZ_ASSERT(frequency >= 20.f);
-	const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
-	return unsigned(lower);
+	return (frequency*kPeriodLength)/kSampleRate;
 }
+
+// Not necessary for FM_lutsinf()!
+VIZ_INLINE unsigned PhaseToPeriodIndex(float phase)
+{
+	const unsigned iPhase = (unsigned) phase;
+	return iPhase & (kPeriodLength-1);
+}
+
+/* 
+	Prototype envelopes (partially jacked from GR-1 codebase)
+*/
+
+#include "synth-envelopes.h"
+
+/*
+	Master envelope generator.
+
+/* 
+
+// ...
+
+/*
+	Index/timbre envelope generator.
+	Envelope is 1 period long for now.
+*/
+
+float s_indexEnv[kPeriodLength];
 
 /*
 	Basic oscillators.
 
-	Saw and square are a bit more complicated due to harmonics than the sine which is pretty much gauranteed to
-	have no sidebands.
-
-	The saw and square are momentarily not intended to be used for anything else than carrier (tone) generation.
-	They assume a frequency within the (reasonably) audible spectrum.
+	FIXME: saw and square.
 */
 
 enum Waveform
 {
-	kSine,
-	kSaw,
-	kSquare
+	kSine
+//	kSaw,
+//	kSquare
 };
 
-VIZ_INLINE float oscSine(float beta) { return sinf(beta); }
-
-// Band-limited, adapted from 2 sources:
-// - https://www.sfu.ca/sonic-studio/handbook/index.html
-// - https://github.com/rcliftonharvey/rchoscillators
-//
-// Assumes frequency is below below Nyquist!
-// FIXME: optimize both, too costly!
-
-VIZ_INLINE float oscSaw(float beta, unsigned numHarmonics) 
-{ 
-	// Simple implementation:
-//	return -1.f + fmodf(beta, k2PI)/(kPI*0.5f);
-
-	const float phase = -1.f*beta;
-	float harmonicPhase = phase;
-
-	float signal = 0.f;
-
-	for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
-	{
-		signal += sinf(harmonicPhase)/(1.f+iHarmonic);
-		harmonicPhase += phase;
-	}
-
-	const float ampMul = 2.f/kPI;
-	signal *= ampMul;
-
-	return signal;
-}
-
-// FM can turn this into a PWM-style signal.
-VIZ_INLINE float oscSquare(float beta, unsigned numHarmonics) 
-{ 
-	// Simple implementation:
-	// const float sine = oscSine(beta);
-	// return (sine >= 0.f) ? 1.f : -1.f;
-
-	float harmonicPhase = beta;
-	const float hPhaseStep = beta*2.f;
-
-	float signal = 0.f;
-
-	for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
-	{
-		signal += sinf(harmonicPhase)/(1.f+iHarmonic);
-		harmonicPhase += hPhaseStep;
-	}
-
-	const float ampMul = 4.f/kPI;
-	signal *= ampMul;
-
-	return signal;
-}
-
-/*
-	Oscillator angle calculator.
-*/
-
-VIZ_INLINE float oscAngle(unsigned sampleIdx, float frequency)
-{
-	const float time = (float) sampleIdx / kSampleRate;
-	return time*frequency*k2PI;
-}
+VIZ_INLINE float oscSine(float phase) { return FM_lutsinf(phase); }
 
 /*
 	FM modulator.
-	FIXME: Ronny says no envelope is necessary, except of course for the index/timbre.
 */
 
 struct FM_Modulator
 {
-	float index; // In practice this is timbre.
-	float frequency;
+	float index;
+	float pitch;
+	float phase;
 
-	// FIXME: wrap
-	unsigned sampleIdx;
-
-	void Prepare()
+	void Prepare(float constIndex, float frequency)
 	{
-		sampleIdx = 0;
+		index = constIndex;
+		pitch = CalcSinPitch(frequency);
+		phase = 0.f;
 	}
 
 	float Sample()
 	{
-		float modulation = sinf(oscAngle(sampleIdx++, frequency));
-		return index*modulation;
+		const unsigned envIdx = PhaseToPeriodIndex(phase);
+		const float envelope = s_indexEnv[envIdx];
+		const float modulation = oscSine(phase)*kTabToRad;
+
+		phase += pitch;
+
+		return envelope*index*modulation;
 	}
 };
 
 /*
 	FM operator.
-
-	FIXME: Ronny says that just a sinus waveform should be sufficient, but let's pretend I'm hard of hearing, so I've got 3.
-	FIXME: master envelope and envelope operators!
 */
 
 struct FM_Operator
 {
 	Waveform form;
 
-	float amplitude; // Amplitude must be 0-1.
-	float frequency; // What's generally known as the carrier frequency.
+	float amplitude;
+	float pitch;
+	float phase;
 
-	// FIXME: wrap
-	unsigned sampleIdx;
-
-	void Prepare()
+	// FIXME: take amplitude in dB?
+	void Prepare(Waveform form, float amplitude, float frequency)
 	{
 		VIZ_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
-
-		sampleIdx = 0;
+		this->form = form;
+		this->amplitude = amplitude;
+		pitch = CalcSinPitch(frequency);
+		phase = 0.f;
 	}
 
 	// Classic Chowning FM formula.
@@ -211,29 +191,8 @@ struct FM_Operator
 	{
 		const float modulation = (nullptr != pModulator) ? pModulator->Sample() : 0.f;
 
-		VIZ_ASSERT(frequency >= 1.f);
-		const float beta = oscAngle(sampleIdx++, frequency);
-
-		float signal = 0.f;
-		switch (form)
-		{
-		case kSine:
-			signal = oscSine(beta+modulation);
-			break;
-
-		case kSaw:
-			VIZ_ASSERT(frequency < kNyquist);
-			signal = oscSaw(beta+modulation, GetNumCarrierHarmonics(frequency));
-			break;
-
-		case kSquare:
-			VIZ_ASSERT(frequency < kNyquist);
-			signal = oscSquare(beta+modulation, GetNumCarrierHarmonics(frequency));
-			break;
-
-		default:
-			VIZ_ASSERT(false);
-		}
+		const float signal = oscSine(phase+modulation);
+		phase += pitch;
 
 		return amplitude*signal;
 	}
@@ -241,10 +200,13 @@ struct FM_Operator
 
 /*
 	Voice.
+
+	FIXME: tie to / turn into note?
 */
 
 struct FM_Voice
 {
+	bool active;
 	FM_Operator carrier;
 	FM_Modulator modulator;
 
@@ -261,7 +223,13 @@ struct FM_Voice
 struct FM
 {
 	// FIXME: expand when you've got gear.
-	FM_Voice voice;
+	FM_Voice voice[kMaxVoices];
+
+	void Reset()
+	{
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			voice[iVoice].active = false;
+	}
 
 } static s_FM;
 
@@ -269,12 +237,25 @@ struct FM
 	Render functions.
 */
 
-VIZ_INLINE void RenderVoice(FM_Voice &voice, float *pWrite, unsigned numSamples)
+VIZ_INLINE void RenderVoices(FM &voices, float *pWrite, unsigned numSamples)
 {
 	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 	{
-		float sample = voice.Sample();
-		*pWrite++ = sample;
+		float mix = 0.f;
+		float divider = 0.f;
+
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		{
+			FM_Voice &voice = voices.voice[iVoice];
+			if (true == voice.active)
+			{
+				const float sample = voice.Sample();
+				mix += sample;
+				divider += 1.f;
+			}
+		}
+
+		*pWrite++ = mix/divider;
 	}
 }
 
@@ -282,28 +263,30 @@ VIZ_INLINE void RenderVoice(FM_Voice &voice, float *pWrite, unsigned numSamples)
 static bool s_isReady = false;
 
 /*
+	Test voice setup (+ envelope(s)).
+*/
+
+static void TestVoice1(FM_Voice &voice)
+{
+	// Define single voice (indefinite)
+	voice.active = true;
+	voice.carrier.Prepare(kSine, 1.f, 100.f);
+	voice.modulator.Prepare(kPI, 1000.f);
+
+	for (int i = 0; i < kPeriodLength; ++i)
+		s_indexEnv[i] = 1.f;
+}
+
+/*
 	Simple RAW waveform writer.
 */
 
 static void WriteToFile(unsigned seconds)
 {
-	FM test;
-	FM_Voice &voice = test.voice;
-
-	// Define single voice (indefinite)
-	voice.carrier.form = kSaw;
-	voice.carrier.amplitude = 1.f;
-	voice.carrier.frequency = 100.f;
-	voice.carrier.Prepare();
-
-	voice.modulator.index = 1.f;
-	voice.modulator.frequency = 1000.f;
-	voice.modulator.Prepare();
-
 	// Render a fixed amount of seconds to a buffer
 	const unsigned numSamples = seconds*kSampleRate;
 	float *buffer = new float[numSamples];
-	RenderVoice(voice, buffer, numSamples);
+	RenderVoices(s_FM, buffer, numSamples);
 
 	// And flush (no error checking)
 	FILE* file;
@@ -314,22 +297,17 @@ static void WriteToFile(unsigned seconds)
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
-	FM_Voice &voice = s_FM.voice;
-
 	if (false == s_isReady)
 	{
+		// Test voice(s)
+		s_FM.Reset();
+		TestVoice1(s_FM.voice[0]);
+
+		// Calculate mod. index envelope
+//		CalcEnv_AD(s_indexEnv, 0.25f, 0.75f, 0.f);
+
 		// Write test file with basic tone (FIXME: remove, replace)
 		WriteToFile(32);
-
-		// Define single voice (indefinite)
-		voice.carrier.form = kSquare;
-		voice.carrier.amplitude = 1.f;
-		voice.carrier.frequency = 440.f;
-		voice.carrier.Prepare();
-
-		voice.modulator.index = 1.f;
-		voice.modulator.frequency = 400.f*10.f;
-		voice.modulator.Prepare();
 
 		// Start blasting!
 		Audio_Start_Stream();
@@ -350,7 +328,7 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	VIZ_ASSERT(length == numSamplesReq*sizeof(float));
 
 	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kMaxSamplesPerUpdate);
-	RenderVoice(s_FM.voice, static_cast<float*>(pDest), numSamples);
+	RenderVoices(s_FM, static_cast<float*>(pDest), numSamples);
 
 	return numSamples*sizeof(float);
 }

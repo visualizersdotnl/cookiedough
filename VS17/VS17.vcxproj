@@ -66,6 +66,7 @@
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared-resources.cpp" />
     <ClCompile Include="..\code\sincos-lut.cpp" />
+    <ClCompile Include="..\code\synth-sin-lut.cpp" />
     <ClCompile Include="..\code\syntherklaas.cpp" />
     <ClCompile Include="..\code\tests.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
+    <ClInclude Include="..\code\synth-envelopes.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
     <ClInclude Include="..\code\rocket.h" />
@@ -115,6 +117,7 @@
     <ClInclude Include="..\code\shadertoy-util.h" />
     <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\sincos-lut.h" />
+    <ClInclude Include="..\code\synth-sin-lut.h" />
     <ClInclude Include="..\code\syntherklaas.h" />
     <ClInclude Include="..\code\tests.h" />
     <ClInclude Include="..\code\timer.h" />

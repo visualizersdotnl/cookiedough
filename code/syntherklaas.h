@@ -1,6 +1,8 @@
 
 /*
-	FM synthesizer prototype, not related to this project, but it's a great test bed.
+	Syntherklaas -- FM synthesizer prototype.
+
+	Riding along with this codebase because it's a great testbed.
 	Uses a little hack in my BASS layer (audio.cpp) to output to a 44100 Hz monaural stream.
 */
 

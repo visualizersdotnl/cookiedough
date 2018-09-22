@@ -133,6 +133,9 @@
     <ClCompile Include="..\code\syntherklaas.cpp">
       <Filter>/code\/FM synth.</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\synth-sin-lut.cpp">
+      <Filter>/code\/FM synth.</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -265,6 +268,12 @@
       <Filter>/temporary!</Filter>
     </ClInclude>
     <ClInclude Include="..\code\syntherklaas.h">
+      <Filter>/code\/FM synth.</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\synth-sin-lut.h">
+      <Filter>/code\/FM synth.</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\synth-envelopes.h">
       <Filter>/code\/FM synth.</Filter>
     </ClInclude>
   </ItemGroup>
