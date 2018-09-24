@@ -2,27 +2,29 @@
 /*
 	Syntherklaas -- FM synthesizer prototype.
 
-	Stuff I made for GR-1 prototyping, not sure if I'll keep any of it.
+	Envelope(s).
+
+	FIXME: alpha stage, need ADSR and ADR (probably both state based).
 */
 
 #pragma once
 
 /* 
-	Based on the document in Koen's prototyping folder.
+	Based on the document in Koen's prototyping folder (from the GR-1 project).
 	Values between [-1..1].
 
 	'tilt' = Peak of the curve.
 	'curve' = Curvature (power).
 	'frequency' = In hZ;
 */
-static void CalcEnv_Cosine(float *pDest, float tilt, float curve, float frequency)
+static void CalcEnv_Cosine(float *pDest, unsigned numSamples, float tilt, float curve, float frequency)
 {
     /* Let's assert that what we're getting is in accordance to what I was promised. */
 	VIZ_ASSERT(tilt >= -1.f && tilt <= 1.f);
   
     /* Note to self: raising by zero results in 1, ergo: flat. */
 
-    const size_t envelopeSize = kSampleRate;
+    const size_t envelopeSize = numSamples;
 
     /* Calculate "middle" (tilt) & remainder. */
     tilt = 0.5f + tilt*0.5f;

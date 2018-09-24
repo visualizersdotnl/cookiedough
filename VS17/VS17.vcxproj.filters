@@ -276,6 +276,12 @@
     <ClInclude Include="..\code\synth-envelopes.h">
       <Filter>/code\/FM synth.</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\synth-moog-ladder.h">
+      <Filter>/code\/FM synth.</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\synth-taylor-tanhf.h">
+      <Filter>/code\/FM synth.</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

@@ -100,6 +100,7 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
+    <ClInclude Include="..\code\synth-moog-ladder.h" />
     <ClInclude Include="..\code\synth-envelopes.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\sincos-lut.h" />
     <ClInclude Include="..\code\synth-sin-lut.h" />
+    <ClInclude Include="..\code\synth-taylor-tanhf.h" />
     <ClInclude Include="..\code\syntherklaas.h" />
     <ClInclude Include="..\code\tests.h" />
     <ClInclude Include="..\code\timer.h" />
