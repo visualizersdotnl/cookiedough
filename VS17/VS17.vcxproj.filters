@@ -44,7 +44,7 @@
     <Filter Include="/temporary!">
       <UniqueIdentifier>{a8310a48-84a7-4f0f-bee7-21229ad6efd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM synth.">
+    <Filter Include="/code\/FM-synthesizer">
       <UniqueIdentifier>{02b361b2-fc11-49b2-a40d-c1d429408e53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -130,11 +130,11 @@
     <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
       <Filter>/temporary!</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\syntherklaas.cpp">
-      <Filter>/code\/FM synth.</Filter>
+    <ClCompile Include="..\code\FM-synthesizer\core.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\synth-sin-lut.cpp">
-      <Filter>/code\/FM synth.</Filter>
+    <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,20 +267,20 @@
     <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
       <Filter>/temporary!</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\syntherklaas.h">
-      <Filter>/code\/FM synth.</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\core.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\synth-sin-lut.h">
-      <Filter>/code\/FM synth.</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\fast-tanhf.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\synth-envelopes.h">
-      <Filter>/code\/FM synth.</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\final-MOOG-ladder.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\synth-moog-ladder.h">
-      <Filter>/code\/FM synth.</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\global.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\synth-taylor-tanhf.h">
-      <Filter>/code\/FM synth.</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -42,6 +42,8 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\core.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OpenMPSupport>
@@ -66,8 +68,6 @@
     <ClCompile Include="..\code\polar.cpp" />
     <ClCompile Include="..\code\shared-resources.cpp" />
     <ClCompile Include="..\code\sincos-lut.cpp" />
-    <ClCompile Include="..\code\synth-sin-lut.cpp" />
-    <ClCompile Include="..\code\syntherklaas.cpp" />
     <ClCompile Include="..\code\tests.cpp" />
     <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\tunnelscape.cpp" />
@@ -99,9 +99,12 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
+    <ClInclude Include="..\code\FM-synthesizer\fast-tanhf.h" />
+    <ClInclude Include="..\code\FM-synthesizer\core.h" />
+    <ClInclude Include="..\code\FM-synthesizer\final-MOOG-ladder.h" />
+    <ClInclude Include="..\code\FM-synthesizer\global.h" />
+    <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
-    <ClInclude Include="..\code\synth-moog-ladder.h" />
-    <ClInclude Include="..\code\synth-envelopes.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
     <ClInclude Include="..\code\rocket.h" />
@@ -118,9 +121,6 @@
     <ClInclude Include="..\code\shadertoy-util.h" />
     <ClInclude Include="..\code\shared-resources.h" />
     <ClInclude Include="..\code\sincos-lut.h" />
-    <ClInclude Include="..\code\synth-sin-lut.h" />
-    <ClInclude Include="..\code\synth-taylor-tanhf.h" />
-    <ClInclude Include="..\code\syntherklaas.h" />
     <ClInclude Include="..\code\tests.h" />
     <ClInclude Include="..\code\timer.h" />
     <ClInclude Include="..\code\torus-twister.h" />

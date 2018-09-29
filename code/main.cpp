@@ -83,7 +83,7 @@ const bool kTestBedForFM = true;
 #include "fx-blitter.h"
 
 // FM synthesizer
-#include "syntherklaas.h"
+#include "FM-synthesizer/core.h"
 
 // -- display & audio config. --
 
