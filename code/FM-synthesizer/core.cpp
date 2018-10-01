@@ -248,14 +248,15 @@ namespace SFM
 	{
 		// Define single voice (indefinite)
 		voice.carrier.Initialize(kSquareCarrier, 1.f, 220.f);
-		voice.modulator.Initialize(2.f, 440.f*0.1f);
+		const float CM = 220.f/4.f;
+		voice.modulator.Initialize(CM, 10.f);
 	}
 
 	static void SetTestMOOG(float time)
 	{
-		float test = /*fabsf*/(sinf(time*kPI));
-		MOOG_Cutoff(440.f*20.f);
-		MOOG_Resonance(1.f + 0.5f*test);
+		float test = 1.f+cosf(time);
+		MOOG_Cutoff(700.f + 300.f*test);
+		// MOOG_Resonance(0.f + kPI*test);
 	}
 
 	/*
