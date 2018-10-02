@@ -47,6 +47,9 @@
     <Filter Include="/code\/FM-synthesizer">
       <UniqueIdentifier>{02b361b2-fc11-49b2-a40d-c1d429408e53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer\FIXME">
+      <UniqueIdentifier>{1e93e8c6-1d07-41a1-8a89-ed759544aed2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -135,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\LFOs.cpp">
+      <Filter>/code\/FM-synthesizer\FIXME</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h">
       <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\LFOs.h">
+      <Filter>/code\/FM-synthesizer\FIXME</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

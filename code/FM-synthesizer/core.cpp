@@ -44,9 +44,8 @@ void Syntherklaas_Destroy()
 
 namespace SFM
 {
-
 	/*
-		Frequency to pitch calculators.
+		Utility functions.
 	*/
 
 	// Frequency to (PI*2)/tabSize
@@ -56,9 +55,14 @@ namespace SFM
 	}
 
 	// Frequency to PI*2
-	SFM_INLINE float CalRadPitch(float frequency)
+	SFM_INLINE float CalcRadPitch(float frequency)
 	{
 		return (frequency*k2PI)/kSampleRate;
+	}
+
+	SFM_INLINE float CalcNoiseRate(float frequency)
+	{
+		return (frequency*kSampleRate)/kAudibleNyquist;
 	}
 
 	/*
@@ -151,7 +155,7 @@ namespace SFM
 
 			++m_sample;
 
-			const float modulation = oscSine(phase)*kTabToRad;
+			const float modulation = oscSine(phase)*kTabToRad; // FIXME: try other oscillators (not without risk of noise, of course)
 			return envelope*m_index*modulation;
 		}
 	};
@@ -255,8 +259,8 @@ namespace SFM
 	static void SetTestMOOG(float time)
 	{
 		float test = 1.f+cosf(time);
-		MOOG_Cutoff(700.f + 300.f*test);
-		// MOOG_Resonance(0.f + kPI*test);
+		// MOOG_Cutoff(700.f + 300.f*test);
+		MOOG_Resonance(0.f + 2.f*test);
 	}
 
 	/*
@@ -345,7 +349,7 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	const unsigned numSamplesReq = length/sizeof(float);
 	VIZ_ASSERT(length == numSamplesReq*sizeof(float));
 
-	const unsigned numSamples = std::min<unsigned>(numSamplesReq, SFM::kMaxSamplesPerUpdate);
+	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kMaxSamplesPerUpdate);
 	SFM::RenderVoices(static_cast<float*>(pDest), numSamples);
 
 	return numSamples*sizeof(float);

@@ -14,7 +14,7 @@
 		- Filter does not require oversampling!
 
 	FIXME: clamp instead of assert, or not at all.
-	FIXME: more than enough to optimize here if need be, but let us wait for a target platform.
+	FIXME: more than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
 */
 
 #ifndef _SFM_MOOG_LADDER_H_
@@ -27,6 +27,7 @@ namespace SFM
 {
 
 	// Thermal voltage (26 milliwats at room temperature)
+	// FIXME: offer different temperatures by a control next to cutoff and resonance?
 	const float kVT = 0.312f;
 	const float kThermalMul = 1.f/(2.f*kVT);
 
@@ -52,6 +53,7 @@ namespace SFM
 
 	static void MOOG_Resonance(float resonance)
 	{
+		// FIXME: supposedly the range is [0..4], but let's test that when MIDI is hooked up
 		g_resonance = resonance;
 	}
 
@@ -84,22 +86,22 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			dV0 = -cutGain * (fast_tanhf((drive*pDest[iSample] + resonance*V[3]) * kThermalMul) + tV[0]);
-			V[0] += (dV0 + dV[0]) / (2.f * kSampleRate);
+			V[0] += (dV0 + dV[0]) / (2.f*kSampleRate);
 			dV[0] = dV0;
 			tV[0] = fast_tanhf(V[0]*kThermalMul);
 			
 			dV1 = cutGain * (tV[0] - tV[1]);
-			V[1] += (dV1 + dV[1]) / (2.f * kSampleRate);
+			V[1] += (dV1 + dV[1]) / (2.f*kSampleRate);
 			dV[1] = dV1;
 			tV[1] = fast_tanhf(V[1]*kThermalMul);
 			
 			dV2 = cutGain * (tV[1] - tV[2]);
-			V[2] += (dV2 + dV[2]) / (2.f * kSampleRate);
+			V[2] += (dV2 + dV[2]) / (2.f*kSampleRate);
 			dV[2] = dV2;
 			tV[2] = fast_tanhf(V[2]*kThermalMul);
 			
 			dV3 = cutGain * (tV[2] - tV[3]);
-			V[3] += (dV3 + dV[3]) / (2.f * kSampleRate);
+			V[3] += (dV3 + dV[3]) / (2.f*kSampleRate);
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]*kThermalMul);
 
