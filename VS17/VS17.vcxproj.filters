@@ -142,6 +142,12 @@
     <ClCompile Include="..\code\FM-synthesizer\LFOs.cpp">
       <Filter>/code\/FM-synthesizer\FIXME</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-error.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -290,6 +296,12 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\LFOs.h">
       <Filter>/code\/FM-synthesizer\FIXME</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-error.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

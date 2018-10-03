@@ -1,10 +1,12 @@
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
+	Syntherklaas FM
+	(C) syntherklaas.org, a subsidiary of visualizers.nl
 
-	Envelope(s).
+	LFOs.
 
-	FIXME: alpha stage, need ADSR and ADR (probably both state based).
+	FIXME:
+		- Everything, this is just Koen's basic envelope.
 */
 
 #pragma once

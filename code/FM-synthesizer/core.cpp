@@ -24,6 +24,9 @@
 #include "sinus-LUT.h"
 #include "final-MOOG-ladder.h"
 
+// Win32 MIDI input for now
+#include "windows-midi-in.h"
+
 /*
 	Global (de-)initialization.
 */
@@ -35,11 +38,15 @@ bool Syntherklaas_Create()
 	SFM::MOOG_Reset_Parameters();
 	SFM::MOOG_Reset_Feedback();
 
-	return true;
+	const auto numDevs = SFM::WinMidi_GetNumDevices();
+	const bool midiIn = SFM::WinMidi_Start(0);
+
+	return midiIn;
 }
 
 void Syntherklaas_Destroy()
 {
+	SFM::WinMidi_Stop();
 }
 
 namespace SFM
@@ -251,16 +258,24 @@ namespace SFM
 	static void SetTestVoice(FM_Voice &voice)
 	{
 		// Define single voice (indefinite)
-		voice.carrier.Initialize(kSquareCarrier, 1.f, 220.f);
-		const float CM = 220.f/4.f;
-		voice.modulator.Initialize(CM, 10.f);
+		const float carrierFreq = 220.f/4.f;
+		voice.carrier.Initialize(kSquareCarrier, 1.f, carrierFreq);
+		const float CM  = carrierFreq*0.1f;
+		voice.modulator.Initialize(CM, kPI);
 	}
 
-	static void SetTestMOOG(float time)
+	static void SetTestMOOG(float time, float delta)
 	{
 		float test = 1.f+cosf(time);
-		// MOOG_Cutoff(700.f + 300.f*test);
-		MOOG_Resonance(0.f + 2.f*test);
+		
+		static float prevCut = 0.f;
+
+		float testCut = WinMidi_GetTestValue_1();
+		const float testReso = WinMidi_GetTestValue_2();
+		// testCut = smoothstepf(prevCut, testCut, delta);
+
+		MOOG_Cutoff(kAudibleLowHZ + testCut*440.f);
+		MOOG_Resonance(kEpsilon + testReso*4.f);
 	}
 
 	/*
@@ -295,7 +310,7 @@ namespace SFM
 		float time = 0.f;
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			SetTestMOOG(time);
+			SetTestMOOG(time, timeStep);
 			RenderVoices(buffer+iSample, 1);
 			time += timeStep;
 		}
@@ -332,8 +347,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		s_isReady = true;
 	}
 
-	// Resest MOOG filter
-	SetTestMOOG(time);
+	// Set MOOG filter
+	SetTestMOOG(time, delta);
 	
 	// Check for stream starvation
 	VIZ_ASSERT(true == Audio_Check_Stream());

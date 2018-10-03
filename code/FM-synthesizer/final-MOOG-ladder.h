@@ -105,11 +105,12 @@ namespace SFM
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]*kThermalMul);
 
-			// I'd like to be sure the fitler doesn't go out of bounds.
-			const float sample = V[3];
-			SFM_ASSERT(sample >= -1.f && sample <= 1.f);
+//			const float sample = V[3];
+//			SFM_ASSERT(sample >= -1.f && sample <= 1.f);
 			
-			pDest[iSample] = V[3];
+			// FIXME: is this overdrive clamp the right thing to do?
+			//        Must be hardware dep., BASS will go silent if I don't.
+			pDest[iSample] = saturatef(V[3]);
 		}
 	}
 }
