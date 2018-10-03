@@ -18,11 +18,15 @@
 
 	To do:
 	- See notebook.
+	- Speed up oscillators.
+	- FIXMEs.
+	- Interpolate more!
 */
 
 #include "core.h"
 #include "sinus-LUT.h"
 #include "final-MOOG-ladder.h"
+#include "LFOs.h"
 
 // Win32 MIDI input for now
 #include "windows-midi-in.h"
@@ -73,10 +77,39 @@ namespace SFM
 	}
 
 	/*
+		Available waveforms.
+	*/
+
+	enum Waveform
+	{
+		kSineCarrier,
+		kSawCarrier,
+		kSquareCarrier,
+		kDirtySawCarrier,
+		kDirtyTriangleCarrier
+	};
+
+	/*
 		Sinus oscillator.
 	*/
 
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
+
+	/*
+		Straight up sawtooth & triangle (aliases, but sometimes that's great).
+		FIXME: these are off the cuff and dirt slow!
+	*/
+
+	SFM_INLINE float oscDirtySaw(float phase)
+	{
+		return -1.f + fmodf(phase/kPeriodLength, 2.f);
+	}
+
+
+	SFM_INLINE float oscDirtyTriangle(float phase)
+	{
+		return -1.f + 4.f*fabsf(fmodf(phase/kPeriodLength, 1.f) - 0.5f);
+	}
 
 	/*
 		Band-limited saw and square (additive sinuses).
@@ -85,8 +118,8 @@ namespace SFM
 		** Only to be used for carrier signals within audible range or Nyquist **
 	*/
 
-	const float kHarmonicsPrecHZ = kAudibleLowHZ;
-	// const float kHarmonicsPrecHZ = kAudibleLowHZ*0.1f;
+	// const float kHarmonicsPrecHZ = kAudibleLowHZ;
+	const float kHarmonicsPrecHZ = kAudibleLowHZ/2.f;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
@@ -171,22 +204,15 @@ namespace SFM
 		FM carrier.
 	*/
 
-	enum CarrierForm
-	{
-		kSineCarrier,
-		kSawCarrier,
-		kSquareCarrier
-	};
-
 	struct FM_Carrier
 	{
-		CarrierForm m_form;
+		Waveform m_form;
 		float m_amplitude;
 		float m_pitch;
 		unsigned m_sample;
 		unsigned m_numHarmonics;
 
-		void Initialize(CarrierForm form, float amplitude, float frequency)
+		void Initialize(Waveform form, float amplitude, float frequency)
 		{
 			m_form = form;
 			m_amplitude = amplitude;
@@ -195,7 +221,7 @@ namespace SFM
 			m_numHarmonics = GetCarrierHarmonics(frequency);
 		}
 
-		// Classic Chowning FM formula.
+		// FIXME: take out branching for better performance (use table)
 		float Sample(float modulation)
 		{
 			const float phase = m_sample*m_pitch;
@@ -214,6 +240,14 @@ namespace SFM
 
 			case kSquareCarrier:
 				signal = oscSquare(phase+modulation, m_numHarmonics);
+				break;
+
+			case kDirtySawCarrier:
+				signal = oscDirtySaw(phase+modulation);
+				break;
+
+			case kDirtyTriangleCarrier:
+				signal = oscDirtyTriangle(phase+modulation);
 				break;
 			}
 
@@ -252,44 +286,47 @@ namespace SFM
 
 	/*
 		Test voice setup.
-		FIXME: make note trigger!
+		FIXME: make notes, and turn these into algorithm-driven patches, but keep it simple!
 	*/
 
 	static void SetTestVoice(FM_Voice &voice)
 	{
 		// Define single voice (indefinite)
-		const float carrierFreq = 220.f/4.f;
-		voice.carrier.Initialize(kSquareCarrier, 1.f, carrierFreq);
-		const float CM  = carrierFreq*0.1f;
-		voice.modulator.Initialize(CM, kPI);
+		const float carrierFreq = 220.f;
+		voice.carrier.Initialize(kDirtyTriangleCarrier, 1.f, carrierFreq);
+		const float ratio = 5.f/3.f;
+		const float CM = carrierFreq*ratio;
+		voice.modulator.Initialize(1.f, CM);
 	}
 
-	static void SetTestMOOG(float time, float delta)
+	static void SetTestMOOG(float time, float delta, bool useMIDI)
 	{
-		float test = 1.f+cosf(time);
-		
-		static float prevCut = 0.f;
-
-		float testCut = WinMidi_GetTestValue_1();
-		const float testReso = WinMidi_GetTestValue_2();
-		// testCut = smoothstepf(prevCut, testCut, delta);
-
-		MOOG_Cutoff(kAudibleLowHZ + testCut*440.f);
-		MOOG_Resonance(kEpsilon + testReso*4.f);
+		if (true == useMIDI)
+		{
+			float testCut, testReso;
+			testCut = WinMidi_GetTestValue_1();
+			testReso = WinMidi_GetTestValue_2();
+			MOOG_Cutoff(kAudibleLowHZ + testCut*440.f*2.f);
+			MOOG_Resonance(kEpsilon + testReso*4.f);
+		}
 	}
 
 	/*
 		Render functions.
 	*/
 
+	// FIXME: optimize: for example render N voices at once, apply MOOG ladder with SIMD
 	SFM_INLINE void RenderVoices(float *pDest, unsigned numSamples)
 	{
 		float *pWrite = pDest;
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			float sample = s_FM.voice.Sample();
+
+			// FIXME: inline
 			MOOG_Ladder(&sample, 1);
-			*pWrite++ = sample;
+	
+		*pWrite++ = sample;
 		}
 	}
 
@@ -302,6 +339,9 @@ namespace SFM
 
 	static float WriteToFile(unsigned seconds)
 	{
+		// Test voice
+		SetTestVoice(s_FM.voice);
+
 		// Render a fixed amount of seconds to a buffer
 		const unsigned numSamples = seconds*kSampleRate;
 		float *buffer = new float[numSamples];
@@ -310,7 +350,7 @@ namespace SFM
 		float time = 0.f;
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			SetTestMOOG(time, timeStep);
+			SetTestMOOG(time, timeStep, false);
 			RenderVoices(buffer+iSample, 1);
 			time += timeStep;
 		}
@@ -336,11 +376,12 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
 	if (false == s_isReady)
 	{
-		// Test voice
-		SetTestVoice(s_FM.voice);
-
 		// Write test file with basic tone (FIXME: remove, replace)
-		WriteToFile(32);
+		WriteToFile(8);
+
+		// Reset voice & MOOG ladder
+		SetTestVoice(s_FM.voice);
+		SetTestMOOG(time, delta, true);
 
 		// Start blasting!
 		Audio_Start_Stream();
@@ -348,7 +389,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	}
 
 	// Set MOOG filter
-	SetTestMOOG(time, delta);
+	SetTestMOOG(time, delta, true);
 	
 	// Check for stream starvation
 	VIZ_ASSERT(true == Audio_Check_Stream());

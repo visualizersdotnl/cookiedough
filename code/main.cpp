@@ -215,7 +215,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						const float delta = newTime-oldTime;
 						Syntherklaas_Render(pDest, newTime, delta*100.f);
 
-						// FIXME: why so expensive?
+						// Otherwise polling goes crazy f*cking up my performance statistics.
+						SDL_Delay(1);
+
 //						display.Update(pDest);
 					}
 				}

@@ -68,11 +68,12 @@ namespace SFM
 		}
 
 		case MIM_LONGDATA:
+			// FIXME
 			break;
 
 		case MIM_OPEN:
 		case MIM_CLOSE:
-			// I should be handling this right
+			// I think I'm handling this OK
 			break; 
 
 		case MIM_ERROR:

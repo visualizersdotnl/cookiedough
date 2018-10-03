@@ -9,6 +9,7 @@
 	Sources:
 		- https://github.com/ddiakopoulos/MoogLadders/tree/master/src
 		- The paper by S. D'Angelo & V. Välimäki (2013).
+		- Pieter v/d Meer for the idea.
 
 	Major win here:
 		- Filter does not require oversampling!
@@ -105,12 +106,8 @@ namespace SFM
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]*kThermalMul);
 
-//			const float sample = V[3];
-//			SFM_ASSERT(sample >= -1.f && sample <= 1.f);
-			
-			// FIXME: is this overdrive clamp the right thing to do?
-			//        Must be hardware dep., BASS will go silent if I don't.
-			pDest[iSample] = saturatef(V[3]);
+			// FIXME: clamp
+			pDest[iSample] = V[3];
 		}
 	}
 }
