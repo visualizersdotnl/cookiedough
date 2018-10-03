@@ -219,7 +219,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						SDL_Delay(1);
 
 //						display.Update(pDest);
+
 					}
+
+					// bypass message box
+					avgFPS = 60.f;
 				}
 			}
 		}

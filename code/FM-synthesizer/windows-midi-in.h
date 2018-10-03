@@ -20,6 +20,7 @@ namespace SFM
 	// FIXME: prototype throw-away code
 	float WinMidi_GetTestValue_1();
 	float WinMidi_GetTestValue_2();
+	float WinMidi_GetTestValue_3();
 };
 
 #endif // _SFM_WINDOWS_MIDI_H_

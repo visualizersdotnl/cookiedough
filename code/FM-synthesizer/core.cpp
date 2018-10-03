@@ -21,6 +21,8 @@
 	- Speed up oscillators.
 	- FIXMEs.
 	- Interpolate more!
+	- Smoothstep *all* MIDI potmeters (use LUT).
+	- Normalize volumes!
 */
 
 #include "core.h"
@@ -293,10 +295,10 @@ namespace SFM
 	{
 		// Define single voice (indefinite)
 		const float carrierFreq = 220.f;
-		voice.carrier.Initialize(kDirtyTriangleCarrier, 1.f, carrierFreq);
-		const float ratio = 5.f/3.f;
+		voice.carrier.Initialize(kSawCarrier, 1.f, carrierFreq);
+		const float ratio = kGoldenRatio; // 5.f/3.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(1.f, CM);
+		voice.modulator.Initialize(kPI/CM /* LFO! */, CM);
 	}
 
 	static void SetTestMOOG(float time, float delta, bool useMIDI)
@@ -318,15 +320,21 @@ namespace SFM
 	// FIXME: optimize: for example render N voices at once, apply MOOG ladder with SIMD
 	SFM_INLINE void RenderVoices(float *pDest, unsigned numSamples)
 	{
+		const float wetness = WinMidi_GetTestValue_3();
+
 		float *pWrite = pDest;
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			float sample = s_FM.voice.Sample();
+			float dry = s_FM.voice.Sample();
+			
+			// FIXME: inline, this is just a perf. hit!
+			float wet = dry;
+			MOOG_Ladder(&wet, 1);
 
-			// FIXME: inline
-			MOOG_Ladder(&sample, 1);
+			// Blend between dry FM and MOOG ladder filtered
+			const float sample = smoothstepf(dry, wet, wetness);
 	
-		*pWrite++ = sample;
+			*pWrite++ = sample;
 		}
 	}
 

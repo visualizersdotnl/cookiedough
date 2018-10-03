@@ -15,7 +15,7 @@ namespace SFM
 {
 	SFM_INLINE float fast_tanhf(float x) 
 	{
-		return tanhf(x);
+//		return tanhf(x);
 
 		const float xx = x*x;
 		const float a = (((xx*378.f)*xx + 17325.f)*xx + 135135.f)*x;

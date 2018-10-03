@@ -28,6 +28,7 @@ namespace SFM
 	// Test value to play with the M-AUDIO Oxygen 49
 	static float s_test1 = 0.f;
 	static float s_test2 = 0.f;
+	static float s_test3 = 0.f;
 
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -62,6 +63,11 @@ namespace SFM
 			{
 				s_test2 = controlVal / 127.f;
 				SFM_ASSERT(s_test2 >= 0.f && s_test2 <= 1.f);
+			}
+			else if (controlIdx == 0x1a)
+			{
+				s_test3 = controlVal / 127.f;
+				SFM_ASSERT(s_test3 >= 0.f && s_test3 <= 1.f);
 			}
 
 			break;
@@ -140,4 +146,5 @@ namespace SFM
 	// FIXME: prototype throw-away code
 	float WinMidi_GetTestValue_1() { return s_test1; }
 	float WinMidi_GetTestValue_2() { return s_test2; }
+	float WinMidi_GetTestValue_3() { return s_test3; }
 }
