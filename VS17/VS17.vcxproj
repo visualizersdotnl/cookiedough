@@ -42,10 +42,11 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\core.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\LFOs.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-error.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-LFOs.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
@@ -103,12 +104,16 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\FM-synthesizer\fast-tanhf.h" />
-    <ClInclude Include="..\code\FM-synthesizer\core.h" />
-    <ClInclude Include="..\code\FM-synthesizer\final-MOOG-ladder.h" />
-    <ClInclude Include="..\code\FM-synthesizer\global.h" />
-    <ClInclude Include="..\code\FM-synthesizer\LFOs.h" />
+    <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-global.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-LFOs.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-log.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-midi.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-MOOG-ladder.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-state.h" />
     <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />

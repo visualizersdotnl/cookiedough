@@ -1,35 +1,32 @@
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
-	Error handling mechanism.
+	Syntherklaas -- Error handling.
 */
 
-#ifndef _SFM_ERROR_H_
-#define _SFM_ERROR_H_
-
-#include "global.h"
+#ifndef _SFM_SYNTH_ERROR_H_
+#define _SFM_SYNTH_ERROR_H_
 
 namespace SFM
 {
 	enum ErrorLevel
 	{
-		ERR_WARNING,
-		ERR_INTERACTION,
-		ERR_FATAL
+		kWarning,
+		kInteraction,
+		kFatal
 	};
 
-	void Error(ErrorLevel level)
+	SFM_INLINE void Error(ErrorLevel level, const char *message = nullptr)
 	{
 		switch (level)
 		{
-		case ERR_WARNING:
+		case kWarning:
 			break; // FIXME
 
-		case ERR_INTERACTION:
+		case kInteraction:
 			break; // FIXME
 
-		case ERR_FATAL:
-			SetLastError("Syntherklaas FM fatal error");
+		case kFatal:
+			SetLastError((nullptr == message) ? "Syntherklaas FM fatal error" : message);
 			break;
 
 		default:
@@ -38,4 +35,5 @@ namespace SFM
 	}
 };
 
-#endif // _SFM_SINUS_LUT_H_
+#endif // _SFM_SYNTH_ERROR_H_
+

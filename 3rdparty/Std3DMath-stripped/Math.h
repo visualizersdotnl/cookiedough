@@ -16,6 +16,7 @@
 	- Added an actual Multiplied()/Multiply() function on Vector3 and Vector4 as I really needed it more often.
 	- Fix: used Scale() function instead of Mul() when multiplying vector by scalar.
 	- Added fracf().
+	- Fixed clampf().
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
@@ -50,7 +51,9 @@ inline bool comparef(float a, float b)
 // GLSL-style clamp.
 inline float clampf(float min, float max, float value)
 {
-	return std::max<float>(max, std::min<float>(min, value));
+	if (value < min) value = min;
+	else if (value > max) value = max;
+	return value;
 }
 
 // HLSL saturate().

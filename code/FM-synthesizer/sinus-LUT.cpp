@@ -1,10 +1,9 @@
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
-	Sinus lookup table.
+	Syntherklaas FM -- Sinus lookup table.
 */
 
-#include "global.h"
+#include "synth-global.h"
 #include "sinus-LUT.h"
 
 namespace SFM

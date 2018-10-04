@@ -1,15 +1,15 @@
 
 /*
 	Syntherklaas FM
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
-	-- Approx. hyperbolic tangent function, taken from:
-	-- https://varietyofsound.wordpress.com/2011/02/14/efficient-tanh-computation-using-lamberts-continued-fraction/
+	
+	Approx. hyperbolic tangent function, taken from:
+	https://varietyofsound.wordpress.com/2011/02/14/efficient-tanh-computation-using-lamberts-continued-fraction/
 */
 
 #ifndef _SFM_FAST_TANHF_H_
 #define _SFM_FAST_TANHF_H_
 
-#include "global.h"
+#include "synth-global.h"
 
 namespace SFM
 {
@@ -24,4 +24,4 @@ namespace SFM
 	}
 }
 
-#endif // _SMF_FAST_TANHF_H_
+#endif // _SFM_FAST_TANHF_H_

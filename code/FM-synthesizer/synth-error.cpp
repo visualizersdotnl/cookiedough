@@ -1,5 +1,4 @@
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
-	Error handling mechanism.
+	Syntherklaas FM -- Error handling.
 */

@@ -83,7 +83,7 @@ const bool kTestBedForFM = true;
 #include "fx-blitter.h"
 
 // FM synthesizer
-#include "FM-synthesizer/core.h"
+#include "FM-synthesizer/FM_BISON.h"
 
 // -- display & audio config. --
 
@@ -171,8 +171,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// calculate cosine LUT
 	CalculateCosLUT();
 
-	// set simplest rounding mode, since we do a fair bit of ftol()
-	_controlfp(_MCW_RC, _RC_CHOP);
+	if (false == kTestBedForFM)	
+		// set simplest rounding mode, since we do a fair bit of ftol()
+		_controlfp(_MCW_RC, _RC_CHOP);
 
 	bool utilInit = true;
 
@@ -196,35 +197,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		{
 			// Test code for FM synth.
 
-			Display display;
-			if (display.Open(kTitle, kResX, kResY, kFullScreen))
+			if (Audio_Create_Stream(-1, Syntherklaas_StreamFunc, GetForegroundWindow()))
 			{
-				if (Audio_Create_Stream(-1, Syntherklaas_StreamFunc, GetForegroundWindow()))
+				Timer timer;
+
+				float oldTime = 0.f, newTime = 0.f;
+				while (true == HandleEvents())
 				{
-					// frame buffer
-					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
-					memset32(pDest, 0, kOutputSize);
+					oldTime = newTime;
+					newTime = timer.Get();
+					const float delta = newTime-oldTime;
+					Syntherklaas_Render(nullptr, newTime, delta*100.f);
 
-					Timer timer;
-
-					float oldTime = 0.f, newTime = 0.f;
-					while (true == HandleEvents())
-					{
-						oldTime = newTime;
-						newTime = timer.Get();
-						const float delta = newTime-oldTime;
-						Syntherklaas_Render(pDest, newTime, delta*100.f);
-
-						// Otherwise polling goes crazy f*cking up my performance statistics.
-						SDL_Delay(1);
-
-//						display.Update(pDest);
-
-					}
-
-					// bypass message box
-					avgFPS = 60.f;
+					// Otherwise polling goes crazy f*cking up my performance statistics.
+					Sleep(0);
 				}
+
+				// bypass message box
+				avgFPS = 60.f;
 			}
 		}
 		else

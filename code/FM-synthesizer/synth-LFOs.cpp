@@ -1,20 +1,16 @@
 
 /*
-	Syntherklaas FM
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
-
-	LFOs.
+	Syntherklaas FM -- LFOs.
 
 	FIXME:
-		- Everything, this is just Koen's GR-1 prototyping envelope.
+		- Everything, this is just Koen's GR-1 prototyping LFO.
 */
 
-#include "global.h"
-#include "LFOs.h"
+#include "synth-global.h"
+#include "synth-LFOs.h"
 
 namespace SFM
 {
-
 	static void CalcLFO_CosTilt(float *pDest, unsigned numSamples, float tilt, float curve, float frequency)
 	{
 		/* Let's assert that what we're getting is in accordance to what I was promised. */
@@ -54,5 +50,4 @@ namespace SFM
 			theta += dRemainder;
 		}
 	}
-
 }

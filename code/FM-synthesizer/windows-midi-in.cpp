@@ -1,15 +1,13 @@
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
-	Windows (Win32) MIDI input.
-
-	FIXME:
-		- Need mapping, error checking et cetera to spread the executable.
-		- Curves are needed to make the knobs et cetera sound a bit more natural.
+	Syntherklaas FM -- Windows (Win32) MIDI input, explicitly designed (for now) for the M-AUDIO Oxygen 49.
+	All values are within [0..1] range; rotaries and faders are interpolated.
 */
 
-#include "global.h"
+#include "synth-global.h"
 #include "windows-midi-in.h"
+#include "synth-midi.h"
+#include "FM_BISON.h"
 
 // Bevacqua mainly relies on SDL + standard C(++), so:
 #pragma comment(lib, "Winmm.lib")
@@ -20,15 +18,34 @@ namespace SFM
 {
 	static HMIDIIN s_hMidiIn = NULL;
 
+	// FIXME: not yet used, but should be!
 	static const size_t kMidiBufferLength = 256;
 	static uint8_t s_buffer[kMidiBufferLength];
 
 	static MIDIHDR s_header;
 
-	// Test value to play with the M-AUDIO Oxygen 49
-	static float s_test1 = 0.f;
-	static float s_test2 = 0.f;
-	static float s_test3 = 0.f;
+	SFM_INLINE unsigned MsgType(unsigned parameter)   { return parameter & 0xf0; }
+	SFM_INLINE unsigned MsgChan(unsigned parameter)   { return parameter & 0x0f; }
+	SFM_INLINE unsigned MsgParam1(unsigned parameter) { return (parameter>>8)  & 0x7f; }
+	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
+
+	// Mapping: 3 rotaries
+	const unsigned kPotCutoff = 22;
+	const unsigned kPotResonance = 23;
+	const unsigned kPotFilterMix = 26;
+	MIDI_Smoothed s_cutoff, s_resonance, s_filterMix;
+
+	// Mapping: 49 keys
+	const unsigned kUpperKey = 36;
+	const unsigned kLowerKey = 84;
+
+	SFM_INLINE bool IsKey(unsigned index) 
+	{ 
+		return index >= kUpperKey && index <= kLowerKey; 
+	}
+
+	// FIXME: this array can be smaller
+	static unsigned s_voices[127];
 
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -38,54 +55,92 @@ namespace SFM
 		DWORD_PTR _dwParam2)
 	{
 		// Screw 32-bit warnings
-		unsigned dwParam1 = (unsigned) _dwParam1; // Timestamp
-		unsigned dwParam2 = (unsigned) _dwParam2; // Index and value
-
-		// FIXME: debug only
-		static TCHAR buffer[80];
+		unsigned dwParam1 = (unsigned) _dwParam1; // Information
+		unsigned dwParam2 = (unsigned) _dwParam2; // Time stamp
 
 		switch (wMsg)
 		{
 		case MIM_DATA:
 		{
-			// sprintf(buffer, "0x%08X 0x%02X 0x%02X 0x%02X\r\n", dwParam2, dwParam1 & 0x000000FF, (dwParam1>>8) & 0x000000FF, (dwParam1>>16) & 0x000000FF);
-			// OutputDebugString(buffer);
+			unsigned eventType = MsgType(dwParam1);
+			unsigned channel = MsgChan(dwParam1);
+			unsigned controlIdx = MsgParam1(dwParam1);
+			unsigned controlVal = MsgParam2(dwParam1);
 
-			// FIXME-note: third parameter is index, fourth is value!
-			auto controlIdx = (dwParam1>>8)&0xff;
-			auto controlVal = (dwParam1>>16)&0xff;
-			if (controlIdx == 0x16)
-			{
-				s_test1 = controlVal / 127.f;
-				SFM_ASSERT(s_test1 >= 0.f && s_test1 <= 1.f);
-			}
-			else if (controlIdx == 0x17)
-			{
-				s_test2 = controlVal / 127.f;
-				SFM_ASSERT(s_test2 >= 0.f && s_test2 <= 1.f);
-			}
-			else if (controlIdx == 0x1a)
-			{
-				s_test3 = controlVal / 127.f;
-				SFM_ASSERT(s_test3 >= 0.f && s_test3 <= 1.f);
-			}
+			// FIXME: debug string only
+			
+			// static char buffer[128];
+			// sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
+			// Log(buffer);
 
-			break;
+			switch (eventType)
+			{
+			default:
+				{
+					// Rotaries (FIXME: code repetition)
+					if (kPotCutoff == controlIdx)
+					{
+						s_cutoff.Set(controlVal, dwParam2);
+					}
+					else if (kPotResonance == controlIdx)
+					{
+						s_resonance.Set(controlVal, dwParam2);
+					}
+					else if (kPotFilterMix == controlIdx)
+					{
+						s_filterMix.Set(controlVal, dwParam2);
+					}
+
+					break;
+				}
+
+			case PITCH_BEND:
+				{
+					// FIXME: pitch bend (14-bit), use it!
+					auto bend = (controlVal<<7)|controlIdx;
+					break;
+				}
+
+			case NOTE_ON:
+				{
+					SFM_ASSERT(true == IsKey(controlIdx));
+					const unsigned iVoice = TriggerNote(controlIdx);
+					s_voices[controlIdx] = iVoice;
+					break;
+				}
+
+			case NOTE_OFF:
+				{
+					SFM_ASSERT(true == IsKey(controlIdx));
+					const unsigned iVoice = s_voices[controlIdx];
+					SFM_ASSERT(-1 != iVoice);
+					if (-1 != iVoice)
+					{
+						ReleaseNote(iVoice);
+						s_voices[controlIdx] = -1;
+					}
+
+					break;
+				}
+			}
+			
+			return;
 		}
 
 		case MIM_LONGDATA:
-			// FIXME
+			// FIXE: implement!
+			Log("Implement MIM_LONGDATA!");
 			break;
 
+		// Handled
 		case MIM_OPEN:
 		case MIM_CLOSE:
-			// I think I'm handling this OK
 			break; 
 
+		// Shouldn't happen, but let's assert
 		case MIM_ERROR:
 		case MIM_LONGERROR:
 		case MIM_MOREDATA:
-			// This means I'm at fault or falling behind
 			SFM_ASSERT(false);
 			break;
 
@@ -107,21 +162,28 @@ namespace SFM
 			return false;
 		}
 
+		MIDIINCAPS devCaps;
+		SFM_ASSERT(0 == midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS)));
+		Log(devCaps.szPname);
+
 		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
-		if (0 == openRes)
+		if (MMSYSERR_NOERROR == openRes)
 		{
 			s_header.lpData = (LPSTR) s_buffer; // I'm not going to attempt to make this nonsene prettier.
 			s_header.dwBufferLength = kMidiBufferLength;
 			s_header.dwFlags = 0;
 
 			const auto hdrPrepRes = midiInPrepareHeader(s_hMidiIn, &s_header, sizeof(MIDIHDR));
-			if (0 == hdrPrepRes)
+			if (MMSYSERR_NOERROR == hdrPrepRes)
 			{
 				const auto queueRes = midiInAddBuffer(s_hMidiIn, &s_header, sizeof(MIDIHDR));
-				if (0 == queueRes)
+				if (MMSYSERR_NOERROR == queueRes)
 				{
+					// Reset voice indices
+					memset(s_voices, -1, 127*sizeof(unsigned));
+
 					const auto startRes = midiInStart(s_hMidiIn);
-					if (0 == startRes)
+					if (MMSYSERR_NOERROR == startRes)
 					{
 						return true;
 					}
@@ -136,15 +198,17 @@ namespace SFM
 	{
 		if (NULL != s_hMidiIn)
 		{
+			midiInStop(s_hMidiIn);
+			midiInReset(s_hMidiIn);
 			midiInClose(s_hMidiIn);
-			midiInPrepareHeader(s_hMidiIn, &s_header, sizeof(MIDIHDR));
+
+			midiInUnprepareHeader(s_hMidiIn, &s_header, sizeof(MIDIHDR));
 		}		
 		
 		s_hMidiIn = NULL;
 	}
 
-	// FIXME: prototype throw-away code
-	float WinMidi_GetTestValue_1() { return s_test1; }
-	float WinMidi_GetTestValue_2() { return s_test2; }
-	float WinMidi_GetTestValue_3() { return s_test3; }
+	float WinMidi_GetCutoff() { return s_cutoff.Get(); }
+	float WinMidi_GetResonance() { return s_resonance.Get(); }
+	float WinMidi_GetFilterMix() { return s_filterMix.Get(); }
 }

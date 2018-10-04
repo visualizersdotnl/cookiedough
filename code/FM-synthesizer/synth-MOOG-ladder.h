@@ -1,36 +1,34 @@
 
 
 /*
-	Syntherklaas FM
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
+	Syntherklaas FM -- 4-pole filter like the MOOG ladder.
 
-	Post-filter like the MOOG ladder.
-
-	Sources:
+	Credits:
 		- https://github.com/ddiakopoulos/MoogLadders/tree/master/src
 		- The paper by S. D'Angelo & V. Välimäki (2013).
 		- Pieter v/d Meer for the idea.
 
 	Major win here:
-		- Filter does not require oversampling!
+		- Filter does not require oversampling \o/
 
-	FIXME: clamp instead of assert, or not at all.
+	Added:
+		- Taking edges off final sample using atanf().
+		- Mixing with dry input.
+
 	FIXME: more than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
 */
 
-#ifndef _SFM_MOOG_LADDER_H_
-#define _SFM_MOOG_LADDER_H_
+#ifndef _SFM_SYNTH_MOOG_LADDER_H_
+#define _SFM_SYNTH_MOOG_LADDER_H_
 
-#include "global.h"
+#include "synth-global.h"
 #include "fast-tanhf.h"
 
 namespace SFM
 {
-
 	// Thermal voltage (26 milliwats at room temperature)
 	// FIXME: offer different temperatures by a control next to cutoff and resonance?
 	const float kVT = 0.312f;
-	const float kThermalMul = 1.f/(2.f*kVT);
 
 	float g_cutGain;
 	float g_resonance;
@@ -43,19 +41,23 @@ namespace SFM
 
 	static void MOOG_Cutoff(float cutoff)
 	{
-		// It seems reasonable that you can cutoff possibly inaudible frequency or harmonics.
-		SFM_ASSERT(cutoff >= 0.f); 
+		SFM_ASSERT(cutoff >= 0.f && cutoff <= 1000.f); 
 
-		const float periodCut = (kPI*cutoff)/kSampleRate;
-		const float gain = 4.f*kPI*kVT*cutoff*(1.f-periodCut)/(1.f+periodCut);
+		const float angular = (kPI*cutoff)/kSampleRate;
+		const float gain = 4.f*kPI*kVT*cutoff*(1.f-angular)/(1.f+angular);
 	
 		g_cutGain = gain;
 	}
 
 	static void MOOG_Resonance(float resonance)
 	{
-		// FIXME: supposedly the range is [0..4], but let's test that when MIDI is hooked up
+		SFM_ASSERT(resonance >= 0.f && resonance <= 4.f);
 		g_resonance = resonance;
+	}
+
+	static void MOOG_Drive(float drive)
+	{
+		g_drive = drive;
 	}
 
 	static void MOOG_Reset_Parameters()
@@ -75,7 +77,13 @@ namespace SFM
 		}
 	}
 
-	static void MOOG_Ladder(float *pDest, unsigned numSamples)
+	SFM_INLINE void MOOG_Reset()
+	{
+		MOOG_Reset_Feedback();
+		MOOG_Reset_Parameters();
+	}
+
+	static void MOOG_Ladder(float *pDest, unsigned numSamples, float wetness)
 	{
 		float dV0, dV1, dV2, dV3;
 
@@ -83,33 +91,37 @@ namespace SFM
 		const float &cutGain = g_cutGain;
 		const float &drive = g_drive;
 
-		// FIXME: find a more elegant way to write this down (and compare the two to assert correctness)
+		// FIXME: find a more elegant, faster way to express this
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			dV0 = -cutGain * (fast_tanhf((drive*pDest[iSample] + resonance*V[3]) * kThermalMul) + tV[0]);
+			// Fetch dry sample, multiply by drive since I use it to mix voices
+			const float dry = drive*pDest[iSample];
+
+			dV0 = -cutGain * (fast_tanhf((dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
 			V[0] += (dV0 + dV[0]) / (2.f*kSampleRate);
 			dV[0] = dV0;
-			tV[0] = fast_tanhf(V[0]*kThermalMul);
+			tV[0] = fast_tanhf(V[0]/(2.f*kVT));
 			
 			dV1 = cutGain * (tV[0] - tV[1]);
 			V[1] += (dV1 + dV[1]) / (2.f*kSampleRate);
 			dV[1] = dV1;
-			tV[1] = fast_tanhf(V[1]*kThermalMul);
+			tV[1] = fast_tanhf(V[1]/(2.f*kVT));
 			
 			dV2 = cutGain * (tV[1] - tV[2]);
 			V[2] += (dV2 + dV[2]) / (2.f*kSampleRate);
 			dV[2] = dV2;
-			tV[2] = fast_tanhf(V[2]*kThermalMul);
+			tV[2] = fast_tanhf(V[2]/(2.f*kVT));
 			
 			dV3 = cutGain * (tV[2] - tV[3]);
 			V[3] += (dV3 + dV[3]) / (2.f*kSampleRate);
 			dV[3] = dV3;
-			tV[3] = fast_tanhf(V[3]*kThermalMul);
+			tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
-			// FIXME: clamp
-			pDest[iSample] = V[3];
+			const float rounded = atanf(V[3]);
+			
+			pDest[iSample] = smoothstepf(dry, rounded, wetness);
 		}
 	}
 }
 
-#endif // _SFM_MOOG_LADDER_H_
+#endif // _SFM_SYNTH_MOOG_LADDER_H_

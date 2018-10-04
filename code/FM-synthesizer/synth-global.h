@@ -1,28 +1,30 @@
 
 /*
-	Syntherklaas FM
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
-	-- Global constants & main/top include.
+	Syntherklaas FM -- Global includes, constants & utility functions.
 */
 
-#ifndef _SMF_GLOBAL_H_
-#define _SMF_GLOBAL_H_
+#ifndef _SFM_SYNTH_GLOBAL_H_
+#define _SFM_SYNTH_GLOBAL_H_
 
 // FIXME: only necessary when depending on the Kurt Bevacqua engine as our base
 #include "../main.h"
 
-// Rename:
+// Rename existing mechanisms:
 #define SFM_INLINE VIZ_INLINE
 #define SFM_ASSERT VIZ_ASSERT
 
-// ...
 #include "sinus-LUT.h"
+#include "synth-log.h"
+#include "synth-error.h"
 
 namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
 	const unsigned kMaxSamplesPerUpdate = kSampleRate/4;
+
+	// Feed buffer size.
+	const size_t kFeedBufferSize = kMaxSamplesPerUpdate;
 
 	// Reasonable audible spectrum.
 	const float kAudibleLowHZ = 20.f;
@@ -40,7 +42,27 @@ namespace SFM
 
 	// Useful when using actual radians with sinus LUT;
 	const float kTabToRad = (1.f/k2PI)*kPeriodLength;
-};
 
-#endif // _SMF_GLOBAL_H_
+	/*
+		Utility functions.
+	*/
 
+	// Frequency to (PI*2)/tabSize (LUT)
+	SFM_INLINE float CalcSinPitch(float frequency)
+	{
+		return (frequency*kPeriodLength)/kSampleRate;
+	}
+
+	// Frequency to PI*2 (angular)
+	SFM_INLINE float CalcAngularPitch(float frequency)
+	{
+		return (frequency*k2PI)/kSampleRate;
+	}
+
+	SFM_INLINE float CalcNoiseRate(float frequency)
+	{
+		return (frequency*kSampleRate)/kAudibleNyquist;
+	}
+}
+
+#endif // _SFM_SYNTH_GLOBAL_H_
