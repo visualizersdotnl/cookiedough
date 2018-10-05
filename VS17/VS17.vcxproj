@@ -113,6 +113,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-MOOG-ladder.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-state.h" />
     <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h" />
     <ClInclude Include="..\code\fx-blitter.h" />

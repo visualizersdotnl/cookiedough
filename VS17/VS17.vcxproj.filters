@@ -315,6 +315,9 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

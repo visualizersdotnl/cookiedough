@@ -6,7 +6,6 @@
 	Credits:
 		- https://github.com/ddiakopoulos/MoogLadders/tree/master/src
 		- The paper by S. D'Angelo & V. Välimäki (2013).
-		- Pieter v/d Meer for the idea.
 
 	Major win here:
 		- Filter does not require oversampling \o/
@@ -91,7 +90,7 @@ namespace SFM
 		const float &cutGain = g_cutGain;
 		const float &drive = g_drive;
 
-		// FIXME: find a more elegant, faster way to express this
+		// FIXME: find a more elegant, faster way to express this (SIMD, more LUTs)
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			// Fetch dry sample, multiply by drive since I use it to mix voices
@@ -116,10 +115,9 @@ namespace SFM
 			V[3] += (dV3 + dV[3]) / (2.f*kSampleRate);
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]/(2.f*kVT));
-
-			const float rounded = atanf(V[3]);
 			
-			pDest[iSample] = smoothstepf(dry, rounded, wetness);
+			// Sigmoid curve blend between dry and wet, then take the edges off to prevent clipping
+			pDest[iSample] = atanf(smoothstepf(dry, V[3], wetness));
 		}
 	}
 }

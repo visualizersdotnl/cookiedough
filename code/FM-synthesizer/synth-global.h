@@ -21,10 +21,10 @@ namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
-	const unsigned kMaxSamplesPerUpdate = kSampleRate/4;
+	const unsigned kMaxSamplesPerUpdate = kSampleRate/1;
 
-	// Feed buffer size.
-	const size_t kFeedBufferSize = kMaxSamplesPerUpdate;
+	// Buffer size.
+	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
 
 	// Reasonable audible spectrum.
 	const float kAudibleLowHZ = 20.f;

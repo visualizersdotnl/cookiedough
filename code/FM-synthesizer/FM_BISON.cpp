@@ -19,15 +19,20 @@
 	and in part supplemented by hardware components if that so happens to be a good idea.
 
 	To do:
-	- Fix: 2 callbacks fighting over the same resource!
-	- Find NAN-bugs!
-	- Speed up oscillators (and everything else).
-	- FIXMEs.
-	- Interpolate more!
-	- Smooth out MIDI controls (faders, potentionmeters?).
+	- Fix: use a shadow state that can be updated by MIDI at will and is then copied on render
+	- Fix: any NAN-bugs left, why?
+	- Implement ADSR on voices!
+	- Optimization, FIXMEs, interpolation.
+	- Smooth out MIDI controls using Maarten van Strien's trick.
 	- Normalize volumes?
-	- See notebook.
+	- Zie notebook.
 */
+
+// MSVC :(
+#define _CRT_SECURE_NO_WARNINGS
+
+// FIXME: easily interchangeable
+#include <mutex>
 
 #include "FM_BISON.h"
 #include "synth-MOOG-ladder.h"
@@ -35,38 +40,18 @@
 #include "synth-midi.h"
 #include "synth-oscillators.h"
 #include "synth-state.h"
+#include "synth-ringbuffer.h"
 
 // Win32 MIDI input (specialized for the Oxygen 49)
 #include "windows-midi-in.h"
 
-/*
-	Global (de-)initialization.
-*/
-
-bool Syntherklaas_Create()
-{
-	SFM::CalculateSinLUT();
-	SFM::CalcMidiToFreqLUT();
-
-	const auto numDevs = SFM::WinMidi_GetNumDevices();
-	const bool midiIn = SFM::WinMidi_Start(0);
-	return midiIn;
-}
-
-void Syntherklaas_Destroy()
-{
-	SFM::WinMidi_Stop();
-}
-
 namespace SFM
 {
 	/*
-		Feed buffer.
-		FIXME: try to use!
+		Ring buffer.
 	*/
 
-	static float s_feedBuf[kFeedBufferSize];
-	static unsigned s_feedSize;
+	static FIFO s_ringBuffer;
 
 	/*
 		FM modulator.
@@ -147,22 +132,6 @@ namespace SFM
 	*/
 
 	static FM s_FM;
-
-	/*
-		Test voice setup.
-	*/
-
-	static void SetTestVoice(FM_Voice &voice)
-	{
-		// Define single voice (indefinite)
-		const float carrierFreq = 440.f;
-		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
-		const float ratio = 5.f/3.f;
-		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(1.f /* LFO! */, CM);
-
-		voice.enabled = true;
-	}
 
 	/*
 		MIDI-driven MOOG ladder filter setup.
@@ -266,9 +235,22 @@ namespace SFM
 
 	/*
 		Simple RAW waveform writer.
+		FIXME?
 	*/
 
-	static float WriteToFile(unsigned seconds)
+	static void SetTestVoice(FM_Voice &voice)
+	{
+		// Define single voice (indefinite)
+		const float carrierFreq = 440.f;
+		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
+		const float ratio = 5.f/3.f;
+		const float CM = carrierFreq*ratio;
+		voice.modulator.Initialize(1.f /* LFO! */, CM);
+
+		voice.enabled = true;
+	}
+
+	static void WriteToFile(unsigned seconds)
 	{
 		// Test voice, default MOOG ladder
 		s_FM.Reset();
@@ -293,7 +275,7 @@ namespace SFM
 		fwrite(buffer, sizeof(float), numSamples, file);
 		fclose(file);
 
-		return time;
+		delete buffer;
 	}
 
 }; // namespace SFM
@@ -301,38 +283,58 @@ namespace SFM
 using namespace SFM;
 
 /*
+	Global (de-)initialization.
+*/
+
+bool Syntherklaas_Create()
+{
+	// Calc. LUTs
+	CalculateSinLUT();
+	CalcMidiToFreqLUT();
+
+	// Reset FM state & MOOG ladder
+	s_FM.Reset();
+	MOOG_Reset();
+
+	const auto numDevs = WinMidi_GetNumDevices();
+	const bool midiIn = WinMidi_Start(0);
+
+	return true == midiIn;
+}
+
+void Syntherklaas_Destroy()
+{
+	WinMidi_Stop();
+}
+
+/*
+	Mutex.
+*/
+
+static std::mutex s_mutex;
+
+/*
 	Render function for Kurt Bevacqua codebase.
 */
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	// Update MOOG filter parameters
+	SetMOOG();
+
 	if (false == s_isReady)
 	{
-		// Write test file with basic tone for debugging purposes (FIXME: remove, replace)
-		WriteToFile(8);
-
-		// Reset FM state & MOOG ladder
-		s_FM.Reset();
-		MOOG_Reset();
-
-		// Prepare MOOG ladder (FIXME: can go if rendering feed buffer here)
-		SetMOOG();
-
 		// Start blasting!
 		Audio_Start_Stream();
 		s_isReady = true;
 	}
 
-	// Update MOOG filter parameters
-	SetMOOG();
-	
 	// Check for stream starvation
 	SFM_ASSERT(true == Audio_Check_Stream());
 }
 
-
 /*
-	Stream callback.
+	Stream callback (FIXME)
 */
 
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser)
@@ -340,8 +342,8 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	const unsigned numSamplesReq = length/sizeof(float);
 	SFM_ASSERT(length == numSamplesReq*sizeof(float));
 
-	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kMaxSamplesPerUpdate);
-	SFM::Render(static_cast<float*>(pDest), numSamples);
+	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kRingBufferSize);
+	Render(static_cast<float*>(pDest), numSamples);
 
 	return numSamples*sizeof(float);
 }

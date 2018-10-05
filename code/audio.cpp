@@ -79,7 +79,8 @@ void Audio_Destroy()
 
 void Audio_Update() {}
 
-// FM prototyping
+// ---- FM synth. prototyping ----
+
 bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 {
 	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
@@ -107,6 +108,7 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 		}
 	}
 
+//	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, nullptr);
 	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, pStreamer, nullptr);
 	if (0 == s_hStream)
 	{
@@ -118,7 +120,11 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 	return true;
 }
 
-// Prototyping
+HSTREAM Audio_Get_Stream()
+{
+	return s_hStream;
+}
+
 void Audio_Start_Stream()
 {
 	BASS_ChannelPlay(s_hStream, TRUE);
@@ -135,6 +141,8 @@ bool Audio_Check_Stream()
 
 	return true;
 }
+
+// ---- FM synth. prototyping ----
 
 void Audio_Rocket_Pause(void *, int mustPause)
 {
