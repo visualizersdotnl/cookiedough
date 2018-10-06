@@ -9,8 +9,11 @@
 // Oh MSVC and your well-intentioned madness!
 #define _CRT_SECURE_NO_WARNINGS
 
-// FIXME: easily interchangeable with POSIX-variants or straight assembler
+// FIXME: 
+//	- easily interchangeable with POSIX-variants or straight assembler, though so complication
+//	  may arise with all the different (system/API) threads calling
 #include <mutex>
+#include <shared_mutex>
 #include <atomic>
 
 #include "FM_BISON.h"
@@ -27,21 +30,18 @@
 namespace SFM
 {
 	/*
-		Ring buffer.
-	*/
-
-	static FIFO s_ringBuffer;
-
-	/*
 		Global sample count.
 
 		Each timed object stores an offset when it is activated and uses this global acount to calculate the delta, which is relatively cheap
 		and keeps the concept time largely out of the floating point realm.
 
-		FIXME: test/account for wrapping!
+		FIXME: 
+			- Test/account for wrapping!
+			- I'm using it for buffering now too (FIXME).
 	*/
 
 	static std::atomic<unsigned> s_sampleCount = 0;
+	static std::atomic<unsigned> s_sampleOutCount = 0;
 
 	/*
 		FM modulator.
@@ -130,7 +130,7 @@ namespace SFM
 		to be negligible so long as the update buffer's size isn't too large.
 	*/
 
-	static std::mutex s_stateMutex;
+	static std::shared_mutex s_stateMutex;
 	static FM s_shadowState;
 	static FM s_renderState;
 
@@ -171,7 +171,7 @@ namespace SFM
 	// Returns voice index, if available
 	unsigned TriggerNote(unsigned midiIndex)
 	{
-		std::lock_guard<std::mutex> lock(s_stateMutex);
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
 		const unsigned iVoice = AllocNote(s_shadowState.voices);
@@ -185,7 +185,7 @@ namespace SFM
 		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
 		const float ratio = 5.f/3.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(kPI/CM /* LFO! */, CM);
+		voice.modulator.Initialize(1.f /* LFO! */, CM);
 
 		voice.enabled = true;
 
@@ -194,7 +194,7 @@ namespace SFM
 
 	void ReleaseNote(unsigned index)
 	{
-		std::lock_guard<std::mutex> lock(s_stateMutex);
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
 		FM_Voice &voice = state.voices[index];
@@ -207,8 +207,16 @@ namespace SFM
 		FIXME: crude impl., optimize.
 	*/
 
+	SFM_INLINE void CopyShadowState()
+	{
+		std::lock_guard<std::shared_mutex> stateCopyLock(s_stateMutex);
+		s_renderState = s_shadowState;
+	}
+
 	static void Render(float *pDest, unsigned numSamples)
 	{
+		CopyShadowState();	
+
 		FM &state = s_renderState;
 		FM_Voice *voices = state.voices;
 
@@ -238,8 +246,8 @@ namespace SFM
 		const float wetness = WinMidi_GetFilterMix();
 		if (0 != numVoices)
 		{
-			MOOG_SetDrive(1.f/numVoices);
-			MOOG_Ladder(pDest, numSamples, wetness);
+//			MOOG_SetDrive(1.f/numVoices);
+//			MOOG_Ladder(pDest, numSamples, wetness);
 		}
 	}
 
@@ -311,6 +319,7 @@ bool Syntherklaas_Create()
 
 	// Reset sample count
 	s_sampleCount = 0;
+	s_sampleOutCount = 0;
 
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
@@ -337,11 +346,12 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 //		WriteToFile(4.f);
 
 		// Start blasting!
-		Audio_Start_Stream();
+		float bufMS = 1000.f*((float) kRingBufferSize / kSampleRate);
+		Audio_Start_Stream(unsigned(ceilf(bufMS)) + 1);
 		s_isReady = true;
 	}
 
-	// FIXME: fill ring buffer here!
+	BASS_Update(5);
 
 	// Check for stream starvation
 	SFM_ASSERT(true == Audio_Check_Stream());
@@ -353,16 +363,11 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser)
 {
-	const unsigned numSamplesReq = length/sizeof(float);
-	SFM_ASSERT(length == numSamplesReq*sizeof(float));
+	unsigned numSamplesReq = length/sizeof(float);
+	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
-	// Lock shadow state and copy it to render state (introduces a tiny bit of latency).
-	s_stateMutex.lock();
-	s_renderState = s_shadowState;
-	s_stateMutex.unlock();
+	Render((float*) pDest, numSamplesReq);
+	s_sampleOutCount += numSamplesReq;
 
-	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kRingBufferSize);
-	Render(static_cast<float*>(pDest), numSamples);
-
-	return numSamples*sizeof(float);
+	return length;
 }

@@ -1,7 +1,9 @@
 
 /*
-	Syntherklaas FM -- Simple ring buffer.
-	FIXME: much faster if buffer size is power of 2, also untested!
+	Syntherklaas FM -- Simple ring buffer (lockless, figure that out yourself).
+
+	// FIXME:
+		- Much faster if using power of 2 size, can optimize for that.
 */
 
 #ifndef _SFM_SYNTH_RINGBUFFER_H_
@@ -29,6 +31,7 @@ namespace SFM
 
 		float *WritePtr(unsigned numValues)
 		{
+			SFM_ASSERT(GetFree() >= numValues);
 			float *pointer = buffer + (writeIdx % kRingBufferSize);
 			writeIdx += numValues;
 			return pointer;
@@ -42,14 +45,21 @@ namespace SFM
 
 		const float *ReadPtr(unsigned numValues)
 		{
+			SFM_ASSERT(GetAvail() >= numValues);
 			const float *pointer = buffer + (readIdx % kRingBufferSize);
 			readIdx += numValues;
 			return pointer;
 		}
 
-		unsigned GetAvail()
+		unsigned GetAvail() const
 		{
 			return writeIdx-readIdx;
+		}
+
+		unsigned GetFree() const
+		{
+			const unsigned maxWrite = kRingBufferSize-1;
+			return std::min<unsigned>(maxWrite, maxWrite-GetAvail());
 		}
 		
 		unsigned readIdx;

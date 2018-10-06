@@ -15,11 +15,12 @@
 
 namespace SFM
 {
+	// FIXME: enable formatting
 	static void Log(const char *message)
 	{
 		SFM_ASSERT(nullptr != message);
 		static char buffer[256]; // Always dirty but it'll do for now (FIXME)
-		sprintf(buffer, "FM. BISON says: %s\n", message);
+		sprintf(buffer, "Syntherklaas FM: %s\n", message);
 		SFM_logprint(buffer);
 	}
 }

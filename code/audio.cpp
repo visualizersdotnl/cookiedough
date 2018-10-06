@@ -13,6 +13,8 @@ const int kRowsPerOrder = 64;
 static HMUSIC s_hMusic = NULL;
 static HSTREAM s_hStream = NULL;
 
+static BASS_INFO s_bassInf;
+
 const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
 const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
 
@@ -42,6 +44,8 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 			return false;
 		}
 	}
+
+	BASS_GetInfo(&s_bassInf);
 
 	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, kMusicFlagsMisc, 0);
 	if (NULL == s_hMusic)
@@ -79,6 +83,11 @@ void Audio_Destroy()
 
 void Audio_Update() {}
 
+BASS_INFO &Audio_Get_Info()
+{
+	return s_bassInf;
+}
+
 // ---- FM synth. prototyping ----
 
 bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
@@ -107,6 +116,8 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 			return false;
 		}
 	}
+	
+	BASS_GetInfo(&s_bassInf);
 
 //	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, nullptr);
 	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, pStreamer, nullptr);
@@ -120,13 +131,10 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 	return true;
 }
 
-HSTREAM Audio_Get_Stream()
+void Audio_Start_Stream(unsigned bufLenMS)
 {
-	return s_hStream;
-}
-
-void Audio_Start_Stream()
-{
+	// VIZ_ASSERT(bufLenMS >= 5);
+	BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 0);
 	BASS_ChannelPlay(s_hStream, TRUE);
 }
 

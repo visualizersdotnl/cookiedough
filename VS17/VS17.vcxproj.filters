@@ -264,9 +264,6 @@
     <ClInclude Include="..\code\timer.h">
       <Filter>/code</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\util.h">
-      <Filter>/code\util-lib</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\heartquake.h">
       <Filter>/code\effects\not implemented</Filter>
     </ClInclude>
@@ -317,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
       <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\util.h">
+      <Filter>/code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,5 @@ namespace SFM
 			const float frequency = base * powf(2.f, (iKey-69.f)/12.f);
 			g_midiToFreqLUT[iKey] = frequency;
 		}
-
 	}
 }

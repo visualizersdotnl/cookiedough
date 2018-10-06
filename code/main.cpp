@@ -182,9 +182,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Polar_Create();
 	utilInit &= FxBlitter_Create();
 
-	if (true == kTestBedForFM)
-		utilInit &= Syntherklaas_Create();
-
 	Gamepad_Create();
 
 	// utilInit &= Snatchtiler();
@@ -199,6 +196,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 			if (Audio_Create_Stream(-1, Syntherklaas_StreamFunc, GetForegroundWindow()))
 			{
+				Syntherklaas_Create();
+
 				Timer timer;
 
 				float oldTime = 0.f, newTime = 0.f;
@@ -208,9 +207,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					newTime = timer.Get();
 					const float delta = newTime-oldTime;
 					Syntherklaas_Render(nullptr, newTime, delta*100.f);
-
-					// Otherwise polling goes crazy f*cking up my performance statistics.
-					Sleep(0);
 				}
 
 				// bypass message box

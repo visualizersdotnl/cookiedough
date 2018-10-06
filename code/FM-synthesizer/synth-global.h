@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Global includes, constants & utility functions.
+
+	IMPORTANT: all of these are tweaked to be used with the BASS hack in it's host codebase.
 */
 
 #ifndef _SFM_SYNTH_GLOBAL_H_
@@ -21,7 +23,7 @@ namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
-	const unsigned kMaxSamplesPerUpdate = 44100/8;
+	const unsigned kMaxSamplesPerUpdate = 512;
 
 	// Buffer size.
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;

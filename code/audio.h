@@ -11,10 +11,11 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 void Audio_Destroy();
 void Audio_Update();
 
+BASS_INFO &Audio_Get_Info();
+
 // for custom stream @ 44100 Hz (chiefly intended for FM synthesis prototyping)
 bool Audio_Create_Stream(unsigned int iDevice,  STREAMPROC *pStreamer, HWND hWnd);
-HSTREAM Audio_Get_Stream();
-void Audio_Start_Stream();
+void Audio_Start_Stream(unsigned bufLenMS);
 bool Audio_Check_Stream();
 
 // GNU Rocket callbacks

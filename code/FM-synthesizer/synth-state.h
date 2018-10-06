@@ -1,8 +1,7 @@
 
 
 /*
-	Syntherklaas -- FM synthesizer prototype.
-	Global state PODs.
+	Syntherklaas FM -- Global state PODs.
 */
 
 #ifndef _SFM_SYNTH_STATE_H_
