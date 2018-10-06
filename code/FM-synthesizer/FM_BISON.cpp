@@ -334,6 +334,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 
 	if (false == s_isReady)
 	{
+//		WriteToFile(4.f);
+
 		// Start blasting!
 		Audio_Start_Stream();
 		s_isReady = true;

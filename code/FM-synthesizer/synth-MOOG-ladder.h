@@ -117,10 +117,13 @@ namespace SFM
 			tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
 			// Take edges off to prevent filter from clipping
+			// FIXME: LUT
 			const float rounded = atanf(V[3]);
 			
-			// Sigmoid curve blend between dry and wet, then take the edges off to prevent clipping
-			pDest[iSample] = smoothstepf(dry, rounded, wetness);
+			// Blend between dry and wet
+			pDest[iSample] = lerpf(dry, rounded, wetness);
+
+			SFM_ASSERT(false == IsNAN(pDest[iSample]));
 		}
 	}
 }

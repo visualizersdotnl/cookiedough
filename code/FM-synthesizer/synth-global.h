@@ -64,6 +64,12 @@ namespace SFM
 	{
 		return (frequency*kSampleRate)/kAudibleNyquist;
 	}
+
+	// For debug purposes
+	SFM_INLINE bool IsNAN(float value)
+	{
+		return value != value;
+	}
 }
 
 #endif // _SFM_SYNTH_GLOBAL_H_

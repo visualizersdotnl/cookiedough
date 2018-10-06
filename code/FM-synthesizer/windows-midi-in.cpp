@@ -113,7 +113,6 @@ namespace SFM
 				{
 					SFM_ASSERT(true == IsKey(controlIdx));
 					const unsigned iVoice = s_voices[controlIdx];
-					SFM_ASSERT(-1 != iVoice);
 					if (-1 != iVoice)
 					{
 						ReleaseNote(iVoice);

@@ -21,7 +21,6 @@
 
 	Priority / /Bugs:
 		- Use ring buffer to feed
-		- Use float exceptions to track NAN-bugs (happens when MOOG-filtering)
 		- ADSR on voices (uses flexible ADSR based on velocity)
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 
@@ -29,7 +28,7 @@
 		- Normalize volumes as we go?
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way.
-		- Optimization, FIXMEs, interpolation.
+		- Optimization, FIXMEs, interpolation, keeping tracking NAN bugs.
 		- See notebook.
 */
 
