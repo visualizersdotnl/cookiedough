@@ -1,9 +1,36 @@
 
 /*
-	Syntherklaas FM
+	Syntherklaas FM presents 'FM. BISON'
 	(C) syntherklaas.org, a subsidiary of visualizers.nl
 
-	Uses a little hack in the BASS layer of this codebase (audio.cpp) to output a 44.1kHz monaural stream.
+	This is intended to be a powerful yet relatively simple FM synthesizer core.
+
+	I have to thank the following people for helping me with their knowledge, ideas and experience:
+		- Ronny Pries
+		- Tammo Hinrichs
+		- Alex Bartholomeus
+		- Pieter v/d Meer
+		- Thorsten Ørts
+		- Stijn Haring-Kuipers
+		- Dennis de Bruijn
+		- Zden Hlinka
+
+	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
+	and in part supplemented by hardware components if that so happens to be a good idea.
+	So the style will look a bit dated here and there.
+
+	Priority / /Bugs:
+		- Use ring buffer to feed
+		- Use float exceptions to track NAN-bugs (happens when MOOG-filtering)
+		- ADSR on voices (uses flexible ADSR based on velocity)
+		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
+
+	To do:
+		- Normalize volumes as we go?
+		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
+		  to keep it this way.
+		- Optimization, FIXMEs, interpolation.
+		- See notebook.
 */
 
 #ifndef _FM_BISON_H_

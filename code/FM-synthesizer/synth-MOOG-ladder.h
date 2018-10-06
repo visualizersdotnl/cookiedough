@@ -38,7 +38,7 @@ namespace SFM
 	float dV[4] = { 0.f };
 	float tV[4] = { 0.f };
 
-	static void MOOG_Cutoff(float cutoff)
+	static void MOOG_SetCutoff(float cutoff)
 	{
 		SFM_ASSERT(cutoff >= 0.f && cutoff <= 1000.f); 
 
@@ -48,22 +48,22 @@ namespace SFM
 		g_cutGain = gain;
 	}
 
-	static void MOOG_Resonance(float resonance)
+	static void MOOG_SetResonance(float resonance)
 	{
 		SFM_ASSERT(resonance >= 0.f && resonance <= 4.f);
 		g_resonance = resonance;
 	}
 
-	static void MOOG_Drive(float drive)
+	static void MOOG_SetDrive(float drive)
 	{
 		g_drive = drive;
 	}
 
 	static void MOOG_Reset_Parameters()
 	{
-		MOOG_Cutoff(1000.f);
-		MOOG_Resonance(0.1f);
-		g_drive = 1.f;
+		MOOG_SetCutoff(1000.f);
+		MOOG_SetResonance(0.1f);
+		MOOG_SetDrive(1.f);
 	}
 
 	static void MOOG_Reset_Feedback()

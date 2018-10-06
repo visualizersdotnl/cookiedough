@@ -21,7 +21,7 @@ namespace SFM
 	{
 		float m_index;
 		float m_pitch;
-		unsigned m_sample;
+		unsigned m_sampleOffs;
 
 		void Initialize(float index, float frequency);
 		float Sample(const float *pEnv);
@@ -36,7 +36,7 @@ namespace SFM
 		Waveform m_form;
 		float m_amplitude;
 		float m_pitch;
-		unsigned m_sample;
+		unsigned m_sampleOffs;
 		unsigned m_numHarmonics;
 
 		void Initialize(Waveform form, float amplitude, float frequency);

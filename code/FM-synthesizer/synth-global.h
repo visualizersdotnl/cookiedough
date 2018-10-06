@@ -21,7 +21,7 @@ namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
-	const unsigned kMaxSamplesPerUpdate = kSampleRate/1;
+	const unsigned kMaxSamplesPerUpdate = 44100/8;
 
 	// Buffer size.
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
@@ -47,18 +47,19 @@ namespace SFM
 		Utility functions.
 	*/
 
-	// Frequency to (PI*2)/tabSize (LUT)
+	// Frequency to sinus LUT pitch
 	SFM_INLINE float CalcSinPitch(float frequency)
 	{
 		return (frequency*kPeriodLength)/kSampleRate;
 	}
 
-	// Frequency to PI*2 (angular)
+	// Frequency to angular pitch
 	SFM_INLINE float CalcAngularPitch(float frequency)
 	{
 		return (frequency*k2PI)/kSampleRate;
 	}
 
+	// This can be, for example, used to drive extra filtering
 	SFM_INLINE float CalcNoiseRate(float frequency)
 	{
 		return (frequency*kSampleRate)/kAudibleNyquist;

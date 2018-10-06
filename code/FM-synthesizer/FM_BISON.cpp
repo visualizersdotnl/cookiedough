@@ -3,36 +3,15 @@
 	Syntherklaas FM presents 'FM. BISON'
 	(C) syntherklaas.org, a subsidiary of visualizers.nl
 
-	This is intended to be a powerful yet relatively simple FM synthesizer core.
-
-	I have to thank the following people for helping me with their knowledge, ideas and experience:
-		- Ronny Pries
-		- Tammo Hinrichs
-		- Alex Bartholomeus
-		- Pieter v/d Meer
-		- Thorsten Ørts
-		- Stijn Haring-Kuipers
-		- Dennis de Bruijn
-		- Zden Hlinka
-
-	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
-	and in part supplemented by hardware components if that so happens to be a good idea.
-
-	To do:
-	- Fix: use a shadow state that can be updated by MIDI at will and is then copied on render
-	- Fix: any NAN-bugs left, why?
-	- Implement ADSR on voices!
-	- Optimization, FIXMEs, interpolation.
-	- Smooth out MIDI controls using Maarten van Strien's trick.
-	- Normalize volumes?
-	- Zie notebook.
+	Uses a little hack in the BASS layer of this codebase (audio.cpp) to output a 44.1kHz monaural stream.
 */
 
-// MSVC :(
+// Oh MSVC and your well-intentioned madness!
 #define _CRT_SECURE_NO_WARNINGS
 
-// FIXME: easily interchangeable
+// FIXME: easily interchangeable with POSIX-variants or straight assembler
 #include <mutex>
+#include <atomic>
 
 #include "FM_BISON.h"
 #include "synth-MOOG-ladder.h"
@@ -54,6 +33,17 @@ namespace SFM
 	static FIFO s_ringBuffer;
 
 	/*
+		Global sample count.
+
+		Each timed object stores an offset when it is activated and uses this global acount to calculate the delta, which is relatively cheap
+		and keeps the concept time largely out of the floating point realm.
+
+		FIXME: test/account for wrapping!
+	*/
+
+	static std::atomic<unsigned> s_sampleCount = 0;
+
+	/*
 		FM modulator.
 	*/
 
@@ -61,21 +51,20 @@ namespace SFM
 	{
 		m_index = index;
 		m_pitch = CalcSinPitch(frequency);
-		m_sample = 0;
+		m_sampleOffs = s_sampleCount;
 	}
 
 	float FM_Modulator::Sample(const float *pEnv)
 	{
-		float phase = m_sample*m_pitch;
+		const unsigned sample = s_sampleCount-m_sampleOffs;
+		const float phase = sample*m_pitch;
 
 		float envelope = 1.f;
 		if (pEnv != nullptr)
 		{
-			const unsigned index = m_sample & (kPeriodLength-1);
+			const unsigned index = sample & (kPeriodLength-1);
 			envelope = pEnv[index];
 		}
-
-		++m_sample;
 
 		const float modulation = oscSine(phase)*kTabToRad; // FIXME: try other oscillators (not without risk of noise, of course)
 		return envelope*m_index*modulation;
@@ -90,15 +79,15 @@ namespace SFM
 		m_form = form;
 		m_amplitude = amplitude;
 		m_pitch = CalcSinPitch(frequency);
-		m_sample = 0;
+		m_sampleOffs = s_sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	}
 
 	// FIXME: kill switch!
 	float FM_Carrier::Sample(float modulation)
 	{
-		const float phase = m_sample*m_pitch;
-		++m_sample;
+		const unsigned sample = s_sampleCount-m_sampleOffs;
+		const float phase = sample*m_pitch;
 
 		float signal = 0.f;
 		switch (m_form)
@@ -128,13 +117,27 @@ namespace SFM
 	}
 
 	/*
-		Global state.
+		Global & shadow state.
+		
+		The shadow state may be updated after acquiring the lock (FIXME: use cheaper solution).
+		This should be done for all state that is set on a push-basis.
+
+		Things to remember:
+			- Currently the synthesizer itself just uses a single thread; when expanding, things will get more complicated.
+			- Pulling state (e.g. SetMOOG()) is fine, for now.
+
+		This creates a tiny additional lag between input and output, but an earlier commercial product has shown this
+		to be negligible so long as the update buffer's size isn't too large.
 	*/
 
-	static FM s_FM;
+	static std::mutex s_stateMutex;
+	static FM s_shadowState;
+	static FM s_renderState;
 
 	/*
 		MIDI-driven MOOG ladder filter setup.
+
+		The MOOG state is not included in the global state for now as it pulls the values rather than pushing them.
 	*/
 
 	static void SetMOOG()
@@ -142,19 +145,18 @@ namespace SFM
 		float testCut, testReso;
 		testCut = WinMidi_GetCutoff();
 		testReso = WinMidi_GetResonance();
-		MOOG_Cutoff(testCut*1000.f);
-		MOOG_Resonance(testReso*4.f);
+		MOOG_SetCutoff(testCut*1000.f);
+		MOOG_SetResonance(testReso*4.f);
+		MOOG_SetDrive(1.f);
 	}
 
 	/*
 		Note (voice) logic.
 	*/
 
-	SFM_INLINE unsigned AllocNote()
+	// First fit (FIXME: check lifetime, volume, pitch, just try different heuristics)
+	SFM_INLINE unsigned AllocNote(FM_Voice *voices)
 	{
-		FM_Voice *voices = s_FM.voices;
-
-		// First fit (FIXME)
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			if (false == voices[iVoice].enabled)
@@ -169,27 +171,33 @@ namespace SFM
 	// Returns voice index, if available
 	unsigned TriggerNote(unsigned midiIndex)
 	{
-		const unsigned iVoice = AllocNote();
-		if (-1 != iVoice)
-		{
-			FM_Voice &voice = s_FM.voices[iVoice];
+		std::lock_guard<std::mutex> lock(s_stateMutex);
+		FM &state = s_shadowState;
 
-			// FIXME: patch!
-			const float carrierFreq = g_midiToFreqLUT[midiIndex];
-			voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
-			const float ratio = 5.f/3.f;
-			const float CM = carrierFreq*ratio;
-			voice.modulator.Initialize(1.f /* LFO! */, CM);
+		const unsigned iVoice = AllocNote(s_shadowState.voices);
+		if (-1 == iVoice)
+			return -1;
 
-			voice.enabled = true;
-		}
+		FM_Voice &voice = state.voices[iVoice];
+
+		// FIXME: adapt to patch when it's that time
+		const float carrierFreq = g_midiToFreqLUT[midiIndex];
+		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
+		const float ratio = 5.f/3.f;
+		const float CM = carrierFreq*ratio;
+		voice.modulator.Initialize(kPI/CM /* LFO! */, CM);
+
+		voice.enabled = true;
 
 		return iVoice;
 	}
 
 	void ReleaseNote(unsigned index)
 	{
-		FM_Voice &voice = s_FM.voices[index];
+		std::lock_guard<std::mutex> lock(s_stateMutex);
+		FM &state = s_shadowState;
+
+		FM_Voice &voice = state.voices[index];
 
 		voice.enabled = false;
 	}
@@ -201,16 +209,21 @@ namespace SFM
 
 	static void Render(float *pDest, unsigned numSamples)
 	{
+		FM &state = s_renderState;
+		FM_Voice *voices = state.voices;
+
+		// FIXME: I can safely count these elsewhere now that I've got a lock
 		unsigned numVoices = 0;
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-			if (true == s_FM.voices[iVoice].enabled) ++numVoices;
+			if (true == voices[iVoice].enabled) ++numVoices;
 
+		// Render dry samples
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			float dry = 0.f;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				FM_Voice &voice = s_FM.voices[iVoice];
+				FM_Voice &voice = voices[iVoice];
 				if (true == voice.enabled)
 				{
 					dry += voice.Sample();
@@ -218,14 +231,14 @@ namespace SFM
 			}
 
 			pDest[iSample] = dry;
+			++s_sampleCount;
 		}
 
-		const float wetness = WinMidi_GetFilterMix();
-
 		// Only filter if needed
+		const float wetness = WinMidi_GetFilterMix();
 		if (0 != numVoices)
 		{
-			MOOG_Drive(1.f/numVoices);
+			MOOG_SetDrive(1.f/numVoices);
 			MOOG_Ladder(pDest, numSamples, wetness);
 		}
 	}
@@ -253,8 +266,8 @@ namespace SFM
 	static void WriteToFile(unsigned seconds)
 	{
 		// Test voice, default MOOG ladder
-		s_FM.Reset();
-		SetTestVoice(s_FM.voices[0]);
+		s_renderState.Reset();
+		SetTestVoice(s_renderState.voices[0]);
 		MOOG_Reset();
 
 		// Render a fixed amount of seconds to a buffer
@@ -292,9 +305,12 @@ bool Syntherklaas_Create()
 	CalculateSinLUT();
 	CalcMidiToFreqLUT();
 
-	// Reset FM state & MOOG ladder
-	s_FM.Reset();
+	// Reset shadow FM state & MOOG ladder
+	s_shadowState.Reset();
 	MOOG_Reset();
+
+	// Reset sample count
+	s_sampleCount = 0;
 
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
@@ -306,12 +322,6 @@ void Syntherklaas_Destroy()
 {
 	WinMidi_Stop();
 }
-
-/*
-	Mutex.
-*/
-
-static std::mutex s_mutex;
 
 /*
 	Render function for Kurt Bevacqua codebase.
@@ -329,6 +339,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		s_isReady = true;
 	}
 
+	// FIXME: fill ring buffer here!
+
 	// Check for stream starvation
 	SFM_ASSERT(true == Audio_Check_Stream());
 }
@@ -341,6 +353,11 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 {
 	const unsigned numSamplesReq = length/sizeof(float);
 	SFM_ASSERT(length == numSamplesReq*sizeof(float));
+
+	// Lock shadow state and copy it to render state (introduces a tiny bit of latency).
+	s_stateMutex.lock();
+	s_renderState = s_shadowState;
+	s_stateMutex.unlock();
 
 	const unsigned numSamples = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 	Render(static_cast<float*>(pDest), numSamples);
