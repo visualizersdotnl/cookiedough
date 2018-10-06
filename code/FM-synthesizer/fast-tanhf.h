@@ -1,9 +1,7 @@
 
 /*
-	Syntherklaas FM
-	
-	Approx. hyperbolic tangent function, taken from:
-	https://varietyofsound.wordpress.com/2011/02/14/efficient-tanh-computation-using-lamberts-continued-fraction/
+	Syntherklaas FM -- Fast approx. hyperbolic tangent function
+	Taken from: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=388650&sid=84cf3f5e70cec61f4b19c5031fe3a2d5
 */
 
 #ifndef _SFM_FAST_TANHF_H_
@@ -15,12 +13,11 @@ namespace SFM
 {
 	SFM_INLINE float fast_tanhf(float x) 
 	{
-//		return tanhf(x);
+		const float ax = fabsf(x);
+		const float x2 = x*x;
+		const float z = x * (1.f + ax + (1.05622909486427f + 0.215166815390934f*x2*ax)*x2);
 
-		const float xx = x*x;
-		const float a = (((xx*378.f)*xx + 17325.f)*xx + 135135.f)*x;
-		const float b = ((28.f*xx + 3150.f)*xx + 62370.f)*xx +135135.f;
-		return a/b;
+		return(z / ( 1.02718982441289f + fabsf(z)));
 	}
 }
 
