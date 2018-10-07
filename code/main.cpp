@@ -207,6 +207,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					newTime = timer.Get();
 					const float delta = newTime-oldTime;
 					Syntherklaas_Render(nullptr, newTime, delta*100.f);
+
+					// Relinquish thread
+					Sleep(0);
 				}
 
 				// bypass message box

@@ -93,10 +93,10 @@ namespace SFM
 		// FIXME: find a more elegant, faster way to express this (SIMD, more LUTs)
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			// Fetch dry sample, multiply by drive since I use it to mix voices
-			const float dry = drive*pDest[iSample];
+			// Fetch dry sample
+			const float dry = pDest[iSample];
 
-			dV0 = -cutGain * (fast_tanhf((dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
+			dV0 = -cutGain * (fast_tanhf((drive*dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
 			V[0] += (dV0 + dV[0]) / (2.f*kSampleRate);
 			dV[0] = dV0;
 			tV[0] = fast_tanhf(V[0]/(2.f*kVT));
@@ -116,14 +116,12 @@ namespace SFM
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
-			// Take edges off to prevent filter from clipping
-			// FIXME: LUT
-			const float rounded = atanf(V[3]);
-			
-			// Blend between dry and wet
-			pDest[iSample] = lerpf(dry, rounded, wetness);
+//			const float wetDry = smoothstepf(dry, V[3], wetness);
+			const float wetDry = lerpf(dry, V[3], wetness);
+			pDest[iSample] = wetDry;
 
-			SFM_ASSERT(false == IsNAN(pDest[iSample]));
+			// If this happens we're fucked (for now)
+			SFM_ASSERT(false == IsNAN(V[3]));
 		}
 	}
 }

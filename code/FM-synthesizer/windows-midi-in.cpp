@@ -44,7 +44,7 @@ namespace SFM
 		return index >= kUpperKey && index <= kLowerKey; 
 	}
 
-	// FIXME: this array can be smaller
+	// Array can be smaller (FIXME)
 	static unsigned s_voices[127];
 
 	static void WinMidiProc(
@@ -162,7 +162,8 @@ namespace SFM
 		}
 
 		MIDIINCAPS devCaps;
-		SFM_ASSERT(0 == midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS)));
+		const MMRESULT result = midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS));
+		SFM_ASSERT(MMSYSERR_NOERROR == result); 
 		Log(devCaps.szPname);
 
 		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
@@ -179,7 +180,7 @@ namespace SFM
 				if (MMSYSERR_NOERROR == queueRes)
 				{
 					// Reset voice indices
-					memset(s_voices, -1, 127*sizeof(unsigned));
+					memset(s_voices, 0xff, 127*sizeof(unsigned));
 
 					const auto startRes = midiInStart(s_hMidiIn);
 					if (MMSYSERR_NOERROR == startRes)

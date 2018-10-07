@@ -47,11 +47,11 @@ namespace SFM
 		API exposed to MIDI input.
 	*/
 
-	// Trigger a note (if possible) and return it's internal index
+	// Trigger a note (if possible) and return it's voice index
 	unsigned TriggerNote(unsigned midiIndex);
 
-	// Release a note using it's internal index
-	void ReleaseNote(unsigned index);
+	// Release a note using it's voice index
+	void ReleaseNote(unsigned iVoice);
 }
 
 // To feed BASS (see audio.h):

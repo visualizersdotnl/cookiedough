@@ -23,7 +23,7 @@ namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
-	const unsigned kMaxSamplesPerUpdate = 512;
+	const unsigned kMaxSamplesPerUpdate = kSampleRate/8;
 
 	// Buffer size.
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
@@ -66,6 +66,10 @@ namespace SFM
 	{
 		return (frequency*kSampleRate)/kAudibleNyquist;
 	}
+
+	// From and to dB
+	inline float AmplitudeTodB(float amplitude) { return 20.0f * log10f(amplitude); }
+	inline float dBToAmplitude(float dB)        { return powf(10.0f, dB/20.0f);     }
 
 	// For debug purposes
 	SFM_INLINE bool IsNAN(float value)

@@ -117,6 +117,7 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 		}
 	}
 	
+	BASS_SetConfig(BASS_CONFIG_BUFFER, 200); // 200ms. max.
 	BASS_GetInfo(&s_bassInf);
 
 //	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, nullptr);
@@ -133,8 +134,7 @@ bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
 
 void Audio_Start_Stream(unsigned bufLenMS)
 {
-	// VIZ_ASSERT(bufLenMS >= 5);
-	BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 0);
+//	BASS_ChannelSetAttribute(s_hStream, BASS_ATTRIB_NOBUFFER, 0.f);
 	BASS_ChannelPlay(s_hStream, TRUE);
 }
 

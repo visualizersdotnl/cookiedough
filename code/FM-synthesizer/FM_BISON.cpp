@@ -154,12 +154,14 @@ namespace SFM
 		Note (voice) logic.
 	*/
 
-	// First fit (FIXME: check lifetime, volume, pitch, just try different heuristics)
+	// - First fit (FIXME: check lifetime, volume, pitch, just try different heuristics)
+	// - Assumes being used on shadow parameters (so lock!)
 	SFM_INLINE unsigned AllocNote(FM_Voice *voices)
 	{
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			if (false == voices[iVoice].enabled)
+			const bool enabled = voices[iVoice].enabled;
+			if (false == enabled)
 			{
 				return iVoice;
 			}
@@ -171,8 +173,9 @@ namespace SFM
 	// Returns voice index, if available
 	unsigned TriggerNote(unsigned midiIndex)
 	{
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
+
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 
 		const unsigned iVoice = AllocNote(s_shadowState.voices);
 		if (-1 == iVoice)
@@ -185,21 +188,117 @@ namespace SFM
 		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
 		const float ratio = 5.f/3.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(1.f /* LFO! */, CM);
+		voice.modulator.Initialize(0.f /* LFO! */, CM);
+		voice.envelope.Start(s_sampleCount);
 
 		voice.enabled = true;
 
 		return iVoice;
 	}
 
-	void ReleaseNote(unsigned index)
+	void ReleaseNote(unsigned iVoice)
 	{
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		FM_Voice &voice = state.voices[index];
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
+		FM_Voice &voice = state.voices[iVoice];
+		voice.envelope.Stop(s_sampleCount);
+	}
 
-		voice.enabled = false;
+	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
+	//        but I can see this function have more use later on (like, not at 07:10 AM)
+	void UpdateNotes()
+	{
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
+
+		FM &state = s_shadowState;
+
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		{
+			FM_Voice &voice = state.voices[iVoice];
+			const bool enabled = voice.enabled;
+			if (true == enabled)
+			{
+				if (ADSR::kRelease == voice.envelope.m_state)
+				{
+					if (voice.envelope.m_sampleOffs == s_sampleCount)
+					{
+						voice.enabled = false;
+					}
+				}
+			}
+		}
+	}
+
+	/*
+		ADSR implementation.
+
+		FIXME:
+			- Non-linear decay and such.
+			- Ronny's idea (velocity scale).
+	*/
+
+	void ADSR::Start(unsigned sampleOffs)
+	{
+		m_sampleOffs = sampleOffs;
+		m_attack = kSampleRate/2;
+		m_decay = 0;
+		m_release = kSampleRate/4;
+		m_sustain = 1.f;
+		m_state = kAttack;
+	}
+
+	void ADSR::Stop(unsigned sampleOffs)
+	{
+		m_sampleOffs = sampleOffs;
+		m_state = kRelease;
+	}
+
+	float ADSR::Sample()
+	{
+		const unsigned sample = s_sampleCount-m_sampleOffs;
+
+		float amplitude = 0.f;
+		switch (m_state)
+		{
+		case kAttack:
+			{
+				if (sample < m_attack)
+				{
+					const float delta = m_sustain/m_attack;
+					amplitude = delta*sample;
+				}
+				else 
+				{
+					amplitude = m_sustain;
+					m_state = kSustain;
+				}
+			}
+			break;
+
+		case kDecay: // FIXME
+		case kSustain:
+			{
+				amplitude = m_sustain;
+			}
+			break;
+
+		case kRelease:
+			{
+				if (sample <= m_release)
+				{
+					const float delta = m_sustain/m_release;
+					amplitude = m_sustain - (delta*sample);
+				}
+				else 
+				{
+					amplitude = 0.f; 
+				}
+			}
+			break;
+		}
+
+		return amplitude;
 	}
 
 	/*
@@ -225,79 +324,48 @@ namespace SFM
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			if (true == voices[iVoice].enabled) ++numVoices;
 
-		// Render dry samples
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		float loudest = 0.f;
+		if (0 == numVoices)
 		{
-			float dry = 0.f;
-			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			// Silence, but still run (off) the filter
+			// Could cap. that but what's the point if we're not using any CPU
+			memset(pDest, 0, numSamples*sizeof(float));
+		}
+		else
+		{
+			// Render dry samples
+			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				FM_Voice &voice = voices[iVoice];
-				if (true == voice.enabled)
+				float dry = 0.f;
+				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 				{
-					dry += voice.Sample();
+					FM_Voice &voice = voices[iVoice];
+					if (true == voice.enabled)
+					{
+						const float sample = voice.Sample();
+						loudest = std::max<float>(fabsf(sample), loudest);
+						dry += sample;
+					}
 				}
-			}
 
-			pDest[iSample] = dry;
-			++s_sampleCount;
+				// FIXME: dirt slow
+				const float clipped = clampf(-loudest, loudest, dry);
+				pDest[iSample] = atanf(clipped);
+
+				++s_sampleCount;
+			}
 		}
 
-		// Only filter if needed
-		const float wetness = WinMidi_GetFilterMix();
 		if (0 != numVoices)
 		{
-//			MOOG_SetDrive(1.f/numVoices);
-//			MOOG_Ladder(pDest, numSamples, wetness);
+			const float wetness = WinMidi_GetFilterMix();
+			MOOG_SetDrive(1.f/numVoices);
+			MOOG_Ladder(pDest, numSamples, wetness);
 		}
 	}
 
 	// FIXME: hack for now to initialize an indefinite voice and start the stream.
 	static bool s_isReady = false;
-
-	/*
-		Simple RAW waveform writer.
-		FIXME?
-	*/
-
-	static void SetTestVoice(FM_Voice &voice)
-	{
-		// Define single voice (indefinite)
-		const float carrierFreq = 440.f;
-		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
-		const float ratio = 5.f/3.f;
-		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(1.f /* LFO! */, CM);
-
-		voice.enabled = true;
-	}
-
-	static void WriteToFile(unsigned seconds)
-	{
-		// Test voice, default MOOG ladder
-		s_renderState.Reset();
-		SetTestVoice(s_renderState.voices[0]);
-		MOOG_Reset();
-
-		// Render a fixed amount of seconds to a buffer
-		const unsigned numSamples = seconds*kSampleRate;
-		float *buffer = new float[numSamples];
-
-		const float timeStep = 1.f/kSampleRate;
-		float time = 0.f;
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		{
-			Render(buffer+iSample, 1);
-			time += timeStep;
-		}
-
-		// And flush (no error checking)
-		FILE* file;
-		file = fopen("fm_test.raw", "wb");
-		fwrite(buffer, sizeof(float), numSamples, file);
-		fclose(file);
-
-		delete buffer;
-	}
 
 }; // namespace SFM
 
@@ -338,20 +406,20 @@ void Syntherklaas_Destroy()
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
-	// Update MOOG filter parameters
-	SetMOOG();
-
 	if (false == s_isReady)
 	{
-//		WriteToFile(4.f);
-
 		// Start blasting!
-		float bufMS = 1000.f*((float) kRingBufferSize / kSampleRate);
-		Audio_Start_Stream(unsigned(ceilf(bufMS)) + 1);
+
+//		const float bufMS = 1000.f*((float) kRingBufferSize / kSampleRate);
+//		Audio_Start_Stream(unsigned(ceilf(bufMS+1.f)));
+
+		Audio_Start_Stream(0);
+
 		s_isReady = true;
 	}
 
-	BASS_Update(5);
+	// Update (shadow) voices (or notes if you will)
+	UpdateNotes();
 
 	// Check for stream starvation
 	SFM_ASSERT(true == Audio_Check_Stream());
@@ -366,8 +434,17 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	unsigned numSamplesReq = length/sizeof(float);
 	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
+//	float pitch = CalcSinPitch(440.f);
+//	float *pWrite = (float *) pDest;
+//	for (auto iSample = 0; iSample < numSamplesReq; ++iSample)
+//	{
+//		pWrite[iSample] = SFM::oscSine(s_sampleCount++ * pitch);
+//	}
+
+	SetMOOG(); // Update MOOG filter parameters (pull-only!)
 	Render((float*) pDest, numSamplesReq);
+	
 	s_sampleOutCount += numSamplesReq;
 
-	return length;
+	return numSamplesReq*sizeof(float);
 }

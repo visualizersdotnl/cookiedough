@@ -51,8 +51,12 @@ inline bool comparef(float a, float b)
 // GLSL-style clamp.
 inline float clampf(float min, float max, float value)
 {
-	if (value < min) value = min;
-	else if (value > max) value = max;
+	if (value < min)
+		return min;
+
+	if (value > max)
+		return max;
+
 	return value;
 }
 

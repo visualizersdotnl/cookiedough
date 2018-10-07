@@ -1,5 +1,4 @@
 
-
 /*
 	Syntherklaas FM -- Global state PODs.
 */
@@ -24,6 +23,35 @@ namespace SFM
 
 		void Initialize(float index, float frequency);
 		float Sample(const float *pEnv);
+	};
+
+	/*
+		ADSR envelope.
+	*/
+
+	struct ADSR
+	{
+		unsigned m_sampleOffs;
+
+		// In number of samples
+		unsigned m_attack;
+		unsigned m_decay;
+		unsigned m_release;
+
+		// [0..1]
+		float m_sustain;
+
+		enum State
+		{
+			kAttack,
+			kDecay,
+			kSustain,
+			kRelease
+		} m_state;
+
+		void Start(unsigned sampleOffs);
+		void Stop(unsigned sampleOffs);
+		float Sample(); // Sets 'enabled' to false if voice is released by ADSR.
 	};
 
 	/*
@@ -52,12 +80,16 @@ namespace SFM
 
 		FM_Carrier carrier;
 		FM_Modulator modulator;
+		ADSR envelope;
 
+		// FIXME: idea: pass global envelope here, like Ronny said, along with operation!
 		float Sample()
 		{
 			// FIXME: simplest algorithm there is, expand!
-			float modulation = modulator.Sample(nullptr);
-			return carrier.Sample(modulation);
+			const float modulation = modulator.Sample(nullptr);
+			const float ampEnv = envelope.Sample();
+			const float sample = carrier.Sample(modulation)*ampEnv;
+			return sample;
 		}
 	};
 
