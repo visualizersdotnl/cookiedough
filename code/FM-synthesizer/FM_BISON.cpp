@@ -17,12 +17,12 @@
 #include <atomic>
 
 #include "FM_BISON.h"
-#include "synth-MOOG-ladder.h"
 #include "synth-LFOs.h"
 #include "synth-midi.h"
 #include "synth-oscillators.h"
 #include "synth-state.h"
-#include "synth-ringbuffer.h"
+#include "synth-MOOG-ladder.h"
+// #include "synth-ringbuffer.h"
 
 // Win32 MIDI input (specialized for the Oxygen 49)
 #include "windows-midi-in.h"
@@ -124,7 +124,7 @@ namespace SFM
 
 		Things to remember:
 			- Currently the synthesizer itself just uses a single thread; when expanding, things will get more complicated.
-			- Pulling state (e.g. SetMOOG()) is fine, for now.
+			- Pulling state is fine, for now.
 
 		This creates a tiny additional lag between input and output, but an earlier commercial product has shown this
 		to be negligible so long as the update buffer's size isn't too large.
@@ -135,19 +135,19 @@ namespace SFM
 	static FM s_renderState;
 
 	/*
-		MIDI-driven MOOG ladder filter setup.
-
-		The MOOG state is not included in the global state for now as it pulls the values rather than pushing them.
+		MIDI-driven filter setup.
+		Filter state is not included in the global state for now as it pulls the values rather than pushing them.
 	*/
 
-	static void SetMOOG()
+	static void UpdateFilterSettings()
 	{
 		float testCut, testReso;
 		testCut = WinMidi_GetCutoff();
 		testReso = WinMidi_GetResonance();
-		MOOG_SetCutoff(testCut*1000.f);
-		MOOG_SetResonance(testReso*4.f);
-		MOOG_SetDrive(1.f);
+
+		MOOG::SetCutoff(testCut*1000.f);
+		MOOG::SetResonance(testReso*4.f);
+		MOOG::SetDrive(1.f);
 	}
 
 	/*
@@ -186,9 +186,9 @@ namespace SFM
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
 		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
-		const float ratio = 5.f/3.f;
+		const float ratio = 4.f/1.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(0.f /* LFO! */, CM);
+		voice.modulator.Initialize(1.f /* LFO! */, CM); // These parameters mean a lot
 		voice.envelope.Start(s_sampleCount);
 
 		voice.enabled = true;
@@ -221,7 +221,7 @@ namespace SFM
 			{
 				if (ADSR::kRelease == voice.envelope.m_state)
 				{
-					if (voice.envelope.m_sampleOffs+voice.envelope.m_release <= s_sampleCount)
+					if (voice.envelope.m_sampleOffs+voice.envelope.m_release < s_sampleCount)
 					{
 						voice.enabled = false;
 					}
@@ -234,8 +234,10 @@ namespace SFM
 		ADSR implementation.
 
 		FIXME:
+			- Define MIDI parameters.
 			- Non-linear decay and such.
 			- Ronny's idea (velocity time scale).
+			- Also Ronny: make these settings global and use a thin copy for each voice.
 	*/
 
 	void ADSR::Start(unsigned sampleOffs)
@@ -304,10 +306,10 @@ namespace SFM
 
 	/*
 		Render function.
-		FIXME: crude impl., optimize.
+		FIXME: crude and weird impl., optimize.
 	*/
 
-	SFM_INLINE void CopyShadowState()
+	SFM_INLINE void CopyShadowToRenderState()
 	{
 		std::lock_guard<std::shared_mutex> stateCopyLock(s_stateMutex);
 		s_renderState = s_shadowState;
@@ -315,7 +317,7 @@ namespace SFM
 
 	static void Render(float *pDest, unsigned numSamples)
 	{
-		CopyShadowState();	
+		CopyShadowToRenderState();	
 
 		FM &state = s_renderState;
 		FM_Voice *voices = state.voices;
@@ -325,11 +327,12 @@ namespace SFM
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			if (true == voices[iVoice].enabled) ++numVoices;
 
-		float loudest = 0.f;
+		// FIXME: to run this over the entire range makes no sense, but it sounds OK?
+		float loudness = 0.f;
+
 		if (0 == numVoices)
 		{
 			// Silence, but still run (off) the filter
-			// Could cap. that but what's the point if we're not using any CPU
 			memset(pDest, 0, numSamples*sizeof(float));
 		}
 		else
@@ -344,23 +347,21 @@ namespace SFM
 					if (true == voice.enabled)
 					{
 						const float sample = voice.Sample();
-						loudest = std::max<float>(fabsf(sample), loudest);
+						loudness = std::max<float>(fabsf(sample), loudness);
 						dry += sample;
 					}
 				}
 
-				// FIXME: dirt slow
-				const float clipped = clampf(-loudest, loudest, dry);
-				const float mixed = pDest[iSample] = atanf(clipped);
-				SFM_ASSERT(false == IsNAN(mixed));
+				const float clipped = clampf(-loudness, loudness, dry);
+				pDest[iSample] = atanf(clipped); // FIXME: atanf() LUT
 
 				++s_sampleCount;
 			}
-		}
 
-		const float wetness = WinMidi_GetFilterMix();
-//		MOOG_SetDrive(1.f);
-		MOOG_Ladder(pDest, numSamples, wetness);
+			const float wetness = WinMidi_GetFilterMix();
+			MOOG::SetDrive(1.f/numVoices);
+			MOOG::Filter(pDest, numSamples, wetness);
+		}
 	}
 
 	// FIXME: hack for now to initialize an indefinite voice and start the stream.
@@ -380,9 +381,9 @@ bool Syntherklaas_Create()
 	CalculateSinLUT();
 	CalcMidiToFreqLUT();
 
-	// Reset shadow FM state & MOOG ladder
+	// Reset shadow FM state & filter(s)
 	s_shadowState.Reset();
-	MOOG_Reset();
+	MOOG::Reset();
 
 	// Reset sample count
 	s_sampleCount = 0;
@@ -408,17 +409,9 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	if (false == s_isReady)
 	{
 		// Start blasting!
-
-//		const float bufMS = 1000.f*((float) kRingBufferSize / kSampleRate);
-//		Audio_Start_Stream(unsigned(ceilf(bufMS+1.f)));
-
 		Audio_Start_Stream(0);
-
 		s_isReady = true;
 	}
-
-	// Update (shadow) voices (or notes if you will)
-	UpdateNotes();
 
 	// Check for stream starvation
 	SFM_ASSERT(true == Audio_Check_Stream());
@@ -440,9 +433,10 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 //		pWrite[iSample] = SFM::oscSine(s_sampleCount++ * pitch);
 //	}
 
-	SetMOOG(); // Update MOOG filter parameters (pull-only!)
+	// FIXME: move rendering to Syntherklaas_Render()
+	UpdateNotes(); // Update (shadow) voices (or notes if you will)
+	UpdateFilterSettings(); // Pull-only!
 	Render((float*) pDest, numSamplesReq);
-	
 	s_sampleOutCount += numSamplesReq;
 
 	return numSamplesReq*sizeof(float);

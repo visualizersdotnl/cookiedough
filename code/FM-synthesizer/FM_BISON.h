@@ -15,14 +15,21 @@
 		- Dennis de Bruijn
 		- Zden Hlinka
 
+	Notes:
+	
 	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
 	So the style will look a bit dated here and there.
 
+	Quite some stuff is implemented straight in header files, and basically only meant to be used
+	by the synthesizer core.
+
 	Priority / Bugs:
-		- fix ADSR on voices (uses flexible ADSR based on velocity)
-		- Use ring buffer to feed
+		- There's a bug in the MOOG filter, seems to show it self when you let go of an note with high resonance
+		- Dry notes "click", that's not great
+		- Fix ADSR
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
+		- Use ring buffer to feed
 
 	To do:
 		- Normalize volumes as we go?

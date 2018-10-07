@@ -60,11 +60,11 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
-			const float delta = 1.f;
+			const float delta = 0.1f*k2PI;
 			m_timeStamp = timeStamp;
 				
 			const float newValue = iValue/127.f;
-			m_value = lerpf(m_value, newValue, delta);
+			m_value = smoothstepf(m_value, newValue, delta);
 		}
 
 		float Get() const
