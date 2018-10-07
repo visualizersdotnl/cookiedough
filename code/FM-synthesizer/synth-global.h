@@ -74,7 +74,8 @@ namespace SFM
 	// For debug purposes
 	SFM_INLINE bool IsNAN(float value)
 	{
-		return value != value;
+		return std::isnan(value);
+//		return value != value;
 	}
 }
 

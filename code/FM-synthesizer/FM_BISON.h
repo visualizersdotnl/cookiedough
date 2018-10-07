@@ -19,9 +19,9 @@
 	and in part supplemented by hardware components if that so happens to be a good idea.
 	So the style will look a bit dated here and there.
 
-	Priority / /Bugs:
+	Priority / Bugs:
+		- fix ADSR on voices (uses flexible ADSR based on velocity)
 		- Use ring buffer to feed
-		- ADSR on voices (uses flexible ADSR based on velocity)
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 
 	To do:

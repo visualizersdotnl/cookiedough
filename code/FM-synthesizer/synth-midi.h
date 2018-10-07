@@ -44,7 +44,6 @@ namespace SFM
 	};
 
 	/*
-		Sigmoid curve for smoothed MIDI inputs (I've been told the maker of VIRUS synthesizers held a patent).
 		FIXME: use the Maarten van Strien method; 64 samples to go from A to B, always?
 	*/
 
@@ -61,11 +60,11 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
-			const float delta = k2PI*0.1f; // FIXME: this is a lost cause, maybe this sounds nice for now
+			const float delta = 1.f;
 			m_timeStamp = timeStamp;
 				
 			const float newValue = iValue/127.f;
-			m_value = smoothstepf(m_value, newValue, delta);
+			m_value = lerpf(m_value, newValue, delta);
 		}
 
 		float Get() const

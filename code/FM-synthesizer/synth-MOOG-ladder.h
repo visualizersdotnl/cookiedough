@@ -116,8 +116,9 @@ namespace SFM
 			dV[3] = dV3;
 			tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
-//			const float wetDry = smoothstepf(dry, V[3], wetness);
-			const float wetDry = lerpf(dry, V[3], wetness);
+			// Mix with sigmoid curve (hello VIRUS!)
+			const float wetDry = smoothstepf(dry, V[3], wetness);
+
 			pDest[iSample] = wetDry;
 
 			// If this happens we're fucked (for now)

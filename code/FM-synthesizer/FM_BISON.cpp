@@ -221,7 +221,7 @@ namespace SFM
 			{
 				if (ADSR::kRelease == voice.envelope.m_state)
 				{
-					if (voice.envelope.m_sampleOffs == s_sampleCount)
+					if (voice.envelope.m_sampleOffs+voice.envelope.m_release <= s_sampleCount)
 					{
 						voice.enabled = false;
 					}
@@ -235,7 +235,7 @@ namespace SFM
 
 		FIXME:
 			- Non-linear decay and such.
-			- Ronny's idea (velocity scale).
+			- Ronny's idea (velocity time scale).
 	*/
 
 	void ADSR::Start(unsigned sampleOffs)
@@ -244,12 +244,15 @@ namespace SFM
 		m_attack = kSampleRate/2;
 		m_decay = 0;
 		m_release = kSampleRate/4;
-		m_sustain = 1.f;
+		m_sustain = 0.8f;
 		m_state = kAttack;
 	}
 
 	void ADSR::Stop(unsigned sampleOffs)
 	{
+		// Always use current amplitude for release
+		m_sustain = ADSR::Sample();
+
 		m_sampleOffs = sampleOffs;
 		m_state = kRelease;
 	}
@@ -278,14 +281,12 @@ namespace SFM
 
 		case kDecay: // FIXME
 		case kSustain:
-			{
-				amplitude = m_sustain;
-			}
+			amplitude = m_sustain;			
 			break;
 
 		case kRelease:
 			{
-				if (sample <= m_release)
+				if (sample < m_release)
 				{
 					const float delta = m_sustain/m_release;
 					amplitude = m_sustain - (delta*sample);
@@ -350,18 +351,16 @@ namespace SFM
 
 				// FIXME: dirt slow
 				const float clipped = clampf(-loudest, loudest, dry);
-				pDest[iSample] = atanf(clipped);
+				const float mixed = pDest[iSample] = atanf(clipped);
+				SFM_ASSERT(false == IsNAN(mixed));
 
 				++s_sampleCount;
 			}
 		}
 
-		if (0 != numVoices)
-		{
-			const float wetness = WinMidi_GetFilterMix();
-			MOOG_SetDrive(1.f/numVoices);
-			MOOG_Ladder(pDest, numSamples, wetness);
-		}
+		const float wetness = WinMidi_GetFilterMix();
+//		MOOG_SetDrive(1.f);
+		MOOG_Ladder(pDest, numSamples, wetness);
 	}
 
 	// FIXME: hack for now to initialize an indefinite voice and start the stream.

@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Global state PODs.
+
+	** Important note: since everything is copied for now, you can't have persistent state **
 */
 
 #ifndef _SFM_SYNTH_STATE_H_
@@ -26,35 +28,6 @@ namespace SFM
 	};
 
 	/*
-		ADSR envelope.
-	*/
-
-	struct ADSR
-	{
-		unsigned m_sampleOffs;
-
-		// In number of samples
-		unsigned m_attack;
-		unsigned m_decay;
-		unsigned m_release;
-
-		// [0..1]
-		float m_sustain;
-
-		enum State
-		{
-			kAttack,
-			kDecay,
-			kSustain,
-			kRelease
-		} m_state;
-
-		void Start(unsigned sampleOffs);
-		void Stop(unsigned sampleOffs);
-		float Sample(); // Sets 'enabled' to false if voice is released by ADSR.
-	};
-
-	/*
 		FM carrier.
 	*/
 
@@ -68,6 +41,35 @@ namespace SFM
 
 		void Initialize(Waveform form, float amplitude, float frequency);
 		float Sample(float modulation);
+	};
+
+	/*
+		ADSR envelope.
+	*/
+
+	struct ADSR
+	{
+		unsigned m_sampleOffs;
+
+		// In number of samples
+		unsigned m_attack;
+		unsigned m_decay;
+		unsigned m_release;
+
+		// Desired sustain [0..1]
+		float m_sustain;
+
+		enum State
+		{
+			kAttack,
+			kDecay,
+			kSustain,
+			kRelease
+		} m_state;
+
+		void Start(unsigned sampleOffs);
+		void Stop(unsigned sampleOffs);
+		float Sample(); // Sets 'enabled' to false if voice is released by ADSR.
 	};
 
 	/*
