@@ -9,9 +9,8 @@
 // Oh MSVC and your well-intentioned madness!
 #define _CRT_SECURE_NO_WARNINGS
 
-// FIXME: 
-//	- easily interchangeable with POSIX-variants or straight assembler, though so complication
-//	  may arise with all the different (system/API) threads calling
+// Easily interchangeable with POSIX-variants or straight assembler, though so complication
+// may arise with all the different (system/API) threads calling
 #include <mutex>
 #include <shared_mutex>
 #include <atomic>
@@ -30,14 +29,11 @@
 namespace SFM
 {
 	/*
-		Global sample count.
-
-		Each timed object stores an offset when it is activated and uses this global acount to calculate the delta, which is relatively cheap
-		and keeps the concept time largely out of the floating point realm.
+		Global sample counts.
 
 		FIXME: 
-			- Test/account for wrapping!
-			- I'm using it for buffering now too (FIXME).
+			- Account for wrapping.
+			- Atomic can be dropped later.
 	*/
 
 	static std::atomic<unsigned> s_sampleCount = 0;
@@ -185,7 +181,7 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.carrier.Initialize(kDirtySaw, 1.f, carrierFreq);
+		voice.carrier.Initialize(kSaw, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f/1.f;
 		const float CM = carrierFreq*ratio;
 		voice.modulator.Initialize(1.f /* LFO! */, CM); // These parameters mean a lot
@@ -234,10 +230,10 @@ namespace SFM
 		ADSR implementation.
 
 		FIXME:
-			- Define MIDI parameters.
-			- Non-linear decay and such.
-			- Ronny's idea (velocity time scale).
-			- Also Ronny: make these settings global and use a thin copy for each voice.
+			- MIDI parameters
+			- Non-linear slopes
+			- Ronny's idea (note velocity scales attack and release time and possibly curvature)
+			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
 	*/
 
 	void ADSR::Start(unsigned sampleOffs)
@@ -426,6 +422,7 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	unsigned numSamplesReq = length/sizeof(float);
 	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
+//	Little test to see if this function is working using BASS' current configuration.
 //	float pitch = CalcSinPitch(440.f);
 //	float *pWrite = (float *) pDest;
 //	for (auto iSample = 0; iSample < numSamplesReq; ++iSample)

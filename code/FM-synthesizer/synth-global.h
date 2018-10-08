@@ -2,7 +2,9 @@
 /*
 	Syntherklaas FM -- Global includes, constants & utility functions.
 
-	IMPORTANT: all of these are tweaked to be used with the BASS hack in it's host codebase.
+	Dependencies on Bevacqua (as far as I know):
+		- Std3DMath
+		- Macros
 */
 
 #ifndef _SFM_SYNTH_GLOBAL_H_
@@ -11,13 +13,14 @@
 // FIXME: only necessary when depending on the Kurt Bevacqua engine as our base
 #include "../main.h"
 
-// Rename existing mechanisms:
+// Alias Bevacqua existing mechanisms (FIXME: adapt target platform's)
 #define SFM_INLINE VIZ_INLINE
 #define SFM_ASSERT VIZ_ASSERT
 
-#include "sinus-LUT.h"
 #include "synth-log.h"
 #include "synth-error.h"
+#include "synth-fast-math.h"
+#include "sinus-LUT.h"
 
 namespace SFM
 {
@@ -38,11 +41,12 @@ namespace SFM
 
 	// Max. number of voices (FIXME: more!)
 	const unsigned kMaxVoices = 6;
+	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
 	const unsigned kPeriodLength = kSinTabSize;
 
-	// Useful when using actual radians with sinus LUT;
+	// Useful when mixing sinus LUT & angular phase.
 	const float kTabToRad = (1.f/k2PI)*kPeriodLength;
 
 	/*

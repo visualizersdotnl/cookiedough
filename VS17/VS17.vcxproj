@@ -47,6 +47,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-error.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LFOs.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-MOOG-ladder.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
@@ -103,7 +104,7 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
-    <ClInclude Include="..\code\FM-synthesizer\fast-tanhf.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h" />
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />

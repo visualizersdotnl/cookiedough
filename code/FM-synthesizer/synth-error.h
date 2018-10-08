@@ -26,7 +26,7 @@ namespace SFM
 			break; // FIXME
 
 		case kFatal:
-			SetLastError((nullptr == message) ? "Syntherklaas FM unspecified fatal error" : message);
+			SetLastError((nullptr == message) ? "Syntherklaas FM: unspecified fatal error" : message);
 			break;
 
 		default:
@@ -36,4 +36,3 @@ namespace SFM
 };
 
 #endif // _SFM_SYNTH_ERROR_H_
-

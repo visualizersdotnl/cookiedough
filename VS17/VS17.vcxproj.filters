@@ -148,6 +148,9 @@
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-MOOG-ladder.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -276,9 +279,6 @@
     <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
       <Filter>/temporary!</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\fast-tanhf.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
@@ -317,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="..\code\util.h">
       <Filter>/code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

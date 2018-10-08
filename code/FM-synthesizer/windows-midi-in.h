@@ -14,6 +14,7 @@ namespace SFM
 	bool WinMidi_Start(unsigned iDevice);
 	void WinMidi_Stop();
 
+	// Pull-style values
 	float WinMidi_GetCutoff();
 	float WinMidi_GetResonance();
 	float WinMidi_GetFilterMix();

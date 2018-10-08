@@ -67,8 +67,7 @@ namespace SFM
 			unsigned controlIdx = MsgParam1(dwParam1);
 			unsigned controlVal = MsgParam2(dwParam1);
 
-			// FIXME: debug string only
-			
+			// Dumps incoming events, very useful
 			// static char buffer[128];
 			// sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
 			// Log(buffer);
@@ -179,7 +178,7 @@ namespace SFM
 				const auto queueRes = midiInAddBuffer(s_hMidiIn, &s_header, sizeof(MIDIHDR));
 				if (MMSYSERR_NOERROR == queueRes)
 				{
-					// Reset voice indices
+					// Reset voice indices (to -1)
 					memset(s_voices, 0xff, 127*sizeof(unsigned));
 
 					const auto startRes = midiInStart(s_hMidiIn);
@@ -194,7 +193,7 @@ namespace SFM
 		return false;
 	}
 
-	void WinMidi_Stop(/* Only one device at a time for now (FIXME) */)
+	void WinMidi_Stop(/* Only one device (#0) at a time for now (FIXME) */)
 	{
 		if (NULL != s_hMidiIn)
 		{
@@ -208,7 +207,8 @@ namespace SFM
 		s_hMidiIn = NULL;
 	}
 
-	float WinMidi_GetCutoff() { return s_cutoff.Get(); }
+	// Pull-style values
+	float WinMidi_GetCutoff()    { return s_cutoff.Get();    }
 	float WinMidi_GetResonance() { return s_resonance.Get(); }
 	float WinMidi_GetFilterMix() { return s_filterMix.Get(); }
 }

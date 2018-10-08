@@ -6,33 +6,30 @@
 	This is intended to be a powerful yet relatively simple FM synthesizer core.
 
 	I have to thank the following people for helping me with their knowledge, ideas and experience:
-		- Ronny Pries
-		- Tammo Hinrichs
-		- Alex Bartholomeus
 		- Pieter v/d Meer
-		- Thorsten Ørts
+		- Ronny Pries (Ronny Pries/Farbrausch)
+		- Tammo Hinrichs (KB/Farbarausch)
+		- Alex Bartholomeus (Deadline/Superstition)
+		- Thorsten Ørts (Thorsten/Purple)
 		- Stijn Haring-Kuipers
-		- Dennis de Bruijn
-		- Zden Hlinka
+		- Zden Hlinka (Zden/Satori)
 
 	Notes:
 	
-	It's intended to be portable to embedded platforms in plain C (which it isn't now but close enough), 
+	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
+	
 	So the style will look a bit dated here and there.
 
-	Quite some stuff is implemented straight in header files, and basically only meant to be used
-	by the synthesizer core.
-
 	Priority / Bugs:
-		- There's a bug in the MOOG filter, seems to show it self when you let go of an note with high resonance
+		- There's a bug in the MOOG filter where a detuned sound get stucks when using high resonance values whislt releasing a note (though you can hear it before)
 		- Dry notes "click", that's not great
-		- Fix ADSR
+		- Finish up ADSR (see impl.)
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
 
 	To do:
-		- Normalize volumes as we go?
+		- Adjust gain as we go?
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way.
 		- Optimization, FIXMEs, interpolation, keeping tracking NAN bugs.
@@ -51,7 +48,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta);
 namespace SFM
 {
 	/*
-		API exposed to MIDI input.
+		API exposed to (MIDI) input.
 	*/
 
 	// Trigger a note (if possible) and return it's voice index
@@ -61,7 +58,7 @@ namespace SFM
 	void ReleaseNote(unsigned iVoice);
 }
 
-// To feed BASS (see audio.h):
+// To feed BASS (see Bevacqua's audio.h):
 #include "../audio.h"
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser);
 
