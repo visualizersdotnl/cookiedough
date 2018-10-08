@@ -46,7 +46,7 @@ namespace SFM
 
 		void SetResonance(float resonance)
 		{
-			SFM_ASSERT(resonance >= 0.f && resonance <= 4.f);
+			SFM_ASSERT(resonance >= 0.f && resonance <= kPI);
 			s_resonance = resonance;
 		}
 

@@ -14,7 +14,7 @@ namespace SFM
 	namespace MOOG
 	{
 		void SetCutoff(float cutoff);
-		void SetResonance(float resonance);
+		void SetResonance(float resonance); // Feed it [0..PI] (higher will cause sticky detuned feedback).
 		void SetDrive(float drive);
 
 		void ResetParameters();

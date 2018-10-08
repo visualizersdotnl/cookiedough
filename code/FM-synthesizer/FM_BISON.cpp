@@ -142,7 +142,7 @@ namespace SFM
 		testReso = WinMidi_GetResonance();
 
 		MOOG::SetCutoff(testCut*1000.f);
-		MOOG::SetResonance(testReso*4.f);
+		MOOG::SetResonance(testReso*kPI);
 		MOOG::SetDrive(1.f);
 	}
 
@@ -181,10 +181,10 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.carrier.Initialize(kSaw, kMaxVoiceAmplitude, carrierFreq);
+		voice.carrier.Initialize(kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f/1.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(1.f /* LFO! */, CM); // These parameters mean a lot
+		voice.modulator.Initialize(2.f /* LFO! */, CM); // These parameters mean a lot
 		voice.envelope.Start(s_sampleCount);
 
 		voice.enabled = true;
@@ -353,11 +353,11 @@ namespace SFM
 
 				++s_sampleCount;
 			}
-
-			const float wetness = WinMidi_GetFilterMix();
-			MOOG::SetDrive(1.f/numVoices);
-			MOOG::Filter(pDest, numSamples, wetness);
 		}
+
+		const float wetness = WinMidi_GetFilterMix();
+		MOOG::SetDrive(1.f);
+		MOOG::Filter(pDest, numSamples, wetness);
 	}
 
 	// FIXME: hack for now to initialize an indefinite voice and start the stream.

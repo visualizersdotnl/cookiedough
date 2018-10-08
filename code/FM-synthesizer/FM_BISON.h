@@ -22,11 +22,10 @@
 	So the style will look a bit dated here and there.
 
 	Priority / Bugs:
-		- There's a bug in the MOOG filter where a detuned sound get stucks when using high resonance values whislt releasing a note (though you can hear it before)
-		- Dry notes "click", that's not great
 		- Finish up ADSR (see impl.)
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
+		- Implement a master rotary or fader to scale voice amplitude	
 
 	To do:
 		- Adjust gain as we go?
