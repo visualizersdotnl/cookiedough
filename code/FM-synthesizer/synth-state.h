@@ -102,6 +102,7 @@ namespace SFM
 	struct FM
 	{
 		FM_Voice voices[kMaxVoices];
+		unsigned active;
 
 		void Reset()
 		{
@@ -109,6 +110,8 @@ namespace SFM
 			{
 				voices[iVoice].enabled = false;
 			}
+
+			active = 0;
 		}
 
 	};

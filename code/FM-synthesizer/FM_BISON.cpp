@@ -177,6 +177,8 @@ namespace SFM
 		if (-1 == iVoice)
 			return -1;
 
+		++state.active;
+
 		FM_Voice &voice = state.voices[iVoice];
 
 		// FIXME: adapt to patch when it's that time
@@ -220,6 +222,7 @@ namespace SFM
 					if (voice.envelope.m_sampleOffs+voice.envelope.m_release < s_sampleCount)
 					{
 						voice.enabled = false;
+						--state.active;
 					}
 				}
 			}
@@ -318,10 +321,7 @@ namespace SFM
 		FM &state = s_renderState;
 		FM_Voice *voices = state.voices;
 
-		// FIXME: I can safely count these elsewhere now that I've got a lock
-		unsigned numVoices = 0;
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-			if (true == voices[iVoice].enabled) ++numVoices;
+		const unsigned numVoices = state.active;
 
 		if (0 == numVoices)
 		{
