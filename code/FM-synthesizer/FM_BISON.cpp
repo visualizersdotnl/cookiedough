@@ -181,10 +181,10 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.carrier.Initialize(kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
+		voice.carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f/1.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(2.f /* LFO! */, CM); // These parameters mean a lot
+		voice.modulator.Initialize(0.f /* LFO! */, CM); // These parameters mean a lot
 		voice.envelope.Start(s_sampleCount);
 
 		voice.enabled = true;
@@ -323,9 +323,6 @@ namespace SFM
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			if (true == voices[iVoice].enabled) ++numVoices;
 
-		// FIXME: to run this over the entire range makes no sense, but it sounds OK?
-		float loudness = 0.f;
-
 		if (0 == numVoices)
 		{
 			// Silence, but still run (off) the filter
@@ -343,12 +340,11 @@ namespace SFM
 					if (true == voice.enabled)
 					{
 						const float sample = voice.Sample();
-						loudness = std::max<float>(fabsf(sample), loudness);
 						dry += sample;
 					}
 				}
 
-				const float clipped = clampf(-loudness, loudness, dry);
+				const float clipped = clampf(-1.f, 1.f, dry);
 				pDest[iSample] = atanf(clipped); // FIXME: atanf() LUT
 
 				++s_sampleCount;
@@ -356,7 +352,7 @@ namespace SFM
 		}
 
 		const float wetness = WinMidi_GetFilterMix();
-		MOOG::SetDrive(1.f);
+		MOOG::SetDrive(1.f - (numVoices*0.1f)); // FIXME: use constant for dB scale?
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 

@@ -84,9 +84,9 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				// Fetch dry sample
-				const float dry = pDest[iSample];
+				const float dry = pDest[iSample]*drive;
 
-				dV0 = -cutGain * (fast_tanhf((drive*dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
+				dV0 = -cutGain * (fast_tanhf((dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
 				V[0] += (dV0 + dV[0]) / (2.f*kSampleRate);
 				dV[0] = dV0;
 				tV[0] = fast_tanhf(V[0]/(2.f*kVT));
@@ -107,7 +107,7 @@ namespace SFM
 				tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
 				// Round off and mix with dry (FIXME: atanf() LUT)
-				pDest[iSample] = lerpf(dry, atanf(V[3]), wetness); 
+				pDest[iSample] = lerpf(dry, V[3], wetness); 
 
 				// If this happens we're fucked
 				SFM_ASSERT(false == IsNAN(V[3]));

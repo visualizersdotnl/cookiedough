@@ -28,6 +28,7 @@
 		- Implement a master rotary or fader to scale voice amplitude	
 
 	To do:
+		- Take another gander at oscillators (clean ones)
 		- Adjust gain as we go?
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way.

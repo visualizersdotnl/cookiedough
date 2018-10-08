@@ -40,7 +40,7 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHZ, kNyquist);
 
 	// Max. number of voices (FIXME: more!)
-	const unsigned kMaxVoices = 6;
+	const unsigned kMaxVoices = 8;
 	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
