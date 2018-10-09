@@ -27,6 +27,6 @@ makes everything sound like it's on too much Valium.
 
 - A master "volume" rotary or fader that can be seen as a 'drive' on the dry sample mixing.
 
-- Key feature: VORTICITY DAMPENING. It's a relatively simple concept but I'll have to find a fun and useful way to make it into a simple effective sound modifier.
+- Key feature: VORTICITY DAMPENING. It's a relatively simple concept but I'll have to find a fun and useful way to make it into a simple effective sound modifier. See:	https://en.wikipedia.org/wiki/Vortex_shedding
 
 This feature set is about 70% complete at time of writing.
