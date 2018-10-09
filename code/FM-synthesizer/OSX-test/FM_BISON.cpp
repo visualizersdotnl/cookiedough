@@ -2,8 +2,6 @@
 /*
 	Syntherklaas FM presents 'FM. BISON'
 	(C) syntherklaas.org, a subsidiary of visualizers.nl
-
-	OSX HACK!
 */
 
 // Oh MSVC and your well-intentioned madness!

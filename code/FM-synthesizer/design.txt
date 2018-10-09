@@ -1,16 +1,22 @@
 
-FM. BISON (by syntherklaas.org)
-Basic design.
 
-For a first release to be ported to VST, I'm picking a very simple design:
+FM. BISON (by syntherklaas.org and the friendly folks who made Street Fighter ][)
+
+For a first release to be ported to VST for alpha testing, I'm picking a very simple design:
 
 - 1 patch at a time with limited polyphony (8, but can and should be ramped up to at least 16).
+
 - 1 global ADSR drives how all notes are played; as with any controls in the synthesizer they will be updated or pulled per frame and thus there is a slight but undetectable latency. The ADSR will have non-linear properties
 and the length of the attack phase (and likely release) will be scaled according to the note velocity.
+
 - 2 LFOs (that either have frequencies below the audible spectrum i.e. 20Hz or are also permitted in the
   sonic range) drive the amplitude of a voice and it's FM depth (or 'index' if you will) respectively.
-  * They are optional. *
+  ** They are optional **
+
 - The LFOs will initially be of the BLIT saw type, to take a little bit of that roundness out of the sound.
+
 - After a simple dry mixing phase samples are fed to a MOOG ladder filter (which has cutoff and frequency)
   and then, per sample, an interpolation is done between that dry state and filtered as the MOOG filter
   makes everything sound like it's on too much Valium.
+
+- A master "volume" rotary or fader that can be seen as a 'drive' on the dry sample mixing.

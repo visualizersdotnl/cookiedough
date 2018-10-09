@@ -2,7 +2,4 @@
 - Nice resource: https://github.com/Themaister/libfmsynth/blob/master/src/fmsynth.c
 - I'll work on OSX-test while in NL, I can put most changes right back later; no need in keeping
   2 up to date copies, but it is nice if I influential keep changes listed here.
-- I'll have to copy back these files and plug back in the Windows-related stuff, basically.
-
-But here's a list (which may well be incomplete):
-- No adjusted drive according to number of samples (see Render())/
+- On return use P4MERGE to compare te two and integrate the changes.
