@@ -265,3 +265,8 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+code/FM-synthesizer/OSX-test/bison
+
+code/FM-synthesizer/OSX-test/bison.dSYM/Contents/Resources/DWARF/bison
+
+code/FM-synthesizer/OSX-test/test-out.raw

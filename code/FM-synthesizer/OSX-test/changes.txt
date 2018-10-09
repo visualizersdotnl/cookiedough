@@ -1,0 +1,3 @@
+
+- Took out drive aplification scale
+- ...

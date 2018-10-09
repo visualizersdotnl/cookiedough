@@ -29,7 +29,8 @@
 
 	To do:
 		- Take another gander at oscillators (clean ones)
-		- Adjust gain as we go?
+		- Implement LFOs: form, period, frequency, aplitude, and apply it to modulation index first
+		- Impement pitch bend
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way.
 		- Optimization, FIXMEs, interpolation, keeping tracking NAN bugs.
