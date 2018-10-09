@@ -1,3 +1,4 @@
 
+- Nice resource: https://github.com/Themaister/libfmsynth/blob/master/src/fmsynth.c
 - Took out drive aplification scale
 - ...

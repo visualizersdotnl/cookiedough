@@ -14,7 +14,7 @@
 // #include "../main.h"
 
 // FIXME: quick fix to compile on OSX
-#include "bevacqua-compat.h"
+ #include "bevacqua-compat.h"
 
 // Alias Bevacqua existing mechanisms (FIXME: adapt target platform's)
 #define SFM_INLINE VIZ_INLINE
