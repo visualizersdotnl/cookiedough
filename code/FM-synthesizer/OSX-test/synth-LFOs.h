@@ -21,6 +21,9 @@ namespace SFM
 		When used as part of a modulator be sure to limit the frequency; go too high and it'll just be odd noise.
 	*/
 	void CalcLFO_CosTilt(float *pDest, unsigned numSamples, float tilt, float curve, float frequency);
+
+	// Fast sinusoidal LFO
+	
 }
 
 #endif // _SFM_SYNTH_LFOS_H_

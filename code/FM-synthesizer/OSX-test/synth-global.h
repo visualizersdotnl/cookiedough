@@ -38,6 +38,10 @@ namespace SFM
 	const float kAudibleLowHZ = 20.f;
 	const float kAudibleHighHZ = 22000.f;
 
+	// LFO ranges.
+	const float kMaxStdLFO = kAudibleLowHZ;
+	const float kMaxSonicLFO = kAudibleHighHZ;i
+
 	// Nyquist frequencies.
 	const float kNyquist = kSampleRate/2.f;
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHZ, kNyquist);

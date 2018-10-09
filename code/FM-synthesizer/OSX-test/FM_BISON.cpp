@@ -3,8 +3,7 @@
 	Syntherklaas FM presents 'FM. BISON'
 	(C) syntherklaas.org, a subsidiary of visualizers.nl
 
-	PAST: Uses a little hack in the BASS layer of this codebase (audio.cpp) to output a 44.1kHz monaural stream.
-	FUTURE: lots of hacks to comment out that Bevacqua dependency for OSX test hack
+	OSX HACK!
 */
 
 // Oh MSVC and your well-intentioned madness!
