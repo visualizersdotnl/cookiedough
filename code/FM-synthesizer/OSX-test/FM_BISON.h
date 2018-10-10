@@ -26,6 +26,7 @@
 		- Check up on BLIT harmonics amount
 		- Finish up ADSR (see impl.)
 		- Implement a master rotary or fader to scale voice amplitude ("main")	
+		- Get a clearer picture of "generic" LFOs and implement a few
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
 		- Consider interpolated LUT sampler
@@ -37,6 +38,7 @@
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way
 		- Optimization (LUTs, branching et cetera)
+		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 		- Keep tracking NAN bugs.
 		- See notebook
 */

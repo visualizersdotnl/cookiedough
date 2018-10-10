@@ -6,7 +6,7 @@ For a first release to be ported to VST for alpha testing, I'm picking a very si
 
 - 1 patch at a time with limited polyphony (8, but can and should be ramped up to at least 16).
 
-- A patch is driven by 1 carrier and 1 modulator, the latter now being a sine wave. The carrier waveform can be a sine, a BLIT saw, a BLIT square, a 'dirty' saw and a 'dirty' triangle.
+- A patch is driven by 1 carrier and 1 modulator, the latter now being a sine wave. The carrier waveform can be a sine, a BLIT saw, a BLIT square, a 'dirty' saw and a 'dirty' triangle. Addition: pleasing noise.
 
 - 1 global ADSR drives how all notes are played; as with any controls in the synthesizer they will be updated,
 or pulled per frame and thus there is a slight but undetectable latency. The ADSR will have non-linear properties
@@ -28,6 +28,5 @@ makes everything sound like it's on too much Valium.
 - A master "volume" rotary or fader that can be seen as a 'drive' on the dry sample mixing.
 
 - Key feature: VORTICITY. It's a relatively simple concept but I'll have to find a fun and useful way to make it into a simple effective sound modifier. See https://en.wikipedia.org/wiki/Vortex_shedding
-I'll try to make this a blend between a 'wahwah' and use the Strouhal value as falloff.
 
 This feature set is about 50% complete at time of writing.

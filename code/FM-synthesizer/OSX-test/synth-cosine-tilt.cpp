@@ -4,11 +4,11 @@
 */
 
 #include "synth-global.h"
-#include "synth-LFOs.h"
+// #include "synth-cosine-tilt.h"
 
 namespace SFM
 {
-	void CalcLFO_CosTilt(float *pDest, unsigned numSamples, float tilt, float curve, float frequency)
+	void CalculateCosineTiltEnvelope(float *pDest, unsigned numSamples, float tilt, float curve, float frequency)
 	{
 		/* Let's assert that what we're getting is in accordance to what I was promised. */
 		SFM_ASSERT(tilt >= -1.f && tilt <= 1.f);

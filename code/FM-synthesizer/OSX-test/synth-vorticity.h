@@ -1,20 +1,35 @@
 
 /*
-	Syntherklaas FM -- Vorticity.
+	Syntherklaas FM -- Vorticity LFO.
 
-	- https://intelligentsoundengineering.wordpress.com/2016/05/19/real-time-synthesis-of-an-aeolian-tone/
-	- https://sourceforge.net/p/zynaddsubfx/code/ci/master/tree/src/Effects/
-	- http://www.mate.tue.nl/mate/pdfs/8998.pdf
+	Some resources:
+		- https://intelligentsoundengineering.wordpress.com/2016/05/19/real-time-synthesis-of-an-aeolian-tone/
+		- http://www.mate.tue.nl/mate/pdfs/8998.pdf
+
+	I'll have to get a little creative here.
 */
 
 #ifndef _SFM_SYNTH_VORTICITY_H_
 #define _SFM_SYNTH_VORTICITY_H_
 
+#include "synth-global.h"
+#include "synth-modulator.h"
+
 namespace SFM
 {
-	SFM_INLINE float Vorticize(float sample, float phase)
+	struct Vorticity
 	{
-		return sample;
+		FM_Modulator m_LFO; // Modulator type can be used as LFO
+
+		void Initialize()
+		{
+			m_LFO.Initialize(1.f, 4.f);
+		}
+
+		float Sample()
+		{
+			return m_LFO.Sample();
+		}
 	}
 };
 

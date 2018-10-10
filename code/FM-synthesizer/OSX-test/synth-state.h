@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Global state PODs.
+	Syntherklaas FM -- Global (state) PODs.
 
 	Everything is copied per render cycle to a 'live' state; because of this it is important
 	*not* to have any state altered during rendering as it will be lost.
@@ -10,25 +10,10 @@
 #define _SFM_SYNTH_STATE_H_
 
 #include "synth-global.h"
-#include "synth-oscillators.h"
-#include "synth-vorticity.h"
+#include "synth-modulator.h"
 
 namespace SFM
 {
-	/*
-		FM modulator.
-	*/
-
-	struct FM_Modulator
-	{
-		float m_index;
-		float m_pitch;
-		unsigned m_sampleOffs;
-
-		void Initialize(float index, float frequency);
-		float Sample(const float *pEnv);
-	};
-
 	/*
 		FM carrier.
 	*/
@@ -98,7 +83,7 @@ namespace SFM
 	};
 
 	/*
-		Global state.
+		Complete state.
 	*/
 
 	struct FM

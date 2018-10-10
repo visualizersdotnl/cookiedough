@@ -14,7 +14,6 @@
 #include <atomic>
 
 #include "FM_BISON.h"
-#include "synth-LFOs.h"
 #include "synth-midi.h"
 #include "synth-oscillators.h"
 #include "synth-state.h"
@@ -105,8 +104,6 @@ namespace SFM
 			signal = oscDirtyTriangle(phase+modulation);
 			break;
 		}
-
-		signal = Vorticize(signal, sample*m_angularPitch);
 
 		return m_amplitude*signal;
 	}
