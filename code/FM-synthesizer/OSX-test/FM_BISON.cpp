@@ -38,17 +38,18 @@ namespace SFM
 		FM modulator.
 	*/
 
-	void FM_Modulator::Initialize(float index, float frequency)
+	void FM_Modulator::Initialize(float index, float frequency, float phaseShift)
 	{
 		m_index = index;
 		m_pitch = CalcSinPitch(frequency);
 		m_sampleOffs = s_sampleCount;
+		m_phaseShift = (phaseShift*kPeriodLength)/k2PI;
 	}
 
 	float FM_Modulator::Sample(const float *pEnv)
 	{
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float phase = sample*m_pitch;
+		const float phase = sample*m_pitch + m_phaseShift;
 
 		float envelope = 1.f;
 		if (pEnv != nullptr)
@@ -57,7 +58,7 @@ namespace SFM
 			envelope = pEnv[index];
 		}
 
-		const float modulation = oscSine(phase)*kTabToRad; // FIXME: try other oscillators (not without risk of noise, of course)
+		const float modulation = oscSine(phase); // FIXME: try other oscillators (not without risk of noise, of course)
 		return envelope*m_index*modulation;
 	}
 
@@ -75,12 +76,15 @@ namespace SFM
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	}
 
-	// FIXME: kill switch!
 	float FM_Carrier::Sample(float modulation)
 	{
 		const unsigned sample = s_sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
 
+		// Convert modulation to LUT period
+		modulation *= kModToLUT;
+
+		// FIXME: get rid of switch!
 		float signal = 0.f;
 		switch (m_form)
 		{
@@ -146,13 +150,12 @@ namespace SFM
 		Note (voice) logic.
 	*/
 
-	// - First fit (FIXME: check lifetime, volume, pitch, just try different heuristics)
-	// - Assumes being used on shadow parameters (so lock!)
+	// FIXME: first fit isn't fancy enough
 	SFM_INLINE unsigned AllocNote(FM_Voice *voices)
 	{
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			const bool enabled = voices[iVoice].enabled;
+			const bool enabled = voices[iVoice].m_enabled;
 			if (false == enabled)
 			{
 				return iVoice;
@@ -169,23 +172,23 @@ namespace SFM
 
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 
-		const unsigned iVoice = AllocNote(s_shadowState.voices);
+		const unsigned iVoice = AllocNote(s_shadowState.m_voices);
 		if (-1 == iVoice)
 			return -1;
 
-		++state.active;
+		++state.m_active;
 
-		FM_Voice &voice = state.voices[iVoice];
+		FM_Voice &voice = state.m_voices[iVoice];
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
+		voice.m_carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f/1.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(0.f /* LFO! */, CM); // These parameters mean a lot
-		voice.envelope.Start(s_sampleCount);
+		voice.m_modulator.Initialize(0.f /* LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_envelope.Start(s_sampleCount);
 
-		voice.enabled = true;
+		voice.m_enabled = true;
 
 		return iVoice;
 	}
@@ -195,8 +198,9 @@ namespace SFM
 		FM &state = s_shadowState;
 
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
-		FM_Voice &voice = state.voices[iVoice];
-		voice.envelope.Stop(s_sampleCount);
+		FM_Voice &voice = state.m_voices[iVoice];
+		voice.m_envelope.Stop(s_sampleCount);
+		voice.m_vorticity.Initialize();
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
@@ -209,16 +213,17 @@ namespace SFM
 
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			FM_Voice &voice = state.voices[iVoice];
-			const bool enabled = voice.enabled;
+			FM_Voice &voice = state.m_voices[iVoice];
+			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				if (ADSR::kRelease == voice.envelope.m_state)
+				ADSR &envelope = voice.m_envelope;
+				if (ADSR::kRelease == envelope.m_state)
 				{
-					if (voice.envelope.m_sampleOffs+voice.envelope.m_release < s_sampleCount)
+					if (envelope.m_sampleOffs+envelope.m_release < s_sampleCount)
 					{
-						voice.enabled = false;
-						--state.active;
+						voice.m_enabled = false;
+						--state.m_active;
 					}
 				}
 			}
@@ -240,7 +245,7 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_attack = kSampleRate/2;
 		m_decay = 0;
-		m_release = kSampleRate/4;
+		m_release = kSampleRate*2;
 		m_sustain = 0.8f;
 		m_state = kAttack;
 	}
@@ -314,9 +319,9 @@ namespace SFM
 		CopyShadowToRenderState();	
 
 		FM &state = s_renderState;
-		FM_Voice *voices = state.voices;
+		FM_Voice *voices = state.m_voices;
 
-		const unsigned numVoices = state.active;
+		const unsigned numVoices = state.m_active;
 
 		if (0 == numVoices)
 		{
@@ -332,7 +337,7 @@ namespace SFM
 				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 				{
 					FM_Voice &voice = voices[iVoice];
-					if (true == voice.enabled)
+					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample();
 						dry += sample;

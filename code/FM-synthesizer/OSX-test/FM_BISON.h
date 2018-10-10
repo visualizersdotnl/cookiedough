@@ -19,10 +19,10 @@
 	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
 	
-	So the style will look a bit dated here and there.
+	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- CWork out Vorticity
+		- Work out Vorticity
 		- Check up on BLIT harmonics amount
 		- Finish up ADSR (see impl.)
 		- Implement a master rotary or fader to scale voice amplitude ("main")	

@@ -11,6 +11,7 @@
 
 #include "synth-global.h"
 #include "synth-modulator.h"
+#include "synth-vorticity.h"
 
 namespace SFM
 {
@@ -56,7 +57,7 @@ namespace SFM
 
 		void Start(unsigned sampleOffs);
 		void Stop(unsigned sampleOffs);
-		float Sample(); // Sets 'enabled' to false if voice is released by ADSR.
+		float Sample();	
 	};
 
 	/*
@@ -65,19 +66,27 @@ namespace SFM
 
 	struct FM_Voice
 	{
-		bool enabled;
+		bool m_enabled;
 
-		FM_Carrier carrier;
-		FM_Modulator modulator;
-		ADSR envelope;
+		FM_Carrier m_carrier;
+		FM_Modulator m_modulator;
+		ADSR m_envelope;
+		Vorticity m_vorticity;
 
 		// FIXME: idea: pass global envelope here, like Ronny said, along with operation!
+		// FIXME: simplest algorithm there is, expand!
 		float Sample()
 		{
-			// FIXME: simplest algorithm there is, expand!
-			const float modulation = modulator.Sample(nullptr);
-			const float ampEnv = envelope.Sample();
-			const float sample = carrier.Sample(modulation)*ampEnv;
+			const float modulation = m_modulator.Sample(nullptr);
+			const float ampEnv = m_envelope.Sample();
+			float sample = m_carrier.Sample(modulation)*ampEnv;
+
+			if (m_envelope.m_state == ADSR::kRelease)
+			{
+				const float vorticity = m_vorticity.Sample();
+				sample *= vorticity;
+			}
+
 			return sample;
 		}
 	};
@@ -88,17 +97,17 @@ namespace SFM
 
 	struct FM
 	{
-		FM_Voice voices[kMaxVoices];
-		unsigned active;
+		FM_Voice m_voices[kMaxVoices];
+		unsigned m_active;
 
 		void Reset()
 		{
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				voices[iVoice].enabled = false;
+				m_voices[iVoice].m_enabled = false;
 			}
 
-			active = 0;
+			m_active = 0;
 		}
 
 	};

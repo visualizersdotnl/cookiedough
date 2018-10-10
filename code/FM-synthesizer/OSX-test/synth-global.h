@@ -53,8 +53,8 @@ namespace SFM
 	// Number of discrete values that make up a period in the sinus LUT.
 	const unsigned kPeriodLength = kSinTabSize;
 
-	// Useful when mixing sinus LUT & angular phase.
-	const float kTabToRad = (1.f/k2PI)*kPeriodLength;
+	// Use to multiply modulation value to LUT pitch
+	const float kModToLUT = (1.f/k2PI)*kPeriodLength;
 
 	/*
 		Utility functions.

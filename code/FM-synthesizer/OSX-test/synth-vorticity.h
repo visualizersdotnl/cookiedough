@@ -2,11 +2,13 @@
 /*
 	Syntherklaas FM -- Vorticity LFO.
 
-	Some resources:
-		- https://intelligentsoundengineering.wordpress.com/2016/05/19/real-time-synthesis-of-an-aeolian-tone/
-		- http://www.mate.tue.nl/mate/pdfs/8998.pdf
+	This isn't a physically correct vortex shedding implement by a long shot; the goal
+	is clearly to have a cool feature that sounds a bit like it.
 
-	I'll have to get a little creative here.
+	FIXME:
+		- Implement parametrization
+		- Do not let it control the full range, but let this happen over time!
+		- Start on sustain?
 */
 
 #ifndef _SFM_SYNTH_VORTICITY_H_
@@ -17,20 +19,25 @@
 
 namespace SFM
 {
+	const float kCommonStrouhal = 0.22f;
+
 	struct Vorticity
 	{
-		FM_Modulator m_LFO; // Modulator type can be used as LFO
+		FM_Modulator m_LFO;
 
 		void Initialize()
 		{
-			m_LFO.Initialize(1.f, 4.f);
+			// FIXME: derive from Strouhal constant, in turn derived from frequency, diameter and flow speed
+			m_LFO.Initialize(1.f, 1.f+kCommonStrouhal, kPI*0.5f);
 		}
 
 		float Sample()
 		{
-			return m_LFO.Sample();
+			const float modulation = m_LFO.Sample(NULL);
+			SFM_ASSERT(fabsf(modulation) <= 1.f);
+			return modulation;
 		}
-	}
-};
+	};
+}
 
 #endif // _SFM_SYNTH_VORTICITY_H_

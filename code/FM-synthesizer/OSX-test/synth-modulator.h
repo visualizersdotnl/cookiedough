@@ -19,8 +19,9 @@ namespace SFM
 		float m_index;
 		float m_pitch;
 		unsigned m_sampleOffs;
+		float m_phaseShift;
 
-		void Initialize(float index, float frequency);
+		void Initialize(float index, float frequency, float phaseShift /* In radians */);
 		float Sample(const float *pEnv);
 	};
 }
