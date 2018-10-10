@@ -63,6 +63,25 @@ namespace SFM
 	}
 
 	/*
+		Vorticity.
+	*/
+
+	void Vorticity::Initialize(unsigned sampleOffs)
+	{
+		m_LFO.Initialize(1.f, 1.f, kPI*0.5f);
+		m_sampleOffs = sampleOffs;
+		m_pitchShift = kCommonStrouhal;
+	}
+
+	float Vorticity::Sample()
+	{
+		const unsigned sample = s_sampleCount-m_sampleOffs;
+		const float modulation = m_LFO.Sample(NULL);
+		SFM_ASSERT(fabsf(modulation) <= 1.f);
+		return modulation;
+	}
+
+	/*
 		FM carrier.
 	*/
 
@@ -110,6 +129,28 @@ namespace SFM
 		}
 
 		return m_amplitude*signal;
+	}
+
+	/*
+		FM voice.
+	*/
+
+	// FIXME: 
+	//	- Pass global envelope here, like Ronny said, along with operation
+	//  - Expand with a patch or algorithm selection of sorts
+	float FM_Voice::Sample()
+	{
+		const float modulation = m_modulator.Sample(nullptr);
+		const float ampEnv = m_envelope.Sample();
+		float sample = m_carrier.Sample(modulation)*ampEnv;
+
+		if (m_envelope.m_state == ADSR::kRelease)
+		{
+			const float vorticity = m_vorticity.Sample();
+			sample *= vorticity;
+		}
+
+		return sample;
 	}
 
 	/*
@@ -200,7 +241,7 @@ namespace SFM
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM_Voice &voice = state.m_voices[iVoice];
 		voice.m_envelope.Stop(s_sampleCount);
-		voice.m_vorticity.Initialize();
+		voice.m_vorticity.Initialize(s_sampleCount);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,

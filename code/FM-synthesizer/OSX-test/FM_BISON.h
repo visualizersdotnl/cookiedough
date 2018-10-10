@@ -40,6 +40,7 @@
 		- Optimization (LUTs, branching et cetera)
 		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 		- Keep tracking NAN bugs.
+		- Maybe some code can be moved out of FM_BISON.cpp and sample count passed as parameter
 		- See notebook
 */
 

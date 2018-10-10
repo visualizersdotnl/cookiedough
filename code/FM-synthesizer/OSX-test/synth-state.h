@@ -4,12 +4,15 @@
 
 	Everything is copied per render cycle to a 'live' state; because of this it is important
 	*not* to have any state altered during rendering as it will be lost.
+
+	Most implementation of what's here (and included beyong global) is implemented in FM_BISON.cpp
 */
 
 #ifndef _SFM_SYNTH_STATE_H_
 #define _SFM_SYNTH_STATE_H_
 
 #include "synth-global.h"
+
 #include "synth-modulator.h"
 #include "synth-vorticity.h"
 
@@ -73,22 +76,7 @@ namespace SFM
 		ADSR m_envelope;
 		Vorticity m_vorticity;
 
-		// FIXME: idea: pass global envelope here, like Ronny said, along with operation!
-		// FIXME: simplest algorithm there is, expand!
-		float Sample()
-		{
-			const float modulation = m_modulator.Sample(nullptr);
-			const float ampEnv = m_envelope.Sample();
-			float sample = m_carrier.Sample(modulation)*ampEnv;
-
-			if (m_envelope.m_state == ADSR::kRelease)
-			{
-				const float vorticity = m_vorticity.Sample();
-				sample *= vorticity;
-			}
-
-			return sample;
-		}
+		float Sample();
 	};
 
 	/*

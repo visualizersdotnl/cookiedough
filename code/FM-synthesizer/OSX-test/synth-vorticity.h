@@ -6,7 +6,7 @@
 	is clearly to have a cool feature that sounds a bit like it.
 
 	FIXME:
-		- Implement parametrization
+		- Implement parametrization using Strouhal
 		- Do not let it control the full range, but let this happen over time!
 		- Start on sustain?
 */
@@ -24,19 +24,11 @@ namespace SFM
 	struct Vorticity
 	{
 		FM_Modulator m_LFO;
+		unsigned m_sampleOffs;
+		float m_pitchShift;
 
-		void Initialize()
-		{
-			// FIXME: derive from Strouhal constant, in turn derived from frequency, diameter and flow speed
-			m_LFO.Initialize(1.f, 1.f+kCommonStrouhal, kPI*0.5f);
-		}
-
-		float Sample()
-		{
-			const float modulation = m_LFO.Sample(NULL);
-			SFM_ASSERT(fabsf(modulation) <= 1.f);
-			return modulation;
-		}
+		void Initialize(unsigned sampleOffs);
+		float Sample();
 	};
 }
 
