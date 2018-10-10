@@ -6,8 +6,8 @@
 	is clearly to have a cool feature that sounds a bit like it.
 
 	FIXME:
-		- Implement parametrization using Strouhal
-		- Do not let it control the full range, but let this happen over time!
+		- Feed SetStrouhal
+		- Use acceleration to blend in noise and speed up pitch
 		- Start on sustain?
 */
 
@@ -26,9 +26,12 @@ namespace SFM
 		unsigned m_sampleOffs;
 		float m_pitch;
 		float m_pitchShift;
+		float m_wetness;
+		float m_acceleration;
 
-		void Initialize(unsigned sampleOffs);
-		float Sample();
+		void Initialize(unsigned sampleOffs, float acceleration);
+		void SetStrouhal(float sheddingFreq, float diameter, float velocity);
+		float Sample(float input);
 	};
 }
 

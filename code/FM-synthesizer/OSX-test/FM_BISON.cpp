@@ -61,21 +61,29 @@ namespace SFM
 		Vorticity.
 	*/
 
-	void Vorticity::Initialize(unsigned sampleOffs)
+	void Vorticity::Initialize(unsigned sampleOffs, float acceleration)
 	{
 		m_pitch = CalcSinLUTPitch(1.f);
 		m_sampleOffs = sampleOffs;
 		m_pitchShift = kCommonStrouhal*kSinLUTPeriod;
+		m_wetness = 0.624f;
 	}
 
-	float Vorticity::Sample()
+	void Vorticity::SetStrouhal(float sheddingFreq, float diameter, float velocity)
+	{
+		SFM_ASSERT(velocity != 0.f);
+		const float S = (sheddingFreq*diameter)/velocity;
+		m_pitchShift = S*kSinLUTPeriod;
+	}
+
+	float Vorticity::Sample(float input)
 	{
 		// FIXME: this is just first draft
 		const unsigned sample = s_sampleCount-m_sampleOffs;
 		const float angle = sample*m_pitch + kSinLUTCosOffs;
-		const float modulation = lutsinf(smoothstepf(angle, angle+m_pitchShift, 1.f/sample));
-		SFM_ASSERT(fabsf(modulation) <= 1.f);
-		return modulation;
+		const float shift = sample*m_pitchShift + kSinLUTCosOffs;
+		const float modulation = lutsinf(angle + oscDirtyTriangle(shift));
+		return smoothstepf(input, input*modulation, m_wetness);
 	}
 
 	/*
@@ -143,8 +151,7 @@ namespace SFM
 
 		if (m_envelope.m_state == ADSR::kRelease)
 		{
-			const float vorticity = m_vorticity.Sample();
-			sample *= vorticity;
+			sample = m_vorticity.Sample(sample);
 		}
 
 		return sample;
@@ -238,7 +245,7 @@ namespace SFM
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM_Voice &voice = state.m_voices[iVoice];
 		voice.m_envelope.Stop(s_sampleCount);
-		voice.m_vorticity.Initialize(s_sampleCount);
+		voice.m_vorticity.Initialize(s_sampleCount, 1.f);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
@@ -283,14 +290,9 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_attack = kSampleRate/2;
 		m_decay = 0;
-		m_release = kSampleRate;
+		m_release = kSampleRate*4;
 		m_sustain = 0.8f;
 		m_state = kAttack;
-
-		// One second is the max. range, if more is desired look for another envelope or LFO
-		SFM_ASSERT(m_attack  <= kSampleRate);
-		SFM_ASSERT(m_decay   <= kSampleRate);
-		SFM_ASSERT(m_release <= kSampleRate);
 	}
 
 	void ADSR::Stop(unsigned sampleOffs)
@@ -466,7 +468,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	const unsigned index2 = TriggerNote(73);
 	const unsigned index3 = TriggerNote(76);
 
-	const unsigned release = kSampleRate;
+	const unsigned release = s_shadowState.m_voices[index1].m_envelope.m_release;
 
 	unsigned writeIdx = 0;
 

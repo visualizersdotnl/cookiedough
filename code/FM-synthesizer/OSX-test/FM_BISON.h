@@ -22,7 +22,7 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- Work out Vorticity to a basic level
+		- Work out Vorticity further: steer by MIDI! 
 		- Finish up ADSR (see impl.)
 		- Check up on BLIT harmonics amount
 		- Implement a master value to scale voice amplitude ("main, gain?")	
