@@ -23,8 +23,8 @@ namespace SFM
 
 	struct Vorticity
 	{
-		FM_Modulator m_LFO;
 		unsigned m_sampleOffs;
+		float m_pitch;
 		float m_pitchShift;
 
 		void Initialize(unsigned sampleOffs);

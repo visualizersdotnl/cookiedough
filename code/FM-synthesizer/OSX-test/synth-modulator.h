@@ -22,7 +22,7 @@ namespace SFM
 		float m_phaseShift;
 
 		void Initialize(float index, float frequency, float phaseShift /* In radians */);
-		float Sample(const float *pEnv);
+		float Sample();
 	};
 }
 

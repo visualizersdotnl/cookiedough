@@ -51,19 +51,20 @@ namespace SFM
 	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
-	const unsigned kPeriodLength = kSinTabSize;
+	const unsigned kSinLUTPeriod = kSinTabSize;
+	const float kSinLUTCosOffs = kSinLUTPeriod/4;
 
 	// Use to multiply modulation value to LUT pitch
-	const float kModToLUT = (1.f/k2PI)*kPeriodLength;
+	const float kLinToSinLUT = (1.f/k2PI)*kSinLUTPeriod;
 
 	/*
 		Utility functions.
 	*/
 
 	// Frequency to sinus LUT pitch
-	SFM_INLINE float CalcSinPitch(float frequency)
+	SFM_INLINE float CalcSinLUTPitch(float frequency)
 	{
-		return (frequency*kPeriodLength)/kSampleRate;
+		return (frequency*kSinLUTPeriod)/kSampleRate;
 	}
 
 	// Frequency to angular CalcSinPitch

@@ -42,7 +42,7 @@ namespace SFM
 	{
 		unsigned m_sampleOffs;
 
-		// In number of samples
+		// In number of samples (must be within 1 second or max. kSampleRate)
 		unsigned m_attack;
 		unsigned m_decay;
 		unsigned m_release;

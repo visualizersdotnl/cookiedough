@@ -38,13 +38,13 @@ namespace SFM
 
 	SFM_INLINE float oscDirtySaw(float phase)
 	{
-		return -1.f + fmodf(phase/kPeriodLength, 2.f);
+		return -1.f + fmodf(phase/kSinLUTPeriod, 2.f);
 	}
 
 
 	SFM_INLINE float oscDirtyTriangle(float phase)
 	{
-		return -1.f + 4.f*fabsf(fmodf(phase/kPeriodLength, 1.f) - 0.5f);
+		return -1.f + 4.f*fabsf(fmodf(phase/kSinLUTPeriod, 1.f) - 0.5f);
 	}
 
 	/*

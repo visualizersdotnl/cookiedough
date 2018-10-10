@@ -22,10 +22,10 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- Work out Vorticity
-		- Check up on BLIT harmonics amount
+		- Work out Vorticity to a basic level
 		- Finish up ADSR (see impl.)
-		- Implement a master rotary or fader to scale voice amplitude ("main")	
+		- Check up on BLIT harmonics amount
+		- Implement a master value to scale voice amplitude ("main, gain?")	
 		- Get a clearer picture of "generic" LFOs and implement a few
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
@@ -35,12 +35,9 @@
 		- Take another gander at oscillators (clean ones), add a few noise types
 		- Implement LFOs: form, period, frequency, aplitude, and apply it to modulation index first
 		- Implement pitch bend
-		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
-		  to keep it this way
 		- Optimization (LUTs, branching et cetera)
-		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 		- Keep tracking NAN bugs.
-		- Maybe some code can be moved out of FM_BISON.cpp and sample count passed as parameter
+		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 		- See notebook
 */
 

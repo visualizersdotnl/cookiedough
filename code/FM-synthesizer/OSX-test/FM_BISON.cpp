@@ -41,25 +41,20 @@ namespace SFM
 	void FM_Modulator::Initialize(float index, float frequency, float phaseShift)
 	{
 		m_index = index;
-		m_pitch = CalcSinPitch(frequency);
+		m_pitch = CalcSinLUTPitch(frequency);
 		m_sampleOffs = s_sampleCount;
-		m_phaseShift = (phaseShift*kPeriodLength)/k2PI;
+		m_phaseShift = (phaseShift*kSinLUTPeriod)/k2PI;
 	}
 
-	float FM_Modulator::Sample(const float *pEnv)
+	float FM_Modulator::Sample()
 	{
 		const unsigned sample = s_sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch + m_phaseShift;
+		
+		// FIXME: try other oscillators (not without risk of noise, of course)
+		const float modulation = oscSine(phase); 
 
-		float envelope = 1.f;
-		if (pEnv != nullptr)
-		{
-			const unsigned index = sample & (kPeriodLength-1);
-			envelope = pEnv[index];
-		}
-
-		const float modulation = oscSine(phase); // FIXME: try other oscillators (not without risk of noise, of course)
-		return envelope*m_index*modulation;
+		return m_index*modulation;
 	}
 
 	/*
@@ -68,15 +63,17 @@ namespace SFM
 
 	void Vorticity::Initialize(unsigned sampleOffs)
 	{
-		m_LFO.Initialize(1.f, 1.f, kPI*0.5f);
+		m_pitch = CalcSinLUTPitch(1.f);
 		m_sampleOffs = sampleOffs;
-		m_pitchShift = kCommonStrouhal;
+		m_pitchShift = kCommonStrouhal*kSinLUTPeriod;
 	}
 
 	float Vorticity::Sample()
 	{
+		// FIXME: this is just first draft
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float modulation = m_LFO.Sample(NULL);
+		const float angle = sample*m_pitch + kSinLUTCosOffs;
+		const float modulation = lutsinf(smoothstepf(angle, angle+m_pitchShift, 1.f/sample));
 		SFM_ASSERT(fabsf(modulation) <= 1.f);
 		return modulation;
 	}
@@ -89,7 +86,7 @@ namespace SFM
 	{
 		m_form = form;
 		m_amplitude = amplitude;
-		m_pitch = CalcSinPitch(frequency);
+		m_pitch = CalcSinLUTPitch(frequency);
 		m_angularPitch = CalcAngularPitch(frequency);
 		m_sampleOffs = s_sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
@@ -101,7 +98,7 @@ namespace SFM
 		const float phase = sample*m_pitch;
 
 		// Convert modulation to LUT period
-		modulation *= kModToLUT;
+		modulation *= kLinToSinLUT;
 
 		// FIXME: get rid of switch!
 		float signal = 0.f;
@@ -140,7 +137,7 @@ namespace SFM
 	//  - Expand with a patch or algorithm selection of sorts
 	float FM_Voice::Sample()
 	{
-		const float modulation = m_modulator.Sample(nullptr);
+		const float modulation = m_modulator.Sample();
 		const float ampEnv = m_envelope.Sample();
 		float sample = m_carrier.Sample(modulation)*ampEnv;
 
@@ -286,9 +283,14 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_attack = kSampleRate/2;
 		m_decay = 0;
-		m_release = kSampleRate*2;
+		m_release = kSampleRate;
 		m_sustain = 0.8f;
 		m_state = kAttack;
+
+		// One second is the max. range, if more is desired look for another envelope or LFO
+		SFM_ASSERT(m_attack  <= kSampleRate);
+		SFM_ASSERT(m_decay   <= kSampleRate);
+		SFM_ASSERT(m_release <= kSampleRate);
 	}
 
 	void ADSR::Stop(unsigned sampleOffs)
@@ -335,9 +337,7 @@ namespace SFM
 					amplitude = m_sustain - (delta*sample);
 				}
 				else 
-				{
 					amplitude = 0.f; 
-				}
 			}
 			break;
 		}
@@ -507,7 +507,7 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
 //	Little test to see if this function is working using BASS' current configuration.
-//	float pitch = CalcSinPitch(440.f);
+//	float pitch = CalcSinLUTPitch(440.f);
 //	float *pWrite = (float *) pDest;
 //	for (auto iSample = 0; iSample < numSamplesReq; ++iSample)
 //	{
