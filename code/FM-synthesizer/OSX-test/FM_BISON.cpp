@@ -61,10 +61,13 @@ namespace SFM
 		Vorticity.
 	*/
 
-	void Vorticity::Initialize(unsigned sampleOffs, float acceleration)
+	void Vorticity::Initialize(unsigned sampleOffs, float depth, float acceleration)
 	{
-		m_pitch = CalcSinLUTPitch(1.f);
 		m_sampleOffs = sampleOffs;
+		m_depth = depth;
+		m_acceleration = acceleration;
+	
+		m_pitch = CalcSinLUTPitch(1.f);
 		m_pitchShift = kCommonStrouhal*kSinLUTPeriod;
 		m_wetness = 0.624f;
 	}
@@ -78,11 +81,12 @@ namespace SFM
 
 	float Vorticity::Sample(float input)
 	{
-		// FIXME: this is just first draft
+		// FIXME: this is basic FM, the only unique properties are the phase shift and Strouhal constant
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float angle = sample*m_pitch + kSinLUTCosOffs;
+		const float acceleration = sample*m_acceleration;
+		const float angle = sample*(m_pitch+acceleration) + kSinLUTCosOffs;
 		const float shift = sample*m_pitchShift + kSinLUTCosOffs;
-		const float modulation = lutsinf(angle + oscDirtyTriangle(shift));
+		const float modulation = lutsinf(angle + m_depth*oscDirtyTriangle(shift));
 		return smoothstepf(input, input*modulation, m_wetness);
 	}
 
@@ -245,7 +249,7 @@ namespace SFM
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM_Voice &voice = state.m_voices[iVoice];
 		voice.m_envelope.Stop(s_sampleCount);
-		voice.m_vorticity.Initialize(s_sampleCount, 1.f);
+		voice.m_vorticity.Initialize(s_sampleCount, 1.f, 0.f);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,

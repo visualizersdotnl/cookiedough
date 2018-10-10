@@ -7,7 +7,7 @@
 
 	FIXME:
 		- Feed SetStrouhal
-		- Use acceleration to blend in noise and speed up pitch
+		- Use acceleration to blend in noise
 		- Start on sustain?
 */
 
@@ -24,12 +24,14 @@ namespace SFM
 	struct Vorticity
 	{
 		unsigned m_sampleOffs;
+		float m_depth;
+		float m_acceleration;
+
 		float m_pitch;
 		float m_pitchShift;
 		float m_wetness;
-		float m_acceleration;
 
-		void Initialize(unsigned sampleOffs, float acceleration);
+		void Initialize(unsigned sampleOffs, float depth, float acceleration);
 		void SetStrouhal(float sheddingFreq, float diameter, float velocity);
 		float Sample(float input);
 	};
