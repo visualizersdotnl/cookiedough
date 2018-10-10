@@ -8,7 +8,9 @@
 
 	Filter does not require oversampling.
 
-	FIXME: more than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
+	FIXME: 
+		- More than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
+		- Consider using more precision or at least loook at possible precision issues.
 */
 
 #ifndef _SFM_SYNTH_MOOG_LADDER_H_

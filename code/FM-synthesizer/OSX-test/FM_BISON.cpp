@@ -28,12 +28,9 @@ namespace SFM
 {
 	/*
 		Global sample counts.
-
-		FIXME: 
-			- Account for wrapping.
-			- Atomic can be dropped later.
 	*/
 
+//	FIXME: drop atomic when safe.
 //	static std::atomic<unsigned> s_sampleCount = 0;
 //	static std::atomic<unsigned> s_sampleOutCount = 0;
 	static unsigned s_sampleCount = 0, s_sampleOutCount = 0;
@@ -307,7 +304,6 @@ namespace SFM
 
 	/*
 		Render function.
-		FIXME: crude and weird impl., optimize.
 	*/
 
 	SFM_INLINE void CopyShadowToRenderState()
@@ -346,8 +342,8 @@ namespace SFM
 					}
 				}
 
-				const float clipped = clampf(-1.f, 1.f, dry); // FIXME: speed
-				pDest[iSample] = atanf(clipped); // FIXME: atanf() LUT
+				const float clipped = clampf(-1.f, 1.f, dry);
+				pDest[iSample] = atanf(clipped);
 
 				++s_sampleCount;
 			}
@@ -412,7 +408,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	}
 
 	/*
-		FIXME: just shit out one sample for 8 seconds, fix real output!
+		FIXME: just write out one sample for 8 seconds, fix real output multi-platform (SDL)!
 	*/
 	
 	const float duration = 8.f;
@@ -422,9 +418,10 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	
 	UpdateFilterSettings();
 
+	// C-E-G
 	const unsigned index1 = TriggerNote(64);
-//	const unsigned index2 = TriggerNote(67);
-//	const unsigned index3 = TriggerNote(69);
+	const unsigned index2 = TriggerNote(73);
+	const unsigned index3 = TriggerNote(76);
 
 	const unsigned release = kSampleRate;
 
@@ -437,8 +434,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	}
 
 	ReleaseNote(index1);
-//	ReleaseNote(index2);
-//	ReleaseNote(index3);
+	ReleaseNote(index2);
+	ReleaseNote(index3);
 
 	for (unsigned iSample = 0; iSample < release; ++iSample)
 	{		

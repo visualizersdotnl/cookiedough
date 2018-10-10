@@ -1,5 +1,4 @@
 
 - Nice resource: https://github.com/Themaister/libfmsynth/blob/master/src/fmsynth.c
-- I'll work on OSX-test while in NL, I can put most changes right back later; no need in keeping
-  2 up to date copies, but it is nice if I influential keep changes listed here.
-- On return use P4MERGE to compare te two and integrate the changes.
+- On return use P4MERGE and integrate changes back to root folder.
+

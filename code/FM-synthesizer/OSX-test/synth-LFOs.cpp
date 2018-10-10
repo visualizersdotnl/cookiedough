@@ -1,9 +1,6 @@
 
 /*
 	Syntherklaas FM -- LFOs.
-
-	FIXME:
-		- Everything, this is just Koen's GR-1 prototyping LFO.
 */
 
 #include "synth-global.h"

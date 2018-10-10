@@ -17,7 +17,7 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
-		/* Neutered forms */
+		/* Neutered forms (BLIT) */
 		kSaw,
 		kSquare,
 		/* Aliasing forms */
@@ -49,7 +49,7 @@ namespace SFM
 
 	/*
 		Band-limited saw and square (additive sinuses).
-		If you want dirt, use modulation and/or envelopes (or the two oscillators above).
+		If you want dirt, use try the two oscillators above or try modulation & LFO.q
 	*/
 
 	// FIXME?

@@ -10,20 +10,13 @@ namespace SFM
 {
 
 	/* 
-		Based on the document in Koen's prototyping folder (from the GR-1 project).
-	
-		Values between [-1..1]
-
-		'tilt' = Peak of the curve.
+		'tilt' = Peak of the curve [-1..1]
 		'curve' = Curvature (power).
 		'frequency' = In hZ.
 
-		When used as part of a modulator be sure to limit the frequency; go too high and it'll just be odd noise.
+		When used as part of a modulator be sure to limit the frequency; go too high and it'll just be noise.
 	*/
 	void CalcLFO_CosTilt(float *pDest, unsigned numSamples, float tilt, float curve, float frequency);
-
-	// Fast sinusoidal LFO
-	
 }
 
 #endif // _SFM_SYNTH_LFOS_H_

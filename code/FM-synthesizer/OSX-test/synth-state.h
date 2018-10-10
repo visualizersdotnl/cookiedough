@@ -2,7 +2,8 @@
 /*
 	Syntherklaas FM -- Global state PODs.
 
-	** Important note: since everything is copied for now, you can't have persistent state **
+	Everything is copied per render cycle to a 'live' state; because of this it is important
+	*not* to have any state altered during rendering as it will be lost.
 */
 
 #ifndef _SFM_SYNTH_STATE_H_
