@@ -27,6 +27,7 @@ makes everything sound like it's on too much Valium.
 
 - A master "volume" rotary or fader that can be seen as a 'drive' on the dry sample mixing.
 
-- Key feature: VORTICITY DAMPENING. It's a relatively simple concept but I'll have to find a fun and useful way to make it into a simple effective sound modifier. See:	https://en.wikipedia.org/wiki/Vortex_shedding; question is how to interpret this. Angular harmonics, I thought whilst showering. And then operate on them in some sort of way. Angular can simply be derived from the phase (depending on where in the chain this effect is placed). Yet another way to see this is as modulating the cutoff, but I'd like it to be more elaborate.
+- Key feature: VORTICITY. It's a relatively simple concept but I'll have to find a fun and useful way to make it into a simple effective sound modifier. See https://en.wikipedia.org/wiki/Vortex_shedding
+I'll try to make this a blend between a 'wahwah' and use the Strouhal value as falloff.
 
-This feature set is about 70% complete at time of writing.
+This feature set is about 50% complete at time of writing.

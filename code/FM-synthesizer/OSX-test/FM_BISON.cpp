@@ -74,6 +74,7 @@ namespace SFM
 		m_form = form;
 		m_amplitude = amplitude;
 		m_pitch = CalcSinPitch(frequency);
+		m_angularPitch = CalcAngularPitch(frequency);
 		m_sampleOffs = s_sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	}
@@ -107,6 +108,8 @@ namespace SFM
 			signal = oscDirtyTriangle(phase+modulation);
 			break;
 		}
+
+		signal = Vorticize(signal, sample*m_angularPitch);
 
 		return m_amplitude*signal;
 	}
@@ -343,16 +346,17 @@ namespace SFM
 					}
 				}
 
-				const float clipped = clampf(-1.f, 1.f, dry);
+				const float clipped = clampf(-1.f, 1.f, dry); // FIXME: speed
 				pDest[iSample] = atanf(clipped); // FIXME: atanf() LUT
 
 				++s_sampleCount;
 			}
 		}
 
+		// FIXME: equalize, gain?
 //		const float wetness = WinMidi_GetFilterMix();
-		const float wetness = 0.314f;
-		MOOG::SetDrive(1.f); // FIXME: use *any* clipping?
+		const float wetness = 0.f;
+		MOOG::SetDrive(1.f);
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 
@@ -419,8 +423,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	UpdateFilterSettings();
 
 	const unsigned index1 = TriggerNote(64);
-	const unsigned index2 = TriggerNote(66);
-	const unsigned index3 = TriggerNote(68);
+//	const unsigned index2 = TriggerNote(67);
+//	const unsigned index3 = TriggerNote(69);
 
 	const unsigned release = kSampleRate;
 
@@ -433,8 +437,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	}
 
 	ReleaseNote(index1);
-	ReleaseNote(index2);
-	ReleaseNote(index3);
+//	ReleaseNote(index2);
+//	ReleaseNote(index3);
 
 	for (unsigned iSample = 0; iSample < release; ++iSample)
 	{		

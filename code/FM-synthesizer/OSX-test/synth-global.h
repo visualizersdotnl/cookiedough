@@ -40,7 +40,7 @@ namespace SFM
 
 	// LFO ranges.
 	const float kMaxStdLFO = kAudibleLowHZ;
-	const float kMaxSonicLFO = kAudibleHighHZ;i
+	const float kMaxSonicLFO = kAudibleHighHZ;	
 
 	// Nyquist frequencies.
 	const float kNyquist = kSampleRate/2.f;
@@ -66,7 +66,7 @@ namespace SFM
 		return (frequency*kPeriodLength)/kSampleRate;
 	}
 
-	// Frequency to angular pitch
+	// Frequency to angular CalcSinPitch
 	SFM_INLINE float CalcAngularPitch(float frequency)
 	{
 		return (frequency*k2PI)/kSampleRate;

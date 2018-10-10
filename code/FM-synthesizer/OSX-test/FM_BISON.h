@@ -22,15 +22,17 @@
 	So the style will look a bit dated here and there.
 
 	Priority / Bugs:
+		- Check 'Vorticity' idea
+		- Check up on BLIT harmonics amount
 		- Finish up ADSR (see impl.)
 		- Implement a master rotary or fader to scale voice amplitude ("main")	
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
 
 	To do:
-		- Take another gander at oscillators (clean ones)
+		- Take another gander at oscillators (clean ones), add a few noise types
 		- Implement LFOs: form, period, frequency, aplitude, and apply it to modulation index first
-		- Impement pitch bend
+		- Implement pitch bend
 		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
 		  to keep it this way.
 		- Optimization, FIXMEs, interpolation, keeping tracking NAN bugs.

@@ -10,6 +10,7 @@
 
 #include "synth-global.h"
 #include "synth-oscillators.h"
+#include "synth-vorticity.h"
 
 namespace SFM
 {
@@ -35,7 +36,7 @@ namespace SFM
 	{
 		Waveform m_form;
 		float m_amplitude;
-		float m_pitch;
+		float m_pitch, m_angularPitch;
 		unsigned m_sampleOffs;
 		unsigned m_numHarmonics;
 

@@ -52,12 +52,13 @@ namespace SFM
 		If you want dirt, use modulation and/or envelopes (or the two oscillators above).
 	*/
 
+	// FIXME?
 	// const float kHarmonicsPrecHZ = kAudibleLowHZ;
 	const float kHarmonicsPrecHZ = kAudibleLowHZ/2.f;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
-		VIZ_ASSERT(frequency >= 20.f);
+		SMF_ASSERT(frequency >= 20.f);
 		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
 		return unsigned(lower);
 	}
