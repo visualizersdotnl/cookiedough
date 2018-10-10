@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Logging (debug).
+	Syntherklaas FM -- Logging (use sparingly, mainly for debug).
 */
 
 #ifndef _SFM_SYNTH_LOG_H_
@@ -22,8 +22,11 @@ namespace SFM
 	static void Log(const char *message)
 	{
 		SFM_ASSERT(nullptr != message);
-		sprintf(s_logBuffer, "Syntherklaas FM: %s\n", message);
-		SFM_logprint(s_logBuffer);
+
+		printf("FM. BISON: %s\n", message);
+
+//		sprintf(s_logBuffer, "Syntherklaas FM: %s\n", message);
+//		SFM_logprint(s_logBuffer);
 	}
 }
 

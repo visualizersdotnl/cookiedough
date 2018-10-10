@@ -58,7 +58,7 @@ namespace SFM
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
-		SMF_ASSERT(frequency >= 20.f);
+		SFM_ASSERT(frequency >= 20.f);
 		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
 		return unsigned(lower);
 	}
