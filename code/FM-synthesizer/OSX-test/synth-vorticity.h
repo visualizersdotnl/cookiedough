@@ -14,10 +14,7 @@ namespace SFM
 
 		// https://intelligentsoundengineering.wordpress.com/2016/05/19/real-time-synthesis-of-an-aeolian-tone/
 		// https://sourceforge.net/p/zynaddsubfx/code/ci/master/tree/src/Effects/
-
-		// Idea:
-		// - Get some kind of 'wahwah' effect running ramping up quick then decaying in some relation
-		//   to the Strouhal number and combine these parameters into 1 function/
+		// http://www.mate.tue.nl/mate/pdfs/8998.pdf
 
 		return sample;
 	}
