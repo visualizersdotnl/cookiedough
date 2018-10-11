@@ -52,8 +52,6 @@ namespace SFM
 		If you want dirt, use try the two oscillators above or try modulation & LFO.q
 	*/
 
-	// FIXME?
-	// const float kHarmonicsPrecHZ = kAudibleLowHZ;
 	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)

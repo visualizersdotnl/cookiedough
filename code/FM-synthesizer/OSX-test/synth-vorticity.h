@@ -2,13 +2,10 @@
 /*
 	Syntherklaas FM -- Vorticity LFO.
 
-	This isn't a physically correct vortex shedding implement by a long shot; the goal
-	is clearly to have a cool feature that sounds a bit like it.
+	This isn't a physically correct vortex shedding implementation by a long shot; the goal
+	is clearly to have a cool feature that sounds a bit like it but isn't special at all.
 
-	FIXME:
-		- Feed SetStrouhal
-		- Use acceleration to blend in noise
-		- Start on sustain?
+	It's called branding.
 */
 
 #ifndef _SFM_SYNTH_VORTICITY_H_

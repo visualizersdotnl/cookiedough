@@ -22,26 +22,23 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- Look at Thorsten's noise oscillator
+		- Look at Thorsten's noise oscillator, implement noise ASAP!
 		- Debug log with formatting
 		- Work out Vorticity further: steer by MIDI, calculate note-dependent constant, non-linearity
-		- sinus LUT should have a lutcosf() function
 		- Finish up ADSR (see impl.)
-		- Check up on BLIT harmonics amount
+		- Try to get a reasonably normalized output
 		- Implement a master value to scale voice amplitude ("main, gain?")	
-		- Get a clearer picture of "generic" LFOs and implement a few
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
-		- Consider interpolated LUT sampler
 
 	To do:
-		- Take another gander at oscillators (clean ones), add a few noise types
-		- Implement LFOs: form, period, frequency, aplitude, and apply it to modulation index first
+		- Consider interpolated LUT sampler
+		- Take another gander at oscillators (clean ones), apply BLEP?
 		- Implement pitch bend
-		- Optimization (LUTs, branching et cetera)
+		- Optimization (LUTs, findg hotspots using profiler)
 		- Keep tracking NAN bugs.
-		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 		- See notebook
+		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
 */
 
 #ifndef _FM_BISON_H_

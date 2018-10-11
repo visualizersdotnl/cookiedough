@@ -18,6 +18,7 @@ namespace SFM
 	void CalculateSinLUT();
 
 	SFM_INLINE float lutsinf(float index) { return g_sinLUT[unsigned(index)&kSinTabAnd]; }
+	SFM_INLINE float lutcosf(float index) { return lutsinf(index + kSinTabSize/4); }
 }
 
 #endif // _SFM_SINUS_LUT_H_

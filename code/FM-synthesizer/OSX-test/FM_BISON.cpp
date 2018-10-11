@@ -232,7 +232,7 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.m_carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
+		voice.m_carrier.Initialize(kSaw, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 15.f/3.f;
 		const float CM = carrierFreq*ratio;
 		voice.m_modulator.Initialize(1.f /* LFO? */, CM, 0.f); // These parameters mean a lot
@@ -254,7 +254,7 @@ namespace SFM
 		// FIXME
 		// const float angPitch = voice.m_carrier.m_angularPitch;
 		const float vorticity = 1.f;	
-		voice.m_vorticity.Initialize(s_sampleCount, vorticity*10.f, vorticity);
+		voice.m_vorticity.Initialize(s_sampleCount, vorticity*k2PI, vorticity);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
@@ -405,8 +405,8 @@ namespace SFM
 
 		// FIXME: equalize, gain?
 //		const float wetness = WinMidi_GetFilterMix();
-		const float wetness = 0.f;
-		MOOG::SetDrive(1.f);
+		const float wetness = 0.5f;
+		MOOG::SetDrive(1.f + numVoices); // FIXME?
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 
