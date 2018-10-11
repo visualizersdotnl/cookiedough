@@ -31,6 +31,7 @@
 		- Implement a master value to scale voice amplitude ("main, gain?")
 
 	To do:
+		- Check MOOG filter cutoff
 		- Implement pitch bend
 		- Consider interpolated LUT sampler
 		- Take another gander at oscillators (clean ones), apply BLEP?
