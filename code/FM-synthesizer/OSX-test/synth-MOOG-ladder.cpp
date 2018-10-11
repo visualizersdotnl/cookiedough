@@ -85,9 +85,9 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				// Fetch dry sample
-				const float dry = pDest[iSample]*drive;
+				const float dry = pDest[iSample];
 
-				dV0 = -cutGain * (fast_tanhf((dry + resonance*V[3]) / (2.f*kVT)) + tV[0]);
+				dV0 = -cutGain * (fast_tanhf((dry*drive + resonance*V[3]) / (2.f*kVT)) + tV[0]);
 				V[0] += (dV0 + dV[0]) / (2.f*kSampleRate);
 				dV[0] = dV0;
 				tV[0] = fast_tanhf(V[0]/(2.f*kVT));

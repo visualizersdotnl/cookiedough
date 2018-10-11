@@ -22,19 +22,18 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- Look at Thorsten's noise oscillator, implement noise ASAP!
 		- Debug log with formatting
+		- Look at Thorsten's noise oscillator, implement noise ASAP!
 		- Work out Vorticity further: steer by MIDI, calculate note-dependent constant, non-linearity
 		- Finish up ADSR (see impl.)
-		- Try to get a reasonably normalized output
-		- Implement a master value to scale voice amplitude ("main, gain?")	
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
+		- Implement a master value to scale voice amplitude ("main, gain?")
 
 	To do:
+		- Implement pitch bend
 		- Consider interpolated LUT sampler
 		- Take another gander at oscillators (clean ones), apply BLEP?
-		- Implement pitch bend
 		- Optimization (LUTs, findg hotspots using profiler)
 		- Keep tracking NAN bugs.
 		- See notebook

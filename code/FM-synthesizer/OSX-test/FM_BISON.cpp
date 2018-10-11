@@ -85,9 +85,9 @@ namespace SFM
 	{
 		// FIXME: play a little more, pick best, keep it static, it's your feature
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float angle = sample*m_pitch + kSinLUTCosOffs;
-		const float modAngle = sample*m_pitchMod + kSinLUTCosOffs;
-		const float modulation = oscSine(angle + kLinToSinLUT*oscDirtySaw(modAngle));
+		const float angle = sample*m_pitch;
+		const float modAngle = sample*m_pitchMod;
+		const float modulation = lutcosf(angle + kLinToSinLUT*lutsinf(modAngle));
 		return lerpf<float>(input, input*modulation, m_wetness);
 	}
 
@@ -232,10 +232,10 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.m_carrier.Initialize(kSaw, kMaxVoiceAmplitude, carrierFreq);
+		voice.m_carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 15.f/3.f;
 		const float CM = carrierFreq*ratio;
-		voice.m_modulator.Initialize(1.f /* LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_modulator.Initialize(0.25f /* LFO? */, CM, 0.f); // These parameters mean a lot
 		voice.m_envelope.Start(s_sampleCount);
 
 		voice.m_enabled = true;
@@ -253,8 +253,8 @@ namespace SFM
 
 		// FIXME
 		// const float angPitch = voice.m_carrier.m_angularPitch;
-		const float vorticity = 1.f;	
-		voice.m_vorticity.Initialize(s_sampleCount, vorticity*k2PI, vorticity);
+		const float vorticity = 0.75f;	
+		voice.m_vorticity.Initialize(s_sampleCount, vorticity*kPI, vorticity);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
@@ -299,7 +299,7 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_attack = kSampleRate/2;
 		m_decay = 0;
-		m_release = kSampleRate*2;
+		m_release = kSampleRate*4;
 		m_sustain = 0.8f;
 		m_state = kAttack;
 	}
@@ -379,6 +379,7 @@ namespace SFM
 		{
 			// Silence, but still run (off) the filter
 			memset(pDest, 0, numSamples*sizeof(float));
+			MOOG::SetDrive(0.f);
 		}
 		else
 		{
@@ -401,12 +402,12 @@ namespace SFM
 
 				++s_sampleCount;
 			}
+
+			MOOG::SetDrive(1.f + 1.f/numVoices);
 		}
 
-		// FIXME: equalize, gain?
 //		const float wetness = WinMidi_GetFilterMix();
-		const float wetness = 0.5f;
-		MOOG::SetDrive(1.f + numVoices); // FIXME?
+		const float wetness = 0.f;
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 
