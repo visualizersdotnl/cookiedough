@@ -19,19 +19,18 @@
 
 namespace SFM
 {
-	const float kCommonStrouhal = 0.22f;
+	const float kCommonStrouhal = 0.22f*10.f;
 
 	struct Vorticity
 	{
 		unsigned m_sampleOffs;
-		float m_depth;
 		float m_acceleration;
 
 		float m_pitch;
-		float m_pitchShift;
+		float m_pitchMod;
 		float m_wetness;
 
-		void Initialize(unsigned sampleOffs, float depth, float acceleration);
+		void Initialize(unsigned sampleOffs, float acceleration, float wetness);
 		void SetStrouhal(float sheddingFreq, float diameter, float velocity);
 		float Sample(float input);
 	};

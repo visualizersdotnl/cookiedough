@@ -61,33 +61,34 @@ namespace SFM
 		Vorticity.
 	*/
 
-	void Vorticity::Initialize(unsigned sampleOffs, float depth, float acceleration)
+	void Vorticity::Initialize(unsigned sampleOffs, float acceleration, float wetness)
 	{
+		SFM_ASSERT(acceleration >= 0.f);
+		SFM_ASSERT(fabsf(wetness) <= 1.f);
+
 		m_sampleOffs = sampleOffs;
-		m_depth = depth;
 		m_acceleration = acceleration;
 	
-		m_pitch = CalcSinLUTPitch(1.f);
-		m_pitchShift = kCommonStrouhal*kSinLUTPeriod;
-		m_wetness = 0.624f;
+		m_pitch = CalcSinLUTPitch(kCommonStrouhal);
+		m_pitchMod = CalcSinLUTPitch(acceleration);
+		m_wetness = wetness;
 	}
 
 	void Vorticity::SetStrouhal(float sheddingFreq, float diameter, float velocity)
 	{
-		SFM_ASSERT(velocity != 0.f);
+		SFM_ASSERT(velocity > 0.f);
 		const float S = (sheddingFreq*diameter)/velocity;
-		m_pitchShift = S*kSinLUTPeriod;
+		m_pitch = CalcSinLUTPitch(S);
 	}
 
 	float Vorticity::Sample(float input)
 	{
-		// FIXME: this is basic FM, the only unique properties are the phase shift and Strouhal constant
+		// FIXME: play a little more, pick best, keep it static, it's your feature
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float acceleration = sample*m_acceleration;
-		const float angle = sample*(m_pitch+acceleration) + kSinLUTCosOffs;
-		const float shift = sample*m_pitchShift + kSinLUTCosOffs;
-		const float modulation = lutsinf(angle + m_depth*oscDirtyTriangle(shift));
-		return smoothstepf(input, input*modulation, m_wetness);
+		const float angle = sample*m_pitch + kSinLUTCosOffs;
+		const float modAngle = sample*m_pitchMod + kSinLUTCosOffs;
+		const float modulation = oscSine(angle + kLinToSinLUT*oscDirtySaw(modAngle));
+		return lerpf<float>(input, input*modulation, m_wetness);
 	}
 
 	/*
@@ -232,9 +233,9 @@ namespace SFM
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
 		voice.m_carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
-		const float ratio = 4.f/1.f;
+		const float ratio = 15.f/3.f;
 		const float CM = carrierFreq*ratio;
-		voice.m_modulator.Initialize(0.f /* LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_modulator.Initialize(1.f /* LFO? */, CM, 0.f); // These parameters mean a lot
 		voice.m_envelope.Start(s_sampleCount);
 
 		voice.m_enabled = true;
@@ -249,7 +250,11 @@ namespace SFM
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM_Voice &voice = state.m_voices[iVoice];
 		voice.m_envelope.Stop(s_sampleCount);
-		voice.m_vorticity.Initialize(s_sampleCount, 1.f, 0.f);
+
+		// FIXME
+		// const float angPitch = voice.m_carrier.m_angularPitch;
+		const float vorticity = 1.f;	
+		voice.m_vorticity.Initialize(s_sampleCount, vorticity*10.f, vorticity);
 	}
 
 	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
@@ -294,7 +299,7 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_attack = kSampleRate/2;
 		m_decay = 0;
-		m_release = kSampleRate*4;
+		m_release = kSampleRate*2;
 		m_sustain = 0.8f;
 		m_state = kAttack;
 	}

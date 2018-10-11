@@ -22,7 +22,10 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
-		- Work out Vorticity further: steer by MIDI! 
+		- Look at Thorsten's noise oscillator
+		- Debug log with formatting
+		- Work out Vorticity further: steer by MIDI, calculate note-dependent constant, non-linearity
+		- sinus LUT should have a lutcosf() function
 		- Finish up ADSR (see impl.)
 		- Check up on BLIT harmonics amount
 		- Implement a master value to scale voice amplitude ("main, gain?")	

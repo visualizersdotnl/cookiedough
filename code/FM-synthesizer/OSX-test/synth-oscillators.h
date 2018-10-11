@@ -54,12 +54,12 @@ namespace SFM
 
 	// FIXME?
 	// const float kHarmonicsPrecHZ = kAudibleLowHZ;
-	const float kHarmonicsPrecHZ = kAudibleLowHZ/2.f;
+	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
+		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHz;
 		return unsigned(lower);
 	}
 

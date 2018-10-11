@@ -35,16 +35,16 @@ namespace SFM
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
 
 	// Reasonable audible spectrum.
-	const float kAudibleLowHZ = 20.f;
-	const float kAudibleHighHZ = 22000.f;
+	const float kAudibleLowHz = 20.f;
+	const float kAudibleHighHz = 22000.f;
 
 	// LFO ranges.
-	const float kMaxStdLFO = kAudibleLowHZ;
-	const float kMaxSonicLFO = kAudibleHighHZ;	
+	const float kMaxStdLFO = kAudibleLowHz;
+	const float kMaxSonicLFO = kAudibleHighHz;	
 
 	// Nyquist frequencies.
 	const float kNyquist = kSampleRate/2.f;
-	const float kAudibleNyquist = std::min<float>(kAudibleHighHZ, kNyquist);
+	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices (FIXME: more!)
 	const unsigned kMaxVoices = 8;
@@ -56,7 +56,6 @@ namespace SFM
 
 	// Use to multiply modulation value to LUT pitch
 	const float kLinToSinLUT = (1.f/k2PI)*kSinLUTPeriod;
-
 	/*
 		Utility functions.
 	*/
@@ -67,10 +66,10 @@ namespace SFM
 		return (frequency*kSinLUTPeriod)/kSampleRate;
 	}
 
-	// Frequency to angular CalcSinPitch
+	// Frequency to angular pitch
 	SFM_INLINE float CalcAngularPitch(float frequency)
 	{
-		return (frequency*k2PI)/kSampleRate;
+		return (frequency/kSampleRate)*k2PI;
 	}
 
 	// This can be, for example, used to drive extra filtering
