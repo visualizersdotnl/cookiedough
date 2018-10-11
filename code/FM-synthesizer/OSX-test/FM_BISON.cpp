@@ -83,7 +83,7 @@ namespace SFM
 
 	float Vorticity::Sample(float input)
 	{
-		// FIXME: play a little more, pick best, keep it static, it's your feature
+		// FIXME: add subtle noise at higher frequency
 		const unsigned sample = s_sampleCount-m_sampleOffs;
 		const float angle = sample*m_pitch;
 		const float modAngle = sample*m_pitchMod;
@@ -287,20 +287,31 @@ namespace SFM
 	/*
 		ADSR implementation.
 
+		This ADSR envelope has some non-standard properties, being:
+			- Attack and release is influenced by not velocity.
+			- Attack is not linear but exponential.
+			- Release currently uses Ken Perlin's smooth step.
+
 		FIXME:
-			- MIDI parameters
-			- Non-linear slopes
+			- Implement velocity & decay
+			- MIDI parameters (velocity, ADSR on faders)
 			- Ronny's idea (note velocity scales attack and release time and possibly curvature)
 			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
 	*/
 
-	void ADSR::Start(unsigned sampleOffs)
+	void ADSR::Start(unsigned sampleOffs, float velocity)
 	{
+		SFM_ASSERT(fabsf(velocity) <= 1.f);
+
 		m_sampleOffs = sampleOffs;
+		m_velocity = velocity;
+
+		// FIXME: feed by MIDI (or another source)
 		m_attack = kSampleRate/2;
 		m_decay = 0;
 		m_release = kSampleRate*4;
 		m_sustain = 0.8f;
+
 		m_state = kAttack;
 	}
 
@@ -324,8 +335,9 @@ namespace SFM
 			{
 				if (sample < m_attack)
 				{
-					const float delta = m_sustain/m_attack;
-					amplitude = delta*sample;
+					const float step = 1.f/m_attack;
+					const float delta = powf(sample*step, 2.f);
+					amplitude = m_sustain*delta;
 				}
 				else 
 				{
@@ -344,8 +356,9 @@ namespace SFM
 			{
 				if (sample < m_release)
 				{
-					const float delta = m_sustain/m_release;
-					amplitude = m_sustain - (delta*sample);
+					const float step = 1.f/m_release;
+					const float delta = sample*step;
+					amplitude = smoothstepf(m_sustain, 0.f, delta); // FIXME: Ken Perlin type, expensive
 				}
 				else 
 					amplitude = 0.f; 

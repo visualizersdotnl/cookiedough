@@ -41,6 +41,7 @@ namespace SFM
 	struct ADSR
 	{
 		unsigned m_sampleOffs;
+		float m_velocity;
 
 		// In number of samples (must be within 1 second or max. kSampleRate)
 		unsigned m_attack;
@@ -58,8 +59,8 @@ namespace SFM
 			kRelease
 		} m_state;
 
-		void Start(unsigned sampleOffs);
-		void Stop(unsigned sampleOffs);
+		void Start(unsigned sampleOffs, float velocity);
+		void Stop(unsigned sampleOffs /* Required to trigger Vorticity effect */);
 		float Sample();	
 	};
 

@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- OSX test Bevacaqua compatiblity.
+	Syntherklaas FM -- OSX test Bevacaqua compatiblity (some of this should make it's way in officially).
 */
 
 #ifndef _SFM_BEVACQUA_COMPAT_H_
@@ -50,6 +50,7 @@ inline float saturatef(float value)
 }
 
 // Scalar interpolation.
+// FIXME: use multiply-add
 template<typename T>
 inline const T lerpf(const T &a, const T &b, float t)
 {
