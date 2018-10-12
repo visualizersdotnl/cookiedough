@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM presents 'FM. BISON'
+	Syntherklaas FM presents 'FM. BISON', probably the best FM syntheszier in the world
 	(C) syntherklaas.org, a subsidiary of visualizers.nl
 */
 
@@ -142,6 +142,81 @@ namespace SFM
 	}
 
 	/*
+		ADSR implementation.
+
+		This ADSR envelope has some non-standard properties, being:
+			- Attack and release is influenced by note velocity.
+			- Curves are a little unorthodox.
+
+		FIXME:
+			- Ronny's idea: note velocity scales attack and release time and possibly curvature
+			- MIDI parameters (velocity, ADSR on faders)
+			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
+	*/
+
+	void ADSR::Start(unsigned sampleOffs, float velocity)
+	{
+		SFM_ASSERT(fabsf(velocity) <= 1.f);
+
+		m_sampleOffs = sampleOffs;
+		m_velocity = velocity;
+
+		// FIXME: feed by MIDI (or another source) ,can also not be zero in some cases!
+		m_attack = kSampleRate*2;
+		m_decay = kSampleRate*3;
+		m_release = kSampleRate*3;
+		m_sustain = 0.7f;
+		m_releasing = false;
+	}
+
+	void ADSR::Stop(unsigned sampleOffs)
+	{
+		// Always use current amplitude for release
+		m_sustain = ADSR::Sample();
+
+		m_sampleOffs = s_sampleCount;
+		m_releasing = true;
+	}
+
+	float ADSR::Sample()
+	{
+		/* const */ unsigned sample = s_sampleCount-m_sampleOffs;
+
+		float amplitude = m_sustain;
+
+		if (false == m_releasing)
+		{
+			if (sample <= m_attack)
+			{
+				// Build up to full attack
+				const float step = 1.f/m_attack;
+				const float delta = sample*step;
+				amplitude = delta*delta;
+			}
+			else if (sample > m_attack && sample <= m_attack+m_decay)
+			{
+				// Decay to sustain
+				sample -= m_attack;
+				const float step = 1.f/m_decay;
+				const float delta = sample*step;
+				amplitude = smoothstepf(1.f, m_sustain, delta); // Perlin's version, slow!
+			}
+		}
+		else
+		{
+			// Sustain level and sample offset are adjusted on NOTE_OFF.
+			if (sample <= m_release)
+			{
+				const float step = 1.f/m_release;
+				const float delta = sample*step;
+				amplitude = lerpf<float>(m_sustain, 0.f, delta);
+			}
+		}
+
+		return amplitude;
+	}
+
+	/*
 		FM voice.
 	*/
 
@@ -154,7 +229,8 @@ namespace SFM
 		const float ampEnv = m_envelope.Sample();
 		float sample = m_carrier.Sample(modulation)*ampEnv;
 
-		if (m_envelope.m_state == ADSR::kRelease)
+//		if (m_envelope.m_state == ADSR::kRelease)
+		if (true == m_envelope.m_releasing)
 		{
 			sample = m_vorticity.Sample(sample);
 		}
@@ -232,11 +308,11 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.m_carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
-		const float ratio = 15.f/3.f;
+		voice.m_carrier.Initialize(kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
+		const float ratio = 4.f;
 		const float CM = carrierFreq*ratio;
 		voice.m_modulator.Initialize(0.25f /* LFO? */, CM, 0.f); // These parameters mean a lot
-		voice.m_envelope.Start(s_sampleCount);
+		voice.m_envelope.Start(s_sampleCount, 1.f /* FIXME */);
 
 		voice.m_enabled = true;
 
@@ -253,11 +329,11 @@ namespace SFM
 
 		// FIXME
 		// const float angPitch = voice.m_carrier.m_angularPitch;
-		const float vorticity = 0.75f;	
+		const float vorticity = 0.75f;
 		voice.m_vorticity.Initialize(s_sampleCount, vorticity*kPI, vorticity);
 	}
 
-	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
+	// FIXME: For now this is a hack that checks if enabled voices are fully released, and frees them,
 	//        but I can see this function have more use later on (like, not at 07:10 AM)
 	void UpdateNotes()
 	{
@@ -272,7 +348,7 @@ namespace SFM
 			if (true == enabled)
 			{
 				ADSR &envelope = voice.m_envelope;
-				if (ADSR::kRelease == envelope.m_state)
+				if (true == envelope.m_releasing)
 				{
 					if (envelope.m_sampleOffs+envelope.m_release < s_sampleCount)
 					{
@@ -282,91 +358,6 @@ namespace SFM
 				}
 			}
 		}
-	}
-
-	/*
-		ADSR implementation.
-
-		This ADSR envelope has some non-standard properties, being:
-			- Attack and release is influenced by not velocity.
-			- Attack is not linear but exponential.
-			- Release currently uses Ken Perlin's smooth step.
-
-		FIXME:
-			- Implement velocity & decay
-			- MIDI parameters (velocity, ADSR on faders)
-			- Ronny's idea (note velocity scales attack and release time and possibly curvature)
-			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
-	*/
-
-	void ADSR::Start(unsigned sampleOffs, float velocity)
-	{
-		SFM_ASSERT(fabsf(velocity) <= 1.f);
-
-		m_sampleOffs = sampleOffs;
-		m_velocity = velocity;
-
-		// FIXME: feed by MIDI (or another source)
-		m_attack = kSampleRate/2;
-		m_decay = 0;
-		m_release = kSampleRate*4;
-		m_sustain = 0.8f;
-
-		m_state = kAttack;
-	}
-
-	void ADSR::Stop(unsigned sampleOffs)
-	{
-		// Always use current amplitude for release
-		m_sustain = ADSR::Sample();
-
-		m_sampleOffs = sampleOffs;
-		m_state = kRelease;
-	}
-
-	float ADSR::Sample()
-	{
-		const unsigned sample = s_sampleCount-m_sampleOffs;
-
-		float amplitude = 0.f;
-		switch (m_state)
-		{
-		case kAttack:
-			{
-				if (sample < m_attack)
-				{
-					const float step = 1.f/m_attack;
-					const float delta = powf(sample*step, 2.f);
-					amplitude = m_sustain*delta;
-				}
-				else 
-				{
-					amplitude = m_sustain;
-					m_state = kSustain;
-				}
-			}
-			break;
-
-		case kDecay: // FIXME
-		case kSustain:
-			amplitude = m_sustain;			
-			break;
-
-		case kRelease:
-			{
-				if (sample < m_release)
-				{
-					const float step = 1.f/m_release;
-					const float delta = sample*step;
-					amplitude = smoothstepf(m_sustain, 0.f, delta); // FIXME: Ken Perlin type, expensive
-				}
-				else 
-					amplitude = 0.f; 
-			}
-			break;
-		}
-
-		return amplitude;
 	}
 
 	/*
@@ -420,7 +411,7 @@ namespace SFM
 		}
 
 //		const float wetness = WinMidi_GetFilterMix();
-		const float wetness = 0.f;
+		const float wetness = 0.1f;
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 

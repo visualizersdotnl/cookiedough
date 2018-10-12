@@ -13,10 +13,8 @@
 		- Consider using more precision or at least loook at possible precision issues.
 */
 
-#ifndef _SFM_SYNTH_MOOG_LADDER_H_
-#define _SFM_SYNTH_MOOG_LADDER_H_
-
 #include "synth-global.h"
+// #include "synth-MOOG-ladder.h"
 
 namespace SFM
 {
@@ -116,5 +114,3 @@ namespace SFM
 		}
 	}
 }
-
-#endif // _SFM_SYNTH_MOOG_LADDER_H_

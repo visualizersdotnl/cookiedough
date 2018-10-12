@@ -51,13 +51,8 @@ namespace SFM
 		// Desired sustain [0..1]
 		float m_sustain;
 
-		enum State
-		{
-			kAttack,
-			kDecay,
-			kSustain,
-			kRelease
-		} m_state;
+		// Note released?
+		bool m_releasing;
 
 		void Start(unsigned sampleOffs, float velocity);
 		void Stop(unsigned sampleOffs /* Required to trigger Vorticity effect */);

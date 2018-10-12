@@ -22,15 +22,16 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs:
+		- Does filter mixing shave off the positive voltages?
 		- Debug log with formatting
 		- Look at Thorsten's noise oscillator, implement noise ASAP!
 		- Work out Vorticity further: steer by MIDI, calculate note-dependent constant, non-linearity
-		- Finish up ADSR (see impl.)
 		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
 		- Use ring buffer to feed
 		- Implement a master value to scale voice amplitude ("main, gain?")
 
 	To do:
+		- What does Audacity's "Paulstretch" do? Sounds like an arpeggiator to me.
 		- Check MOOG filter cutoff
 		- Implement pitch bend
 		- Consider interpolated LUT sampler

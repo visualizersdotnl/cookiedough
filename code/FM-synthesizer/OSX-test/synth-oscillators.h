@@ -22,7 +22,9 @@ namespace SFM
 		kSquare,
 		/* Aliasing forms */
 		kDirtySaw,
-		kDirtyTriangle
+		kDirtyTriangle,
+		/* Noise */
+		kPinkNoise
 	};
 
 	/*
@@ -75,7 +77,7 @@ namespace SFM
 		}
 
  		const float ampMul = 2.f/kPI;
-		signal *= ampMul;
+ 		signal *= ampMul;
 
 		return signal;
 	}
@@ -97,6 +99,15 @@ namespace SFM
 
 
 		return signal;
+	}
+
+	/*
+		Noise oscillator(s).
+	*/
+
+	SFM_INLINE float oscPinkNoise(float phase)
+	{
+		return 0.f;
 	}
 }
 
