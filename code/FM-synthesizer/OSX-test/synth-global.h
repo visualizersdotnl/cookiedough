@@ -48,7 +48,9 @@ namespace SFM
 
 	// Max. number of voices (FIXME: more!)
 	const unsigned kMaxVoices = 8;
-	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
+
+	// Max. (or initial) voice amplitude
+	const float kMaxVoiceAmplitude = 1.f - 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
 	const unsigned kSinLUTPeriod = kSinTabSize;
@@ -79,8 +81,8 @@ namespace SFM
 	}
 
 	// From and to dB
-	inline float AmplitudeTodB(float amplitude) { return 20.0f * log10f(amplitude); }
-	inline float dBToAmplitude(float dB)        { return powf(10.0f, dB/20.0f);     }
+	inline float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
+	inline float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);     }
 
 	// For debug purposes
 	SFM_INLINE bool IsNAN(float value)

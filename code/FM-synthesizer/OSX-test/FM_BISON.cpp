@@ -145,8 +145,9 @@ namespace SFM
 		ADSR implementation.
 
 		This ADSR envelope has some non-standard properties, being:
-			- Attack and release is influenced by note velocity.
+			- Attack and release is influenced by note velocity, as well as carrier pitch.
 			- Curves are a little unorthodox.
+			- Decay should be quick!
 
 		FIXME:
 			- Ronny's idea: note velocity scales attack and release time and possibly curvature
@@ -162,10 +163,10 @@ namespace SFM
 		m_velocity = velocity;
 
 		// FIXME: feed by MIDI (or another source) ,can also not be zero in some cases!
-		m_attack = kSampleRate*2;
-		m_decay = kSampleRate*3;
-		m_release = kSampleRate*3;
-		m_sustain = 0.7f;
+		m_attack = kSampleRate/2; // 0.5s
+		m_decay = kSampleRate/4;  // 0.25s
+		m_release = kSampleRate;  // 1s
+		m_sustain = 0.9f; // FIXME: logarithmic scale, more intuitive?
 		m_releasing = false;
 	}
 
@@ -188,28 +189,28 @@ namespace SFM
 		{
 			if (sample <= m_attack)
 			{
-				// Build up to full attack
+				// Build up to full attack (exponential)
 				const float step = 1.f/m_attack;
 				const float delta = sample*step;
 				amplitude = delta*delta;
 			}
 			else if (sample > m_attack && sample <= m_attack+m_decay)
 			{
-				// Decay to sustain
+				// Decay to sustain (exponential)
 				sample -= m_attack;
 				const float step = 1.f/m_decay;
 				const float delta = sample*step;
-				amplitude = smoothstepf(1.f, m_sustain, delta); // Perlin's version, slow!
+				amplitude = lerpf(1.f, m_sustain, delta*delta); 			
 			}
 		}
 		else
 		{
-			// Sustain level and sample offset are adjusted on NOTE_OFF.
+			// Sustain level and sample offset are adjusted on NOTE_OFF (again, exponential)
 			if (sample <= m_release)
 			{
 				const float step = 1.f/m_release;
 				const float delta = sample*step;
-				amplitude = lerpf<float>(m_sustain, 0.f, delta);
+				amplitude = lerpf<float>(m_sustain, 0.f, delta*delta);
 			}
 		}
 
@@ -221,16 +222,14 @@ namespace SFM
 	*/
 
 	// FIXME: 
-	//	- Pass global envelope here, like Ronny said, along with operation
 	//  - Expand with a patch or algorithm selection of sorts
 	float FM_Voice::Sample()
 	{
 		const float modulation = m_modulator.Sample();
-		const float ampEnv = m_envelope.Sample();
+		const float ampEnv = m_ADSR.Sample();
 		float sample = m_carrier.Sample(modulation)*ampEnv;
 
-//		if (m_envelope.m_state == ADSR::kRelease)
-		if (true == m_envelope.m_releasing)
+		if (true == m_ADSR.m_releasing)
 		{
 			sample = m_vorticity.Sample(sample);
 		}
@@ -261,10 +260,10 @@ namespace SFM
 		Filter state is not included in the global state for now as it pulls the values rather than pushing them.
 	*/
 
-	static void UpdateFilterSettings()
+	static void UpdateFilterParameters()
 	{
 		float testCut, testReso;
-		testCut = 0.9f; // WinMidi_GetCutoff();
+		testCut = 1.f; // WinMidi_GetCutoff();
 		testReso = 0.1f;  // WinMidi_GetResonance();
 
 		MOOG::SetCutoff(testCut*1000.f);
@@ -308,11 +307,11 @@ namespace SFM
 
 		// FIXME: adapt to patch when it's that time
 		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.m_carrier.Initialize(kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
+		voice.m_carrier.Initialize(kSine, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f;
 		const float CM = carrierFreq*ratio;
-		voice.m_modulator.Initialize(0.25f /* LFO? */, CM, 0.f); // These parameters mean a lot
-		voice.m_envelope.Start(s_sampleCount, 1.f /* FIXME */);
+		voice.m_modulator.Initialize(0.f /* LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
 		voice.m_enabled = true;
 
@@ -325,7 +324,7 @@ namespace SFM
 
 //		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		FM_Voice &voice = state.m_voices[iVoice];
-		voice.m_envelope.Stop(s_sampleCount);
+		voice.m_ADSR.Stop(s_sampleCount);
 
 		// FIXME
 		// const float angPitch = voice.m_carrier.m_angularPitch;
@@ -347,7 +346,7 @@ namespace SFM
 			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				ADSR &envelope = voice.m_envelope;
+				ADSR &envelope = voice.m_ADSR;
 				if (true == envelope.m_releasing)
 				{
 					if (envelope.m_sampleOffs+envelope.m_release < s_sampleCount)
@@ -406,12 +405,10 @@ namespace SFM
 
 				++s_sampleCount;
 			}
-
-			MOOG::SetDrive(1.f + 1.f/numVoices);
 		}
 
 //		const float wetness = WinMidi_GetFilterMix();
-		const float wetness = 0.1f;
+		const float wetness = 1.f;
 		MOOG::Filter(pDest, numSamples, wetness);
 	}
 
@@ -470,19 +467,19 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		FIXME: just write out one sample for 8 seconds, fix real output multi-platform (SDL)!
 	*/
 	
-	const float duration = 8.f;
+	const float duration = 2.f;
 	const unsigned numSamples = kSampleRate*duration;
 
 	float render[numSamples];
 	
-	UpdateFilterSettings();
+	UpdateFilterParameters();
 
-	// C-E-G
+	// Strike chord: C-E-G
 	const unsigned index1 = TriggerNote(64);
 	const unsigned index2 = TriggerNote(73);
 	const unsigned index3 = TriggerNote(76);
 
-	const unsigned release = s_shadowState.m_voices[index1].m_envelope.m_release;
+	const unsigned release = s_shadowState.m_voices[index1].m_ADSR.m_release;
 
 	unsigned writeIdx = 0;
 
@@ -492,6 +489,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		Render(render+writeIdx++, 1);
 	}
 
+	// Release chord.
 	ReleaseNote(index1);
 	ReleaseNote(index2);
 	ReleaseNote(index3);

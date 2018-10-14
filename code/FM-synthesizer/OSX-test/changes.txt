@@ -1,4 +1,3 @@
 
 - Nice resource: https://github.com/Themaister/libfmsynth/blob/master/src/fmsynth.c
-- On return use P4MERGE and integrate changes back to root folder.
-
+- On return make a copy of what you had and just copy the new stuff back, then fix errors.

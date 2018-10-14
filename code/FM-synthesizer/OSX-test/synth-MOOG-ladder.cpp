@@ -10,7 +10,7 @@
 
 	FIXME: 
 		- More than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
-		- Consider using more precision or at least loook at possible precision issues.
+		- Consider using more precision or at least look at precision issues.
 */
 
 #include "synth-global.h"
@@ -35,6 +35,7 @@ namespace SFM
 
 		void SetCutoff(float cutoff)
 		{
+			// Accept within normalized range
 			SFM_ASSERT(cutoff >= 0.f && cutoff <= 1000.f); 
 
 			const float angular = (kPI*cutoff)/kSampleRate;
@@ -51,7 +52,8 @@ namespace SFM
 
 		void SetDrive(float drive)
 		{
-			s_drive = drive;
+			// Multiply by 2 to adjust to [-1..1] range.
+			s_drive = drive*2.f;
 		}
 
 		void ResetParameters()

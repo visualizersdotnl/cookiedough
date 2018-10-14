@@ -21,7 +21,7 @@
 #define VIZ_ASSERT(condition) assert(condition)
 
 /*
-	Taken from Bevacqua's Std3DMath
+	Taken from my Std3DMath library; I probably want to keep some of this
 */
 
 // A few meaningful constants.
@@ -37,7 +37,7 @@ inline float clampf(float min, float max, float value)
 	if (value < min)
 		return min;
 
-	if (value > max)
+	if (value > max)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 		return max;
 
 	return value;
@@ -50,7 +50,7 @@ inline float saturatef(float value)
 }
 
 // Scalar interpolation.
-// FIXME: use multiply-add
+// FIXME: use multiply-add (in other copies as well)
 template<typename T>
 inline const T lerpf(const T &a, const T &b, float t)
 {

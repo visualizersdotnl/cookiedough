@@ -1,32 +1,20 @@
 
 
-FM. BISON (by syntherklaas.org and the friendly folks who made Street Fighter ][)
+**** FM. BISON - DESIGN 0.1 ****
 
-For a first release to be ported to VST for alpha testing, I'm picking a very simple design:
 
-- 1 patch at a time with limited but useful polyphony.
+- 1 patch can be used a time. I might want the parameters to be tweakable (either wrapped in VST or by XML);
 
-- A patch is driven by 1 carrier and 1 modulator, the latter now being a sine wave. The carrier waveform can
-be a variety of BLIT and aliasing waveforms.
+- Polyphony is currently 8, but it won't be much of a problem to enlarge that to 16, in which case a basic voice stealing is used.
 
-- 1 global ADSR drives how all notes are played; as with any controls in the synthesizer they will be updated,
-or pulled per frame and thus there is a slight but undetectable latency. The ADSR will have non-linear properties
-and the length of the attack phase (and likely release) will be scaled according to the note velocity.
-  * Add decay, non-linearity and operations (see below).
+- A patch is driven by a single carrier and 1 modulato for now; changing this related to more elaborate patches which is not on the agenda just yet.
 
-- The ADSR can influence the patch in a variety of ways; initially this will be default (modulate).
-I'll have to think of options that make good sense to add.
+- 1 global ADSR modulates drives amplitude, 1 global cosine tilt LFO (for now) modulates the carrier frequency. It makes sense to have a few operations on hand to on how these envelopes are applied, but not before the next iteration.
 
-- 2 optional LFOs (that either have frequencies below the audible spectrum i.e. 20Hz or are also permitted in the
-sonic range) drive the amplitude of a voice and it's FM depth (or 'index' if you will) respectively.
-  * Implement.
+- After a simple dry voice mix the samples are fed to a MOOG ladder filter (which has cutoff and frequency
+parameters); another control allows you to mix between wet and dry signal.
 
-- After a simple dry mixing phase samples are fed to a MOOG ladder filter (which has cutoff and frequency)
-and then, per sample, and interpolation is done between that dry state and filtered as the MOOG filter
-makes everything sound like a cheap church organ is snorting Valium.
+- A global gain rotary or fader that amplifies the dry mix; much like drive on most guitar amplifiers.
 
-- A master "volume" rotary or fader that can be seen as a 'drive' on the dry sample mixing.
-
-- Hip feature: vorticity. A cheap approximation of the vortex shedding concept which is applied on release of a note by combining the Strouhal value with a frequency modulated LFO.
-
-This feature set is about 60% complete at time of writing.
+- Unique feature: 'vorticity'. It is a cheap approximation of vortex shedding which is applied upon release
+of a note by combining the Strouhal value with a frequency modulated LFO.

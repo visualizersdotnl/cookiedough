@@ -5,6 +5,9 @@
 
 	Please check README.md for more information.
 
+	FIXME:
+	- Use multiply-add for lerpf().
+
 	Added, fixed and/or modified (backport to main branch):
 	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
 	- Added Matrix44::FromArray33().

@@ -1,6 +1,8 @@
 
 /*
-	Syntherklaas FM -- LFOs.
+	Syntherklaas FM -- Cosine tilt envelope.
+
+	It can br well used as an LFO.
 */
 
 #include "synth-global.h"
@@ -8,6 +10,7 @@
 
 namespace SFM
 {
+	// FIXME: optimize (start by using LUT cosinus)
 	void CalculateCosineTiltEnvelope(float *pDest, unsigned numSamples, float tilt, float curve, float frequency)
 	{
 		/* Let's assert that what we're getting is in accordance to what I was promised. */
