@@ -69,7 +69,7 @@ namespace SFM
 
 		FM_Carrier m_carrier;
 		FM_Modulator m_modulator;
-		ADSR m_ADSR; // FIXME: turn into something like a (smaller?) copy of the ADSR envelope
+		ADSR m_ADSR; // FIXME: turn into something like a smaller ref. to global ADSR envelope
 		Vorticity m_vorticity;
 
 		float Sample();

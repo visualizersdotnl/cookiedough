@@ -1,7 +1,6 @@
 
-
-**** FM. BISON - DESIGN 0.1 ****
-
+FM. BISON synthesizer design
+Version 0.1
 
 - 1 patch can be used a time. I might want the parameters to be tweakable (either wrapped in VST or by XML);
 

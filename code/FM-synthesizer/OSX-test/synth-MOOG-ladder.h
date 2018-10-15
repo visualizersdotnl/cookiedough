@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- 4-pole filter like the MOOG ladder.
+	Syntherklaas FM -- 4-pole MOOG ladder filter.
 */
 
 #ifndef _SFM_SYNTH_MOOG_LADDER_H_
@@ -12,12 +12,16 @@ namespace SFM
 {
 	namespace MOOG
 	{
+		// Witin normalied range [0..10000]
 		void SetCutoff(float cutoff);
 		
 		// Feed it [0..PI], anything higher will cause it to detune and start self-oscillating
 		// I suspect this is because I brought the precision down to 32-bit.
+		// However, the paper also mentions that this implementation is closer to the original
+		// filter's self-oscillating nature!
 		void SetResonance(float resonance); 
 
+		// FIXME: useful range to be determined
 		void SetDrive(float drive);
 
 		void ResetParameters();

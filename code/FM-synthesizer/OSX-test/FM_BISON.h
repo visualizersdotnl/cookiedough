@@ -22,7 +22,8 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs: 
-		- Try Microtracker filter, find out why current filter loses voltage (gain)
+		- Add drive control (and figure out acceptable range) to MOOG ladder
+		- Try Microtracker filter)
 		- Backport immediately!
 		- Check ADSR curves
 		- Use cosine tilt envelope for carrier freq. shaping

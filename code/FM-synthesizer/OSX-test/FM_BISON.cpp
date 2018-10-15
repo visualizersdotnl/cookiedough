@@ -78,6 +78,7 @@ namespace SFM
 
 	void Vorticity::SetStrouhal(float sheddingFreq, float diameter, float velocity)
 	{
+		// FIXME: use some trigonometry here to figure out the diameter and actual shedding freq.?s
 		SFM_ASSERT(velocity > 0.f);
 		const float S = (sheddingFreq*diameter)/velocity;
 		m_pitch = CalcSinLUTPitch(S);
@@ -198,7 +199,7 @@ namespace SFM
 			}
 			else if (sample > m_attack && sample <= m_attack+m_decay)
 			{
-				// Decay to sustain (exponential)
+				// Decay to sustain (exponential, may want it punchier (FIXME))
 				sample -= m_attack;
 				const float step = 1.f/m_decay;
 				const float delta = sample*step;

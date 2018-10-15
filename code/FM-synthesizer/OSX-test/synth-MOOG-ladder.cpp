@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- 4-pole filter like the MOOG ladder.
+	Syntherklaas FM -- 4-pole MOOG ladder filter.
 
 	Credits:
 		- https://github.com/ddiakopoulos/MoogLadders/tree/master/src
