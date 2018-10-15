@@ -22,10 +22,9 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs: 
-		- Add drive control (and figure out acceptable range) to MOOG ladder
-		- Try Microtracker filter)
 		- Backport immediately!
 		- Check ADSR curves
+		- Add drive control (and figure out acceptable range) to MOOG ladder
 		- Use cosine tilt envelope for carrier freq. shaping
 		- Use ring buffer
 		- Debug log with formatting
@@ -35,9 +34,9 @@
 		- Keep tracking NAN bugs.
 
 	To do:
-		- Check MOOG filter cutoff (why does it detune at higher frequencies and cause self-oscillation?)
-		- Optimization (LUTs, find hotspots using profiler)
+		- Optimization (LUTs, find hotspots using profiler)s
 		- Use multiply-add in lerpf()
+		- Try Microtracker filter
 
 	Consider:
 		- Consider interpolated LUT sampler

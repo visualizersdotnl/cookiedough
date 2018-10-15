@@ -1,6 +1,17 @@
 
 /*
 	Syntherklaas FM -- 4-pole MOOG ladder filter.
+
+	A little quote about the self-oscillating resonance:
+	
+	"But just as you'd expect from a Moog filter, the Ladder self‑oscillates when the resonance control 
+	is turned fully clockwise. This can be a disturbing effect at times, but it can be used to great advantage 
+	in some situations. In other words, it's very much a feature rather than a bug, and demonstrates how 
+	powerful this filter is; you simply have to know it and deal with it... and get some fun out of it! 
+	In fact, with a little practice, you might even be able to coax some Theremin‑like sounds out of this tiny 
+	module!"
+
+	Source: https://www.soundonsound.com/reviews/moog-ladder
 */
 
 #ifndef _SFM_SYNTH_MOOG_LADDER_H_
@@ -12,13 +23,10 @@ namespace SFM
 {
 	namespace MOOG
 	{
-		// Witin normalied range [0..10000]
+		// Witin normalied range [0..1000]
 		void SetCutoff(float cutoff);
 		
-		// Feed it [0..PI], anything higher will cause it to detune and start self-oscillating
-		// I suspect this is because I brought the precision down to 32-bit.
-		// However, the paper also mentions that this implementation is closer to the original
-		// filter's self-oscillating nature!
+		// Feed it [0..PI], this just cuts off when it wants to start self-oscillating (see above)
 		void SetResonance(float resonance); 
 
 		// FIXME: useful range to be determined
