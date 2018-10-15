@@ -4,9 +4,11 @@
 
 	Credits:
 		- https://github.com/ddiakopoulos/MoogLadders/tree/master/src
-		- The paper by S. D'Angelo & V. Välimäki (2013).
+		- Copyright 2012 Stefano D'Angelo <zanga.mail@gmail.com>
+		- Corresponding paper by S. D'Angelo & V. Välimäki (2013)
 
 	Filter does not require oversampling.
+	Filter has been sligtly modified.
 
 	FIXME: 
 		- More than enough to optimize here if need be (SIMD, maybe), but let us wait for a target platform.
@@ -38,8 +40,8 @@ namespace SFM
 			// Accept within normalized range
 			SFM_ASSERT(cutoff >= 0.f && cutoff <= 1000.f); 
 
-			const float angular = (kPI*cutoff)/kSampleRate;
-			const float gain = 4.f*kPI*kVT*cutoff*(1.f-angular)/(1.f+angular);
+			const float omega = (kPI*cutoff)/kSampleRate;
+			const float gain = 4.f*kPI*kVT*cutoff*(1.f-omega)/(1.f+omega);
 	
 			s_cutGain = gain;
 		}
@@ -52,8 +54,7 @@ namespace SFM
 
 		void SetDrive(float drive)
 		{
-			// Multiply by 2 to adjust to [-1..1] range.
-			s_drive = drive*2.f;
+			s_drive = drive;
 		}
 
 		void ResetParameters()
@@ -107,7 +108,7 @@ namespace SFM
 				dV[3] = dV3;
 				tV[3] = fast_tanhf(V[3]/(2.f*kVT));
 
-				// Round off and mix with dry (FIXME: atanf() LUT)
+				// Crossfade
 				pDest[iSample] = lerpf(dry, V[3], wetness); 
 
 				// If this happens we're fucked

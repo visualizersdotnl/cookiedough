@@ -50,7 +50,7 @@ namespace SFM
 	const unsigned kMaxVoices = 8;
 
 	// Max. (or initial) voice amplitude
-	const float kMaxVoiceAmplitude = 1.f - 1.f/kMaxVoices;
+	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
 	const unsigned kSinLUTPeriod = kSinTabSize;

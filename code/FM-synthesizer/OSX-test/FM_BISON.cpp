@@ -1,14 +1,16 @@
 
 /*
-	Syntherklaas FM presents 'FM. BISON', probably the best FM syntheszier in the world
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
+	Syntherklaas FM presents 'FM. BISON'
+	by syntherklaas.org, a subsidiary of visualizers.nl
+
+	Contains most of the basic implementation.
+	Might want to split that up if it starts to become clutter (FIXME).
 */
 
 // Oh MSVC and your well-intentioned madness!
 #define _CRT_SECURE_NO_WARNINGS
 
-// Easily interchangeable with POSIX-variants or straight assembler, though so complication
-// may arise with all the different (system/API) threads calling
+// Easily interchangeable with POSIX-variants or straight assembler
 #include <mutex>
 #include <shared_mutex>
 #include <atomic>
@@ -162,10 +164,10 @@ namespace SFM
 		m_sampleOffs = sampleOffs;
 		m_velocity = velocity;
 
-		// FIXME: feed by MIDI (or another source) ,can also not be zero in some cases!
-		m_attack = kSampleRate/2; // 0.5s
+		// FIXME: feed by MIDI (or another source), can also not be zero in some cases!
+		m_attack = kSampleRate/2; // 0.50s
 		m_decay = kSampleRate/4;  // 0.25s
-		m_release = kSampleRate;  // 1s
+		m_release = kSampleRate;  // 1.00s
 		m_sustain = 0.9f; // FIXME: logarithmic scale, more intuitive?
 		m_releasing = false;
 	}
@@ -310,7 +312,7 @@ namespace SFM
 		voice.m_carrier.Initialize(kSine, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f;
 		const float CM = carrierFreq*ratio;
-		voice.m_modulator.Initialize(0.f /* LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_modulator.Initialize(ratio /* apply LFO? */, CM, 0.f); // These parameters mean a lot
 		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
 		voice.m_enabled = true;
@@ -361,6 +363,8 @@ namespace SFM
 
 	/*
 		Render function.
+
+		FIXME: fold all into a single loop?
 	*/
 
 	SFM_INLINE void CopyShadowToRenderState()
@@ -382,7 +386,6 @@ namespace SFM
 		{
 			// Silence, but still run (off) the filter
 			memset(pDest, 0, numSamples*sizeof(float));
-			MOOG::SetDrive(0.f);
 		}
 		else
 		{
@@ -400,6 +403,7 @@ namespace SFM
 					}
 				}
 
+				// FIXME: move to last step?
 				const float clipped = clampf(-1.f, 1.f, dry);
 				pDest[iSample] = atanf(clipped);
 

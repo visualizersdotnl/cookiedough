@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Modulator (basically a type of LFO).
+	Syntherklaas FM -- Modulator (can be used as LFO).
 */
 
 #ifndef _SFM_SYNTH_MODULATOR_H_
@@ -27,4 +27,3 @@ namespace SFM
 }
 
 #endif // _SFM_SYNTH_MODULATOR_H_
-

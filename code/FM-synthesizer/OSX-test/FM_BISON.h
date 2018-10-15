@@ -1,7 +1,7 @@
 
 /*
 	Syntherklaas FM presents 'FM. BISON'
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
+	by syntherklaas.org, a subsidiary of visualizers.nl
 
 	This is intended to be a powerful yet relatively simple FM synthesizer core.
 
@@ -22,13 +22,11 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Priority / Bugs: 
-		- Output just ain't loud enough: the MOOG ladder seems to normalize my input signal!
-		  * THINK I FIXED IT! *
+		- Try Microtracker filter, find out why current filter loses voltage (gain)
 		- Backport immediately!
 		- Check ADSR curves
 		- Use cosine tilt envelope for carrier freq. shaping
 		- Use ring buffer
-		- Does MOOG ladder mixing shave off positive voltage?
 		- Debug log with formatting
 		- Implement pink noise (and possibly, later, Thorsten's noise)
 		- Steer vorticity by MIDI control (just 1 would be best, as not to overcomplicate things)

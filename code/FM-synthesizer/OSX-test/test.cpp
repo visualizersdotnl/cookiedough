@@ -7,7 +7,7 @@
 
 int main(int argC, char **argV)
 {
-	// FIXME: try to dump a sample, for now			
+	// FIXME: try to dump a sample, for nowS
 	Syntherklaas_Create();
 	Syntherklaas_Render(nullptr, 0.f, 0.f);
 	Syntherklaas_Destroy();

@@ -14,7 +14,8 @@ namespace SFM
 	{
 		void SetCutoff(float cutoff);
 		
-		// Feed it [0..PI] (higher will cause detuned feedback getting stuck).
+		// Feed it [0..PI], anything higher will cause it to detune and start self-oscillating
+		// I suspect this is because I brought the precision down to 32-bit.
 		void SetResonance(float resonance); 
 
 		void SetDrive(float drive);
