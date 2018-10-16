@@ -21,11 +21,14 @@
 	
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
+	Things to do whilst not motivated (read: manic or medicated):
+		- Stash pieces of code not directly related to the polyphonic synth in their own source file (ADSR, modulator, carrier et cetera).
+		- Consider folding FM_Modulator and FM_Carrier into one (should be easy enough to see if that makes sense).
+		- Read more about proper cross fading.
+
 	Sound related: 
-		- Stash pieces of code not directly related to the polyphonic synth in their own .cpp!
 		- Volume difference between dry and wet (MOOG ladder), why?
 		  + Try simpler filter!
-		- Create realistic cross fading (review!)
 		- Review ADSR curves
 		- Review Vorticity: tie Strouhal constant to voice, also modulate carrier frequeny by adding to modulation? 
 		- Implement pink noise (and possibly, later, Thorsten's noise)
