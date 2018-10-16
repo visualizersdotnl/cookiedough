@@ -2,10 +2,8 @@
 /*
 	Syntherklaas FM -- Vorticity LFO.
 
-	This isn't a physically correct vortex shedding implementation by a long shot; the goal
-	is clearly to have a cool feature that sounds a bit like it but isn't special at all.
-
-	It's called branding.
+	Weird wobbly vortex shedding-like effect to be used on NOTE_OFF.
+	Only keep if you can go somewhere with it (FIXME).
 */
 
 #ifndef _SFM_SYNTH_VORTICITY_H_

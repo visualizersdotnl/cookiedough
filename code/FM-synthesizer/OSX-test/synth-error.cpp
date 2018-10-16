@@ -1,4 +1,0 @@
-
-/*
-	Syntherklaas FM -- Error handling.
-*/

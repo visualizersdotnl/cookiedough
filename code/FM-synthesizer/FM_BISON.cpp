@@ -1,26 +1,26 @@
 
 /*
 	Syntherklaas FM presents 'FM. BISON'
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
+	by syntherklaas.org, a subsidiary of visualizers.nl
 
-	Uses a little hack in the BASS layer of this codebase (audio.cpp) to output a 44.1kHz monaural stream.
+	Contains most of the basic implementation.
+	Might want to split that up if it starts to become clutter (FIXME).
 */
 
 // Oh MSVC and your well-intentioned madness!
 #define _CRT_SECURE_NO_WARNINGS
 
-// Easily interchangeable with POSIX-variants or straight assembler, though so complication
-// may arise with all the different (system/API) threads calling
+// Easily interchangeable with POSIX-variants or straight assembler
 #include <mutex>
 #include <shared_mutex>
 #include <atomic>
 
 #include "FM_BISON.h"
-#include "synth-LFOs.h"
 #include "synth-midi.h"
 #include "synth-oscillators.h"
 #include "synth-state.h"
 #include "synth-MOOG-ladder.h"
+#include "synth-mix.h"
 // #include "synth-ringbuffer.h"
 
 // Win32 MIDI input (specialized for the Oxygen 49)
@@ -30,40 +30,72 @@ namespace SFM
 {
 	/*
 		Global sample counts.
-
-		FIXME: 
-			- Account for wrapping.
-			- Atomic can be dropped later.
 	*/
 
+//	FIXME: drop atomic when safe.
 	static std::atomic<unsigned> s_sampleCount = 0;
 	static std::atomic<unsigned> s_sampleOutCount = 0;
+//	static unsigned s_sampleCount = 0, s_sampleOutCount = 0;
 
 	/*
 		FM modulator.
 	*/
 
-	void FM_Modulator::Initialize(float index, float frequency)
+	void FM_Modulator::Initialize(float index, float frequency, float phaseShift)
 	{
 		m_index = index;
-		m_pitch = CalcSinPitch(frequency);
+		m_pitch = CalcSinLUTPitch(frequency);
 		m_sampleOffs = s_sampleCount;
+		m_phaseShift = (phaseShift*kSinLUTPeriod)/k2PI;
 	}
 
-	float FM_Modulator::Sample(const float *pEnv)
+	float FM_Modulator::Sample()
 	{
 		const unsigned sample = s_sampleCount-m_sampleOffs;
-		const float phase = sample*m_pitch;
+		const float phase = sample*m_pitch + m_phaseShift;
+		
+		// FIXME: try other oscillators (not without risk of noise, of course)
+		const float modulation = oscSine(phase); 
 
-		float envelope = 1.f;
-		if (pEnv != nullptr)
-		{
-			const unsigned index = sample & (kPeriodLength-1);
-			envelope = pEnv[index];
-		}
+		return m_index*modulation;
+	}
 
-		const float modulation = oscSine(phase)*kTabToRad; // FIXME: try other oscillators (not without risk of noise, of course)
-		return envelope*m_index*modulation;
+	/*
+		Vorticity.
+
+		FIXME:
+			- Add noise at higher frequencies?
+			- Subtract frequency from carrier (actual shedding)?
+	*/
+
+	void Vorticity::Initialize(unsigned sampleOffs, float acceleration, float wetness)
+	{
+		SFM_ASSERT(acceleration >= 0.f);
+		SFM_ASSERT(fabsf(wetness) <= 1.f);
+
+		m_sampleOffs = sampleOffs;
+		m_acceleration = acceleration;
+	
+		m_pitch = CalcSinLUTPitch(kCommonStrouhal);
+		m_pitchMod = CalcSinLUTPitch(acceleration);
+		m_wetness = wetness;
+	}
+
+	void Vorticity::SetStrouhal(float sheddingFreq, float diameter, float velocity)
+	{
+		// FIXME: use some trigonometry here to figure out the diameter and actual shedding freq.?
+		SFM_ASSERT(velocity > 0.f);
+		const float S = (sheddingFreq*diameter)/velocity;
+		m_pitch = CalcSinLUTPitch(S);
+	}
+
+	float Vorticity::Sample(float input)
+	{
+		const unsigned sample = s_sampleCount-m_sampleOffs;
+		const float angle = sample*m_pitch;
+		const float modAngle = sample*m_pitchMod;
+		const float modulation = lutcosf(angle + kLinToSinLUT*lutsinf(modAngle));
+		return lerpf<float>(input, input*modulation, m_wetness);
 	}
 
 	/*
@@ -74,17 +106,21 @@ namespace SFM
 	{
 		m_form = form;
 		m_amplitude = amplitude;
-		m_pitch = CalcSinPitch(frequency);
+		m_pitch = CalcSinLUTPitch(frequency);
+		m_angularPitch = CalcAngularPitch(frequency);
 		m_sampleOffs = s_sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	}
 
-	// FIXME: kill switch!
 	float FM_Carrier::Sample(float modulation)
 	{
 		const unsigned sample = s_sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
 
+		// Convert modulation to LUT period
+		modulation *= kLinToSinLUT;
+
+		// FIXME: get rid of switch!
 		float signal = 0.f;
 		switch (m_form)
 		{
@@ -113,6 +149,108 @@ namespace SFM
 	}
 
 	/*
+		ADSR implementation.
+
+		This ADSR envelope has some non-standard properties, being:
+			- Attack and release is influenced by note velocity, as well as carrier pitch.
+			- Curves are a little unorthodox.
+			- Decay should be quick!
+
+		FIXME:
+			- Ronny's idea: note velocity scales attack and release time and possibly curvature
+			- MIDI parameters (velocity, ADSR on faders)
+			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
+	*/
+
+	void ADSR::Start(unsigned sampleOffs, float velocity)
+	{
+		SFM_ASSERT(fabsf(velocity) <= 1.f);
+
+		m_sampleOffs = sampleOffs;
+		m_velocity = velocity;
+
+		// FIXME: feed by MIDI (or another source), can also not be zero in some cases!
+		m_attack = kSampleRate/8;
+		m_decay = kSampleRate/4;
+		m_release = kSampleRate/4;
+		m_sustain = 0.4f;
+		m_releasing = false;
+	}
+
+	void ADSR::Stop(unsigned sampleOffs)
+	{
+		// Always use current amplitude for release
+		m_sustain = ADSR::Sample();
+
+		m_sampleOffs = s_sampleCount;
+		m_releasing = true;
+	}
+
+	float ADSR::Sample()
+	{
+		/* const */ unsigned sample = s_sampleCount-m_sampleOffs;
+
+		float amplitude = 0.f;
+
+		if (false == m_releasing)
+		{
+			if (sample <= m_attack)
+			{
+				// Build up to full attack (sigmoid)
+				const float step = 1.f/m_attack;
+				const float delta = sample*step;
+				amplitude = delta*delta;
+				SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
+			}
+			else if (sample > m_attack && sample <= m_attack+m_decay)
+			{
+				// Decay to sustain (exponential, may want it punchier (FIXME?))
+				sample -= m_attack;
+				const float step = 1.f/m_decay;
+				const float delta = sample*step;
+				amplitude = lerpf(1.f, m_sustain, delta*delta);
+				SFM_ASSERT(amplitude <= 1.f && amplitude >= m_sustain);
+			}
+			else
+			{
+				return m_sustain;
+			}
+		}
+		else
+		{
+			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
+			if (sample <= m_release)
+			{
+				const float step = 1.f/m_release;
+				const float delta = sample*step;
+				amplitude = lerpf<float>(m_sustain, 0.f, delta*delta);
+				SFM_ASSERT(amplitude >= 0.f);
+			}
+		}
+
+		return amplitude;
+	}
+
+	/*
+		FM voice.
+	*/
+
+	// FIXME: expand with a patch or algorithm selection of sorts
+	float FM_Voice::Sample()
+	{
+		const float modulation = m_modulator.Sample();
+		const float ampEnv = m_ADSR.Sample();
+		float sample = m_carrier.Sample(modulation)*ampEnv;
+
+		if (true == m_ADSR.m_releasing)
+		{
+			sample = m_vorticity.Sample(sample);
+		}
+
+		return sample;
+	}
+
+	/*
 		Global & shadow state.
 		
 		The shadow state may be updated after acquiring the lock (FIXME: use cheaper solution).
@@ -127,6 +265,7 @@ namespace SFM
 	*/
 
 	static std::shared_mutex s_stateMutex;
+
 	static FM s_shadowState;
 	static FM s_renderState;
 
@@ -135,11 +274,14 @@ namespace SFM
 		Filter state is not included in the global state for now as it pulls the values rather than pushing them.
 	*/
 
-	static void UpdateFilterSettings()
+	static float s_filterWetness = 0.f; // [-1..1]
+
+	static void UpdateFilterParameters()
 	{
 		float testCut, testReso;
 		testCut = WinMidi_GetCutoff();
 		testReso = WinMidi_GetResonance();
+		s_filterWetness = -1.f + 2.f*WinMidi_GetFilterMix();
 
 		MOOG::SetCutoff(testCut*1000.f);
 		MOOG::SetResonance(testReso*kPI);
@@ -147,16 +289,15 @@ namespace SFM
 	}
 
 	/*
-		Note (voice) logic.
+		Note/Voice logic.
 	*/
 
-	// - First fit (FIXME: check lifetime, volume, pitch, just try different heuristics)
-	// - Assumes being used on shadow parameters (so lock!)
+	// FIXME: first fit isn't fancy enough
 	SFM_INLINE unsigned AllocNote(FM_Voice *voices)
 	{
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			const bool enabled = voices[iVoice].enabled;
+			const bool enabled = voices[iVoice].m_enabled;
 			if (false == enabled)
 			{
 				return iVoice;
@@ -167,45 +308,50 @@ namespace SFM
 	}
 
 	// Returns voice index, if available
-	unsigned TriggerNote(unsigned midiIndex)
+	unsigned TriggerNote(float frequency)
 	{
+		SFM_ASSERT(true == InAudibleSpectrum(frequency));
+
 		FM &state = s_shadowState;
 
 		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 
-		const unsigned iVoice = AllocNote(s_shadowState.voices);
+		const unsigned iVoice = AllocNote(s_shadowState.m_voices);
 		if (-1 == iVoice)
 			return -1;
 
-		++state.active;
+		++state.m_active;
 
-		FM_Voice &voice = state.voices[iVoice];
+		FM_Voice &voice = state.m_voices[iVoice];
 
-		// FIXME: adapt to patch when it's that time
-		const float carrierFreq = g_midiToFreqLUT[midiIndex];
-		voice.carrier.Initialize(kDirtySaw, kMaxVoiceAmplitude, carrierFreq);
-		const float ratio = 4.f/1.f;
+		// FIXME: create simple patch mechanism
+		const float carrierFreq = frequency;
+		voice.m_carrier.Initialize(kSine, kMaxVoiceAmplitude, carrierFreq);
+		const float ratio = 4.f;
 		const float CM = carrierFreq*ratio;
-		voice.modulator.Initialize(0.f /* LFO! */, CM); // These parameters mean a lot
-		voice.envelope.Start(s_sampleCount);
+		voice.m_modulator.Initialize(3.f /* apply LFO? */, CM, 0.f); // These parameters mean a lot
+		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
-		voice.enabled = true;
+		voice.m_enabled = true;
 
 		return iVoice;
 	}
 
-	void ReleaseNote(unsigned iVoice)
+	void ReleaseVoice(unsigned iVoice)
 	{
 		FM &state = s_shadowState;
 
 		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
-		FM_Voice &voice = state.voices[iVoice];
-		voice.envelope.Stop(s_sampleCount);
+		FM_Voice &voice = state.m_voices[iVoice];
+		voice.m_ADSR.Stop(s_sampleCount);
+
+		// FIXME: MIDI input (in UpdateFilterParameters())
+		const float vorticity = 0.f;
+		voice.m_vorticity.Initialize(s_sampleCount, vorticity*kPI, vorticity);
 	}
 
-	// FIXME: for now this is a hack that checks if enabled voices are fully released, and frees them,
-	//        but I can see this function have more use later on (like, not at 07:10 AM)
-	void UpdateNotes()
+	// To be called every time before rendering
+	static void UpdateVoices()
 	{
 		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 
@@ -213,16 +359,17 @@ namespace SFM
 
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			FM_Voice &voice = state.voices[iVoice];
-			const bool enabled = voice.enabled;
+			FM_Voice &voice = state.m_voices[iVoice];
+			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				if (ADSR::kRelease == voice.envelope.m_state)
+				ADSR &envelope = voice.m_ADSR;
+				if (true == envelope.m_releasing)
 				{
-					if (voice.envelope.m_sampleOffs+voice.envelope.m_release < s_sampleCount)
+					if (envelope.m_sampleOffs+envelope.m_release < s_sampleCount)
 					{
-						voice.enabled = false;
-						--state.active;
+						voice.m_enabled = false;
+						--state.m_active;
 					}
 				}
 			}
@@ -230,82 +377,9 @@ namespace SFM
 	}
 
 	/*
-		ADSR implementation.
-
-		FIXME:
-			- MIDI parameters
-			- Non-linear slopes
-			- Ronny's idea (note velocity scales attack and release time and possibly curvature)
-			- Make these settings global and only use a thin copy of this object (that takes an operator X) with each voice
-	*/
-
-	void ADSR::Start(unsigned sampleOffs)
-	{
-		m_sampleOffs = sampleOffs;
-		m_attack = kSampleRate/2;
-		m_decay = 0;
-		m_release = kSampleRate/4;
-		m_sustain = 0.8f;
-		m_state = kAttack;
-	}
-
-	void ADSR::Stop(unsigned sampleOffs)
-	{
-		// Always use current amplitude for release
-		m_sustain = ADSR::Sample();
-
-		m_sampleOffs = sampleOffs;
-		m_state = kRelease;
-	}
-
-	float ADSR::Sample()
-	{
-		const unsigned sample = s_sampleCount-m_sampleOffs;
-
-		float amplitude = 0.f;
-		switch (m_state)
-		{
-		case kAttack:
-			{
-				if (sample < m_attack)
-				{
-					const float delta = m_sustain/m_attack;
-					amplitude = delta*sample;
-				}
-				else 
-				{
-					amplitude = m_sustain;
-					m_state = kSustain;
-				}
-			}
-			break;
-
-		case kDecay: // FIXME
-		case kSustain:
-			amplitude = m_sustain;			
-			break;
-
-		case kRelease:
-			{
-				if (sample < m_release)
-				{
-					const float delta = m_sustain/m_release;
-					amplitude = m_sustain - (delta*sample);
-				}
-				else 
-				{
-					amplitude = 0.f; 
-				}
-			}
-			break;
-		}
-
-		return amplitude;
-	}
-
-	/*
 		Render function.
-		FIXME: crude and weird impl., optimize.
+
+		FIXME: fold all into a single loop?
 	*/
 
 	SFM_INLINE void CopyShadowToRenderState()
@@ -319,9 +393,9 @@ namespace SFM
 		CopyShadowToRenderState();	
 
 		FM &state = s_renderState;
-		FM_Voice *voices = state.voices;
+		FM_Voice *voices = state.m_voices;
 
-		const unsigned numVoices = state.active;
+		const unsigned numVoices = state.m_active;
 
 		if (0 == numVoices)
 		{
@@ -330,6 +404,9 @@ namespace SFM
 		}
 		else
 		{
+			const float wetness = WinMidi_GetFilterMix();
+			MOOG::SetDrive(1.f);
+
 			// Render dry samples
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
@@ -337,23 +414,20 @@ namespace SFM
 				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 				{
 					FM_Voice &voice = voices[iVoice];
-					if (true == voice.enabled)
+					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample();
 						dry += sample;
 					}
 				}
 
-				const float clipped = clampf(-1.f, 1.f, dry);
-				pDest[iSample] = atanf(clipped); // FIXME: atanf() LUT
+				const float wet = MOOG::Filter(dry);
+				pDest[iSample] = Crossfade(dry, wet, s_filterWetness); // FIXME interpolate with gain table
 
 				++s_sampleCount;
 			}
-		}
 
-		const float wetness = WinMidi_GetFilterMix();
-		MOOG::SetDrive(1.f - (numVoices*0.1f)); // FIXME: use constant for dB scale?
-		MOOG::Filter(pDest, numSamples, wetness);
+		}
 	}
 
 	// FIXME: hack for now to initialize an indefinite voice and start the stream.
@@ -410,7 +484,9 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 }
 
 /*
-	Stream callback (FIXME)
+	Stream callback
+
+	 FIXME: move rendering to Syntherklaas_Render()
 */
 
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser)
@@ -419,16 +495,19 @@ DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD lengt
 	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
 //	Little test to see if this function is working using BASS' current configuration.
-//	float pitch = CalcSinPitch(440.f);
+//	float pitch = CalcSinLUTPitch(440.f);
 //	float *pWrite = (float *) pDest;
 //	for (auto iSample = 0; iSample < numSamplesReq; ++iSample)
 //	{
 //		pWrite[iSample] = SFM::oscSine(s_sampleCount++ * pitch);
 //	}
 
-	// FIXME: move rendering to Syntherklaas_Render()
-	UpdateNotes(); // Update (shadow) voices (or notes if you will)
-	UpdateFilterSettings(); // Pull-only!
+	// Update (shadow) voices
+	UpdateVoices(); 
+
+	// Pull-only!
+	UpdateFilterParameters(); 
+
 	Render((float*) pDest, numSamplesReq);
 	s_sampleOutCount += numSamplesReq;
 

@@ -130,10 +130,16 @@
     <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
       <Filter>/temporary!</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\random.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp">
+    <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-error.cpp">
@@ -142,13 +148,13 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-LFOs.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-MOOG-ladder.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-oscillators.cpp">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -193,9 +199,6 @@
       <Filter>/3rdparty\/3rdparty-rocket</Filter>
     </ClInclude>
     <ClInclude Include="..\code\shadertoy-util.h">
-      <Filter>/code\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\random.h">
       <Filter>/code\render</Filter>
     </ClInclude>
     <ClInclude Include="..\3rdparty\sse_mathfun.h">
@@ -279,13 +282,28 @@
     <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
       <Filter>/temporary!</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\util.h">
+      <Filter>/code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\random.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h">
+    <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-global.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-log.h">
@@ -294,19 +312,10 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-global.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-LFOs.h">
+    <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-MOOG-ladder.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
@@ -315,10 +324,19 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\util.h">
-      <Filter>/code</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
+      <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h">
+    <ClInclude Include="..\code\FM-synthesizer\synth-vorticity.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\random.h">
+      <Filter>/code\util-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-mix.h">
       <Filter>/code\/FM-synthesizer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -348,6 +366,9 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
+    <None Include="..\code\FM-synthesizer\makefile">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\to do.txt" />
@@ -356,5 +377,8 @@
     </Text>
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\rocket-track-guide.txt" />
+    <Text Include="..\code\FM-synthesizer\design.txt">
+      <Filter>/code\/FM-synthesizer</Filter>
+    </Text>
   </ItemGroup>
 </Project>

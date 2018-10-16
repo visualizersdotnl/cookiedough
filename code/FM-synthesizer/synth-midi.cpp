@@ -12,7 +12,7 @@ namespace SFM
 
 	void CalcMidiToFreqLUT()
 	{
-		const float base = 440.f;
+		const float base = 220.f;
 		for (unsigned iKey = 0; iKey < 127; ++iKey)
 		{
 			const float frequency = base * powf(2.f, (iKey-69.f)/12.f);

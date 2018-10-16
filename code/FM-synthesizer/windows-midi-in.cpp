@@ -68,9 +68,9 @@ namespace SFM
 			unsigned controlVal = MsgParam2(dwParam1);
 
 			// Dumps incoming events, very useful
-			// static char buffer[128];
-			// sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
-			// Log(buffer);
+			static char buffer[128];
+			sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
+			Log(buffer);
 
 			switch (eventType)
 			{
@@ -95,15 +95,14 @@ namespace SFM
 
 			case PITCH_BEND:
 				{
-					// FIXME: pitch bend (14-bit), use it!
-					auto bend = (controlVal<<7)|controlIdx;
+					unsigned bend = (controlVal<<7)|controlIdx;
 					break;
 				}
 
 			case NOTE_ON:
 				{
 					SFM_ASSERT(true == IsKey(controlIdx));
-					const unsigned iVoice = TriggerNote(controlIdx);
+					const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx]);
 					s_voices[controlIdx] = iVoice;
 					break;
 				}
@@ -114,7 +113,7 @@ namespace SFM
 					const unsigned iVoice = s_voices[controlIdx];
 					if (-1 != iVoice)
 					{
-						ReleaseNote(iVoice);
+						ReleaseVoice(iVoice);
 						s_voices[controlIdx] = -1;
 					}
 

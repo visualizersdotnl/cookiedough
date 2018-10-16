@@ -3,6 +3,7 @@
 	Syntherklaas FM -- Global includes, constants & utility functions.
 
 	Dependencies on Bevacqua (as far as I know):
+		- Audio output (through BASS)
 		- Std3DMath
 		- Macros
 */
@@ -12,6 +13,9 @@
 
 // FIXME: only necessary when depending on the Kurt Bevacqua engine as our base
 #include "../main.h"
+
+// FIXME: quick fix to compile on OSX
+ // #include "bevacqua-compat.h"
 
 // Alias Bevacqua existing mechanisms (FIXME: adapt target platform's)
 #define SFM_INLINE VIZ_INLINE
@@ -32,37 +36,44 @@ namespace SFM
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
 
 	// Reasonable audible spectrum.
-	const float kAudibleLowHZ = 20.f;
-	const float kAudibleHighHZ = 22000.f;
+	const float kAudibleLowHz = 20.f;
+	const float kAudibleHighHz = 22000.f;
+
+	// LFO ranges.
+	const float kMaxStdLFO = kAudibleLowHz;
+	const float kMaxSonicLFO = kAudibleHighHz;	
 
 	// Nyquist frequencies.
 	const float kNyquist = kSampleRate/2.f;
-	const float kAudibleNyquist = std::min<float>(kAudibleHighHZ, kNyquist);
+	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices (FIXME: more!)
 	const unsigned kMaxVoices = 8;
+
+	// Max. (or initial) voice amplitude
 	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
 	// Number of discrete values that make up a period in the sinus LUT.
-	const unsigned kPeriodLength = kSinTabSize;
+	const unsigned kSinLUTPeriod = kSinTabSize;
+	const float kSinLUTCosOffs = kSinLUTPeriod/4;
 
-	// Useful when mixing sinus LUT & angular phase.
-	const float kTabToRad = (1.f/k2PI)*kPeriodLength;
+	// Use to multiply modulation value to LUT pitch
+	const float kLinToSinLUT = (1.f/k2PI)*kSinLUTPeriod;
 
 	/*
 		Utility functions.
 	*/
 
 	// Frequency to sinus LUT pitch
-	SFM_INLINE float CalcSinPitch(float frequency)
+	SFM_INLINE float CalcSinLUTPitch(float frequency)
 	{
-		return (frequency*kPeriodLength)/kSampleRate;
+		return (frequency*kSinLUTPeriod)/kSampleRate;
 	}
 
 	// Frequency to angular pitch
 	SFM_INLINE float CalcAngularPitch(float frequency)
 	{
-		return (frequency*k2PI)/kSampleRate;
+		return (frequency/kSampleRate)*k2PI;
 	}
 
 	// This can be, for example, used to drive extra filtering
@@ -72,14 +83,22 @@ namespace SFM
 	}
 
 	// From and to dB
-	inline float AmplitudeTodB(float amplitude) { return 20.0f * log10f(amplitude); }
-	inline float dBToAmplitude(float dB)        { return powf(10.0f, dB/20.0f);     }
+	inline float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
+	inline float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);     }
+
+	// For assertions, mostly
+	inline bool InAudibleSpectrum(float frequency)
+	{
+		return frequency >= kAudibleLowHz && frequency <= kAudibleHighHz;
+	}
 
 	// For debug purposes
 	SFM_INLINE bool IsNAN(float value)
 	{
+		return value != value;
+
+		// FIXME: not supported on Unix?
 		return std::isnan(value);
-//		return value != value;
 	}
 }
 

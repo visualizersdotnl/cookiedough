@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM -- Simple ring buffer (lockless, figure that out yourself).
 
-	FIXME: optimize for power of 2 size buffers only.
+	FIXME: modify to use power of 2 size buffers only.
 */
 
 #ifndef _SFM_SYNTH_RINGBUFFER_H_

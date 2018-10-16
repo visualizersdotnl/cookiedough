@@ -1,7 +1,7 @@
 
 /*
 	Syntherklaas FM presents 'FM. BISON'
-	(C) syntherklaas.org, a subsidiary of visualizers.nl
+	by syntherklaas.org, a subsidiary of visualizers.nl
 
 	This is intended to be a powerful yet relatively simple FM synthesizer core.
 
@@ -19,22 +19,32 @@
 	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
 	
-	So the style will look a bit dated here and there.
+	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
-	Priority / Bugs:
-		- Finish up ADSR (see impl.)
-		- Smooth out MIDI controls using Maarten van Strien's trick (interpolate 64 samples until next value)
-		- Use ring buffer to feed
-		- Implement a master rotary or fader to scale voice amplitude	
+	Sound related: 
+		- Stash pieces of code not directly related to the polyphonic synth in their own .cpp!
+		- Volume difference between dry and wet (MOOG ladder), why?
+		  + Try simpler filter!
+		- Create realistic cross fading (review!)
+		- Review ADSR curves
+		- Review Vorticity: tie Strouhal constant to voice, also modulate carrier frequeny by adding to modulation? 
+		- Implement pink noise (and possibly, later, Thorsten's noise)
+		- Try cosine tilt envelope for shaping of modulator
 
-	To do:
-		- Take another gander at oscillators (clean ones)
-		- Implement LFOs: form, period, frequency, aplitude, and apply it to modulation index first
-		- Impement pitch bend
-		- For now it is convenient to keep modulators and carriers apart but they might start sharing too much logic
-		  to keep it this way.
-		- Optimization, FIXMEs, interpolation, keeping tracking NAN bugs.
-		- See notebook.
+	Plumbing:
+		- Use multiply-add in lerpf()
+		- Use ring buffer
+		- Debug log with formatting
+		- Keep tracking NaN bugs
+
+	Of later concern:
+		- Optimization (LUTs, find hotspots using profiler)
+		- Try Microtracker filter
+		- Consider interpolated LUT sampler
+		- Implement pitch bend
+		- Take another gander at oscillators (clean ones), apply BLEP?
+		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
+		- Double precision?
 */
 
 #ifndef _FM_BISON_H_
@@ -52,14 +62,14 @@ namespace SFM
 		API exposed to (MIDI) input.
 	*/
 
-	// Trigger a note (if possible) and return it's voice index
-	unsigned TriggerNote(unsigned midiIndex);
+	// Trigger a note (if possible) and return it's voice index: at this point it's a voice
+	unsigned TriggerNote(float frequency);
 
 	// Release a note using it's voice index
-	void ReleaseNote(unsigned iVoice);
+	void ReleaseVoice(unsigned index);
 }
 
-// To feed BASS (see Bevacqua's audio.h):
+// To feed Bevacqua's audio hack (FIXME)
 #include "../audio.h"
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser);
 

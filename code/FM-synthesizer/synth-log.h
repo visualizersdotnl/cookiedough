@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Logging (debug).
+	Syntherklaas FM -- Logging (use sparingly, mainly for debug).
 */
 
 #ifndef _SFM_SYNTH_LOG_H_
@@ -10,12 +10,12 @@
 	#include <Windows.h>
 	#define SFM_logprint OutputDebugStringA
 #else
-	#define SFM_logprint printf // For now, on any other platform, just dump to STDIO
+	#define SFM_logprint printf
 #endif
 
 namespace SFM
 {
-	// Always dirty but it'll do for now (FIXME)
+	// Always dirty but it'll do for now (FIXME: formatting!)
 	static char s_logBuffer[256]; 
 
 	// FIXME: enable formatting

@@ -17,12 +17,14 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
-		/* Neutered forms */
+		/* Neutered forms (BLIT) */
 		kSaw,
 		kSquare,
 		/* Aliasing forms */
 		kDirtySaw,
-		kDirtyTriangle
+		kDirtyTriangle,
+		/* Noise */
+		kPinkNoise
 	};
 
 	/*
@@ -38,27 +40,26 @@ namespace SFM
 
 	SFM_INLINE float oscDirtySaw(float phase)
 	{
-		return -1.f + fmodf(phase/kPeriodLength, 2.f);
+		return -1.f + fmodf(phase/kSinLUTPeriod, 2.f);
 	}
 
 
 	SFM_INLINE float oscDirtyTriangle(float phase)
 	{
-		return -1.f + 4.f*fabsf(fmodf(phase/kPeriodLength, 1.f) - 0.5f);
+		return -1.f + 4.f*fabsf(fmodf(phase/kSinLUTPeriod, 1.f) - 0.5f);
 	}
 
 	/*
 		Band-limited saw and square (additive sinuses).
-		If you want dirt, use modulation and/or envelopes (or the two oscillators above).
+		If you want dirt, use try the two oscillators above or try modulation & LFO.q
 	*/
 
-	// const float kHarmonicsPrecHZ = kAudibleLowHZ;
-	const float kHarmonicsPrecHZ = kAudibleLowHZ/2.f;
+	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
-		VIZ_ASSERT(frequency >= 20.f);
-		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHZ;
+		SFM_ASSERT(frequency >= 20.f);
+		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHz;
 		return unsigned(lower);
 	}
 
@@ -76,7 +77,7 @@ namespace SFM
 		}
 
  		const float ampMul = 2.f/kPI;
-		signal *= ampMul;
+ 		signal *= ampMul;
 
 		return signal;
 	}
@@ -98,6 +99,15 @@ namespace SFM
 
 
 		return signal;
+	}
+
+	/*
+		Noise oscillator(s).
+	*/
+
+	SFM_INLINE float oscPinkNoise(float phase)
+	{
+		return 0.f;
 	}
 }
 

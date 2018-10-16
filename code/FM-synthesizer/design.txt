@@ -1,19 +1,17 @@
 
 FM. BISON synthesizer design
-Version 0.1
 
-- 1 patch can be used a time. I might want the parameters to be tweakable (either wrapped in VST or by XML);
+Features for version 0.1:
 
-- Polyphony is currently 8, but it won't be much of a problem to enlarge that to 16, in which case a basic voice stealing is used.
+- 1 patch at a time; hardcoded for now.
+- Polyphony is 8; no voice stealing algorithm *yet*.
+- Patch is driven by a single carrier with 1 modulator.
+- 1 global configurable ADSR modulates amplitude.
+- Cosine tilt envelope modulates 
+- Vorticity 0.1 (vortex shedding) modulates the amplitude.
+- Global gain control.
+- MOOG ladder filter with cutoff and resonance with a wet<->dry crossfade control.
 
-- A patch is driven by a single carrier and 1 modulator for now; changing this related to more elaborate patches which is not on the agenda just yet.
-
-- 1 global ADSR modulates drives amplitude, 1 global cosine tilt LFO (for now) modulates the carrier frequency. It makes sense to have a few operations on hand to on how these envelopes are applied, but not before the next iteration.
-
-- After a simple dry voice mix the samples are fed to a MOOG ladder filter (which has cutoff and frequency
-parameters); another control allows you to mix between wet and dry signal.
-
-- A global gain rotary or fader that amplifies the dry mix; much like drive on most guitar amplifiers.
-
-- Unique feature: 'vorticity'. It is a cheap approximation of vortex shedding which is applied upon release
-of a note by combining the Strouhal value with a frequency modulated LFO.
+Features for 0.2:
+- Control over modulation index (physical, LFO or both).
+- Pitch bend (physical).

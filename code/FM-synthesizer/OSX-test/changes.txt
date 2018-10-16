@@ -1,3 +1,0 @@
-
-- Nice resource: https://github.com/Themaister/libfmsynth/blob/master/src/fmsynth.c
-- On return make a copy of what you had and just copy the new stuff back, then fix errors.

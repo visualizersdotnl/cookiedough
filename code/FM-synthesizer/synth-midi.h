@@ -43,10 +43,7 @@ namespace SFM
 		MIDI_META_EVENT = 0xff
 	};
 
-	/*
-		FIXME: use the Maarten van Strien method; 64 samples to go from A to B, always?
-	*/
-
+	// FIXME: interpolate
 	class MIDI_Smoothed
 	{
 	public:
@@ -60,11 +57,7 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
-			const float delta = 0.1f*k2PI;
-			m_timeStamp = timeStamp;
-				
-			const float newValue = iValue/127.f;
-			m_value = smoothstepf(m_value, newValue, delta);
+			m_value = iValue/127.f;
 		}
 
 		float Get() const
