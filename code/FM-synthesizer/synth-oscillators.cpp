@@ -5,12 +5,8 @@
 */
 
 #include "synth-global.h"
+// #include "synth-oscillators.h"
 
 namespace SFM
 {
-	// ...
-
-	void InitializeNoiseLUT()
-	{
-	}
 }

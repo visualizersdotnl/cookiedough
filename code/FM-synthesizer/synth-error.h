@@ -3,8 +3,7 @@
 	Syntherklaas -- Error handling.
 */
 
-#ifndef _SFM_SYNTH_ERROR_H_
-#define _SFM_SYNTH_ERROR_H_
+#pragma once
 
 namespace SFM
 {
@@ -27,12 +26,9 @@ namespace SFM
 
 		case kFatal:
 			SetLastError((nullptr == message) ? "Syntherklaas FM: unspecified fatal error" : message);
-			break;
 
 		default:
 			SFM_ASSERT(false);
 		}
 	}
 };
-
-#endif // _SFM_SYNTH_ERROR_H_

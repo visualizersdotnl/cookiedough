@@ -1,8 +1,6 @@
 
 /*
 	Syntherklaas FM -- Cosine tilt envelope.
-
-	It can br well used as an LFO.
 */
 
 #include "synth-global.h"

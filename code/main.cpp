@@ -84,6 +84,7 @@ const bool kTestBedForFM = true;
 
 // FM synthesizer
 #include "FM-synthesizer/FM_BISON.h"
+#include "FM-synthesizer/synth-audio-out.h"
 
 // -- display & audio config. --
 
@@ -95,7 +96,7 @@ const bool kFullScreen = false;
 // const char *kModule = "assets/theduel.mod";
 const char *kModule = "assets/knulla-kuk.mod";
 
-// when you're working on anything else than synchronization..
+// when you're working on anything else than synchronization
 const bool kSilent = false;
 
 // -----------------------------

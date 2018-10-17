@@ -1,15 +1,14 @@
 
 /*
-	Syntherklaas FM -- Windows (Win32) MIDI input, explicitly designed (for now) for the M-AUDIO Oxygen 49.
-	All values are within [0..1] range; rotaries and faders are interpolated.
+	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
 */
 
 #include "synth-global.h"
-#include "windows-midi-in.h"
+#include "Win-MIDI-in-Oxygen49.h"
 #include "synth-midi.h"
 #include "FM_BISON.h"
 
-// Bevacqua mainly relies on SDL + standard C(++), so:
+// Bevacqua mainly relies on SDL + std. C(++), so:
 #pragma comment(lib, "Winmm.lib")
 #include <Windows.h>
 #include <Mmsystem.h>
@@ -167,7 +166,7 @@ namespace SFM
 		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
 		if (MMSYSERR_NOERROR == openRes)
 		{
-			s_header.lpData = (LPSTR) s_buffer; // I'm not going to attempt to make this nonsene prettier.
+			s_header.lpData = (LPSTR) s_buffer;
 			s_header.dwBufferLength = kMidiBufferLength;
 			s_header.dwFlags = 0;
 

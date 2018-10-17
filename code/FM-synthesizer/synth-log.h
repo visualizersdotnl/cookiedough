@@ -1,10 +1,11 @@
 
 /*
 	Syntherklaas FM -- Logging (use sparingly, mainly for debug).
+
+	FIXME: formatting!
 */
 
-#ifndef _SFM_SYNTH_LOG_H_
-#define _SFM_SYNTH_LOG_H_
+#pragma once
 
 #if defined(WIN32) || defined(_WIN32)
 	#include <Windows.h>
@@ -15,16 +16,12 @@
 
 namespace SFM
 {
-	// Always dirty but it'll do for now (FIXME: formatting!)
-	static char s_logBuffer[256]; 
+	static char s_logBuffer[256]; // FIXME: overflow hazard
 
-	// FIXME: enable formatting
 	static void Log(const char *message)
 	{
 		SFM_ASSERT(nullptr != message);
-		sprintf(s_logBuffer, "Syntherklaas FM: %s\n", message);
+		sprintf(s_logBuffer, "SFM log: %s\n", message);
 		SFM_logprint(s_logBuffer);
 	}
 }
-
-#endif // _SFM_SYNTH_LOG_H_

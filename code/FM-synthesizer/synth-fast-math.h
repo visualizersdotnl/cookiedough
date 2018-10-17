@@ -1,10 +1,9 @@
 
 /*
-	Syntherklaas FM -- Fast approx. hyperbolic tangent function.
+	Syntherklaas FM -- Fast approx. math functions
 */
 
-#ifndef _SFM_SYNTH_FAST_MATH_H_
-#define _SFM_SYNTH_FAST_MATH_H_
+#pragma once
 
 #include "synth-global.h"
 
@@ -20,5 +19,3 @@ namespace SFM
 		return z/(1.02718982441289f + fabsf(z));
 	}
 }
-
-#endif // _SFM_SYNTH_FAST_MATH_H_

@@ -3,8 +3,7 @@
 	Syntherklaas FM -- Oscillators.
 */
 
-#ifndef _SFM_SYNTH_OSCILLATORS_H_
-#define _SFM_SYNTH_OSCILLATORS_H_
+#pragma once
 
 #include "synth-global.h"
 
@@ -17,7 +16,7 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
-		/* Neutered forms (BLIT) */
+		/* Neutered forms */
 		kSaw,
 		kSquare,
 		/* Aliasing forms */
@@ -34,24 +33,23 @@ namespace SFM
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
 
 	/*
-		Straight up sawtooth & triangle (aliases, but sometimes that's great).
-		FIXME: these are off the cuff and dirt slow!
+		Straight up sawtooth & triangle (aliases and thus noisy, but sometimes that's great).
+		FIXME: these are dirty slow.
 	*/
 
 	SFM_INLINE float oscDirtySaw(float phase)
 	{
-		return -1.f + fmodf(phase/kSinLUTPeriod, 2.f);
+		return -1.f + fmodf(phase*kInvOscPeriod, 2.f);
 	}
 
 
 	SFM_INLINE float oscDirtyTriangle(float phase)
 	{
-		return -1.f + 4.f*fabsf(fmodf(phase/kSinLUTPeriod, 1.f) - 0.5f);
+		return -1.f + 4.f*fabsf(fmodf(phase*kInvOscPeriod, 1.f) - 0.5f);
 	}
 
 	/*
-		Band-limited saw and square (additive sinuses).
-		If you want dirt, use try the two oscillators above or try modulation & LFO.q
+		Band-limited saw and square.
 	*/
 
 	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
@@ -110,5 +108,3 @@ namespace SFM
 		return 0.f;
 	}
 }
-
-#endif // _SFM_SYNTH_OSCILLATORS_H_

@@ -1,9 +1,7 @@
 
-/*
-	Syntherklaas FM presents 'FM. BISON'
-	by syntherklaas.org, a subsidiary of visualizers.nl
 
-	This is intended to be a powerful yet relatively simple FM synthesizer core.
+/*
+	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
 	I have to thank the following people for helping me with their knowledge, ideas and experience:
 		- Pieter v/d Meer
@@ -22,21 +20,19 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Things to do whilst not motivated (read: manic or medicated):
-		- Stash pieces of code not directly related to the polyphonic synth in their own source file (ADSR, modulator, carrier et cetera).
-		- Consider folding FM_Modulator and FM_Carrier into one (should be easy enough to see if that makes sense).
-		- Read more about proper cross fading.
+		- Use ring buffer to see if tha takes care of the lag
+		- Read more about proper cross fading
+		- Try basic filter yourself before reintroducing the MOOG ladder
 
 	Sound related: 
-		- Volume difference between dry and wet (MOOG ladder), why?
-		  + Try simpler filter!
+		- Implement own basic filter before using someone else's to get a better understanding
 		- Review ADSR curves
-		- Review Vorticity: tie Strouhal constant to voice, also modulate carrier frequeny by adding to modulation? 
-		- Implement pink noise (and possibly, later, Thorsten's noise)
+		- Implement pink noise
 		- Try cosine tilt envelope for shaping of modulator
+		- Proper voice stealing
 
 	Plumbing:
 		- Use multiply-add in lerpf()
-		- Use ring buffer
 		- Debug log with formatting
 		- Keep tracking NaN bugs
 
@@ -71,9 +67,5 @@ namespace SFM
 	// Release a note using it's voice index
 	void ReleaseVoice(unsigned index);
 }
-
-// To feed Bevacqua's audio hack (FIXME)
-#include "../audio.h"
-DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser);
 
 #endif // _FM_BISON_H_

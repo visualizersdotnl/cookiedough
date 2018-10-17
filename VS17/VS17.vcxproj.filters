@@ -47,6 +47,12 @@
     <Filter Include="/code\/FM-synthesizer">
       <UniqueIdentifier>{02b361b2-fc11-49b2-a40d-c1d429408e53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer\Core">
+      <UniqueIdentifier>{1dcb50fa-d145-4984-98c4-babe18486116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\Driver%28s%29">
+      <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -130,32 +136,38 @@
     <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
       <Filter>/temporary!</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\random.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\sinus-LUT.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-error.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
+    <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-MOOG-ladder.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillators.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\windows-midi-in.cpp">
-      <Filter>/code\/FM-synthesizer</Filter>
+    <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp">
+      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -285,59 +297,65 @@
     <ClInclude Include="..\code\util.h">
       <Filter>/code</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\random.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\sinus-LUT.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-error.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-global.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-log.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-midi.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-MOOG-ladder.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-vorticity.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\windows-midi-in.h">
-      <Filter>/code\/FM-synthesizer</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\random.h">
       <Filter>/code\util-lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-mix.h">
-      <Filter>/code\/FM-synthesizer</Filter>
+    <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-util.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-random.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-global.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-LUT.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-midi.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-log.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-error.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-voice.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.h">
+      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

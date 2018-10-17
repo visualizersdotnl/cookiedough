@@ -1,17 +1,15 @@
 
-FM. BISON synthesizer design
+FM. BISON synthesizer design.
 
 Features for version 0.1:
 
-- 1 patch at a time; hardcoded for now.
-- Polyphony is 8; no voice stealing algorithm *yet*.
-- Patch is driven by a single carrier with 1 modulator.
-- 1 global configurable ADSR modulates amplitude.
-- Cosine tilt envelope modulates 
-- Vorticity 0.1 (vortex shedding) modulates the amplitude.
-- Global gain control.
-- MOOG ladder filter with cutoff and resonance with a wet<->dry crossfade control.
+- 1 hardcoded tone (patch).
+- Polyphony of 8; no voice stealing.
+- 1 global ADSR which modulates amplitude.
+- 1 simple filter for cutoff and resonance.
 
 Features for 0.2:
-- Control over modulation index (physical, LFO or both).
-- Pitch bend (physical).
+
+- Basic patch framework for different tones.
+- More elaborate filter (MOOG) plus wet<->dry mix.
+- Voice stealing.

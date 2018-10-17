@@ -1,16 +1,15 @@
 
 /*
-	Syntherklaas -- Generic MIDI-related.
+	Syntherklaas -- General MIDI utilities.
 */
 
-#ifndef _SFM_SYNTH_MIDI_H_
-#define _SFM_SYNTH_MIDI_H_
+#pragma once
 
 namespace SFM
 {
-	// Lookup table to translate any MIDI key to a frequency, with 440Hz as the base.
-	void CalcMidiToFreqLUT();
+	// Lookup table to translate any MIDI key to a frequency (see implementation for base)
 	extern float g_midiToFreqLUT[127];
+	void CalculateMidiToFrequencyLUT(float baseFreq = 220.f);
 
 	// Stolen from: https://github.com/FluidSynth/fluidsynth/blob/master/src/midi/fluid_midi.h
 	enum MIDI_EventType
@@ -43,7 +42,6 @@ namespace SFM
 		MIDI_META_EVENT = 0xff
 	};
 
-	// FIXME: interpolate
 	class MIDI_Smoothed
 	{
 	public:
@@ -57,6 +55,7 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
+			// FIXME: interpolate
 			m_value = iValue/127.f;
 		}
 
@@ -66,5 +65,3 @@ namespace SFM
 		}
 	};
 }
-
-#endif // _SFM_SYNTH_MIDI_H_

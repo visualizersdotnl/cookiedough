@@ -8,23 +8,19 @@
 		- Macros
 */
 
-#ifndef _SFM_SYNTH_GLOBAL_H_
-#define _SFM_SYNTH_GLOBAL_H_
+#pragma once
 
 // FIXME: only necessary when depending on the Kurt Bevacqua engine as our base
 #include "../main.h"
 
-// FIXME: quick fix to compile on OSX
- // #include "bevacqua-compat.h"
-
-// Alias Bevacqua existing mechanisms (FIXME: adapt target platform's)
+// Alias with Bevacqua's existing mechanisms (FIXME: adapt target platform's)
 #define SFM_INLINE VIZ_INLINE
 #define SFM_ASSERT VIZ_ASSERT
 
 #include "synth-log.h"
 #include "synth-error.h"
 #include "synth-fast-math.h"
-#include "sinus-LUT.h"
+#include "synth-LUT.h"
 
 namespace SFM
 {
@@ -47,59 +43,19 @@ namespace SFM
 	const float kNyquist = kSampleRate/2.f;
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
-	// Max. number of voices (FIXME: more!)
+	// Max. number of voices
 	const unsigned kMaxVoices = 8;
 
 	// Max. (or initial) voice amplitude
 	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
 
-	// Number of discrete values that make up a period in the sinus LUT.
-	const unsigned kSinLUTPeriod = kSinTabSize;
-	const float kSinLUTCosOffs = kSinLUTPeriod/4;
+	// Define oscillator period as a discrete amount of steps (derived from the sinus LUT)
+	const unsigned kOscPeriod = kSinTabSize;
+	const float kOscQuarterPeriod = kOscPeriod/4;
+	const float kInvOscPeriod = 1.f/kOscPeriod;
 
-	// Use to multiply modulation value to LUT pitch
-	const float kLinToSinLUT = (1.f/k2PI)*kSinLUTPeriod;
-
-	/*
-		Utility functions.
-	*/
-
-	// Frequency to sinus LUT pitch
-	SFM_INLINE float CalcSinLUTPitch(float frequency)
-	{
-		return (frequency*kSinLUTPeriod)/kSampleRate;
-	}
-
-	// Frequency to angular pitch
-	SFM_INLINE float CalcAngularPitch(float frequency)
-	{
-		return (frequency/kSampleRate)*k2PI;
-	}
-
-	// This can be, for example, used to drive extra filtering
-	SFM_INLINE float CalcNoiseRate(float frequency)
-	{
-		return (frequency*kSampleRate)/kAudibleNyquist;
-	}
-
-	// From and to dB
-	inline float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
-	inline float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);     }
-
-	// For assertions, mostly
-	inline bool InAudibleSpectrum(float frequency)
-	{
-		return frequency >= kAudibleLowHz && frequency <= kAudibleHighHz;
-	}
-
-	// For debug purposes
-	SFM_INLINE bool IsNAN(float value)
-	{
-		return value != value;
-
-		// FIXME: not supported on Unix?
-		return std::isnan(value);
-	}
+	// Use to multiply modulation value (radian) to osc. LUT period
+	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 }
 
-#endif // _SFM_SYNTH_GLOBAL_H_
+#include "synth-util.h"

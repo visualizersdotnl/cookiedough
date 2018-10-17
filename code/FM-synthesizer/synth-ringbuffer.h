@@ -1,12 +1,11 @@
 
 /*
-	Syntherklaas FM -- Simple ring buffer (lockless, figure that out yourself).
+	Syntherklaas FM -- Simple ring buffer (lockless).
 
-	FIXME: modify to use power of 2 size buffers only.
+	FIXME: modify to use power of 2 size buffers only (and thus less costly modulo).
 */
 
-#ifndef _SFM_SYNTH_RINGBUFFER_H_
-#define _SFM_SYNTH_RINGBUFFER_H_
+#pragma once
 
 #include "synth-global.h"
 
@@ -50,7 +49,7 @@ namespace SFM
 			return pointer;
 		}
 
-		unsigned GetAvail() const
+		unsigned GetAvailable() const
 		{
 			return writeIdx-readIdx;
 		}
@@ -58,7 +57,7 @@ namespace SFM
 		unsigned GetFree() const
 		{
 			const unsigned maxWrite = kRingBufferSize-1;
-			return std::min<unsigned>(maxWrite, maxWrite-GetAvail());
+			return std::min<unsigned>(maxWrite, maxWrite-GetAvailable());
 		}
 		
 		unsigned readIdx;
@@ -66,5 +65,3 @@ namespace SFM
 		float buffer[kRingBufferSize];
 	};
 }
-
-#endif // _SFM_SYNTH_RINGBUFFER_H_
