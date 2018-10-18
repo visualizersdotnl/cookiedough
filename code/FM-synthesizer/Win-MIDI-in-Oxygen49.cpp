@@ -206,7 +206,7 @@ namespace SFM
 	}
 
 	// Pull-style values
-	float WinMidi_GetCutoff()    { return s_cutoff.Get();    }
-	float WinMidi_GetResonance() { return s_resonance.Get(); }
-	float WinMidi_GetFilterMix() { return s_filterMix.Get(); }
+	float WinMidi_GetCutoff()        { return s_cutoff.Get();    }
+	float WinMidi_GetResonance()     { return s_resonance.Get(); }
+	float WinMidi_GetFilterWetness() { return s_filterMix.Get(); }
 }

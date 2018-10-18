@@ -14,7 +14,7 @@ namespace SFM
 
 	extern float g_sinLUT[kSinTabSize];
 
-	void CalculateLUT();
+	void CalculateLUTs();
 
 	SFM_INLINE float lutsinf(float index) 
 	{

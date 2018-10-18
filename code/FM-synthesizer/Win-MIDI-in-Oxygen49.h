@@ -18,5 +18,5 @@ namespace SFM
 	// Pull-style values
 	float WinMidi_GetCutoff();
 	float WinMidi_GetResonance();
-	float WinMidi_GetFilterMix();
+	float WinMidi_GetFilterWetness();
 };

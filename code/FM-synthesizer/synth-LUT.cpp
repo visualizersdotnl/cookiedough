@@ -10,7 +10,7 @@ namespace SFM
 {
 	alignas(16) float g_sinLUT[kSinTabSize];
 
-	void CalculateLUT()
+	void CalculateLUTs()
 	{
 		float angle = 0.f;
 		const float angleStep = k2PI/kSinTabSize;

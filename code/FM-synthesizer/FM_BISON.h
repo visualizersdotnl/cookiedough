@@ -20,7 +20,7 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Things to do whilst not motivated (read: manic or medicated):
-		- Use ring buffer to see if tha takes care of the lag
+		- Use ring buffer to see if that takes care of the lag
 		- Read more about proper cross fading
 		- Try basic filter yourself before reintroducing the MOOG ladder
 
@@ -32,6 +32,7 @@
 		- Proper voice stealing
 
 	Plumbing:
+		- Stash all oscillators in LUTs, makes it easier to switch between them and employ the same sampler quality
 		- Use multiply-add in lerpf()
 		- Debug log with formatting
 		- Keep tracking NaN bugs

@@ -86,10 +86,9 @@ namespace SFM
 
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
-		voice.m_carrier.Initialize(s_sampleCount, kSine, kMaxVoiceAmplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
 		const float ratio = 4.f;
-		const float CM = carrierFreq*ratio;
-		voice.m_modulator.Initialize(s_sampleCount, 2.f, CM, 0.f);
+		voice.m_modulator.Initialize(s_sampleCount, ratio, carrierFreq*ratio, 0.f);
 		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
 		voice.m_enabled = true;
@@ -196,7 +195,7 @@ using namespace SFM;
 bool Syntherklaas_Create()
 {
 	// Calc. LUTs
-	CalculateLUT();
+	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
 
 	// Reset shadow FM state
