@@ -44,6 +44,13 @@ namespace SFM
 		return std::isnan(value);
 	}
 
+	// Unsigned integer is-power-of-2 check
+	SFM_INLINE const bool IsPow2(unsigned value)
+	{
+		return value != 0 && !(value & (value - 1));
+	}
+
+	// Hard clamp
 	SFM_INLINE float Clamp(float sample)
 	{
 		return clampf(-1.f, 1.f, sample);

@@ -20,6 +20,9 @@
 // Win32 MIDI input (M-AUDIO Oxygen 49)
 #include "Win-MIDI-in-Oxygen49.h"
 
+// SDL2 audio output
+#include "SDL2-audio-out.h"
+
 namespace SFM
 {
 	/*
@@ -87,8 +90,8 @@ namespace SFM
 
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
-		voice.m_carrier.Initialize(s_sampleCount, kSquare, kMaxVoiceAmplitude, carrierFreq);
-		const float ratio = 18.f;
+		voice.m_carrier.Initialize(s_sampleCount, kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
+		const float ratio = 2.f;
 		voice.m_modulator.Initialize(s_sampleCount, 1.f, carrierFreq*ratio, 0.f);
 		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
@@ -186,9 +189,6 @@ namespace SFM
 		}
 	}
 
-	// FIXME
-	static bool s_isReady = false;
-
 }; // namespace SFM
 
 using namespace SFM;
@@ -210,8 +210,12 @@ bool Syntherklaas_Create()
 	s_sampleCount = 0;
 	s_sampleOutCount = 0;
 
+	// Test hack: Oxygen 49 + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
+	
+	// FIXME: check error
+	SDL2_CreateAudio();
 
 	return true == midiIn;
 }
@@ -219,6 +223,7 @@ bool Syntherklaas_Create()
 void Syntherklaas_Destroy()
 {
 	WinMidi_Stop();
+	SDL2_DestroyAudio();
 }
 
 /*
@@ -226,45 +231,20 @@ void Syntherklaas_Destroy()
 */
 
 static FIFO s_ringBuf;
-// static std::mutex s_bufLock;
+static std::mutex s_bufLock;
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	s_bufLock.lock();
 	UpdateVoices();
-
-//	s_bufLock.lock();
 	Render(s_ringBuf);
-//	s_bufLock.unlock();
+	s_bufLock.unlock();
 
-	if (false == s_isReady)
+	static bool first = false;
+	if (false == first)
 	{
-		// Start streaming!
-		Audio_Start_Stream(0);
-		s_isReady = true;
+		SDL2_StartAudio();
+		first = false;
 	}
-
-	// Check for stream starvation
-	SFM_ASSERT(true == Audio_Check_Stream());
 }
 
-/*
-	Stream callback
-*/
-
-DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser)
-{
-	unsigned numSamplesReq = length/sizeof(float);
-
-//	s_bufLock.lock();
-	const unsigned numSamples = std::min<unsigned>(s_ringBuf.GetAvailable(), numSamplesReq);
-
-	float *pWrite = static_cast<float*>(pDest);
-	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		*pWrite++ = s_ringBuf.Read();
-
-	s_sampleOutCount += numSamples;
-
-//	s_bufLock.unlock();
-
-	return numSamples*sizeof(float);
-}

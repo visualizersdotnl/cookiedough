@@ -169,6 +169,9 @@
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp">
+      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h">
+      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

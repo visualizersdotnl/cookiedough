@@ -83,58 +83,8 @@ void Audio_Destroy()
 
 void Audio_Update() {}
 
-BASS_INFO &Audio_Get_Info()
-{
-	return s_bassInf;
-}
-
-// ---- FM synth. prototyping ----
-
-bool Audio_Create_Stream(unsigned int iDevice, STREAMPROC *pStreamer, HWND hWnd)
-{
-	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
-	VIZ_ASSERT(hWnd != NULL);
-
-	// BASS device IDs:
-	//  0 = No sound (causes functionality to be limited, so -1 is the better pick).
-	// -1 = Default.
-	// >0 = As enumerated.
-	if (!BASS_Init(iDevice, 44100, BASS_DEVICE_LATENCY, hWnd, NULL))
-	{ 
-		switch (BASS_ErrorGetCode())
-		{
-		case BASS_ERROR_DEVICE:
-		case BASS_ERROR_ALREADY:
-		case BASS_ERROR_NO3D:
-		case BASS_ERROR_UNKNOWN:
-		case BASS_ERROR_MEM:
-			VIZ_ASSERT(0);
-
-		case BASS_ERROR_DRIVER:
-		case BASS_ERROR_FORMAT:
-			SetLastError("Can not initialize BASS audio library @ 44.1 kHz.");
-			return false;
-		}
-	}
-	
-	BASS_SetConfig(BASS_CONFIG_BUFFER, 200); // 200ms. max.
-	BASS_GetInfo(&s_bassInf);
-
-//	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, nullptr);
-	s_hStream = BASS_StreamCreate(44100, 1, BASS_SAMPLE_FLOAT, pStreamer, nullptr);
-	if (0 == s_hStream)
-	{
-		// This is prototyping code, don't need too elaborate error checking.
-		SetLastError("Can not initialize 44100 Hz custom audio stream.");
-		return false;
-	}
-
-	return true;
-}
-
 void Audio_Start_Stream(unsigned bufLenMS)
 {
-//	BASS_ChannelSetAttribute(s_hStream, BASS_ATTRIB_NOBUFFER, 0.f);
 	BASS_ChannelPlay(s_hStream, TRUE);
 }
 
@@ -149,8 +99,6 @@ bool Audio_Check_Stream()
 
 	return true;
 }
-
-// ---- FM synth. prototyping ----
 
 void Audio_Rocket_Pause(void *, int mustPause)
 {

@@ -43,6 +43,7 @@
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />
+    <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h" />

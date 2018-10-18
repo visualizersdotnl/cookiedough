@@ -26,7 +26,7 @@ namespace SFM
 {
 	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
 	const unsigned kSampleRate = 44100;
-	const unsigned kMaxSamplesPerUpdate = 44100/8;
+	const unsigned kMaxSamplesPerUpdate = 2048;
 
 	// Buffer size.
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;

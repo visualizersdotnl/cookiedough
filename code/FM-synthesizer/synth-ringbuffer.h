@@ -18,17 +18,20 @@ namespace SFM
 			readIdx(0),
 			writeIdx(0)
 		{
+			SFM_ASSERT(IsPow2(kRingBufferSize));
 			memset(buffer, 0, kRingBufferSize*sizeof(float));
 		}
 
 		void Write(float value)
 		{
-			buffer[writeIdx++ % kRingBufferSize] = value;
+			const unsigned index = writeIdx++ & (kRingBufferSize-1);
+			buffer[index] = value;
 		}
 
 		float Read()
 		{
-			const float value = buffer[readIdx++ % kRingBufferSize];
+			const unsigned index = readIdx++ & (kRingBufferSize-1);
+			const float value = buffer[index];
 			return value;
 		}
 

@@ -13,6 +13,8 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
+// #define DUMP_MIDI_EVENTS
+
 namespace SFM
 {
 	static HMIDIIN s_hMidiIn = NULL;
@@ -66,10 +68,12 @@ namespace SFM
 			unsigned controlIdx = MsgParam1(dwParam1);
 			unsigned controlVal = MsgParam2(dwParam1);
 
+#ifdef DUMP_MIDI_EVENTS
 			// Dumps incoming events, very useful
 			static char buffer[128];
 			sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
 			Log(buffer);
+#endif
 
 			switch (eventType)
 			{

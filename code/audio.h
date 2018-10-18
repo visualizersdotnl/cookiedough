@@ -13,11 +13,6 @@ void Audio_Update();
 
 BASS_INFO &Audio_Get_Info();
 
-// for custom stream @ 44100 Hz (chiefly intended for FM synthesis prototyping)
-bool Audio_Create_Stream(unsigned int iDevice,  STREAMPROC *pStreamer, HWND hWnd);
-void Audio_Start_Stream(unsigned bufLenMS);
-bool Audio_Check_Stream();
-
 // GNU Rocket callbacks
 void Audio_Rocket_Pause(void *, int mustPause);
 void Audio_Rocket_SetRow(void *, int row);
