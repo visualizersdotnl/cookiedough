@@ -20,7 +20,7 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Things to do whilst not motivated (read: manic or medicated):
-		- Use ring buffer to see if that takes care of the lag
+		- Create a simple disk writer that gathers samples when a button is pushed (MIDI) and dumps it on release (!)
 		- Read more about proper cross fading
 		- Try basic filter yourself before reintroducing the MOOG ladder
 

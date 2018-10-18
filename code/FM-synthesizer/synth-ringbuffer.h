@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Simple ring buffer (lockless).
+	Syntherklaas FM -- Simple ring buffer (lockless) for samples.
 
 	FIXME: modify to use power of 2 size buffers only (and thus less costly modulo).
 */
@@ -23,30 +23,13 @@ namespace SFM
 
 		void Write(float value)
 		{
-			buffer[writeIdx % kRingBufferSize] = value;
-			++writeIdx;
-		}
-
-		float *WritePtr(unsigned numValues)
-		{
-			SFM_ASSERT(GetFree() >= numValues);
-			float *pointer = buffer + (writeIdx % kRingBufferSize);
-			writeIdx += numValues;
-			return pointer;
+			buffer[writeIdx++ % kRingBufferSize] = value;
 		}
 
 		float Read()
 		{
-			const float value = buffer[readIdx % kRingBufferSize];
-			++readIdx;
-		}
-
-		const float *ReadPtr(unsigned numValues)
-		{
-			SFM_ASSERT(GetAvail() >= numValues);
-			const float *pointer = buffer + (readIdx % kRingBufferSize);
-			readIdx += numValues;
-			return pointer;
+			const float value = buffer[readIdx++ % kRingBufferSize];
+			return value;
 		}
 
 		unsigned GetAvailable() const

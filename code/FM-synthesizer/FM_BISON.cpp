@@ -15,6 +15,7 @@
 #include "synth-midi.h"
 #include "synth-state.h"
 #include "synth-audio-out.h"
+#include "synth-ringbuffer.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -86,9 +87,9 @@ namespace SFM
 
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
-		voice.m_carrier.Initialize(s_sampleCount, kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
-		const float ratio = 4.f;
-		voice.m_modulator.Initialize(s_sampleCount, ratio, carrierFreq*ratio, 0.f);
+		voice.m_carrier.Initialize(s_sampleCount, kSquare, kMaxVoiceAmplitude, carrierFreq);
+		const float ratio = 18.f;
+		voice.m_modulator.Initialize(s_sampleCount, 1.f, carrierFreq*ratio, 0.f);
 		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
 
 		voice.m_enabled = true;
@@ -143,9 +144,12 @@ namespace SFM
 		s_renderState = s_shadowState;
 	}
 
-	static void Render(float *pDest, unsigned numSamples)
+	static void Render(FIFO &ringBuf)
 	{
-		CopyShadowToRenderState();	
+		CopyShadowToRenderState();
+
+		// ^^ Maybe we can share this mutex.
+		const unsigned numSamples = ringBuf.GetFree();
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -154,8 +158,9 @@ namespace SFM
 
 		if (0 == numVoices)
 		{
-			// Silence, but still run (off) the filter
-			memset(pDest, 0, numSamples*sizeof(float));
+			// Silence, but still run (off) the filter (FIXME: speed)
+			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+				ringBuf.Write(0.f);
 		}
 		else
 		{
@@ -173,7 +178,7 @@ namespace SFM
 					}
 				}
 
-				pDest[iSample] = Clamp(dry);
+				ringBuf.Write(Clamp(dry));
 
 				++s_sampleCount;
 			}
@@ -220,8 +225,17 @@ void Syntherklaas_Destroy()
 	Render function for Kurt Bevacqua codebase.
 */
 
+static FIFO s_ringBuf;
+// static std::mutex s_bufLock;
+
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	UpdateVoices();
+
+//	s_bufLock.lock();
+	Render(s_ringBuf);
+//	s_bufLock.unlock();
+
 	if (false == s_isReady)
 	{
 		// Start streaming!
@@ -240,11 +254,17 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 DWORD CALLBACK Syntherklaas_StreamFunc(HSTREAM hStream, void *pDest, DWORD length, void *pUser)
 {
 	unsigned numSamplesReq = length/sizeof(float);
-	numSamplesReq = std::min<unsigned>(numSamplesReq, kRingBufferSize);
 
-	UpdateVoices(); 
-	Render((float*) pDest, numSamplesReq);
-	s_sampleOutCount += numSamplesReq;
+//	s_bufLock.lock();
+	const unsigned numSamples = std::min<unsigned>(s_ringBuf.GetAvailable(), numSamplesReq);
 
-	return numSamplesReq*sizeof(float);
+	float *pWrite = static_cast<float*>(pDest);
+	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		*pWrite++ = s_ringBuf.Read();
+
+	s_sampleOutCount += numSamples;
+
+//	s_bufLock.unlock();
+
+	return numSamples*sizeof(float);
 }
