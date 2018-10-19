@@ -25,7 +25,6 @@
 		- Try basic filter yourself before reintroducing the MOOG ladder
 
 	Sound related: 
-		- Implement own basic filter before using someone else's to get a better understanding
 		- Review ADSR curves
 		- Implement pink noise
 		- Try cosine tilt envelope for shaping of modulator

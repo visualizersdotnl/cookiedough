@@ -194,6 +194,39 @@ namespace SFM
 using namespace SFM;
 
 /*
+	Ring buffer + lock.
+
+	FIXME: a lot here can be optimized.
+*/
+
+static FIFO s_ringBuf;
+static std::mutex s_bufLock;
+
+/*
+	SDL2 stream callback.
+*/
+
+static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
+{
+	const unsigned numSamplesReq = length/sizeof(float);
+
+	s_bufLock.lock();
+
+	const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
+	const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
+
+	float *pWrite = reinterpret_cast<float*>(pStream);
+	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+	{
+		*pWrite++ = s_ringBuf.Read();
+	}
+
+	s_bufLock.unlock();
+
+	s_sampleOutCount += numSamples;
+}
+
+/*
 	Global (de-)initialization.
 */
 
@@ -213,11 +246,11 @@ bool Syntherklaas_Create()
 	// Test hack: Oxygen 49 + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
-	
-	// FIXME: check error
-	SDL2_CreateAudio();
 
-	return true == midiIn;
+	// Test (?): SDL2 audio stream	
+	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
+
+	return true == midiIn && audioOut;
 }
 
 void Syntherklaas_Destroy()
@@ -229,9 +262,6 @@ void Syntherklaas_Destroy()
 /*
 	Render function for Kurt Bevacqua codebase.
 */
-
-static FIFO s_ringBuf;
-static std::mutex s_bufLock;
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
@@ -247,4 +277,3 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		first = false;
 	}
 }
-

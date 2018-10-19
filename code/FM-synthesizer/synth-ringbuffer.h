@@ -18,7 +18,7 @@ namespace SFM
 			readIdx(0),
 			writeIdx(0)
 		{
-			SFM_ASSERT(IsPow2(kRingBufferSize));
+			SFM_ASSERT(true == IsPow2(kRingBufferSize));
 			memset(buffer, 0, kRingBufferSize*sizeof(float));
 		}
 
