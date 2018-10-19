@@ -150,9 +150,20 @@ namespace SFM
 	static void Render(FIFO &ringBuf)
 	{
 		CopyShadowToRenderState();
-
 		// ^^ Maybe we can share this mutex.
+
 		const unsigned numSamples = ringBuf.GetFree();
+
+		/*
+		static float phase = 0.f;
+		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		{
+			ringBuf.Write(sinf(phase));
+			phase += CalculateAngularPitch(440.f);
+		}
+
+		return;
+		*/
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;

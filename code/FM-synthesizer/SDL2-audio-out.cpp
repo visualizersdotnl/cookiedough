@@ -24,7 +24,7 @@ namespace SFM
 	bool SDL2_CreateAudio(SDL_AudioCallback callback)
 	{
 		SDL_AudioSpec necSpec;
-		necSpec.freq = 44100;
+		necSpec.freq = kSampleRate;
 		necSpec.format = AUDIO_F32;
 		necSpec.channels = 1;
 		necSpec.samples = kRingBufferSize;

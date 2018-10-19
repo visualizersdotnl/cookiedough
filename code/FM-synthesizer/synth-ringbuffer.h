@@ -1,8 +1,6 @@
 
 /*
 	Syntherklaas FM -- Simple ring buffer (lockless) for samples.
-
-	FIXME: modify to use power of 2 size buffers only (and thus less costly modulo).
 */
 
 #pragma once
@@ -42,7 +40,7 @@ namespace SFM
 
 		unsigned GetFree() const
 		{
-			const unsigned maxWrite = kRingBufferSize-1;
+			const unsigned maxWrite = kRingBufferSize;
 			return std::min<unsigned>(maxWrite, maxWrite-GetAvailable());
 		}
 		
