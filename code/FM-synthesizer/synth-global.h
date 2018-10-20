@@ -3,7 +3,6 @@
 	Syntherklaas FM -- Global includes, constants & utility functions.
 
 	Dependencies on Bevacqua (as far as I know):
-		- Audio output (through BASS)
 		- Std3DMath
 		- Macros
 */
@@ -19,7 +18,7 @@
 
 #include "synth-log.h"
 #include "synth-error.h"
-#include "synth-fast-math.h"
+#include "synth-math.h"
 #include "synth-LUT.h"
 
 namespace SFM
@@ -32,7 +31,7 @@ namespace SFM
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
 
 	// Reasonable audible spectrum.
-	const float kAudibleLowHz = 20.f;
+	const float kAudibleLowHz = 12.f;
 	const float kAudibleHighHz = 22000.f;
 
 	// LFO ranges.
@@ -44,10 +43,7 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 8;
-
-	// Max. (or initial) voice amplitude
-	const float kMaxVoiceAmplitude = 1.f/kMaxVoices;
+	const unsigned kMaxVoices = 20;
 
 	// Define oscillator period as a discrete amount of steps (derived from the sinus LUT)
 	const unsigned kOscPeriod = kSinTabSize;

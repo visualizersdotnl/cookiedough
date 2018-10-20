@@ -24,7 +24,7 @@ namespace SFM
 		m_decay = kSampleRate/4;
 		m_release = kSampleRate/4;
 
-		m_sustain = 0.75f;
+		m_sustain = 0.9f;
 
 		m_releasing = false;
 	}
@@ -48,19 +48,19 @@ namespace SFM
 		{
 			if (sample <= m_attack)
 			{
-				// Build up to full attack (sigmoid)
+				// Build up to full attack (linear)
 				const float step = 1.f/m_attack;
 				const float delta = sample*step;
-				amplitude = delta*delta;
+				amplitude = delta;
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
 			}
 			else if (sample > m_attack && sample <= m_attack+m_decay)
 			{
-				// Decay to sustain (exponential, may want it punchier (FIXME?))
+				// Decay to sustain (exponential)
 				sample -= m_attack;
 				const float step = 1.f/m_decay;
-				const float delta = sample*step;
-				amplitude = lerpf(1.f, m_sustain, delta*delta);
+				const float delta = powf(sample*step, 2.f);
+				amplitude = lerpf(1.f, m_sustain, delta);
 				SFM_ASSERT(amplitude <= 1.f && amplitude >= m_sustain);
 			}
 			else
@@ -74,9 +74,9 @@ namespace SFM
 			if (sample <= m_release)
 			{
 				const float step = 1.f/m_release;
-				const float delta = sample*step;
-				amplitude = lerpf<float>(m_sustain, 0.f, delta*delta);
-				SFM_ASSERT(amplitude >= 0.f);
+				const float delta = powf(sample*step, 2.f);
+				amplitude = lerpf<float>(m_sustain, 0.f, delta);
+				SFM_ASSERT(amplitude >= 0.f && amplitude <= m_sustain);
 			}
 		}
 

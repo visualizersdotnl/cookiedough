@@ -82,12 +82,6 @@
     <ClCompile Include="..\code\torus-twister.cpp" />
     <ClCompile Include="..\code\tunnelscape.cpp" />
     <ClCompile Include="..\code\util.cpp" />
-    <ClCompile Include="..\shaderGP-detour\snatchtiler.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\aspectratios.h" />
@@ -116,7 +110,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-fast-math.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-math.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-global.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-log.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-LUT.h" />
@@ -152,12 +146,6 @@
     <ClInclude Include="..\code\tunnelscape.h" />
     <ClInclude Include="..\code\util.h" />
     <ClInclude Include="..\code\voxel-shared.h" />
-    <ClInclude Include="..\shaderGP-detour\snatchtiler.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bass24-stripped\c\bass.lib" />

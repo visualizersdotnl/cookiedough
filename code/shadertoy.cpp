@@ -645,7 +645,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				float absX = fabsf(direction.x);
 				float absY = fabsf(direction.y);
 				float box = absX > absY ? absX : absY;
-				A =lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
+				A = lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
 				float radius = 1.f;

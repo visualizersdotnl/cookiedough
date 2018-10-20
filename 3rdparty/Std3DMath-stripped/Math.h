@@ -5,9 +5,6 @@
 
 	Please check README.md for more information.
 
-	FIXME:
-	- Use multiply-add for lerpf().
-
 	Added, fixed and/or modified (backport to main branch):
 	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
 	- Added Matrix44::FromArray33().
@@ -20,6 +17,10 @@
 	- Fix: used Scale() function instead of Mul() when multiplying vector by scalar.
 	- Added fracf().
 	- Fixed clampf().
+	- Fixed lerpf(), smoothstepf() & smootherstepf().
+
+	Added after integrating fixes on 19/10/2018:
+	- Little type in smoothstepf().
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
@@ -76,15 +77,22 @@ inline float fracf(float value) { return value - std::truncf(value); }
 template<typename T>
 inline const T lerpf(const T &a, const T &b, float t)
 {
-	return a*(1.f-t) + b*t;
+	return a + (b-a)*t;
+}
+
+// Bezier smoothstep.
+inline float smoothstepf(float a, float b, float t)
+{
+	t = t*t * (3.f - 2.f*t);
+	return lerpf<float>(a, b, t);
 }
 
 // Ken Perlin's take on Smoothstep.
 // Source: http://en.wikipedia.org/wiki/Smoothstep
-inline float smoothstepf(float a, float b, float t)
+inline float smootherstepf(float a, float b, float t)
 {
-	t = saturatef(t);
-	return lerpf<float>(a, b, t*t*t*(t*(t*6.f - 15.f) + 10.f));
+	t = t*t*t*(t*(t * 6.f-15.f) + 10.f);
+	return lerpf<float>(a, b, t);
 }
 
 #include "Vector2.h"

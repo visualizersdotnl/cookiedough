@@ -36,21 +36,24 @@ namespace SFM
 			signal = oscSine(phase+modulation);
 			break;
 
-		case kSaw:
-			signal = oscSaw(phase+modulation, m_numHarmonics);
+		case kSoftSaw:
+			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
 			break;
 
-		case kSquare:
-			signal = oscSquare(phase+modulation, m_numHarmonics);
+		case kSoftSquare:
+			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
 			break;
 
-		case kDirtySaw:
-			signal = oscDirtySaw(phase+modulation);
+		case kDigiSaw:
+			signal = oscDigiSaw(phase+modulation);
 			break;
 
-		case kDirtyTriangle:
-			signal = oscDirtyTriangle(phase+modulation);
+		case kTriangle:
+			signal = oscTriangle(phase+modulation);
 			break;
+
+		case kWhiteNoise:
+			signal = oscWhiteNoise();
 		}
 
 		return m_amplitude*signal;

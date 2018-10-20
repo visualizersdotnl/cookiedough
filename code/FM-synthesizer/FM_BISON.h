@@ -20,31 +20,30 @@
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
 	Things to do whilst not motivated (read: manic or medicated):
-		- More elaborate voice stealing
+		- Fix that darned voice mixing once and for all
+		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
+		- Try and filter MIDI inputs
+		- More elaborate voice stealing (base on velocity, says Pieter)
+		- Influence ADSR by velocity
 		- Create a simple disk writer that gathers samples when a button is pushed (MIDI) and dumps it on release (!)
 		- Read more about proper cross fading
-		- Try basic filter yourself before reintroducing the MOOG ladder
 
 	Sound related: 
-		- Review ADSR curves
+		- Review & optimize ADSR
 		- Implement pink noise
 		- Try cosine tilt envelope for shaping of modulator
 		- Proper voice stealing
 
 	Plumbing:
-		- Stash all oscillators in LUTs, makes it easier to switch between them and employ the same sampler quality
-		- Use multiply-add in lerpf()
+		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Debug log with formatting
-		- Keep tracking NaN bugs
+		- Move all math needed from Std3DMath to synth-math.h
 
 	Of later concern:
 		- Optimization (LUTs, find hotspots using profiler)
-		- Try Microtracker filter
-		- Consider interpolated LUT sampler
 		- Implement pitch bend
-		- Take another gander at oscillators (clean ones), apply BLEP?
-		- On that note (!), keep in mind that inlining isn't always as implicit as it should be
-		- Double precision?
+		- Double precision
+		- Keep tracking NaN bugs
 */
 
 #ifndef _FM_BISON_H_
@@ -63,7 +62,7 @@ namespace SFM
 	*/
 
 	// Trigger a note (if possible) and return it's voice index: at this point it's a voice
-	unsigned TriggerNote(float frequency);
+	unsigned TriggerNote(float frequency, float velocity);
 
 	// Release a note using it's voice index
 	void ReleaseVoice(unsigned index);

@@ -13,7 +13,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -31,10 +31,10 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
 	// Mapping: 3 rotaries
-	const unsigned kPotCutoff = 22;
-	const unsigned kPotResonance = 23;
-	const unsigned kPotFilterMix = 26;
-	MIDI_Smoothed s_cutoff, s_resonance, s_filterMix;
+	const unsigned kPotCutoff = 23;    // C11
+	const unsigned kPotResonance = 61; // C12
+	const unsigned kPotFilterMix = 22; // C10
+	MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
 
 	// Mapping: 49 keys
 	const unsigned kUpperKey = 36;
@@ -90,7 +90,7 @@ namespace SFM
 					}
 					else if (kPotFilterMix == controlIdx)
 					{
-						s_filterMix.Set(controlVal, dwParam2);
+						s_filterWetness.Set(controlVal, dwParam2);
 					}
 
 					break;
@@ -105,7 +105,7 @@ namespace SFM
 			case NOTE_ON:
 				{
 					SFM_ASSERT(true == IsKey(controlIdx));
-					const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx]);
+					const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx], controlVal/127.f);
 					s_voices[controlIdx] = iVoice;
 					break;
 				}
@@ -210,7 +210,7 @@ namespace SFM
 	}
 
 	// Pull-style values
-	float WinMidi_GetCutoff()        { return s_cutoff.Get();    }
+	float WinMidi_GetCutoff()        { return s_cutoff.Get(); }
 	float WinMidi_GetResonance()     { return s_resonance.Get(); }
-	float WinMidi_GetFilterWetness() { return s_filterMix.Get(); }
+	float WinMidi_GetFilterWetness() { return s_filterWetness.Get(); }
 }

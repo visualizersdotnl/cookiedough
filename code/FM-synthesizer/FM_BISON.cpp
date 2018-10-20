@@ -73,7 +73,7 @@ namespace SFM
 	}
 
 	// Returns voice index, if available
-	unsigned TriggerNote(float frequency)
+	unsigned TriggerNote(float frequency, float velocity)
 	{
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
@@ -90,10 +90,16 @@ namespace SFM
 
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
-		voice.m_carrier.Initialize(s_sampleCount, kDirtyTriangle, kMaxVoiceAmplitude, carrierFreq);
+
+		// This is "bro science" at best
+		const float amplitude = 0.1f + smoothstepf(velocity * 0.9f);
+	
+		// FIXME: adapt velocity in a non-linear fashion
+		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
+
 		const float ratio = 2.f;
 		voice.m_modulator.Initialize(s_sampleCount, 1.f, carrierFreq*ratio, 0.f);
-		voice.m_ADSR.Start(s_sampleCount, 1.f /* FIXME */);
+		voice.m_ADSR.Start(s_sampleCount, velocity);
 
 		voice.m_enabled = true;
 
@@ -172,7 +178,7 @@ namespace SFM
 
 		if (0 == numVoices)
 		{
-			// Silence, but still run (off) the filter (FIXME: speed)
+			// Silence, but still run (off) the filter
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 				ringBuf.Write(0.f);
 		}
@@ -192,7 +198,8 @@ namespace SFM
 					}
 				}
 
-				ringBuf.Write(Clamp(dry));
+				// FIXME: this is dirt slow!
+				ringBuf.Write(Clamp(atanf(dry)));
 
 				++s_sampleCount;
 			}

@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Fast approx. math functions
+	Syntherklaas FM -- Fast (approx.) math functions
 */
 
 #pragma once
@@ -17,5 +17,11 @@ namespace SFM
 		const float x2 = x*x;
 		const float z = x * (1.f + ax + (1.05622909486427f + 0.215166815390934f*x2*ax)*x2);
 		return z/(1.02718982441289f + fabsf(z));
+	}
+
+	// Bezier smoothstep
+	SFM_INLINE float smoothstepf(float t)
+	{
+		return t*t * (3.f - 2.f*t);
 	}
 }

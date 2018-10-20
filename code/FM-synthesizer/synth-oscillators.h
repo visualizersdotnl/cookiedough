@@ -6,6 +6,7 @@
 #pragma once
 
 #include "synth-global.h"
+#include "synth-random.h"
 
 namespace SFM
 {
@@ -16,14 +17,13 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
-		/* Neutered forms */
-		kSaw,
-		kSquare,
-		/* Aliasing forms */
-		kDirtySaw,
-		kDirtyTriangle,
-		/* Noise */
-		kPinkNoise
+		/* BLIT forms */
+		kSoftSaw,
+		kSoftSquare,
+		/* Straight forms */
+		kDigiSaw,
+		kTriangle,
+		kWhiteNoise
 	};
 
 	/*
@@ -33,23 +33,22 @@ namespace SFM
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
 
 	/*
-		Straight up sawtooth & triangle (aliases and thus noisy, but sometimes that's great).
-		FIXME: these are dirty slow.
+		Straight up sawtooth & triangle (will alias in most circumstances).
 	*/
 
-	SFM_INLINE float oscDirtySaw(float phase)
+	SFM_INLINE float oscDigiSaw(float phase)
 	{
-		return -1.f + fmodf(phase*kInvOscPeriod, 2.f);
+		phase *= kInvOscPeriod;
+		return -1.f + fmodf(phase, 2.f);
 	}
 
-
-	SFM_INLINE float oscDirtyTriangle(float phase)
+	SFM_INLINE float oscTriangle(float phase)
 	{
-		return -1.f + 4.f*fabsf(fmodf(phase*kInvOscPeriod, 1.f) - 0.5f);
+		return asinf(lutsinf(phase))*kHalfPI;
 	}
 
 	/*
-		Band-limited saw and square.
+		Band-limited saw and square (BLIT).
 	*/
 
 	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
@@ -61,7 +60,7 @@ namespace SFM
 		return unsigned(lower);
 	}
 
-	SFM_INLINE float oscSaw(float phase, unsigned numHarmonics) 
+	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
 	{ 
 		phase *= -1.f;
 		float harmonicPhase = phase;
@@ -80,7 +79,7 @@ namespace SFM
 		return signal;
 	}
 
-	SFM_INLINE float oscSquare(float phase, unsigned numHarmonics) 
+	SFM_INLINE float oscSoftSquare(float phase, unsigned numHarmonics) 
 	{ 
 		float harmonicPhase = phase;
 
@@ -103,8 +102,8 @@ namespace SFM
 		Noise oscillator(s).
 	*/
 
-	SFM_INLINE float oscPinkNoise(float phase)
+	SFM_INLINE float oscWhiteNoise()
 	{
-		return 0.f;
+		return -1.f + 2.f*randf();
 	}
 }
