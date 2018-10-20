@@ -56,10 +56,10 @@ namespace SFM
 			}
 			else if (sample > m_attack && sample <= m_attack+m_decay)
 			{
-				// Decay to sustain (exponential)
+				// Decay to sustain (cubic)
 				sample -= m_attack;
 				const float step = 1.f/m_decay;
-				const float delta = powf(sample*step, 2.f);
+				const float delta = powf(sample*step, 3.f);
 				amplitude = lerpf(1.f, m_sustain, delta);
 				SFM_ASSERT(amplitude <= 1.f && amplitude >= m_sustain);
 			}
@@ -74,8 +74,8 @@ namespace SFM
 			if (sample <= m_release)
 			{
 				const float step = 1.f/m_release;
-				const float delta = powf(sample*step, 2.f);
-				amplitude = lerpf<float>(m_sustain, 0.f, delta);
+				const float delta = sample*step;
+				amplitude = lerpf<float>(m_sustain, 0.f, delta*delta);
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= m_sustain);
 			}
 		}

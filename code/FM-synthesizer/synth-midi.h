@@ -9,11 +9,13 @@ namespace SFM
 {
 	// Lookup table to translate any MIDI key to a frequency (see implementation for base)
 	extern float g_midiToFreqLUT[127];
-	void CalculateMidiToFrequencyLUT(float baseFreq = 220.f);
+	void CalculateMidiToFrequencyLUT(float baseFreq = 440.f);
 
-	// Stolen from: https://github.com/FluidSynth/fluidsynth/blob/master/src/midi/fluid_midi.h
+	// Taken from (though I later added what I needed): https://github.com/FluidSynth/fluidsynth/blob/master/src/midi/fluid_midi.h
 	enum MIDI_EventType
 	{
+		/* Channels */
+		CHANNEL_PERCUSSION = 0x9,
 		/* Channel messages */
 		NOTE_OFF = 0x80,
 		NOTE_ON = 0x90,

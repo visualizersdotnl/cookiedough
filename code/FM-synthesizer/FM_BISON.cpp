@@ -91,14 +91,14 @@ namespace SFM
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
 
-		// This is "bro science" at best
-		const float amplitude = 0.1f + smoothstepf(velocity * 0.9f);
+		// This is "bro science" at best (FIXME)
+		velocity *= kMaxVoiceAmplitude;
+		const float amplitude = smoothstepf(velocity);
 	
-		// FIXME: adapt velocity in a non-linear fashion
-		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
-
+		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
 		const float ratio = 2.f;
-		voice.m_modulator.Initialize(s_sampleCount, 1.f, carrierFreq*ratio, 0.f);
+		voice.m_modulator.Initialize(s_sampleCount, state.modIndex, carrierFreq*ratio, 0.f);
+
 		voice.m_ADSR.Start(s_sampleCount, velocity);
 
 		voice.m_enabled = true;
@@ -116,12 +116,8 @@ namespace SFM
 		voice.m_ADSR.Stop(s_sampleCount);
 	}
 
-	// To be called every time before rendering
-	static void UpdateVoices()
+	static void UpdateVoices(FM &state)
 	{
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
-		FM &state = s_shadowState;
-
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			Voice &voice = state.m_voices[iVoice];
@@ -139,6 +135,21 @@ namespace SFM
 				}
 			}
 		}
+	}
+
+	/*
+		Global update.
+	*/
+
+	static void Update()
+	{
+		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
+		FM &state = s_shadowState;
+
+		UpdateVoices(state);
+		
+		state.drive = WinMidi_GetMasterDrive()*2.f;
+		state.modIndex = WinMidi_GetMasterModulationIndex()*k2PI;	
 	}
 
 	/*
@@ -184,6 +195,8 @@ namespace SFM
 		}
 		else
 		{
+			const float drive = WinMidi_GetMasterDrive()*2.f;
+
 			// Render dry samples
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
@@ -194,12 +207,11 @@ namespace SFM
 					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample(s_sampleCount);
-						dry += sample;
+						dry = fast_tanhf(drive*(dry+sample));
 					}
 				}
 
-				// FIXME: this is dirt slow!
-				ringBuf.Write(Clamp(atanf(dry)));
+				ringBuf.Write(dry);
 
 				++s_sampleCount;
 			}
@@ -265,7 +277,7 @@ bool Syntherklaas_Create()
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
 
-	// Test (?): SDL2 audio stream	
+	// SDL2 audio stream	
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	return true == midiIn && audioOut;
@@ -283,8 +295,9 @@ void Syntherklaas_Destroy()
 
 void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	Update();
+
 	s_bufLock.lock();
-	UpdateVoices();
 	Render(s_ringBuf);
 	s_bufLock.unlock();
 

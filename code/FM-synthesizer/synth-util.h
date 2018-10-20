@@ -56,11 +56,4 @@ namespace SFM
 		return clampf(-1.f, 1.f, sample);
 	}
 
-	// FIXME: verify & optimize
-	SFM_INLINE float Crossfade(float dry, float wet, float time)
-	{
-		dry *= sqrtf(0.5f * (1.f+time));
-		wet *= sqrtf(0.5f * (1.f-time));
-		return Clamp(dry+wet);
-	}
-}
+} 

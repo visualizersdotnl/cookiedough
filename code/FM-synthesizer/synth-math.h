@@ -19,6 +19,16 @@ namespace SFM
 		return z/(1.02718982441289f + fabsf(z));
 	}
 
+	// "Ultra" version (claimed to be 2.5 times as precise)
+	// Taken from: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=388650&start=15
+	SFM_INLINE float ultra_tanhf(float x)
+	{
+		const float ax = fabsf(x);
+		const float x2 = x*x;
+		const float z = x * (0.773062670268356f + ax + (0.757118539838817f + 0.0139332362248817f*x2*x2) * x2*ax);
+		return z/(0.795956503022967f + fabsf(z));
+	}
+
 	// Bezier smoothstep
 	SFM_INLINE float smoothstepf(float t)
 	{

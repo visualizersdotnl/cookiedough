@@ -23,19 +23,19 @@
 
 namespace SFM
 {
-	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME)).
+	// Pretty standard sample rate, can always up it (for now the BASS hack in this codebase relies on it (FIXME))
 	const unsigned kSampleRate = 44100;
 	const unsigned kMaxSamplesPerUpdate = 1024;
 
-	// Buffer size.
+	// Buffer size
 	const unsigned kRingBufferSize = kMaxSamplesPerUpdate;
 
-	// Reasonable audible spectrum.
+	// Reasonable audible spectrum
 	const float kAudibleLowHz = 12.f;
 	const float kAudibleHighHz = 22000.f;
 
-	// LFO ranges.
-	const float kMaxStdLFO = kAudibleLowHz;
+	// LFO ranges
+	const float kMaxSubLFO = kAudibleLowHz;
 	const float kMaxSonicLFO = kAudibleHighHz;	
 
 	// Nyquist frequencies.
@@ -44,6 +44,9 @@ namespace SFM
 
 	// Max. number of voices
 	const unsigned kMaxVoices = 20;
+
+	// Max. voice amplitude (minus 33%, as Impulse Tracker supposedly does it)
+	const float kMaxVoiceAmplitude = 0.66f;
 
 	// Define oscillator period as a discrete amount of steps (derived from the sinus LUT)
 	const unsigned kOscPeriod = kSinTabSize;

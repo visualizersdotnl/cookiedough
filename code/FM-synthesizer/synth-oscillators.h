@@ -1,6 +1,9 @@
 
 /*
 	Syntherklaas FM -- Oscillators.
+
+	The idea is to, in due time, precalculate all these and use samplers during actual synthesis as is practically the case already
+	for everything that depends on the sinus LUT.
 */
 
 #pragma once
@@ -38,26 +41,24 @@ namespace SFM
 
 	SFM_INLINE float oscDigiSaw(float phase)
 	{
-		phase *= kInvOscPeriod;
-		return -1.f + fmodf(phase, 2.f);
+		return fmodf(phase/kOscPeriod, 1.f)*2.f - 1.f;
 	}
 
 	SFM_INLINE float oscTriangle(float phase)
 	{
-		return asinf(lutsinf(phase))*kHalfPI;
+		return asinf(lutsinf(phase))*(2.f/kPI);
 	}
 
 	/*
 		Band-limited saw and square (BLIT).
 	*/
 
-	const float kHarmonicsPrecHz = kAudibleLowHz*2.f;
+	const float kHarmonicsPrecHz = kAudibleLowHz;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		const float lower = (kAudibleNyquist/frequency)/kHarmonicsPrecHz;
-		return unsigned(lower);
+		return 40; // FIXME (documented)
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 

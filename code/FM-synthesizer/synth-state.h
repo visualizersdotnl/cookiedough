@@ -18,15 +18,27 @@ namespace SFM
 		Voice m_voices[kMaxVoices];
 		unsigned m_active;
 
+		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive
+		float drive;
+
+		// Currently used as global modulation index value (used on note trigger), probably temporary
+		// [0..N]
+		float modIndex;
+
 		void Reset()
 		{
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				m_voices[iVoice].m_enabled = false;
-			}
+				}
 
 			m_active = 0;
-		}
 
+			// Neutral
+			drive = 1.f;
+
+			// No FM
+			modIndex = 0.f;
+		}
 	};
 }

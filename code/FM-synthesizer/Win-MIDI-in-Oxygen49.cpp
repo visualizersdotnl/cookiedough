@@ -1,6 +1,11 @@
 
 /*
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
+
+	This isn't supposed to be top quality code, it's just for my home rig. 
+
+	- Keep it in P01 for this mapping to work (!).
+	- Use the octave button!
 */
 
 #include "synth-global.h"
@@ -13,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-#define DUMP_MIDI_EVENTS
+// #define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -30,11 +35,21 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam1(unsigned parameter) { return (parameter>>8)  & 0x7f; }
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
-	// Mapping: 3 rotaries
-	const unsigned kPotCutoff = 23;    // C11
-	const unsigned kPotResonance = 61; // C12
-	const unsigned kPotFilterMix = 22; // C10
+	/*
+		Mapping for the Oxy-49's Patch #01
+	*/
+
+	// Rotary mapping
+	const unsigned kPotCutoff = 22;      // C11
+	const unsigned kPotResonance = 23;   // C12
+	const unsigned kPotFilterMix = 61;   // C10
+	const unsigned kPotMasterDrive = 26; // C14
 	MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
+	MIDI_Smoothed s_masterDrive;
+
+	// Wheel mapping
+	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
+	MIDI_Smoothed s_masterModIndex;
 
 	// Mapping: 49 keys
 	const unsigned kUpperKey = 36;
@@ -62,70 +77,88 @@ namespace SFM
 		switch (wMsg)
 		{
 		case MIM_DATA:
-		{
-			unsigned eventType = MsgType(dwParam1);
-			unsigned channel = MsgChan(dwParam1);
-			unsigned controlIdx = MsgParam1(dwParam1);
-			unsigned controlVal = MsgParam2(dwParam1);
+			{
+				unsigned eventType = MsgType(dwParam1);
+				unsigned channel = MsgChan(dwParam1);
+				unsigned controlIdx = MsgParam1(dwParam1);
+				unsigned controlVal = MsgParam2(dwParam1);
+
+				if (CHANNEL_PERCUSSION == channel)
+				{
+					// This is where I can use those nice buttons
+					return;
+				}
 
 #ifdef DUMP_MIDI_EVENTS
-			// Dumps incoming events, very useful
-			static char buffer[128];
-			sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
-			Log(buffer);
+				// Dumps incoming events, very useful
+				static char buffer[128];
+				sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
+				Log(buffer);
 #endif
 
-			switch (eventType)
-			{
-			default:
+				switch (eventType)
 				{
-					// Rotaries (FIXME: code repetition)
-					if (kPotCutoff == controlIdx)
+				default: // FIXME: == 13 (?)
 					{
-						s_cutoff.Set(controlVal, dwParam2);
+						switch (controlIdx)
+						{
+						case kPotCutoff:
+							s_cutoff.Set(controlVal, dwParam2);
+							break;
+
+						case kPotResonance:
+							s_resonance.Set(controlVal, dwParam2);
+							break;
+
+						case kPotFilterMix:
+							s_filterWetness.Set(controlVal, dwParam2);
+							break;
+
+						case kPotMasterDrive:
+							s_masterDrive.Set(controlVal, dwParam2);
+							break;
+
+						case kMasterModIndex:
+							s_masterModIndex.Set(controlVal, dwParam2);
+							break;
+
+						default:
+							break;
+						}
+
+						break;
 					}
-					else if (kPotResonance == controlIdx)
+		
+				case PITCH_BEND:
 					{
-						s_resonance.Set(controlVal, dwParam2);
-					}
-					else if (kPotFilterMix == controlIdx)
-					{
-						s_filterWetness.Set(controlVal, dwParam2);
-					}
-
-					break;
-				}
-
-			case PITCH_BEND:
-				{
-					unsigned bend = (controlVal<<7)|controlIdx;
-					break;
-				}
-
-			case NOTE_ON:
-				{
-					SFM_ASSERT(true == IsKey(controlIdx));
-					const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx], controlVal/127.f);
-					s_voices[controlIdx] = iVoice;
-					break;
-				}
-
-			case NOTE_OFF:
-				{
-					SFM_ASSERT(true == IsKey(controlIdx));
-					const unsigned iVoice = s_voices[controlIdx];
-					if (-1 != iVoice)
-					{
-						ReleaseVoice(iVoice);
-						s_voices[controlIdx] = -1;
+						unsigned bend = (controlVal<<7)|controlIdx;
+						break;
 					}
 
-					break;
+				case NOTE_ON:
+					{
+						SFM_ASSERT(true == IsKey(controlIdx));
+						const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx], controlVal/127.f);
+						s_voices[controlIdx] = iVoice;
+						break;
+					}
+
+				case NOTE_OFF:
+					{
+						SFM_ASSERT(true == IsKey(controlIdx));
+						const unsigned iVoice = s_voices[controlIdx];
+						if (-1 != iVoice)
+						{
+							ReleaseVoice(iVoice);
+							s_voices[controlIdx] = -1;
+						}
+
+						break;
+					}
 				}
+
+				return;
 			}
-			
-			return;
-		}
 
 		case MIM_LONGDATA:
 			// FIXE: implement!
@@ -209,8 +242,14 @@ namespace SFM
 		s_hMidiIn = NULL;
 	}
 
-	// Pull-style values
-	float WinMidi_GetCutoff()        { return s_cutoff.Get(); }
-	float WinMidi_GetResonance()     { return s_resonance.Get(); }
-	float WinMidi_GetFilterWetness() { return s_filterWetness.Get(); }
+	// Pull-style values:
+
+	// Filter
+	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get(); }
+	float WinMidi_GetFilterResonance() { return s_resonance.Get(); }
+	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get(); }
+
+	// Master
+	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
+	float WinMidi_GetMasterModulationIndex() { return s_masterModIndex.Get(); }
 }
