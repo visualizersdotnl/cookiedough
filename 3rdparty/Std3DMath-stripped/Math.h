@@ -21,6 +21,7 @@
 
 	Added after integrating fixes on 19/10/2018:
 	- Little typo in smoothstepf().
+	- Added weighted average.
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
@@ -94,6 +95,13 @@ inline float smootherstepf(float a, float b, float t)
 	t = t*t*t*(t*(t * 6.f-15.f) + 10.f);
 	return lerpf<float>(a, b, t);
 }
+
+// Weighted average (type of low-pass).
+inline float lowpassf(float from, float to, float factor)
+{
+	return ((from * (factor-1.f)) + to)/factor;
+}
+
 
 #include "Vector2.h"
 #include "Vector3.h"

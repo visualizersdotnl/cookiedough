@@ -41,4 +41,10 @@ namespace SFM
 	{
 		return t*t * (3.f - 2.f*t);
 	}
+
+	// Simple lowpass
+	inline float lowpassf(float from, float to, float factor)
+	{
+		return ((from * (factor-1.f)) + to)/factor;
+	}
 }

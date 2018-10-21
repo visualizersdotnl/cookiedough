@@ -44,6 +44,13 @@ namespace SFM
 		MIDI_META_EVENT = 0xff
 	};
 
+	/*
+		Simple smoothing algorithm intended for controls that have an effect during playback of a voice, but
+		can just as well be used for nearly all non-key controls.
+	*/
+
+	const float kMidiEpsilon = 0.0075f;
+	
 	class MIDI_Smoothed
 	{
 	public:
@@ -58,8 +65,12 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
-			// FIXME: interpolate
-			m_value = iValue/127.f;
+			const float newVal = iValue/127.f;
+			m_value = lowpassf(m_value, newVal, kPI);
+			
+			// Pull down
+			if (m_value < kMidiEpsilon) 
+				m_value = 0.f;
 		}
 
 		float Get() const

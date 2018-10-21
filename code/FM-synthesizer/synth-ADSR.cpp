@@ -56,11 +56,12 @@ namespace SFM
 			}
 			else if (sample > attack && sample <= attack+decay)
 			{
-				// Decay to sustain (cubic)
+				// Decay to sustain (inverse exp.)
 				sample -= attack;
 				const float step = 1.f/decay;
-				const float delta = powf(sample*step, 3.f);
-				amplitude = lerpf(1.f, sustain, delta);
+				const float delta = 1.f-(sample*step);
+				const float invExp = 1.f - delta*delta;
+				amplitude = lerpf(1.f, sustain, invExp*invExp);
 				SFM_ASSERT(amplitude <= 1.f && amplitude >= m_sustain);
 			}
 			else
@@ -70,12 +71,11 @@ namespace SFM
 		}
 		else
 		{
-			// Sustain level and sample offset are adjusted on NOTE_OFF (inverse exp.)
+			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
 			if (sample <= release)
 			{
 				const float step = 1.f/release;
 				const float delta = sample*step;
-				const float invExp = 1.f - (1.f-delta)*(1.f-delta);
 				amplitude = lerpf<float>(sustain, 0.f, delta*delta);
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= m_sustain);
 			}

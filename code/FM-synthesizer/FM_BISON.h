@@ -25,7 +25,6 @@
 	To do:
 		- See Moleskine (will overlap with items below)
 		- Try to get current state of MIDI controls on startup in driver
-		- Try and filter MIDI inputs
 		- If sustain is zero, skip that stage of the ADSR?
 		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
 
@@ -43,7 +42,7 @@
 		- Debug log with formatting
 		- Move all math needed from Std3DMath to synth-math.h
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
-		- Clean up Oxygen 49 driver so it's easier to port to another keyboard
+		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
 
 	Of later concern:
 		- Implement pitch bend
