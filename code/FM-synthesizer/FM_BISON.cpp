@@ -90,9 +90,9 @@ namespace SFM
 		Voice &voice = state.m_voices[iVoice];
 
 		const float carrierFreq = frequency;
-		const float amplitude = 0.05f + invsqrf(velocity*0.95f); // She blinded him with "bro science"
+		const float amplitude = 0.05f + 0.95f*invsqrf(velocity); // She blinded him with "bro science"
 
-		voice.m_carrier.Initialize(s_sampleCount, kDigiSaw, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
 
 		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
@@ -155,8 +155,8 @@ namespace SFM
 		// Get state from Oxygen 49 driver (FIXME: test)
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = fabsf(WinMidi_GetMasterModulationIndex()*16.f);
-		state.m_modRatio = fabsf(WinMidi_GetMasterModulationRatio()*16.f);
+		state.m_modIndex = WinMidi_GetMasterModulationIndex()*10.f*kGoldenRatio;
+		state.m_modRatio = floorf(WinMidi_GetMasterModulationRatio()*16.f);
 
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);

@@ -54,15 +54,14 @@ namespace SFM
 				amplitude = delta;
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
 			}
-			else if (sample > attack && sample <= attack+decay)
+			else if (sample >= attack && sample < attack+decay)
 			{
 				// Decay to sustain (inverse exp.)
 				sample -= attack;
 				const float step = 1.f/decay;
 				const float invExp = invsqrf(sample*step);
 				amplitude = lerpf(1.f, sustain, invExp*invExp);
-				// SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
-				SFM_ASSERT(amplitude <= 1.f /* Can't vouch for upper limit, interpolation isn't 100% accurate */);
+				SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
 			}
 			else
 			{
