@@ -19,7 +19,6 @@
 #include "synth-log.h"
 #include "synth-error.h"
 #include "synth-math.h"
-#include "synth-LUT.h"
 
 namespace SFM
 {
@@ -48,9 +47,10 @@ namespace SFM
 	// Max. voice amplitude (minus 33%, as Impulse Tracker supposedly does it)
 	const float kMaxVoiceAmplitude = 0.66f;
 
-	// Define oscillator period as a discrete amount of steps (derived from the sinus LUT)
-	const unsigned kOscPeriod = kSinTabSize;
-	const float kOscQuarterPeriod = kOscPeriod/4;
+	// Define oscillator period as a discrete amount of steps (i.e. in samples)
+	// IMPORTANT: other LUTs and such also use this number
+	const unsigned kOscPeriod = 4096;
+	const unsigned kOscTabAnd = 4096-1;
 	const float kInvOscPeriod = 1.f/kOscPeriod;
 
 	// Use to multiply modulation value (radian) to osc. LUT period
@@ -60,4 +60,5 @@ namespace SFM
 	const float kMaxOverdrive = kPI;
 }
 
+#include "synth-LUT.h"
 #include "synth-util.h"

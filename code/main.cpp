@@ -185,6 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= FxBlitter_Create();
 
 	Gamepad_Create();
+	initialize_random_generator();
 
 	// utilInit &= Snatchtiler();
 

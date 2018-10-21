@@ -23,7 +23,13 @@ namespace SFM
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterWetness();
 
-	// Master
+	// Master drive & modulation index
 	float WinMidi_GetMasterDrive();
 	float WinMidi_GetMasterModulationIndex();
+
+	// Master ADSR parameters
+	float WinMidi_GetMasterAttack();
+	float WinMidi_GetMasterDecay();
+	float WinMidi_GetMasterSustain();
+	float WinMidi_GetMasterRelease();
 }

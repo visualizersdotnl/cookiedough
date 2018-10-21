@@ -23,19 +23,19 @@ namespace SFM
 //		tinymt32_init(&s_genState, seed);
 	}
 
-	float randf()
+	float mt_randf()
 	{
 //		return tinymt32_generate_floatOC(&s_genState);
 		return ::mt_randf();
 	}
 
-	uint32_t randu32()
+	uint32_t mt_randu32()
 	{
 //		return tinymt32_generate_uint32(&s_genState);
 		return ::mt_randu32();
 	}
 
-	int32_t rand32() 
+	int32_t mt_rand32() 
 	{ 
 //		return (int32_t) randu32();
 		return ::mt_rand32();

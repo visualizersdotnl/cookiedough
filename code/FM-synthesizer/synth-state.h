@@ -10,6 +10,7 @@
 
 #include "synth-global.h"
 #include "synth-voice.h"
+#include "synth-ADSR.h"
 
 namespace SFM
 {
@@ -19,11 +20,14 @@ namespace SFM
 		unsigned m_active;
 
 		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive
-		float drive;
+		float m_drive;
 
 		// Currently used as global modulation index value (used on note trigger), probably temporary
 		// [0..N]
-		float modIndex;
+		float m_modIndex;
+
+		// Master ADSR parameters
+		ADSR::Parameters m_ADSR;
 
 		void Reset()
 		{
@@ -35,10 +39,16 @@ namespace SFM
 			m_active = 0;
 
 			// Neutral
-			drive = 1.f;
+			m_drive = 1.f;
 
 			// No FM
-			modIndex = 0.f;
+			m_modIndex = 0.f;
+
+			// Default ADSR envelope
+			m_ADSR.attack  = kSampleRate/8;
+			m_ADSR.decay   = kSampleRate/4;
+			m_ADSR.release = kSampleRate/4;
+			m_ADSR.sustain = kRootHalf;
 		}
 	};
 }

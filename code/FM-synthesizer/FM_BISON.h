@@ -26,14 +26,14 @@
 		- See Moleskine (will overlap with items below)
 		- Try to get current state of MIDI controls on startup in driver
 		- Try and filter MIDI inputs
+		- If sustain is zero, skip that stage of the ADSR?
 		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
-		- Create a simple disk writer that gathers samples when a button is pushed (MIDI) and dumps it on release (!)
 
 	Sound related: 
+		- More elaborate voice stealing (base on velocity, says Pieter)
 		- Influence ADSR by velocity
 		- Read more about proper cross fading
-		- More elaborate voice stealing (base on velocity, says Pieter)
-		- Review ADSR
+		- Review ADSR (by someone else than me)
 		- Implement pink noise
 		- Try cosine tilt envelope for shaping of modulator
 		- Proper voice stealing
@@ -43,6 +43,7 @@
 		- Debug log with formatting
 		- Move all math needed from Std3DMath to synth-math.h
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
+		- Clean up Oxygen 49 driver so it's easier to port to another keyboard
 
 	Of later concern:
 		- Implement pitch bend
@@ -50,6 +51,7 @@
 		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
 		- Keep tracking NaN bugs
 		- Double precision?
+		- Reinstate OSX port for on-the-go programming
 */
 
 #ifndef _FM_BISON_H_

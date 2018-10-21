@@ -17,7 +17,7 @@ namespace SFM
 		rand32()  -- Signed 32-bit.
 	*/
 
-	float randf();
-	uint32_t randu32();
-	int32_t rand32();
+	float mt_randf();
+	uint32_t mt_randu32();
+	int32_t mt_rand32();
 };

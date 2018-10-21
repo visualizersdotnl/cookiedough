@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -50,6 +50,13 @@ namespace SFM
 	// Wheel mapping
 	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
 	MIDI_Smoothed s_masterModIndex;
+
+	// Fader mapping
+	const unsigned kFaderA = 20; // C1
+	const unsigned kFaderD = 21; // C2
+	const unsigned kFaderS = 71; // C3
+	const unsigned kFaderR = 72; // C4
+	MIDI_Smoothed s_A, s_D, s_S, s_R;
 
 	// Mapping: 49 keys
 	const unsigned kUpperKey = 36;
@@ -119,6 +126,22 @@ namespace SFM
 
 						case kMasterModIndex:
 							s_masterModIndex.Set(controlVal, dwParam2);
+							break;
+
+						case kFaderA:
+							s_A.Set(controlVal, dwParam2);
+							break;
+
+						case kFaderD:
+							s_D.Set(controlVal, dwParam2);
+							break;
+
+						case kFaderS:
+							s_S.Set(controlVal, dwParam2);
+							break;
+
+						case kFaderR:
+							s_R.Set(controlVal, dwParam2);
 							break;
 
 						default:
@@ -241,7 +264,9 @@ namespace SFM
 		s_hMidiIn = NULL;
 	}
 
-	// Pull-style values:
+	/*
+		Pull-style controls
+	*/
 
 	// Filter
 	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get(); }
@@ -251,4 +276,8 @@ namespace SFM
 	// Master
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
 	float WinMidi_GetMasterModulationIndex() { return s_masterModIndex.Get(); }
+	float WinMidi_GetMasterAttack()          { return s_A.Get(); }
+	float WinMidi_GetMasterDecay()           { return s_D.Get(); }
+	float WinMidi_GetMasterSustain()         { return s_S.Get(); }
+	float WinMidi_GetMasterRelease()         { return s_R.Get(); }
 }

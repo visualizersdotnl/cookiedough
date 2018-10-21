@@ -103,8 +103,8 @@ namespace SFM
 		Noise oscillator(s).
 	*/
 
-	SFM_INLINE float oscWhiteNoise()
+	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return -1.f + 2.f*randf();
+		return lutnoisef(phase + rand() /* Without this we'll definitely hear a pattern */);
 	}
 }

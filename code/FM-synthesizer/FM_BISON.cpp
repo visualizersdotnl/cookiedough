@@ -94,12 +94,12 @@ namespace SFM
 		// This is "bro science" at best
 		const float amplitude = 0.05f + velocity*0.95f;
 	
-		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
 		const float ratio = 2.f;
 		voice.m_modulator.Initialize(s_sampleCount, 0.f, carrierFreq*ratio, 0.f);
-//		voice.m_modulator.Initialize(s_sampleCount, state.modIndex, carrierFreq*ratio, 0.f);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
 
-		voice.m_ADSR.Start(s_sampleCount, velocity);
+		voice.m_ADSR.Start(s_sampleCount, state.m_ADSR, velocity);
 
 		voice.m_enabled = true;
 
@@ -127,7 +127,7 @@ namespace SFM
 				ADSR &envelope = voice.m_ADSR;
 				if (true == envelope.m_releasing)
 				{
-					if (envelope.m_sampleOffs+envelope.m_release < s_sampleCount)
+					if (envelope.m_sampleOffs+envelope.m_parameters.release < s_sampleCount)
 					{
 						voice.m_enabled = false;
 						--state.m_active;
@@ -148,8 +148,18 @@ namespace SFM
 
 		UpdateVoices(state);
 		
-		state.drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.modIndex = WinMidi_GetMasterModulationIndex()*k2PI;	
+		// Get state from Oxygen 49 driver (FIXME: test)
+
+		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
+		state.m_modIndex = WinMidi_GetMasterModulationIndex()*k2PI;	
+
+		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
+		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
+(	
+		// Allow release to be twice as long for a nice lingering effect which in turn can be modulated
+		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f));
+		
+		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 	}
 
 	/*
@@ -170,17 +180,6 @@ namespace SFM
 		// ^^ Maybe we can share this mutex.
 
 		const unsigned numSamples = ringBuf.GetFree();
-
-		/*
-		static float phase = 0.f;
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		{
-			ringBuf.Write(sinf(phase));
-			phase += CalculateAngularPitch(440.f);
-		}
-
-		return;
-		*/
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -275,7 +274,7 @@ bool Syntherklaas_Create()
 	s_sampleCount = 0;
 	s_sampleOutCount = 0;
 
-	// Test hack: Oxygen 49 + SDL2
+	// Test (FIXME): Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
 

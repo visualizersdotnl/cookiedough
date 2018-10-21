@@ -53,7 +53,7 @@ namespace SFM
 			break;
 
 		case kWhiteNoise:
-			signal = oscWhiteNoise();
+			signal = oscWhiteNoise(phase);
 		}
 
 		return m_amplitude*signal;

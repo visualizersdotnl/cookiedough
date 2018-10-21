@@ -51,6 +51,7 @@ namespace SFM
 			m_timeStamp(0), m_value(0.f) {}
 
 	private:
+		unsigned m_iValue;
 		unsigned m_timeStamp;
 		float m_value;
 
@@ -64,6 +65,12 @@ namespace SFM
 		float Get() const
 		{
 			return m_value;
+		}
+
+		// Return original MIDI value [0..127]
+		unsigned GetDiscrete() const 
+		{
+			return m_iValue;
 		}
 	};
 }
