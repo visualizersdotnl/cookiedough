@@ -49,7 +49,7 @@ namespace SFM
 		can just as well be used for nearly all non-key controls.
 	*/
 
-	const float kMidiEpsilon = 0.0075f;
+	const float kMidiEpsilon = 1.f/127.f;
 	
 	class MIDI_Smoothed
 	{
@@ -65,12 +65,10 @@ namespace SFM
 	public:
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
+			// Another fine example of "bro science"
+			// I believe the VIRUS people also did something to this effect and actually patented it?
 			const float newVal = iValue/127.f;
-			m_value = lowpassf(m_value, newVal, kPI);
-			
-			// Pull down
-			if (m_value < kMidiEpsilon) 
-				m_value = 0.f;
+			m_value = lowpassf(m_value, newVal, 2.f);
 		}
 
 		float Get() const

@@ -169,6 +169,9 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -358,6 +361,9 @@
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-filter.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
   </ItemGroup>

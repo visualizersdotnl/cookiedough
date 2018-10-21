@@ -26,6 +26,10 @@ namespace SFM
 		// [0..N]
 		float m_modIndex;
 
+		// Filter wetness
+		// [0..1]
+		float m_wetness;
+
 		// Master ADSR parameters
 		ADSR::Parameters m_ADSR;
 
@@ -43,6 +47,9 @@ namespace SFM
 
 			// No FM
 			m_modIndex = 0.f;
+
+			// No filter
+			m_wetness = 0.f;
 
 			// Default ADSR envelope
 			m_ADSR.attack  = kSampleRate/8;

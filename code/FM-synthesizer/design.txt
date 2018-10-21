@@ -6,11 +6,11 @@ Features for version 0.1:
 [X] - 1 hardcoded tone (patch).
 [X] - Polyphony of 8; no voice stealing.
 [X] - 1 global ADSR which modulates amplitude.
-- 1 simple filter for cutoff and resonance.
+[X] - 1 simple filter for low-pass cutoff and resonance.
 [X] - Controls for: filter, master drive, modulation, oscillator type (FIX!) & ADSR.
 
 Features for 0.2:
 
-- Basic patch framework for different tones.
-- More elaborate filter (MOOG) plus wet<->dry mix.
+[X] - More elaborate filter (MOOG) plus wet<->dry mix.
 - Voice stealing.
+- First (hardcoded) patch, emulating a well known instrument (TOTO brass!).

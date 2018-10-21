@@ -46,7 +46,7 @@ namespace SFM
 
 		if (false == m_releasing)
 		{
-			if (sample <= attack)
+			if (sample < attack)
 			{
 				// Build up to full attack (linear)
 				const float step = 1.f/attack;
@@ -62,7 +62,8 @@ namespace SFM
 				const float delta = 1.f-(sample*step);
 				const float invExp = 1.f - delta*delta;
 				amplitude = lerpf(1.f, sustain, invExp*invExp);
-				SFM_ASSERT(amplitude <= 1.f && amplitude >= m_sustain);
+				// SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
+				SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
 			}
 			else
 			{
@@ -72,12 +73,12 @@ namespace SFM
 		else
 		{
 			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
-			if (sample <= release)
+			if (sample < release)
 			{
 				const float step = 1.f/release;
 				const float delta = sample*step;
 				amplitude = lerpf<float>(sustain, 0.f, delta*delta);
-				SFM_ASSERT(amplitude >= 0.f && amplitude <= m_sustain);
+				SFM_ASSERT(amplitude >= 0.f && amplitude <= sustain);
 			}
 		}
 

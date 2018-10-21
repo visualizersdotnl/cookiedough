@@ -42,10 +42,11 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 20;
+	const unsigned kMaxVoices = 12; 
 
-	// Max. voice amplitude (minus 33%, as Impulse Tracker supposedly does it)
+	// Max. voice amplitude 
 	const float kMaxVoiceAmplitude = 0.66f;
+	const float kMaxVoicedB = -3.609121289; // 66% in dB (I've read Impulse Tracker did/does that)
 
 	// Define oscillator period as a discrete amount of steps (i.e. in samples)
 	// IMPORTANT: other LUTs and such also use this number
@@ -57,7 +58,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Maximum master (over)drive
-	const float kMaxOverdrive = kPI;
+	const float kMaxOverdrive = kGoldenRatio;
 }
 
 #include "synth-LUT.h"

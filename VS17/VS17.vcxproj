@@ -47,6 +47,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-math.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-global.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-log.h" />

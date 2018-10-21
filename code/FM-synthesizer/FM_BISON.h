@@ -12,6 +12,9 @@
 		- Stijn Haring-Kuipers
 		- Zden Hlinka (Zden/Satori)
 
+	Actual credits:
+		- Magnus Jonsson for his Microtracker MOOG filter impl. on which on of ours is based
+
 	Notes:
 	
 	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
@@ -23,34 +26,40 @@
 		- Not much, play a little, don't push yourself
 
 	To do:
-		- See Moleskine (will overlap with items below)
 		- Try to get current state of MIDI controls on startup in driver
-		- If sustain is zero, skip that stage of the ADSR?
-		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
+		- Try using kMaxVoicedB
 
 	Sound related: 
 		- More elaborate voice stealing (base on velocity, says Pieter)
-		- Influence ADSR by velocity
-		- Read more about proper cross fading
-		- Review ADSR (by someone else than me)
 		- Implement pink noise
-		- Try cosine tilt envelope for shaping of modulator
-		- Proper voice stealing
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
+		- Implement pitch bend?
+
+	Proper sound related task:
+		- Create algorithms & patches; just start by emulating the electric piano as we all know it
 
 	Plumbing:
 		- Debug log with formatting
-		- Move all math needed from Std3DMath to synth-math.h
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
-		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
+		- Move all math needed from Std3DMath to synth-math.h
+		- Optimized copy to ring buffer in Render()
 
 	Of later concern:
-		- Implement pitch bend
-		- Optimization (LUTs, find hotspots using profiler); probably eliminate floating point values where they don't belong
+		- Try basic filter yourself (start with 2-pole LP)
+		- If sustain is zero, skip that stage of the ADSR? Purely an optimization since you can do it just with the right settings.
+		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
+		- Eliminate floating point values where they do not belong and kill NAN-style bugs
 		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
-		- Keep tracking NaN bugs
-		- Double precision?
 		- Reinstate OSX port for on-the-go programming
+
+	The Idea Bin:
+		- Try cosine tilt envelope for shaping of modulator
+		- Modulation ratio fader (<3)
+		- Influence ADSR by velocity (says Ronny)
+		- Modulate cutoff
+
+	Simon Cann's useful videos:
+		- https://www.youtube.com/watch?v=95Euc8SdTyc
 */
 
 #ifndef _FM_BISON_H_

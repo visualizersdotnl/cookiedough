@@ -16,6 +16,7 @@
 #include "synth-state.h"
 #include "synth-audio-out.h"
 #include "synth-ringbuffer.h"
+#include "synth-filter.h" 
 
 // Win32 MIDI input (M-AUDIO Oxygen 49)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -94,7 +95,7 @@ namespace SFM
 		// This is "bro science" at best
 		const float amplitude = 0.05f + velocity*0.95f;
 	
-		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kTriangle, amplitude, carrierFreq);
 		const float ratio = 2.f;
 		voice.m_modulator.Initialize(s_sampleCount, 0.f, carrierFreq*ratio, 0.f);
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
@@ -136,6 +137,12 @@ namespace SFM
 			}
 		}
 	}
+	
+	/*
+		Master filter.
+	*/
+
+	static MicrotrackerMoogFilter s_moogFilter;
 
 	/*
 		Global update.
@@ -151,7 +158,7 @@ namespace SFM
 		// Get state from Oxygen 49 driver (FIXME: test)
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = WinMidi_GetMasterModulationIndex()*k2PI;	
+		state.m_modIndex = floorf(WinMidi_GetMasterModulationIndex()*16.f);
 
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
@@ -160,13 +167,17 @@ namespace SFM
 		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f));
 		
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
+
+		s_moogFilter.SetCutoff(WinMidi_GetFilterCutoff());
+		s_moogFilter.SetResonance(WinMidi_GetFilterResonance());
+		state.m_wetness = WinMidi_GetFilterWetness();
 	}
 
 	/*
 		Render function.
-
-		FIXME: fold all into a single loop?
 	*/
+
+ 	alignas(16) static float s_renderBuf[kRingBufferSize];
 
 	SFM_INLINE void CopyShadowToRenderState()
 	{
@@ -190,12 +201,10 @@ namespace SFM
 		{
 			// Silence, but still run (off) the filter
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-				ringBuf.Write(0.f);
+				s_renderBuf[iSample] = 0.f;
 		}
 		else
 		{
-			const float drive = WinMidi_GetMasterDrive()*2.f;
-
 			// Render dry samples
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
@@ -210,14 +219,18 @@ namespace SFM
 					}
 				}
 
-				dry = fast_tanhf(dry*drive);
-
-				ringBuf.Write(dry);
-
+				dry = fast_tanhf(dry*state.m_drive);
+				s_renderBuf[iSample] = dry;
 				++s_sampleCount;
+
 			}
 
+			s_moogFilter.Apply(s_renderBuf, numSamples, state.m_wetness);
 		}
+
+		// FIXME: optimize
+		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+			ringBuf.Write(s_renderBuf[iSample]);
 	}
 
 }; // namespace SFM

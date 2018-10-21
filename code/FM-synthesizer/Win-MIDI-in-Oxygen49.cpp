@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
 
-	This isn't supposed to be top quality code, it's just for my home rig. 
+	** This is not production quality code, it's just for my home rig. **
 
 	- Keep it in P01 for this mapping to work (!).
 	- Use the octave button!
