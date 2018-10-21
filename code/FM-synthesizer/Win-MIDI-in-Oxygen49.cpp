@@ -65,8 +65,21 @@ namespace SFM
 	static MIDI_Smoothed s_masterModRatio;
 	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
 
+	// FIXME: unused
 	const unsigned kUpperKey = 36;
 	const unsigned kLowerKey = 84;
+
+	static Waveform s_waveform = kSine;
+
+	// Percussion channel indices
+	const unsigned kPerc1 = 36;
+	const unsigned kPerc2 = 38;
+	const unsigned kPerc3 = 42;
+	const unsigned kPerc4 = 46;
+	const unsigned kPerc5 = 50;
+	const unsigned kPerc6 = 45;
+	const unsigned kPerc7 = 51;
+	const unsigned kPerc8 = 49;
 
 	static unsigned s_voices[127];
 
@@ -90,18 +103,52 @@ namespace SFM
 				unsigned controlIdx = MsgParam1(dwParam1);
 				unsigned controlVal = MsgParam2(dwParam1);
 
-				if (CHANNEL_PERCUSSION == channel)
-				{
-					// This is where I can use those nice buttons
-					return;
-				}
-
-#ifdef DUMP_MIDI_EVENTS
+				#ifdef DUMP_MIDI_EVENTS
 				// Dumps incoming events, very useful
 				static char buffer[128];
 				sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
 				Log(buffer);
 #endif
+
+				if (CHANNEL_PERCUSSION == channel)
+				{
+					switch (controlIdx)
+					{
+					default:
+						s_waveform = kSine;
+						break;
+
+					case kPerc1:
+						s_waveform = kSine;
+						break;
+
+					case kPerc2:
+						s_waveform = kSoftSaw;
+						break;
+
+					case kPerc3:
+						s_waveform = kSoftSquare;
+						break;
+
+					case kPerc4:
+						s_waveform = kDigiSaw;
+						break;
+
+					case kPerc5:
+						s_waveform = kDigiSquare;
+						break;
+
+					case kPerc6:
+						s_waveform = kTriangle;
+						break;
+
+					case kPerc7:
+						s_waveform = kWhiteNoise;
+						break;
+					}
+
+					return;
+				}
 
 				switch (eventType)
 				{
@@ -175,7 +222,7 @@ namespace SFM
 
 				case NOTE_ON:
 					{
-						const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx], controlVal/127.f);
+						const unsigned iVoice = TriggerNote(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						s_voices[controlIdx] = iVoice;
 						break;
 					}

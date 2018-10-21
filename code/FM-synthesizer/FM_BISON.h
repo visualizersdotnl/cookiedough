@@ -66,6 +66,7 @@
 #define _FM_BISON_H_
 
 #include "synth-global.h"
+#include "synth-oscillators.h"
 
 bool Syntherklaas_Create();
 void Syntherklaas_Destroy();
@@ -78,7 +79,7 @@ namespace SFM
 	*/
 
 	// Trigger a note (if possible) and return it's voice index: at this point it's a voice
-	unsigned TriggerNote(float frequency, float velocity);
+	unsigned TriggerNote(Waveform form, float frequency, float velocity);
 
 	// Release a note using it's voice index
 	void ReleaseVoice(unsigned index);

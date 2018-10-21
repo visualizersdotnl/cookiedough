@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <cmath>
+#include <limits>
+
 namespace SFM 
 {
 	// Frequency to sinus LUT pitch
@@ -35,15 +38,6 @@ namespace SFM
 		return frequency >= kAudibleLowHz && frequency <= kAudibleHighHz;
 	}
 
-	// For debug purposes
-	SFM_INLINE bool IsNAN(float value)
-	{
-		return value != value;
-
-		// FIXME: not supported on Unix?
-		return std::isnan(value);
-	}
-
 	// Unsigned integer is-power-of-2 check
 	SFM_INLINE const bool IsPow2(unsigned value)
 	{
@@ -56,4 +50,16 @@ namespace SFM
 		return clampf(-1.f, 1.f, sample);
 	}
 
-} 
+	/*
+		Floating point f*ckup detection
+		FIXME: didn't seem to compile on OSX
+	*/
+
+	SFM_INLINE bool FloatCheck(float value)
+	{
+		if (value != 0.f && fabsf(value) < std::numeric_limits<float>::denorm_min())
+			return false;
+
+		return !std::isnan(value);
+	}
+}

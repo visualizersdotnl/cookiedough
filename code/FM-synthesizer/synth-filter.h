@@ -44,7 +44,7 @@ namespace SFM
 		void SetCutoff(float value)
 		{
 			SFM_ASSERT(fabsf(value) <= 1.f);
-			value *= 1000.f;
+			value *= 2000.f;
 			value = value*2.f*kPI/kSampleRate;
 			m_cutoff = std::min<float>(1.f, value); // Also known as omega
 		}
@@ -57,9 +57,6 @@ namespace SFM
 
 		void Apply(float *pSamples, unsigned numSamples, float wetness)
 		{
-			if (wetness < kEpsilon)
-				return;
-
 			wetness = invsqrf(wetness);
 
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -67,7 +64,7 @@ namespace SFM
 				const float dry = pSamples[iSample];
 
 				const float feedback = m_P3;
-				SFM_ASSERT(false == IsNAN(feedback));
+				SFM_ASSERT(true == FloatCheck(feedback));
 
 				// Coefficients optimized using differential evolution
 				// to make feedback gain 4.0 correspond closely to the

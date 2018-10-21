@@ -74,7 +74,7 @@ namespace SFM
 	}
 
 	// Returns voice index, if available
-	unsigned TriggerNote(float frequency, float velocity)
+	unsigned TriggerNote(Waveform form, float frequency, float velocity)
 	{
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
@@ -94,7 +94,7 @@ namespace SFM
 		// She blinded him with "bro science"
 		float amplitude = 0.1f*kMaxVoiceAmplitude + 0.9f*velocity*kMaxVoiceAmplitude;
 
-		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
 
 		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
@@ -175,7 +175,7 @@ namespace SFM
 		// Calculate modulation index envelope
 		const float tilt = -1.f + 2.f*WinMidi_GetMasterModLFOTilt();
 		const float curve = WinMidi_GetMasterModLFOPower()*k2PI;
-		const float frequency = 2.f*WinMidi_GetMasterModLFOFrequency();
+		const float frequency = kEpsilon + 2.f*WinMidi_GetMasterModLFOFrequency();
 		CalculateCosineTiltEnvelope(state.m_modIndexLFO, kOscPeriod, tilt, curve, frequency);
 	}
 
@@ -221,6 +221,7 @@ namespace SFM
 					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample(s_sampleCount, state.m_modIndexLFO);
+						SFM_ASSERT(true == FloatCheck(sample));
 						dry = fast_tanhf(dry + sample);
 					}
 				}
