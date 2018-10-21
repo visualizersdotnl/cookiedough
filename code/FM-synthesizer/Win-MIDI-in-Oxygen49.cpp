@@ -4,7 +4,7 @@
 
 	** This is not production quality code, it's just for my home rig. **
 
-	- Keep it in P01 for this mapping to work (!).
+	- Keep it in P01 for this mapping to work (or adjust if it doesn't, I often screw around here).
 	- Use the octave button to fiddle around the gamut.
 */
 
@@ -40,12 +40,14 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotCutoff = 22;      // C11
-	const unsigned kPotResonance = 23;   // C12
-	const unsigned kPotFilterMix = 61;   // C10
-	const unsigned kPotMasterDrive = 26; // C14
+	const unsigned kPotCutoff = 22; // C11
+	const unsigned kPotResonance = 23; // C12
+	const unsigned kPotFilterMix = 61; // C10
+	const unsigned kPotMasterDrive = 26;  // C14
+	const unsigned kPotMasterModLFOCurve = 95; // C17
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
 	static MIDI_Smoothed s_masterDrive;
+	static MIDI_Smoothed s_masterModLFOCurve;
 
 	// Wheel mapping
 	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
@@ -57,8 +59,11 @@ namespace SFM
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
 	const unsigned kFaderMasterModRatio = 63; // C9
+	const unsigned kFaderMasterModLFOTilt = 25; // C5
+	const unsigned kFaderMasterModLFOFreq = 73; // C6
 	static MIDI_Smoothed s_A, s_D, s_S, s_R;
 	static MIDI_Smoothed s_masterModRatio;
+	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
 
 	const unsigned kUpperKey = 36;
 	const unsigned kLowerKey = 84;
@@ -143,6 +148,17 @@ namespace SFM
 						case kFaderMasterModRatio:
 							s_masterModRatio.Set(controlVal);
 							break;
+
+						case kPotMasterModLFOCurve:
+							s_masterModLFOCurve.Set(controlVal);
+							break;
+
+						case kFaderMasterModLFOTilt:
+							s_masterModLFOTilt.Set(controlVal);
+							break;
+
+						case kFaderMasterModLFOFreq:
+							s_masterModLFOFreq.Set(controlVal);
 
 						default:
 							break;
@@ -271,10 +287,19 @@ namespace SFM
 	float WinMidi_GetFilterResonance() { return s_resonance.Get(); }
 	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get(); }
 
-	// Master
+	// Master drive
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
+
+	// Master modulation main
 	float WinMidi_GetMasterModulationIndex() { return s_masterModIndex.Get(); }
 	float WinMidi_GetMasterModulationRatio() { return s_masterModRatio.Get(); }
+
+	// Master modulation LFO
+	float WinMidi_GetMasterModLFOTilt()      { return s_masterModLFOTilt.Get(); }
+	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq.Get(); }
+	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get(); }
+
+	// Master ADSR
 	float WinMidi_GetMasterAttack()          { return s_A.Get(); }
 	float WinMidi_GetMasterDecay()           { return s_D.Get(); }
 	float WinMidi_GetMasterSustain()         { return s_S.Get(); }

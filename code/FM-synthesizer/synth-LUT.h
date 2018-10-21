@@ -18,7 +18,7 @@ namespace SFM
 		LUT functions
 	*/
 
-	SFM_INLINE float LUTsample(float *LUT, float index)
+	SFM_INLINE float LUTsample(const float *LUT, float index)
 	{
 		// FIXME: use proper sampling
 		return LUT[unsigned(index)&kOscTabAnd];

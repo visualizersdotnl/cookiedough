@@ -20,9 +20,9 @@ namespace SFM
 		Modulator m_modulator;
 		ADSR m_ADSR;
 
-		float Sample(unsigned sampleCount)
+		float Sample(unsigned sampleCount, const float *modIndexLFO)
 		{
-			const float modulation = m_modulator.Sample(sampleCount);
+			const float modulation = m_modulator.Sample(sampleCount, modIndexLFO);
 			const float ampEnv = m_ADSR.Sample(sampleCount);
 			const float sample = m_carrier.Sample(sampleCount, modulation)*ampEnv;
 			return sample;

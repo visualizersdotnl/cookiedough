@@ -17,14 +17,20 @@ namespace SFM
 		m_phaseShift = (phaseShift*kOscPeriod)/k2PI;
 	}
 
-	float Modulator::Sample(unsigned sampleCount)
+	float Modulator::Sample(unsigned sampleCount, const float *pLFO)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch + m_phaseShift;
 		
+		float envelope = 1.f;
+		if (nullptr != pLFO)
+		{
+			envelope = LUTsample(pLFO, phase);
+		}
+
 		// FIXME: try other oscillators (not without risk of noise, of course)
 		const float modulation = oscSine(phase); 
 
-		return m_index*modulation;
+		return (envelope*m_index)*modulation;
 	}
 }

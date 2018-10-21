@@ -15,8 +15,11 @@ namespace SFM
 		float m_pitch;
 		unsigned m_sampleOffs;
 		float m_phaseShift;
+		
+		// Currently for a 'cosine tilt' envelope
+		float m_envelope[kOscPeriod];
 
 		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */);
-		float Sample(unsigned sampleCount);
+		float Sample(unsigned sampleCount, const float *pLFO);
 	};
 }

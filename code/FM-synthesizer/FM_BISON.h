@@ -25,6 +25,9 @@
 	Things to do whilst not motivated (read: hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
+	Working on:
+		- Cosine tilt envelope to modulate FM, with 2 controls and 1 or more operator switches
+
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
 
@@ -50,7 +53,6 @@
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- Cosine tilt envelope to modulate FM, with 2 controls and 1 or more operator switches
 		- Periodical ADSR envelope to modulate cutoff, off and on switch to begin with, plus A and R faders
 		- Modulation ratio fader (<3)
 		- Influence ADSR by velocity (says Ronny)

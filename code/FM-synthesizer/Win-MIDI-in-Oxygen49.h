@@ -25,10 +25,17 @@ namespace SFM
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterWetness();
 
-	// Master drive & modulation index
+	// Master drive
 	float WinMidi_GetMasterDrive();
+
+	// Master modulation main
 	float WinMidi_GetMasterModulationIndex();
 	float WinMidi_GetMasterModulationRatio();
+
+	// Master modulation LFO
+	float WinMidi_GetMasterModLFOTilt();
+	float WinMidi_GetMasterModLFOFrequency();
+	float WinMidi_GetMasterModLFOPower();
 
 	// Master ADSR parameters
 	float WinMidi_GetMasterAttack();

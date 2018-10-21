@@ -90,10 +90,11 @@ namespace SFM
 		Voice &voice = state.m_voices[iVoice];
 
 		const float carrierFreq = frequency;
-		const float amplitude = 0.05f + 0.95f*invsqrf(velocity); // She blinded him with "bro science"
-//		const float amplitude = velocity;
+		
+		// She blinded him with "bro science"
+		float amplitude = 0.1f*kMaxVoiceAmplitude + 0.9f*velocity*kMaxVoiceAmplitude;
 
-		voice.m_carrier.Initialize(s_sampleCount, kDigiSquare, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
 
 		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
@@ -156,20 +157,26 @@ namespace SFM
 		// Get state from Oxygen 49 driver (FIXME: test)
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = WinMidi_GetMasterModulationIndex()*10.f*kGoldenRatio;
-		state.m_modRatio = floorf(WinMidi_GetMasterModulationRatio()*16.f);
-
+		state.m_modIndex = WinMidi_GetMasterModulationIndex();
+		state.m_modRatio = WinMidi_GetMasterModulationRatio()*4.f;
+	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
-(	
+		
 		// Allow release to be twice as long for a nice lingering effect which in turn can be modulated
-		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f));
+		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f);
 		
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
 		s_moogFilter.SetCutoff(WinMidi_GetFilterCutoff());
 		s_moogFilter.SetResonance(WinMidi_GetFilterResonance());
 		state.m_wetness = WinMidi_GetFilterWetness();
+
+		// Calculate modulation index envelope
+		const float tilt = -1.f + 2.f*WinMidi_GetMasterModLFOTilt();
+		const float curve = WinMidi_GetMasterModLFOPower()*k2PI;
+		const float frequency = 2.f*WinMidi_GetMasterModLFOFrequency();
+		CalculateCosineTiltEnvelope(state.m_modIndexLFO, kOscPeriod, tilt, curve, frequency);
 	}
 
 	/*
@@ -213,12 +220,12 @@ namespace SFM
 					Voice voice = voices[iVoice];
 					if (true == voice.m_enabled)
 					{
-						const float sample = voice.Sample(s_sampleCount);
+						const float sample = voice.Sample(s_sampleCount, state.m_modIndexLFO);
 						dry = fast_tanhf(dry + sample);
 					}
 				}
 
-				dry = ultra_tanhf(dry*state.m_drive);
+				dry = fast_tanhf(dry*state.m_drive);
 				s_renderBuf[iSample] = dry;
 				++s_sampleCount;
 

@@ -11,6 +11,7 @@
 #include "synth-global.h"
 #include "synth-voice.h"
 #include "synth-ADSR.h"
+#include "synth-cosine-tilt.h"
 
 namespace SFM
 {
@@ -34,12 +35,15 @@ namespace SFM
 		// Master ADSR parameters
 		ADSR::Parameters m_ADSR;
 
+		// LFO for modulation index (osc. period length)
+		float m_modIndexLFO[kOscPeriod];
+
 		void Reset()
 		{
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				m_voices[iVoice].m_enabled = false;
-				}
+			}
 
 			m_active = 0;
 
@@ -58,6 +62,9 @@ namespace SFM
 			m_ADSR.decay   = kSampleRate/4;
 			m_ADSR.release = kSampleRate/4;
 			m_ADSR.sustain = kRootHalf;
+
+			// Std. modulation index LFO
+			CalculateCosineTiltEnvelope(m_modIndexLFO, kOscPeriod, 0.f, 0.f, 1.f);
 		}
 	};
 }
