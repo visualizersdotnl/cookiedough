@@ -45,7 +45,8 @@
 		- Optimized copy to ring buffer in Render()
 
 	Of later concern:
-		- Try basic filter yourself (start with 2-pole LP)
+		- Try basic filter yourself (s
+		- Start with 2-pole LP)
 		- If sustain is zero, skip that stage of the ADSR? Purely an optimization since you can do it just with the right settings.
 		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
 		- Eliminate floating point values where they do not belong and kill NAN-style bugs
@@ -53,7 +54,8 @@
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- Try cosine tilt envelope for shaping of modulator
+		- Cosine tilt envelope to modulate FM, with 2 controls and 1 or more operator switches
+		- Periodical ADSR envelope to modulate cutoff, off and on switch to begin with, plus A and R faders
 		- Modulation ratio fader (<3)
 		- Influence ADSR by velocity (says Ronny)
 		- Modulate cutoff

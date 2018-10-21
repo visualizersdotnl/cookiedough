@@ -47,4 +47,11 @@ namespace SFM
 	{
 		return ((from * (factor-1.f)) + to)/factor;
 	}
+
+	// Inverse square
+	inline float invsqrf(float x)
+	{
+		x = 1.f-x;
+		return 1.f - x*x;
+	}
 }

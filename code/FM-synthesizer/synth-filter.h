@@ -60,6 +60,8 @@ namespace SFM
 			if (wetness < kEpsilon)
 				return;
 
+			wetness = invsqrf(wetness);
+
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];

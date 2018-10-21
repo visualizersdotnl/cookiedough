@@ -58,14 +58,9 @@ namespace SFM
 	const unsigned kFaderR = 72; // C4
 	MIDI_Smoothed s_A, s_D, s_S, s_R;
 
-	// Mapping: 49 keys
+	// Mapping: 49 keys (FIXME: shift by current octave to use)
 	const unsigned kUpperKey = 36;
 	const unsigned kLowerKey = 84;
-
-	SFM_INLINE bool IsKey(unsigned index) 
-	{ 
-		return index >= kUpperKey && index <= kLowerKey; 
-	}
 
 	static unsigned s_voices[127];
 
@@ -159,7 +154,6 @@ namespace SFM
 
 				case NOTE_ON:
 					{
-						SFM_ASSERT(true == IsKey(controlIdx));
 						const unsigned iVoice = TriggerNote(g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						s_voices[controlIdx] = iVoice;
 						break;
@@ -167,7 +161,6 @@ namespace SFM
 
 				case NOTE_OFF:
 					{
-						SFM_ASSERT(true == IsKey(controlIdx));
 						const unsigned iVoice = s_voices[controlIdx];
 						if (-1 != iVoice)
 						{

@@ -59,8 +59,7 @@ namespace SFM
 				// Decay to sustain (inverse exp.)
 				sample -= attack;
 				const float step = 1.f/decay;
-				const float delta = 1.f-(sample*step);
-				const float invExp = 1.f - delta*delta;
+				const float invExp = invsqrf(sample*step);
 				amplitude = lerpf(1.f, sustain, invExp*invExp);
 				// SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
 				SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);

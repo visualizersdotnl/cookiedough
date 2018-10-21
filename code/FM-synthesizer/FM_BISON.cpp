@@ -95,9 +95,8 @@ namespace SFM
 		// This is "bro science" at best
 		const float amplitude = 0.05f + velocity*0.95f;
 	
-		voice.m_carrier.Initialize(s_sampleCount, kTriangle, amplitude, carrierFreq);
-		const float ratio = 2.f;
-		voice.m_modulator.Initialize(s_sampleCount, 0.f, carrierFreq*ratio, 0.f);
+		voice.m_carrier.Initialize(s_sampleCount, kDigiSaw, amplitude, carrierFreq);
+		const float ratio = 4.f;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
 
 		voice.m_ADSR.Start(s_sampleCount, state.m_ADSR, velocity);
