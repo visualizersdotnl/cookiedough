@@ -21,7 +21,9 @@ namespace SFM
 		} m_parameters;
 
 		unsigned m_sampleOffs;
-		float m_velocity;
+
+		// Current amplitude
+		float m_sustain;
 
 		// Note released?
 		bool m_releasing;

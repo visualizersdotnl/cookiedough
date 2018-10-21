@@ -18,10 +18,21 @@ namespace SFM
 		SFM_ASSERT(velocity <= 1.f);
 
 		m_sampleOffs = sampleCount;
-		m_parameters = parameters;
-		m_velocity = velocity;
 
+		// Not in release stage
 		m_releasing = false;
+
+		// Sustaining at level (current amplitude)
+		m_sustain = parameters.sustain;
+
+		// Scale attack and release phase by note velocity (with "bro science")
+		SFM_ASSERT(velocity != 0.f);
+		const float threshold = 0.1f*kPI;
+		const float velScale = threshold + velocity*(1.f-threshold);
+		m_parameters.attack = unsigned(parameters.attack*velScale);
+		m_parameters.decay = parameters.decay;
+		m_parameters.release = unsigned(parameters.release*velScale);
+		m_parameters.sustain = parameters.sustain;
 	}
 
 	void ADSR::Stop(unsigned sampleCount)
@@ -51,7 +62,7 @@ namespace SFM
 				// Build up to full attack (linear)
 				const float step = 1.f/attack;
 				const float delta = sample*step;
-				amplitude = delta;
+				m_sustain = amplitude = delta;
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
 			}
 			else if (sample >= attack && sample < attack+decay)
@@ -60,12 +71,12 @@ namespace SFM
 				sample -= attack;
 				const float step = 1.f/decay;
 				const float invExp = invsqrf(sample*step);
-				amplitude = lerpf(1.f, sustain, invExp*invExp);
-				SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
+				m_sustain = amplitude = lerpf(1.f, sustain, invExp);
+				SFM_ASSERT(amplitude <= 1.f /* && amplitude >= sustain */); // FIXME: suspect
 			}
 			else
 			{
-				return sustain;
+				return m_sustain;
 			}
 		}
 		else

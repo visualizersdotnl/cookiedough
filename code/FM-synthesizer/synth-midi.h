@@ -44,6 +44,7 @@ namespace SFM
 		MIDI_META_EVENT = 0xff
 	};
 
+	// Much like Kruger Industrial Smoothing, this class does jack shit for now (FIXME).
 	class MIDI_Smoothed
 	{
 	public:

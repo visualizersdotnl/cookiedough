@@ -48,6 +48,10 @@ namespace SFM
 			signal = oscDigiSaw(phase+modulation);
 			break;
 
+		case kDigiSquare:
+			signal = oscDigiSquare(phase+modulation);
+			break;
+
 		case kTriangle:
 			signal = oscTriangle(phase+modulation);
 			break;

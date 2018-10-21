@@ -25,6 +25,7 @@ namespace SFM
 		kSoftSquare,
 		/* Straight forms */
 		kDigiSaw,
+		kDigiSquare,
 		kTriangle,
 		kWhiteNoise
 	};
@@ -36,12 +37,17 @@ namespace SFM
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
 
 	/*
-		Straight up sawtooth & triangle (will alias in most circumstances).
+		Straight up sawtooth, square & triangle (will alias in most circumstances).
 	*/
 
 	SFM_INLINE float oscDigiSaw(float phase)
 	{
 		return fmodf(phase/kOscPeriod, 1.f)*2.f - 1.f;
+	}
+
+	SFM_INLINE float oscDigiSquare(float phase)
+	{
+		return lutsinf(phase) > 0.f ? 1.f : -1.f;
 	}
 
 	SFM_INLINE float oscTriangle(float phase)

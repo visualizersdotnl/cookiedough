@@ -27,7 +27,6 @@
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
-		- Try using kMaxVoicedB
 
 	Sound related: 
 		- More elaborate voice stealing (base on velocity, says Pieter)
@@ -36,7 +35,7 @@
 		- Implement pitch bend?
 
 	Proper sound related task:
-		- Create algorithms & patches; just start by emulating the electric piano as we all know it
+		- Create algorithms & patches; just start by emulating something well known
 
 	Plumbing:
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality

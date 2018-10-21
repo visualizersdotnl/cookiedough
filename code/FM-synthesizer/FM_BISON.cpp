@@ -93,7 +93,7 @@ namespace SFM
 		const float amplitude = 0.05f + 0.95f*invsqrf(velocity); // She blinded him with "bro science"
 //		const float amplitude = velocity;
 
-		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kDigiSquare, amplitude, carrierFreq);
 
 		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
@@ -214,11 +214,11 @@ namespace SFM
 					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample(s_sampleCount);
-						dry = fast_tanhf(dry + sample*state.m_drive);
+						dry = fast_tanhf(dry + sample);
 					}
 				}
 
-				dry = ultra_tanhf(dry);
+				dry = ultra_tanhf(dry*state.m_drive);
 				s_renderBuf[iSample] = dry;
 				++s_sampleCount;
 
