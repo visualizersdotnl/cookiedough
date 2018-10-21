@@ -44,31 +44,21 @@ namespace SFM
 		MIDI_META_EVENT = 0xff
 	};
 
-	/*
-		Simple smoothing algorithm intended for controls that have an effect during playback of a voice, but
-		can just as well be used for nearly all non-key controls.
-	*/
-
-	const float kMidiEpsilon = 1.f/127.f;
-	
 	class MIDI_Smoothed
 	{
 	public:
 		MIDI_Smoothed() :
-			m_timeStamp(0), m_value(0.f) {}
+			m_iValue(0)
+,			m_value(0.f) {}
 
 	private:
 		unsigned m_iValue;
-		unsigned m_timeStamp;
 		float m_value;
 
 	public:
-		void Set(unsigned iValue, unsigned timeStamp)
+		void Set(unsigned iValue)
 		{
-			// Another fine example of "bro science"
-			// I believe the fine people behind the VIRUS also did something to this effect and actually patented it for a while
-			const float newVal = iValue/127.f;
-			m_value = lowpassf(m_value, newVal, 2.f);
+			m_value = iValue/127.f;
 		}
 
 		float Get() const

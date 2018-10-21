@@ -105,43 +105,43 @@ namespace SFM
 						switch (controlIdx)
 						{
 						case kPotCutoff:
-							s_cutoff.Set(controlVal, dwParam2);
+							s_cutoff.Set(controlVal);
 							break;
 
 						case kPotResonance:
-							s_resonance.Set(controlVal, dwParam2);
+							s_resonance.Set(controlVal);
 							break;
 
 						case kPotFilterMix:
-							s_filterWetness.Set(controlVal, dwParam2);
+							s_filterWetness.Set(controlVal);
 							break;
 
 						case kPotMasterDrive:
-							s_masterDrive.Set(controlVal, dwParam2);
+							s_masterDrive.Set(controlVal);
 							break;
 
 						case kMasterModIndex:
-							s_masterModIndex.Set(controlVal, dwParam2);
+							s_masterModIndex.Set(controlVal);
 							break;
 
 						case kFaderA:
-							s_A.Set(controlVal, dwParam2);
+							s_A.Set(controlVal);
 							break;
 
 						case kFaderD:
-							s_D.Set(controlVal, dwParam2);
+							s_D.Set(controlVal);
 							break;
 
 						case kFaderS:
-							s_S.Set(controlVal, dwParam2);
+							s_S.Set(controlVal);
 							break;
 
 						case kFaderR:
-							s_R.Set(controlVal, dwParam2);
+							s_R.Set(controlVal);
 							break;
 
 						case kFaderMasterModRatio:
-							s_masterModRatio.Set(controlVal, dwParam2);
+							s_masterModRatio.Set(controlVal);
 							break;
 
 						default:

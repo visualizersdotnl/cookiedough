@@ -91,6 +91,7 @@ namespace SFM
 
 		const float carrierFreq = frequency;
 		const float amplitude = 0.05f + 0.95f*invsqrf(velocity); // She blinded him with "bro science"
+//		const float amplitude = velocity;
 
 		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
 
@@ -213,11 +214,11 @@ namespace SFM
 					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample(s_sampleCount);
-						dry = fast_tanhf(dry+sample);
+						dry = fast_tanhf(dry + sample*state.m_drive);
 					}
 				}
 
-				dry = fast_tanhf(dry*state.m_drive);
+				dry = ultra_tanhf(dry);
 				s_renderBuf[iSample] = dry;
 				++s_sampleCount;
 
@@ -317,7 +318,7 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	if (false == first)
 	{
 		SDL2_StartAudio();
-		first = false;
+		first = true;
 
 		// Let the world know
 		Log("FM. BISON is up & running!");
