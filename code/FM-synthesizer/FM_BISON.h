@@ -19,31 +19,37 @@
 	
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
-	Things to do whilst not motivated (read: manic or medicated):
-		- Fix that darned voice mixing once and for all
-		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
+	Things to do whilst not motivated (read: hypomanic or medicated):
+		- Not much, play a little, don't push yourself
+
+	To do:
+		- See Moleskine (will overlap with items below)
+		- Try to get current state of MIDI controls on startup in driver
 		- Try and filter MIDI inputs
-		- More elaborate voice stealing (base on velocity, says Pieter)
-		- Influence ADSR by velocity
+		- Try basic filter yourself (start with 1-pole LP) before reintroducing the MOOG ladder
 		- Create a simple disk writer that gathers samples when a button is pushed (MIDI) and dumps it on release (!)
-		- Read more about proper cross fading
 
 	Sound related: 
-		- Review & optimize ADSR
+		- Influence ADSR by velocity
+		- Read more about proper cross fading
+		- More elaborate voice stealing (base on velocity, says Pieter)
+		- Review ADSR
 		- Implement pink noise
 		- Try cosine tilt envelope for shaping of modulator
 		- Proper voice stealing
+		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 
 	Plumbing:
-		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Debug log with formatting
 		- Move all math needed from Std3DMath to synth-math.h
+		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 
 	Of later concern:
-		- Optimization (LUTs, find hotspots using profiler)
 		- Implement pitch bend
-		- Double precision
+		- Optimization (LUTs, find hotspots using profiler); probably eliminate floating point values where they don't belong
+		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
 		- Keep tracking NaN bugs
+		- Double precision?
 */
 
 #ifndef _FM_BISON_H_
