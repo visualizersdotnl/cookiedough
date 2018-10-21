@@ -5,7 +5,7 @@
 	** This is not production quality code, it's just for my home rig. **
 
 	- Keep it in P01 for this mapping to work (!).
-	- Use the octave button!
+	- Use the octave button to fiddle around the gamut.
 */
 
 #include "synth-global.h"
@@ -44,21 +44,22 @@ namespace SFM
 	const unsigned kPotResonance = 23;   // C12
 	const unsigned kPotFilterMix = 61;   // C10
 	const unsigned kPotMasterDrive = 26; // C14
-	MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
-	MIDI_Smoothed s_masterDrive;
+	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
+	static MIDI_Smoothed s_masterDrive;
 
 	// Wheel mapping
 	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
-	MIDI_Smoothed s_masterModIndex;
+	static MIDI_Smoothed s_masterModIndex;
 
 	// Fader mapping
 	const unsigned kFaderA = 20; // C1
 	const unsigned kFaderD = 21; // C2
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
-	MIDI_Smoothed s_A, s_D, s_S, s_R;
+	const unsigned kFaderMasterModRatio = 63; // C9
+	static MIDI_Smoothed s_A, s_D, s_S, s_R;
+	static MIDI_Smoothed s_masterModRatio;
 
-	// Mapping: 49 keys (FIXME: shift by current octave to use)
 	const unsigned kUpperKey = 36;
 	const unsigned kLowerKey = 84;
 
@@ -139,6 +140,10 @@ namespace SFM
 							s_R.Set(controlVal, dwParam2);
 							break;
 
+						case kFaderMasterModRatio:
+							s_masterModRatio.Set(controlVal, dwParam2);
+							break;
+
 						default:
 							break;
 						}
@@ -177,7 +182,7 @@ namespace SFM
 
 		case MIM_LONGDATA:
 			// FIXE: implement!
-			Log("Implement MIM_LONGDATA!");
+			Log("MIDI: implement MIM_LONGDATA!");
 			break;
 
 		// Handled
@@ -213,7 +218,7 @@ namespace SFM
 		MIDIINCAPS devCaps;
 		const MMRESULT result = midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS));
 		SFM_ASSERT(MMSYSERR_NOERROR == result); 
-		Log(devCaps.szPname);
+		Log("Using MIDI device " + std::string(devCaps.szPname));
 
 		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
 		if (MMSYSERR_NOERROR == openRes)
@@ -269,6 +274,7 @@ namespace SFM
 	// Master
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
 	float WinMidi_GetMasterModulationIndex() { return s_masterModIndex.Get(); }
+	float WinMidi_GetMasterModulationRatio() { return s_masterModRatio.Get(); }
 	float WinMidi_GetMasterAttack()          { return s_A.Get(); }
 	float WinMidi_GetMasterDecay()           { return s_D.Get(); }
 	float WinMidi_GetMasterSustain()         { return s_S.Get(); }

@@ -89,14 +89,12 @@ namespace SFM
 
 		Voice &voice = state.m_voices[iVoice];
 
-		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
+		const float amplitude = 0.05f + invsqrf(velocity*0.95f); // She blinded him with "bro science"
 
-		// This is "bro science" at best
-		const float amplitude = 0.05f + velocity*0.95f;
-	
 		voice.m_carrier.Initialize(s_sampleCount, kDigiSaw, amplitude, carrierFreq);
-		const float ratio = 4.f;
+
+		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
 
 		voice.m_ADSR.Start(s_sampleCount, state.m_ADSR, velocity);
@@ -157,7 +155,8 @@ namespace SFM
 		// Get state from Oxygen 49 driver (FIXME: test)
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = floorf(WinMidi_GetMasterModulationIndex()*16.f);
+		state.m_modIndex = fabsf(WinMidi_GetMasterModulationIndex()*16.f);
+		state.m_modRatio = fabsf(WinMidi_GetMasterModulationRatio()*16.f);
 
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
@@ -319,5 +318,8 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	{
 		SDL2_StartAudio();
 		first = false;
+
+		// Let the world know
+		Log("FM. BISON is up & running!");
 	}
 }

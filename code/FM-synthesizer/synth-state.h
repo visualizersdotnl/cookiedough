@@ -19,12 +19,13 @@ namespace SFM
 		Voice m_voices[kMaxVoices];
 		unsigned m_active;
 
-		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive
+		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive (no hard limit)
 		float m_drive;
 
-		// Currently used as global modulation index value (used on note trigger), probably temporary
-		// [0..N]
+		// Master modulation index value & ratio (used on note trigger)
+		// [0..1]
 		float m_modIndex;
+		float m_modRatio;
 
 		// Filter wetness
 		// [0..1]
@@ -47,6 +48,7 @@ namespace SFM
 
 			// No FM
 			m_modIndex = 0.f;
+			m_modRatio = 0.f;
 
 			// No filter
 			m_wetness = 0.f;

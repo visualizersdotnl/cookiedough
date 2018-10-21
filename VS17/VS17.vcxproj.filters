@@ -172,6 +172,9 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">

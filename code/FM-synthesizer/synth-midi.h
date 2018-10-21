@@ -66,7 +66,7 @@ namespace SFM
 		void Set(unsigned iValue, unsigned timeStamp)
 		{
 			// Another fine example of "bro science"
-			// I believe the VIRUS people also did something to this effect and actually patented it?
+			// I believe the fine people behind the VIRUS also did something to this effect and actually patented it for a while
 			const float newVal = iValue/127.f;
 			m_value = lowpassf(m_value, newVal, 2.f);
 		}

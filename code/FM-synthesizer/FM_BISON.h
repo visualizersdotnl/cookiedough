@@ -39,18 +39,15 @@
 		- Create algorithms & patches; just start by emulating the electric piano as we all know it
 
 	Plumbing:
-		- Debug log with formatting
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Move all math needed from Std3DMath to synth-math.h
 		- Optimized copy to ring buffer in Render()
 
 	Of later concern:
-		- Try basic filter yourself (s
-		- Start with 2-pole LP)
+		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
 		- If sustain is zero, skip that stage of the ADSR? Purely an optimization since you can do it just with the right settings.
 		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
 		- Eliminate floating point values where they do not belong and kill NAN-style bugs
-		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:

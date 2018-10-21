@@ -105,6 +105,6 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return lutnoisef(phase + rand() /* Without this we'll definitely hear a pattern */);
+		return lutnoisef(phase + mt_randu32() /* Without this we'll definitely hear a pattern */);
 	}
 }

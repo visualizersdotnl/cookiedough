@@ -16,7 +16,9 @@ namespace SFM
 	bool WinMidi_Start(unsigned iDevice);
 	void WinMidi_Stop();
 
-	// Pull-style values:
+	/*
+		Pull-style values
+	*/
 
 	// Filter
 	float WinMidi_GetFilterCutoff();
@@ -26,6 +28,7 @@ namespace SFM
 	// Master drive & modulation index
 	float WinMidi_GetMasterDrive();
 	float WinMidi_GetMasterModulationIndex();
+	float WinMidi_GetMasterModulationRatio();
 
 	// Master ADSR parameters
 	float WinMidi_GetMasterAttack();

@@ -48,6 +48,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp" />
