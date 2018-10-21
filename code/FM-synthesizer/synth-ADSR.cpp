@@ -70,11 +70,12 @@ namespace SFM
 		}
 		else
 		{
-			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
+			// Sustain level and sample offset are adjusted on NOTE_OFF (inverse exp.)
 			if (sample <= m_release)
 			{
 				const float step = 1.f/m_release;
 				const float delta = sample*step;
+				const float invExp = 1.f - (1.f-delta)*(1.f-delta);
 				amplitude = lerpf<float>(m_sustain, 0.f, delta*delta);
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= m_sustain);
 			}

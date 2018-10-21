@@ -60,7 +60,6 @@ namespace SFM
 		return index >= kUpperKey && index <= kLowerKey; 
 	}
 
-	// Array can be smaller (FIXME)
 	static unsigned s_voices[127];
 
 	static void WinMidiProc(

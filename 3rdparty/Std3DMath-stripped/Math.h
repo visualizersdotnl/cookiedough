@@ -20,7 +20,7 @@
 	- Fixed lerpf(), smoothstepf() & smootherstepf().
 
 	Added after integrating fixes on 19/10/2018:
-	- Little type in smoothstepf().
+	- Little typo in smoothstepf().
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).

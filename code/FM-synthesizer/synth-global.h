@@ -55,6 +55,9 @@ namespace SFM
 
 	// Use to multiply modulation value (radian) to osc. LUT period
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
+
+	// Maximum master (over)drive
+	const float kMaxOverdrive = kPI;
 }
 
 #include "synth-util.h"

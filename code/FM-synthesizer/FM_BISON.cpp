@@ -91,13 +91,13 @@ namespace SFM
 		// FIXE: replace with algorithm-based patch 
 		const float carrierFreq = frequency;
 
-		// This is "bro science" at best (FIXME)
-		velocity *= kMaxVoiceAmplitude;
-		const float amplitude = smoothstepf(velocity);
+		// This is "bro science" at best
+		const float amplitude = 0.05f + velocity*0.95f;
 	
-		voice.m_carrier.Initialize(s_sampleCount, kSoftSaw, amplitude, carrierFreq);
+		voice.m_carrier.Initialize(s_sampleCount, kSine, amplitude, carrierFreq);
 		const float ratio = 2.f;
-		voice.m_modulator.Initialize(s_sampleCount, state.modIndex, carrierFreq*ratio, 0.f);
+		voice.m_modulator.Initialize(s_sampleCount, 0.f, carrierFreq*ratio, 0.f);
+//		voice.m_modulator.Initialize(s_sampleCount, state.modIndex, carrierFreq*ratio, 0.f);
 
 		voice.m_ADSR.Start(s_sampleCount, velocity);
 
@@ -148,7 +148,7 @@ namespace SFM
 
 		UpdateVoices(state);
 		
-		state.drive = WinMidi_GetMasterDrive()*2.f;
+		state.drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
 		state.modIndex = WinMidi_GetMasterModulationIndex()*k2PI;	
 	}
 
@@ -207,9 +207,11 @@ namespace SFM
 					if (true == voice.m_enabled)
 					{
 						const float sample = voice.Sample(s_sampleCount);
-						dry = fast_tanhf(drive*(dry+sample));
+						dry = fast_tanhf(dry+sample);
 					}
 				}
+
+				dry = fast_tanhf(dry*drive);
 
 				ringBuf.Write(dry);
 
