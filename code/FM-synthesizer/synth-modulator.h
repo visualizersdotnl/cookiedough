@@ -9,17 +9,29 @@
 
 namespace SFM
 {
+	struct IndexEnvelope
+	{
+		alignas(16) float buffer[kOscPeriod];
+
+		struct Parameters
+		{
+			float frequency;
+			float tilt;       // [0..1]
+			float curve;      // [0..N]
+		};
+
+		void Calculate(const Parameters &parameters);
+	};
+
 	struct Modulator
 	{
 		float m_index;
 		float m_pitch;
 		unsigned m_sampleOffs;
 		float m_phaseShift;
+		IndexEnvelope m_envelope;
 		
-		// Currently for a 'cosine tilt' envelope
-		float m_envelope[kOscPeriod];
-
-		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */);
-		float Sample(unsigned sampleCount, const float *pLFO);
+		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, const IndexEnvelope::Parameters &indexEnvParams);
+		float Sample(unsigned sampleCount);
 	};
 }

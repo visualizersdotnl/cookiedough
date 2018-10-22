@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-#define DUMP_MIDI_EVENTS
+// #define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -114,10 +114,6 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
-					default:
-						s_waveform = kSine;
-						break;
-
 					case kPerc1:
 						s_waveform = kSine;
 						break;
@@ -144,6 +140,10 @@ namespace SFM
 
 					case kPerc7:
 						s_waveform = kWhiteNoise;
+						break;
+
+					default:
+						s_waveform = kTriangle;
 						break;
 					}
 

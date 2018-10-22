@@ -14,9 +14,21 @@
 
 #include "synth-global.h"
 #include "synth-math.h"
+#include "synth-ADSR.h"
 
 namespace SFM
 {
+	/*
+		Filter parameters.
+	*/
+
+	struct FilterParameters
+	{
+		// Normalized [0..1]
+		float cutoff;
+		float resonance;
+	};
+
 	/*
 		Microtracker MOOG filter
 		
@@ -41,9 +53,15 @@ namespace SFM
 			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
 		}
 
+		void Set(const FilterParameters &parameters)
+		{
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+		}
+
 		void SetCutoff(float value)
 		{
-			SFM_ASSERT(fabsf(value) <= 1.f);
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 2000.f;
 			value = value*2.f*kPI/kSampleRate;
 			m_cutoff = std::min<float>(1.f, value); // Also known as omega
@@ -51,17 +69,16 @@ namespace SFM
 
 		void SetResonance(float value)
 		{
-			SFM_ASSERT(fabsf(value) <= 1.f);
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_resonance = std::max<float>(kEpsilon, value*4.f);
 		}
 
-		void Apply(float *pSamples, unsigned numSamples, float wetness)
+		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
 		{
-			wetness = invsqrf(wetness);
-
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
+				const float ADSR = envelope.Sample(sampleCount+iSample);
 
 				const float feedback = m_P3;
 				SFM_ASSERT(true == FloatCheck(feedback));
@@ -69,7 +86,8 @@ namespace SFM
 				// Coefficients optimized using differential evolution
 				// to make feedback gain 4.0 correspond closely to the
 				// border of instability, for all values of omega.
-				const float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
+				float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
+				out = fast_tanhf(out);
 
 				// Move window
 				m_resoCoeffs[2] = m_resoCoeffs[1];
@@ -82,8 +100,7 @@ namespace SFM
 				m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
 
 				// Linear *might* work since we're blending between 2 separate circuits (from my POV)
-				// FIXME: however, a little playfulness probably won't hurt
-				const float sample = lerpf<float>(dry, out, wetness*wetness); 
+				const float sample = lerpf<float>(dry, out, globalWetness*(1.f-ADSR)); 
 
 				pSamples[iSample] = sample;
 			}

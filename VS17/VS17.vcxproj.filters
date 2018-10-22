@@ -130,9 +130,6 @@
     <ClCompile Include="..\code\fx-blitter.cpp">
       <Filter>/code\filters &amp; blitters</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-cosine-tilt.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
@@ -302,9 +299,6 @@
     </ClInclude>
     <ClInclude Include="..\code\random.h">
       <Filter>/code\util-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-cosine-tilt.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>

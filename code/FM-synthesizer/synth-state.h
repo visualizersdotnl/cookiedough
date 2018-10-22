@@ -11,7 +11,7 @@
 #include "synth-global.h"
 #include "synth-voice.h"
 #include "synth-ADSR.h"
-#include "synth-cosine-tilt.h"
+#include "synth-filter.h"
 
 namespace SFM
 {
@@ -28,17 +28,20 @@ namespace SFM
 		float m_modIndex;
 		float m_modRatio;
 
-		// Filter wetness
+		// Global filter wetness
 		// [0..1]
 		float m_wetness;
 
 		// Master ADSR parameters
 		ADSR::Parameters m_ADSR;
 
-		// LFO for modulation index (osc. period length)
-		float m_modIndexLFO[kOscPeriod];
+		// Master filter parameters
+		FilterParameters m_filterParams;
 
-		void Reset()
+		// Master FM index LFO parameters
+		IndexEnvelope::Parameters m_indexLFOParams;
+
+		void Reset(unsigned sampleCount)
 		{
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
@@ -63,8 +66,14 @@ namespace SFM
 			m_ADSR.release = kSampleRate/4;
 			m_ADSR.sustain = kRootHalf;
 
-			// Std. modulation index LFO
-			CalculateCosineTiltEnvelope(m_modIndexLFO, kOscPeriod, 0.f, 0.f, 1.f);
+			// Default filter 
+			m_filterParams.cutoff = 1.f;
+			m_filterParams.resonance = 0.1f;
+
+			// Default FM index modulation
+			m_indexLFOParams.curve = 0.f;
+			m_indexLFOParams.frequency = 1.f;
+			m_indexLFOParams.tilt = 0.f;
 		}
 	};
 }

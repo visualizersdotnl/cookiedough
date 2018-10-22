@@ -22,9 +22,6 @@ namespace SFM
 
 		unsigned m_sampleOffs;
 
-		// Current amplitude
-		float m_sustain;
-
 		// Note released?
 		bool m_releasing;
 

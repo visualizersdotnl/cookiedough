@@ -88,19 +88,20 @@ namespace SFM
 		++state.m_active;
 
 		Voice &voice = state.m_voices[iVoice];
-
-		const float carrierFreq = frequency;
 		
 		// She blinded him with "bro science"
+		const float carrierFreq = frequency;
 		float amplitude = 0.1f*kMaxVoiceAmplitude + 0.9f*velocity*kMaxVoiceAmplitude;
-
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
 
+		// Set modulator
 		const float ratio = state.m_modRatio;
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, state.m_indexLFOParams);
 
+		// Set ADSR
 		voice.m_ADSR.Start(s_sampleCount, state.m_ADSR, velocity);
 
+		// And we're live!
 		voice.m_enabled = true;
 
 		return iVoice;
@@ -136,12 +137,12 @@ namespace SFM
 			}
 		}
 	}
-	
+
 	/*
-		Master filter.
+		Filters (one for each voice).
 	*/
 
-	static MicrotrackerMoogFilter s_moogFilter;
+	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 
 	/*
 		Global update.
@@ -154,11 +155,11 @@ namespace SFM
 
 		UpdateVoices(state);
 		
-		// Get state from Oxygen 49 driver (FIXME: test + "bro science")
+		// Get state from Oxygen 49 driver (lots of "bro science")
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = WinMidi_GetMasterModulationIndex()*dBToAmplitude(24.f);
-		state.m_modRatio = floorf(WinMidi_GetMasterModulationRatio()*16.f);
+		state.m_modIndex = WinMidi_GetMasterModulationIndex()*dBToAmplitude(-12.f); // FIXME
+		state.m_modRatio = floorf(smoothstepf(WinMidi_GetMasterModulationRatio()*8.f));
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
@@ -168,15 +169,17 @@ namespace SFM
 		
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
-		s_moogFilter.SetCutoff(WinMidi_GetFilterCutoff());
-		s_moogFilter.SetResonance(WinMidi_GetFilterResonance());
+		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
+		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_wetness = WinMidi_GetFilterWetness();
 
-		// Calculate modulation index envelope
-		const float tilt = -1.f + 2.f*WinMidi_GetMasterModLFOTilt();
-		const float curve = invsqrf(WinMidi_GetMasterModLFOPower());
-		const float frequency = dBToAmplitude(-6.f)*WinMidi_GetMasterModLFOFrequency();
-		CalculateCosineTiltEnvelope(state.m_modIndexLFO, kOscPeriod, tilt, curve, frequency);
+		// Modulation index envelope
+		const float tilt = WinMidi_GetMasterModLFOTilt();
+		const float curve = WinMidi_GetMasterModLFOPower();
+		const float frequency = WinMidi_GetMasterModLFOFrequency();
+		state.m_indexLFOParams.tilt = tilt;
+		state.m_indexLFOParams.curve = floorf(lerpf<float>(0.f, 6.f, curve));
+		state.m_indexLFOParams.frequency = 1.f+(frequency*10.f);
 	}
 
 	/*
@@ -190,6 +193,8 @@ namespace SFM
 		std::lock_guard<std::shared_mutex> stateCopyLock(s_stateMutex);
 		s_renderState = s_shadowState;
 	}
+
+	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	static void Render(FIFO &ringBuf)
 	{
@@ -207,37 +212,56 @@ namespace SFM
 		{
 			// Silence, but still run (off) the filter
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-				s_renderBuf[iSample] = 0.f;
+			{
+				ringBuf.Write(0.f);
+//				s_renderBuf[iSample] = 0.f;
+			}
 		}
 		else
 		{
-			// Render dry samples
-			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+			// Render dry samples for each voice
+			unsigned curVoice = 0;
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				float dry = 0.f;
-				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+				Voice &voice = voices[iVoice];
+				if (true == voice.m_enabled)
 				{
-					Voice voice = voices[iVoice];
-					if (true == voice.m_enabled)
+					float *buffer = s_voiceBuffers[curVoice];
+					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const float sample = voice.Sample(s_sampleCount, state.m_modIndexLFO);
+						const float sample = voice.Sample(s_sampleCount+iSample);
 						SFM_ASSERT(true == FloatCheck(sample));
-						dry = fast_tanhf(dry + sample);
+						buffer[iSample] = sample;
 					}
+
+					// Apply filter
+					s_filters[curVoice].Set(state.m_filterParams);
+					s_filters[curVoice].Apply(buffer, numSamples, state.m_wetness, s_sampleCount, voice.m_ADSR);
+
+					++curVoice;
 				}
-
-				dry = fast_tanhf(dry*state.m_drive);
-				s_renderBuf[iSample] = dry;
-				++s_sampleCount;
-
 			}
 
-			s_moogFilter.Apply(s_renderBuf, numSamples, state.m_wetness);
+			// Mix voices
+			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+			{
+				float mix = 0.f;
+				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
+				{
+					const float sample = s_voiceBuffers[iVoice][iSample];
+					mix = fast_tanhf(mix + sample);
+				}
+
+				mix = fast_tanhf(mix*state.m_drive);
+	//			s_renderBuf[iSample] = mix;
+				ringBuf.Write(mix);
+			}
 		}
 
-		// FIXME: optimize
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-			ringBuf.Write(s_renderBuf[iSample]);
+//		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+//			ringBuf.Write(s_renderBuf[iSample]);
+
+		s_sampleCount += numSamples;
 	}
 
 }; // namespace SFM
@@ -288,7 +312,7 @@ bool Syntherklaas_Create()
 	CalculateMidiToFrequencyLUT();
 
 	// Reset shadow FM state
-	s_shadowState.Reset();
+	s_shadowState.Reset(s_sampleCount);
 
 	// Reset sample count
 	s_sampleCount = 0;

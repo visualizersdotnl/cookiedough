@@ -22,11 +22,11 @@
 	
 	So the style will look a bit dated here with a few modern bits there, but nothing major.
 
-	Things to do whilst not motivated (read: hypomanic or medicated):
+	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- Cosine tilt envelope to modulate FM, with 2 controls and 1 or more operator switches
+		- Operator switches for envelopes.
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
@@ -43,20 +43,14 @@
 	Plumbing:
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Move all math needed from Std3DMath to synth-math.h
-		- Optimized copy to ring buffer in Render()
 
 	Of later concern:
-		- Clipping and master drive (or gain if you will) has been resolved enough, *for now*, but ask around
-		- If sustain is zero, skip that stage of the ADSR? Purely an optimization since you can do it just with the right settings.
 		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
-		- Eliminate floating point values where they do not belong and kill NAN-style bugs
+		- Eliminate floating point values where they do not belong and kill NAN-style bugs (major nuisance, causes crackle!)
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- Periodical ADSR envelope to modulate cutoff, off and on switch to begin with, plus A and R faders
-		- Modulation ratio fader (<3)
-		- Influence ADSR by velocity (says Ronny)
-		- Modulate cutoff
+		- ...
 
 	Simon Cann's useful videos:
 		- https://www.youtube.com/watch?v=95Euc8SdTyc
