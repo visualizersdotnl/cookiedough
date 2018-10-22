@@ -83,7 +83,7 @@ namespace SFM
 
 				// Linear *might* work since we're blending between 2 separate circuits (from my POV)
 				// FIXME: however, a little playfulness probably won't hurt
-				const float sample = lerpf<float>(dry, out, wetness); 
+				const float sample = lerpf<float>(dry, out, wetness*wetness); 
 
 				pSamples[iSample] = sample;
 			}

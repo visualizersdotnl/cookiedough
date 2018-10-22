@@ -175,7 +175,7 @@ namespace SFM
 		// Calculate modulation index envelope
 		const float tilt = -1.f + 2.f*WinMidi_GetMasterModLFOTilt();
 		const float curve = WinMidi_GetMasterModLFOPower()*k2PI;
-		const float frequency = kEpsilon + 2.f*WinMidi_GetMasterModLFOFrequency();
+		const float frequency = kEpsilon + kPI*WinMidi_GetMasterModLFOFrequency();
 		CalculateCosineTiltEnvelope(state.m_modIndexLFO, kOscPeriod, tilt, curve, frequency);
 	}
 
