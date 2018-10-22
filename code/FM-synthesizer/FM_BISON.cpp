@@ -156,10 +156,14 @@ namespace SFM
 		UpdateVoices(state);
 		
 		// Get state from Oxygen 49 driver (lots of "bro science")
+		// The number 6 is my friend!
+		// Sounds OK now, 23/10/2018, 01:45
+
+		const float alpha = 1.f/dBToAmplitude(-12.f);
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = WinMidi_GetMasterModulationIndex()*dBToAmplitude(-12.f); // FIXME
-		state.m_modRatio = floorf(smoothstepf(WinMidi_GetMasterModulationRatio()*8.f));
+		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
+		state.m_modRatio = ceilf(WinMidi_GetMasterModulationRatio()*15.f);
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
@@ -178,8 +182,8 @@ namespace SFM
 		const float curve = WinMidi_GetMasterModLFOPower();
 		const float frequency = WinMidi_GetMasterModLFOFrequency();
 		state.m_indexLFOParams.tilt = tilt;
-		state.m_indexLFOParams.curve = floorf(lerpf<float>(0.f, 6.f, curve));
-		state.m_indexLFOParams.frequency = 1.f+(frequency*10.f);
+		state.m_indexLFOParams.curve = fabsf(curve*12.f);
+		state.m_indexLFOParams.frequency = fabsf(frequency*6.f);
 	}
 
 	/*
@@ -214,7 +218,6 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				ringBuf.Write(0.f);
-//				s_renderBuf[iSample] = 0.f;
 			}
 		}
 		else
@@ -253,14 +256,9 @@ namespace SFM
 				}
 
 				mix = fast_tanhf(mix*state.m_drive);
-	//			s_renderBuf[iSample] = mix;
 				ringBuf.Write(mix);
 			}
 		}
-
-//		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-//			ringBuf.Write(s_renderBuf[iSample]);
-
 		s_sampleCount += numSamples;
 	}
 

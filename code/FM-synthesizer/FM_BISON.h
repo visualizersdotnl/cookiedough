@@ -26,12 +26,14 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
+		- Find the source of the crackling - it's always there, the filter just attenuates it (maybe it's the nearest-neighbour LUT sampling)
 		- Operator switches for envelopes.
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
 
 	Sound related: 
+		- Modulation ratios can be fractional for different sounds
 		- More elaborate voice stealing (base on velocity, says Pieter)
 		- Implement pink noise
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"

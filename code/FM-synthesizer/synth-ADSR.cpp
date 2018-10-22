@@ -64,11 +64,11 @@ namespace SFM
 			}
 			else if (sample >= attack && sample < attack+decay)
 			{
-				// Decay to sustain (inverse exp.)
+				// Decay to sustain (exponential)
 				sample -= attack;
 				const float step = 1.f/decay;
 				const float delta = sample*step;
-				amplitude = lerpf(1.f, sustain, delta);
+				amplitude = lerpf(1.f, sustain, delta*delta);
 				SFM_ASSERT(amplitude <= 1.f && amplitude >= sustain);
 			}
 			else

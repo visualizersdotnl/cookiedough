@@ -19,10 +19,10 @@ namespace SFM
 		float phase = 0.f;
 		for (unsigned iSample = 0; iSample < kOscPeriod; ++iSample)
 		{
-			// Blend between raised cosine and a square FM'ed by it
+			// Blend between raised cosine and another oscillator FM'ed by it
 			const float cosine = powf(lutcosf(phase), parameters.curve);
-			const float pulse = oscTriangle(phase+cosine);
-			buffer[iSample] = lerpf<float>(cosine, pulse, tilt*tilt);
+			const float pulse = oscSoftSaw(phase+cosine, 40);
+			buffer[iSample] = lerpf<float>(cosine, pulse, tilt);
 			phase += pitch;
 		}
 	}

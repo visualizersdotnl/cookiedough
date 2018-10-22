@@ -43,15 +43,23 @@ namespace SFM
 	}
 
 	// Simple lowpass
-	inline float lowpassf(float from, float to, float factor)
+	SFM_INLINE float lowpassf(float from, float to, float factor)
 	{
 		return ((from * (factor-1.f)) + to)/factor;
 	}
 
 	// Inverse square
-	inline float invsqrf(float x)
+	SFM_INLINE float invsqrf(float x)
 	{
 		x = 1.f-x;
 		return 1.f - x*x;
+	}
+
+	// Scalar interpolation.
+	template<typename T>
+	SFM_INLINE const T lerpf(const T &a, const T &b, float t)
+	{
+		SFM_ASSERT(t >= 0.f && t <= 1.f);
+		return a + (b-a)*t;
 	}
 }

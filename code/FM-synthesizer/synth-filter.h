@@ -87,7 +87,7 @@ namespace SFM
 				// to make feedback gain 4.0 correspond closely to the
 				// border of instability, for all values of omega.
 				float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
-				out = fast_tanhf(out);
+				out = ultra_tanhf(out);
 
 				// Move window
 				m_resoCoeffs[2] = m_resoCoeffs[1];
@@ -100,7 +100,7 @@ namespace SFM
 				m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
 
 				// Linear *might* work since we're blending between 2 separate circuits (from my POV)
-				const float sample = lerpf<float>(dry, out, globalWetness*(1.f-ADSR)); 
+				float sample = lerpf<float>(dry, out, globalWetness*(1.f- ADSR*ADSR)); 
 
 				pSamples[iSample] = sample;
 			}
