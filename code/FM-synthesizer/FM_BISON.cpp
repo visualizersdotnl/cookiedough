@@ -154,11 +154,11 @@ namespace SFM
 
 		UpdateVoices(state);
 		
-		// Get state from Oxygen 49 driver (FIXME: test)
+		// Get state from Oxygen 49 driver (FIXME: test + "bro science")
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
-		state.m_modIndex = WinMidi_GetMasterModulationIndex();
-		state.m_modRatio = WinMidi_GetMasterModulationRatio()*4.f;
+		state.m_modIndex = WinMidi_GetMasterModulationIndex()*dBToAmplitude(24.f);
+		state.m_modRatio = floorf(WinMidi_GetMasterModulationRatio()*16.f);
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
@@ -174,8 +174,8 @@ namespace SFM
 
 		// Calculate modulation index envelope
 		const float tilt = -1.f + 2.f*WinMidi_GetMasterModLFOTilt();
-		const float curve = WinMidi_GetMasterModLFOPower()*k2PI;
-		const float frequency = kEpsilon + kPI*WinMidi_GetMasterModLFOFrequency();
+		const float curve = invsqrf(WinMidi_GetMasterModLFOPower());
+		const float frequency = dBToAmplitude(-6.f)*WinMidi_GetMasterModLFOFrequency();
 		CalculateCosineTiltEnvelope(state.m_modIndexLFO, kOscPeriod, tilt, curve, frequency);
 	}
 

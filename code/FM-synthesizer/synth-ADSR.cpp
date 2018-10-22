@@ -30,7 +30,7 @@ namespace SFM
 		const float threshold = 0.1f*kPI;
 		const float velScale = threshold + velocity*(1.f-threshold);
 		m_parameters.attack = unsigned(parameters.attack*velScale);
-		m_parameters.decay = parameters.decay;
+		m_parameters.decay = unsigned(parameters.decay*velScale);
 		m_parameters.release = unsigned(parameters.release*velScale);
 		m_parameters.sustain = parameters.sustain;
 	}
