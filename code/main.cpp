@@ -88,7 +88,7 @@ const bool kTestBedForFM = true;
 
 // -- display & audio config. --
 
-const char *kTitle = "untitled #SHADERGP19 promotional";
+const char *kTitle = "cocktails at Kurt Bevacqua's";
 
 const bool kFullScreen = false;
 
@@ -197,8 +197,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		{
 			/* Test code for FM synth */
 
+			auto *bumper = Image_Load32("../code/FM-synthesizer/artwork/window-filler.png");
+
 			Display display;
-			if (display.Open(kTitle, kResX, kResY, kFullScreen))
+			if (display.Open(kTitle, 1280, 303, kFullScreen))
 			{
 				Syntherklaas_Create();
 
@@ -212,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					const float delta = newTime-oldTime;
 					Syntherklaas_Render(nullptr, newTime, delta*100.f);
 
-					display.Update(nullptr);
+					display.Update(bumper);
 				}
 
 				// bypass message box

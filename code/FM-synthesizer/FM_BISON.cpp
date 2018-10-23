@@ -181,7 +181,7 @@ namespace SFM
 		const float curve = WinMidi_GetMasterModLFOPower();
 		const float frequency = WinMidi_GetMasterModLFOFrequency();
 		state.m_indexLFOParams.tilt = tilt;
-		state.m_indexLFOParams.curve = fabsf(curve*12.f);
+		state.m_indexLFOParams.curve = curve*alpha;
 		state.m_indexLFOParams.frequency = fabsf(frequency*6.f);
 	}
 
@@ -268,8 +268,6 @@ using namespace SFM;
 
 /*
 	Ring buffer + lock.
-
-	FIXME: a lot here can be optimized.
 */
 
 static FIFO s_ringBuf;

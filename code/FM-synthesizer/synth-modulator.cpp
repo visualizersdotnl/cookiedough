@@ -21,7 +21,7 @@ namespace SFM
 		{
 			// Blend between raised cosine and another oscillator FM'ed by it
 			const float cosine = powf(lutcosf(phase), parameters.curve);
-			const float pulse = oscSoftSaw(phase+cosine, 40);
+			const float pulse = oscSoftSaw(phase+cosine, 32);
 			buffer[iSample] = lerpf<float>(cosine, pulse, tilt);
 			phase += pitch;
 		}
@@ -41,7 +41,6 @@ namespace SFM
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch + m_phaseShift;
 
-		// FIXME: try other oscillators (not without risk of noise, of course)
 		const float modulation = oscSine(phase); 
 		const float index = m_index*LUTsample(m_envelope.buffer, phase);
 
