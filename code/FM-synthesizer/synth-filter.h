@@ -61,7 +61,7 @@ namespace SFM
 		void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			value *= 2000.f;
+			value *= 1000.f;
 			value = value*2.f*kPI/kSampleRate;
 			m_cutoff = std::min<float>(1.f, value); // Also known as omega
 		}
@@ -99,7 +99,7 @@ namespace SFM
 				m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
 
 				// Linear *might* work since we're blending between 2 separate circuits (from my POV)
-				float sample = lerpf<float>(dry, out, globalWetness*(1.f- ADSR*ADSR)); 
+				float sample = lerpf<float>(dry, out, globalWetness*(1.f-ADSR*ADSR)); 
 
 				pSamples[iSample] = sample;
 			}
