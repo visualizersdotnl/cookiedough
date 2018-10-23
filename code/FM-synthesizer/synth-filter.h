@@ -54,7 +54,6 @@ namespace SFM
 
 		void Set(const FilterParameters &parameters)
 		{
-			// Reset();
 			SetCutoff(parameters.cutoff);
 			SetResonance(parameters.resonance);
 		}
@@ -100,7 +99,7 @@ namespace SFM
 				m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
 
 				// Linear *might* work since we're blending between 2 separate circuits (from my POV)
-				float sample = lerpf<float>(dry, out, globalWetness*(1.f-ADSR*ADSR)); 
+				float sample = lerpf<float>(dry, out, globalWetness*(1.f-(ADSR))); 
 
 				pSamples[iSample] = sample;
 			}

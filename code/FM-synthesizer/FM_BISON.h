@@ -28,7 +28,6 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- Modulation ratios can be fractional for different sounds
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
@@ -53,7 +52,6 @@
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- Steal a wave of a TR-808 kick
 		- Operator switches for envelopes
 
 	Simon Cann's useful videos:
@@ -68,7 +66,9 @@
 
 bool Syntherklaas_Create();
 void Syntherklaas_Destroy();
-void Syntherklaas_Render(uint32_t *pDest, float time, float delta);
+
+// Returns loudest voice (linear amplitude)
+float Syntherklaas_Render(uint32_t *pDest, float time, float delta);
 
 namespace SFM
 {

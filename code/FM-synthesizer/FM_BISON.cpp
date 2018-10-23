@@ -96,13 +96,12 @@ namespace SFM
 		++state.m_active;
 
 		Voice &voice = state.m_voices[iVoice];
-		
-		// She blinded him with "bro science"
-		const float ratio = state.m_modRatioM/state.m_modRatioC;
+
+		// Initialize carrier & modulator	
+		const float ratio = state.m_modRatioC/state.m_modRatioM;
 		const float carrierFreq = frequency;
 		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
-
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, state.m_indexLFOParams);
 
 		// Set ADSR
@@ -163,13 +162,14 @@ namespace SFM
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
 		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
-		state.m_modRatioC = 1.f+floorf(WinMidi_GetMasterModulationRatioC()*15.f);
-		state.m_modRatioM = floorf(WinMidi_GetMasterModulationRatioM()*15.f);
+
+		// Ratios are always at least 1
+		state.m_modRatioC = 1.f+floorf(WinMidi_GetMasterModulationRatioC()*14.f);
+		state.m_modRatioM = 1.f+floorf(WinMidi_GetMasterModulationRatioM()*14.f);
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
-		const unsigned release = unsigned(WinMidi_GetMasterRelease()*kSampleRate);
-		state.m_ADSR.release = release;
+		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f); // Extra second to enable long pads
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
@@ -198,19 +198,28 @@ namespace SFM
 		s_renderState = s_shadowState;
 	}
 
-	static void Render(FIFO &ringBuf)
+	// Returns loudest signal (linear amplitude)
+	static float Render(FIFO &ringBuf)
 	{
 		CopyShadowToRenderState();
 
+		static float loudest = 0.f;
+
 		const unsigned numSamples = ringBuf.GetFree();
+		if (0 == numSamples)
+		{
+			Log("Zero samples to render!");
+			return loudest;
+		}
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
 
 		const unsigned numVoices = state.m_active;
-
 		if (0 == numVoices)
 		{
+			loudest = 0.f;
+
 			// Silence, but still run (off) the filter
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
@@ -245,6 +254,7 @@ namespace SFM
 			}
 
 			// Mix voices
+			loudest = 0.f;
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				float mix = 0.f;
@@ -256,10 +266,14 @@ namespace SFM
 
 				mix = fast_tanhf(mix*state.m_drive);
 				ringBuf.Write(mix);
+
+				loudest = std::max<float>(loudest, fabsf(mix));
 			}
 		}
 
 		s_sampleCount += numSamples;
+
+		return loudest;
 	}
 
 }; // namespace SFM
@@ -346,13 +360,14 @@ void Syntherklaas_Destroy()
 	Render function for Kurt Bevacqua codebase.
 */
 
-void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
+float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
 	Update();
 
+	float loudest;
 	s_bufLock.lock();
 	{
-		Render(s_ringBuf);
+		loudest = Render(s_ringBuf);
 	}
 	s_bufLock.unlock();
 
@@ -365,4 +380,6 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 		// Let the world know
 		Log("FM. BISON is up & running!");
 	}
+
+	return loudest;
 }

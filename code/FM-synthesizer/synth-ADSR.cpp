@@ -19,12 +19,12 @@ namespace SFM
 
 		// Scale envelope by note velocity (with "bro science")
 		SFM_ASSERT(velocity != 0.f);
-		const float velScale = 0.314f + 0.6f*velocity;
+		const float velScale = 0.314f + (1.f-0.314f)*velocity;
 		m_parameters.attack  = unsigned(parameters.attack*velScale);
 		m_parameters.decay   = unsigned(parameters.decay*velScale);
 		
 		// Always at least for an amount of samples to avoid pop/click when 0
-		m_parameters.release = std::max<unsigned>(256, unsigned(parameters.release));
+		m_parameters.release = std::max<unsigned>(kSampleRate/16, unsigned(parameters.release));
 		
 		m_parameters.sustain = parameters.sustain;
 	}
@@ -65,7 +65,7 @@ namespace SFM
 				// Decay to sustain (exponential)
 				const float step = 1.f/decay;
 				const float delta = step*(sample-attack);
-				amplitude = lerpf(1.f, sustain, delta*delta);
+				amplitude = 1.f - sustain*(delta*delta);
 				SFM_ASSERT(amplitude <= 1.f /* && amplitude >= sustain */);
 			}
 			else
@@ -73,12 +73,12 @@ namespace SFM
 		}
 		else
 		{
-			// Sustain level and sample offset are adjusted on NOTE_OFF (linear)
+			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
 			if (sample < release)
 			{
 				const float step = sustain/release;
 				const float delta = step*sample;
-				amplitude = sustain-delta;
+				amplitude = sustain - sustain*(delta*delta);
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= sustain);
 			}
 		}

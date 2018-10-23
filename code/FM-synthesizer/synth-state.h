@@ -56,7 +56,7 @@ namespace SFM
 			// No FM
 			m_modIndex = 0.f;
 			m_modRatioC = 0.f;
-			m_modRatioM = 0.f;
+ 			m_modRatioM = 0.f;
 
 			// No filter
 			m_wetness = 0.f;

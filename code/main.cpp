@@ -85,6 +85,7 @@ const bool kTestBedForFM = true;
 // FM synthesizer
 #include "FM-synthesizer/FM_BISON.h"
 #include "FM-synthesizer/synth-audio-out.h"
+#include "cspan.h"
 
 // -- display & audio config. --
 
@@ -212,7 +213,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					oldTime = newTime;
 					newTime = timer.Get();
 					const float delta = newTime-oldTime;
-					Syntherklaas_Render(nullptr, newTime, delta*100.f);
+					
+					// sloppy VU meter
+					float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
+					unsigned length = 1+unsigned(loudest*1279.f);
+
+					for (int iY = 3; iY < 15; ++iY)
+						cspan(bumper + 1280*iY, 1, 1280, 1280, 0, 0x7f7f7f);
+
+					for (int iY = 3; iY < 15; ++iY)
+					{
+						if (iY & 1)
+							cspan(bumper + 1280*iY, 1, length, length, 0x007f00, 0xff0000);
+						else
+							cspan(bumper + 1280*iY, 1, length, length, 0xff7f00, 0xff0000);
+					}
 
 					display.Update(bumper);
 				}
