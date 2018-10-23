@@ -55,11 +55,14 @@ namespace SFM
 		return 1.f - x*x;
 	}
 
-	// Scalar interpolation.
+	// Scalar interpolation
 	template<typename T>
 	SFM_INLINE const T lerpf(const T &a, const T &b, float t)
 	{
 		SFM_ASSERT(t >= 0.f && t <= 1.f);
 		return a + (b-a)*t;
 	}
+
+	// GLSL frac()
+	SFM_INLINE float fracf(float value) { return value - std::truncf(value); }
 }

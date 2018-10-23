@@ -26,16 +26,14 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- Find the source of the crackling - it's always there, the filter just attenuates it (maybe it's the nearest-neighbour LUT sampling)
-		- Operator switches for envelopes.
+		- Implement pink noise
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
 
 	Sound related: 
 		- Modulation ratios can be fractional for different sounds
-		- More elaborate voice stealing (base on velocity, says Pieter)
-		- Implement pink noise
+		- Voice stealing (see KVR thread)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- Implement pitch bend?
 
@@ -52,7 +50,9 @@
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- ...
+		- Chorus
+		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects)
+		- Operator switches for envelopes
 
 	Simon Cann's useful videos:
 		- https://www.youtube.com/watch?v=95Euc8SdTyc

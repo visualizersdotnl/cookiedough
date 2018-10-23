@@ -28,16 +28,13 @@ namespace SFM
 {
 	/*
 		Global sample counts.
-
-		FIXME: drop atomic property when rendering from main thread!
 	*/
 
-	static std::atomic<unsigned> s_sampleCount = 0;
+ 	static std::atomic<unsigned> s_sampleCount = 0;
 	static std::atomic<unsigned> s_sampleOutCount = 0;
 
-
 	/*
-		Global & shadow state.
+		Global state.
 		
 		The shadow state may be updated after acquiring the lock.
 		This should be done for all state that is set on a push-basis.
@@ -50,11 +47,21 @@ namespace SFM
 		to be negligible so long as the update buffer's size isn't too large.
 	*/
 
-	static std::shared_mutex s_stateMutex;
+	static std::mutex s_stateMutex;
 
 	static FM s_shadowState;
 	static FM s_renderState;
-	
+
+	/*
+		ADSRs & filters (one for each voice).
+
+		These are not part of the state object since they alter their state
+		and aren't directly affected by synth. driver settings.
+	*/
+
+	static ADSR s_ADSRs[kMaxVoices];
+	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+		
 	/*
 		API + logic.
 	*/
@@ -70,6 +77,7 @@ namespace SFM
 			}
 		}
 
+		Log("Insufficient polyphony!");
 		return -1;
 	}
 
@@ -78,7 +86,7 @@ namespace SFM
 	{
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
+		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
 		const unsigned iVoice = AllocateNote(s_shadowState.m_voices);
@@ -91,7 +99,7 @@ namespace SFM
 		
 		// She blinded him with "bro science"
 		const float carrierFreq = frequency;
-		float amplitude = 0.1f*kMaxVoiceAmplitude + 0.9f*velocity*kMaxVoiceAmplitude;
+		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
 
 		// Set modulator
@@ -99,7 +107,7 @@ namespace SFM
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, state.m_indexLFOParams);
 
 		// Set ADSR
-		voice.m_ADSR.Start(s_sampleCount, state.m_ADSR, velocity);
+		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
 
 		// And we're live!
 		voice.m_enabled = true;
@@ -109,12 +117,11 @@ namespace SFM
 
 	void ReleaseVoice(unsigned iVoice)
 	{
+		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
 		Voice &voice = state.m_voices[iVoice];
-		
-		voice.m_ADSR.Stop(s_sampleCount);
+		s_ADSRs[iVoice].Stop(s_sampleCount);
 	}
 
 	static void UpdateVoices(FM &state)
@@ -125,11 +132,12 @@ namespace SFM
 			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				ADSR &envelope = voice.m_ADSR;
+				ADSR &envelope = s_ADSRs[iVoice];
 				if (true == envelope.m_releasing)
 				{
 					if (envelope.m_sampleOffs+envelope.m_parameters.release < s_sampleCount)
 					{
+						SFM_ASSERT(envelope.Sample(s_sampleCount) == 0.f);
 						voice.m_enabled = false;
 						--state.m_active;
 					}
@@ -139,24 +147,17 @@ namespace SFM
 	}
 
 	/*
-		Filters (one for each voice).
-	*/
-
-	static MicrotrackerMoogFilter s_filters[kMaxVoices];
-
-	/*
 		Global update.
 	*/
 
 	static void Update()
 	{
-		std::lock_guard<std::shared_mutex> lock(s_stateMutex);
+		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
 		UpdateVoices(state);
 		
 		// Get state from Oxygen 49 driver (lots of "bro science")
-		// The number 6 is my friend!
 		// Sounds OK now, 23/10/2018, 01:45
 
 		const float alpha = 1.f/dBToAmplitude(-12.f);
@@ -167,10 +168,8 @@ namespace SFM
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
-		
-		// Allow release to be twice as long for a nice lingering effect which in turn can be modulated
-		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f);
-		
+		const unsigned release = unsigned(WinMidi_GetMasterRelease()*kSampleRate);
+		state.m_ADSR.release = release;
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
@@ -191,19 +190,17 @@ namespace SFM
 	*/
 
  	alignas(16) static float s_renderBuf[kRingBufferSize];
+	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	SFM_INLINE void CopyShadowToRenderState()
 	{
-		std::lock_guard<std::shared_mutex> stateCopyLock(s_stateMutex);
+		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
 		s_renderState = s_shadowState;
 	}
-
-	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	static void Render(FIFO &ringBuf)
 	{
 		CopyShadowToRenderState();
-		// ^^ Maybe we can share this mutex.
 
 		const unsigned numSamples = ringBuf.GetFree();
 
@@ -229,17 +226,19 @@ namespace SFM
 				Voice &voice = voices[iVoice];
 				if (true == voice.m_enabled)
 				{
+					ADSR &envelope = s_ADSRs[iVoice];
+
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const float sample = voice.Sample(s_sampleCount+iSample);
+						const float sample = voice.Sample(s_sampleCount+iSample, envelope);
 						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;
 					}
 
 					// Apply filter
 					s_filters[curVoice].Set(state.m_filterParams);
-					s_filters[curVoice].Apply(buffer, numSamples, state.m_wetness, s_sampleCount, voice.m_ADSR);
+					s_filters[curVoice].Apply(buffer, numSamples, state.m_wetness, s_sampleCount, envelope);
 
 					++curVoice;
 				}
@@ -259,6 +258,7 @@ namespace SFM
 				ringBuf.Write(mix);
 			}
 		}
+
 		s_sampleCount += numSamples;
 	}
 
@@ -284,19 +284,19 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 	const unsigned numSamplesReq = length/sizeof(float);
 
 	s_bufLock.lock();
-
-	const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
-	const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
-
-	float *pWrite = reinterpret_cast<float*>(pStream);
-	for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 	{
-		*pWrite++ = s_ringBuf.Read();
+		const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
+		const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
+
+		float *pWrite = reinterpret_cast<float*>(pStream);
+		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		{
+			*pWrite++ = s_ringBuf.Read();
+		}
+
+		s_sampleOutCount += numSamples;
 	}
-
 	s_bufLock.unlock();
-
-	s_sampleOutCount += numSamples;
 }
 
 /*
@@ -309,12 +309,18 @@ bool Syntherklaas_Create()
 	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
 
-	// Reset shadow FM state
-	s_shadowState.Reset(s_sampleCount);
-
 	// Reset sample count
 	s_sampleCount = 0;
 	s_sampleOutCount = 0;
+
+	// Reset shadow FM state
+	s_shadowState.Reset(s_sampleCount);
+
+	// Reset global state
+	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+	{
+		s_filters[iVoice].Reset();
+	}
 
 	// Test (FIXME): Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
@@ -341,7 +347,9 @@ void Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	Update();
 
 	s_bufLock.lock();
-	Render(s_ringBuf);
+	{
+		Render(s_ringBuf);
+	}
 	s_bufLock.unlock();
 
 	static bool first = false;

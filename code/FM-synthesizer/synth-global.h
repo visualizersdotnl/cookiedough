@@ -42,10 +42,9 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 12; 
+	const unsigned kMaxVoices = 32; 
 
 	// Max. voice amplitude 
-	const float kMaxVoiceAmplitude = 0.66f;
 	const float kMaxVoicedB = -3.609121289; // 66% in dB (I've read Impulse Tracker did/does that)
 
 	// Define oscillator period as a discrete amount of steps (i.e. in samples)

@@ -21,8 +21,7 @@ namespace SFM
 		} m_parameters;
 
 		unsigned m_sampleOffs;
-
-		// Note released?
+		float m_curAmp;
 		bool m_releasing;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);

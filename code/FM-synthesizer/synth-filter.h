@@ -5,6 +5,7 @@
 	Each end filter should support the following functions:
 
 	- Reset()
+	- Set()
 	- SetCutoff() (normalized [0..1])
 	- SetResonance() (normalized [0..1])
 	- Apply(pSamples, numSamples, wetness)
@@ -37,15 +38,13 @@ namespace SFM
 		- https://github.com/magnusjonsson/microtracker (unlicense)
 	*/
 
-	class MicrotrackerMoogFilter
+	struct MicrotrackerMoogFilter
 	{
-	public:
-		MicrotrackerMoogFilter() 
-		{
-			Reset();
-			SetCutoff(1.f);
-			SetResonance(0.1f);
-		}
+		float m_cutoff;
+		float m_resonance;
+
+		float m_P0, m_P1, m_P2, m_P3;
+		float m_resoCoeffs[3];
 
 		void Reset()
 		{
@@ -105,12 +104,5 @@ namespace SFM
 				pSamples[iSample] = sample;
 			}
 		}
-
-	private:
-		float m_cutoff;
-		float m_resonance;
-
-		float m_P0, m_P1, m_P2, m_P3;
-		float m_resoCoeffs[3];
 	};
 }
