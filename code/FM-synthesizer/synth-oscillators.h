@@ -28,7 +28,9 @@ namespace SFM
 		kDigiSquare,
 		kTriangle,
 		kWhiteNoise,
-		kPinkNoise
+		kPinkNoise,
+		/* Wavetable */
+		kKick808
 	};
 
 	/*
@@ -139,4 +141,10 @@ namespace SFM
 		
 		return pink;
    }
+
+   /*
+		Wavetable oscillator(s)
+	*/
+
+	float oscKick808(float phase);
 }

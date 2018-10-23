@@ -98,12 +98,11 @@ namespace SFM
 		Voice &voice = state.m_voices[iVoice];
 		
 		// She blinded him with "bro science"
+		const float ratio = state.m_modRatioM/state.m_modRatioC;
 		const float carrierFreq = frequency;
 		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
 
-		// Set modulator
-		const float ratio = state.m_modRatio;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, state.m_indexLFOParams);
 
 		// Set ADSR
@@ -164,7 +163,8 @@ namespace SFM
 
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
 		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
-		state.m_modRatio = ceilf(WinMidi_GetMasterModulationRatio()*15.f);
+		state.m_modRatioC = 1.f+floorf(WinMidi_GetMasterModulationRatioC()*15.f);
+		state.m_modRatioM = floorf(WinMidi_GetMasterModulationRatioM()*15.f);
 	
 		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
 		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);

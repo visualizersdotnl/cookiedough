@@ -5,6 +5,7 @@
 
 	I have to thank the following people for helping me with their knowledge, ideas and experience:
 		- Pieter v/d Meer
+		- Maarten van Strien (Crystal Score/TBL)
 		- Ronny Pries (Ronny Pries/Farbrausch)
 		- Tammo Hinrichs (KB/Farbarausch)
 		- Alex Bartholomeus (Deadline/Superstition)
@@ -12,8 +13,9 @@
 		- Stijn Haring-Kuipers
 		- Zden Hlinka (Zden/Satori)
 
-	Actual credits:
+	Thanks to:
 		- Magnus Jonsson for his Microtracker MOOG filter impl. on which on of ours is based
+		- The KVR forum
 
 	Notes:
 	
@@ -30,6 +32,8 @@
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
+		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI
+		  Kind of low priority!
 
 	Sound related: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -49,8 +53,7 @@
 		- Reinstate OSX port for on-the-go programming
 
 	The Idea Bin:
-		- Chorus
-		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects)
+		- Steal a wave of a TR-808 kick
 		- Operator switches for envelopes
 
 	Simon Cann's useful videos:

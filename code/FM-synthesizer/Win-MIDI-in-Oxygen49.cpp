@@ -18,13 +18,13 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
 	static HMIDIIN s_hMidiIn = NULL;
 
-	// FIXME: not yet used, but should be!
+	// FIXME: for SYSEX
 	static const size_t kMidiBufferLength = 256;
 	static uint8_t s_buffer[kMidiBufferLength];
 
@@ -58,11 +58,12 @@ namespace SFM
 	const unsigned kFaderD = 21; // C2
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
-	const unsigned kFaderMasterModRatio = 63; // C9
+	const unsigned kFaderMasterModRatioC = 70;  // C8
+	const unsigned kFaderMasterModRatioM = 63;  // C9
 	const unsigned kFaderMasterModLFOTilt = 25; // C5
 	const unsigned kFaderMasterModLFOFreq = 73; // C6
 	static MIDI_Smoothed s_A, s_D, s_S, s_R;
-	static MIDI_Smoothed s_masterModRatio;
+	static MIDI_Smoothed s_masterModRatioC, s_masterModRatioM;
 	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
 
 	// FIXME: unused
@@ -139,7 +140,7 @@ namespace SFM
 						break;
 
 					case kPerc7:
-						s_waveform = kWhiteNoise;
+						s_waveform = kKick808;
 						break;
 
 					case kPerc8:
@@ -196,8 +197,12 @@ namespace SFM
 							s_R.Set(controlVal);
 							break;
 
-						case kFaderMasterModRatio:
-							s_masterModRatio.Set(controlVal);
+						case kFaderMasterModRatioC:
+							s_masterModRatioC.Set(controlVal);
+							break;
+
+						case kFaderMasterModRatioM:
+							s_masterModRatioM.Set(controlVal);
 							break;
 
 						case kPotMasterModLFOCurve:
@@ -342,8 +347,9 @@ namespace SFM
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
 
 	// Master modulation main
-	float WinMidi_GetMasterModulationIndex() { return s_masterModIndex.Get(); }
-	float WinMidi_GetMasterModulationRatio() { return s_masterModRatio.Get(); }
+	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get(); }
+	float WinMidi_GetMasterModulationRatioC() { return s_masterModRatioC.Get(); }
+	float WinMidi_GetMasterModulationRatioM() { return s_masterModRatioM.Get(); }
 
 	// Master modulation LFO
 	float WinMidi_GetMasterModLFOTilt()      { return s_masterModLFOTilt.Get(); }

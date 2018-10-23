@@ -26,7 +26,7 @@ namespace SFM
 		// Master modulation index value & ratio (used on note trigger)
 		// [0..1]
 		float m_modIndex;
-		float m_modRatio;
+		float m_modRatioC, m_modRatioM;
 
 		// Global filter wetness
 		// [0..1]
@@ -55,7 +55,8 @@ namespace SFM
 
 			// No FM
 			m_modIndex = 0.f;
-			m_modRatio = 0.f;
+			m_modRatioC = 0.f;
+			m_modRatioM = 0.f;
 
 			// No filter
 			m_wetness = 0.f;

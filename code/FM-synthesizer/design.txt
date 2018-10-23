@@ -12,5 +12,8 @@ Features for version 0.1:
 Features for 0.2:
 
 [X] - More elaborate filter (MOOG) plus wet<->dry mix.
+- Reverse modulation ratios.
+
+Features for 0.3:
 - Voice stealing.
 - First (hardcoded) patch, emulating a well known instrument (TOTO brass!).

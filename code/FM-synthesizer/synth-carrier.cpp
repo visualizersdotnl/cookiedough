@@ -63,6 +63,10 @@ namespace SFM
 		case kPinkNoise:
 			signal = oscPinkNoise(phase);
 			break;
+
+		case kKick808:
+			signal = oscKick808(phase+modulation);
+			break;
 		}
 
 		return m_amplitude*signal;
