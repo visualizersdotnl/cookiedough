@@ -33,7 +33,7 @@
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
 		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI
-		  Kind of low priority!
+		+ Both low-priority
 
 	Sound related: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -55,6 +55,9 @@
 
 	The Idea Bin:
 		- Operator switches for envelopes
+
+	Bugs:
+		- Sometimes the digital saw oscillator cocks up
 
 	Simon Cann's useful videos:
 		- https://www.youtube.com/watch?v=95Euc8SdTyc

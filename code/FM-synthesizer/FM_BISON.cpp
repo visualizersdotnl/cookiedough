@@ -156,7 +156,6 @@ namespace SFM
 		UpdateVoices(state);
 		
 		// Get state from Oxygen 49 driver (lots of "bro science")
-		// Sounds OK now, 23/10/2018, 01:45
 
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 
@@ -181,7 +180,7 @@ namespace SFM
 		const float curve = WinMidi_GetMasterModLFOPower();
 		const float frequency = WinMidi_GetMasterModLFOFrequency();
 		state.m_indexLFOParams.tilt = tilt;
-		state.m_indexLFOParams.curve = curve*alpha;
+		state.m_indexLFOParams.curve = curve*6.f;
 		state.m_indexLFOParams.frequency = fabsf(frequency*6.f);
 	}
 
