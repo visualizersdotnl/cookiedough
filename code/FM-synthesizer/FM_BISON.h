@@ -57,7 +57,7 @@
 		- Operator switches for envelopes
 
 	Bugs:
-		- Sometimes the digital saw oscillator cocks up
+		- Sometimes the digital saw oscillator cocks up (NAN)
 
 	Simon Cann's useful videos:
 		- https://www.youtube.com/watch?v=95Euc8SdTyc
