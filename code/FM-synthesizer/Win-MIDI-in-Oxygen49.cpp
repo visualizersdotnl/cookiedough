@@ -66,13 +66,9 @@ namespace SFM
 	static MIDI_Smoothed s_masterModRatioC, s_masterModRatioM;
 	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
 
-	// FIXME: unused
-	const unsigned kUpperKey = 36;
-	const unsigned kLowerKey = 84;
-
 	static Waveform s_waveform = kSine;
 
-	// Percussion channel indices
+	// Percussion channel indices (used to select carrier waveform)
 	const unsigned kPerc1 = 36;
 	const unsigned kPerc2 = 38;
 	const unsigned kPerc3 = 42;

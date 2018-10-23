@@ -9,6 +9,7 @@
 
 namespace SFM
 {
+	// This envelope causes a resonance-like effect which can be effective to smooth out the modulator(s)
 	struct IndexEnvelope
 	{
 		alignas(16) float buffer[kOscPeriod];

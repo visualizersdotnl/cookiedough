@@ -208,7 +208,7 @@ namespace SFM
 		const unsigned numSamples = ringBuf.GetFree();
 		if (0 == numSamples)
 		{
-			Log("Zero samples to render!");
+//			Log("Zero samples to render!");
 			return loudest;
 		}
 

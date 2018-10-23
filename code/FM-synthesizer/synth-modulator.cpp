@@ -21,7 +21,7 @@ namespace SFM
 		{
 			// Blend between raised cosine and another oscillator FM'ed by it
 			const float cosine = powf(lutcosf(phase), parameters.curve);
-			const float pulse = oscSoftSaw(phase+cosine, 32);
+			const float pulse = oscSoftSaw(phase + tilt*cosine, 32);
 			buffer[iSample] = lerpf<float>(cosine, pulse, tilt);
 			phase += pitch;
 		}

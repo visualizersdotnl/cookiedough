@@ -16,6 +16,7 @@ namespace SFM
 
 		// Not in release stage
 		m_releasing = false;
+		m_invert = false;
 
 		// Scale envelope by note velocity (with "bro science")
 		SFM_ASSERT(velocity != 0.f);
@@ -73,12 +74,12 @@ namespace SFM
 		}
 		else
 		{
-			// Sustain level and sample offset are adjusted on NOTE_OFF (exponential)
+			// Sustain level and sample offset are adjusted on NOTE_OFF (linear)
 			if (sample < release)
 			{
 				const float step = sustain/release;
 				const float delta = step*sample;
-				amplitude = sustain - sustain*(delta*delta);
+				amplitude = sustain-delta;
 				SFM_ASSERT(amplitude >= 0.f && amplitude <= sustain);
 			}
 		}
@@ -86,6 +87,6 @@ namespace SFM
 		SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
 		m_curAmp = amplitude;
 
-		return amplitude;
+		return (false == m_invert) ? amplitude : 1.f-amplitude;
 	}
 }

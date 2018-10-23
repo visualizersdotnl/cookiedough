@@ -21,8 +21,9 @@
 	
 	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
 	and in part supplemented by hardware components if that so happens to be a good idea.
-	
-	So the style will look a bit dated here with a few modern bits there, but nothing major.
+
+	I started programming in a very C-style but later realized that wasn't really necessary, but for now I stick to the chosen style
+	as much as possible to keep it predictable to the reader; even if that means it's not very pretty in places.
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
@@ -43,6 +44,7 @@
 		- Create algorithms & patches; just start by emulating something well known
 
 	Plumbing:
+		- Move MIDI calls out of FM. BISON, expose parameters through an object (preparation for VST)
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Move all math needed from Std3DMath to synth-math.h
 

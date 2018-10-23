@@ -23,6 +23,7 @@ namespace SFM
 		unsigned m_sampleOffs;
 		float m_curAmp;
 		bool m_releasing;
+		bool m_invert;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
 		void Stop(unsigned sampleCount);
