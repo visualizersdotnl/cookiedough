@@ -103,7 +103,7 @@ namespace SFM
 				unsigned controlIdx = MsgParam1(dwParam1);
 				unsigned controlVal = MsgParam2(dwParam1);
 
-				#ifdef DUMP_MIDI_EVENTS
+#ifdef DUMP_MIDI_EVENTS
 				// Dumps incoming events, very useful
 				static char buffer[128];
 				sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
@@ -140,6 +140,10 @@ namespace SFM
 
 					case kPerc7:
 						s_waveform = kWhiteNoise;
+						break;
+
+					case kPerc8:
+						s_waveform = kPinkNoise;
 						break;
 
 					default:

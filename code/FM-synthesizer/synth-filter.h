@@ -54,6 +54,7 @@ namespace SFM
 
 		void Set(const FilterParameters &parameters)
 		{
+			// Reset();
 			SetCutoff(parameters.cutoff);
 			SetResonance(parameters.resonance);
 		}

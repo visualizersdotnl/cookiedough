@@ -303,11 +303,17 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 	Global (de-)initialization.
 */
 
+#include "synth-test.h"
+
 bool Syntherklaas_Create()
 {
 	// Calc. LUTs
 	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
+
+	//
+	// OscTest();
+	//
 
 	// Reset sample count
 	s_sampleCount = 0;
@@ -322,7 +328,7 @@ bool Syntherklaas_Create()
 		s_filters[iVoice].Reset();
 	}
 
-	// Test (FIXME): Oxygen 49 driver + SDL2
+	// Test: Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
 	const bool midiIn = WinMidi_Start(0);
 

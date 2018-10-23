@@ -45,6 +45,7 @@ namespace SFM
 	// Simple lowpass
 	SFM_INLINE float lowpassf(float from, float to, float factor)
 	{
+		SFM_ASSERT(factor >= 1.f);
 		return ((from * (factor-1.f)) + to)/factor;
 	}
 

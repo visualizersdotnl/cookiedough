@@ -7,5 +7,5 @@
 
 namespace SFM
 {
-	void oscTest();
+	void OscTest();
 }

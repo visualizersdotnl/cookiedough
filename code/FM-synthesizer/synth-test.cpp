@@ -10,7 +10,7 @@
 
 namespace SFM 
 {
-	static void OscTest()
+	void OscTest()
 	{
 		const unsigned seconds = 4;
 		const float frequency = 1.f;
@@ -21,7 +21,7 @@ namespace SFM
 		float phase = 0.f;
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
-			float sample = oscDigiSaw(phase); // , 40);
+			float sample = oscPinkNoise(phase); // , 40);
 			buffer[iSample] = sample;
 			phase += pitch;
 		}

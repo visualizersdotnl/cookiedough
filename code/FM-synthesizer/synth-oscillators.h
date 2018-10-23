@@ -27,7 +27,8 @@ namespace SFM
 		kDigiSaw,
 		kDigiSquare,
 		kTriangle,
-		kWhiteNoise
+		kWhiteNoise,
+		kPinkNoise
 	};
 
 	/*
@@ -111,6 +112,31 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return lutnoisef(phase + mt_randu32() /* Without this we'll definitely hear a pattern */);
+		return lutnoisef(phase + rand() /* Without this we'll definitely hear a pattern */);
 	}
+
+	// Paul Kellet's approximation to pink noise; basically just a filter
+	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
+	SFM_INLINE float oscPinkNoise(float phase)
+	{
+		const float white = oscWhiteNoise(phase);
+
+		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
+		static float pink = 0.5f;
+
+		b0 = 0.99886f*b0 + white*0.0555179f;
+		b1 = 0.99332f*b1 + white*0.0750759f; 
+		b2 = 0.96900f*b2 + white*0.1538520f; 
+		b3 = 0.86650f*b3 + white*0.3104856f; 
+		b4 = 0.55000f*b4 + white*0.5329522f; 
+		b5 = -0.7616f*b5 - white*0.0168980f; 
+		
+		// This is a bit of a judgement call but I prefer clearly hearing different noise over keeping
+		// the not-too-exact spectral properties
+		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, kGoldenRatio); 
+
+		b6 = white*0.115926f;
+		
+		return pink;
+   }
 }

@@ -26,13 +26,12 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- Implement pink noise
+		- Modulation ratios can be fractional for different sounds
 
 	To do:
 		- Try to get current state of MIDI controls on startup in driver
 
 	Sound related: 
-		- Modulation ratios can be fractional for different sounds
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- Implement pitch bend?
