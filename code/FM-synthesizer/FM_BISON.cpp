@@ -175,12 +175,12 @@ namespace SFM
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
 
 		// Modulation index envelope
-		const float tilt = WinMidi_GetMasterModLFOTilt();
+		const float shape = WinMidi_GetMasterModLFOShape();
 		const float curve = WinMidi_GetMasterModLFOPower();
 		const float frequency = WinMidi_GetMasterModLFOFrequency();
-		state.m_indexLFOParams.tilt = tilt;
+		state.m_indexLFOParams.shape = shape;
 		state.m_indexLFOParams.curve = curve*6.f;
-		state.m_indexLFOParams.frequency = fabsf(frequency*6.f);
+		state.m_indexLFOParams.frequency = frequency*kPI;
 	}
 
 	/*

@@ -77,7 +77,7 @@ namespace SFM
 			// Default FM index modulation
 			m_indexLFOParams.curve = 0.f;
 			m_indexLFOParams.frequency = 1.f;
-			m_indexLFOParams.tilt = 0.f;
+			m_indexLFOParams.shape = 0.f;
 		}
 	};
 }

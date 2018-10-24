@@ -13,16 +13,16 @@ namespace SFM
 	{
 		const float pitch = CalculateOscPitch(parameters.frequency);
 
-		const float tilt = parameters.tilt;
-		SFM_ASSERT(tilt >= 0.f && tilt <= 1.f);
+		const float shape = parameters.shape;
+		SFM_ASSERT(shape >= 0.f && shape <= 1.f);
 
 		float phase = 0.f;
 		for (unsigned iSample = 0; iSample < kOscPeriod; ++iSample)
 		{
 			// Blend between raised cosine and another oscillator FM'ed by it
 			const float cosine = powf(lutcosf(phase), parameters.curve);
-			const float pulse = oscSoftSaw(phase + tilt*cosine, 32);
-			buffer[iSample] = lerpf<float>(cosine, pulse, tilt);
+			const float pulse = oscSoftSaw(phase + shape*cosine, 32);
+			buffer[iSample] = lerpf<float>(cosine, pulse, shape);
 			phase += pitch;
 		}
 	}

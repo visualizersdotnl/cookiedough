@@ -61,12 +61,12 @@ namespace SFM
 	const unsigned kFaderR = 72; // C4
 	const unsigned kFaderMasterModRatioC = 70;     // C8
 	const unsigned kFaderMasterModRatioM = 63;     // C9
-	const unsigned kFaderMasterModLFOTilt = 25;    // C5
+	const unsigned kFaderMasterModLFOShape = 25;   // C5
 	const unsigned kFaderMasterModLFOFreq = 73;    // C6
 	const unsigned kFaderMasterModBrightness = 74; // C7
 	static MIDI_Smoothed s_A, s_D, s_S, s_R;
 	static MIDI_Smoothed s_masterModRatioC, s_masterModRatioM;
-	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
+	static MIDI_Smoothed s_masterModLFOShape, s_masterModLFOFreq;
 	static MIDI_Smoothed s_masterModBrightness;
 
 	static Waveform s_waveform = kSine;
@@ -212,8 +212,8 @@ namespace SFM
 							s_masterModLFOCurve.Set(controlVal);
 							break;
 
-						case kFaderMasterModLFOTilt:
-							s_masterModLFOTilt.Set(controlVal);
+						case kFaderMasterModLFOShape:
+							s_masterModLFOShape.Set(controlVal);
 							break;
 
 						case kFaderMasterModLFOFreq:
@@ -361,7 +361,7 @@ namespace SFM
 	float WinMidi_GetMasterModulationRatioM() { return s_masterModRatioM.Get(); }
 
 	// Master modulation LFO
-	float WinMidi_GetMasterModLFOTilt()      { return s_masterModLFOTilt.Get();    }
+	float WinMidi_GetMasterModLFOShape()     { return s_masterModLFOShape.Get();   }
 	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq.Get();    }
 	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get();   }
 	float WinMidi_GetMasterModBrightness()   { return s_masterModBrightness.Get(); }

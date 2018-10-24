@@ -17,7 +17,7 @@ namespace SFM
 		struct Parameters
 		{
 			float frequency;
-			float tilt;       // [0..1]
+			float shape;      // [0..1]
 			float curve;      // [0..N]
 		};
 
