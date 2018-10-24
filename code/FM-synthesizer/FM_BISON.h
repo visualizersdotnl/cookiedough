@@ -3,19 +3,10 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	I have to thank the following people for helping me with their knowledge, ideas and experience:
-		- Pieter v/d Meer
-		- Maarten van Strien (Crystal Score/TBL)
-		- Ronny Pries (Ronny Pries/Farbrausch)
-		- Tammo Hinrichs (KB/Farbarausch)
-		- Alex Bartholomeus (Deadline/Superstition)
-		- Thorsten Ørts (Thorsten/Purple)
-		- Stijn Haring-Kuipers
-		- Zden Hlinka (Zden/Satori)
-
-	Thanks to:
-		- Magnus Jonsson for his Microtracker MOOG filter impl. on which on of ours is based
-		- The KVR forum
+	Credits due:
+		- Magnus Jonsson for his Microtracker MOOG filter
+		- D'Angelo & Valimaki for their MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+		- A nice ADSR implementation by Nigel Redmon of earlevel.com
 
 	Notes:
 	
@@ -28,20 +19,27 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Working on:
+	** CRACKLE BUG **
 
-	To do:
-		- Try to get current state of MIDI controls on startup in driver
-		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI
-		+ Both low-priority
+	Het heeft in elk geval iets te maken met het triggeren van voices, want als ik ze nooit terug geef heb ik hier geen last van.
+	Waar je aan zou kunnen denken is dat er een threading probleem is; of wellicht zijn die gedeelde resources die globaal zijn
+	niet helemaal jofel? Of het is iets doodsimpels, zul je zien.
+
+	******************
+
+	Working on:
+		- Finetune ADSR(s) (use Nigel's as a reference)
+		- VST preparation
+
+	MIDI:
+		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI_Smoothed
 
 	Sound related: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
-		- Implement pitch bend?
-
-	Proper sound related task:
-		- Create algorithms & patches; just start by emulating something well known
+		- Implement pitch bend
+		- Improve wavetable oscillators
+		- See about patches & more algorithms (careful)
 
 	Plumbing:
 		- Move MIDI calls out of FM. BISON, expose parameters through an object (preparation for VST)
@@ -49,18 +47,13 @@
 		- Move all math needed from Std3DMath to synth-math.h
 
 	Of later concern:
-		- Clean up Oxygen 49 driver so it's easier to port to another keyboard (or use an existing library)
+		- Find hotspots (plenty!) and optimize
 		- Eliminate floating point values where they do not belong and kill NAN-style bugs (major nuisance, causes crackle!)
 		- Reinstate OSX port for on-the-go programming
 
-	The Idea Bin:
-		- Operator switches for envelopes
-
 	Bugs:
+		- Master gain/drive isn't loud enough
 		- Sometimes the digital saw oscillator cocks up (NAN)
-
-	Simon Cann's useful videos:
-		- https://www.youtube.com/watch?v=95Euc8SdTyc
 */
 
 #ifndef _FM_BISON_H_

@@ -36,12 +36,15 @@ namespace SFM
 		m_envelope.Calculate(indexEnvParams);
 	}
 
-	float Modulator::Sample(unsigned sampleCount)
+	float Modulator::Sample(unsigned sampleCount, float brightness)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch + m_phaseShift;
 
-		const float modulation = oscSine(phase); 
+		brightness = invsqrf(brightness); 
+		const float triangle = oscTriangle(phase);
+		const float sine = oscSine(phase);
+		const float modulation = sine + (triangle-sine)*brightness;
 		const float index = m_index*LUTsample(m_envelope.buffer, phase);
 
 		return index*modulation;

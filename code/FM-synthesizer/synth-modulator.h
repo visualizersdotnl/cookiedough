@@ -33,6 +33,6 @@ namespace SFM
 		IndexEnvelope m_envelope;
 		
 		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, const IndexEnvelope::Parameters &indexEnvParams);
-		float Sample(unsigned sampleCount);
+		float Sample(unsigned sampleCount, float brightness);
 	};
 }

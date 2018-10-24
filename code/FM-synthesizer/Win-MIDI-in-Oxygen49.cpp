@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-#define DUMP_MIDI_EVENTS
+// #define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -40,12 +40,13 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotCutoff = 22; // C11
-	const unsigned kPotResonance = 23; // C12
-	const unsigned kPotFilterMix = 61; // C10
-	const unsigned kPotMasterDrive = 26;  // C14
+	const unsigned kPotCutoff = 22;            // C11
+	const unsigned kPotResonance = 23;         // C12
+	const unsigned kPotFilterMix = 61;         // C10
+	const unsigned kPotFilterEnvInfl = 24;     // C13
+	const unsigned kPotMasterDrive = 26;       // C14
 	const unsigned kPotMasterModLFOCurve = 95; // C17
-	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
+	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
 	static MIDI_Smoothed s_masterModLFOCurve;
 
@@ -58,13 +59,15 @@ namespace SFM
 	const unsigned kFaderD = 21; // C2
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
-	const unsigned kFaderMasterModRatioC = 70;  // C8
-	const unsigned kFaderMasterModRatioM = 63;  // C9
-	const unsigned kFaderMasterModLFOTilt = 25; // C5
-	const unsigned kFaderMasterModLFOFreq = 73; // C6
+	const unsigned kFaderMasterModRatioC = 70;     // C8
+	const unsigned kFaderMasterModRatioM = 63;     // C9
+	const unsigned kFaderMasterModLFOTilt = 25;    // C5
+	const unsigned kFaderMasterModLFOFreq = 73;    // C6
+	const unsigned kFaderMasterModBrightness = 74; // C7
 	static MIDI_Smoothed s_A, s_D, s_S, s_R;
 	static MIDI_Smoothed s_masterModRatioC, s_masterModRatioM;
 	static MIDI_Smoothed s_masterModLFOTilt, s_masterModLFOFreq;
+	static MIDI_Smoothed s_masterModBrightness;
 
 	static Waveform s_waveform = kSine;
 
@@ -153,7 +156,7 @@ namespace SFM
 
 				switch (eventType)
 				{
-				default: // FIXME: == 13 (?)
+				default:
 					{
 						switch (controlIdx)
 						{
@@ -171,6 +174,10 @@ namespace SFM
 
 						case kPotMasterDrive:
 							s_masterDrive.Set(controlVal);
+							break;
+
+						case kPotFilterEnvInfl:
+							s_filterEnvInfl.Set(controlVal);
 							break;
 
 						case kMasterModIndex:
@@ -211,6 +218,11 @@ namespace SFM
 
 						case kFaderMasterModLFOFreq:
 							s_masterModLFOFreq.Set(controlVal);
+							break;
+
+						case kFaderMasterModBrightness:
+							s_masterModBrightness.Set(controlVal);
+							break;
 
 						default:
 							break;
@@ -229,14 +241,18 @@ namespace SFM
 					{
 						const unsigned iVoice = TriggerNote(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						s_voices[controlIdx] = iVoice;
+						Log("NOTE_ON " + std::to_string(controlIdx));
+						Log("iVoice: " + std::to_string(iVoice));
 						break;
 					}
 
 				case NOTE_OFF:
 					{
+						Log("NOTE_OFF: " + std::to_string(controlIdx));
 						const unsigned iVoice = s_voices[controlIdx];
 						if (-1 != iVoice)
 						{
+							Log("RELEASED: " + std::to_string(iVoice));							
 							ReleaseVoice(iVoice);
 							s_voices[controlIdx] = -1;
 						}
@@ -335,22 +351,24 @@ namespace SFM
 	*/
 
 	// Filter
-	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get(); }
-	float WinMidi_GetFilterResonance() { return s_resonance.Get(); }
-	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get(); }
+	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
+	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
+	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }
+	float WinMidi_GetFilterEnvInfl()   { return s_filterEnvInfl.Get();  }
 
 	// Master drive
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
 
 	// Master modulation main
-	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get(); }
+	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get();  }
 	float WinMidi_GetMasterModulationRatioC() { return s_masterModRatioC.Get(); }
 	float WinMidi_GetMasterModulationRatioM() { return s_masterModRatioM.Get(); }
 
 	// Master modulation LFO
-	float WinMidi_GetMasterModLFOTilt()      { return s_masterModLFOTilt.Get(); }
-	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq.Get(); }
-	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get(); }
+	float WinMidi_GetMasterModLFOTilt()      { return s_masterModLFOTilt.Get();    }
+	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq.Get();    }
+	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get();   }
+	float WinMidi_GetMasterModBrightness()   { return s_masterModBrightness.Get(); }
 
 	// Master ADSR
 	float WinMidi_GetMasterAttack()          { return s_A.Get(); }

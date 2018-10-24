@@ -7,13 +7,17 @@ Features for version 0.1:
 [X] - Polyphony of 8; no voice stealing.
 [X] - 1 global ADSR which modulates amplitude.
 [X] - 1 simple filter for low-pass cutoff and resonance.
-[X] - Controls for: filter, master drive, modulation, oscillator type (FIX!) & ADSR.
+[X] - Controls for: filter, master drive, modulation, oscillator type & ADSR.
 
 Features for 0.2:
 
 [X] - More elaborate filter (MOOG) plus wet<->dry mix.
-- Reverse modulation ratios.
+[X] - Actual modulation ratios (C:M).
+[X] - Better tweaked parameters.
+[X] - Modulator brightness.
+- Swap pink-ish noise for 808 kick drum.
 
 Features for 0.3:
 - Voice stealing.
-- First (hardcoded) patch, emulating a well known instrument (TOTO brass!).
+- VST.
+- User manual (interface documentation).

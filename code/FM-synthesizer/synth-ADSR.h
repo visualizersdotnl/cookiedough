@@ -11,22 +11,32 @@ namespace SFM
 	{
 		struct Parameters
 		{
-			// In number of samples (must be within 1 second or max. kSampleRate)
-			unsigned attack;
-			unsigned decay;
-			unsigned release;
-
-			// Desired sustain [0..1]
+			// [0..1]
+			float attack;
+			float decay;
+			float release;
 			float sustain;
 		} m_parameters;
 
 		unsigned m_sampleOffs;
+
+		unsigned m_attack;
+		unsigned m_decay;
+		unsigned m_release;
+		float m_sustain;
+
 		float m_curAmp;
-		bool m_releasing;
-		bool m_invert;
+		bool m_isReleasing;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
 		void Stop(unsigned sampleCount);
-		float Sample(unsigned sampleCount);	
+
+		float Sample(unsigned sampleCount);
+		
+		// Used to release voice to the pool
+		SFM_INLINE bool IsReleased(unsigned sampleCount)
+		{
+			return true == m_isReleasing && (m_sampleOffs+m_release < sampleCount);
+		}
 	};
 }

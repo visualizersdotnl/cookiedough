@@ -17,13 +17,14 @@ namespace SFM
 	void WinMidi_Stop();
 
 	/*
-		Pull-style values
+		Pull-style values, all normalized [0..1]
 	*/
 
 	// Filter
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterWetness();
+	float WinMidi_GetFilterEnvInfl();
 
 	// Master drive
 	float WinMidi_GetMasterDrive();
@@ -37,6 +38,7 @@ namespace SFM
 	float WinMidi_GetMasterModLFOTilt();
 	float WinMidi_GetMasterModLFOFrequency();
 	float WinMidi_GetMasterModLFOPower();
+	float WinMidi_GetMasterModBrightness();
 
 	// Master ADSR parameters
 	float WinMidi_GetMasterAttack();

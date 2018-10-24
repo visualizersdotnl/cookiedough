@@ -8,66 +8,57 @@
 
 namespace SFM
 {
+	const unsigned kMinReleaseSamples = 128;
+
 	void ADSR::Start(unsigned sampleCount, const Parameters &parameters, float velocity)
 	{
-		SFM_ASSERT(velocity <= 1.f);
-
 		m_sampleOffs = sampleCount;
-
-		// Not in release stage
-		m_releasing = false;
-		m_invert = false;
+		m_sustain = parameters.sustain;
 
 		// Scale envelope by note velocity (with "bro science")
-		SFM_ASSERT(velocity != 0.f);
+		SFM_ASSERT(velocity <= 1.f);
 		const float velScale = 0.314f + (1.f-0.314f)*velocity;
-		m_parameters.attack  = unsigned(parameters.attack*velScale);
-		m_parameters.decay   = unsigned(parameters.decay*velScale);
+		m_attack  = unsigned(parameters.attack*kSampleRate*velScale);
+		m_decay   = unsigned(parameters.decay*kSampleRate);
+		m_release = unsigned(parameters.release*kSampleRate*velScale);
 		
 		// Always at least for an amount of samples to avoid pop/click when 0
-		m_parameters.release = std::max<unsigned>(kSampleRate/16, unsigned(parameters.release));
-		
-		m_parameters.sustain = parameters.sustain;
+		m_release = std::max<unsigned>(kMinReleaseSamples, m_release);
+
+		m_curAmp = 0.f;
+		m_isReleasing = false; // Not in release stage
 	}
 
 	void ADSR::Stop(unsigned sampleCount)
 	{
 		// Always use current amplitude for release
-		m_parameters.sustain = m_curAmp;
+		m_sustain = m_curAmp;
 
 		m_sampleOffs = sampleCount;
-		m_releasing = true;
+		m_isReleasing = true;
 	}
 
 	float ADSR::Sample(unsigned sampleCount)
 	{
-		const unsigned sample = sampleCount-m_sampleOffs;
+		unsigned sample = sampleCount-m_sampleOffs;
 
-		const unsigned attack  = m_parameters.attack;
-		const unsigned decay   = m_parameters.decay;
-		const unsigned release = m_parameters.release;
-
-		const float sustain = m_parameters.sustain;
-
-		float amplitude = 0.f;
-
-		if (false == m_releasing)
+		if (false == m_isReleasing)
 		{
-			if (sample < attack)
+			if (sample < m_attack)
 			{
 				// Build up to full attack (linear)
-				const float step = 1.f/attack;
-				const float delta = step*sample;
-				amplitude = delta;
-				SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
+				const float delta = 1.f/m_attack;
+				const float step = delta*sample;
+				m_curAmp = step;
+				if (m_curAmp > 1.f) m_curAmp = 1.f;
 			}
-			else if (sample >= attack && sample < attack+decay)
+			else if (sample >= m_attack && sample < m_attack+m_decay)
 			{
-				// Decay to sustain (exponential)
-				const float step = 1.f/decay;
-				const float delta = step*(sample-attack);
-				amplitude = 1.f - sustain*(delta*delta);
-				SFM_ASSERT(amplitude <= 1.f /* && amplitude >= sustain */);
+				// Decay to sustain (linear)
+				sample -= m_attack;
+				const float delta = 1.f/m_decay;
+				const float step = delta*sample;
+				m_curAmp = lerpf<float>(1.f, m_sustain, step);
 			}
 			else
 				return m_curAmp;
@@ -75,18 +66,17 @@ namespace SFM
 		else
 		{
 			// Sustain level and sample offset are adjusted on NOTE_OFF (linear)
-			if (sample < release)
+			if (sample < m_release)
 			{
-				const float step = sustain/release;
-				const float delta = step*sample;
-				amplitude = sustain-delta;
-				SFM_ASSERT(amplitude >= 0.f && amplitude <= sustain);
+				const float delta = 1.f/m_release;
+				const float step = delta*sample;
+				m_curAmp = lerpf<float>(m_sustain, 0.f, step);
+				if (m_curAmp < 0.f) m_curAmp = 0.f;
 			}
+			else
+				m_curAmp = 0.f;
 		}
 
-		SFM_ASSERT(amplitude >= 0.f && amplitude <= 1.f);
-		m_curAmp = amplitude;
-
-		return (false == m_invert) ? amplitude : 1.f-amplitude;
+		return m_curAmp;
 	}
 }

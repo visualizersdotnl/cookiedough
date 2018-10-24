@@ -19,9 +19,9 @@ namespace SFM
 		Carrier m_carrier;
 		Modulator m_modulator;
 
-		float Sample(unsigned sampleCount, ADSR &envelope)
+		float Sample(unsigned sampleCount, float modBrightness, ADSR &envelope)
 		{
-			const float modulation = m_modulator.Sample(sampleCount);
+			const float modulation = m_modulator.Sample(sampleCount, modBrightness);
 			const float ADSR = envelope.Sample(sampleCount);
 			const float sample = m_carrier.Sample(sampleCount, modulation);
 			return ADSR*sample;

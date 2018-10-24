@@ -40,8 +40,7 @@ namespace SFM
 
 		unsigned GetFree() const
 		{
-			const unsigned maxWrite = kRingBufferSize;
-			return std::min<unsigned>(maxWrite, maxWrite-GetAvailable());
+			return kRingBufferSize-GetAvailable();
 		}
 		
 		unsigned readIdx;

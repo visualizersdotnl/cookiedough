@@ -23,10 +23,11 @@ namespace SFM
 		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive (no hard limit)
 		float m_drive;
 
-		// Master modulation index value & ratio (used on note trigger)
+		// Master modulation index value, ratio & brightness (used on note trigger)
 		// [0..1]
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
+		float m_modBrightness;
 
 		// Global filter wetness
 		// [0..1]
@@ -57,6 +58,7 @@ namespace SFM
 			m_modIndex = 0.f;
 			m_modRatioC = 0.f;
  			m_modRatioM = 0.f;
+			m_modBrightness = 0.f;
 
 			// No filter
 			m_wetness = 0.f;
@@ -70,6 +72,7 @@ namespace SFM
 			// Default filter 
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
+			m_filterParams.envInfl = 0.f;
 
 			// Default FM index modulation
 			m_indexLFOParams.curve = 0.f;

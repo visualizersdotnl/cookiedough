@@ -60,7 +60,8 @@ namespace SFM
 	*/
 
 	static ADSR s_ADSRs[kMaxVoices];
-	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+// 	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+ 	static ImprovedMoogFilter s_filters[kMaxVoices];
 		
 	/*
 		API + logic.
@@ -89,11 +90,9 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		const unsigned iVoice = AllocateNote(s_shadowState.m_voices);
+		const unsigned iVoice = AllocateNote(state.m_voices);
 		if (-1 == iVoice)
 			return -1;
-
-		++state.m_active;
 
 		Voice &voice = state.m_voices[iVoice];
 
@@ -107,8 +106,12 @@ namespace SFM
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
 
+		// Reset filter
+		s_filters[iVoice].Reset();
+
 		// And we're live!
 		voice.m_enabled = true;
+		++state.m_active;
 
 		return iVoice;
 	}
@@ -131,14 +134,10 @@ namespace SFM
 			if (true == enabled)
 			{
 				ADSR &envelope = s_ADSRs[iVoice];
-				if (true == envelope.m_releasing)
+				if (true == envelope.IsReleased(s_sampleCount))
 				{
-					if (envelope.m_sampleOffs+envelope.m_parameters.release < s_sampleCount)
-					{
-						SFM_ASSERT(envelope.Sample(s_sampleCount) == 0.f);
-						voice.m_enabled = false;
-						--state.m_active;
-					}
+					voice.m_enabled = false;
+					--state.m_active;
 				}
 			}
 		}
@@ -148,7 +147,7 @@ namespace SFM
 		Global update.
 	*/
 
-	static void Update()
+	static void Update_Oxygen49()
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
@@ -165,15 +164,22 @@ namespace SFM
 		// Ratios are always at least 1
 		state.m_modRatioC = 1.f+floorf(WinMidi_GetMasterModulationRatioC()*14.f);
 		state.m_modRatioM = 1.f+floorf(WinMidi_GetMasterModulationRatioM()*14.f);
+
+		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
+		state.m_modBrightness = WinMidi_GetMasterModBrightness();
 	
-		state.m_ADSR.attack = unsigned(WinMidi_GetMasterAttack()*kSampleRate);
-		state.m_ADSR.decay = unsigned(WinMidi_GetMasterDecay()*kSampleRate);
-		state.m_ADSR.release = unsigned(WinMidi_GetMasterRelease()*kSampleRate*2.f); // Extra second to enable long pads
+		state.m_ADSR.attack  = WinMidi_GetMasterAttack();
+		state.m_ADSR.decay   = WinMidi_GetMasterDecay();
+		state.m_ADSR.release = WinMidi_GetMasterRelease(); // Extra second to enable long pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
+		// Global filter wetness
+		state.m_wetness = WinMidi_GetFilterWetness();
+
+		// Filter parameters
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
-		state.m_wetness = WinMidi_GetFilterWetness();
+		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
 
 		// Modulation index envelope
 		const float tilt = WinMidi_GetMasterModLFOTilt();
@@ -204,12 +210,10 @@ namespace SFM
 
 		static float loudest = 0.f;
 
+		// Block?
 		const unsigned numSamples = ringBuf.GetFree();
-		if (0 == numSamples)
-		{
-//			Log("Zero samples to render!");
+		if (numSamples <= 1)
 			return loudest;
-		}
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -219,7 +223,7 @@ namespace SFM
 		{
 			loudest = 0.f;
 
-			// Silence, but still run (off) the filter
+			// Silence
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				ringBuf.Write(0.f);
@@ -239,13 +243,13 @@ namespace SFM
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const float sample = voice.Sample(s_sampleCount+iSample, envelope);
+						const float sample = voice.Sample(s_sampleCount+iSample, state.m_modBrightness, envelope);
 						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;
 					}
 
 					// Apply filter
-					s_filters[curVoice].Set(state.m_filterParams);
+					s_filters[curVoice].SetParameters(state.m_filterParams);
 					s_filters[curVoice].Apply(buffer, numSamples, state.m_wetness, s_sampleCount, envelope);
 
 					++curVoice;
@@ -361,7 +365,7 @@ void Syntherklaas_Destroy()
 
 float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
-	Update();
+	Update_Oxygen49();
 
 	float loudest;
 	s_bufLock.lock();
