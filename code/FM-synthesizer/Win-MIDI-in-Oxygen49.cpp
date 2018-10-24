@@ -239,7 +239,7 @@ namespace SFM
 
 				case NOTE_ON:
 					{
-						const unsigned iVoice = TriggerNote(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
+						const unsigned iVoice = TriggerVoice(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						s_voices[controlIdx] = iVoice;
 						break;
 					}

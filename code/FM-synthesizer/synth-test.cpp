@@ -44,7 +44,7 @@ namespace SFM
 		{
 			if (-1 != iB) ReleaseVoice(iB);
 
-			iA = TriggerNote(kSine, 440.f, 0.75f);
+			iA = TriggerVoice(kSine, 440.f, 0.75f);
 
 			triggerA = false;
 			triggerB = true;
@@ -53,7 +53,7 @@ namespace SFM
 		{
 			if (-1 != iA) ReleaseVoice(iA);
 
-			iB = TriggerNote(kSine, 220.f, 0.75f);
+			iB = TriggerVoice(kSine, 220.f, 0.75f);
 
 			triggerB = false;
 			triggerA = true;

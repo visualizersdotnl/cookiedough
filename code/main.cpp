@@ -215,7 +215,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					const float delta = newTime-oldTime;
 					
 					// sloppy VU meter
+					static float prevLoudest = 0.f;
 					float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
+					if (loudest == 0.f) loudest = prevLoudest;
+					prevLoudest = loudest;
+
 					unsigned length = 1+unsigned(loudest*1279.f);
 
 					for (int iY = 3; iY < 15; ++iY)

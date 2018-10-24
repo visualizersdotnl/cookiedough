@@ -17,7 +17,7 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI_Smoothed
+		- Smooth MIDI pots
 		- Finetune ADSR(s)
 		- VST preparation
 		- Turn structures into real classes piece by piece
@@ -28,8 +28,9 @@
 		- ...
 
 	Sound related: 
+		- Sample & hold noise
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Implement pitch bend
+		- Implement pitch bend and/or detune
 		- Improve oscillators (blend, but only where it looks necessary)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- See about patches & more algorithms (careful)
@@ -45,7 +46,6 @@
 		- Reinstate OSX port for on-the-go programming
 
 	Bugs:
-		- Master gain/drive isn't loud enough
 		- Sometimes the digital saw oscillator cocks up (NAN)
 */
 
@@ -67,8 +67,8 @@ namespace SFM
 		API exposed to (MIDI) input.
 	*/
 
-	// Trigger a note (if possible) and return it's voice index: at this point it's a voice
-	unsigned TriggerNote(Waveform form, float frequency, float velocity);
+	// Trigger a nvoice (if possible) and return it's voice index
+	unsigned TriggerVoice(Waveform form, float frequency, float velocity);
 
 	// Release a note using it's voice index
 	void ReleaseVoice(unsigned index);

@@ -76,6 +76,9 @@ namespace SFM
 				{
 					voice.m_enabled = false;
 					--state.m_active;
+
+					// Perfect: take it!
+					return iVoice;
 				}
 			}
 		}
@@ -95,7 +98,7 @@ namespace SFM
 	}
 
 	// Returns voice index, if available
-	unsigned TriggerNote(Waveform form, float frequency, float velocity)
+	unsigned TriggerVoice(Waveform form, float frequency, float velocity)
 	{
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
@@ -242,6 +245,7 @@ namespace SFM
 			}
 
 			// Mix voices
+			loudest = 0.f;
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				float mix = 0.f;

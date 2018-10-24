@@ -20,12 +20,12 @@ namespace SFM
 		const float sustain = parameters.sustain;
 
 		// For now this sounds fine
-		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f - velocity*0.6f);
-		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f - velocity*0.6f);
+		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f + velocity*0.66f);
+		m_voiceADSR.setTargetRatioDR(kGoldenRatio + velocity*0.33f);
 
 		// FIXME: do I want to let velocity meddle with this?
-		m_filterADSR.setTargetRatioA(0.314f);
-		m_filterADSR.setTargetRatioDR(0.0001f*kGoldenRatio);
+		m_filterADSR.setTargetRatioA(0.314f + velocity*0.066f);
+		m_filterADSR.setTargetRatioDR(0.0001f*kGoldenRatio + velocity*0.033f);
 
 		m_voiceADSR.setAttackRate(attack);
 		m_voiceADSR.setDecayRate(decay);

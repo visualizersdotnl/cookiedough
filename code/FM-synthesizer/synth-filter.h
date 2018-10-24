@@ -88,6 +88,8 @@ namespace SFM
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
 		{
+			globalWetness = invsqrf(globalWetness);
+
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
@@ -100,7 +102,7 @@ namespace SFM
 				// Coefficients optimized using differential evolution
 				// to make feedback gain 4.0 correspond closely to the
 				// border of instability, for all values of omega.
-				float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
+				const float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
 
 				// Move window
 				m_resoCoeffs[2] = m_resoCoeffs[1];
@@ -184,6 +186,8 @@ namespace SFM
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
 		{
+			globalWetness = invsqrf(globalWetness);
+
 			float dV0, dV1, dV2, dV3;
 
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
