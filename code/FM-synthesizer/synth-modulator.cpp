@@ -27,13 +27,15 @@ namespace SFM
 		}
 	}
 
-	void Modulator::Initialize(unsigned sampleOffs, float index, float frequency, float phaseShift, const IndexEnvelope::Parameters &indexEnvParams)
+	void Modulator::Initialize(unsigned sampleOffs, float index, float frequency, float phaseShift, const IndexEnvelope::Parameters *pIndexEnvParams)
 	{
 		m_index = index;
 		m_pitch = CalculateOscPitch(frequency);
 		m_sampleOffs = sampleOffs;
 		m_phaseShift = (phaseShift*kOscPeriod)/k2PI;
-		m_envelope.Calculate(indexEnvParams);
+
+		if (nullptr != pIndexEnvParams)
+			m_envelope.Calculate(*pIndexEnvParams);
 	}
 
 	float Modulator::Sample(unsigned sampleCount, float brightness)
@@ -48,5 +50,16 @@ namespace SFM
 		const float index = m_index*LUTsample(m_envelope.buffer, phase);
 
 		return index*modulation;
+	}
+
+	float Modulator::SimpleSample(unsigned sampleCount)
+	{
+		const unsigned sample = sampleCount-m_sampleOffs;
+		const float phase = sample*m_pitch + m_phaseShift;
+
+		const float sine = oscSine(phase);
+		const float index = m_index;
+
+		return index*sine;
 	}
 }

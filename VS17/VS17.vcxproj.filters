@@ -377,6 +377,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\wavetable\wavKick808.h" />
     <ClInclude Include="..\code\FM-synthesizer\wavetable\wavSnare808.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

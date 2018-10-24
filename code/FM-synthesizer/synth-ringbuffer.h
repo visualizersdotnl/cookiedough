@@ -13,29 +13,29 @@ namespace SFM
 	{
 	public:
 		FIFO() :
-			readIdx(0),
-			writeIdx(0)
+			m_readIdx(0),
+			m_writeIdx(0)
 		{
 			SFM_ASSERT(true == IsPow2(kRingBufferSize));
-			memset(buffer, 0, kRingBufferSize*sizeof(float));
+			memset(m_buffer, 0, kRingBufferSize*sizeof(float));
 		}
 
 		void Write(float value)
 		{
-			const unsigned index = writeIdx++ & (kRingBufferSize-1);
-			buffer[index] = value;
+			const unsigned index = m_writeIdx++ & (kRingBufferSize-1);
+			m_buffer[index] = value;
 		}
 
 		float Read()
 		{
-			const unsigned index = readIdx++ & (kRingBufferSize-1);
-			const float value = buffer[index];
+			const unsigned index = m_readIdx++ & (kRingBufferSize-1);
+			const float value = m_buffer[index];
 			return value;
 		}
 
 		unsigned GetAvailable() const
 		{
-			return writeIdx-readIdx;
+			return m_writeIdx-m_readIdx;
 		}
 
 		unsigned GetFree() const
@@ -43,8 +43,9 @@ namespace SFM
 			return kRingBufferSize-GetAvailable();
 		}
 		
-		unsigned readIdx;
-		unsigned writeIdx;
-		float buffer[kRingBufferSize];
+	private:
+		unsigned m_readIdx;
+		unsigned m_writeIdx;
+		float m_buffer[kRingBufferSize];
 	};
 }

@@ -24,7 +24,7 @@ namespace SFM
 		WavetableOscillator(const uint8_t *pTable, unsigned length, unsigned speed = 1 /* Higher means slower */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_length(length/sizeof(float))
-,			m_divider((m_length/kOscPeriod)*speed) {}
+,			m_divider(float(m_length/kOscPeriod)*speed) {}
 
 	float Sample(float phase)
 	{

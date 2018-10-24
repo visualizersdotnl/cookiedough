@@ -32,7 +32,10 @@ namespace SFM
 		float m_phaseShift;
 		IndexEnvelope m_envelope;
 		
-		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, const IndexEnvelope::Parameters &indexEnvParams);
+		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, const IndexEnvelope::Parameters *pIndexEnvParams);
 		float Sample(unsigned sampleCount, float brightness);
+
+		// Version without envelope and brightness
+		float SimpleSample(unsigned sampleCount);
 	};
 }

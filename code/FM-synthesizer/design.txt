@@ -15,9 +15,10 @@ Features for 0.2:
 [X] - Actual modulation ratios (C:M).
 [X] - Better tweaked parameters.
 [X] - Modulator brightness.
-- Swap pink-ish noise for 808 kick drum.
+[X] - Swap pink-ish noise for 808 kick drum.
 
 Features for 0.3:
+[/] - Feedback effect (still has to be finished).
 - Voice stealing.
-- VST.
+- VST-ready.
 - User manual (interface documentation).

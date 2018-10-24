@@ -16,7 +16,9 @@
 #include "synth-state.h"
 #include "synth-audio-out.h"
 #include "synth-ringbuffer.h"
-#include "synth-filter.h" 
+#include "synth-filter.h"
+#include "synth-delayline.h"
+#include "synth-math.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -57,6 +59,7 @@ namespace SFM
 	static ADSR s_ADSRs[kMaxVoices];
 //	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 	static ImprovedMoogFilter s_filters[kMaxVoices];
+	static DelayLine s_delayLine;
 		
 	/*
 		API + logic.
@@ -116,14 +119,14 @@ namespace SFM
 		const float carrierFreq = frequency;
 		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, state.m_indexLFOParams);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, &state.m_indexLFOParams);
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
 
 		// Reset filter
 		s_filters[iVoice].Reset();
-
+	
 		// And we're live!
 		voice.m_enabled = true;
 		++state.m_active;
@@ -177,6 +180,10 @@ namespace SFM
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
 
+		// Feedback parameters
+		state.m_feedback = WinMidi_GetFeedback();
+		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
+
 		// Modulation index envelope
 		const float shape = WinMidi_GetMasterModLFOShape();
 		const float curve = WinMidi_GetMasterModLFOPower();
@@ -202,6 +209,8 @@ namespace SFM
 		static float loudest = 0.f;
 
 		const unsigned numSamples = ringBuf.GetFree();
+//		if (numSamples < kRingBufferSize>>4)
+//			return loudest;
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -219,7 +228,7 @@ namespace SFM
 		}
 		else
 		{
-			// Render dry samples for each voice
+			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
@@ -227,11 +236,12 @@ namespace SFM
 				if (true == voice.m_enabled)
 				{
 					ADSR &envelope = s_ADSRs[iVoice];
-
 					float *buffer = s_voiceBuffers[curVoice];
+
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const float sample = voice.Sample(s_sampleCount+iSample, state.m_modBrightness, envelope);
+						const unsigned sampleCount = s_sampleCount+iSample;
+						const float sample = voice.Sample(sampleCount, state.m_modBrightness, envelope);
 						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;
 					}
@@ -244,10 +254,13 @@ namespace SFM
 				}
 			}
 
-			// Mix voices
 			loudest = 0.f;
+
+			// Mix voices
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
+				const unsigned sampleCount = s_sampleCount+iSample;
+
 				float mix = 0.f;
 				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
 				{
@@ -255,9 +268,14 @@ namespace SFM
 					mix = fast_tanhf(mix + sample);
 				}
 
-				mix = fast_tanhf(mix*state.m_drive);
+				// Apply delay (FIXME: expand effect, add a little flanger)
+				const float delayed = s_delayLine.Read()*0.66f;
+				s_delayLine.Write(mix, state.m_feedback);
+				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);
+
 				ringBuf.Write(mix);
 
+				// FIXME: temporary
 				loudest = std::max<float>(loudest, fabsf(mix));
 			}
 		}

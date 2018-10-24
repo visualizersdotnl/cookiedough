@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -46,9 +46,12 @@ namespace SFM
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
 	const unsigned kPotMasterModLFOCurve = 95; // C17
+	const unsigned kPotFeedback = 27;          // C15
+	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
 	static MIDI_Smoothed s_masterModLFOCurve;
+	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 
 	// Wheel mapping
 	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
@@ -178,6 +181,14 @@ namespace SFM
 
 						case kPotFilterEnvInfl:
 							s_filterEnvInfl.Set(controlVal);
+							break;
+
+						case kPotFeedback:
+							s_feedback.Set(controlVal);
+							break;
+
+						case kPotFeedbackWetness:
+							s_feedbackWetness.Set(controlVal);
 							break;
 
 						case kMasterModIndex:
@@ -351,6 +362,10 @@ namespace SFM
 	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
 	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }
 	float WinMidi_GetFilterEnvInfl()   { return s_filterEnvInfl.Get();  }
+
+	// Feedback
+	float WinMidi_GetFeedback()         { return s_feedback.Get();          }
+	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
 
 	// Master drive
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }

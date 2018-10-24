@@ -1,10 +1,6 @@
 
 /*
-	Syntherklaas FM - Audio output driver.
-
-	FIXME:
-		- Use SDL2 first
-		- Later optimize for target hardware, retaining SDL2 output
+	Syntherklaas FM - SDL2 audio output driver.
 */
 
 #pragma once

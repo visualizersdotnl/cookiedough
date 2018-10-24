@@ -26,6 +26,10 @@ namespace SFM
 	float WinMidi_GetFilterWetness();
 	float WinMidi_GetFilterEnvInfl();
 
+	// Feedback
+	float WinMidi_GetFeedback();
+	float WinMidi_GetFeedbackWetness();
+
 	// Master drive
 	float WinMidi_GetMasterDrive();
 

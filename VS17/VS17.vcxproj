@@ -112,6 +112,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-math.h" />

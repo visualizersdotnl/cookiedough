@@ -57,7 +57,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Maximum master (over)drive
-	const float kMaxOverdrive = kGoldenRatio*2.f;
+	const float kMaxOverdrive = kGoldenRatio*1.6f;
 }
 
 #include "synth-LUT.h"

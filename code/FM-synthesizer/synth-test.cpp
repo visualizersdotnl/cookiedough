@@ -59,11 +59,4 @@ namespace SFM
 			triggerA = true;
 		}
 	}
-
-	void DumpRingBuffer(const char *path, FIFO &ringBuf)
-	{
-		FILE *file = fopen(path, "wb");
-		fwrite(ringBuf.buffer, sizeof(float), kRingBufferSize, file);
-		fclose(file);
-	}
 }

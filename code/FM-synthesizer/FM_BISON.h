@@ -17,23 +17,21 @@
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- Smooth MIDI pots
-		- Finetune ADSR(s)
+		- Finish feedback effect (see synth-delayline.h & FM_BISON.cpp)
 		- VST preparation
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
 		- The worst crackle and pop is gone but I'm not convinced yet
 
 	MIDI:
-		- ...
+		- Smooth MIDI pots
 
 	Sound related: 
-		- Sample & hold noise
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Implement pitch bend and/or detune
+		- Sample & hold noise
+		- Implement pitch bend
 		- Improve oscillators (blend, but only where it looks necessary)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
-		- See about patches & more algorithms (careful)
 
 	Plumbing:
 		- Move MIDI calls out of FM. BISON, expose parameters through an object (part of preparation for VST)
@@ -67,7 +65,7 @@ namespace SFM
 		API exposed to (MIDI) input.
 	*/
 
-	// Trigger a nvoice (if possible) and return it's voice index
+	// Trigger a voice (if possible) and return it's voice index
 	unsigned TriggerVoice(Waveform form, float frequency, float velocity);
 
 	// Release a note using it's voice index

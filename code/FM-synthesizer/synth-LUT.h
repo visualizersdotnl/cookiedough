@@ -20,6 +20,7 @@ namespace SFM
 
 	SFM_INLINE float LUTsample(const float *LUT, float index)
 	{
+		// Nearest neighbour; so far so good, but sooner or later: FIXME
 		const unsigned from = unsigned(index)&kOscTabAnd;
 		const float A = LUT[from];
 		return A;

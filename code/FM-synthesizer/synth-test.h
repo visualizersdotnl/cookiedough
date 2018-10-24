@@ -12,7 +12,4 @@ namespace SFM
 
 	// Plays alternating note to hunt down crackle & pop artifacts (FIXME: lower speed actually means faster alternating notes)
 	void CrackleTest(float time, float speed);
-
-	// Dump content of ring buffer to RAW file
-	void DumpRingBuffer(const char *path, FIFO &ringBuf);
 }

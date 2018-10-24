@@ -39,6 +39,10 @@ namespace SFM
 		// Master filter parameters
 		FilterParameters m_filterParams;
 
+		// Feedback (delay) effect parameters
+		float m_feedback;
+		float m_feedbackWetness;
+
 		// Master FM index LFO parameters
 		IndexEnvelope::Parameters m_indexLFOParams;
 
@@ -73,6 +77,10 @@ namespace SFM
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
 			m_filterParams.envInfl = 0.f;
+
+			// Default feedback
+			m_feedback = 0.f;
+			m_feedbackWetness = 0.f;
 
 			// Default FM index modulation
 			m_indexLFOParams.curve = 0.f;
