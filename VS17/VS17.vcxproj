@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -127,7 +127,8 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h" />
-    <ClInclude Include="..\code\FM-synthesizer\wavetable\oscWav808.h" />
+    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavKick808.h" />
+    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavSnare808.h" />
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />

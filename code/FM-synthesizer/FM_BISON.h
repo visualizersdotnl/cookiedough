@@ -3,32 +3,25 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	Credits due:
-		- Magnus Jonsson for his Microtracker MOOG filter
-		- D'Angelo & Valimaki for their MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
-		- A nice ADSR implementation by Nigel Redmon of earlevel.com
+	Third-party code used:
+		- Magnus Jonsson's Microtracker MOOG filter
+		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+		- ADSR implementation by Nigel Redmon of earlevel.com
 
 	Notes:
-	
-	It's intended to be portable to embedded platforms in plain C if required (which it isn't now but close enough for an easy port), 
-	and in part supplemented by hardware components if that so happens to be a good idea.
 
-	I started programming in a very C-style but later realized that wasn't really necessary, but for now I stick to the chosen style
-	as much as possible to keep it predictable to the reader; even if that means it's not very pretty in places.
+		- The code style started out as semi-C, intending a hardware target, but though I try to stick to that particular style since
+		  it's there I'm realizing I can just as well use more C++ since the target is never going to be very archaic. So if it comes
+		  across as inconsistent here and there: that's because it is.
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	** CRACKLE BUG **
-
-	Het heeft in elk geval iets te maken met het triggeren van voices, want als ik ze nooit terug geef heb ik hier geen last van.
-	Waar je aan zou kunnen denken is dat er een threading probleem is; of wellicht zijn die gedeelde resources die globaal zijn
-	niet helemaal jofel? Of het is iets doodsimpels, zul je zien.
-
-	******************
-
 	Working on:
-		- Finetune ADSR(s) (use Nigel's as a reference)
+		- The worst crackle and pop is gone but I'm not convinced yet
+		- Write wrapper class for wavetable oscillators
+		- Feed envelope to filters, adjust the second one to use fast_tanhf()
+		- Finetune ADSR(s)
 		- VST preparation
 
 	MIDI:
@@ -36,13 +29,14 @@
 
 	Sound related: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- Implement pitch bend
-		- Improve wavetable oscillators
+		- Improve oscillators (blend)
+		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- See about patches & more algorithms (careful)
 
 	Plumbing:
-		- Move MIDI calls out of FM. BISON, expose parameters through an object (preparation for VST)
+		- Turn structures into real classes
+		- Move MIDI calls out of FM. BISON, expose parameters through an object (part of preparation for VST)
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Move all math needed from Std3DMath to synth-math.h
 

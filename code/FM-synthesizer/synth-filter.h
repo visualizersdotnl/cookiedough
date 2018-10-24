@@ -128,6 +128,8 @@ namespace SFM
 		References: "An Improved Virtual Analog Model of the Moog Ladder Filter"
 
 		Original Implementation: D'Angelo, Valimaki
+
+		FIXME: use fast_tanhf()
 	*/
 
 	// Thermal voltage (26 milliwats at room temperature)

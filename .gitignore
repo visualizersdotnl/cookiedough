@@ -273,3 +273,4 @@ code/FM-synthesizer/OSX-test/test-out.raw
 
 code/FM-synthesizer/OSX-test/bison.dSYM/Contents/Info.plist
 target/oscTest.raw
+target/ringBuf.raw

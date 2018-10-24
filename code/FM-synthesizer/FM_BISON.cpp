@@ -36,12 +36,7 @@ namespace SFM
 	/*
 		Global state.
 		
-		The shadow state may be updated after acquiring the lock.
-		This should be done for all state that is set on a push-basis.
-
-		Things to remember:
-			- Currently the synthesizer itself just uses a single thread; when expanding, things will get more complicated.
-			- Pulling state is fine, for now.
+		The (shadow) state may be updated after acquiring the lock.
 
 		This creates a tiny additional lag between input and output, but an earlier commercial product has shown this
 		to be negligible so long as the update buffer's size isn't too large.
@@ -53,25 +48,44 @@ namespace SFM
 	static FM s_renderState;
 
 	/*
-		ADSRs & filters (one for each voice).
+		Runtime state.
 
 		These are not part of the state object since they alter their state
-		and aren't directly affected by synth. driver settings.
+		whilst rendering. 
+		
+		** They must however also be guarded by the state mutex. **
 	*/
 
 	static ADSR s_ADSRs[kMaxVoices];
-// 	static MicrotrackerMoogFilter s_filters[kMaxVoices];
- 	static ImprovedMoogFilter s_filters[kMaxVoices];
+	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+//	static ImprovedMoogFilter s_filters[kMaxVoices];
 		
 	/*
 		API + logic.
 	*/
 
-	SFM_INLINE unsigned AllocateNote(Voice *voices)
+	static unsigned AllocateNote(FM &state)
 	{
+		// See if any releasing voices are done
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			const bool enabled = voices[iVoice].m_enabled;
+			Voice &voice = state.m_voices[iVoice];
+			const bool enabled = voice.m_enabled;
+			if (true == enabled)
+			{
+				ADSR &envelope = s_ADSRs[iVoice];
+				if (true == envelope.IsReleased(s_sampleCount))
+				{
+					voice.m_enabled = false;
+					--state.m_active;
+				}
+			}
+		}
+
+		// Pick the first available slot
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		{
+			const bool enabled = state.m_voices[iVoice].m_enabled;
 			if (false == enabled)
 			{
 				return iVoice;
@@ -90,7 +104,7 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		const unsigned iVoice = AllocateNote(state.m_voices);
+		const unsigned iVoice = AllocateNote(state);
 		if (-1 == iVoice)
 			return -1;
 
@@ -118,6 +132,8 @@ namespace SFM
 
 	void ReleaseVoice(unsigned iVoice)
 	{
+		SFM_ASSERT(-1 != iVoice);
+
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
@@ -125,36 +141,15 @@ namespace SFM
 		s_ADSRs[iVoice].Stop(s_sampleCount);
 	}
 
-	static void UpdateVoices(FM &state)
-	{
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-		{
-			Voice &voice = state.m_voices[iVoice];
-			const bool enabled = voice.m_enabled;
-			if (true == enabled)
-			{
-				ADSR &envelope = s_ADSRs[iVoice];
-				if (true == envelope.IsReleased(s_sampleCount))
-				{
-					voice.m_enabled = false;
-					--state.m_active;
-				}
-			}
-		}
-	}
-
 	/*
 		Global update.
 	*/
 
+	// Get state from Oxygen 49 driver (lots of "bro science")
 	static void Update_Oxygen49()
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
-
-		UpdateVoices(state);
-		
-		// Get state from Oxygen 49 driver (lots of "bro science")
 
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 
@@ -170,7 +165,7 @@ namespace SFM
 	
 		state.m_ADSR.attack  = WinMidi_GetMasterAttack();
 		state.m_ADSR.decay   = WinMidi_GetMasterDecay();
-		state.m_ADSR.release = WinMidi_GetMasterRelease(); // Extra second to enable long pad-like sounds
+		state.m_ADSR.release = WinMidi_GetMasterRelease()*2.f; // Extra second to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
 		// Global filter wetness
@@ -197,23 +192,15 @@ namespace SFM
  	alignas(16) static float s_renderBuf[kRingBufferSize];
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	SFM_INLINE void CopyShadowToRenderState()
-	{
-		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
-		s_renderState = s_shadowState;
-	}
-
 	// Returns loudest signal (linear amplitude)
 	static float Render(FIFO &ringBuf)
 	{
-		CopyShadowToRenderState();
+		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
+		s_renderState = s_shadowState;
 
 		static float loudest = 0.f;
 
-		// Block?
 		const unsigned numSamples = ringBuf.GetFree();
-		if (numSamples <= 1)
-			return loudest;
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -326,9 +313,8 @@ bool Syntherklaas_Create()
 	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
 
-	//
+	// Test
 	// OscTest();
-	//
 
 	// Reset sample count
 	s_sampleCount = 0;
@@ -337,9 +323,10 @@ bool Syntherklaas_Create()
 	// Reset shadow FM state
 	s_shadowState.Reset(s_sampleCount);
 
-	// Reset global state
+	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 	{
+		s_ADSRs[iVoice].Reset();
 		s_filters[iVoice].Reset();
 	}
 
@@ -365,6 +352,9 @@ void Syntherklaas_Destroy()
 
 float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
+	// CrackleTest(time, 0.5f);
+
+	// Update for M-AUDIO Oxygen 49
 	Update_Oxygen49();
 
 	float loudest;

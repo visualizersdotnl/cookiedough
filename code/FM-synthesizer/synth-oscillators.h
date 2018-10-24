@@ -30,7 +30,8 @@ namespace SFM
 		kWhiteNoise,
 		kPinkNoise,
 		/* Wavetable */
-		kKick808
+		kKick808,
+		kSnare808
 	};
 
 	/*
@@ -135,7 +136,7 @@ namespace SFM
 		
 		// This is a bit of a judgement call but I prefer clearly hearing different noise over keeping
 		// the not-too-exact spectral properties
-		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.3f); 
+		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.314f); 
 
 		b6 = white*0.115926f;
 		
@@ -147,4 +148,5 @@ namespace SFM
 	*/
 
 	float oscKick808(float phase);
+	float oscSnare808(float phase);
 }

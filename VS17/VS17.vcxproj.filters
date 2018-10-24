@@ -50,11 +50,11 @@
     <Filter Include="/code\/FM-synthesizer\Driver%28s%29">
       <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\/wavetable">
-      <UniqueIdentifier>{cd216f43-3806-4a9c-8e8f-037820965844}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty">
       <UniqueIdentifier>{62651d01-6f2d-404d-92ac-dc89f8e19c73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\/3rdparty\/tinymt">
+      <UniqueIdentifier>{8913e425-5f41-4208-9318-c0f2461119ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -372,12 +372,11 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\wavetable\oscWav808.h">
-      <Filter>/code\/FM-synthesizer\/wavetable</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavKick808.h" />
+    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavSnare808.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

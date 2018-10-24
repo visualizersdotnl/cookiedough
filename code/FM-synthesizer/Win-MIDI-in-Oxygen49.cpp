@@ -143,11 +143,11 @@ namespace SFM
 						break;
 
 					case kPerc8:
-						s_waveform = kPinkNoise;
+						s_waveform = kSnare808;
 						break;
 
 					default:
-						s_waveform = kTriangle;
+						s_waveform = kSine;
 						break;
 					}
 
@@ -241,18 +241,14 @@ namespace SFM
 					{
 						const unsigned iVoice = TriggerNote(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						s_voices[controlIdx] = iVoice;
-						Log("NOTE_ON " + std::to_string(controlIdx));
-						Log("iVoice: " + std::to_string(iVoice));
 						break;
 					}
 
 				case NOTE_OFF:
 					{
-						Log("NOTE_OFF: " + std::to_string(controlIdx));
 						const unsigned iVoice = s_voices[controlIdx];
 						if (-1 != iVoice)
 						{
-							Log("RELEASED: " + std::to_string(iVoice));							
 							ReleaseVoice(iVoice);
 							s_voices[controlIdx] = -1;
 						}

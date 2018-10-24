@@ -5,6 +5,9 @@
 
 #pragma once
 
+//
+#include "3rdparty/ADSR.h"
+
 namespace SFM
 {
 	struct ADSR
@@ -16,27 +19,27 @@ namespace SFM
 			float decay;
 			float release;
 			float sustain;
-		} m_parameters;
+		};
 
-		unsigned m_sampleOffs;
-
-		unsigned m_attack;
-		unsigned m_decay;
-		unsigned m_release;
-		float m_sustain;
-
-		float m_curAmp;
-		bool m_isReleasing;
+		::ADSR m_voiceADSR;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
 		void Stop(unsigned sampleCount);
 
-		float Sample(unsigned sampleCount);
+		void Reset()
+		{
+			m_voiceADSR.reset();
+		}
+
+		float Sample(unsigned sampleCount)
+		{
+			return m_voiceADSR.process();
+		}
 		
 		// Used to release voice to the pool
-		SFM_INLINE bool IsReleased(unsigned sampleCount)
+		bool IsReleased(unsigned sampleCount)
 		{
-			return true == m_isReleasing && (m_sampleOffs+m_release < sampleCount);
+			return m_voiceADSR.getState() == ::ADSR::env_idle;
 		}
 	};
 }

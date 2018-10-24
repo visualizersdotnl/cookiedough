@@ -42,7 +42,7 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 64; 
+	const unsigned kMaxVoices = 16; 
 
 	// Max. voice amplitude 
 	const float kMaxVoicedB = -3.609121289; // 66% in dB (I've read Impulse Tracker did/does that)
@@ -57,7 +57,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Maximum master (over)drive
-	const float kMaxOverdrive = kGoldenRatio;
+	const float kMaxOverdrive = kGoldenRatio*2.f;
 }
 
 #include "synth-LUT.h"

@@ -1,12 +1,14 @@
 
 /*
-	Syntherklaas FM -- Test functions.
+	Syntherklaas FM -- Misc. test functions.
 */
 
 #include "synth-global.h"
 // #include "synth-test.h"
 #include "synth-oscillators.h"
 // #include "synth-util.h"
+#include "FM_BISON.h"
+#include "synth-ringbuffer.h"
 
 namespace SFM 
 {
@@ -28,6 +30,40 @@ namespace SFM
 
 		FILE *file = fopen("oscTest.raw", "wb");
 		fwrite(buffer, sizeof(float), kSampleRate*seconds, file);
+		fclose(file);
+
+	}
+	void CrackleTest(float time, float speed)
+	{
+		static unsigned iA = -1, iB = -1;
+		static bool triggerA = true, triggerB = false;
+
+		float second = fmodf(time, speed);
+
+		if (triggerA && second < speed*0.5f)
+		{
+			if (-1 != iB) ReleaseVoice(iB);
+
+			iA = TriggerNote(kSine, 440.f, 0.75f);
+
+			triggerA = false;
+			triggerB = true;
+		}
+		else if (triggerB && second >= speed*0.5f)
+		{
+			if (-1 != iA) ReleaseVoice(iA);
+
+			iB = TriggerNote(kSine, 220.f, 0.75f);
+
+			triggerB = false;
+			triggerA = true;
+		}
+	}
+
+	void DumpRingBuffer(const char *path, FIFO &ringBuf)
+	{
+		FILE *file = fopen(path, "wb");
+		fwrite(ringBuf.buffer, sizeof(float), kRingBufferSize, file);
 		fclose(file);
 	}
 }

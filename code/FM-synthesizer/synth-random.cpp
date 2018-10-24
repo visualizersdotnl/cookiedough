@@ -9,7 +9,7 @@
 #include "synth-random.h"
 
 /* Include 'Tiny Mersenne-Twister' 32-bit right here, since it's the only place we'll be using it. */
-// #include "tinymt/tinymt32.c"
+// #include "3rdparty/tinymt/tinymt32.c"
 
 //nclude "../random.h"
 

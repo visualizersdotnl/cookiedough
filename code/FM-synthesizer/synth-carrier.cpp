@@ -67,6 +67,10 @@ namespace SFM
 		case kKick808:
 			signal = oscKick808(phase+modulation);
 			break;
+
+		case kSnare808:
+			signal = oscSnare808(phase+modulation);
+			break;
 		}
 
 		return m_amplitude*signal;
