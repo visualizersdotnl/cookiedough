@@ -27,6 +27,9 @@ namespace SFM
 
 	struct FilterParameters
 	{
+		// [0..N]
+		float drive;
+	
 		// Normalized [0..1]
 		float cutoff;
 		float resonance;
@@ -80,7 +83,7 @@ namespace SFM
 		void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = 1.f-value;
+			m_envInfl = value;
 		}
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
@@ -88,7 +91,7 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
-				const float ADSR = lerpf<float>(1.f, envelope.SampleForFilter(sampleCount), m_envInfl);
+				const float ADSR = envelope.SampleForFilter(sampleCount);
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 				const float feedback = m_P3;
@@ -109,7 +112,8 @@ namespace SFM
 				m_P2 += (fast_tanhf(m_P1) - fast_tanhf(m_P2)) * m_cutoff;
 				m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
 
-				const float sample = lerpf<float>(dry, out, globalWetness*ADSR); 
+				const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
+				const float sample = lerpf<float>(dry, out, wetness); 
 				SFM_ASSERT(sample >= -1.f && sample <= 1.f);
 
 				pSamples[iSample] = sample;
@@ -175,7 +179,7 @@ namespace SFM
 		void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = 1.f-value;
+			m_envInfl = value;
 		}
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
@@ -185,7 +189,7 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
-				const float ADSR = lerpf<float>(1.f, envelope.SampleForFilter(sampleCount), m_envInfl);
+				const float ADSR = envelope.SampleForFilter(sampleCount);
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 				dV0 = -m_cutoff * (fast_tanhf((1.f*dry + m_resonance*m_V[3]) / (2.f*kVT)) + m_tV[0]);
@@ -208,7 +212,8 @@ namespace SFM
 				m_dV[3] = dV3;
 				m_tV[3] = fast_tanhf(m_V[3] / (2.f*kVT));
 
-				const float sample = lerpf<float>(dry, m_V[3], globalWetness*ADSR); 
+				const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
+				const float sample = lerpf<float>(dry, m_V[3], wetness); 
 				SFM_ASSERT(sample >= -1.f && sample <= 1.f);
 
 				pSamples[iSample] = sample;

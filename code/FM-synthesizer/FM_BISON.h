@@ -18,7 +18,6 @@
 
 	Working on:
 		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI_Smoothed
-		- Add filter drive as one last parameter?
 		- Finetune ADSR(s)
 		- VST preparation
 		- Turn structures into real classes piece by piece

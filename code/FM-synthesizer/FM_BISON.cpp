@@ -55,8 +55,8 @@ namespace SFM
 	*/
 
 	static ADSR s_ADSRs[kMaxVoices];
-	static MicrotrackerMoogFilter s_filters[kMaxVoices]; // I really seem to prefer this one, little more subtle, but let's make it an option
-//	static ImprovedMoogFilter s_filters[kMaxVoices];
+//	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+	static ImprovedMoogFilter s_filters[kMaxVoices];
 		
 	/*
 		API + logic.
