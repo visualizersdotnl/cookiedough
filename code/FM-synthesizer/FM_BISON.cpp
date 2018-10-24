@@ -36,10 +36,11 @@ namespace SFM
 	/*
 		Global state.
 		
-		The (shadow) state may be updated after acquiring the lock.
+		The shadow & runtime state may be updated after acquiring the lock.
+		This means pretty much every API call and Render().
 
-		This creates a tiny additional lag between input and output, but an earlier commercial product has shown this
-		to be negligible so long as the update buffer's size isn't too large.
+		This creates a tiny additional lag between input and output, but an earlier commercial product has 
+		shown this not to be noticeable.
 	*/
 
 	static std::mutex s_stateMutex;
@@ -50,14 +51,11 @@ namespace SFM
 	/*
 		Runtime state.
 
-		These are not part of the state object since they alter their state
-		whilst rendering. 
-		
-		** They must however also be guarded by the state mutex. **
+		These are not part of the state object since they alter their state whilst rendering. 
 	*/
 
 	static ADSR s_ADSRs[kMaxVoices];
-	static MicrotrackerMoogFilter s_filters[kMaxVoices];
+	static MicrotrackerMoogFilter s_filters[kMaxVoices]; // I really seem to prefer this one, little more subtle, but let's make it an option
 //	static ImprovedMoogFilter s_filters[kMaxVoices];
 		
 	/*
@@ -145,7 +143,7 @@ namespace SFM
 		Global update.
 	*/
 
-	// Get state from Oxygen 49 driver (lots of "bro science")
+	// Get state from Oxygen 49 driver
 	static void Update_Oxygen49()
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
@@ -244,7 +242,6 @@ namespace SFM
 			}
 
 			// Mix voices
-			loudest = 0.f;
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				float mix = 0.f;

@@ -23,16 +23,27 @@ namespace SFM
 		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f - velocity*0.6f);
 		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f - velocity*0.6f);
 
+		// FIXME: do I want to let velocity meddle with this?
+		m_filterADSR.setTargetRatioA(0.314f);
+		m_filterADSR.setTargetRatioDR(0.0001f*kGoldenRatio);
+
 		m_voiceADSR.setAttackRate(attack);
 		m_voiceADSR.setDecayRate(decay);
 		m_voiceADSR.setReleaseRate(release);
 		m_voiceADSR.setSustainLevel(sustain);
 
+		m_filterADSR.setAttackRate(attack);
+		m_filterADSR.setDecayRate(decay);
+		m_filterADSR.setReleaseRate(release);
+		m_filterADSR.setSustainLevel(sustain);
+
 		m_voiceADSR.gate(true);
+		m_filterADSR.gate(true);
 	}
 
 	void ADSR::Stop(unsigned sampleCount)
 	{
 		m_voiceADSR.gate(false);
+		m_filterADSR.gate(false);
 	}
 }

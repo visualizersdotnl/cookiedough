@@ -5,7 +5,8 @@
 
 #pragma once
 
-//
+// Very nice implementation by Nigel Redmon (earlevel.com); using this for convenience and the fact that 
+// with his experience it's modeled to behave like composers are likely used to
 #include "3rdparty/ADSR.h"
 
 namespace SFM
@@ -22,6 +23,7 @@ namespace SFM
 		};
 
 		::ADSR m_voiceADSR;
+		::ADSR m_filterADSR;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
 		void Stop(unsigned sampleCount);
@@ -29,11 +31,17 @@ namespace SFM
 		void Reset()
 		{
 			m_voiceADSR.reset();
+			m_filterADSR.reset();
 		}
 
-		float Sample(unsigned sampleCount)
+		float SampleForVoice(unsigned sampleCount)
 		{
 			return m_voiceADSR.process();
+		}
+
+		float SampleForFilter(unsigned sampleCount)
+		{
+			return m_filterADSR.process();
 		}
 		
 		// Used to release voice to the pool

@@ -80,7 +80,7 @@ namespace SFM
 		void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = value;
+			m_envInfl = 1.f-value;
 		}
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
@@ -88,7 +88,7 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
-				const float ADSR = 1.f; // lerpf<float>(1.f, envelope.Sample(sampleCount), m_envInfl);
+				const float ADSR = lerpf<float>(1.f, envelope.SampleForFilter(sampleCount), m_envInfl);
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 				const float feedback = m_P3;
@@ -175,7 +175,7 @@ namespace SFM
 		void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = value;
+			m_envInfl = 1.f-value;
 		}
 
 		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
@@ -185,28 +185,28 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const float dry = pSamples[iSample];
-				const float ADSR = 1.f; // lerpf<float>(1.f, envelope.Sample(sampleCount), m_envInfl);
+				const float ADSR = lerpf<float>(1.f, envelope.SampleForFilter(sampleCount), m_envInfl);
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
-				dV0 = -m_cutoff * (tanhf((1.f*dry + m_resonance*m_V[3]) / (2.f*kVT)) + m_tV[0]);
+				dV0 = -m_cutoff * (fast_tanhf((1.f*dry + m_resonance*m_V[3]) / (2.f*kVT)) + m_tV[0]);
 				m_V[0] += (dV0 + m_dV[0]) / (2.f*kSampleRate);
 				m_dV[0] = dV0;
-				m_tV[0] = tanhf(m_V[0] / (2.f*kVT));
+				m_tV[0] = fast_tanhf(m_V[0] / (2.f*kVT));
 			
 				dV1 = m_cutoff * (m_tV[0] - m_tV[1]);
 				m_V[1] += (dV1 + m_dV[1]) / (2.f*kSampleRate);
 				m_dV[1] = dV1;
-				m_tV[1] = tanhf(m_V[1] / (2.f*kVT));
+				m_tV[1] = fast_tanhf(m_V[1] / (2.f*kVT));
 			
 				dV2 = m_cutoff * (m_tV[1] - m_tV[2]);
 				m_V[2] += (dV2 + m_dV[2]) / (2.f*kSampleRate);
 				m_dV[2] = dV2;
-				m_tV[2] = tanhf(m_V[2] / (2.f*kVT));
+				m_tV[2] = fast_tanhf(m_V[2] / (2.f*kVT));
 			
 				dV3 = m_cutoff * (m_tV[2] - m_tV[3]);
 				m_V[3] += (dV3 + m_dV[3]) / (2.f*kSampleRate);
 				m_dV[3] = dV3;
-				m_tV[3] = tanhf(m_V[3] / (2.f*kVT));
+				m_tV[3] = fast_tanhf(m_V[3] / (2.f*kVT));
 
 				const float sample = lerpf<float>(dry, m_V[3], globalWetness*ADSR); 
 				SFM_ASSERT(sample >= -1.f && sample <= 1.f);

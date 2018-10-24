@@ -9,33 +9,33 @@
 		- ADSR implementation by Nigel Redmon of earlevel.com
 
 	Notes:
-
-		- The code style started out as semi-C, intending a hardware target, but though I try to stick to that particular style since
-		  it's there I'm realizing I can just as well use more C++ since the target is never going to be very archaic. So if it comes
-		  across as inconsistent here and there: that's because it is.
+		- The code style started out as semi-C, intending a hardware target, currently in the process of cleaning it up a bit
+		  and upgrading to somewhat proper C++.
+		- You'll run into various numbers and seemingly weird calculations: it's called "bro science".
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
 	Working on:
-		- The worst crackle and pop is gone but I'm not convinced yet
-		- Write wrapper class for wavetable oscillators
-		- Feed envelope to filters, adjust the second one to use fast_tanhf()
+		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI_Smoothed
+		- Add filter drive as one last parameter?
 		- Finetune ADSR(s)
 		- VST preparation
+		- Turn structures into real classes piece by piece
+		- Expose end filter selection as a parameter
+		- The worst crackle and pop is gone but I'm not convinced yet
 
 	MIDI:
-		- "Linear Smoothed Value" (see https://github.com/WeAreROLI/JUCE/tree/master/modules/juce_audio_basics/effects) for MIDI_Smoothed
+		- ...
 
 	Sound related: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Implement pitch bend
-		- Improve oscillators (blend)
+		- Improve oscillators (blend, but only where it looks necessary)
 		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 		- See about patches & more algorithms (careful)
 
 	Plumbing:
-		- Turn structures into real classes
 		- Move MIDI calls out of FM. BISON, expose parameters through an object (part of preparation for VST)
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
 		- Move all math needed from Std3DMath to synth-math.h

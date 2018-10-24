@@ -22,7 +22,7 @@ namespace SFM
 		float Sample(unsigned sampleCount, float modBrightness, ADSR &envelope)
 		{
 			const float modulation = m_modulator.Sample(sampleCount, modBrightness);
-			const float ADSR = envelope.Sample(sampleCount);
+			const float ADSR = envelope.SampleForVoice(sampleCount);
 			const float sample = m_carrier.Sample(sampleCount, modulation);
 			return ADSR*sample;
 		}
