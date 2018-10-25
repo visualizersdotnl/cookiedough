@@ -19,6 +19,7 @@
 #include "synth-filter.h"
 #include "synth-delayline.h"
 #include "synth-math.h"
+#include "synth-LUT.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -116,11 +117,9 @@ namespace SFM
 		Voice &voice = state.m_voices[iVoice];
 
 		// Initialize carrier & modulator	
-		const float ratio = state.m_modRatioC/state.m_modRatioM;
-		const float carrierFreq = frequency;
 		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
-		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, carrierFreq);
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, carrierFreq*ratio, 0.f, &state.m_indexLFOParams);
+		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, frequency*state.m_modRatioC);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*state.m_modRatioM, 0.f, &state.m_indexLFOParams);
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
@@ -161,9 +160,10 @@ namespace SFM
 		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
 		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
 
-		// Ratios are always at least 1
-		state.m_modRatioC = 1.f+floorf(WinMidi_GetMasterModulationRatioC()*14.f);
-		state.m_modRatioM = 1.f+floorf(WinMidi_GetMasterModulationRatioM()*14.f);
+		// Get ratio from precalculated table (see synth-LUT.cpp)
+		const unsigned tabIndex = (unsigned) (WinMidi_GetMasterModulationRatio()*(kCarrierModTabSize-1));
+		state.m_modRatioC = (float) g_CM_table_15NF[tabIndex][0];
+		state.m_modRatioM = (float) g_CM_table_15NF[tabIndex][1];
 
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
 		state.m_modBrightness = WinMidi_GetMasterModBrightness();
@@ -184,7 +184,7 @@ namespace SFM
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
-		state.m_feedbackPhaser = WinMidi_GetFeedbackPhaser() * -1.f;
+		state.m_feedbackPhaser = -1.f + WinMidi_GetFeedbackPhaser()*2.f;
 
 		// Modulation index envelope
 		const float shape = WinMidi_GetMasterModLFOShape();

@@ -36,8 +36,8 @@ namespace SFM
 
 	// Master modulation main
 	float WinMidi_GetMasterModulationIndex();
-	float WinMidi_GetMasterModulationRatioC();
-	float WinMidi_GetMasterModulationRatioM();
+	float WinMidi_GetMasterModulationRatio();
+	float WinMidi_GetMasterModulationUnused();
 
 	// Master modulation LFO
 	float WinMidi_GetMasterModLFOShape();

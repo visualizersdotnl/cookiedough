@@ -13,7 +13,7 @@
 #include "../main.h"
 
 // Alias with Bevacqua's existing mechanisms (FIXME: adapt target platform's)
-#define SFM_INLINE VIZ_INLINE
+#define SFM_INLINE __inline
 #define SFM_ASSERT VIZ_ASSERT
 
 #include "synth-log.h"

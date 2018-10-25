@@ -62,13 +62,14 @@ namespace SFM
 	const unsigned kFaderD = 21; // C2
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
-	const unsigned kFaderMasterModRatioC = 70;     // C8
-	const unsigned kFaderMasterModRatioM = 63;     // C9
+	const unsigned kFaderMasterModRatio = 70;      // C8
+	const unsigned kFaderPhaser = 63;              // C9
 	const unsigned kFaderMasterModLFOShape = 25;   // C5
 	const unsigned kFaderMasterModLFOFreq = 73;    // C6
 	const unsigned kFaderMasterModBrightness = 74; // C7
 	static MIDI_Smoothed s_A, s_D, s_S, s_R;
-	static MIDI_Smoothed s_masterModRatioC, s_masterModRatioM;
+	static MIDI_Smoothed s_masterModRatio;
+	static MIDI_Smoothed s_phaser;
 	static MIDI_Smoothed s_masterModLFOShape, s_masterModLFOFreq;
 	static MIDI_Smoothed s_masterModBrightness;
 
@@ -214,12 +215,12 @@ namespace SFM
 							s_R.Set(controlVal);
 							break;
 
-						case kFaderMasterModRatioC:
-							s_masterModRatioC.Set(controlVal);
+						case kFaderMasterModRatio:
+							s_masterModRatio.Set(controlVal);
 							break;
 
-						case kFaderMasterModRatioM:
-							s_masterModRatioM.Set(controlVal);
+						case kFaderPhaser:
+							s_phaser.Set(controlVal);
 							break;
 
 						case kPotMasterModLFOCurve:
@@ -248,7 +249,7 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-						s_normalizedPitchBend = lowpassf(s_normalizedPitchBend, bend/16383.f, 1.33f);
+						s_normalizedPitchBend = bend/16383.f, 1.33f;
 						break;
 					}
 
@@ -370,15 +371,14 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
 	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
-	float WinMidi_GetFeedbackPhaser()   { return s_normalizedPitchBend;   }
+	float WinMidi_GetFeedbackPhaser()   { return s_phaser.Get();          }
 
 	// Master drive
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
 
 	// Master modulation main
 	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get();  }
-	float WinMidi_GetMasterModulationRatioC() { return s_masterModRatioC.Get(); }
-	float WinMidi_GetMasterModulationRatioM() { return s_masterModRatioM.Get(); }
+	float WinMidi_GetMasterModulationRatio()  { return s_masterModRatio.Get();  }
 
 	// Master modulation LFO
 	float WinMidi_GetMasterModLFOShape()     { return s_masterModLFOShape.Get();   }

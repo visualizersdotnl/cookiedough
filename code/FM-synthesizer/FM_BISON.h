@@ -12,12 +12,14 @@
 		- The code style started out as semi-C, intending a hardware target, currently in the process of cleaning it up a bit
 		  and upgrading to somewhat proper C++.
 		- You'll run into various numbers and seemingly weird calculations: it's called "bro science".
+		- On FM ratios: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
+
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
 	Priority:
-		- Think of dedicating 1 fader to the C:M ratio which indexes a table of rational ratios!
+		- Pitch bend?
 		- Prepare for VST & finish documentation.
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
