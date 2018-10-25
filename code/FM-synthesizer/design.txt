@@ -22,3 +22,5 @@ Features for 0.3:
 - Voice stealing.
 - VST-ready.
 - User manual (interface documentation).
+- Figure out real-time and per-voice parameters.
+ 

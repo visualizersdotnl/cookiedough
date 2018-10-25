@@ -16,30 +16,30 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Working on:
-		- Finish feedback effect (see synth-delayline.h & FM_BISON.cpp)
-		- VST preparation
+	Priority:
+		- Finish feedback effect (using pitch bend wheel for a little flanger; or just pitch bend?)
+		- Prepare for VST & finish documentation.
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
 		- The worst crackle and pop is gone but I'm not convinced yet
+		  + https://github.com/abaga129/lib_dsp/blob/master/oscillators/GordonSmithOscillator.cpp
 
-	MIDI:
-		- Smooth MIDI pots
+	MIDI issues:
+		- Smooth MIDI potmeters
 
-	Sound related: 
+	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Sample & hold noise
-		- Implement pitch bend
-		- Improve oscillators (blend, but only where it looks necessary)
-		- Relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
+		- Optional: sample & hold noise
+		- After VST: improve oscillators (blend, but only where it looks necessary)
+		- After VST: relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
 
 	Plumbing:
 		- Move MIDI calls out of FM. BISON, expose parameters through an object (part of preparation for VST)
 		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
-		- Move all math needed from Std3DMath to synth-math.h
+		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern:
-		- Find hotspots (plenty!) and optimize
+		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
 		- Eliminate floating point values where they do not belong and kill NAN-style bugs (major nuisance, causes crackle!)
 		- Reinstate OSX port for on-the-go programming
 

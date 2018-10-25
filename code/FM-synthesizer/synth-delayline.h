@@ -41,9 +41,7 @@ namespace SFM
 			const unsigned index = m_readIdx++;
 			return m_buffer[index % m_length];
 		}
-					
-//		Modulator m_modulator;
-
+			
 	private:
 		unsigned m_readIdx, m_writeIdx;
 		unsigned m_length;

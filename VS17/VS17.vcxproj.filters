@@ -56,6 +56,9 @@
     <Filter Include="/code\/FM-synthesizer\/3rdparty\/tinymt">
       <UniqueIdentifier>{8913e425-5f41-4208-9318-c0f2461119ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer\Documentation">
+      <UniqueIdentifier>{3082668a-436a-4913-a835-221db8cb1532}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -419,7 +422,10 @@
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\code\FM-synthesizer\design.txt">
-      <Filter>/code\/FM-synthesizer</Filter>
+      <Filter>/code\/FM-synthesizer\Documentation</Filter>
+    </Text>
+    <Text Include="..\code\FM-synthesizer\manual.txt">
+      <Filter>/code\/FM-synthesizer\Documentation</Filter>
     </Text>
   </ItemGroup>
 </Project>

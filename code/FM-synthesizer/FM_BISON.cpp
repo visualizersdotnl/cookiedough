@@ -268,7 +268,7 @@ namespace SFM
 					mix = fast_tanhf(mix + sample);
 				}
 
-				// Apply delay (FIXME: expand effect, add a little flanger)
+				// Apply delay
 				const float delayed = s_delayLine.Read()*0.66f;
 				s_delayLine.Write(mix, state.m_feedback);
 				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);

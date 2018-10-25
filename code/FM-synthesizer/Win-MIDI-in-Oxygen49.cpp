@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-#define DUMP_MIDI_EVENTS
+// #define DUMP_MIDI_EVENTS
 
 namespace SFM
 {

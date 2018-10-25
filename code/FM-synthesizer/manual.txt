@@ -1,0 +1,47 @@
+
+
+FM. BISON by syntherklaas.org :: Dutch street synthesis, a subsidiary of visualizers.nl
+
+Hybrid FM synthesis software/firmware.
+Revision: 0.3
+
+[ Introduction ]
+
+FM. BISON offers RISC-style complexity without comprimising itself as a bonafide instrument.
+Much like M. BISON (Street Fighter 2, Capcom) it's flashy yet predictable. These goals make
+for an instrument that is versatile and powerful but won't give you headaches as so many VST
+plugins do and a lot of hardware synthesizers alike.
+
+During the design phase I used an M-AUDIO Oxygen 49 keyboard and promised to fit the entire
+gamut of possibilities on it. Did I succeed? Give or take 1-2 boolean settings: yes.
+
+[ What is it not? ]
+
+Native Instruments FM8, a Yamaha DX7 or any other instrument that offers you, in all fairness,
+more flexibility. But at such a price that it seldom saw proper use; run through the DX7 patches
+and you've got your yearly dose of 1980s pop music.
+
+[ Features ]
+
+* 32 note polyphony (might be a bit less on limited embedded platforms).
+* 8 different carrier oscillators, 2 of them dedicated to Roland TR-808 style percussion.
+* Fully fledged master ADSR envelope.
+* 2 serial LFOs, fully controllable, in charge of frequency modulation.
+* 2 different MOOG ladder filters sporting cutoff, resonance, wetness and a wetness envelope tied to your voices.
+* Frequency modulation shape & brightness.
+* Powerful reverb effect with optional flanger modulation.
+* Master (over)drive.
+* Controls tailored to allow for a minimum of noise, thereby allowing confident use of all features.
+* Written in fairly plain C++, easily portable to embedded platforms.
+* Last but not least: free of copyrighted or patented algorithms.
+
+This is it, for now. 
+One thousand more features are possible; the art is to know where draw the line.
+
+[ Interface ]
+
+...
+
+
+
+ 
