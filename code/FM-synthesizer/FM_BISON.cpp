@@ -59,7 +59,7 @@ namespace SFM
 	static ADSR s_ADSRs[kMaxVoices];
 //	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 	static ImprovedMoogFilter s_filters[kMaxVoices];
-	static DelayLine s_delayLine;
+	static DelayMatrix s_delayMatrix(kSampleRate/8);
 		
 	/*
 		API + logic.
@@ -269,8 +269,8 @@ namespace SFM
 				}
 
 				// Apply delay
-				const float delayed = s_delayLine.Read()*0.66f;
-				s_delayLine.Write(mix, state.m_feedback);
+				const float delayed = s_delayMatrix.Read(0.f)*0.66f;
+				s_delayMatrix.Write(mix, state.m_feedback);
 				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);
 
 				ringBuf.Write(mix);
