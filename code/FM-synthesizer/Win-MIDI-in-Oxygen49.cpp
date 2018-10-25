@@ -84,6 +84,9 @@ namespace SFM
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
 
+	// Normalized pitch bend [-1..1]
+	float s_normalizedPitchBend = 0.5f;
+
 	static unsigned s_voices[127];
 
 	static void WinMidiProc(
@@ -244,7 +247,8 @@ namespace SFM
 		
 				case PITCH_BEND:
 					{
-						unsigned bend = (controlVal<<7)|controlIdx;
+						const unsigned bend = (controlVal<<7)|controlIdx;
+						s_normalizedPitchBend = bend/16383.f; // FIXME: smooth!
 						break;
 					}
 
@@ -364,8 +368,9 @@ namespace SFM
 	float WinMidi_GetFilterEnvInfl()   { return s_filterEnvInfl.Get();  }
 
 	// Feedback
-	float WinMidi_GetFeedback()         { return s_feedback.Get();          }
+	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
 	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
+	float WinMidi_GetFeedbackPhaser()   { return s_normalizedPitchBend;   }
 
 	// Master drive
 	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }

@@ -42,6 +42,7 @@ namespace SFM
 		// Feedback (delay) effect parameters
 		float m_feedback;
 		float m_feedbackWetness;
+		float m_feedbackPhaser;
 
 		// Master FM index LFO parameters
 		IndexEnvelope::Parameters m_indexLFOParams;
@@ -81,6 +82,7 @@ namespace SFM
 			// Default feedback
 			m_feedback = 0.f;
 			m_feedbackWetness = 0.f;
+			m_feedbackPhaser = 0.5f;
 
 			// Default FM index modulation
 			m_indexLFOParams.curve = 0.f;

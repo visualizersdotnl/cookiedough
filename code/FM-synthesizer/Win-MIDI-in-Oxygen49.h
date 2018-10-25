@@ -29,6 +29,7 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback();
 	float WinMidi_GetFeedbackWetness();
+	float WinMidi_GetFeedbackPhaser();
 
 	// Master drive
 	float WinMidi_GetMasterDrive();

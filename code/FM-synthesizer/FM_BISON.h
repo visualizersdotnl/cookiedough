@@ -17,7 +17,7 @@
 		- Not much, play a little, don't push yourself
 
 	Priority:
-		- Finish feedback effect (using pitch bend wheel for a little flanger; or just pitch bend?)
+		- Refine phaser control
 		- Prepare for VST & finish documentation.
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
@@ -25,7 +25,7 @@
 		  + https://github.com/abaga129/lib_dsp/blob/master/oscillators/GordonSmithOscillator.cpp
 
 	MIDI issues:
-		- Smooth MIDI potmeters
+		- Smooth MIDI potmeters & wheels!
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)

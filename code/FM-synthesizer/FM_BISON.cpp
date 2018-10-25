@@ -59,7 +59,8 @@ namespace SFM
 	static ADSR s_ADSRs[kMaxVoices];
 //	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 	static ImprovedMoogFilter s_filters[kMaxVoices];
-	static DelayMatrix s_delayMatrix(kSampleRate/8);
+	static DelayMatrix s_delayMatrix(kSampleRate/6);
+	static Modulator s_delayPhaser;
 		
 	/*
 		API + logic.
@@ -183,6 +184,7 @@ namespace SFM
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
+		state.m_feedbackPhaser = WinMidi_GetFeedbackPhaser() * -1.f;
 
 		// Modulation index envelope
 		const float shape = WinMidi_GetMasterModLFOShape();
@@ -209,8 +211,8 @@ namespace SFM
 		static float loudest = 0.f;
 
 		const unsigned numSamples = ringBuf.GetFree();
-//		if (numSamples < kRingBufferSize>>4)
-//			return loudest;
+		if (numSamples < 1)
+			return loudest;
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -269,7 +271,10 @@ namespace SFM
 				}
 
 				// Apply delay
-				const float delayed = s_delayMatrix.Read(0.f)*0.66f;
+				// The phaser position can best by controlled externally
+//				const float phaser = s_delayPhaser.SimpleSample(sampleCount);
+				const float phaser = state.m_feedbackPhaser;
+				const float delayed = s_delayMatrix.Read(phaser)*0.66f;
 				s_delayMatrix.Write(mix, state.m_feedback);
 				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);
 
@@ -348,6 +353,8 @@ bool Syntherklaas_Create()
 		s_ADSRs[iVoice].Reset();
 		s_filters[iVoice].Reset();
 	}
+
+	s_delayPhaser.Initialize(s_sampleCount, 1.f, 0.5f, kOscPeriod/4.f, nullptr);
 
 	// Test: Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
