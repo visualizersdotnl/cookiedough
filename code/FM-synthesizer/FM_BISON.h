@@ -43,7 +43,6 @@
 	Of later concern:
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
 		- Eliminate floating point values where they do not belong and kill NAN-style bugs (major nuisance, causes crackle!)
-		- Reinstate OSX port for on-the-go programming
 
 	Bugs:
 		- Sometimes the digital saw oscillator cocks up (NAN)
