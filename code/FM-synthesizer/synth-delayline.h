@@ -32,7 +32,7 @@ namespace SFM
 		SFM_INLINE void Write(float sample, float feedback)
 		{
 			const unsigned index = m_writeIdx++ % m_length;
-			m_buffer[index] = m_buffer[index]*feedback + sample;
+			m_buffer[index] = fast_tanhf(m_buffer[index]*feedback + sample);
 		}
 
 		SFM_INLINE float Read()

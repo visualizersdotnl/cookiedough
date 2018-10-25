@@ -68,7 +68,7 @@ namespace SFM
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		return 40; // FIXME (documented)
+		return 32; // FIXME (documented)
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 

@@ -18,9 +18,13 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Priority:
+	Questions:
+		- That curve pot doesn't sit right with me
+		- Real filter drive?
 		- Pitch bend?
-		- Prepare for VST & finish documentation.
+
+	Priority:
+		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
 		- The worst crackle and pop is gone but I'm not convinced yet
