@@ -59,7 +59,7 @@ namespace SFM
 	static ADSR s_ADSRs[kMaxVoices];
 //	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 	static ImprovedMoogFilter s_filters[kMaxVoices];
-	static DelayMatrix s_delayMatrix(kSampleRate/6);
+	static DelayMatrix s_delayMatrix(kSampleRate/8); // Multiples of 4 or bust
 	static Modulator s_delayPhaser;
 		
 	/*

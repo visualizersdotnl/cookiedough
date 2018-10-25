@@ -53,9 +53,9 @@ namespace SFM
 	{
 	public:
 		DelayMatrix(unsigned lengthMid) :
-			m_lineHi(lengthMid*2)
+			m_lineHi(lengthMid*4)
 ,			m_lineMid(lengthMid)
-,			m_lineLo(lengthMid/2)
+,			m_lineLo(lengthMid/4)
 	{
 	}
 
@@ -80,7 +80,7 @@ namespace SFM
 		else
 		{
 			const float low = m_lineLo.Read();
-			return lerpf<float>(low, middle, phase);
+			return lerpf<float>(middle, low, phase);
 		}
 	}
 

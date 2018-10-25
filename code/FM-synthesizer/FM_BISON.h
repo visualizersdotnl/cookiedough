@@ -17,7 +17,7 @@
 		- Not much, play a little, don't push yourself
 
 	Priority:
-		- Refine phaser control
+		- Think of dedicating 1 fader to the C:M ratio which indexes a table of rational ratios!
 		- Prepare for VST & finish documentation.
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter

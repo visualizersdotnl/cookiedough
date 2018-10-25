@@ -248,7 +248,7 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-						s_normalizedPitchBend = bend/16383.f; // FIXME: smooth!
+						s_normalizedPitchBend = lowpassf(s_normalizedPitchBend, bend/16383.f, 1.33f);
 						break;
 					}
 
