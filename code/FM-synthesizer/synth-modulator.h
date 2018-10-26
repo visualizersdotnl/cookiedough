@@ -26,6 +26,7 @@ namespace SFM
 
 	struct Modulator
 	{
+		float m_frequency;
 		float m_index;
 		float m_pitch;
 		unsigned m_sampleOffs;

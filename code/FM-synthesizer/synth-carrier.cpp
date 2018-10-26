@@ -14,8 +14,8 @@ namespace SFM
 	{
 		m_form = form;
 		m_amplitude = amplitude;
+		m_frequency = frequency;
 		m_pitch = CalculateOscPitch(frequency);
-		m_angularPitch = CalculateAngularPitch(frequency);
 		m_sampleOffs = sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	}
@@ -56,6 +56,7 @@ namespace SFM
 			signal = oscTriangle(phase+modulation);
 			break;
 
+/*
 		case kWhiteNoise:
 			signal = oscWhiteNoise(phase);
 			break;
@@ -63,6 +64,7 @@ namespace SFM
 		case kPinkNoise:
 			signal = oscPinkNoise(phase);
 			break;
+*/
 
 		case kKick808:
 			signal = oscKick808(phase+modulation);
@@ -73,6 +75,9 @@ namespace SFM
 			break;
 		}
 
-		return m_amplitude*signal;
+		const float wave = m_amplitude*signal;
+		SFM_ASSERT(wave >= -1.f && wave <= 1.f);
+
+		return wave;
 	}
 }

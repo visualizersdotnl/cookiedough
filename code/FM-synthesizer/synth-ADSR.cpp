@@ -14,14 +14,14 @@ namespace SFM
 	{
 //		m_voiceADSR.reset();
 
-		const float attack  = 1.f +   truncf(parameters.attack*kSampleRate);
-		const float decay   = 1.f +   truncf(parameters.decay*kSampleRate);
-		const float release = 128.f + truncf(parameters.release*kSampleRate);
+		const float attack  = 1.f + truncf(parameters.attack*kSampleRate);
+		const float decay   = 1.f + truncf(parameters.decay*kSampleRate);
+		const float release = std::max<float>(kSampleRate/100.f /* 10ms. min */, truncf(parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
 		// For now this sounds fine
-		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f + velocity*0.66f);
-		m_voiceADSR.setTargetRatioDR(kGoldenRatio + velocity*0.33f);
+		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f  + velocity*0.624f);
+		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
 
 		// FIXME: do I want to let velocity meddle with this?
 		m_filterADSR.setTargetRatioA(0.314f + velocity*0.066f);

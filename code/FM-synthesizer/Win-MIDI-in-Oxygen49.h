@@ -31,13 +31,14 @@ namespace SFM
 	float WinMidi_GetFeedbackWetness();
 	float WinMidi_GetFeedbackPhaser();
 
-	// Master drive
+	// Master drive & pitch bend
 	float WinMidi_GetMasterDrive();
+	float WinMidi_GetPitchBendRaw(); // [-1..1]
+	float WinMidi_GetPitchBend(); // [0..1]
 
 	// Master modulation main
 	float WinMidi_GetMasterModulationIndex();
 	float WinMidi_GetMasterModulationRatio();
-	float WinMidi_GetMasterModulationUnused();
 
 	// Master modulation LFO
 	float WinMidi_GetMasterModLFOShape();

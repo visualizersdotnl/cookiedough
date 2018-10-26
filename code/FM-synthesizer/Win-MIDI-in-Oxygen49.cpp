@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -67,11 +67,11 @@ namespace SFM
 	const unsigned kFaderMasterModLFOShape = 25;   // C5
 	const unsigned kFaderMasterModLFOFreq = 73;    // C6
 	const unsigned kFaderMasterModBrightness = 74; // C7
-	static MIDI_Smoothed s_A, s_D, s_S, s_R;
-	static MIDI_Smoothed s_masterModRatio;
-	static MIDI_Smoothed s_phaser;
-	static MIDI_Smoothed s_masterModLFOShape, s_masterModLFOFreq;
-	static MIDI_Smoothed s_masterModBrightness;
+	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
+	static float s_masterModRatio = 0.f;
+	static float s_phaser = 0.f;
+	static float s_masterModLFOShape = 0.f, s_masterModLFOFreq = 0.f;
+	static float s_masterModBrightness = 0.f;
 
 	static Waveform s_waveform = kSine;
 
@@ -85,8 +85,9 @@ namespace SFM
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
 
-	// Normalized pitch bend [-1..1]
-	float s_normalizedPitchBend = 0.5f;
+	// Pitch bend
+	static MIDI_Smoothed s_pitchBendS(0.5f, 16383); // 14-bit signed, wheel rests in the middle
+	static float s_pitchBend;
 
 	static unsigned s_voices[127];
 
@@ -113,7 +114,7 @@ namespace SFM
 #ifdef DUMP_MIDI_EVENTS
 				// Dumps incoming events, very useful
 				static char buffer[128];
-				sprintf(buffer, "MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
+				sprintf(buffer, "Oxy49 MIDI input: Type %u Chan %u Idx %u Val %u Time %u", eventType, channel, controlIdx, controlVal, dwParam2);
 				Log(buffer);
 #endif
 
@@ -200,27 +201,27 @@ namespace SFM
 							break;
 
 						case kFaderA:
-							s_A.Set(controlVal);
+							s_A = controlVal/127.f;
 							break;
 
 						case kFaderD:
-							s_D.Set(controlVal);
+							s_D= controlVal/127.f;
 							break;
 
 						case kFaderS:
-							s_S.Set(controlVal);
+							s_S= controlVal/127.f;
 							break;
 
 						case kFaderR:
-							s_R.Set(controlVal);
+							s_R = controlVal/127.f;
 							break;
 
 						case kFaderMasterModRatio:
-							s_masterModRatio.Set(controlVal);
+							s_masterModRatio = controlVal/127.f;
 							break;
 
 						case kFaderPhaser:
-							s_phaser.Set(controlVal);
+							s_phaser = controlVal/127.f;
 							break;
 
 						case kPotMasterModLFOCurve:
@@ -228,15 +229,15 @@ namespace SFM
 							break;
 
 						case kFaderMasterModLFOShape:
-							s_masterModLFOShape.Set(controlVal);
+							s_masterModLFOShape = controlVal/127.f;
 							break;
 
 						case kFaderMasterModLFOFreq:
-							s_masterModLFOFreq.Set(controlVal);
+							s_masterModLFOFreq = controlVal/127.f;
 							break;
 
 						case kFaderMasterModBrightness:
-							s_masterModBrightness.Set(controlVal);
+							s_masterModBrightness = controlVal/127.f;
 							break;
 
 						default:
@@ -249,14 +250,18 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-						s_normalizedPitchBend = bend/16383.f, 1.33f;
+						s_pitchBendS.Set(bend);
+						s_pitchBend = float(bend)/8192.f - 1.f;
 						break;
 					}
 
 				case NOTE_ON:
 					{
 						const unsigned iVoice = TriggerVoice(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
-						s_voices[controlIdx] = iVoice;
+						
+						if (iVoice != -1)
+							s_voices[controlIdx] = iVoice;
+						
 						break;
 					}
 
@@ -278,7 +283,7 @@ namespace SFM
 
 		case MIM_LONGDATA:
 			// FIXE: implement!
-			Log("MIDI: implement MIM_LONGDATA!");
+			Log("Oxy49 MIDI: implement MIM_LONGDATA!");
 			break;
 
 		// Handled
@@ -314,7 +319,7 @@ namespace SFM
 		MIDIINCAPS devCaps;
 		const MMRESULT result = midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS));
 		SFM_ASSERT(MMSYSERR_NOERROR == result); 
-		Log("Using MIDI device " + std::string(devCaps.szPname));
+		Log("Using MIDI device: " + std::string(devCaps.szPname));
 
 		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
 		if (MMSYSERR_NOERROR == openRes)
@@ -371,24 +376,34 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
 	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
-	float WinMidi_GetFeedbackPhaser()   { return s_phaser.Get();          }
+	float WinMidi_GetFeedbackPhaser()   { return s_phaser; }
 
-	// Master drive
-	float WinMidi_GetMasterDrive()           { return s_masterDrive.Get(); }
+	// Master drive & pitch bend
+	float WinMidi_GetMasterDrive() { return s_masterDrive.Get(); }
+
+	float WinMidi_GetPitchBend()   
+	{ 
+		return s_pitchBendS.Get(); 
+	}
+
+	float WinMidi_GetPitchRaw()   
+	{ 
+		return s_pitchBend;
+	}
 
 	// Master modulation main
 	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get();  }
-	float WinMidi_GetMasterModulationRatio()  { return s_masterModRatio.Get();  }
+	float WinMidi_GetMasterModulationRatio()  { return s_masterModRatio;        }
 
 	// Master modulation LFO
-	float WinMidi_GetMasterModLFOShape()     { return s_masterModLFOShape.Get();   }
-	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq.Get();    }
-	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get();   }
-	float WinMidi_GetMasterModBrightness()   { return s_masterModBrightness.Get(); }
+	float WinMidi_GetMasterModLFOShape()     { return s_masterModLFOShape;       }
+	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq;        }
+	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get(); }
+	float WinMidi_GetMasterModBrightness()   { return s_masterModBrightness;     }
 
 	// Master ADSR
-	float WinMidi_GetMasterAttack()          { return s_A.Get(); }
-	float WinMidi_GetMasterDecay()           { return s_D.Get(); }
-	float WinMidi_GetMasterSustain()         { return s_S.Get(); }
-	float WinMidi_GetMasterRelease()         { return s_R.Get(); }
+	float WinMidi_GetMasterAttack()          { return s_A; }
+	float WinMidi_GetMasterDecay()           { return s_D; }
+	float WinMidi_GetMasterSustain()         { return s_S; }
+	float WinMidi_GetMasterRelease()         { return s_R; }
 }

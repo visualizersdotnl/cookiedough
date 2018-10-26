@@ -44,15 +44,26 @@ namespace SFM
 		return value != 0 && !(value & (value - 1));
 	}
 
+	// Soft (sigmoid) clamp
+	SFM_INLINE float SoftClamp(float sample)
+	{
+		return fast_tanhf(sample);
+	}
+
 	// Hard clamp
 	SFM_INLINE float Clamp(float sample)
 	{
-		return clampf(-1.f, 1.f, sample);
+		if (sample > 1.f) 
+			sample = 1.f;
+		else if (sample < -1.f) 
+			sample = -1.f;
+		
+		return sample;
 	}
 
 	/*
-		Floating point f*ckup detection
-		FIXME: didn't seem to compile on OSX
+		Floating point error detection
+		FIXME: didn't seem to compile out of the box on OSX (clang)
 	*/
 
 	SFM_INLINE bool FloatCheck(float value)

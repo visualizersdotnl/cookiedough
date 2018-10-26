@@ -1,11 +1,12 @@
 
 /*
-	Syntherklaas FM -- Lookup table(s).
+	Syntherklaas FM -- Lookup tables.
 */
 
 #pragma once
 
 #include "synth-global.h"
+#include "synth-util.h"
 
 namespace SFM
 {
@@ -22,15 +23,23 @@ namespace SFM
 		LUT functions
 	*/
 
-	SFM_INLINE float LUTsample(const float *LUT, float index)
+	// FIXME: depending on a few factors interpolation might be unnecessary
+	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
-		// Nearest neighbour; so far so good, but sooner or later: FIXME
-		const unsigned from = unsigned(index)&kOscTabAnd;
-		const float A = LUT[from];
+		unsigned from = unsigned(index);
+		const float A = LUT[from&kOscTabAnd];
 		return A;
+
+//		unsigned from = unsigned(index);
+//		unsigned to = from+1;
+//		const float delta = index-from;
+//		const float A = LUT[from&kOscTabAnd];
+//		const float B = LUT[to&kOscTabAnd];
+//		const float sample = lerpf<float>(A, B, delta);
+//		return sample;
 	}
 
-	SFM_INLINE float lutsinf(float index)   { return LUTsample(g_sinLUT, index);    }
+	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index);    }
 	SFM_INLINE float lutcosf(float index)   { return lutsinf(index + kOscPeriod/4); }
-	SFM_INLINE float lutnoisef(float index) { return LUTsample(g_noiseLUT, index);  }
+	SFM_INLINE float lutnoisef(float index) { return SampleLUT(g_noiseLUT, index);  }
 }

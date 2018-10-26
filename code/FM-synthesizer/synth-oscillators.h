@@ -10,6 +10,7 @@
 
 #include "synth-global.h"
 #include "synth-random.h"
+#include "synth-math.h"
 
 namespace SFM
 {
@@ -56,7 +57,7 @@ namespace SFM
 
 	SFM_INLINE float oscTriangle(float phase)
 	{
-		return asinf(lutsinf(phase))*(2.f/kPI);
+		return -1.f + fabsf(roundf(phase/kOscPeriod)-(phase/kOscPeriod))*4.f;
 	}
 
 	/*
@@ -68,45 +69,32 @@ namespace SFM
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		return 32; // FIXME (documented)
+		return 32; // FIXME
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
-	{ 
+	{
 		phase *= -1.f;
-		float harmonicPhase = phase;
 
 		float signal = 0.f;
-
-		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
+		for (float iHarmonic = 0.f; iHarmonic < numHarmonics; iHarmonic += 1.f)
 		{
-			signal += lutsinf(harmonicPhase)/(1.f+iHarmonic);
-			harmonicPhase += phase;
+			signal += lutsinf(phase*iHarmonic)/(1.f+iHarmonic);
 		}
 
- 		const float ampMul = 2.f/kPI;
- 		signal *= ampMul;
-
-		return signal;
+		return signal*(2.f/kPI);
 	}
 
 	SFM_INLINE float oscSoftSquare(float phase, unsigned numHarmonics) 
 	{ 
-		float harmonicPhase = phase;
-
-		float signal = 0.f;
-
-		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
+		float signal = 0.f, accPhase = phase;
+		for (float iHarmonic = 0.f; iHarmonic < numHarmonics; iHarmonic += 2.f)
 		{
-			signal += lutsinf(harmonicPhase)/(1.f+iHarmonic);
-			harmonicPhase += phase*2.f;
+			signal += lutsinf(accPhase)/(1.f+iHarmonic);
+			accPhase += 2.f*phase;
 		}
 
- 		const float ampMul = 4.f/kPI;
-		signal *= ampMul;
-
-
-		return signal;
+		return signal*(4.f/kPI);
 	}
 
 	/*

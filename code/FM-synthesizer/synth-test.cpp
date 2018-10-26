@@ -23,7 +23,7 @@ namespace SFM
 		float phase = 0.f;
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
-			float sample = oscPinkNoise(phase); // , 40);
+			float sample = oscSoftSquare(phase, 32);
 			buffer[iSample] = sample;
 			phase += pitch;
 		}

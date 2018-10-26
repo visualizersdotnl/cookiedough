@@ -27,7 +27,8 @@ namespace SFM
 
 	void CalculateLUTs()
 	{
-		// Sinus
+#if 1
+		// Plain sinus
 		float angle = 0.f;
 		const float angleStep = k2PI/kOscPeriod;
 		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
@@ -35,10 +36,32 @@ namespace SFM
 			g_sinLUT[iStep] = sinf(angle);
 			angle += angleStep;
 		}
+#endif
 
-		int a = sizeof(g_CM_table_15NF)/(2*sizeof(unsigned));
+#if 0
+		/* 
+			Gordon-Smith oscillator
+			Allows for frequency changes with minimal artifacts (first-order filter)
+		*/
 
-		// Noise
+		const float frequency = 1.f;
+		const float theta = k2PI*frequency / kOscPeriod;
+		const float epsilon = 2.f * sinf(theta/2.f);
+		
+		float N, prevN = sinf(-1.f*theta);
+		float Q, prevQ = cosf(-1.f*theta);
+
+		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
+		{
+			Q = prevQ - epsilon*prevN;
+			N = epsilon*Q + prevN;
+			prevQ = Q;
+			prevN = N;
+			g_sinLUT[iStep] = ultra_tanhf(N);
+		}
+#endif
+
+		// White noise (Mersenne-Twister)
 		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
 		{
 			g_noiseLUT[iStep] = -1.f + 2.f*mt_randf();

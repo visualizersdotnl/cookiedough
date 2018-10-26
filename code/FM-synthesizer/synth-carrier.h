@@ -13,7 +13,8 @@ namespace SFM
 	{
 		Waveform m_form;
 		float m_amplitude;
-		float m_pitch, m_angularPitch;
+		float m_frequency;
+		float m_pitch;
 		unsigned m_sampleOffs;
 		unsigned m_numHarmonics;
 

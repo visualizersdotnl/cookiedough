@@ -60,8 +60,7 @@ namespace SFM
 	static ADSR s_ADSRs[kMaxVoices];
 //	static MicrotrackerMoogFilter s_filters[kMaxVoices];
 	static ImprovedMoogFilter s_filters[kMaxVoices];
-	static DelayMatrix s_delayMatrix(kSampleRate/8); // Multiples of 4 or bust
-	static Modulator s_delayPhaser;
+	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
 		
 	/*
 		API + logic.
@@ -88,17 +87,21 @@ namespace SFM
 			}
 		}
 
-		// Pick the first available slot
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		if (state.m_active < kMaxVoices)
 		{
-			const bool enabled = state.m_voices[iVoice].m_enabled;
-			if (false == enabled)
+			// Pick the first available slot
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				return iVoice;
+				const bool enabled = state.m_voices[iVoice].m_enabled;
+				if (false == enabled)
+				{
+					return iVoice;
+				}
 			}
 		}
 
-		Log("Insufficient polyphony!");
+		// FIXME: handle this
+		Log("Out of voices!");
 		return -1;
 	}
 
@@ -116,10 +119,11 @@ namespace SFM
 
 		Voice &voice = state.m_voices[iVoice];
 
-		// Initialize carrier & modulator	
-		float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
+		// Initialize carrier, modulator & their pitched counterparts (for easy pitch bend)
+		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, frequency*state.m_modRatioC);
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*state.m_modRatioM, 0.f, &state.m_indexLFOParams);
+		voice.InitializePitchedCarriers();
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
@@ -146,18 +150,26 @@ namespace SFM
 	}
 
 	/*
-		Global update.
+		Global update; called from render function only if necessary.
 	*/
 
 	// Get state from Oxygen 49 driver
-	static void Update_Oxygen49()
+	// A little mess is OK since it doesn't have to be production quality
+	static void Update_Oxygen49(float time)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		const float alpha = 1.f/dBToAmplitude(-12.f);
+		// Drive
+		state.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
+	
+		// Pitch bend
+		const float bend = WinMidi_GetPitchBend();
+		state.m_bend = (bend-0.5f)*2.f;
+//		Log("Pitch bend: " + std::to_string(state.m_bend));
 
-		state.m_drive = WinMidi_GetMasterDrive()*kMaxOverdrive;
+		// Modulation index
+		const float alpha = 1.f/dBToAmplitude(-12.f);
 		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
 
 		// Get ratio from precalculated table (see synth-LUT.cpp)
@@ -170,7 +182,7 @@ namespace SFM
 	
 		state.m_ADSR.attack  = WinMidi_GetMasterAttack();
 		state.m_ADSR.decay   = WinMidi_GetMasterDecay();
-		state.m_ADSR.release = WinMidi_GetMasterRelease()*2.f; // Extra second to create pad-like sounds
+		state.m_ADSR.release = WinMidi_GetMasterRelease()*kPI; // Extra room to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
 
 		// Global filter wetness
@@ -191,7 +203,7 @@ namespace SFM
 		const float curve = WinMidi_GetMasterModLFOPower();
 		const float frequency = WinMidi_GetMasterModLFOFrequency();
 		state.m_indexLFOParams.shape = shape;
-		state.m_indexLFOParams.curve = curve*6.f;
+		state.m_indexLFOParams.curve = curve*12.f;
 		state.m_indexLFOParams.frequency = frequency*kPI;
 	}
 
@@ -203,16 +215,16 @@ namespace SFM
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	// Returns loudest signal (linear amplitude)
-	static float Render(FIFO &ringBuf)
+	static float Render(float time, FIFO &ringBuf)
 	{
-		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
-		s_renderState = s_shadowState;
-
 		static float loudest = 0.f;
 
 		const unsigned numSamples = ringBuf.GetFree();
 		if (numSamples < 1)
 			return loudest;
+
+		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
+		s_renderState = s_shadowState;
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -230,6 +242,8 @@ namespace SFM
 		}
 		else
 		{
+			const float pitchBend = state.m_bend; // WinMidi_GetPitchBendRaw();
+
 			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -243,7 +257,7 @@ namespace SFM
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
-						const float sample = voice.Sample(sampleCount, state.m_modBrightness, envelope);
+						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope);
 						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;
 					}
@@ -271,8 +285,6 @@ namespace SFM
 				}
 
 				// Apply delay
-				// The phaser position can best by controlled externally
-//				const float phaser = s_delayPhaser.SimpleSample(sampleCount);
 				const float phaser = state.m_feedbackPhaser;
 				const float delayed = s_delayMatrix.Read(phaser)*0.66f;
 				s_delayMatrix.Write(mix, state.m_feedback);
@@ -337,8 +349,9 @@ bool Syntherklaas_Create()
 	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
 
-	// Test
-	// OscTest();
+	// --- Test (FIXME) ---
+	OscTest();
+	// --- Test (FIXME) ---
 
 	// Reset sample count
 	s_sampleCount = 0;
@@ -353,8 +366,6 @@ bool Syntherklaas_Create()
 		s_ADSRs[iVoice].Reset();
 		s_filters[iVoice].Reset();
 	}
-
-	s_delayPhaser.Initialize(s_sampleCount, 1.f, 0.5f, kOscPeriod/4.f, nullptr);
 
 	// Test: Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
@@ -381,12 +392,12 @@ float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 	// CrackleTest(time, 0.5f);
 
 	// Update for M-AUDIO Oxygen 49
-	Update_Oxygen49();
+	Update_Oxygen49(time);
 
-	float loudest;
+	float loudest = 0.f;
 	s_bufLock.lock();
 	{
-		loudest = Render(s_ringBuf);
+		loudest = Render(time, s_ringBuf);
 	}
 	s_bufLock.unlock();
 

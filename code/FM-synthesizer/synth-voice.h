@@ -10,21 +10,29 @@
 #include "synth-modulator.h"
 #include "synth-ADSR.h."
 
+#include <Windows.h>
+
 namespace SFM
 {
-	struct Voice
+	class Voice
 	{
+	public:
+		Voice() :
+			m_enabled(false)
+		{}
+
 		bool m_enabled;
 
+		// To be initialized manually
 		Carrier m_carrier;
 		Modulator m_modulator;
 
-		float Sample(unsigned sampleCount, float modBrightness, ADSR &envelope)
-		{
-			const float modulation = m_modulator.Sample(sampleCount, modBrightness);
-			const float ADSR = envelope.SampleForVoice(sampleCount);
-			const float sample = m_carrier.Sample(sampleCount, modulation);
-			return ADSR*sample;
-		}
+		// Call before use to initialize pitched carriers (used to pitch bend)
+		// Not the most elegant solution, but it doesn't depend on any delay line(s)
+		Carrier m_carrierHi, m_carrierLo;
+		Modulator m_modulatorHi, m_modulatorLo;
+		void InitializePitchedCarriers();
+
+		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
 	};
 }

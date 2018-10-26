@@ -7,6 +7,7 @@
 		- Magnus Jonsson's Microtracker MOOG filter
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com
+		- juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
 
 	Notes:
 		- The code style started out as semi-C, intending a hardware target, currently in the process of cleaning it up a bit
@@ -18,35 +19,32 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Questions:
-		- That curve pot doesn't sit right with me
-		- Real filter drive?
-		- Pitch bend?
+	New ideas:
+		- Filter switch (maybe)
 
 	Priority:
+		- Fix JUCE interpolator (?)
+		- Create interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
-		- The worst crackle and pop is gone but I'm not convinced yet
-		  + https://github.com/abaga129/lib_dsp/blob/master/oscillators/GordonSmithOscillator.cpp
 
 	MIDI issues:
-		- Smooth MIDI potmeters & wheels!
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Optional: sample & hold noise
 		- After VST: improve oscillators (blend, but only where it looks necessary)
-		- After VST: relate GetCarrierHarmonics() to input frequency, now it's just a number that "works"
+		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
-		- Move MIDI calls out of FM. BISON, expose parameters through an object (part of preparation for VST)
-		- Stash all oscillators in LUTs, makes it easier to switch or even blend between them and employ the same sampler quality
+		- Floating point bugs
+		- Stash all oscillators in LUTs, enables easy tricks and speeds it up (in some cases at least)
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern:
+		- Implement real variable delay line
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
-		- Eliminate floating point values where they do not belong and kill NAN-style bugs (major nuisance, causes crackle!)
 
 	Bugs:
 		- Sometimes the digital saw oscillator cocks up (NAN)
