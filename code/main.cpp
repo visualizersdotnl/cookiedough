@@ -84,7 +84,6 @@ const bool kTestBedForFM = true;
 
 // FM synthesizer
 #include "FM-synthesizer/FM_BISON.h"
-#include "FM-synthesizer/synth-audio-out.h"
 #include "cspan.h"
 
 // -- display & audio config. --

@@ -23,7 +23,7 @@
 		- Filter switch (maybe)
 
 	Priority:
-		- Fix JUCE interpolator (?)
+		- Interpolate 808 samples (and scale their lengths to a power of 2)
 		- Create interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
@@ -44,10 +44,8 @@
 
 	Of later concern:
 		- Implement real variable delay line
+		- Investigate use of the 2 noise oscillators
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
-
-	Bugs:
-		- Sometimes the digital saw oscillator cocks up (NAN)
 */
 
 #ifndef _FM_BISON_H_

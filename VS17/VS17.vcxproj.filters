@@ -360,9 +360,6 @@
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h">
       <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
     </ClInclude>
@@ -424,10 +421,10 @@
     </Text>
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\rocket-track-guide.txt" />
-    <Text Include="..\code\FM-synthesizer\design.txt">
+    <Text Include="..\code\FM-synthesizer\manual.txt">
       <Filter>/code\/FM-synthesizer\Documentation</Filter>
     </Text>
-    <Text Include="..\code\FM-synthesizer\manual.txt">
+    <Text Include="..\code\FM-synthesizer\design-goals.txt">
       <Filter>/code\/FM-synthesizer\Documentation</Filter>
     </Text>
   </ItemGroup>

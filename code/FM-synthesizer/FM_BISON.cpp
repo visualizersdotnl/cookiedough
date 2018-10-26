@@ -14,7 +14,6 @@
 #include "FM_BISON.h"
 #include "synth-midi.h"
 #include "synth-state.h"
-#include "synth-audio-out.h"
 #include "synth-ringbuffer.h"
 #include "synth-filter.h"
 #include "synth-delayline.h"
@@ -33,8 +32,10 @@ namespace SFM
 		Global sample counts.
 	*/
 
- 	static std::atomic<unsigned> s_sampleCount = 0;
-	static std::atomic<unsigned> s_sampleOutCount = 0;
+// 	static std::atomic<unsigned> s_sampleCount = 0;
+//	static std::atomic<unsigned> s_sampleOutCount = 0;
+
+	static unsigned s_sampleCount = 0, s_sampleOutCount = 0;
 
 	/*
 		Global state.
@@ -350,7 +351,7 @@ bool Syntherklaas_Create()
 	CalculateMidiToFrequencyLUT();
 
 	// --- Test (FIXME) ---
-	OscTest();
+	// OscTest();
 	// --- Test (FIXME) ---
 
 	// Reset sample count

@@ -43,7 +43,13 @@ A voice is driven as such:
 Voices are then mixed and during mixing a simple delay line-based feedback is applied, depending on parameters.
 As a philosophy the entire algorithm is executed except when there are simply no voices to render.
 
-[ ... ]
+[ Third party credits ]
 
+- Using (modified) ADSR envelope by Nigel Redmon of earlevel.com
+- Adapted Magnus Jonsson's Microtracker MOOG filter
+- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+- juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
+
+[ ... ]
 
  

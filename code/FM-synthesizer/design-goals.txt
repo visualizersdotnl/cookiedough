@@ -16,6 +16,7 @@ Features for 0.2:
 [X] - Better tweaked parameters.
 [X] - Modulator brightness.
 [X] - Swap pink-ish noise for 808 kick drum.
+[X] - 808 snare.
 
 Features for 0.3:
 - Voice stealing.

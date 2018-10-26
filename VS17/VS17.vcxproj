@@ -111,7 +111,6 @@
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
@@ -194,7 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\bypasszs-ascii.txt" />
-    <Text Include="..\code\FM-synthesizer\design.txt" />
+    <Text Include="..\code\FM-synthesizer\design-goals.txt" />
     <Text Include="..\code\FM-synthesizer\manual.txt" />
     <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\target\infofile.txt" />
