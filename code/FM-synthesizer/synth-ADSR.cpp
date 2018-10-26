@@ -26,7 +26,7 @@ namespace SFM
 		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f + velocity*0.624f);
 		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
 
-		// FIXME: do I want to let velocity meddle with this?
+		// FIXME: tweak
 		m_filterADSR.setTargetRatioA(0.314f + velocity*0.066f);
 		m_filterADSR.setTargetRatioDR(0.0001f*kGoldenRatio + velocity*0.033f);
 
