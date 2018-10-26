@@ -192,7 +192,7 @@ namespace SFM
 		state.m_indexLFOFreq = frequency*k2PI*2.f;
 
 		// Modulation detune
-		state.m_modDetune = (WinMidi_GetModulationDetune()-0.5f)* powf(2.f, 12.f);; // Range is 2 octaves
+		state.m_modDetune = (WinMidi_GetModulationDetune()-0.5f)*2.f;
 
 		// Tremolo
 		state.m_tremolo = WinMidi_GetTremolo();
