@@ -25,7 +25,7 @@
 	Priority:
 		- Verify and if necessary fix LUT & wavetable interpolation
 		- Scale 808 sample lengths to power of 2
-		- Create interface and let MIDI driver push all in it's own update loop
+		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
 		- Expose end filter selection as a parameter
@@ -73,6 +73,66 @@ namespace SFM
 
 	// Release a note using it's voice index
 	void ReleaseVoice(unsigned index);
+
+	/*
+		New API (WIP) for compatibility with VST.
+
+		All parameters are normalized [0..1] unless specified otherwise.
+	*/
+
+	class FM_BISON
+	{
+	public:
+		FM_BISON() {}
+		~FM_BISON() {}
+
+		/*
+			Voice API.
+		*/
+
+		// Trigger a voice (if possible) and return it's voice index
+		unsigned TriggerVoice(Waveform form, float frequency, float velocity);
+
+		// Release a note using it's voice index
+		void ReleaseVoice(unsigned index);
+
+		/*
+			Parameters.
+		*/
+
+		// Master drive
+		void SetMasterDrive(float drive);
+
+		// Pitch bend
+		void SetPitchBend(float value);
+
+		// Modulation main
+		void SetModulationIndex(float value);
+		void SetModulationRatio(float value); // Indexes a 15-deep 'Farey Sequence' C:M table
+		void SetModulationBrightness(float value);
+
+		// Modulation LFO
+		void SetModulationLFOShape(float value);
+		void SetModulationLFOFrequency(float value);
+		void SetModulationLFOPower(float value);
+		
+		// Filter
+		void SetFilterCutoff(float value);
+		void SetFilterResonance(float value);
+		void SetFilterWetness(float value);
+		void SetFilterEnvelopeInfluence(float value); // Filter envelope is a tweaked copy of the current ADSR
+
+		// Feedback
+		void SetFeedback(float value);
+		void SetFeedbackWetness(float value);
+		void SetFeedbackPitch(float value);
+
+		// ADSR (also used, automatically altered, by filter)
+		void SetAttack(float value);
+		void SetDecay(float value);
+		void SetSustain(float value);
+		void SetRelease(float value);
+	};
 }
 
 #endif // _FM_BISON_H_

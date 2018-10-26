@@ -29,26 +29,26 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback();
 	float WinMidi_GetFeedbackWetness();
-	float WinMidi_GetFeedbackPhaser();
+	float WinMidi_GetFeedbackPitch();
 
 	// Master drive & pitch bend
 	float WinMidi_GetMasterDrive();
 	float WinMidi_GetPitchBendRaw(); // [-1..1]
 	float WinMidi_GetPitchBend(); // [0..1]
 
-	// Master modulation main
-	float WinMidi_GetMasterModulationIndex();
-	float WinMidi_GetMasterModulationRatio();
+	// Modulation main
+	float WinMidi_GetModulationIndex();
+	float WinMidi_GetModulationRatio();
+	float WinMidi_GetModulationBrightness();
 
-	// Master modulation LFO
-	float WinMidi_GetMasterModLFOShape();
-	float WinMidi_GetMasterModLFOFrequency();
-	float WinMidi_GetMasterModLFOPower();
-	float WinMidi_GetMasterModBrightness();
+	// Modulation LFO
+	float WinMidi_GetModulationLFOShape();
+	float WinMidi_GetModulationLFOFrequency();
+	float WinMidi_GetModulationLFOPower();
 
-	// Master ADSR parameters
-	float WinMidi_GetMasterAttack();
-	float WinMidi_GetMasterDecay();
-	float WinMidi_GetMasterSustain();
-	float WinMidi_GetMasterRelease();
+	// ADSR parameters
+	float WinMidi_GetAttack();
+	float WinMidi_GetDecay();
+	float WinMidi_GetSustain();
+	float WinMidi_GetRelease();
 }

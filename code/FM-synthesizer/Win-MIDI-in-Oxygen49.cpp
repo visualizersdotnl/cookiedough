@@ -45,33 +45,33 @@ namespace SFM
 	const unsigned kPotFilterMix = 61;         // C10
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
-	const unsigned kPotMasterModLFOCurve = 95; // C17
+	const unsigned kPotModLFOCurve = 95;       // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
-	static MIDI_Smoothed s_masterModLFOCurve;
+	static MIDI_Smoothed s_modLFOCurve;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 
 	// Wheel mapping
-	const unsigned kMasterModIndex = 1;  // C32 (MOD wheel)
-	static MIDI_Smoothed s_masterModIndex;
+	const unsigned kModIndex = 1;  // C32 (MOD wheel)
+	static MIDI_Smoothed s_modIndex;
 
 	// Fader mapping
 	const unsigned kFaderA = 20; // C1
 	const unsigned kFaderD = 21; // C2
 	const unsigned kFaderS = 71; // C3
 	const unsigned kFaderR = 72; // C4
-	const unsigned kFaderMasterModRatio = 70;      // C8
-	const unsigned kFaderPhaser = 63;              // C9
-	const unsigned kFaderMasterModLFOShape = 25;   // C5
-	const unsigned kFaderMasterModLFOFreq = 73;    // C6
-	const unsigned kFaderMasterModBrightness = 74; // C7
+	const unsigned kFaderModRatio = 70;       // C8
+	const unsigned kFaderFeedbackPitch = 63;  // C9
+	const unsigned kFaderModLFOShape = 25;    // C5
+	const unsigned kFaderModLFOFreq = 73;     // C6
+	const unsigned kFaderModBrightness = 74;  // C7
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
-	static float s_masterModRatio = 0.f;
-	static float s_phaser = 0.f;
-	static float s_masterModLFOShape = 0.f, s_masterModLFOFreq = 0.f;
-	static float s_masterModBrightness = 0.f;
+	static float s_modRatio = 0.f;
+	static float s_feedbackPitch = 0.f;
+	static float s_modLFOShape = 0.f, s_modLFOFreq = 0.f;
+	static float s_modBrightness = 0.f;
 
 	static Waveform s_waveform = kSine;
 
@@ -196,8 +196,8 @@ namespace SFM
 							s_feedbackWetness.Set(controlVal);
 							break;
 
-						case kMasterModIndex:
-							s_masterModIndex.Set(controlVal);
+						case kModIndex:
+							s_modIndex.Set(controlVal);
 							break;
 
 						case kFaderA:
@@ -216,28 +216,28 @@ namespace SFM
 							s_R = controlVal/127.f;
 							break;
 
-						case kFaderMasterModRatio:
-							s_masterModRatio = controlVal/127.f;
+						case kFaderModRatio:
+							s_modRatio = controlVal/127.f;
 							break;
 
-						case kFaderPhaser:
-							s_phaser = controlVal/127.f;
+						case kFaderFeedbackPitch:
+							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotMasterModLFOCurve:
-							s_masterModLFOCurve.Set(controlVal);
+						case kPotModLFOCurve:
+							s_modLFOCurve.Set(controlVal);
 							break;
 
-						case kFaderMasterModLFOShape:
-							s_masterModLFOShape = controlVal/127.f;
+						case kFaderModLFOShape:
+							s_modLFOShape = controlVal/127.f;
 							break;
 
-						case kFaderMasterModLFOFreq:
-							s_masterModLFOFreq = controlVal/127.f;
+						case kFaderModLFOFreq:
+							s_modLFOFreq = controlVal/127.f;
 							break;
 
-						case kFaderMasterModBrightness:
-							s_masterModBrightness = controlVal/127.f;
+						case kFaderModBrightness:
+							s_modBrightness = controlVal/127.f;
 							break;
 
 						default:
@@ -376,7 +376,7 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
 	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
-	float WinMidi_GetFeedbackPhaser()   { return s_phaser; }
+	float WinMidi_GetFeedbackPitch()    { return s_feedbackPitch;         }
 
 	// Master drive & pitch bend
 	float WinMidi_GetMasterDrive() { return s_masterDrive.Get(); }
@@ -391,19 +391,19 @@ namespace SFM
 		return s_pitchBend;
 	}
 
-	// Master modulation main
-	float WinMidi_GetMasterModulationIndex()  { return s_masterModIndex.Get();  }
-	float WinMidi_GetMasterModulationRatio()  { return s_masterModRatio;        }
+	// Modulation main
+	float WinMidi_GetModulationIndex()      { return s_modIndex.Get(); }
+	float WinMidi_GetModulationRatio()      { return s_modRatio;       }
+	float WinMidi_GetModulationBrightness() { return s_modBrightness;  }
 
-	// Master modulation LFO
-	float WinMidi_GetMasterModLFOShape()     { return s_masterModLFOShape;       }
-	float WinMidi_GetMasterModLFOFrequency() { return s_masterModLFOFreq;        }
-	float WinMidi_GetMasterModLFOPower()     { return s_masterModLFOCurve.Get(); }
-	float WinMidi_GetMasterModBrightness()   { return s_masterModBrightness;     }
+	// Modulation LFO
+	float WinMidi_GetModulationLFOShape()     { return s_modLFOShape;       }
+	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;        }
+	float WinMidi_GetModulationLFOPower()     { return s_modLFOCurve.Get(); }
 
 	// Master ADSR
-	float WinMidi_GetMasterAttack()          { return s_A; }
-	float WinMidi_GetMasterDecay()           { return s_D; }
-	float WinMidi_GetMasterSustain()         { return s_S; }
-	float WinMidi_GetMasterRelease()         { return s_R; }
+	float WinMidi_GetAttack()          { return s_A; }
+	float WinMidi_GetDecay()           { return s_D; }
+	float WinMidi_GetSustain()         { return s_S; }
+	float WinMidi_GetRelease()         { return s_R; }
 }

@@ -169,20 +169,20 @@ namespace SFM
 
 		// Modulation index
 		const float alpha = 1.f/dBToAmplitude(-12.f);
-		state.m_modIndex = WinMidi_GetMasterModulationIndex()*alpha;
+		state.m_modIndex = WinMidi_GetModulationIndex()*alpha;
 
 		// Get ratio from precalculated table (see synth-LUT.cpp)
-		const unsigned tabIndex = (unsigned) (WinMidi_GetMasterModulationRatio()*(kCarrierModTabSize-1));
+		const unsigned tabIndex = (unsigned) (WinMidi_GetModulationRatio()*(kCarrierModTabSize-1));
 		state.m_modRatioC = (float) g_CM_table_15NF[tabIndex][0];
 		state.m_modRatioM = (float) g_CM_table_15NF[tabIndex][1];
 
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
-		state.m_modBrightness = WinMidi_GetMasterModBrightness();
+		state.m_modBrightness = WinMidi_GetModulationBrightness();
 	
-		state.m_ADSR.attack  = WinMidi_GetMasterAttack();
-		state.m_ADSR.decay   = WinMidi_GetMasterDecay();
-		state.m_ADSR.release = WinMidi_GetMasterRelease()*kPI; // Extra room to create pad-like sounds
-		state.m_ADSR.sustain = WinMidi_GetMasterSustain();
+		state.m_ADSR.attack  = WinMidi_GetAttack();
+		state.m_ADSR.decay   = WinMidi_GetDecay();
+		state.m_ADSR.release = WinMidi_GetRelease()*kPI; // Extra room to create pad-like sounds
+		state.m_ADSR.sustain = WinMidi_GetSustain();
 
 		// Global filter wetness
 		state.m_wetness = WinMidi_GetFilterWetness();
@@ -195,12 +195,12 @@ namespace SFM
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
-		state.m_feedbackPhaser = -1.f + WinMidi_GetFeedbackPhaser()*2.f;
+		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f;
 
 		// Modulation index envelope
-		const float shape = WinMidi_GetMasterModLFOShape();
-		const float curve = WinMidi_GetMasterModLFOPower();
-		const float frequency = WinMidi_GetMasterModLFOFrequency();
+		const float shape = WinMidi_GetModulationLFOShape();
+		const float curve = WinMidi_GetModulationLFOPower();
+		const float frequency = WinMidi_GetModulationLFOFrequency();
 		state.m_indexLFOParams.shape = shape;
 		state.m_indexLFOParams.curve = curve*12.f;
 		state.m_indexLFOParams.frequency = frequency*kPI;
@@ -286,7 +286,7 @@ namespace SFM
 				}
 
 				// Apply delay
-				const float phaser = state.m_feedbackPhaser;
+				const float phaser = state.m_feedbackPitch;
 				const float delayed = s_delayMatrix.Read(phaser)*0.66f;
 				s_delayMatrix.Write(mix, state.m_feedback);
 				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);
