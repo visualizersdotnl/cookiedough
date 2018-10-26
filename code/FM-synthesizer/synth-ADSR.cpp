@@ -19,8 +19,11 @@ namespace SFM
 		const float release = std::max<float>(kSampleRate/100.f /* 10ms. min */, truncf(parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
+		// I want more detail (ergo lesser ratio) if the velocity is higher, ergo:
+		velocity = 1.f-velocity;
+
 		// For now this sounds fine
-		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f  + velocity*0.624f);
+		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f + velocity*0.624f);
 		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
 
 		// FIXME: do I want to let velocity meddle with this?

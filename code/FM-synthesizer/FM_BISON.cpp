@@ -178,16 +178,19 @@ namespace SFM
 
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
 		state.m_modBrightness = WinMidi_GetModulationBrightness();
-	
+
+		// Modulation index LFO frequency
+		const float frequency = WinMidi_GetModulationLFOFrequency();
+		state.m_indexLFOFreq = frequency*k2PI*2.f;
+
+		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
 		state.m_ADSR.release = WinMidi_GetRelease()*kPI; // Extra room to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetSustain();
 
-		// Global filter wetness
-		state.m_wetness = WinMidi_GetFilterWetness();
-
 		// Filter parameters
+		state.m_wetness = WinMidi_GetFilterWetness();
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
@@ -196,10 +199,6 @@ namespace SFM
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
 		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f;
-
-		// Modulation index envelope
-		const float frequency = WinMidi_GetModulationLFOFrequency();
-		state.m_indexLFOFreq = frequency*16.f;
 	}
 
 	/*

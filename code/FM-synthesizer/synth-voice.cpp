@@ -20,7 +20,7 @@ namespace SFM
 
 	void Voice::InitializePitchedCarriers()
 	{
-		// Up/down one 3 halftones
+		// Up/down 3 halftones
 		const float up = powf(2.f, 3.f/12.f);
 		const float down = 1.f/up;
 		CopyCarrier(m_carrier, m_carrierHi, up);

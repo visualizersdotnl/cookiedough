@@ -20,21 +20,20 @@ namespace SFM
 		Voice m_voices[kMaxVoices];
 		unsigned m_active;
 
-		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive (no hard limit)
+		// Master drive [0..N]
 		float m_drive;
 
-		// Master modulation index value, ratio & brightness (used on note trigger)
-		// [0..1]
+		// Modulator parameters [0..1]
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
 		float m_modBrightness;
-
-		// Global filter wetness
-		// [0..1]
-		float m_wetness;
+		float m_indexLFOFreq;
 
 		// ADSR parameters
 		ADSR::Parameters m_ADSR;
+
+		// Filter wetness [0..1]
+		float m_wetness;
 
 		// Filter parameters
 		FilterParameters m_filterParams;
@@ -43,9 +42,6 @@ namespace SFM
 		float m_feedback;
 		float m_feedbackWetness;
 		float m_feedbackPitch;
-
-		// FM index LFO parameters
-		float m_indexLFOFreq;
 
 		void Reset(unsigned sampleCount)
 		{
@@ -64,9 +60,7 @@ namespace SFM
 			m_modRatioC = 0.f;
  			m_modRatioM = 0.f;
 			m_modBrightness = 0.f;
-
-			// No filter
-			m_wetness = 0.f;
+			m_indexLFOFreq = 0.f;
 
 			// Default ADSR envelope
 			m_ADSR.attack  = kSampleRate/8;
@@ -74,7 +68,8 @@ namespace SFM
 			m_ADSR.release = kSampleRate/4;
 			m_ADSR.sustain = kRootHalf;
 
-			// Default filter 
+			// Default filter (none)
+			m_wetness = 0.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
 			m_filterParams.envInfl = 0.f;
@@ -83,9 +78,6 @@ namespace SFM
 			m_feedback = 0.f;
 			m_feedbackWetness = 0.f;
 			m_feedbackPitch = 0.5f;
-
-			// Default FM index modulation
-			m_indexLFOFreq = 0.f;
 		}
 	};
 }
