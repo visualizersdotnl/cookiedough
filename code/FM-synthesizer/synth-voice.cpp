@@ -18,7 +18,7 @@ namespace SFM
 		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, from.m_indexModFreq);
 	}
 
-	void Voice::InitializePitchedCarriers()
+	void Voice::InitializeFeedback()
 	{
 		// Up/down 3 halftones
 		const float up = powf(2.f, 3.f/12.f);
@@ -55,6 +55,10 @@ namespace SFM
 		}
 		
 		sample *= ADSR;
+
+		// Finally, modulate amplitude ('tremolo')
+		sample *= m_ampMod.Sample(sampleCount, 0.f);
+
 		return sample;
 	}
 }

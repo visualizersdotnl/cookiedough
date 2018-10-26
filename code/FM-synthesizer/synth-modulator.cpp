@@ -15,7 +15,7 @@ namespace SFM
 		m_frequency = frequency;
 		m_pitch = CalculateOscPitch(frequency);
 		m_sampleOffs = sampleOffs;
-		m_phaseShift = (phaseShift*kOscPeriod)/k2PI;
+		m_phaseShift = phaseShift;
 		m_indexModFreq = indexModFreq;
 		m_indexModPitch = CalculateOscPitch(indexModFreq);
 	}
@@ -27,7 +27,7 @@ namespace SFM
 		const float modPhase = sample*m_indexModPitch;
 
 		const float triangle = oscTriangle(phase);
-		const float sine = oscSine(phase);
+		const float sine = lutsinf(phase);
 		const float modulation = sine + (sine-triangle)*brightness;
 		const float index = m_index*lutcosf(modPhase);
 

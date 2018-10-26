@@ -28,6 +28,10 @@ namespace SFM
 		float m_modRatioC, m_modRatioM;
 		float m_modBrightness;
 		float m_indexLFOFreq;
+		float m_modDetune;
+
+		// Tremolo
+		float m_tremolo;
 
 		// ADSR parameters
 		ADSR::Parameters m_ADSR;
@@ -61,6 +65,10 @@ namespace SFM
  			m_modRatioM = 0.f;
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
+			m_modDetune = 0.f;
+
+			// No tremolo
+			m_tremolo = 0.0f;
 
 			// Default ADSR envelope
 			m_ADSR.attack  = kSampleRate/8;

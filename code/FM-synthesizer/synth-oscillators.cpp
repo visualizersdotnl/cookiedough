@@ -8,7 +8,6 @@
 #include "synth-oscillators.h"
 
 // Wavetable(s)
-// Not included in the workspace since Visual Studio 2017 kept crashing when I did
 #include "wavetable/wavKick808.h" // 1 sec.
 #include "wavetable/wavSnare808.h" // 0.2 sec.
 

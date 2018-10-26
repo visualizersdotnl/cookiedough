@@ -32,7 +32,7 @@ namespace SFM
 		SFM_INLINE void Write(float sample, float feedback)
 		{
 			const unsigned index = m_writeIdx++ % m_length;
-			m_buffer[index] = fast_tanhf(m_buffer[index]*feedback + sample);
+			m_buffer[index] = fast_tanhf(feedback + sample);
 		}
 
 		SFM_INLINE float Read()
@@ -70,6 +70,8 @@ namespace SFM
 	{
 		SFM_ASSERT(fabsf(phase) <= 1.f);
 		const float middle = m_lineMid.Read();
+
+		return middle;
 
 		if (phase < 0.f)
 		{

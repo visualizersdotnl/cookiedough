@@ -20,16 +20,14 @@
 		- Not much, play a little, don't push yourself
 
 	New ideas / Questions:
-		- Filter switch?
-		- Richer C:M table?
-		- Important: do I only modulate the carrier or both C and M on pitch bend?
+		- Switch between 1-3 algorithms
 
 	Priority:
-		- Scale 808 sample lengths to power of 2
+		- BLIT triangle
+		- Feedback bug (seems to overload at some point, for some reason, may be the filter)
 		- Finish interface and let MIDI driver push all in it's own update loop
-		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
-		- Expose end filter selection as a parameter
+		- Prepare for VST & finish documentation
 
 	MIDI issues:
 
@@ -45,7 +43,7 @@
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
-		- Tremolo (what the modulation wheel was meant for)
+		- Scale 808 sample lengths to power of 2
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
@@ -129,6 +127,9 @@ namespace SFM
 		void SetDecay(float value);
 		void SetSustain(float value);
 		void SetRelease(float value);
+
+		// Tremolo
+		void SetTremolo(float value);
 	};
 }
 

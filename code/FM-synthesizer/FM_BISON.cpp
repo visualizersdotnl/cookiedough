@@ -120,11 +120,19 @@ namespace SFM
 
 		Voice &voice = state.m_voices[iVoice];
 
-		// Initialize carrier, modulator & their pitched counterparts (for easy pitch bend)
-		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
+		// Initialize carrier
+		const float amplitude = 0.1f + velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, frequency*state.m_modRatioC);
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*state.m_modRatioM, 0.f, state.m_indexLFOFreq);
-		voice.InitializePitchedCarriers();
+
+		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
+		const float modRatio = state.m_modRatioM+state.m_modDetune;
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*modRatio, 0.f, state.m_indexLFOFreq);
+		voice.InitializeFeedback();
+
+		// Initialize amplitude modulator (or 'tremolo')
+		const float tremolo = state.m_tremolo;
+		const float broFrequency = invsqrf(tremolo)*kPI*kGoldenRatio; // The f*ck else you gonna call debauchery like this?
+		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
@@ -183,10 +191,16 @@ namespace SFM
 		const float frequency = WinMidi_GetModulationLFOFrequency();
 		state.m_indexLFOFreq = frequency*k2PI*2.f;
 
+		// Modulation detune
+		state.m_modDetune = (WinMidi_GetModulationDetune()-0.5f)* powf(2.f, 12.f);; // Range is 2 octaves
+
+		// Tremolo
+		state.m_tremolo = WinMidi_GetTremolo();
+
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
-		state.m_ADSR.release = WinMidi_GetRelease()*kPI; // Extra room to create pad-like sounds
+		state.m_ADSR.release = WinMidi_GetRelease()*3.f; // Extra room to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetSustain();
 
 		// Filter parameters
@@ -214,8 +228,8 @@ namespace SFM
 		static float loudest = 0.f;
 
 		const unsigned numSamples = ringBuf.GetFree();
-		if (numSamples < 1)
-			return loudest;
+//		if (numSamples < 1)
+//			return loudest;
 
 		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
 		s_renderState = s_shadowState;
@@ -283,9 +297,10 @@ namespace SFM
 				// Apply delay
 				const float phaser = state.m_feedbackPitch;
 				const float delayed = s_delayMatrix.Read(phaser)*0.66f;
-				s_delayMatrix.Write(mix, state.m_feedback);
-				mix = fast_tanhf(mix*state.m_drive + state.m_feedbackWetness*delayed);
+				s_delayMatrix.Write(mix, delayed*state.m_feedback);
+				mix = mix + state.m_feedbackWetness*delayed;
 
+				mix = fast_tanhf(mix*state.m_drive);
 				ringBuf.Write(mix);
 
 				// FIXME: temporary

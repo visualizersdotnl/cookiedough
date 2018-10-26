@@ -22,7 +22,7 @@ namespace SFM
 		float m_indexModFreq;
 		float m_indexModPitch;
 		
-		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, float indexModFreq);
+		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In kOscPeriod */, float indexModFreq);
 		float Sample(unsigned sampleCount, float brightness);
 	};
 }

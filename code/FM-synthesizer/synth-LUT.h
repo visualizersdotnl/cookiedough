@@ -39,7 +39,7 @@ namespace SFM
 		return sample;
 	}
 
-	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index);    }
-	SFM_INLINE float lutcosf(float index)   { return lutsinf(index + kOscPeriod/4); }
-	SFM_INLINE float lutnoisef(float index) { return SampleLUT(g_noiseLUT, index);  }
+	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index);      }
+	SFM_INLINE float lutcosf(float index)   { return lutsinf(index + kOscPeriod/4.f); }
+	SFM_INLINE float lutnoisef(float index) { return SampleLUT(g_noiseLUT, index);    }
 }

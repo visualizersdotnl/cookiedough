@@ -41,10 +41,14 @@ namespace SFM
 	float WinMidi_GetModulationRatio();
 	float WinMidi_GetModulationBrightness();
 	float WinMidi_GetModulationLFOFrequency();
+	float WinMidi_GetModulationDetune();
 
 	// ADSR parameters
 	float WinMidi_GetAttack();
 	float WinMidi_GetDecay();
 	float WinMidi_GetSustain();
 	float WinMidi_GetRelease();
+
+	// Tremolo
+	float WinMidi_GetTremolo();
 }

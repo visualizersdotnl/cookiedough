@@ -26,12 +26,13 @@ namespace SFM
 		// To be initialized manually
 		Carrier m_carrier;
 		Modulator m_modulator;
+		Modulator m_ampMod;
 
-		// Call before use to initialize pitched carriers (used to pitch bend)
+		// Call before use to initialize pitched carriers and modulators (used for pitch bend)
 		// Not the most elegant solution, but it doesn't depend on any delay line(s)
 		Carrier m_carrierHi, m_carrierLo;
 		Modulator m_modulatorHi, m_modulatorLo;
-		void InitializePitchedCarriers();
+		void InitializeFeedback();
 
 		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
 	};

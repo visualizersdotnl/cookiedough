@@ -57,7 +57,7 @@ namespace SFM
 			N = epsilon*Q + prevN;
 			prevQ = Q;
 			prevN = N;
-			g_sinLUT[iStep] = ultra_tanhf(N);
+			g_sinLUT[iStep] = Clamp(N);
 		}
 #endif
 

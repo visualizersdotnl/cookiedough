@@ -45,11 +45,12 @@ namespace SFM
 	const unsigned kPotFilterMix = 61;         // C10
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
-	const unsigned kPotUnused1 = 95;           // C17
+	const unsigned kPotModDetune = 95;         // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
+	static MIDI_Smoothed s_modDetune;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 
 	// Wheel mapping
@@ -63,7 +64,7 @@ namespace SFM
 	const unsigned kFaderR = 72; // C4
 	const unsigned kFaderModRatio = 70;       // C8
 	const unsigned kFaderFeedbackPitch = 63;  // C9
-	const unsigned kFaderUnused1 = 25;        // C5
+	const unsigned kFaderTremolo = 25;        // C5
 	const unsigned kFaderModLFOFreq = 73;     // C6
 	const unsigned kFaderModBrightness = 74;  // C7
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
@@ -71,6 +72,7 @@ namespace SFM
 	static float s_feedbackPitch = 0.f;
 	static float s_modLFOFreq = 0.f;
 	static float s_modBrightness = 0.f;
+	static float s_tremolo = 0.f;
 
 	static Waveform s_waveform = kSine;
 
@@ -223,10 +225,12 @@ namespace SFM
 							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotUnused1:
+						case kPotModDetune:
+							s_modDetune.Set(controlVal);
 							break;
 
-						case kFaderUnused1:
+						case kFaderTremolo:
+							s_tremolo = controlVal/127.f;
 							break;
 
 						case kFaderModLFOFreq:
@@ -389,14 +393,21 @@ namespace SFM
 	}
 
 	// Modulation main
-	float WinMidi_GetModulationIndex()        { return s_modIndex.Get(); }
-	float WinMidi_GetModulationRatio()        { return s_modRatio;       }
-	float WinMidi_GetModulationBrightness()   { return s_modBrightness;  }
-	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;     }
+	float WinMidi_GetModulationIndex()        { return s_modIndex.Get();  }
+	float WinMidi_GetModulationRatio()        { return s_modRatio;        }
+	float WinMidi_GetModulationBrightness()   { return s_modBrightness;   }
+	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;      }
+	float WinMidi_GetModulationDetune()       { return s_modDetune.Get(); }
 
 	// Master ADSR
 	float WinMidi_GetAttack()          { return s_A; }
 	float WinMidi_GetDecay()           { return s_D; }
 	float WinMidi_GetSustain()         { return s_S; }
 	float WinMidi_GetRelease()         { return s_R; }
+
+	// Tremolo
+	float WinMidi_GetTremolo()
+	{
+		return s_tremolo;
+	}
 }
