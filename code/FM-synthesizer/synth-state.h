@@ -33,10 +33,10 @@ namespace SFM
 		// [0..1]
 		float m_wetness;
 
-		// Master ADSR parameters
+		// ADSR parameters
 		ADSR::Parameters m_ADSR;
 
-		// Master filter parameters
+		// Filter parameters
 		FilterParameters m_filterParams;
 
 		// Feedback (delay) effect parameters
@@ -44,8 +44,8 @@ namespace SFM
 		float m_feedbackWetness;
 		float m_feedbackPitch;
 
-		// Master FM index LFO parameters
-		IndexEnvelope::Parameters m_indexLFOParams;
+		// FM index LFO parameters
+		float m_indexLFOFreq;
 
 		void Reset(unsigned sampleCount)
 		{
@@ -85,9 +85,7 @@ namespace SFM
 			m_feedbackPitch = 0.5f;
 
 			// Default FM index modulation
-			m_indexLFOParams.curve = 0.f;
-			m_indexLFOParams.frequency = 1.f;
-			m_indexLFOParams.shape = 0.f;
+			m_indexLFOFreq = 0.f;
 		}
 	};
 }

@@ -1,9 +1,8 @@
 
-
 FM. BISON by syntherklaas.org :: Dutch street synthesis, a subsidiary of visualizers.nl
 
 Hybrid FM synthesis software/firmware.
-Revision: 0.3
+Revision: 0.2-0.3
 
 [ Introduction ]
 
@@ -23,26 +22,11 @@ and you've got your yearly dose of 1980s pop music.
 
 [ Features ]
 
-* 32 note polyphony (might be a bit less on limited embedded platforms).
-* 8 different carrier oscillators, 2 of them dedicated to Roland TR-808 style percussion.
-* Fully fledged master ADSR envelope.
-* 2 serial LFOs, fully controllable, in charge of frequency modulation.
-* Linear interpolated table sampling (can well be disabled for less powerful platforms).
-* 2 different MOOG ladder filters sporting cutoff, resonance, wetness and a wetness envelope tied to your voices.
-* Frequency modulation shape & brightness.
-* Variable delay effect.
-* Master drive & pitch bend.
-* Controls tailored to allow for a minimum of noise, thereby allowing confident use of all features.
-* Written in fairly plain C++, easily portable to embedded platforms.
-* Last but not least: free of copyrighted or patented algorithms.
+...
 
 [ Design in a nutshell ]
 
-A voice is driven as such:
-	[ Index modulation LFO ] -> [ Cosine<->Triangle modulator ] -> [ Carrier ] -> [ MOOG ladder filter ] = Voice
-
-Voices are then mixed and during mixing a simple delay line-based feedback is applied, depending on parameters.
-As a philosophy the entire algorithm is executed except when there are simply no voices to render.
+...
 
 [ Third party credits ]
 

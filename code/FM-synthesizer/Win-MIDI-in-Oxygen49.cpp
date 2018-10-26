@@ -45,12 +45,11 @@ namespace SFM
 	const unsigned kPotFilterMix = 61;         // C10
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
-	const unsigned kPotModLFOCurve = 95;       // C17
+	const unsigned kPotUnused1 = 95;           // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
-	static MIDI_Smoothed s_modLFOCurve;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 
 	// Wheel mapping
@@ -64,13 +63,13 @@ namespace SFM
 	const unsigned kFaderR = 72; // C4
 	const unsigned kFaderModRatio = 70;       // C8
 	const unsigned kFaderFeedbackPitch = 63;  // C9
-	const unsigned kFaderModLFOShape = 25;    // C5
+	const unsigned kFaderUnused1 = 25;        // C5
 	const unsigned kFaderModLFOFreq = 73;     // C6
 	const unsigned kFaderModBrightness = 74;  // C7
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 	static float s_modRatio = 0.f;
 	static float s_feedbackPitch = 0.f;
-	static float s_modLFOShape = 0.f, s_modLFOFreq = 0.f;
+	static float s_modLFOFreq = 0.f;
 	static float s_modBrightness = 0.f;
 
 	static Waveform s_waveform = kSine;
@@ -224,12 +223,10 @@ namespace SFM
 							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotModLFOCurve:
-							s_modLFOCurve.Set(controlVal);
+						case kPotUnused1:
 							break;
 
-						case kFaderModLFOShape:
-							s_modLFOShape = controlVal/127.f;
+						case kFaderUnused1:
 							break;
 
 						case kFaderModLFOFreq:
@@ -392,14 +389,10 @@ namespace SFM
 	}
 
 	// Modulation main
-	float WinMidi_GetModulationIndex()      { return s_modIndex.Get(); }
-	float WinMidi_GetModulationRatio()      { return s_modRatio;       }
-	float WinMidi_GetModulationBrightness() { return s_modBrightness;  }
-
-	// Modulation LFO
-	float WinMidi_GetModulationLFOShape()     { return s_modLFOShape;       }
-	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;        }
-	float WinMidi_GetModulationLFOPower()     { return s_modLFOCurve.Get(); }
+	float WinMidi_GetModulationIndex()        { return s_modIndex.Get(); }
+	float WinMidi_GetModulationRatio()        { return s_modRatio;       }
+	float WinMidi_GetModulationBrightness()   { return s_modBrightness;  }
+	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;     }
 
 	// Master ADSR
 	float WinMidi_GetAttack()          { return s_A; }

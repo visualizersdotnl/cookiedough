@@ -28,16 +28,16 @@ namespace SFM
 
 	float Sample(float phase)
 	{
-//		const float index = phase*m_rate;
-//		const unsigned from = unsigned(index);
-//		const unsigned to = from+1;
-//		const float delta = index-from;
-//		const float A = m_pTable[from%m_length];
-//		const float B = m_pTable[from%m_length];
-//		return lerpf<float>(A, B, delta);
+		const float index = phase*m_rate;
+		const unsigned from = unsigned(index);
+		const unsigned to = from+1;
+		const float delta = fracf(index);
+		const float A = m_pTable[from%m_length];
+		const float B = m_pTable[from%m_length];
+		return lerpf<float>(A, B, delta);
 		
-		const unsigned sample = unsigned(phase*m_rate);
-		return m_pTable[sample%m_length];
+//		const unsigned sample = unsigned(phase*m_rate);
+//		return m_pTable[sample%m_length];
 	}
 
 	private:

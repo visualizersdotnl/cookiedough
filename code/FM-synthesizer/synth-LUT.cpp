@@ -45,8 +45,8 @@ namespace SFM
 		*/
 
 		const float frequency = 1.f;
-		const float theta = k2PI*frequency / kOscPeriod;
-		const float epsilon = 2.f * sinf(theta/2.f);
+		const float theta = k2PI*frequency/kOscPeriod;
+		const float epsilon = 2.f*sinf(theta/2.f);
 		
 		float N, prevN = sinf(-1.f*theta);
 		float Q, prevQ = cosf(-1.f*theta);

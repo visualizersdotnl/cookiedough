@@ -1,6 +1,9 @@
 
 /*
-	Syntherklaas FM -- Frequency modulator (can also be used as LFO).
+	Syntherklaas FM -- Frequency modulator.
+
+	This modulator has a brightness component which shifts between a sine and a triangle waveform
+	and a frequency by which the index (or depth, if you like) can be modulated.
 */
 
 #pragma once
@@ -9,34 +12,17 @@
 
 namespace SFM
 {
-	// This envelope causes a cutoff & resonance-like effect which can be effective to smooth out the modulator(s)
-	struct IndexEnvelope
-	{
-		alignas(16) float buffer[kOscPeriod];
-
-		struct Parameters
-		{
-			float frequency;
-			float shape;      // [0..1]
-			float curve;      // [0..N]
-		};
-
-		void Calculate(const Parameters &parameters);
-	};
-
 	struct Modulator
 	{
-		float m_frequency;
-		float m_index;
-		float m_pitch;
 		unsigned m_sampleOffs;
+		float m_index;
+		float m_frequency;
+		float m_pitch;
 		float m_phaseShift;
-		IndexEnvelope m_envelope;
+		float m_indexModFreq;
+		float m_indexModPitch;
 		
-		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, const IndexEnvelope::Parameters *pIndexEnvParams);
+		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In radians */, float indexModFreq);
 		float Sample(unsigned sampleCount, float brightness);
-
-		// Version without envelope and brightness
-		float SimpleSample(unsigned sampleCount);
 	};
 }

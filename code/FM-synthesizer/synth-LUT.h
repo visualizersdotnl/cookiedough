@@ -26,17 +26,17 @@ namespace SFM
 	// FIXME: depending on a few factors interpolation might be unnecessary
 	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
-		unsigned from = unsigned(index);
-		const float A = LUT[from&kOscTabAnd];
-		return A;
-
 //		unsigned from = unsigned(index);
-//		unsigned to = from+1;
-//		const float delta = index-from;
 //		const float A = LUT[from&kOscTabAnd];
-//		const float B = LUT[to&kOscTabAnd];
-//		const float sample = lerpf<float>(A, B, delta);
-//		return sample;
+//		return A;
+
+		unsigned from = unsigned(index);
+		unsigned to = from+1;
+		const float delta = fracf(index);
+		const float A = LUT[from&kOscTabAnd];
+		const float B = LUT[to&kOscTabAnd];
+		const float sample = lerpf<float>(A, B, delta);
+		return sample;
 	}
 
 	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index);    }

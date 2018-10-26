@@ -19,11 +19,12 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	New ideas:
-		- Filter switch (maybe)
+	New ideas / Questions:
+		- Filter switch?
+		- Richer C:M table?
+		- Important: do I only modulate the carrier or both C and M on pitch bend?
 
 	Priority:
-		- Verify and if necessary fix LUT & wavetable interpolation
 		- Scale 808 sample lengths to power of 2
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
@@ -106,15 +107,11 @@ namespace SFM
 		// Pitch bend
 		void SetPitchBend(float value);
 
-		// Modulation main
+		// Modulation
 		void SetModulationIndex(float value);
 		void SetModulationRatio(float value); // Indexes a 15-deep 'Farey Sequence' C:M table
 		void SetModulationBrightness(float value);
-
-		// Modulation LFO
-		void SetModulationLFOShape(float value);
 		void SetModulationLFOFrequency(float value);
-		void SetModulationLFOPower(float value);
 		
 		// Filter
 		void SetFilterCutoff(float value);

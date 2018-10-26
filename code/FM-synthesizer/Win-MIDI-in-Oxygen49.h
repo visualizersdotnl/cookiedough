@@ -36,15 +36,11 @@ namespace SFM
 	float WinMidi_GetPitchBendRaw(); // [-1..1]
 	float WinMidi_GetPitchBend(); // [0..1]
 
-	// Modulation main
+	// Modulation
 	float WinMidi_GetModulationIndex();
 	float WinMidi_GetModulationRatio();
 	float WinMidi_GetModulationBrightness();
-
-	// Modulation LFO
-	float WinMidi_GetModulationLFOShape();
 	float WinMidi_GetModulationLFOFrequency();
-	float WinMidi_GetModulationLFOPower();
 
 	// ADSR parameters
 	float WinMidi_GetAttack();

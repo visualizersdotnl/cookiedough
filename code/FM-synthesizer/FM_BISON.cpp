@@ -123,7 +123,7 @@ namespace SFM
 		// Initialize carrier, modulator & their pitched counterparts (for easy pitch bend)
 		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, frequency*state.m_modRatioC);
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*state.m_modRatioM, 0.f, &state.m_indexLFOParams);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*state.m_modRatioM, 0.f, state.m_indexLFOFreq);
 		voice.InitializePitchedCarriers();
 
 		// Set ADSR
@@ -198,12 +198,8 @@ namespace SFM
 		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f;
 
 		// Modulation index envelope
-		const float shape = WinMidi_GetModulationLFOShape();
-		const float curve = WinMidi_GetModulationLFOPower();
 		const float frequency = WinMidi_GetModulationLFOFrequency();
-		state.m_indexLFOParams.shape = shape;
-		state.m_indexLFOParams.curve = curve*12.f;
-		state.m_indexLFOParams.frequency = frequency*kPI;
+		state.m_indexLFOFreq = frequency*16.f;
 	}
 
 	/*

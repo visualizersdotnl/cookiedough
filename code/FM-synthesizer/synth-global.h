@@ -57,7 +57,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Drive range
-	const float kDriveHidB = 12.f; // Slight overdrive
+	const float kDriveHidB = 12.f; // >= 0 means overdrive
 }
 
 #include "synth-LUT.h"

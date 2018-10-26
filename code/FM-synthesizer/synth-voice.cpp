@@ -15,8 +15,7 @@ namespace SFM
 
 	SFM_INLINE void CopyModulator(const Modulator &from, Modulator &to, float freqMul)
 	{
-		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, nullptr);
-		memcpy(to.m_envelope.buffer, from.m_envelope.buffer, kOscPeriod*sizeof(float));
+		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, from.m_indexModFreq);
 	}
 
 	void Voice::InitializePitchedCarriers()
@@ -24,11 +23,9 @@ namespace SFM
 		// Up/down one 3 halftones
 		const float up = powf(2.f, 3.f/12.f);
 		const float down = 1.f/up;
-
 		CopyCarrier(m_carrier, m_carrierHi, up);
-		CopyModulator(m_modulator, m_modulatorHi, up);
-		
 		CopyCarrier(m_carrier, m_carrierLo, down);
+		CopyModulator(m_modulator, m_modulatorHi, up);
 		CopyModulator(m_modulator, m_modulatorLo, down);
 	}
 
@@ -45,17 +42,15 @@ namespace SFM
 		if (pitchBend < 0.f)
 		{
 			const float delta = pitchBend+1.f;
-			const float lowMod = m_modulatorLo.Sample(sampleCount, modBrightness);
-			const float mixMod = lerpf<float>(lowMod, modulation, delta);
-			const float low = m_carrierLo.Sample(sampleCount, mixMod);
+			const float modulation = m_modulatorLo.Sample(sampleCount, modBrightness);
+			const float low = m_carrierLo.Sample(sampleCount, modulation);
 			sample = lerpf<float>(low, sample, delta);
 		}
 		else if (pitchBend > 0.f)
 		{
 			const float delta = pitchBend;
-			const float highMod = m_modulatorHi.Sample(sampleCount, modBrightness);
-			const float mixMod = lerpf<float>(modulation, highMod, delta);
-			const float high = m_carrierHi.Sample(sampleCount, mixMod);
+			const float modulation = m_modulatorHi.Sample(sampleCount, modBrightness);
+			const float high = m_carrierHi.Sample(sampleCount, modulation);
 			sample = lerpf<float>(sample, high, pitchBend);
 		}
 		
