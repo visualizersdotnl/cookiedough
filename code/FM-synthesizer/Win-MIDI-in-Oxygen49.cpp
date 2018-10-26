@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-#define DUMP_MIDI_EVENTS
+// #define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -85,8 +85,8 @@ namespace SFM
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
 
-	// Pitch bend
-	static MIDI_Smoothed s_pitchBendS(0.5f, 16383); // 14-bit signed, wheel rests in the middle
+	// Pitch bend (14-bit signed, wheel rests in the middle, little longer ramp time)
+	static MIDI_Smoothed s_pitchBendS(0.5f, 16383, 0.075f); 
 	static float s_pitchBend;
 
 	static unsigned s_voices[127];
@@ -386,7 +386,7 @@ namespace SFM
 		return s_pitchBendS.Get(); 
 	}
 
-	float WinMidi_GetPitchRaw()   
+	float WinMidi_GetPitchBendRaw()   
 	{ 
 		return s_pitchBend;
 	}

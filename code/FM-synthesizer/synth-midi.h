@@ -50,11 +50,11 @@ namespace SFM
 	class MIDI_Smoothed
 	{
 	public:
-		MIDI_Smoothed(float value = 0.f, unsigned range = 127) :
+		MIDI_Smoothed(float value = 0.f, unsigned range = 127, float ramp = 0.05f /* Works OK for pots on Oxygen 49 */) :
 			m_range(range)
 ,			m_value(value)
 		{
-			m_value.reset(kSampleRate, 0.025f);
+			m_value.reset(kSampleRate, ramp);
 		}
 
 	private:
@@ -70,7 +70,8 @@ namespace SFM
 
 		float Get() /* const */
 		{
-			return Clamp(m_value.getNextValue());
+			// return Clamp(m_value.getNextValue());
+			return m_value.getTargetValue();
 		}
 	};
 }

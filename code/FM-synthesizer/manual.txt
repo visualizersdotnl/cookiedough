@@ -27,6 +27,7 @@ and you've got your yearly dose of 1980s pop music.
 * 8 different carrier oscillators, 2 of them dedicated to Roland TR-808 style percussion.
 * Fully fledged master ADSR envelope.
 * 2 serial LFOs, fully controllable, in charge of frequency modulation.
+* Linear interpolated table sampling (can well be disabled for less powerful platforms).
 * 2 different MOOG ladder filters sporting cutoff, resonance, wetness and a wetness envelope tied to your voices.
 * Frequency modulation shape & brightness.
 * Variable delay effect.

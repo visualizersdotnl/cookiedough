@@ -27,7 +27,7 @@ namespace SFM
 
 	void CalculateLUTs()
 	{
-#if 1
+#if 0
 		// Plain sinus
 		float angle = 0.f;
 		const float angleStep = k2PI/kOscPeriod;
@@ -38,7 +38,7 @@ namespace SFM
 		}
 #endif
 
-#if 0
+#if 1
 		/* 
 			Gordon-Smith oscillator
 			Allows for frequency changes with minimal artifacts (first-order filter)

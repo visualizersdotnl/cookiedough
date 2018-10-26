@@ -155,7 +155,10 @@ namespace SFM
 	*/
 
 	// Get state from Oxygen 49 driver
-	// A little mess is OK since it doesn't have to be production quality
+
+	// Ideally all that interacts directly is probed on the sample level, but this is impractical for now
+	// and not necessary except for a few (such as the pitch bend wheel).
+
 	static void Update_Oxygen49(float time)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
@@ -163,11 +166,6 @@ namespace SFM
 
 		// Drive
 		state.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
-	
-		// Pitch bend
-		const float bend = WinMidi_GetPitchBend();
-		state.m_bend = (bend-0.5f)*2.f;
-//		Log("Pitch bend: " + std::to_string(state.m_bend));
 
 		// Modulation index
 		const float alpha = 1.f/dBToAmplitude(-12.f);
@@ -243,8 +241,6 @@ namespace SFM
 		}
 		else
 		{
-			const float pitchBend = state.m_bend; // WinMidi_GetPitchBendRaw();
-
 			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -258,6 +254,10 @@ namespace SFM
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
+
+						// To be accurate enough (read: no noise) the pitch bend must be probed on sample level
+						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
+
 						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope);
 						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;

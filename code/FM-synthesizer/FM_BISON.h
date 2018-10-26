@@ -23,7 +23,8 @@
 		- Filter switch (maybe)
 
 	Priority:
-		- Interpolate 808 samples (and scale their lengths to a power of 2)
+		- Verify and if necessary fix LUT & wavetable interpolation
+		- Scale 808 sample lengths to power of 2
 		- Create interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Turn structures into real classes piece by piece
@@ -42,7 +43,8 @@
 		- Stash all oscillators in LUTs, enables easy tricks and speeds it up (in some cases at least)
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
-	Of later concern:
+	Of later concern / Ideas:
+		- Tremolo (what the modulation wheel was meant for)
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)

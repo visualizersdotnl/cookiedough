@@ -23,9 +23,6 @@ namespace SFM
 		// [0..2] where 1 is neutral, 0 silent, 2 obviously overdrive (no hard limit)
 		float m_drive;
 
-		// Pitch bend [-N..N]
-		float m_bend;
-
 		// Master modulation index value, ratio & brightness (used on note trigger)
 		// [0..1]
 		float m_modIndex;
@@ -61,9 +58,6 @@ namespace SFM
 
 			// Neutral
 			m_drive = 1.f;
-
-			// No pitch bend
-			m_bend = 0.f;
 
 			// No FM
 			m_modIndex = 0.f;

@@ -8,6 +8,8 @@
 #include <cmath>
 #include <limits>
 
+#include "synth-math.h"
+
 namespace SFM 
 {
 	// Frequency to sinus LUT pitch
@@ -59,6 +61,12 @@ namespace SFM
 			sample = -1.f;
 		
 		return sample;
+	}
+
+	// Sample mix
+	SFM_INLINE float Mix(float sampleA, float sampleB)
+	{
+		return fast_tanhf(sampleA+sampleB);
 	}
 
 	/*

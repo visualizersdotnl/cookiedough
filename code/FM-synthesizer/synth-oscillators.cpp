@@ -24,18 +24,26 @@ namespace SFM
 		WavetableOscillator(const uint8_t *pTable, unsigned length, unsigned speed = 1 /* Higher means slower */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_length(length/sizeof(float))
-,			m_divider(float(m_length/kOscPeriod)*speed) {}
+,			m_rate(1.f/(float(m_length/kOscPeriod)*speed)) {}
 
 	float Sample(float phase)
 	{
-		const unsigned sample = unsigned(phase/m_divider);
+//		const float index = phase*m_rate;
+//		const unsigned from = unsigned(index);
+//		const unsigned to = from+1;
+//		const float delta = index-from;
+//		const float A = m_pTable[from%m_length];
+//		const float B = m_pTable[from%m_length];
+//		return lerpf<float>(A, B, delta);
+		
+		const unsigned sample = unsigned(phase*m_rate);
 		return m_pTable[sample%m_length];
 	}
 
 	private:
 		const float *m_pTable;
 		const unsigned m_length;
-		const float m_divider;
+		const float m_rate;
 	};
 
 	static WavetableOscillator s_kickOsc(s_wavKick808, sizeof(s_wavKick808));

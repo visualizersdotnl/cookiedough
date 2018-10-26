@@ -74,12 +74,11 @@ namespace SFM
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
 	{
-		phase *= -1.f;
-
-		float signal = 0.f;
-		for (float iHarmonic = 0.f; iHarmonic < numHarmonics; iHarmonic += 1.f)
+		float signal = 0.f, accPhase = phase*-1.f;
+		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
 		{
-			signal += lutsinf(phase*iHarmonic)/(1.f+iHarmonic);
+			signal += lutsinf(accPhase)/(1.f+iHarmonic);
+			accPhase += phase;
 		}
 
 		return signal*(2.f/kPI);
@@ -88,7 +87,7 @@ namespace SFM
 	SFM_INLINE float oscSoftSquare(float phase, unsigned numHarmonics) 
 	{ 
 		float signal = 0.f, accPhase = phase;
-		for (float iHarmonic = 0.f; iHarmonic < numHarmonics; iHarmonic += 2.f)
+		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
 		{
 			signal += lutsinf(accPhase)/(1.f+iHarmonic);
 			accPhase += 2.f*phase;
