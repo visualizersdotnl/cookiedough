@@ -81,4 +81,19 @@ namespace SFM
 
 		return !std::isnan(value);
 	}
+
+	/*
+		Sample check function.
+
+		Since dealing with floating point values creates, I cite, "many opportunities for difficulties", during development
+		I want to check them often (in debug builds). The closer I am to the problem the quicker I can pin down what causes it.
+
+		In release builds this vanishes.
+	*/
+
+	SFM_INLINE void SampleAssert(float sample)
+	{
+		SFM_ASSERT(sample >= -1.f && sample <= 1.f);
+		SFM_ASSERT(true == FloatCheck(sample));
+	}
 }

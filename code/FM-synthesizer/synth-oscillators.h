@@ -32,8 +32,14 @@ namespace SFM
 		kPinkNoise,
 		/* Wavetable */
 		kKick808,
-		kSnare808
+		kSnare808,
+		kGuitar
 	};
+
+	SFM_INLINE bool oscIsWavetable(Waveform form)
+	{
+		return form >= kKick808 && form <= kGuitar;
+	}
 
 	/*
 		Sinus oscillator.
@@ -69,7 +75,7 @@ namespace SFM
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		return 32; // FIXME
+		return 40; // FIXME
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
@@ -132,8 +138,52 @@ namespace SFM
 
    /*
 		Wavetable oscillator(s)
+
+		FIXME:
+			- Hold state (small piece of the sample) for sustain (loop)
+			- Multiple tables to better accomodate different pitches
 	*/
 
-	float oscKick808(float phase);
-	float oscSnare808(float phase);
+	class WavetableOscillator
+	{
+	public:
+		WavetableOscillator(const uint8_t *pTable, unsigned length, unsigned octaveOffs, float baseHz = 220.f /* A3 */) :
+			m_pTable(reinterpret_cast<const float*>(pTable))
+,			m_numSamples(length/sizeof(float))
+,			m_periodLen(float(m_numSamples)/kOscPeriod)
+	{
+		m_basePitch = CalculateOscPitch(baseHz * powf(2.f, float(octaveOffs)));
+		m_rate = 1.f/(m_basePitch/m_periodLen);
+	}
+
+	SFM_INLINE float Sample(float phase) const
+	{
+		const float index = phase*m_rate;
+		const unsigned from = unsigned(index);
+		const unsigned to = from+1;
+		const float delta = fracf(index);
+		const float A = m_pTable[from%m_numSamples];
+		const float B = m_pTable[from%m_numSamples];
+		return lerpf<float>(A, B, delta);
+		
+//		const unsigned sample = unsigned(phase*m_rate);
+//		return m_pTable[sample%m_numSamples];
+	}
+
+	float GetLength() const
+	{
+		return floorf(m_periodLen/m_rate * (kOscPeriod)) - 1.f;
+	}
+
+	private:
+		const float *m_pTable;
+		const unsigned m_numSamples;
+		/* const */ float m_basePitch;
+		const float m_periodLen;
+		/* const */ float m_rate;
+	};
+
+	WavetableOscillator &getOscKick808();
+	WavetableOscillator &getOscSnare808();
+	WavetableOscillator &getOscGuitar();
 }

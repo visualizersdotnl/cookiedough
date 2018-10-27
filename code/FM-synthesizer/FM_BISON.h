@@ -13,6 +13,7 @@
 		- The code style started out as semi-C, intending a hardware target, currently in the process of cleaning it up a bit
 		  and upgrading to somewhat proper C++.
 		- You'll run into various numbers and seemingly weird calculations: it's called "bro science".
+		- There are quite some assertions to check floating point values; and for good reason.
 		- On FM ratios: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 
 
@@ -23,8 +24,10 @@
 		- Switch between 1-3 algorithms
 
 	Priority:
+		- A hole in my game: I keep rendering 'dead' voices, that ought to give me trouble!
+		- Refine wavetable voices
 		- BLIT triangle
-		- Feedback bug (seems to overload at some point, for some reason, may be the filter)
+		- Instabilities
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
@@ -38,14 +41,15 @@
 		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
-		- Floating point bugs
+		- Floating point bugs (keep adding SampleAssert())
 		- Stash all oscillators in LUTs, enables easy tricks and speeds it up (in some cases at least)
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
-		- Scale 808 sample lengths to power of 2
+		- Resample wavetable voices to power-of-2 size
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
+		- Remove assertiosn in places you're sure it's stabilized
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
 */
 

@@ -136,7 +136,7 @@ namespace SFM
 						break;
 
 					case kPerc4:
-						s_waveform = kDigiSaw;
+						s_waveform = kGuitar;
 						break;
 
 					case kPerc5:

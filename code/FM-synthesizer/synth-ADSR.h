@@ -44,7 +44,7 @@ namespace SFM
 			return m_filterADSR.process();
 		}
 		
-		// Used to release voice to the pool
+		// For most voice types this means we're done
 		bool IsReleased(unsigned sampleCount)
 		{
 			return m_voiceADSR.getState() == ::ADSR::env_idle;

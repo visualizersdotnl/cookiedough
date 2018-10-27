@@ -27,8 +27,8 @@ namespace SFM
 		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
 
 		// FIXME: tweak
-		m_filterADSR.setTargetRatioA(0.314f + velocity*0.066f);
-		m_filterADSR.setTargetRatioDR(0.0001f*kGoldenRatio + velocity*0.033f);
+		m_filterADSR.setTargetRatioA(0.3f);
+		m_filterADSR.setTargetRatioDR(0.001f*kGoldenRatio + velocity*0.05f);
 
 		m_voiceADSR.setAttackRate(attack);
 		m_voiceADSR.setDecayRate(decay);

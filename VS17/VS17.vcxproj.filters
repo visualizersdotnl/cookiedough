@@ -59,7 +59,7 @@
     <Filter Include="/code\/FM-synthesizer\Documentation">
       <UniqueIdentifier>{3082668a-436a-4913-a835-221db8cb1532}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\wavetable">
+    <Filter Include="/code\/FM-synthesizer\/wavetable">
       <UniqueIdentifier>{8851bf8c-39f4-4b3d-b2d9-a9a4f36c3b6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -383,12 +383,6 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\juce_LinearSmoothedValue.h">
       <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavKick808.h">
-      <Filter>/code\/FM-synthesizer\wavetable</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\wavetable\wavSnare808.h">
-      <Filter>/code\/FM-synthesizer\wavetable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,7 @@ namespace SFM
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 				const float feedback = m_P3;
-				SFM_ASSERT(true == FloatCheck(feedback));
+				SampleAssert(feedback);
 
 				// Coefficients optimized using differential evolution
 				// to make feedback gain 4.0 correspond closely to the
@@ -38,7 +38,7 @@ namespace SFM
 
 				const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
 				const float sample = lerpf<float>(dry, out, wetness); 
-				SFM_ASSERT(sample >= -1.f && sample <= 1.f);
+				SampleAssert(sample);
 
 				pSamples[iSample] = sample;
 			}
@@ -55,6 +55,8 @@ namespace SFM
 				const float dry = pSamples[iSample];
 				const float ADSR = envelope.SampleForFilter(sampleCount);
 				SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
+
+				SampleAssert(m_V[3]);
 
 				dV0 = -m_cutoff * (fast_tanhf((1.f*dry + m_resonance*m_V[3]) / (2.f*kVT)) + m_tV[0]);
 				m_V[0] += (dV0 + m_dV[0]) / (2.f*kSampleRate);
@@ -78,7 +80,7 @@ namespace SFM
 
 				const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
 				const float sample = lerpf<float>(dry, m_V[3], wetness); 
-				SFM_ASSERT(sample >= -1.f && sample <= 1.f);
+				SampleAssert(sample);
 
 				pSamples[iSample] = sample;
 			}

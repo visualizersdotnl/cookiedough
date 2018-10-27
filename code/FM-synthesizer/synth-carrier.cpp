@@ -18,6 +18,25 @@ namespace SFM
 		m_pitch = CalculateOscPitch(frequency);
 		m_sampleOffs = sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
+	
+		switch (m_form)
+		{
+		case kKick808:
+			m_cycleLen = getOscKick808().GetLength();
+			break;
+
+		case kSnare808:
+			m_cycleLen = getOscSnare808().GetLength();
+			break;
+
+		case kGuitar:
+			m_cycleLen = getOscGuitar().GetLength();
+			break;
+			
+		default:
+			m_cycleLen = kOscPeriod;
+			break;
+		}
 	}
 
 	float Carrier::Sample(unsigned sampleCount, float modulation)
@@ -67,16 +86,20 @@ namespace SFM
 */
 
 		case kKick808:
-			signal = oscKick808(phase+modulation);
+			signal = getOscKick808().Sample(phase+modulation);
 			break;
 
 		case kSnare808:
-			signal = oscSnare808(phase+modulation);
+			signal = getOscSnare808().Sample(phase+modulation);
+			break;
+
+		case kGuitar:
+			signal = getOscGuitar().Sample(phase+modulation);
 			break;
 		}
 
 		const float wave = m_amplitude*signal;
-		SFM_ASSERT(wave >= -1.f && wave <= 1.f);
+		SampleAssert(wave);
 
 		return wave;
 	}

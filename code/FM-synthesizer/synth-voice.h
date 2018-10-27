@@ -28,6 +28,9 @@ namespace SFM
 		Modulator m_modulator;
 		Modulator m_ampMod;
 
+		// Useful for wavetable samples
+		bool m_oneShot;
+
 		// Call before use to initialize pitched carriers and modulators (used for pitch bend)
 		// Not the most elegant solution, but it doesn't depend on any delay line(s)
 		Carrier m_carrierHi, m_carrierLo;

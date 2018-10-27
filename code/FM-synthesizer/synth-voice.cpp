@@ -34,6 +34,10 @@ namespace SFM
 		// Assumption: any artifacts this yields are migitated by soft clamping down the line
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
 
+		// Silence one-shots
+		if (true == m_oneShot && m_carrier.HasCycled(sampleCount))
+			return 0.f;
+
 		const float ADSR = envelope.SampleForVoice(sampleCount);
 		
 		float modulation = m_modulator.Sample(sampleCount, modBrightness);
@@ -58,6 +62,9 @@ namespace SFM
 
 		// Finally, modulate amplitude ('tremolo')
 		sample *= m_ampMod.Sample(sampleCount, 0.f);
+
+		SFM_ASSERT(sample >= -1.f && sample <= 1.f);
+		SFM_ASSERT(true == FloatCheck(sample));
 
 		return sample;
 	}

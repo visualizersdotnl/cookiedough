@@ -76,6 +76,7 @@ namespace SFM
 			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
+				// Ran it's course?
 				ADSR &envelope = s_ADSRs[iVoice];
 				if (true == envelope.IsReleased(s_sampleCount))
 				{
@@ -83,6 +84,11 @@ namespace SFM
 					--state.m_active;
 
 					// Perfect: take it!
+					return iVoice;
+				}
+				else if (true == voice.m_oneShot && true == voice.m_carrier.HasCycled(s_sampleCount))
+				{
+					// One-shot that's done cycling
 					return iVoice;
 				}
 			}
@@ -133,6 +139,9 @@ namespace SFM
 		const float tremolo = state.m_tremolo;
 		const float broFrequency = invsqrf(tremolo)*kPI*kGoldenRatio; // The f*ck else you gonna call debauchery like this?
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
+
+		// FIXME: perhaps this should be optional?
+		voice.m_oneShot = oscIsWavetable(form);
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
@@ -228,11 +237,13 @@ namespace SFM
 		static float loudest = 0.f;
 
 		const unsigned numSamples = ringBuf.GetFree();
-//		if (numSamples < 1)
-//			return loudest;
+		if (numSamples < 1)
+			return loudest;
 
-		std::lock_guard<std::mutex> stateCopyLock(s_stateMutex);
+		std::lock_guard<std::mutex> renderLock(s_stateMutex);
 		s_renderState = s_shadowState;
+	
+	//	UpdateVoices();
 
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
@@ -268,7 +279,6 @@ namespace SFM
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
 						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope);
-						SFM_ASSERT(true == FloatCheck(sample));
 						buffer[iSample] = sample;
 					}
 
@@ -291,16 +301,21 @@ namespace SFM
 				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
 				{
 					const float sample = s_voiceBuffers[iVoice][iSample];
+					SampleAssert(sample);
 					mix = fast_tanhf(mix + sample);
 				}
 
-				// Apply delay
-				const float phaser = state.m_feedbackPitch;
-				const float delayed = s_delayMatrix.Read(phaser)*0.66f;
+				// Process delay
+				const float delPitch = state.m_feedbackPitch;
+				const float delayed = s_delayMatrix.Read(delPitch)*0.66f;
 				s_delayMatrix.Write(mix, delayed*state.m_feedback);
+
+				// Apply delay
 				mix = mix + state.m_feedbackWetness*delayed;
 
 				mix = fast_tanhf(mix*state.m_drive);
+				SampleAssert(mix);
+
 				ringBuf.Write(mix);
 
 				// FIXME: temporary

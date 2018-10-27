@@ -69,21 +69,24 @@ namespace SFM
 	SFM_INLINE float Read(float phase /* [-1..1] */)
 	{
 		SFM_ASSERT(fabsf(phase) <= 1.f);
+	
 		const float middle = m_lineMid.Read();
-
-		return middle;
+		float sample = middle;
 
 		if (phase < 0.f)
 		{
 			phase += 1.f;
 			const float low = m_lineLo.Read();
-			return lerpf<float>(low, middle, phase);
+			sample = lerpf<float>(low, middle, phase);
 		}
 		else
 		{
 			const float high = m_lineHi.Read();
-			return lerpf<float>(middle, high, phase);
+			sample = lerpf<float>(middle, high, phase);
 		}
+
+		SampleAssert(sample);
+		return sample;
 	}
 
 	private:
