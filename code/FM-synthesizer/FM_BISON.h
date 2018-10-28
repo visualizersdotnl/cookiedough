@@ -3,6 +3,12 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
+	Beta-test list:
+		- Ronny Pries
+		- Esa Ruoho
+		- Maarten van Strien
+		- Mark Smith
+
 	Third-party code used:
 		- Magnus Jonsson's Microtracker MOOG filter
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
@@ -24,15 +30,18 @@
 		- Switch between 1-3 algorithms
 
 	Priority:
-		- A hole in my game: I keep rendering 'dead' voices, that ought to give me trouble!
+		- Filter drive (perhaps in proportion to the filter wetness)
+		- A hole in my game: I keep rendering 'dead' voices until they're taken; find out why there's a slight click if you don't (maybe release them a few samples later!)
+		  +  Useless load on CPU!
 		- Refine wavetable voices
-		- BLIT triangle
+		- BLIT triangle!
 		- Instabilities
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
 
 	MIDI issues:
+		- ...
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -42,14 +51,12 @@
 
 	Plumbing:
 		- Floating point bugs (keep adding SampleAssert())
-		- Stash all oscillators in LUTs, enables easy tricks and speeds it up (in some cases at least)
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
 		- Resample wavetable voices to power-of-2 size
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
-		- Remove assertiosn in places you're sure it's stabilized
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
 */
 

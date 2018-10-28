@@ -5,7 +5,7 @@
 //  EarLevel Engineering: earlevel.com
 //  Copyright 2012 Nigel Redmon
 //
-//  Edited by Niels Johan de Wit on 24/10/2018 to eliminate warnings.
+//  Edited by Niels Johan de Wit for FM. BISON.
 //
 //  For a complete explanation of the ADSR envelope generator and code,
 //  read the series of articles by the author, starting here:
@@ -68,6 +68,7 @@ protected:
 inline float ADSR::process() {
 	switch (state) {
         case env_idle:
+			output = 0.f;
             break;
         case env_attack:
             output = attackBase + output * attackCoef;

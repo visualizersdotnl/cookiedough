@@ -22,6 +22,8 @@ namespace SFM
 			float sustain;
 		};
 
+		unsigned m_sampleOffs;
+
 		::ADSR m_voiceADSR;
 		::ADSR m_filterADSR;
 
@@ -44,8 +46,7 @@ namespace SFM
 			return m_filterADSR.process();
 		}
 		
-		// For most voice types this means we're done
-		bool IsReleased(unsigned sampleCount)
+		bool IsIdle(unsigned sampleCount) /* const */
 		{
 			return m_voiceADSR.getState() == ::ADSR::env_idle;
 		}

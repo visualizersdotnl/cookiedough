@@ -67,9 +67,13 @@ namespace SFM
 		API + logic.
 	*/
 
-	static unsigned AllocateNote(FM &state)
+	// Returns -1 or voice index of a recently freed voice
+	static unsigned UpdateVoices(FM &state)
 	{
-		// See if any releasing voices are done
+		SFM_ASSERT(false == s_stateMutex.try_lock());
+
+		// See if any voices are done
+		unsigned iFree = -1;
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			Voice &voice = state.m_voices[iVoice];
@@ -78,38 +82,58 @@ namespace SFM
 			{
 				// Ran it's course?
 				ADSR &envelope = s_ADSRs[iVoice];
-				if (true == envelope.IsReleased(s_sampleCount))
+				if (true == envelope.IsIdle(s_sampleCount))
 				{
 					voice.m_enabled = false;
 					--state.m_active;
 
 					// Perfect: take it!
-					return iVoice;
+					iFree = iVoice;
 				}
 				else if (true == voice.m_oneShot && true == voice.m_carrier.HasCycled(s_sampleCount))
 				{
 					// One-shot that's done cycling
-					return iVoice;
+					voice.m_enabled = false;
+					--state.m_active;
+
+					iFree = iVoice;
 				}
 			}
 		}
 
-		if (state.m_active < kMaxVoices)
+		return iFree;
+	}
+
+	static unsigned AllocateNote(FM &state)
+	{
+		SFM_ASSERT(false == s_stateMutex.try_lock());
+
+		unsigned iFree = UpdateVoices(state);
+		
+		if (-1 == iFree)
 		{
-			// Pick the first available slot
-			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			if (state.m_active < kMaxVoices)
 			{
-				const bool enabled = state.m_voices[iVoice].m_enabled;
-				if (false == enabled)
+				// Pick the first available slot
+				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 				{
-					return iVoice;
+					const bool enabled = state.m_voices[iVoice].m_enabled;
+					if (false == enabled)
+					{
+						iFree = iVoice;
+						break;
+					}
 				}
 			}
 		}
 
-		// FIXME: handle this
-		Log("Out of voices!");
-		return -1;
+		if (-1 == iFree)
+		{
+			// FIXME: handle this
+			Log("Out of voices!");
+		}
+
+		return iFree;
 	}
 
 	// Returns voice index, if available
@@ -176,6 +200,8 @@ namespace SFM
 	// Ideally all that interacts directly is probed on the sample level, but this is impractical for now
 	// and not necessary except for a few (such as the pitch bend wheel).
 
+	// Most tweaking done here should be adapted for the first VST release.
+
 	static void Update_Oxygen49(float time)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
@@ -189,9 +215,9 @@ namespace SFM
 		state.m_modIndex = WinMidi_GetModulationIndex()*alpha;
 
 		// Get ratio from precalculated table (see synth-LUT.cpp)
-		const unsigned tabIndex = (unsigned) (WinMidi_GetModulationRatio()*(kCarrierModTabSize-1));
-		state.m_modRatioC = (float) g_CM_table_15NF[tabIndex][0];
-		state.m_modRatioM = (float) g_CM_table_15NF[tabIndex][1];
+		const unsigned tabIndex = (unsigned) (WinMidi_GetModulationRatio()*(g_CM_table_size-1));
+		state.m_modRatioC = (float) g_CM_table[tabIndex][0];
+		state.m_modRatioM = (float) g_CM_table[tabIndex][1];
 
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
 		state.m_modBrightness = WinMidi_GetModulationBrightness();
@@ -201,7 +227,7 @@ namespace SFM
 		state.m_indexLFOFreq = frequency*k2PI*2.f;
 
 		// Modulation detune
-		state.m_modDetune = (WinMidi_GetModulationDetune()-0.5f)*2.f;
+		state.m_modDetune = WinMidi_GetModulationDetune()*6.f;
 
 		// Tremolo
 		state.m_tremolo = WinMidi_GetTremolo();
@@ -209,7 +235,7 @@ namespace SFM
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
-		state.m_ADSR.release = WinMidi_GetRelease()*3.f; // Extra room to create pad-like sounds
+		state.m_ADSR.release = WinMidi_GetRelease()*4.f; // Extra room to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetSustain();
 
 		// Filter parameters
@@ -236,15 +262,15 @@ namespace SFM
 	{
 		static float loudest = 0.f;
 
+		// At this point I can return or decide to only process equal or above a minimum amount, but at this point I am for full
+		// stability regardless of parameters
 		const unsigned numSamples = ringBuf.GetFree();
-		if (numSamples < 1)
-			return loudest;
 
 		std::lock_guard<std::mutex> renderLock(s_stateMutex);
+
+		// Make copy for rendering
 		s_renderState = s_shadowState;
 	
-	//	UpdateVoices();
-
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
 

@@ -13,9 +13,15 @@ namespace SFM
 	extern float g_sinLUT[kOscPeriod];
 	extern float g_noiseLUT[kOscPeriod];
 
+/*
 	// Carrier:Modulation ratio table (37 entries)
 	const unsigned kCarrierModTabSize = 37;
 	extern unsigned g_CM_table_15NF[][2];
+*/
+
+	// Generated Carrier:Modulation ratio table
+	extern unsigned g_CM_table[512][2];
+	extern unsigned g_CM_table_size;
 
 	void CalculateLUTs();
 

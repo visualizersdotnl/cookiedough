@@ -12,7 +12,10 @@ namespace SFM
 
 	void ADSR::Start(unsigned sampleCount, const Parameters &parameters, float velocity)
 	{
-//		m_voiceADSR.reset();
+		m_voiceADSR.reset();
+		m_filterADSR.reset();
+
+		m_sampleOffs = sampleCount;
 
 		const float attack  = 1.f + truncf(parameters.attack*kSampleRate);
 		const float decay   = 1.f + truncf(parameters.decay*kSampleRate);
@@ -24,10 +27,8 @@ namespace SFM
 
 		// For now this sounds fine
 		m_voiceADSR.setTargetRatioA(kGoldenRatio*2.f + velocity*0.624f);
-		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
-
-		// FIXME: tweak
 		m_filterADSR.setTargetRatioA(0.3f);
+		m_voiceADSR.setTargetRatioDR(kGoldenRatio*2.f + velocity*0.314f);
 		m_filterADSR.setTargetRatioDR(0.001f*kGoldenRatio + velocity*0.05f);
 
 		m_voiceADSR.setAttackRate(attack);
@@ -38,7 +39,7 @@ namespace SFM
 		m_filterADSR.setAttackRate(attack);
 		m_filterADSR.setDecayRate(decay);
 		m_filterADSR.setReleaseRate(release);
-		m_filterADSR.setSustainLevel(sustain);
+		m_filterADSR.setSustainLevel(velocity);
 
 		m_voiceADSR.gate(true);
 		m_filterADSR.gate(true);
