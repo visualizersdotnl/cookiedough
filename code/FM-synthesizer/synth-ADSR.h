@@ -1,6 +1,9 @@
 
 /*
 	Syntherklaas FM -- ADSR envelope.
+
+	The ADSR class uses Nigel Redmon's implementation; the ADSR_Simple is my basic test implementation.
+	I'm keeping the latter for testing purposes.
 */
 
 #pragma once
@@ -11,8 +14,14 @@
 
 namespace SFM
 {
-	struct ADSR
+	class ADSR
 	{
+	public:
+		ADSR()
+		{
+			Reset();
+		}
+
 		struct Parameters
 		{
 			// [0..1]
@@ -48,7 +57,61 @@ namespace SFM
 		
 		bool IsIdle(unsigned sampleCount) /* const */
 		{
+			SFM_ASSERT(0.f == m_voiceADSR.getOutput());
 			return m_voiceADSR.getState() == ::ADSR::env_idle;
+		}
+	};
+
+	/*
+		ADSR_Simple (for testing purposes only)
+	*/
+
+	class ADSR_Simple
+	{
+	public:
+		ADSR_Simple() : 
+			m_state(kIdle),
+			m_output(0.f)
+		{}
+
+		struct Parameters
+		{
+			// [0..1]
+			float attack;
+			float decay;
+			float release;
+			float sustain;
+		};
+
+		unsigned m_sampleOffs;
+
+		enum State
+		{
+			kAttack,
+			kDecay,
+			kSustain,
+			kRelease,
+			kIdle
+		} m_state;
+
+		float m_output;
+
+		unsigned m_attack;
+		unsigned m_decay;
+		unsigned m_release;
+		float    m_sustain;
+
+		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
+		void Stop(unsigned sampleCount);
+
+		void Reset();
+
+		float SampleForVoice(unsigned sampleCount);
+		float SampleForFilter(unsigned sampleCount) { return 1.f; } // FIXME
+		
+		bool IsIdle(unsigned sampleCount) const
+		{
+			return kIdle == m_state;
 		}
 	};
 }

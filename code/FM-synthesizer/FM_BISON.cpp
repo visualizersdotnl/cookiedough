@@ -6,10 +6,11 @@
 // Shut it, MSVC.
 #define _CRT_SECURE_NO_WARNINGS
 
-// Easily interchangeable with POSIX-variants or straight assembler
+// C++11
 #include <mutex>
 #include <shared_mutex>
 #include <atomic>
+#include <deque>
 
 #include "FM_BISON.h"
 #include "synth-midi.h"
@@ -32,177 +33,214 @@ namespace SFM
 		Global sample counts.
 	*/
 
-// 	static std::atomic<unsigned> s_sampleCount = 0;
-//	static std::atomic<unsigned> s_sampleOutCount = 0;
-
-	static unsigned s_sampleCount = 0, s_sampleOutCount = 0;
+ 	static std::atomic<unsigned> s_sampleCount = 0;
+	static std::atomic<unsigned> s_sampleOutCount = 0;
 
 	/*
-		Global state.
-		
-		The shadow & runtime state may be updated after acquiring the lock.
-		This means pretty much every API call and Render().
-
-		This creates a tiny additional lag between input and output, but an earlier commercial product has 
-		shown this not to be noticeable.
+		Ring buffer.
 	*/
+
+	static std::mutex s_ringBufLock;
+	static FIFO s_ringBuf;
+
+	/*
+		State.
+
+		May only be altered after acquiring lock.
+	*/
+
 
 	static std::mutex s_stateMutex;
 
+	// Global (parameters)
 	static FM s_shadowState;
 	static FM s_renderState;
 
-	/*
-		Runtime state.
-
-		These are not part of the state object since they alter their state whilst rendering. 
-	*/
-
+	// Runtime
 	static ADSR s_ADSRs[kMaxVoices];
-//	static MicrotrackerMoogFilter s_filters[kMaxVoices];
-	static ImprovedMoogFilter s_filters[kMaxVoices];
+	static ImprovedMoogFilter s_improvedFilters[kMaxVoices];
+	static MicrotrackerMoogFilter s_MicrotrackerFilters[kMaxVoices];
+	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
-		
+	
 	/*
-		API + logic.
+		Voice API.
 	*/
 
-	// Returns -1 or voice index of a recently freed voice
-	static unsigned UpdateVoices(FM &state)
+	struct VoiceRequest
+	{
+		unsigned *pIndex;
+		Waveform form;
+		float frequency;
+		float velocity;
+	};
+
+	static std::deque<VoiceRequest> s_voiceReq;
+	static std::deque<unsigned> s_voiceReleaseReq;
+
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity)
+	{
+		SFM_ASSERT(true == InAudibleSpectrum(frequency));
+
+		std::lock_guard<std::mutex> lock(s_stateMutex);
+		
+		VoiceRequest request;
+		request.pIndex = pIndex;
+		request.form = form;
+		request.frequency = frequency;
+		request.velocity = velocity;
+
+		s_voiceReq.push_front(request);
+
+		// At this point there is no voice yet
+		if (nullptr != pIndex)
+			*pIndex = -1;
+	}
+
+	void ReleaseVoice(unsigned index)
+	{
+		SFM_ASSERT(-1 != index);
+
+		std::lock_guard<std::mutex> lock(s_stateMutex);
+		s_voiceReleaseReq.push_front(index);
+	}
+
+	static void InitializeVoice(const VoiceRequest &request, FM &state, unsigned iVoice)
+	{
+		Voice &voice = state.m_voices[iVoice];
+
+		const float frequency = request.frequency;
+		const float velocity = request.velocity;
+
+		// Initialize carrier
+		const float amplitude = 0.1f + velocity*dBToAmplitude(kMaxVoicedB);
+		voice.m_carrier.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
+
+		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
+		const float modRatio = state.m_modRatioM+state.m_modDetune;
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*modRatio, 0.f, state.m_indexLFOFreq);
+
+		// Initialize feedback delay line(s)
+		voice.InitializeFeedback();
+
+		// Initialize amplitude modulator (or 'tremolo')
+		const float tremolo = state.m_tremolo;
+		const float broFrequency = invsqrf(tremolo)*kPI*kGoldenRatio; // This is *so* arbitrary
+		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
+
+		// FIXME: perhaps this should be optional?
+		voice.m_oneShot = oscIsWavetable(request.form);
+
+		// Set ADSR
+		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
+
+		// Get & reset filter
+		switch (state.m_curFilter)
+		{
+		default:
+		case 0: // Classic MOOG
+			voice.m_pFilter = s_improvedFilters+iVoice;
+			break;
+
+		case 1: // Tempered variant
+			voice.m_pFilter = s_teemuFilters+iVoice;
+			break;
+
+		case 2: // A bit more expressive 
+			voice.m_pFilter = s_MicrotrackerFilters+iVoice;
+			break;
+		}
+
+		voice.m_pFilter->Reset();		
+		
+		voice.m_enabled = true;
+		++state.m_active;
+
+		// Store index if wanted
+		if (nullptr != request.pIndex)
+			*request.pIndex = iVoice;
+	}
+
+	// Updates all voices as follows:
+	// - Check if a currently active voice is to be terminated.
+	// - Handle all requested voice releases.
+	// - Trigger all requested voices.
+	static void UpdateVoices(FM &state)
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
 		// See if any voices are done
-		unsigned iFree = -1;
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			Voice &voice = state.m_voices[iVoice];
 			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				// Ran it's course?
+				bool free = false;
+				
+				// If ADSR envelope has ran it's course, voice can be freed.
 				ADSR &envelope = s_ADSRs[iVoice];
 				if (true == envelope.IsIdle(s_sampleCount))
+					free = true;
+
+				// One-shot done?				
+				if (true == voice.m_oneShot && true == voice.m_carrier.HasCycled(s_sampleCount))
+					free = true;
+				
+				// If to be freed enter grace period
+				if (true == free)
 				{
 					voice.m_enabled = false;
 					--state.m_active;
-
-					// Perfect: take it!
-					iFree = iVoice;
-				}
-				else if (true == voice.m_oneShot && true == voice.m_carrier.HasCycled(s_sampleCount))
-				{
-					// One-shot that's done cycling
-					voice.m_enabled = false;
-					--state.m_active;
-
-					iFree = iVoice;
 				}
 			}
 		}
 
-		return iFree;
-	}
-
-	static unsigned AllocateNote(FM &state)
-	{
-		SFM_ASSERT(false == s_stateMutex.try_lock());
-
-		unsigned iFree = UpdateVoices(state);
-		
-		if (-1 == iFree)
+		// Process release requests
+		for (unsigned index : s_voiceReleaseReq)
 		{
-			if (state.m_active < kMaxVoices)
+			SFM_ASSERT(-1 != index);
+			
+			Voice &voice = state.m_voices[index];
+			s_ADSRs[index].Stop(s_sampleCount);
+
+			Log("Voice released: " + std::to_string(index));
+		}
+
+		while (s_voiceReq.size() > 0 && state.m_active < kMaxVoices-1)
+		{
+			// Pick first free voice (FIXME: need proper heuristic in case we're out of voices)
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				// Pick the first available slot
-				for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+				Voice &voice = state.m_voices[iVoice];
+				if (false == voice.m_enabled)
 				{
-					const bool enabled = state.m_voices[iVoice].m_enabled;
-					if (false == enabled)
-					{
-						iFree = iVoice;
-						break;
-					}
+					const VoiceRequest request = s_voiceReq.front();
+					InitializeVoice(request, state, iVoice);
+					s_voiceReq.pop_front();
+
+					Log("Voice triggered: " + std::to_string(iVoice));
+
+					break;
 				}
 			}
 		}
 
-		if (-1 == iFree)
-		{
-			// FIXME: handle this
-			Log("Out of voices!");
-		}
-
-		return iFree;
-	}
-
-	// Returns voice index, if available
-	unsigned TriggerVoice(Waveform form, float frequency, float velocity)
-	{
-		SFM_ASSERT(true == InAudibleSpectrum(frequency));
-
-		std::lock_guard<std::mutex> lock(s_stateMutex);
-		FM &state = s_shadowState;
-
-		const unsigned iVoice = AllocateNote(state);
-		if (-1 == iVoice)
-			return -1;
-
-		Voice &voice = state.m_voices[iVoice];
-
-		// Initialize carrier
-		const float amplitude = 0.1f + velocity*dBToAmplitude(kMaxVoicedB);
-		voice.m_carrier.Initialize(s_sampleCount, form, amplitude, frequency*state.m_modRatioC);
-
-		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
-		const float modRatio = state.m_modRatioM+state.m_modDetune;
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*modRatio, 0.f, state.m_indexLFOFreq);
-		voice.InitializeFeedback();
-
-		// Initialize amplitude modulator (or 'tremolo')
-		const float tremolo = state.m_tremolo;
-		const float broFrequency = invsqrf(tremolo)*kPI*kGoldenRatio; // The f*ck else you gonna call debauchery like this?
-		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
-
-		// FIXME: perhaps this should be optional?
-		voice.m_oneShot = oscIsWavetable(form);
-
-		// Set ADSR
-		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
-
-		// Reset filter
-		s_filters[iVoice].Reset();
-	
-		// And we're live!
-		voice.m_enabled = true;
-		++state.m_active;
-
-		return iVoice;
-	}
-
-	void ReleaseVoice(unsigned iVoice)
-	{
-		SFM_ASSERT(-1 != iVoice);
-
-		std::lock_guard<std::mutex> lock(s_stateMutex);
-		FM &state = s_shadowState;
-
-		Voice &voice = state.m_voices[iVoice];
-		s_ADSRs[iVoice].Stop(s_sampleCount);
+		// All release requests have been honoured; as for triggers, they may have to wait
+		// if there's no slot available at this time.
+		s_voiceReleaseReq.clear();
 	}
 
 	/*
-		Global update; called from render function only if necessary.
+		Parameter update.
+
+		Currently there's only one of these for the Oxygen 49 MIDI driver.
+
+		Ideally all inputs interact on sample level, but this is impractical and only done for the pitch bend wheel.
+		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
 
-	// Get state from Oxygen 49 driver
-
-	// Ideally all that interacts directly is probed on the sample level, but this is impractical for now
-	// and not necessary except for a few (such as the pitch bend wheel).
-
-	// Most tweaking done here should be adapted for the first VST release.
-
-	static void Update_Oxygen49(float time)
+	static void UpdateState_Oxygen49(float time)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
@@ -235,10 +273,11 @@ namespace SFM
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
-		state.m_ADSR.release = WinMidi_GetRelease()*4.f; // Extra room to create pad-like sounds
+		state.m_ADSR.release = WinMidi_GetRelease()*kGoldenRatio; // Extra room to create pad-like sounds
 		state.m_ADSR.sustain = WinMidi_GetSustain();
 
 		// Filter parameters
+		state.m_curFilter = WinMidi_GetCurFilter();
 		state.m_wetness = WinMidi_GetFilterWetness();
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
@@ -254,35 +293,46 @@ namespace SFM
 		Render function.
 	*/
 
- 	alignas(16) static float s_renderBuf[kRingBufferSize];
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	// Returns loudest signal (linear amplitude)
-	static float Render(float time, FIFO &ringBuf)
+	static float Render(float time)
 	{
 		static float loudest = 0.f;
 
-		// At this point I can return or decide to only process equal or above a minimum amount, but at this point I am for full
-		// stability regardless of parameters
-		const unsigned numSamples = ringBuf.GetFree();
+		std::lock_guard<std::mutex> ringLock(s_ringBufLock);
 
-		std::lock_guard<std::mutex> renderLock(s_stateMutex);
+		if (true == s_ringBuf.IsFull())
+			return loudest;
 
-		// Make copy for rendering
+		const unsigned available = s_ringBuf.GetAvailable();
+		if (available > kMinSamplesPerUpdate)
+			return loudest;
+
+		const unsigned numSamples = kRingBufferSize-available;
+
+		// Lock all state
+		std::lock_guard<std::mutex> stateLock(s_stateMutex);
+
+		// Update voices
+		UpdateVoices(s_shadowState);
+
+		// Make copy of state for rendering
 		s_renderState = s_shadowState;
 	
 		FM &state = s_renderState;
 		Voice *voices = state.m_voices;
 
-		const unsigned numVoices = state.m_active;
+		const unsigned numVoices = s_shadowState.m_active;
+
 		if (0 == numVoices)
 		{
 			loudest = 0.f;
 
-			// Silence
+			// Render silence
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				ringBuf.Write(0.f);
+				s_ringBuf.Write(0.f);
 			}
 		}
 		else
@@ -301,24 +351,24 @@ namespace SFM
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 
-						// To be accurate enough (read: no noise) the pitch bend must be probed on sample level
+						// Probed on this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
 						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope);
 						buffer[iSample] = sample;
 					}
 
-					// Apply filter
-					s_filters[curVoice].SetParameters(state.m_filterParams);
-					s_filters[curVoice].Apply(buffer, numSamples, state.m_wetness, s_sampleCount, envelope);
+					voice.m_pFilter->SetParameters(state.m_filterParams);
+					voice.m_pFilter->Apply(buffer, numSamples, state.m_wetness, s_sampleCount, envelope);
 
-					++curVoice;
+					++curVoice; // Do *not* use for anything other than temporary buffers
 				}
 			}
 
 			loudest = 0.f;
 
-			// Mix voices
+			// Mix & store voices
+			static float prevMix = 0.f;
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const unsigned sampleCount = s_sampleCount+iSample;
@@ -328,23 +378,24 @@ namespace SFM
 				{
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
-					mix = fast_tanhf(mix + sample);
+					mix = Clamp(mix+sample);
 				}
 
 				// Process delay
-				const float delPitch = state.m_feedbackPitch;
-				const float delayed = s_delayMatrix.Read(delPitch)*0.66f;
+				const float delayPitch = state.m_feedbackPitch;
+				const float delayed = s_delayMatrix.Read(delayPitch)*0.66f;
 				s_delayMatrix.Write(mix, delayed*state.m_feedback);
 
 				// Apply delay
 				mix = mix + state.m_feedbackWetness*delayed;
 
-				mix = fast_tanhf(mix*state.m_drive);
+				// Apply drive and soft clamp
+				mix = ultra_tanhf(mix*state.m_drive);
 				SampleAssert(mix);
 
-				ringBuf.Write(mix);
+				// Write
+				s_ringBuf.Write(mix);
 
-				// FIXME: temporary
 				loudest = std::max<float>(loudest, fabsf(mix));
 			}
 		}
@@ -359,13 +410,6 @@ namespace SFM
 using namespace SFM;
 
 /*
-	Ring buffer + lock.
-*/
-
-static FIFO s_ringBuf;
-static std::mutex s_bufLock;
-
-/*
 	SDL2 stream callback.
 */
 
@@ -373,20 +417,22 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 {
 	const unsigned numSamplesReq = length/sizeof(float);
 
-	s_bufLock.lock();
+	std::lock_guard<std::mutex> lock(s_ringBufLock);
 	{
 		const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
 		const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
 
+		if (numSamplesAvail < numSamplesReq)
+		{
+			Log("Buffer underrun");
+		}
+
 		float *pWrite = reinterpret_cast<float*>(pStream);
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		{
 			*pWrite++ = s_ringBuf.Read();
-		}
 
 		s_sampleOutCount += numSamples;
 	}
-	s_bufLock.unlock();
 }
 
 /*
@@ -401,10 +447,6 @@ bool Syntherklaas_Create()
 	CalculateLUTs();
 	CalculateMidiToFrequencyLUT();
 
-	// --- Test (FIXME) ---
-	// OscTest();
-	// --- Test (FIXME) ---
-
 	// Reset sample count
 	s_sampleCount = 0;
 	s_sampleOutCount = 0;
@@ -416,8 +458,14 @@ bool Syntherklaas_Create()
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 	{
 		s_ADSRs[iVoice].Reset();
-		s_filters[iVoice].Reset();
+		s_improvedFilters[iVoice].Reset();
+		s_MicrotrackerFilters[iVoice].Reset();
+		s_teemuFilters[iVoice].Reset();
 	}
+
+	// Reset voice deques
+	s_voiceReq.clear();
+	s_voiceReleaseReq.clear();
 
 	// Test: Oxygen 49 driver + SDL2
 	const auto numDevs = WinMidi_GetNumDevices();
@@ -436,30 +484,28 @@ void Syntherklaas_Destroy()
 }
 
 /*
-	Render function for Kurt Bevacqua codebase.
+	Frame update (called by Bevacqua).
 */
 
 float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 {
-	// CrackleTest(time, 0.5f);
-
-	// Update for M-AUDIO Oxygen 49
-	Update_Oxygen49(time);
+//	ClickTest(time, 1.f);
 
 	float loudest = 0.f;
-	s_bufLock.lock();
-	{
-		loudest = Render(time, s_ringBuf);
-	}
-	s_bufLock.unlock();
 
+	// Update state for M-AUDIO Oxygen 49
+	UpdateState_Oxygen49(time);
+	
+	// Render
+	loudest = Render(time);
+
+	// Start audio stream on first call
 	static bool first = false;
 	if (false == first)
 	{
 		SDL2_StartAudio();
 		first = true;
 
-		// Let the world know
 		Log("FM. BISON is up & running!");
 	}
 

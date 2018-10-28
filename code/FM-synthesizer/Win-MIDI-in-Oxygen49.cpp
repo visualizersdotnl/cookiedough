@@ -74,6 +74,10 @@ namespace SFM
 	static float s_modBrightness = 0.f;
 	static float s_tremolo = 0.f;
 
+	// Button mapping
+	const unsigned kButtonFilterSwitch = 116;
+	static int s_curFilter = 0;
+
 	static Waveform s_waveform = kSine;
 
 	// Percussion channel indices (used to select carrier waveform)
@@ -169,6 +173,10 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						case kButtonFilterSwitch:
+							if (127 == controlVal) s_curFilter = s_curFilter+1 % 3;
+							break;
+
 						case kPotCutoff:
 							s_cutoff.Set(controlVal);
 							break;
@@ -258,11 +266,11 @@ namespace SFM
 
 				case NOTE_ON:
 					{
-						const unsigned iVoice = TriggerVoice(s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
-						
-						if (iVoice != -1)
-							s_voices[controlIdx] = iVoice;
-						
+						if (-1 == s_voices[controlIdx])
+							TriggerVoice(s_voices+controlIdx, s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
+						else
+							Log("NOTE_ON could not be triggered due to lag."); // FIXME: bad situation
+
 						break;
 					}
 
@@ -369,6 +377,7 @@ namespace SFM
 	*/
 
 	// Filter
+	int   WinMidi_GetCurFilter()       { return s_curFilter;            }
 	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
 	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
 	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }

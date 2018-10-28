@@ -5,8 +5,6 @@
 //  EarLevel Engineering: earlevel.com
 //  Copyright 2012 Nigel Redmon
 //
-//  Edited by Niels Johan de Wit for FM. BISON.
-//
 //  For a complete explanation of the ADSR envelope generator and code,
 //  read the series of articles by the author, starting here:
 //  http://www.earlevel.com/main/2013/06/01/envelope-generators/
@@ -16,6 +14,11 @@
 //  This source code is provided as is, without warranty.
 //  You may copy and distribute verbatim copies of this document.
 //  You may modify and use this source code to create binary code for your own purposes, free or commercial.
+//
+//
+// Adapted by syntherklaas.org for FM. BISON, changes made:
+// - Fixed warnings
+// - Added 1 sample cooldown period to avoid clicks
 //
 
 #ifndef ADRS_h
@@ -43,7 +46,8 @@ public:
         env_attack,
         env_decay,
         env_sustain,
-        env_release
+        env_release,
+		env_cooldown
     };
 
 protected:
@@ -90,8 +94,13 @@ inline float ADSR::process() {
             output = releaseBase + output * releaseCoef;
             if (output <= 0.f) {
                 output = 0.f;
-                state = env_idle;
+                state = env_cooldown;
             }
+			break;
+		case env_cooldown:
+			output = 0.f;
+			state = env_idle;
+			break;
 	}
 	return output;
 }

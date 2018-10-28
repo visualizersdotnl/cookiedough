@@ -153,8 +153,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		_CrtSetBreakAlloc(WIN32_CRT_BREAK_ALLOC);
 #endif
 
-	const auto audioFlag = (true == kTestBedForFM) ? SDL_INIT_AUDIO : 0;
-	if (0 != SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER | audioFlag))
+//	const auto audioFlag = (true == kTestBedForFM) ? SDL_INIT_AUDIO : 0;
+//	if (0 != SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER | audioFlag))
+	if (0 != SDL_Init(SDL_INIT_EVERYTHING))
 	{
 		MessageBox(NULL, SDL_GetError(), "Can't initialize SDL!", MB_OK | MB_ICONEXCLAMATION);
 		return 1;

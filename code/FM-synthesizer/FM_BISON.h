@@ -14,34 +14,33 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com
 		- juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
+		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 
 	Notes:
-		- The code style started out as semi-C, intending a hardware target, currently in the process of cleaning it up a bit
-		  and upgrading to somewhat proper C++.
-		- You'll run into various numbers and seemingly weird calculations: it's called "bro science".
-		- There are quite some assertions to check floating point values; and for good reason.
-		- On FM ratios: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
-
+		- I started programming with low-level embedded targets in mind; over time I decided to go towards conservative C++11.
+		  At the moment you'll see a somewhat mixed bag and it'll probably stay that way.
+		- A lot of calculations are based upon tweaking and thus have no real scientific basis; it is called "bro science".
+		- The filters can cock up if you're lacking procesisng power at that particular moment.
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	New ideas / Questions:
-		- Switch between 1-3 algorithms
-
-	Priority:
-		- Filter drive (perhaps in proportion to the filter wetness)
-		- A hole in my game: I keep rendering 'dead' voices until they're taken; find out why there's a slight click if you don't (maybe release them a few samples later!)
-		  +  Useless load on CPU!
-		- Refine wavetable voices
-		- BLIT triangle!
-		- Instabilities
+	Priority (pre-VST):
+		- Switch between 1-3 algorithms (research)
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
 
+	Issues:
+		- Performance (and resulting instability)
+		- Hidden floating point issues
+
+	Lower priority:
+		- Refine wavetable voices
+		- BLIT triangle!
+
 	MIDI issues:
-		- ...
+		- None that I know of, for now
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -78,10 +77,7 @@ namespace SFM
 		API exposed to (MIDI) input.
 	*/
 
-	// Trigger a voice (if possible) and return it's voice index
-	unsigned TriggerVoice(Waveform form, float frequency, float velocity);
-
-	// Release a note using it's voice index
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity);
 	void ReleaseVoice(unsigned index);
 
 	/*
@@ -123,6 +119,7 @@ namespace SFM
 		void SetModulationLFOFrequency(float value);
 		
 		// Filter
+		void SetFilterType(int value); // 0 = Improved MOOG ladder, 1 = Microtracker MOOG ladder, 2 = Teemu's transistor ladder
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);

@@ -9,8 +9,7 @@
 #include "synth-carrier.h"
 #include "synth-modulator.h"
 #include "synth-ADSR.h."
-
-#include <Windows.h>
+#include "synth-filter.h"
 
 namespace SFM
 {
@@ -27,9 +26,8 @@ namespace SFM
 		Carrier m_carrier;
 		Modulator m_modulator;
 		Modulator m_ampMod;
-
-		// Useful for wavetable samples
-		bool m_oneShot;
+		bool m_oneShot; // For wavetable samples
+		LadderFilter *m_pFilter;
 
 		// Call before use to initialize pitched carriers and modulators (used for pitch bend)
 		// Not the most elegant solution, but it doesn't depend on any delay line(s)

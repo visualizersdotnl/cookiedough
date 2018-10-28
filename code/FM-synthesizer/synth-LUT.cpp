@@ -11,27 +11,14 @@
 
 namespace SFM
 {
-/*
-	// Taken from: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
-	// Has 37 entries
-	unsigned g_CM_table_15NF[][2] = 
-	{
-		{ 1, 1 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 1, 5 }, { 1, 6 }, { 1, 7 }, { 1, 8 }, { 1, 9 }, { 1, 10 }, { 1, 11 }, { 1, 12 }, { 1, 13 }, { 1, 14 }, { 1, 15 },
-		{ 2, 5 }, { 2, 7 }, { 2, 9 }, { 2, 11 }, { 2, 13 }, { 2, 15 },
-		{ 3, 7 }, { 3, 8 }, { 3, 10 }, { 3, 11 }, { 3, 13 }, { 3, 14 },
-		{ 4, 9 }, { 4, 11 }, { 4, 13 }, { 4, 15 },
-		{ 5, 11 }, { 5, 12 }, { 5, 13 }, { 5, 14 },
-		{ 6, 13 },
-		{ 7, 15 }
-	};
-*/
-
 	alignas(16) float g_sinLUT[kOscPeriod];
 	alignas(16) float g_noiseLUT[kOscPeriod];
 
 	/*
 		Farey sequence generator (ham-fisted, but it does the job).
 		This sequence gives the most sonically pleasing FM C:M ratios.
+
+		I learned about this here: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
 	const unsigned kFareyOrder = 15;
@@ -71,7 +58,7 @@ namespace SFM
 			x1 = x2, x2 = x, y1 = y2, y2 = y;
 		} 
 
-		// Sort by fractional, then by carrier
+		// Sort by magnitude first, then by carrier
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x*a.y < b.x*b.y; });
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
 
@@ -92,7 +79,7 @@ namespace SFM
 		}
 
 //		Log("Generated " + std::to_string(size*2));
-		g_CM_table_size = size*2;
+		g_CM_table_size = unsigned(size*2);
 	}
 
 	void CalculateLUTs()

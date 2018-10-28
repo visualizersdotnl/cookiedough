@@ -139,8 +139,7 @@ namespace SFM
    /*
 		Wavetable oscillator(s)
 
-		FIXME:
-			- Hold state (small piece of the sample) for sustain (loop)
+		FIXME: 
 			- Multiple tables to better accomodate different pitches
 	*/
 

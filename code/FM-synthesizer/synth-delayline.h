@@ -31,14 +31,16 @@ namespace SFM
 
 		SFM_INLINE void Write(float sample, float feedback)
 		{
-			const unsigned index = m_writeIdx++ % m_length;
+			const unsigned index = m_writeIdx % m_length;
 			m_buffer[index] = fast_tanhf(feedback + sample);
+			++m_writeIdx;
 		}
 
 		SFM_INLINE float Read()
 		{
-			const unsigned index = m_readIdx++;
-			return m_buffer[index % m_length];
+			const float value = m_buffer[m_readIdx % m_length];
+			m_readIdx++;
+			return value;
 		}
 			
 	private:
@@ -57,6 +59,13 @@ namespace SFM
 ,			m_lineMid(lengthMid)
 ,			m_lineLo(lengthMid*2)
 	{
+	}
+
+	SFM_INLINE void Reset()
+	{
+		m_lineHi.Reset();
+		m_lineMid.Reset();
+		m_lineLo.Reset();
 	}
 
 	SFM_INLINE void Write(float sample, float feedback)

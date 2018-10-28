@@ -21,22 +21,27 @@ namespace SFM
 		}
 	}
 
+	static int s_handle = -1;
+
 	bool SDL2_CreateAudio(SDL_AudioCallback callback)
 	{
-		SDL_AudioSpec necSpec;
-		necSpec.freq = kSampleRate;
-		necSpec.format = AUDIO_F32;
-		necSpec.channels = 1;
-		necSpec.samples = kRingBufferSize;
-		necSpec.callback = (nullptr != callback) ? callback : SDL2_Callback_Sine;
-		necSpec.userdata = NULL;
+		SDL_AudioSpec audioSpec;
+		audioSpec.freq = kSampleRate;
+		audioSpec.format = AUDIO_F32;
+		audioSpec.channels = 1;
+		audioSpec.samples = kMinSamplesPerUpdate; 
+		audioSpec.callback = (nullptr != callback) ? callback : SDL2_Callback_Sine;
+//		audioSpec.callback = NULL;
+		audioSpec.userdata = NULL;
 
-		const int result = SDL_OpenAudio(&necSpec, NULL);
+		const int result = SDL_OpenAudio(&audioSpec, NULL);
 		if (result < 0)
 		{
 			SFM_ASSERT(false);
 			return false;
 		}
+
+		s_handle = result;
 
 		return true;
 	}
@@ -49,5 +54,10 @@ namespace SFM
 	void SDL2_StartAudio()
 	{
 		SDL_PauseAudio(0);
+	}
+
+	int SDL2_GetAudioDevice()
+	{
+		return s_handle;
 	}
 }

@@ -34,10 +34,6 @@ namespace SFM
 		// Assumption: any artifacts this yields are migitated by soft clamping down the line
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
 
-		// Voice done?
-		if (true == envelope.IsIdle(sampleCount))
-			return 0.f;
-
 		// Silence one-shots
 		if (true == m_oneShot && m_carrier.HasCycled(sampleCount))
 			return 0.f;

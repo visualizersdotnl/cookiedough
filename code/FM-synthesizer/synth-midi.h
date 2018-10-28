@@ -50,7 +50,7 @@ namespace SFM
 	class MIDI_Smoothed
 	{
 	public:
-		MIDI_Smoothed(float value = 0.f, unsigned range = 127, float ramp = 0.05f /* Works OK for pots on Oxygen 49 */) :
+		MIDI_Smoothed(float value = 0.f, unsigned range = 127, float ramp = 0.025f /* Works OK for pots on Oxygen 49 */) :
 			m_range(range)
 ,			m_value(value)
 		{

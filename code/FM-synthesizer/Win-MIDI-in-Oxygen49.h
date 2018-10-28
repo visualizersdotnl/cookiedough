@@ -21,6 +21,7 @@ namespace SFM
 	*/
 
 	// Filter
+	int   WinMidi_GetCurFilter();
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterWetness();

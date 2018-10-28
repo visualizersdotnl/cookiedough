@@ -1,16 +1,6 @@
 
 /*
-	Syntherklaas FM -- Master filter(s)
-
-	Each end filter should implement the following functions:
-	- Reset()
-	- SetParameters()
-	- SetCutoff() (normalized [0..1])
-	- SetResonance() (same)
-	- SetEnvelopeScale() (same)
-	- Apply()
-
-	FIXME: move code out of header file
+	Syntherklaas FM -- Master (voice) filters.
 */
 
 #pragma once
@@ -37,6 +27,21 @@ namespace SFM
 	};
 
 	/*
+		Interface (base class).
+	*/
+
+	class LadderFilter
+	{
+	public:
+		LadderFilter() {}
+		virtual ~LadderFilter() {}
+
+		virtual void Reset() = 0;
+		virtual void SetParameters(const FilterParameters &parameters) = 0;
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope) = 0;
+	};
+
+	/*
 		Microtracker MOOG filter
 		
 		Credit:
@@ -44,27 +49,15 @@ namespace SFM
 		- https://github.com/magnusjonsson/microtracker (unlicense)
 	*/
 
-	struct MicrotrackerMoogFilter
+	class MicrotrackerMoogFilter : public LadderFilter
 	{
+	private:
 		float m_cutoff;
 		float m_resonance;
 		float m_envInfl;
 
 		float m_P0, m_P1, m_P2, m_P3;
 		float m_resoCoeffs[3];
-
-		void Reset()
-		{
-			m_P0 = m_P1 = m_P2 = m_P3 = 0.f;
-			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
-		}
-
-		void SetParameters(const FilterParameters &parameters)
-		{
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
-		}
 
 		void SetCutoff(float value)
 		{
@@ -85,8 +78,22 @@ namespace SFM
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_envInfl = value;
 		}
+	
+	public:
+		virtual void Reset()
+		{
+			m_P0 = m_P1 = m_P2 = m_P3 = 0.f;
+			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
+		}
 
-		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+		virtual void SetParameters(const FilterParameters &parameters)
+		{
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+			SetEnvelopeInfluence(parameters.envInfl);
+		}
+
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
 	};
 
 	/*
@@ -100,48 +107,34 @@ namespace SFM
 		References: "An Improved Virtual Analog Model of the Moog Ladder Filter"
 
 		Original Implementation: D'Angelo, Valimaki
-
-		FIXME: use fast_tanhf()
 	*/
 
 	// Thermal voltage (26 milliwats at room temperature)
-	const float kVT = 0.312f;
+	const double kVT = 0.312;
 
-	struct ImprovedMoogFilter
+	class ImprovedMoogFilter : public LadderFilter
 	{
-		float m_cutoff;
-		float m_resonance;
+	private:
+		double m_cutoff;
+		double m_resonance;
 		float m_envInfl;
 
-		float m_V[4];
-		float m_dV[4];
-		float m_tV[4];
-
-		void Reset()
-		{
-			for (unsigned iPole = 0; iPole < 4; ++iPole)
-				m_V[iPole] = m_dV[iPole] = m_tV[iPole] = 0.f;
-		}
-
-		void SetParameters(const FilterParameters &parameters)
-		{
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
-		}
+		double m_V[4];
+		double m_dV[4];
+		double m_tV[4];
 
 		void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 1000.f;
-			const float omega = (kPI*value)/kSampleRate;
-			m_cutoff = 4.f*kPI * kVT * value * (1.f-omega) / (1.f+omega);
+			const double omega = (kPI*value)/kSampleRate;
+			m_cutoff = 4.0*kPI * kVT * value * (1.0-omega) / (1.0+omega);
 		}
 
 		void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = std::max<float>(kEpsilon, value*4.f);
+			m_resonance = std::max<double>(kEpsilon, value*4.0);
 		}
 
 		void SetEnvelopeInfluence(float value)
@@ -150,6 +143,72 @@ namespace SFM
 			m_envInfl = value;
 		}
 
-		void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+	public:
+		virtual void Reset()
+		{
+			for (unsigned iPole = 0; iPole < 4; ++iPole)
+				m_V[iPole] = m_dV[iPole] = m_tV[iPole] = 0.0;
+		}
+
+		virtual void SetParameters(const FilterParameters &parameters)
+		{
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+			SetEnvelopeInfluence(parameters.envInfl);
+		}
+
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+	};
+
+	/*
+		Transistor ladder filter by Teemu Voipio
+		Source: https://www.kvraudio.com/forum/viewtopic.php?t=349859
+	*/
+
+	class TeemuFilter : public LadderFilter
+	{
+	private:
+		double m_cutoff;
+		double m_resonance;
+		float m_envInfl;
+
+		double m_inputDelay;
+		double m_state[4];
+
+		void SetCutoff(float value)
+		{
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
+			value *= 1000.f;
+			value = value*2.f*kPI/kSampleRate;
+			m_cutoff = value; // Also known as omega
+		}
+
+		void SetResonance(float value)
+		{
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
+			m_resonance = value;
+		}
+
+		void SetEnvelopeInfluence(float value)
+		{
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
+			m_envInfl = value;
+		}
+
+	public:
+		virtual void Reset()
+		{
+			m_inputDelay = 0.0;
+			m_state[0] = m_state[1] = m_state[2] = m_state[3] = 0.0;
+		}
+
+		virtual void SetParameters(const FilterParameters &parameters)
+		{
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+			SetEnvelopeInfluence(parameters.envInfl);
+		}
+
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
 	};
 }

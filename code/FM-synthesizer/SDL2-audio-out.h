@@ -12,4 +12,5 @@ namespace SFM
 	bool SDL2_CreateAudio(SDL_AudioCallback callback);
 	void SDL2_DestroyAudio();
 	void SDL2_StartAudio();
+	int  SDL2_GetAudioDevice();
 }

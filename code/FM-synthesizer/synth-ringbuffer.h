@@ -7,6 +7,8 @@
 
 #include "synth-global.h"
 
+#include <atomic>
+
 namespace SFM
 {
 	class FIFO
@@ -22,14 +24,15 @@ namespace SFM
 
 		void Write(float value)
 		{
-			const unsigned index = m_writeIdx++ & (kRingBufferSize-1);
-			m_buffer[index] = value;
+			m_buffer[m_writeIdx  & (kRingBufferSize-1)] = value;
+			m_writeIdx = ++m_writeIdx;
 		}
 
 		float Read()
 		{
-			const unsigned index = m_readIdx++ & (kRingBufferSize-1);
-			const float value = m_buffer[index];
+			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun
+			const float value = m_buffer[m_readIdx & (kRingBufferSize-1)];
+			m_readIdx = ++m_readIdx;
 			return value;
 		}
 
@@ -38,9 +41,9 @@ namespace SFM
 			return m_writeIdx-m_readIdx;
 		}
 
-		unsigned GetFree() const
+		bool IsFull() const
 		{
-			return kRingBufferSize-GetAvailable();
+			return m_writeIdx == m_readIdx+kRingBufferSize;
 		}
 		
 	private:
@@ -49,3 +52,4 @@ namespace SFM
 		float m_buffer[kRingBufferSize];
 	};
 }
+	

@@ -10,6 +10,6 @@ namespace SFM
 	// Writes a single oscillator to a RAW file
 	void OscTest();
 
-	// Plays alternating note to hunt down crackle & pop artifacts (FIXME: lower speed actually means faster alternating notes)
-	void CrackleTest(float time, float speed);
+	// Triggers 2 notes quickly and repeats
+	void ClickTest(float time, float speed);
 }

@@ -40,6 +40,7 @@ namespace SFM
 		float m_wetness;
 
 		// Filter parameters
+		int m_curFilter;
 		FilterParameters m_filterParams;
 
 		// Feedback (delay) effect parameters
@@ -76,7 +77,8 @@ namespace SFM
 			m_ADSR.release = kSampleRate/4;
 			m_ADSR.sustain = kRootHalf;
 
-			// Default filter (none)
+			// Default filter (none, MOOG as default)
+			m_curFilter = 0;
 			m_wetness = 0.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
