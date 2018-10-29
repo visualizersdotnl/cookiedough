@@ -95,15 +95,15 @@ namespace SFM
 	{
 		for (unsigned iHalf = 0; iHalf < 12; ++iHalf)
 		{
-			const unsigned semitone = iHalf;
-			const float freqMod = powf(3.f/2.f, iHalf/7.f);
+			const unsigned semitone = iHalf*7;
+			const float freqMod = powf(2.f, iHalf/12.f);
 			g_detuneTab[11-iHalf] = 1.f/freqMod;
 		}
 
 		for (unsigned iHalf = 12; iHalf < 24; ++iHalf)
 		{
-			const unsigned semitone = iHalf-12;
-			const float freqMod = powf(3.f/2.f, iHalf/7.f);
+			const unsigned semitone = (iHalf-12)*7;
+			const float freqMod = powf(2.f, iHalf/12.f);
 			g_detuneTab[iHalf] = freqMod;
 		}
 
