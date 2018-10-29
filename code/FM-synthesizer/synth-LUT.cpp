@@ -15,7 +15,7 @@ namespace SFM
 	alignas(16) float g_noiseLUT[kOscPeriod];
 
 	/*
-		Farey sequence generator (ham-fisted, but it does the job).
+		Farey sequence generator (ham-fisted but it does the job).
 		This sequence gives the most sonically pleasing FM C:M ratios.
 
 		I learned about this here: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
@@ -82,8 +82,48 @@ namespace SFM
 		g_CM_table_size = unsigned(size*2);
 	}
 
+	/*
+		Detune table.
+
+		Goes one octave up and one down in discrete steps (designed to be used with a potmeter).
+	*/
+
+	alignas(16) float g_detuneTab[24];
+	unsigned g_detuneTabSize = sizeof(g_detuneTab)/sizeof(float);
+
+	static void CalculateDetuneTable()
+	{
+		for (unsigned iHalf = 0; iHalf < 12; ++iHalf)
+		{
+			const unsigned semitone = iHalf;
+			const float freqMod = powf(3.f/2.f, iHalf/7.f);
+			g_detuneTab[11-iHalf] = 1.f/freqMod;
+		}
+
+		for (unsigned iHalf = 12; iHalf < 24; ++iHalf)
+		{
+			const unsigned semitone = iHalf-12;
+			const float freqMod = powf(3.f/2.f, iHalf/7.f);
+			g_detuneTab[iHalf] = freqMod;
+		}
+
+		// Dump
+//		for (auto detune : g_detuneTab)
+//		{
+//			Log("Detune table entry: " + std::to_string(detune));
+//		}
+	}
+
+	/*
+		All calculation goes here.
+		Depending on target platform/hardware I may want to dump this to disk/ROM.
+	*/
+
 	void CalculateLUTs()
 	{
+		// Detune table
+		CalculateDetuneTable();
+
 		// Generate FM C:M ratio table
 		GenerateFareySequence();
 

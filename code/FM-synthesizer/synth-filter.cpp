@@ -10,8 +10,6 @@ namespace SFM
 {
 	void MicrotrackerMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
 	{
-		globalWetness = invsqrf(globalWetness);
-
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
@@ -46,8 +44,6 @@ namespace SFM
 
 	void ImprovedMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
 	{
-		globalWetness = invsqrf(globalWetness);
-
 		double dV0, dV1, dV2, dV3;
 
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)

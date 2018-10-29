@@ -30,8 +30,10 @@
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
+		- Do some profiling and try using less mutex locks
 
 	Issues:
+		- Master feedback clips a bit
 		- Performance (and resulting instability)
 		- Hidden floating point issues
 
@@ -57,6 +59,11 @@
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
+
+	KNOWN ISSUES:
+		- MIDI pots crackle a bit
+		- Numerical instability at times
+		- ...
 */
 
 #ifndef _FM_BISON_H_
@@ -119,7 +126,7 @@ namespace SFM
 		void SetModulationLFOFrequency(float value);
 		
 		// Filter
-		void SetFilterType(int value); // 0 = Improved MOOG ladder, 1 = Microtracker MOOG ladder, 2 = Teemu's transistor ladder
+		void SetFilterType(int value); // 1 = Improved MOOG ladder, 2 = Microtracker MOOG ladder, 0 (default) = Teemu's transistor ladder
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);

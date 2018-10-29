@@ -57,7 +57,8 @@ namespace SFM
 		
 		bool IsIdle(unsigned sampleCount) /* const */
 		{
-			SFM_ASSERT(0.f == m_voiceADSR.getOutput());
+			const bool isIdle = m_voiceADSR.getState() == ::ADSR::env_idle;
+			SFM_ASSERT(false == isIdle || (true == isIdle && 0.f == m_voiceADSR.getOutput()));
 			return m_voiceADSR.getState() == ::ADSR::env_idle;
 		}
 	};

@@ -33,6 +33,9 @@ namespace SFM
 		// Tremolo
 		float m_tremolo;
 
+		// Loop wavetable oscillators
+		bool m_loopWaves;
+
 		// ADSR parameters
 		ADSR::Parameters m_ADSR;
 
@@ -66,10 +69,13 @@ namespace SFM
  			m_modRatioM = 0.f;
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
-			m_modDetune = 0.f;
+			m_modDetune = 0.5f; // Based on a potentionmeter going down (left) and up (right) in discrete steps
 
 			// No tremolo
 			m_tremolo = 0.0f;
+
+			// Don't loop waves
+			m_loopWaves = false;
 
 			// Default ADSR envelope
 			m_ADSR.attack  = kSampleRate/8;

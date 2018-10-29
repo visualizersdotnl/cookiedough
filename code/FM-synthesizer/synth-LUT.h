@@ -14,6 +14,11 @@ namespace SFM
 	extern unsigned g_CM_table[512][2];
 	extern unsigned g_CM_table_size;
 
+	// Down one to up one octave in discrete steps (frequency multiplier)
+	extern float g_detuneTab[];
+	extern unsigned g_detuneTabSize;
+
+	// For oscillators
 	extern float g_sinLUT[kOscPeriod];
 	extern float g_noiseLUT[kOscPeriod];
 

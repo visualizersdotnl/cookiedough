@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <Mmsystem.h>
 
-// #define DUMP_MIDI_EVENTS
+#define DUMP_MIDI_EVENTS
 
 namespace SFM
 {
@@ -76,7 +76,9 @@ namespace SFM
 
 	// Button mapping
 	const unsigned kButtonFilterSwitch = 116;
+	const unsigned kButtonLoopWaves = 113;
 	static int s_curFilter = 0;
+	static int s_loopWaves = 0;
 
 	static Waveform s_waveform = kSine;
 
@@ -174,7 +176,11 @@ namespace SFM
 						switch (controlIdx)
 						{
 						case kButtonFilterSwitch:
-							if (127 == controlVal) s_curFilter = s_curFilter+1 % 3;
+							if (127 == controlVal) s_curFilter = (s_curFilter+1) % 3;
+							break;
+
+						case kButtonLoopWaves:
+							if (127 == controlVal) s_loopWaves ^= 1;
 							break;
 
 						case kPotCutoff:
@@ -418,5 +424,11 @@ namespace SFM
 	float WinMidi_GetTremolo()
 	{
 		return s_tremolo;
+	}
+
+	// Loop wavetable samples on/off
+	bool WinMidi_GetLoopWaves()
+	{
+		return 0 != s_loopWaves;
 	}
 }

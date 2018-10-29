@@ -52,4 +52,7 @@ namespace SFM
 
 	// Tremolo
 	float WinMidi_GetTremolo();
+
+	// Loop wavetable samples on/off
+	bool WinMidi_GetLoopWaves();
 }

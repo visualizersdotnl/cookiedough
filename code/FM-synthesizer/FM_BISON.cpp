@@ -125,11 +125,11 @@ namespace SFM
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
-		const float broFrequency = invsqrf(tremolo)*kPI*kGoldenRatio; // This is *so* arbitrary
+		const float broFrequency = invsqrf(tremolo)*kGoldenRatio; // This is *so* arbitrary
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
 		// FIXME: perhaps this should be optional?
-		voice.m_oneShot = oscIsWavetable(request.form);
+		voice.m_oneShot = state.m_loopWaves ?  false : oscIsWavetable(request.form);
 
 		// Set ADSR
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
@@ -137,17 +137,16 @@ namespace SFM
 		// Get & reset filter
 		switch (state.m_curFilter)
 		{
-		default:
-		case 0: // Classic MOOG
+		case 1: // Classic MOOG
 			voice.m_pFilter = s_improvedFilters+iVoice;
 			break;
 
-		case 1: // Tempered variant
-			voice.m_pFilter = s_teemuFilters+iVoice;
+		case 2: // Tempered variant
 			break;
 
-		case 2: // A bit more expressive 
-			voice.m_pFilter = s_MicrotrackerFilters+iVoice;
+		default:
+		case 0: // A bit more expressive (default)
+			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 		}
 
@@ -265,10 +264,15 @@ namespace SFM
 		state.m_indexLFOFreq = frequency*k2PI*2.f;
 
 		// Modulation detune
-		state.m_modDetune = WinMidi_GetModulationDetune()*6.f;
-
+		const float detunePot = WinMidi_GetModulationDetune();
+		const unsigned detuneIdx = unsigned(detunePot*g_detuneTabSize);
+		state.m_modDetune = g_detuneTab[detuneIdx];
+		
 		// Tremolo
 		state.m_tremolo = WinMidi_GetTremolo();
+
+		// Wavetable one-shot yes/no
+		state.m_loopWaves = WinMidi_GetLoopWaves();
 
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
@@ -278,7 +282,7 @@ namespace SFM
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
-		state.m_wetness = WinMidi_GetFilterWetness();
+		state.m_wetness = Clamp(invsqrf(WinMidi_GetFilterWetness()));
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
@@ -294,6 +298,17 @@ namespace SFM
 	*/
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
+
+	SFM_INLINE void ProcessDelay(FM &state, float &mix)
+	{
+		// Process delay
+		const float delayPitch = state.m_feedbackPitch;
+		const float delayed = s_delayMatrix.Read(delayPitch)*0.66f;
+		s_delayMatrix.Write(mix, delayed*state.m_feedback);
+
+		// Apply delay
+		mix = mix + state.m_feedbackWetness*delayed;
+	}
 
 	// Returns loudest signal (linear amplitude)
 	static float Render(float time)
@@ -329,10 +344,12 @@ namespace SFM
 		{
 			loudest = 0.f;
 
-			// Render silence
+			// Render silence (we still have to run the delay filter)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				s_ringBuf.Write(0.f);
+				float mix = 0.f;
+				ProcessDelay(state, mix);
+				s_ringBuf.Write(mix);
 			}
 		}
 		else
@@ -378,16 +395,11 @@ namespace SFM
 				{
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
-					mix = Clamp(mix+sample);
+					mix = fast_tanhf(mix+sample);
 				}
 
 				// Process delay
-				const float delayPitch = state.m_feedbackPitch;
-				const float delayed = s_delayMatrix.Read(delayPitch)*0.66f;
-				s_delayMatrix.Write(mix, delayed*state.m_feedback);
-
-				// Apply delay
-				mix = mix + state.m_feedbackWetness*delayed;
+				ProcessDelay(state, mix);
 
 				// Apply drive and soft clamp
 				mix = ultra_tanhf(mix*state.m_drive);

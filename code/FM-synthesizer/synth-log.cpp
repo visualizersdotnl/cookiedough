@@ -9,6 +9,12 @@
 namespace SFM
 {
 
+#if SFM_NO_LOGGING
+
+	void Log(const std::string &mesage) {}
+
+#else
+
 #if defined(WIN32) || defined(_WIN32)
 
 	#include <Windows.h>
@@ -29,6 +35,8 @@ namespace SFM
 		printf("SFM log: %s\n", message.c_str());
 	}
 
-#endif
+#endif // PLATFORM
+
+#endif // SFM_NO_LOGGING
 
 }

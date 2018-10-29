@@ -17,7 +17,7 @@ namespace SFM
 
 		const float attack  = truncf(parameters.attack*kSampleRate);
 		const float decay   = truncf(parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/1000.f /* 1ms. min */, truncf(parameters.release*kSampleRate));
+		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
 		// I want more detail (ergo lesser ratio) if the velocity is higher, ergo:
@@ -56,8 +56,8 @@ namespace SFM
 
 		m_sampleOffs = sampleCount;
 
-		m_attack  = 1 + unsigned(parameters.attack*kSampleRate);
-		m_decay   = 1 + unsigned(parameters.decay*kSampleRate);
+		m_attack  = unsigned(parameters.attack*kSampleRate);
+		m_decay   = unsigned(parameters.decay*kSampleRate);
 		m_release = std::max<unsigned>(kSampleRate/1000 /* 1ms */, unsigned(parameters.release*kSampleRate));
 		m_sustain = parameters.sustain;
 
