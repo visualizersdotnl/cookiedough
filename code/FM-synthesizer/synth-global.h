@@ -45,7 +45,7 @@ namespace SFM
 	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 32; 
+	const unsigned kMaxVoices = 24; 
 
 	// Max. voice amplitude 
 	const float kMaxVoicedB = -3.609121289; // 66% in dB (I've read Impulse Tracker did/does that)
@@ -60,7 +60,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Drive range
-	const float kDriveHidB = 6.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
+	const float kDriveHidB = 12.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
 }
 
 #include "synth-LUT.h"
