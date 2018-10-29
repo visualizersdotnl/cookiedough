@@ -29,7 +29,7 @@ namespace SFM
 			m_resoCoeffs[1] = m_resoCoeffs[0];
 			m_resoCoeffs[0] = feedback;
 
-			m_P0 += (fast_tanhf(dry - m_resonance*out) - fast_tanhf(m_P0)) * m_cutoff;
+			m_P0 += (fast_tanhf(dry*1.3f - m_resonance*out) - fast_tanhf(m_P0)) * m_cutoff;
 			m_P1 += (fast_tanhf(m_P0) - fast_tanhf(m_P1)) * m_cutoff;
 			m_P2 += (fast_tanhf(m_P1) - fast_tanhf(m_P2)) * m_cutoff;
 			m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
@@ -52,25 +52,26 @@ namespace SFM
 			const float ADSR = envelope.SampleForFilter(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
-			dV0 = -m_cutoff * (tanh((1.0*dry + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]);
+			const double drive = 1.3;
+			dV0 = -m_cutoff * (fast_tanh((drive*dry + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
 			m_V[0] += (dV0 + m_dV[0]) / (2.0*kSampleRate);
 			m_dV[0] = dV0;
-			m_tV[0] = tanh(m_V[0] / (2.0*kVT));
+			m_tV[0] = fast_tanh(m_V[0] / (2.0*kVT));
 			
 			dV1 = m_cutoff * (m_tV[0] - m_tV[1]);
 			m_V[1] += (dV1 + m_dV[1]) / (2.0*kSampleRate);
 			m_dV[1] = dV1;
-			m_tV[1] = tanh(m_V[1] / (2.0*kVT));
+			m_tV[1] = fast_tanh(m_V[1] / (2.0*kVT));
 			
 			dV2 = m_cutoff * (m_tV[1] - m_tV[2]);
 			m_V[2] += (dV2 + m_dV[2]) / (2.0*kSampleRate);
 			m_dV[2] = dV2;
-			m_tV[2] = tanh(m_V[2] / (2.0*kVT));
+			m_tV[2] = fast_tanh(m_V[2] / (2.0*kVT));
 			
 			dV3 = m_cutoff * (m_tV[2] - m_tV[3]);
 			m_V[3] += (dV3 + m_dV[3]) / (2.0*kSampleRate);
 			m_dV[3] = dV3;
-			m_tV[3] = tanh(m_V[3] / (2.0*kVT));
+			m_tV[3] = fast_tanh(m_V[3] / (2.0*kVT));
 
 			const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
 			const float sample = lerpf<float>(dry, float(m_V[3]), wetness); 
@@ -83,7 +84,7 @@ namespace SFM
 	/*
 		Teemu's filter.
 
-		I've left the core of Teemu's code more or less intact, including variable names.
+		I've left most of Teemu's code more or less intact, including variable names and comments.
 	*/
 
 	// A tanh(x)/x approximation, flatline at very high inputs; might not be safe for very large feedback gains

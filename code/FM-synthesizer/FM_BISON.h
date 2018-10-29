@@ -26,14 +26,13 @@
 		- Not much, play a little, don't push yourself
 
 	Priority (pre-VST):
-		- Switch between 1-3 algorithms (research)
+		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
 		- Do some profiling and try using less mutex locks
 
 	Issues:
-		- Master feedback clips a bit
 		- Performance (and resulting instability)
 		- Hidden floating point issues
 
@@ -42,7 +41,7 @@
 		- BLIT triangle!
 
 	MIDI issues:
-		- None that I know of, for now
+		- No presing matters
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)

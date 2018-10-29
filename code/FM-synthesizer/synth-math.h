@@ -26,6 +26,15 @@ namespace SFM
 		return z/(1.02718982441289f + fabsf(z));
 	}
 
+	// Double precision version
+	SFM_INLINE double fast_tanh(double x) 
+	{
+		const double ax = fabs(x);
+		const double x2 = x*x;
+		const double z = x * (1.0 + ax + (1.05622909486427 + 0.215166815390934*x2*ax)*x2);
+		return z/(1.02718982441289 + fabs(z));
+	}
+
 	// "Ultra" version (claimed to be 2.5 times as precise)
 	// Taken from: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=388650&start=15
 	SFM_INLINE float ultra_tanhf(float x)
