@@ -146,7 +146,7 @@ namespace SFM
 						break;
 
 					case kPerc5:
-						s_waveform = kDigiSquare;
+						s_waveform = kElectricPiano;
 						break;
 
 					case kPerc6:

@@ -18,6 +18,8 @@ namespace SFM
 		m_pitch = CalculateOscPitch(frequency);
 		m_sampleOffs = sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
+
+		m_cycleLen = -1.f;
 	
 		switch (m_form)
 		{
@@ -32,11 +34,17 @@ namespace SFM
 		case kGuitar:
 			m_cycleLen = getOscGuitar().GetLength();
 			break;
+
+		case kElectricPiano:
+			m_cycleLen = getOscElecPiano().GetLength();
+			break;
 			
 		default:
 			m_cycleLen = kOscPeriod;
 			break;
 		}
+
+		SFM_ASSERT(-1 != m_cycleLen);
 	}
 
 	float Carrier::Sample(unsigned sampleCount, float modulation)
@@ -51,6 +59,7 @@ namespace SFM
 		float signal = 0.f;
 		switch (m_form)
 		{
+		default:
 		case kSine:
 			signal = oscSine(phase+modulation);
 			break;
@@ -63,6 +72,7 @@ namespace SFM
 			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
 			break;
 
+/*
 		case kDigiSaw:
 			signal = oscDigiSaw(phase+modulation);
 			break;
@@ -70,6 +80,7 @@ namespace SFM
 		case kDigiSquare:
 			signal = oscDigiSquare(phase+modulation);
 			break;
+*/
 
 		case kTriangle:
 			signal = oscTriangle(phase+modulation);
@@ -95,6 +106,10 @@ namespace SFM
 
 		case kGuitar:
 			signal = getOscGuitar().Sample(phase+modulation);
+			break;
+
+		case kElectricPiano:
+			signal = getOscElecPiano().Sample(phase+modulation);
 			break;
 		}
 

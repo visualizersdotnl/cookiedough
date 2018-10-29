@@ -431,5 +431,8 @@
     <Text Include="..\code\FM-synthesizer\design-goals.txt">
       <Filter>/code\/FM-synthesizer\Documentation</Filter>
     </Text>
+    <Text Include="..\code\FM-synthesizer\wavetable\guide.txt">
+      <Filter>/code\/FM-synthesizer\/wavetable</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@
 		- Not much, play a little, don't push yourself
 
 	Priority (pre-VST):
+		- Refine wavetable voices (better interpolation)
 		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
@@ -37,11 +38,10 @@
 		- Hidden floating point issues
 
 	Lower priority:
-		- Refine wavetable voices
 		- BLIT triangle!
 
 	MIDI issues:
-		- No presing matters
+		- No pressing matters
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -144,6 +144,9 @@ namespace SFM
 
 		// Tremolo
 		void SetTremolo(float value);
+
+		// One-shot 
+		void SetCarrierOneShot(bool value);
 	};
 }
 

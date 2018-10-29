@@ -33,12 +33,13 @@ namespace SFM
 		/* Wavetable */
 		kKick808,
 		kSnare808,
-		kGuitar
+		kGuitar,
+		kElectricPiano
 	};
 
 	SFM_INLINE bool oscIsWavetable(Waveform form)
 	{
-		return form >= kKick808 && form <= kGuitar;
+		return form >= kKick808 && form <= kElectricPiano;
 	}
 
 	/*
@@ -75,7 +76,7 @@ namespace SFM
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
 		SFM_ASSERT(frequency >= 20.f);
-		return 32; // FIXME: depend on frequency?
+		return 48;
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
@@ -146,12 +147,14 @@ namespace SFM
 	class WavetableOscillator
 	{
 	public:
-		WavetableOscillator(const uint8_t *pTable, unsigned length, unsigned octaveOffs, float baseHz = 220.f /* A3 */) :
+		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, float baseHz = 220.f /* A3 */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
 ,			m_periodLen(float(m_numSamples)/kOscPeriod)
 	{
-		m_basePitch = CalculateOscPitch(baseHz * powf(2.f, float(octaveOffs)));
+		float pitchMul = powf(2.f, float(octaveOffs));
+		if (octaveOffs < 0) pitchMul = 1.f/pitchMul;
+		m_basePitch = CalculateOscPitch(baseHz*pitchMul);
 		m_rate = 1.f/(m_basePitch/m_periodLen);
 	}
 
@@ -160,7 +163,7 @@ namespace SFM
 		const float index = phase*m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
-		const float delta = fracf(index);
+		const float delta = fracf(index-from);
 		const float A = m_pTable[from%m_numSamples];
 		const float B = m_pTable[from%m_numSamples];
 		return lerpf<float>(A, B, delta);
@@ -171,7 +174,7 @@ namespace SFM
 
 	float GetLength() const
 	{
-		return floorf(m_periodLen/m_rate * (kOscPeriod)) - 1.f;
+		return floorf(m_periodLen/m_rate * (kOscPeriod));
 	}
 
 	private:
@@ -185,4 +188,5 @@ namespace SFM
 	WavetableOscillator &getOscKick808();
 	WavetableOscillator &getOscSnare808();
 	WavetableOscillator &getOscGuitar();
+	WavetableOscillator &getOscElecPiano();
 }

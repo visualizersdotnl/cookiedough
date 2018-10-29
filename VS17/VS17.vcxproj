@@ -193,6 +193,7 @@
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\code\FM-synthesizer\design-goals.txt" />
     <Text Include="..\code\FM-synthesizer\manual.txt" />
+    <Text Include="..\code\FM-synthesizer\wavetable\guide.txt" />
     <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\target\infofile.txt" />
     <Text Include="..\to do.txt" />
