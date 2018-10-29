@@ -2,8 +2,10 @@
 /*
 	Syntherklaas FM -- Oscillators.
 
-	The idea is to, in due time, precalculate all these and use samplers during actual synthesis as is practically the case already
-	for everything that depends on the sinus LUT.
+	Important to know:
+		- These oscillators are and shall remain stateless (unless there's a good reason not to).
+		- The incoming phase is currently [0...N] with a period of kOscPeriod taylored for LUT sampling (FIXME: up for review as it's more often than not reversed).
+		- Some basic oscillators aren't as fast as they could be because I currently do *not* wrap phase.
 */
 
 #pragma once
@@ -21,15 +23,22 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
+
 		/* BLIT forms */
 		kSoftSaw,
 		kSoftSquare,
+
+		/* PolyBLEP forms */
+		kPolySaw,
+		kPolySquare,
+
 		/* Straight forms (for LFOs) */
 		kDigiSaw,
 		kDigiSquare,
-		kTriangle,
+		kDigiTriangle,
 		kWhiteNoise,
 		kPinkNoise,
+
 		/* Wavetable */
 		kKick808,
 		kSnare808,
@@ -49,7 +58,7 @@ namespace SFM
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
 
 	/*
-		Straight up sawtooth, square & triangle (will alias in most circumstances).
+		Digital sawtooth, square & triangle (alias at audible frequencies).
 	*/
 
 	SFM_INLINE float oscDigiSaw(float phase)
@@ -62,23 +71,27 @@ namespace SFM
 		return lutsinf(phase) > 0.f ? 1.f : -1.f;
 	}
 
-	SFM_INLINE float oscTriangle(float phase)
+	SFM_INLINE float oscDigiTriangle(float phase)
 	{
 		return -1.f + fabsf(roundf(phase/kOscPeriod)-(phase/kOscPeriod))*4.f;
 	}
 
 	/*
 		Band-limited saw and square (BLIT).
+
+		These variants are very nice but computationally expensive.
 	*/
 
 	const float kHarmonicsPrecHz = kAudibleLowHz;
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
-		if (0.f == frequency)
-			return 0;
+		SFM_ASSERT(frequency >= kAudibleLowHz && frequency <= kAudibleNyquist);
 
-		unsigned harmonics = 8 + unsigned(kOscPeriod/(frequency));
+		// Steps from min. 8 (*might* alias, but not likely) to kNyquist 
+		const float step = kNyquist/frequency;
+		const unsigned harmonics = 8 + unsigned(step/kAudibleLowHz);
+
 		Log("Carrier harmonics: " + std::to_string(harmonics));
 		return harmonics;
 	}
@@ -108,6 +121,56 @@ namespace SFM
 	}
 
 	/*
+		PolyBLEP saw & square.
+
+		Why no triangle? A triangle wave does not exhibit clear discontinuities and thus I'd like to think that any extra effort is wasted;
+		instead if you want to soften that sound use a filter or other features of the synthesizer to get there.
+
+		Information used:
+		- http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
+
+		In essence this interpolates exponentially around discontinuities.
+	*/
+
+	const float kPolySoftness = 16.f;
+	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
+
+	SFM_INLINE float PolyBLEP(float phase, float delta)
+	{
+		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
+		phase = fmodf(phase*kInvOscPeriod, 1.f);
+
+		if (phase < delta)
+		{
+			phase /= delta;
+			return phase+phase - phase*phase - 1.f;
+		}
+		else if (phase > 1.f - delta)
+		{
+			phase = (phase-1.f)/delta;
+			return phase*phase + phase+phase + 1.f;
+		}
+
+		return 0.f;
+	}
+
+	SFM_INLINE float oscPolySaw(float phase, float frequency)
+	{
+		float value = oscDigiSaw(phase);
+		value -= PolyBLEP(phase, frequency*kPolyMul);
+		return value;
+	}
+
+	SFM_INLINE float oscPolySquare(float phase, float frequency)
+	{
+		float value = oscDigiSquare(phase);
+		const float delta = frequency*kPolyMul;
+		value += PolyBLEP(phase, delta);
+		value -= PolyBLEP(phase + kOscPeriod/2, delta);
+		return value;
+	}
+
+	/*
 		Noise oscillator(s).
 	*/
 
@@ -116,7 +179,7 @@ namespace SFM
 		return lutnoisef(phase + rand() /* Without this we'll definitely hear a pattern */);
 	}
 
-	// Paul Kellet's approximation to pink noise; basically just a filter
+	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
 	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
 	SFM_INLINE float oscPinkNoise(float phase)
 	{
@@ -131,9 +194,8 @@ namespace SFM
 		b3 = 0.86650f*b3 + white*0.3104856f; 
 		b4 = 0.55000f*b4 + white*0.5329522f; 
 		b5 = -0.7616f*b5 - white*0.0168980f; 
-		
-		// This is a bit of a judgement call but I prefer clearly hearing different noise over keeping
-		// the not-too-exact spectral properties
+
+		// This is a bit of a judgement call, but it's slightly more sonically pleasing
 		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.314f); 
 
 		b6 = white*0.115926f;
@@ -145,7 +207,7 @@ namespace SFM
 		Wavetable oscillator(s)
 
 		FIXME: 
-			- Multiple tables to better accomodate different pitches
+			- Better filtering
 	*/
 
 	class WavetableOscillator
@@ -167,7 +229,7 @@ namespace SFM
 		const float index = phase*m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
-		const float delta = fracf(index-from);
+		const float delta = index-from;
 		const float A = m_pTable[from%m_numSamples];
 		const float B = m_pTable[from%m_numSamples];
 		return lerpf<float>(A, B, delta);

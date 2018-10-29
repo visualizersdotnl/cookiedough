@@ -134,11 +134,11 @@ namespace SFM
 						break;
 
 					case kPerc2:
-						s_waveform = kSoftSaw;
+						s_waveform = kPolySaw;
 						break;
 
 					case kPerc3:
-						s_waveform = kSoftSquare;
+						s_waveform = kPolySquare;
 						break;
 
 					case kPerc4:
@@ -150,7 +150,7 @@ namespace SFM
 						break;
 
 					case kPerc6:
-						s_waveform = kTriangle;
+						s_waveform = kDigiTriangle;
 						break;
 
 					case kPerc7:

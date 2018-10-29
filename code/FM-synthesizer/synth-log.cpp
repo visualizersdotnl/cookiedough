@@ -9,7 +9,7 @@
 namespace SFM
 {
 
-#if SFM_NO_LOGGING
+#if SFM_NO_LOGGING // Set in synth-global.h
 
 	void Log(const std::string &mesage) {}
 

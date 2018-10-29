@@ -26,7 +26,7 @@ namespace SFM
 		const float phase = sample*m_pitch + m_phaseShift;
 		const float modPhase = sample*m_indexModPitch;
 
-		const float triangle = oscTriangle(phase);
+		const float triangle = oscDigiTriangle(phase);
 		const float sine = lutsinf(phase);
 		const float modulation = sine + (sine-triangle)*brightness;
 		const float index = m_index*lutcosf(modPhase);

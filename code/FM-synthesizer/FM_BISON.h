@@ -25,34 +25,24 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Priority (pre-VST):
-		- Implement: http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
-		- Introduce the LFO concept, and test it with FM vibrato to begin with
-		- Refine wavetable voices (better interpolation), try a 'hold' state
-		- Search for (yet another) electric piano sample!
-		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
+	Ideas:
+		- Revise detune table
+		- Revise pitch bend range
+		- Dirt factor (blend noise into carrier signal)
 
+	Priority (pre-VST):
+		- Use a unit phase?
+		- Try a 'hold' state to sustain wavetable samples
+		- Introduce the LFO concept, and test it with FM vibrato to begin with
+		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
-
 		- Prepare for VST & finish documentation
-
 		- Do some profiling and try using less mutex locks
-
-	Issues:
-		- Performance (and resulting instability)
-		- Hidden floating point issues
-
-	Lower priority:
-		- BLIT triangle!
-
-	MIDI issues:
-		- No pressing matters
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Optional: sample & hold noise
-		- After VST: improve oscillators (blend, but only where it looks necessary)
 		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
@@ -60,15 +50,15 @@
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
-		- Resample wavetable voices to power-of-2 size
+		- Think about wrapping the phases, this allows for simpler oscillator algorithms (faster)
 		- Implement real variable delay line
 		- Investigate use of the 2 noise oscillators
+		- Resample wavetable voices to power-of-2 size
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
 
-	KNOWN ISSUES:
+	Known issues:
 		- MIDI pots crackle a bit
 		- Numerical instability at times
-		- ...
 */
 
 #ifndef _FM_BISON_H_

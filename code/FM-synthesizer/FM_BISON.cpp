@@ -486,6 +486,9 @@ bool Syntherklaas_Create()
 	// SDL2 audio stream	
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
+	// Test
+//	OscTest();
+
 	return true == midiIn && audioOut;
 }
 

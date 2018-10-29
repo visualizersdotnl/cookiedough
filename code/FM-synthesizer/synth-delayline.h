@@ -86,12 +86,12 @@ namespace SFM
 		{
 			phase += 1.f;
 			const float low = m_lineLo.Read();
-			sample = lerpf<float>(low, middle, phase*phase);
+			sample = lerpf<float>(low, middle, phase);
 		}
 		else
 		{
 			const float high = m_lineHi.Read();
-			sample = lerpf<float>(middle, high, phase*phase);
+			sample = lerpf<float>(middle, high, phase);
 		}
 
 		SampleAssert(sample);

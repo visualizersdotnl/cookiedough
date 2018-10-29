@@ -15,7 +15,7 @@
 
 namespace SFM
 {
-	// This a bit a French job, tuning miscellanous samples (FIXME)
+	// These parameters are tweaked to align the tone of the sample (using octave shift and a base frequency)
 	static WavetableOscillator s_kickOsc(g_wavKick808, sizeof(g_wavKick808), 4, 233.08f); 
 	static WavetableOscillator s_snareOsc(g_wavSnare808, sizeof(g_wavSnare808), 1, 440.f);
 	static WavetableOscillator s_guitarOsc(g_wavGuitar, sizeof(g_wavGuitar), 6, 196.f);
