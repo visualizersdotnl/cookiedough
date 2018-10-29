@@ -26,11 +26,10 @@
 		- Not much, play a little, don't push yourself
 
 	Ideas:
-		- Revise detune table
-		- Revise pitch bend range
 		- Dirt factor (blend noise into carrier signal)
 
 	Priority (pre-VST):
+		- Why the hell does pitch bend crackle again?
 		- Use a unit phase?
 		- Try a 'hold' state to sustain wavetable samples
 		- Introduce the LFO concept, and test it with FM vibrato to begin with

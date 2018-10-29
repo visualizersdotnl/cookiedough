@@ -20,8 +20,8 @@ namespace SFM
 
 	void Voice::InitializeFeedback()
 	{
-		// Up/down 3 halftones
-		const float up = powf(2.f, 3.f/12.f);
+		// Up/down 4 halftones
+		const float up = powf(2.f, 4.f/12.f);
 		const float down = 1.f/up;
 		CopyCarrier(m_carrier, m_carrierHi, up);
 		CopyCarrier(m_carrier, m_carrierLo, down);

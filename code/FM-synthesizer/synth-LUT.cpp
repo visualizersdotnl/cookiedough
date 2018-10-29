@@ -93,7 +93,8 @@ namespace SFM
 
 	static void CalculateDetuneTable()
 	{
-		const float grondGetal = 3.f/2.f; // https://www.kvraudio.com/forum/viewtopic.php?t=334960
+//		const float grondGetal = 3.f/2.f; // https://www.kvraudio.com/forum/viewtopic.php?t=334960
+		const float grondGetal = 2.f;
 
 		for (unsigned iHalf = 0; iHalf < 12; ++iHalf)
 		{
