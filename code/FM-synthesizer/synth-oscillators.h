@@ -24,7 +24,7 @@ namespace SFM
 		/* BLIT forms */
 		kSoftSaw,
 		kSoftSquare,
-		/* Straight forms */
+		/* Straight forms (for LFOs) */
 		kDigiSaw,
 		kDigiSquare,
 		kTriangle,
