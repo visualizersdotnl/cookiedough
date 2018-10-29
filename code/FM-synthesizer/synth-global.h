@@ -17,7 +17,7 @@
 #define SFM_ASSERT VIZ_ASSERT
 
 // Set to 1 to kill all SFM log output
-#define SFM_NO_LOGGING 1
+#define SFM_NO_LOGGING 0
 
 #include "synth-log.h"
 #include "synth-error.h"

@@ -75,8 +75,12 @@ namespace SFM
 
 	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
 	{
-		SFM_ASSERT(frequency >= 20.f);
-		return 48;
+		if (0.f == frequency)
+			return 0;
+
+		unsigned harmonics = 8 + unsigned(kOscPeriod/(frequency));
+		Log("Carrier harmonics: " + std::to_string(harmonics));
+		return harmonics;
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 

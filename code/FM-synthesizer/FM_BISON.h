@@ -26,7 +26,9 @@
 		- Not much, play a little, don't push yourself
 
 	Priority (pre-VST):
-		- Refine wavetable voices (better interpolation)
+		- Implement: http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
+		- Refine wavetable voices (better interpolation), try a 'hold' state
+		- Search for (yet another) electric piano sample!
 		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Turn structures into real classes piece by piece
