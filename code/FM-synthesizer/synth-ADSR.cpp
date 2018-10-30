@@ -20,11 +20,10 @@ namespace SFM
 		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
-		// I want more detail (ergo lesser ratio) if the velocity is higher, ergo:
+		// Set attack according to velocity (reverse, more velocity means a quicker attack)
 		velocity = 1.f-velocity;
-
-		m_voiceADSR.setTargetRatioA(0.3f*2.f + velocity*0.25f);
-		m_voiceADSR.setTargetRatioDR(0.003f + 0.003f*velocity*0.33f);
+		m_voiceADSR.setTargetRatioA(kGoldenRatio + velocity*12.f);
+		m_filterADSR.setTargetRatioA(0.5f*kGoldenRatio + velocity*6.f);
 
 		m_voiceADSR.setAttackRate(attack);
 		m_voiceADSR.setDecayRate(decay);
@@ -40,8 +39,12 @@ namespace SFM
 		m_filterADSR.gate(true);
 	}
 
-	void ADSR::Stop(unsigned sampleCount)
+	void ADSR::Stop(unsigned sampleCount, float velocity)
 	{
+		// Set decay & release according to velocity (aftertouch, less velocity means a slower release) 
+		m_voiceADSR.setTargetRatioDR(kGoldenRatio + velocity*12.f);
+		m_filterADSR.setTargetRatioDR(0.5f*kGoldenRatio + velocity*6.f);
+
 		m_voiceADSR.gate(false);
 		m_filterADSR.gate(false);
 	}

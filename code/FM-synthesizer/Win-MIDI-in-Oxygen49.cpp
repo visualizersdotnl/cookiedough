@@ -313,7 +313,7 @@ namespace SFM
 						const unsigned iVoice = s_voices[controlIdx];
 						if (-1 != iVoice)
 						{
-							ReleaseVoice(iVoice);
+							ReleaseVoice(iVoice, controlVal/127.f);
 							s_voices[controlIdx] = -1;
 						}
 

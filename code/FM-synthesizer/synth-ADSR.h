@@ -37,7 +37,7 @@ namespace SFM
 		::ADSR m_filterADSR;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
-		void Stop(unsigned sampleCount);
+		void Stop(unsigned sampleCount, float velocity);
 
 		void Reset()
 		{

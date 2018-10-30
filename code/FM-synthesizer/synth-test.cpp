@@ -44,7 +44,7 @@ namespace SFM
 		{
 			if (-1 != indexB) 
 			{
-				ReleaseVoice(indexB);
+				ReleaseVoice(indexB, 1.f);
 				indexB = -1;
 			}
 
@@ -57,7 +57,7 @@ namespace SFM
 		{
 			if (-1 != indexA)
 			{
-				ReleaseVoice(indexA);
+				ReleaseVoice(indexA, 1.f);
 				indexA = -1;
 			}
 

@@ -37,6 +37,7 @@
 		- Consider voice lists
 		- Turn structures into real classes piece by piece
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
+		- Tweak velocity & aftertouch
 
 	Research:
 		- What can I do with my noise oscillators?
@@ -76,7 +77,7 @@ namespace SFM
 	*/
 
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity);
-	void ReleaseVoice(unsigned index);
+	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 
 	/*
 		New API (WIP) for compatibility with VST.
@@ -98,7 +99,7 @@ namespace SFM
 		unsigned TriggerVoice(Waveform form, float frequency, float velocity);
 
 		// Release a note using it's voice index
-		void ReleaseVoice(unsigned index);
+		void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 
 		/*
 			Parameters.

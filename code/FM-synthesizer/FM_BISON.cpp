@@ -75,8 +75,14 @@ namespace SFM
 		float velocity;
 	};
 
+	struct VoiceReleaseRequest
+	{
+		unsigned index;
+		float velocity;
+	};
+
 	static std::deque<VoiceRequest> s_voiceReq;
-	static std::deque<unsigned> s_voiceReleaseReq;
+	static std::deque<VoiceReleaseRequest> s_voiceReleaseReq;
 
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity)
 	{
@@ -96,12 +102,17 @@ namespace SFM
 			*pIndex = -1;
 	}
 
-	void ReleaseVoice(unsigned index)
+	void ReleaseVoice(unsigned index, float velocity)
 	{
 		SFM_ASSERT(-1 != index);
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
-		s_voiceReleaseReq.push_front(index);
+
+		VoiceReleaseRequest request;
+		request.index = index;
+		request.velocity = velocity;
+
+		s_voiceReleaseReq.push_front(request);
 	}
 
 	static void InitializeVoice(const VoiceRequest &request, FM &state, unsigned iVoice)
@@ -211,14 +222,14 @@ namespace SFM
 		}
 
 		// Process release requests
-		for (unsigned index : s_voiceReleaseReq)
+		for (auto &request : s_voiceReleaseReq)
 		{
-			SFM_ASSERT(-1 != index);
+			SFM_ASSERT(-1 != request.index);
 			
-			Voice &voice = state.m_voices[index];
-			s_ADSRs[index].Stop(s_sampleCount);
+			Voice &voice = state.m_voices[request.index];
+			s_ADSRs[request.index].Stop(s_sampleCount, request.velocity);
 
-			Log("Voice released: " + std::to_string(index));
+			Log("Voice released: " + std::to_string(request.index));
 		}
 
 		while (s_voiceReq.size() > 0 && state.m_active < kMaxVoices-1)
