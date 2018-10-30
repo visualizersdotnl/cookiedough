@@ -23,7 +23,6 @@
 		- Some calculations in here are what is referred to as "bro science".
 
 	Priority tasks:
-		- PolyBLEP pulse bugs when phase is zero (I've got a workaround in now)
 		- Flush ring buffer using two memcpy() Calls
 		- Finish up interface and let the MIDI driver feed it
 		- Encapsulate the core in a class so there can be instances

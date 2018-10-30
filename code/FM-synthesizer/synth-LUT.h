@@ -24,7 +24,6 @@ namespace SFM
 		LUT functions
 	*/
 
-	// FIXME: depending on a few factors interpolation might be unnecessary
 	SFM_INLINE float SampleOscLUT(const float *LUT, float index)
 	{
 //		unsigned from = unsigned(index);
@@ -35,7 +34,7 @@ namespace SFM
 		unsigned to = from+1;
 		const float delta = fracf(index);
 		const float A = LUT[from&kOscTabAnd];
-		const float B = LUT[to&kOscTabAnd];
+		const float B = LUT[to&kOscTabAnd]; // FIXME: one extra entry saves me this AND
 		const float sample = lerpf<float>(A, B, delta);
 		return sample;
 	}

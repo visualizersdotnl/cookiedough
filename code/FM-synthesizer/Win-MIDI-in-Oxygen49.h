@@ -60,4 +60,7 @@ namespace SFM
 	// Algorithm
 	Voice::Algorithm WinMidi_GetAlgorithm();
 	float WinMidi_GetAlgoTweak();
+
+	// Pulse osc. width
+	unsigned WinMidi_GetPulseWidth();
 }

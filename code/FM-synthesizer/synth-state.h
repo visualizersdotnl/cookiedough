@@ -39,6 +39,9 @@ namespace SFM
 		// Loop wavetable oscillators
 		bool m_loopWaves;
 
+		// Pulse oscillator width [0..2]: 0 = 0.10, 1 = 0.25, 2 = 0.75
+		unsigned m_pulseWidth;
+
 		// ADSR parameters
 		ADSR::Parameters m_ADSR;
 
@@ -82,6 +85,9 @@ namespace SFM
 
 			// Don't loop waves
 			m_loopWaves = false;
+
+			// Smallest pulse width
+			m_pulseWidth = 0;
 
 			// Default ADSR envelope
 			m_ADSR.attack  = kSampleRate/8;

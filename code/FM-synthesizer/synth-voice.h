@@ -45,7 +45,7 @@ namespace SFM
 		Modulator m_modulatorHi, m_modulatorLo;
 		void InitializeFeedback();
 
-		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
+		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope, float pulseWidth);
 
 		// Can be used to determine if a one-shot is done
 		bool HasCycled(unsigned sampleCount) /* const */

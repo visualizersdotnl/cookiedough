@@ -25,4 +25,4 @@ Features for 0.3:
 [X] - Pitch bend.
 [X] - A lot more! ;)
 [/] - User manual (interface documentation).
- 
+ - See main header.

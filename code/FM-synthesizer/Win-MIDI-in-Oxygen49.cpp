@@ -81,8 +81,11 @@ namespace SFM
 	const unsigned kButtonAlgoSingle = 96;           // C18
 	const unsigned kButtonAlgoDoubleCarriers = 97;   // C19
 	const unsigned kButtonPulseCarrier = 104;        // C26
+	const unsigned kButtonPulseWidthToggle = 103;    // C25
+	const unsigned kButtonNoiseCarrier = 102;        // C24
 	static int s_curFilter = 0;
 	static int s_loopWaves = 0;
+	static unsigned s_pulseWidth = 0;
 	static Voice::Algorithm s_algorithm = Voice::kSingle;
 
 	static Waveform s_waveform = kSine;
@@ -182,6 +185,11 @@ namespace SFM
 						{
 						case kButtonPulseCarrier:
 							if (127 == controlVal) s_waveform = kPolyPulse;
+							break;
+
+						case kButtonNoiseCarrier:
+							if (127 == controlVal) s_waveform = kWhiteNoise;
+							break;
 
 						case kButtonAlgoSingle:
 							if (127 == controlVal) s_algorithm = Voice::kSingle;
@@ -197,6 +205,10 @@ namespace SFM
 
 						case kButtonLoopWaves:
 							if (127 == controlVal) s_loopWaves ^= 1;
+							break;
+
+						case kButtonPulseWidthToggle:
+							if (127 == controlVal) s_pulseWidth = ++s_pulseWidth % 3;
 							break;
 
 						case kPotCutoff:
@@ -450,4 +462,11 @@ namespace SFM
 	// Algorithm
 	Voice::Algorithm WinMidi_GetAlgorithm() { return s_algorithm;       }
 	float WinMidi_GetAlgoTweak()            { return s_algoTweak.Get(); }
+
+	// Pulse osc. width
+	unsigned WinMidi_GetPulseWidth()
+	{
+		SFM_ASSERT(s_pulseWidth < 3);
+		return s_pulseWidth;
+	}
 }

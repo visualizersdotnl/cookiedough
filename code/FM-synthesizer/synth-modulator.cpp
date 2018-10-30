@@ -16,7 +16,7 @@ namespace SFM
 		m_frequency = frequency;
 		m_pitch = CalculateOscPitch(frequency);
 		m_phaseShift = phaseShift;
-		m_indexLFO.Initialize(sampleCount, kDigiTriangle, 1.f, indexModFreq);
+		m_indexLFO.Initialize(sampleCount, kCosine, 1.f, indexModFreq);
 	}
 
 	float Modulator::Sample(unsigned sampleCount, float brightness)

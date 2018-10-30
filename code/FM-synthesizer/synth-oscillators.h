@@ -151,6 +151,8 @@ namespace SFM
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
+		SFM_ASSERT(phase >= 0.f);
+
 		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
 		phase = fmodf(phase*kInvOscPeriod, 1.f);
 
@@ -187,6 +189,9 @@ namespace SFM
 
 	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
 	{
+		// PolyBLEP() doesn't like a negative phase
+		phase += kOscPeriod;
+
 		float value = oscDigiPulse(phase, duty);
 		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRough);
 		value += PolyBLEP(phase, frequency*kPolyMulRough);
@@ -204,7 +209,7 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return lutnoisef(phase + rand() /* Without this we'll definitely hear a pattern */);
+		return lutnoisef(phase + mt_randf());
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
@@ -223,8 +228,7 @@ namespace SFM
 		b4 = 0.55000f*b4 + white*0.5329522f; 
 		b5 = -0.7616f*b5 - white*0.0168980f; 
 
-		// This is a bit of a judgement call, but it's slightly more sonically pleasing
-		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 0.33f); 
+//		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.33f); 
 
 		b6 = white*0.115926f;
 		

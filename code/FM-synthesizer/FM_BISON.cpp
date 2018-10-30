@@ -108,23 +108,26 @@ namespace SFM
 	{
 		Voice &voice = state.m_voices[iVoice];
 
+		const float goldenTen = kGoldenRatio*10.f;
+
 		const float frequency = request.frequency;
 		const float velocity = request.velocity;
-
-		const float goldenTen = kGoldenRatio*10.f;
+		const bool isWave = oscIsWavetable(request.form);
 
 		// Algorithm
 		voice.m_algorithm = state.m_algorithm;
 
 		// Initialize carrier(s)
 		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
-		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
+		const float modRatioC = true == isWave ? 1.f :state.m_modRatioC; // No carrier modulation if wavetable osc.
+
+		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
 
 		if (Voice::kDoubleCarriers == voice.m_algorithm)
 		{
 			// Initialize a detuned second carrier (gives a thicker, almost phaser-like sound)
 			const float detune = powf(3.f/2.f, (0.7f*state.m_algoTweak)/12.f);
-			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*state.m_modRatioC*detune);
+			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*modRatioC*detune);
 		}
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
@@ -198,7 +201,7 @@ namespace SFM
 				if (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount))
 					free = true;
 				
-				// If to be freed enter grace period
+				// Free
 				if (true == free)
 				{
 					voice.m_enabled = false;
@@ -287,6 +290,9 @@ namespace SFM
 		// Wavetable one-shot yes/no
 		state.m_loopWaves = WinMidi_GetLoopWaves();
 
+		// Pulse osc. width
+		state.m_pulseWidth = WinMidi_GetPulseWidth();
+
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
@@ -330,6 +336,7 @@ namespace SFM
 
 		std::lock_guard<std::mutex> ringLock(s_ringBufLock);
 
+		// See if there's enough space in the ring buffer to justify rendering
 		if (true == s_ringBuf.IsFull())
 			return loudest;
 
@@ -367,6 +374,14 @@ namespace SFM
 		}
 		else
 		{
+			// FIXME: this is ugly as sin, but I still refuse to have state in my oscillators (might revisit that at some point)
+			const float kPulseWidths[3] = 
+			{
+				0.1f, 0.314f, 0.624f
+			};
+
+			const float pulseWidth = kPulseWidths[state.m_pulseWidth];
+
 			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -384,7 +399,7 @@ namespace SFM
 						// Probed on this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
-						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope);
+						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope, pulseWidth);
 						buffer[iSample] = sample;
 					}
 
@@ -500,7 +515,7 @@ bool Syntherklaas_Create()
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-//	OscTest();
+	OscTest();
 
 	return true == midiIn && audioOut;
 }

@@ -43,7 +43,7 @@ namespace SFM
 		}
 	}
 
-	float Carrier::Sample(unsigned sampleCount, float modulation)
+	float Carrier::Sample(unsigned sampleCount, float modulation, float pulseWidth)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
@@ -74,11 +74,15 @@ namespace SFM
 			break;
 
 		case kPolyPulse:
-			signal = oscPolyPulse(phase+modulation, m_frequency, 0.25f); // Should be a parameter (FIXME)
+			signal = oscPolyPulse(phase+modulation, m_frequency, pulseWidth);
 			break;
 
 		case kDigiTriangle:
 			signal = oscDigiTriangle(phase+modulation);
+			break;
+
+		case kWhiteNoise:
+			signal = oscWhiteNoise(phase+modulation);
 			break;
 
 		// No FM for wavetable carriers

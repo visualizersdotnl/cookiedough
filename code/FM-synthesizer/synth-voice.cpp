@@ -29,7 +29,7 @@ namespace SFM
 		CopyModulator(m_modulator, m_modulatorLo, down);
 	}
 
-	float Voice::Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope)
+	float Voice::Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope, float pulseWidth)
 	{
 		// Assumption: any artifacts this yields are migitated by soft clamping down the line
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
@@ -47,11 +47,11 @@ namespace SFM
 		switch (m_algorithm)
 		{
 		case kSingle:
-			sample = m_carrierA.Sample(sampleCount, modulation);
+			sample = m_carrierA.Sample(sampleCount, modulation, pulseWidth);
 			break;
 
 		case kDoubleCarriers:
-			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation) + m_carrierB.Sample(sampleCount, -modulation));
+			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation, pulseWidth) + m_carrierB.Sample(sampleCount, -modulation, pulseWidth));
 			break;
 		}
 
