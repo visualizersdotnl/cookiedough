@@ -18,8 +18,6 @@ namespace SFM
 		m_pitch = CalculateOscPitch(frequency);
 		m_sampleOffs = sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
-
-		m_cycleLen = -1.f;
 	
 		switch (m_form)
 		{
@@ -43,8 +41,6 @@ namespace SFM
 			m_cycleLen = kOscPeriod;
 			break;
 		}
-
-		SFM_ASSERT(-1 != m_cycleLen);
 	}
 
 	float Carrier::Sample(unsigned sampleCount, float modulation)
@@ -60,56 +56,43 @@ namespace SFM
 		switch (m_form)
 		{
 		default:
+			SFM_ASSERT(false); // Unsupported oscillator
+
 		case kSine:
 			signal = oscSine(phase+modulation);
 			break;
 
-		case kSoftSaw:
+		// FIXME
+		case kPolySaw:
 			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
+//			signal = oscPolySaw(phase+modulation, m_frequency);
 			break;
 
-		case kSoftSquare:
+		// FIXME
+		case kPolySquare:
 			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
+//			signal = oscPolySquare(phase+modulation, m_frequency);
 			break;
 
-/*
-		case kDigiSaw:
-			signal = oscDigiSaw(phase+modulation);
+		case kDigiTriangle:
+			signal = oscDigiTriangle(phase+modulation);
 			break;
 
-		case kDigiSquare:
-			signal = oscDigiSquare(phase+modulation);
-			break;
-*/
-
-		case kTriangle:
-			signal = oscTriangle(phase+modulation);
-			break;
-
-/*
-		case kWhiteNoise:
-			signal = oscWhiteNoise(phase);
-			break;
-
-		case kPinkNoise:
-			signal = oscPinkNoise(phase);
-			break;
-*/
-
+		// No FM for wavetable carriers
 		case kKick808:
-			signal = getOscKick808().Sample(phase+modulation);
+			signal = getOscKick808().Sample(phase);
 			break;
 
 		case kSnare808:
-			signal = getOscSnare808().Sample(phase+modulation);
+			signal = getOscSnare808().Sample(phase);
 			break;
 
 		case kGuitar:
-			signal = getOscGuitar().Sample(phase+modulation);
+			signal = getOscGuitar().Sample(phase);
 			break;
 
 		case kElectricPiano:
-			signal = getOscElecPiano().Sample(phase+modulation);
+			signal = getOscElecPiano().Sample(phase);
 			break;
 		}
 
