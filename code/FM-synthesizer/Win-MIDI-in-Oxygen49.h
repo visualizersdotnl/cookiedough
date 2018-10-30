@@ -54,4 +54,8 @@ namespace SFM
 
 	// Loop wavetable samples on/off
 	bool WinMidi_GetLoopWaves();
+
+	// Algorithm
+	unsigned WinMidi_GetAlgorithm();
+	float WinMidi_GetAlgoTweak();
 }

@@ -12,6 +12,7 @@
 #include "Win-MIDI-in-Oxygen49.h"
 #include "synth-midi.h"
 #include "FM_BISON.h"
+#include "synth-voice.h"
 
 // Bevacqua mainly relies on SDL + std. C(++), so:
 #pragma comment(lib, "Winmm.lib")
@@ -45,12 +46,13 @@ namespace SFM
 	const unsigned kPotFilterMix = 61;         // C10
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
-	const unsigned kPotUnused1 = 95;           // C17
+	const unsigned kPotAlgoTweak = 95;         // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
+	static MIDI_Smoothed s_algoTweak;
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -74,10 +76,13 @@ namespace SFM
 	static float s_tremolo = 0.f;
 
 	// Button mapping
-	const unsigned kButtonFilterSwitch = 116;
-	const unsigned kButtonLoopWaves = 113;
+	const unsigned kButtonFilterSwitch = 116;       // C28
+	const unsigned kButtonLoopWaves = 113;          // C27
+	const unsigned kButtonAlgoSingle = 96;          // C18
+	const unsigned kButtonAlgoDetunedCarrier = 97;  // C19
 	static int s_curFilter = 0;
 	static int s_loopWaves = 0;
+	static unsigned s_algorithm = 0;
 
 	static Waveform s_waveform = kSine;
 
@@ -174,6 +179,14 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						case kButtonAlgoSingle:
+							if (127 == controlVal) s_algorithm = SFM::Voice::kSingle;
+							break;
+
+						case kButtonAlgoDetunedCarrier:
+							if (127 == controlVal) s_algorithm = SFM::Voice::kDetunedCarriers;
+							break;
+
 						case kButtonFilterSwitch:
 							if (127 == controlVal) s_curFilter = (s_curFilter+1) % 3;
 							break;
@@ -238,7 +251,8 @@ namespace SFM
 							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotUnused1:
+						case kPotAlgoTweak:
+							s_algoTweak.Set(controlVal);
 							break;
 
 						case kFaderTremolo:
@@ -428,4 +442,8 @@ namespace SFM
 	{
 		return 0 != s_loopWaves;
 	}
+
+	// Algorithm
+	unsigned WinMidi_GetAlgorithm() { return s_algorithm;       }
+	float WinMidi_GetAlgoTweak()    { return s_algoTweak.Get(); }
 }

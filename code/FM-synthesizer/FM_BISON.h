@@ -27,17 +27,16 @@
 
 	Ideas:
 		- Dirt factor (noise?)
+		- Figure out 1 more useful algorithm
 
 	Priority (pre-VST):
-		- The BLEP oscillators do not seem to be very stable; investigate!
-		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
-		- Try to figure out if there's a way to make BLEP work better so it can be reinstated (or perhaps it's most usefulf or LFOs)
+		- The PolyBLEP square wave seems to be unstable: investigate!
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Try a 'hold' state to sustain wavetable samples
 		- Review mutex usage
 
-	Other tasks: 
+	Lower priority: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Research sample & hold
 		- Almost all crackle and pop is gone but I'm not convinced yet
@@ -66,6 +65,7 @@
 
 #include "synth-global.h"
 #include "synth-oscillators.h"
+#include "synth-voice.h"
 
 bool Syntherklaas_Create();
 void Syntherklaas_Destroy();
@@ -107,6 +107,10 @@ namespace SFM
 		/*
 			Parameters.
 		*/
+
+		// Algorithm
+		void SetAlgorithm(Voice::Algorithm algorithm);
+		void SetAlgoTweak(float value);
 
 		// Master drive
 		void SetMasterDrive(float drive);

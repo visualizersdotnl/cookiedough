@@ -20,6 +20,10 @@ namespace SFM
 		Voice m_voices[kMaxVoices];
 		unsigned m_active;
 
+		// Algorithm
+		Voice::Algorithm m_algorithm;
+		float m_algoTweak;
+
 		// Master drive [0..N]
 		float m_drive;
 
@@ -58,6 +62,10 @@ namespace SFM
 			}
 
 			m_active = 0;
+
+			// Simple algorithm
+			m_algorithm = Voice::kSingle;
+			m_algoTweak = 0.f;
 
 			// Neutral
 			m_drive = 1.f;

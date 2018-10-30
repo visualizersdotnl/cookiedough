@@ -23,8 +23,8 @@ namespace SFM
 		// Up/down 4 halftones
 		const float up = powf(2.f, 4.f/12.f);
 		const float down = 1.f/up;
-		CopyCarrier(m_carrier, m_carrierHi, up);
-		CopyCarrier(m_carrier, m_carrierLo, down);
+		CopyCarrier(m_carrierA, m_carrierHi, up);
+		CopyCarrier(m_carrierA, m_carrierLo, down);
 		CopyModulator(m_modulator, m_modulatorHi, up);
 		CopyModulator(m_modulator, m_modulatorLo, down);
 	}
@@ -35,14 +35,25 @@ namespace SFM
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
 
 		// Silence one-shots (FIXME: is this necessary?)
-		if (true == m_oneShot && m_carrier.HasCycled(sampleCount))
+		if (true == m_oneShot && m_carrierA.HasCycled(sampleCount))
 			return 0.f;
 
 		const float ADSR = envelope.SampleForVoice(sampleCount);
 		
 		float modulation = m_modulator.Sample(sampleCount, modBrightness);
-		float sample = m_carrier.Sample(sampleCount, modulation);
 
+		// Sample carrier(s)
+		float sample = 0.f;
+		if (kSingle == m_algorithm)
+		{
+			sample = m_carrierA.Sample(sampleCount, modulation);
+		}
+		else if (kDetunedCarriers == m_algorithm)
+		{
+			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation) + m_carrierB.Sample(sampleCount, modulation));
+		}
+
+		// Apply pitch bend
 		if (pitchBend < 0.f)
 		{
 			const float delta = pitchBend+1.f;

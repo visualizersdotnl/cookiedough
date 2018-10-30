@@ -89,7 +89,6 @@ namespace SFM
 		request.form = form;
 		request.frequency = frequency;
 		request.velocity = velocity;
-
 		s_voiceReq.push_front(request);
 
 		// At this point there is no voice yet
@@ -112,20 +111,32 @@ namespace SFM
 		const float frequency = request.frequency;
 		const float velocity = request.velocity;
 
-		// Initialize carrier
+		const float goldenTen = kGoldenRatio*10.f;
+
+		// Algorithm
+		voice.m_algorithm = state.m_algorithm;
+
+		// Initialize carrier(s)
 		const float amplitude = 0.05f + velocity*dBToAmplitude(kMaxVoicedB);
-		voice.m_carrier.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
+		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
+
+		if (Voice::kDetunedCarriers == voice.m_algorithm)
+		{
+			// Initialize proper detuned second carrier (gives a thicker, almost phaser-like sound)
+			const float detune = powf(3.f/2.f, (0.07f*state.m_algoTweak)/12.f);
+			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-6.f), frequency*state.m_modRatioC*detune);
+		}
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
 		const float modFrequency = frequency*state.m_modRatioM;
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq);
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq*goldenTen);
 
 		// Initialize feedback delay line(s)
 		voice.InitializeFeedback();
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
-		const float broFrequency = invsqrf(tremolo)*kGoldenRatio;
+		const float broFrequency = invsqrf(tremolo)*0.25f*goldenTen; // Not sure if I should mess with the "feel" of the control here (FIXME)
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
 		// FIXME: perhaps this should be optional?
@@ -184,7 +195,7 @@ namespace SFM
 					free = true;
 
 				// One-shot done?				
-				if (true == voice.m_oneShot && true == voice.m_carrier.HasCycled(s_sampleCount))
+				if (true == voice.m_oneShot && true == voice.m_carrierA.HasCycled(s_sampleCount))
 					free = true;
 				
 				// If to be freed enter grace period
@@ -245,6 +256,11 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
+		// Algorithm
+		state.m_algorithm = (Voice::Algorithm) WinMidi_GetAlgorithm();
+		SFM_ASSERT(state.m_algorithm < Voice::kNumAlgorithms);
+		state.m_algoTweak = WinMidi_GetAlgoTweak();
+
 		// Drive
 		state.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
@@ -263,7 +279,7 @@ namespace SFM
 
 		// Modulation index LFO frequency
 		const float frequency = WinMidi_GetModulationLFOFrequency();
-		state.m_indexLFOFreq = frequency*10.f;
+		state.m_indexLFOFreq = frequency;
 		
 		// Tremolo
 		state.m_tremolo = WinMidi_GetTremolo();

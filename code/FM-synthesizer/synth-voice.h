@@ -16,6 +16,13 @@ namespace SFM
 	class Voice
 	{
 	public:
+		enum Algorithm
+		{
+			kSingle,
+			kDetunedCarriers,
+			kNumAlgorithms
+		};
+
 		Voice() :
 			m_enabled(false)
 		{}
@@ -23,7 +30,8 @@ namespace SFM
 		bool m_enabled;
 
 		// To be initialized manually
-		Carrier m_carrier;
+		Algorithm m_algorithm;
+		Carrier m_carrierA, m_carrierB;
 		Modulator m_modulator;
 		Modulator m_ampMod;
 		bool m_oneShot; // For wavetable samples
