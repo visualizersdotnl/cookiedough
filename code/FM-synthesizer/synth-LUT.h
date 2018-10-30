@@ -11,12 +11,8 @@
 namespace SFM
 {
 	// Generated Carrier:Modulation ratio table
-	extern unsigned g_CM_table[512][2];
+	extern unsigned g_CM_table[][2];
 	extern unsigned g_CM_table_size;
-
-	// Down one to up one octave in discrete steps (frequency multiplier)
-	extern float g_detuneTab[];
-	extern unsigned g_detuneTabSize;
 
 	// For oscillators
 	extern float g_sinLUT[kOscPeriod];
@@ -37,7 +33,7 @@ namespace SFM
 
 		unsigned from = unsigned(index);
 		unsigned to = from+1;
-		const float delta = index-from;
+		const float delta = fracf(index);
 		const float A = LUT[from&kOscTabAnd];
 		const float B = LUT[to&kOscTabAnd];
 		const float sample = lerpf<float>(A, B, delta);

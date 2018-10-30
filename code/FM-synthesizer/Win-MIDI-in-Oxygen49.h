@@ -42,7 +42,6 @@ namespace SFM
 	float WinMidi_GetModulationRatio();
 	float WinMidi_GetModulationBrightness();
 	float WinMidi_GetModulationLFOFrequency();
-	float WinMidi_GetModulationDetune();
 
 	// ADSR parameters
 	float WinMidi_GetAttack();

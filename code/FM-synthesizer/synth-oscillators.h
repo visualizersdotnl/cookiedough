@@ -63,7 +63,7 @@ namespace SFM
 
 	SFM_INLINE float oscDigiSaw(float phase)
 	{
-		return fmodf(phase/kOscPeriod, 1.f)*2.f - 1.f;
+		return fmodf(phase*kInvOscPeriod, 1.f)*2.f - 1.f;
 	}
 
 	SFM_INLINE float oscDigiSquare(float phase)
@@ -73,7 +73,7 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		return -1.f + fabsf(roundf(phase/kOscPeriod)-(phase/kOscPeriod))*4.f;
+		return -1.f + fabsf(roundf(phase*kInvOscPeriod)-(phase*kInvOscPeriod))*4.f;
 	}
 
 	/*
@@ -130,9 +130,11 @@ namespace SFM
 		- http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
 
 		In essence this interpolates exponentially around discontinuities.
+
+		FIXME: for now these do not seem to fit my requirements as well as their more expensive BLIT counterparts.
 	*/
 
-	const float kPolySoftness = 16.f;
+	const float kPolySoftness = 32.f;
 	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
@@ -140,18 +142,23 @@ namespace SFM
 		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
 		phase = fmodf(phase*kInvOscPeriod, 1.f);
 
+		float value = 0.f;
+
 		if (phase < delta)
 		{
 			phase /= delta;
-			return phase+phase - phase*phase - 1.f;
+			value = phase+phase - phase*phase - 1.f;
 		}
-		else if (phase > 1.f - delta)
+		else if (phase > 1.f-delta)
 		{
 			phase = (phase-1.f)/delta;
-			return phase*phase + phase+phase + 1.f;
+			value = phase*phase + phase+phase + 1.f;
 		}
 
-		return 0.f;
+		// FIXME: this oscillator is *not* stable
+		SampleAssert(value);
+
+		return value;
 	}
 
 	SFM_INLINE float oscPolySaw(float phase, float frequency)
@@ -164,9 +171,11 @@ namespace SFM
 	SFM_INLINE float oscPolySquare(float phase, float frequency)
 	{
 		float value = oscDigiSquare(phase);
+
 		const float delta = frequency*kPolyMul;
-		value += PolyBLEP(phase, delta);
-		value -= PolyBLEP(phase + kOscPeriod/2, delta);
+		value = value + PolyBLEP(phase, delta);
+		value = value - PolyBLEP(phase + kOscPeriod/2, delta);			
+
 		return value;
 	}
 
@@ -229,7 +238,7 @@ namespace SFM
 		const float index = phase*m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
-		const float delta = index-from;
+		const float delta = fracf(index);
 		const float A = m_pTable[from%m_numSamples];
 		const float B = m_pTable[from%m_numSamples];
 		return lerpf<float>(A, B, delta);

@@ -27,5 +27,10 @@ namespace SFM
 		{
 			return ceilf((sampleCount-m_sampleOffs)*m_pitch) >= m_cycleLen;
 		}
+
+		SFM_INLINE bool IsWavetableForm() /* const */
+		{
+			return oscIsWavetable(m_form);
+		}
 	};
 }

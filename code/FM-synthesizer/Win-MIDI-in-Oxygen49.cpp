@@ -45,12 +45,11 @@ namespace SFM
 	const unsigned kPotFilterMix = 61;         // C10
 	const unsigned kPotFilterEnvInfl = 24;     // C13
 	const unsigned kPotMasterDrive = 26;       // C14
-	const unsigned kPotModDetune = 95;         // C17
+	const unsigned kPotUnused1 = 95;           // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
 	static MIDI_Smoothed s_masterDrive;
-	static MIDI_Smoothed s_modDetune;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 
 	// Wheel mapping
@@ -239,8 +238,7 @@ namespace SFM
 							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotModDetune:
-							s_modDetune.Set(controlVal);
+						case kPotUnused1:
 							break;
 
 						case kFaderTremolo:
@@ -412,7 +410,6 @@ namespace SFM
 	float WinMidi_GetModulationRatio()        { return s_modRatio;        }
 	float WinMidi_GetModulationBrightness()   { return s_modBrightness;   }
 	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;      }
-	float WinMidi_GetModulationDetune()       { return s_modDetune.Get(); }
 
 	// Master ADSR
 	float WinMidi_GetAttack()          { return s_A; }

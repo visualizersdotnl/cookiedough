@@ -22,15 +22,15 @@ and you've got your yearly dose of 1980s pop music.
 
 [ Features ]
 
-* 24 voice polyphony
+* 24 voice polyphony; all features are processed per voice unless stated otherwise
 * 4 anti-aliased carrier oscillators, 4 wavetable oscillators, and then some (used internally)
-* 3 end stage ladder filters (also processed per voice) that interact with note velocity (optional)
-* Global feedback effect
-* FM variable modulation, brightness, vibrato & detune
+* Choice of 3 end stage ladder filters that can be applied uniformly or by note velocity
+* FM modulation, brightness & vibrato
 * Tremolo
 * Pitch bend
-* Familiar global ADSR envelope
-* 3 different algorithms
+* Global feedback effect
+* Industry standard ADSR envelope
+* 3 different algorithms (FIXME)
 
 [ Design in a nutshell ]
 
@@ -56,6 +56,10 @@ Thanks, a *lot*, for your advice and willingness:
 - Mark Smith
 - Everyone at the KVR audio forum!
 
-[ ... ]
+[ How to use ]
 
+- When using wavetable carrier forms, frequence modulation is disabled; all other features function as usual.
+  This is because applying FM to arbitrary samples often just results in unusable noise.
+
+- ...
  

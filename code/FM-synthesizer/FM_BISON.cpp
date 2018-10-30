@@ -113,19 +113,19 @@ namespace SFM
 		const float velocity = request.velocity;
 
 		// Initialize carrier
-		const float amplitude = 0.1f + velocity*dBToAmplitude(kMaxVoicedB);
+		const float amplitude = 0.05f + velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrier.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
-		const float modRatio = state.m_modRatioM+state.m_modDetune;
-		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, frequency*modRatio, 0.f, state.m_indexLFOFreq);
+		const float modFrequency = frequency*state.m_modRatioM;
+		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq);
 
 		// Initialize feedback delay line(s)
 		voice.InitializeFeedback();
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
-		const float broFrequency = invsqrf(tremolo)*kGoldenRatio; // This is *so* arbitrary
+		const float broFrequency = invsqrf(tremolo)*kGoldenRatio;
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
 		// FIXME: perhaps this should be optional?
@@ -142,6 +142,7 @@ namespace SFM
 			break;
 
 		case 2: // Tempered variant
+			voice.m_pFilter = s_MicrotrackerFilters+iVoice;
 			break;
 
 		default:
@@ -253,6 +254,7 @@ namespace SFM
 
 		// Get ratio from precalculated table (see synth-LUT.cpp)
 		const unsigned tabIndex = (unsigned) (WinMidi_GetModulationRatio()*(g_CM_table_size-1));
+		SFM_ASSERT(tabIndex < g_CM_table_size);
 		state.m_modRatioC = (float) g_CM_table[tabIndex][0];
 		state.m_modRatioM = (float) g_CM_table[tabIndex][1];
 
@@ -261,12 +263,7 @@ namespace SFM
 
 		// Modulation index LFO frequency
 		const float frequency = WinMidi_GetModulationLFOFrequency();
-		state.m_indexLFOFreq = frequency*k2PI*2.f;
-
-		// Modulation detune
-		const float detunePot = WinMidi_GetModulationDetune();
-		const unsigned detuneIdx = unsigned(detunePot*g_detuneTabSize);
-		state.m_modDetune = g_detuneTab[detuneIdx];
+		state.m_indexLFOFreq = frequency*10.f;
 		
 		// Tremolo
 		state.m_tremolo = WinMidi_GetTremolo();

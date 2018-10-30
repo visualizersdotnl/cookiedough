@@ -34,7 +34,7 @@ namespace SFM
 		// Assumption: any artifacts this yields are migitated by soft clamping down the line
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
 
-		// Silence one-shots
+		// Silence one-shots (FIXME: is this necessary?)
 		if (true == m_oneShot && m_carrier.HasCycled(sampleCount))
 			return 0.f;
 

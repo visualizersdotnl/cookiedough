@@ -174,9 +174,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// calculate cosine LUT
 	CalculateCosLUT();
 
-	if (false == kTestBedForFM)	
-		// set simplest rounding mode, since we do a fair bit of ftol()
-		_controlfp(_MCW_RC, _RC_CHOP);
+	// set simplest rounding mode, since we do a fair bit of ftol()
+	_controlfp(_MCW_RC, _RC_CHOP);
 
 	bool utilInit = true;
 

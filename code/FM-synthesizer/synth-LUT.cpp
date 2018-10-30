@@ -21,9 +21,9 @@ namespace SFM
 		I learned about this here: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
-	const unsigned kFareyOrder = 15;
+	const unsigned kFareyOrder = 9; // Being conservative is not a bad thing here in terms of predictability
 
-	alignas(16) unsigned g_CM_table[512][2];
+	alignas(16) unsigned g_CM_table[256][2];
 	unsigned g_CM_table_size = -1;
 
 	class Ratio
@@ -62,59 +62,22 @@ namespace SFM
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x*a.y < b.x*b.y; });
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
 
-		// Copy to LUT (sequence plus appended sequence with inverse ratios) & store size
+		// Copy to LUT (plus mirrored inverted ratios) & store size
 		const size_t size = sequence.size();
-		SFM_ASSERT(size*2 < 512);
+		SFM_ASSERT(size < 512);
 		
-		for (unsigned iRatio = 0; iRatio < sequence.size(); ++iRatio)
+		for (unsigned iRatio = 0; iRatio < size; ++iRatio)
 		{
 			const Ratio &ratio = sequence[iRatio];
 
 			g_CM_table[iRatio][0] = ratio.x;
 			g_CM_table[iRatio][1] = ratio.y;
-			g_CM_table[iRatio+size][0] = ratio.y;
-			g_CM_table[iRatio+size][1] = ratio.x;
 
-//			Log("Farey C:M = " + std::to_string(ratio.x) + ":" + std::to_string(ratio.y));
+			Log("Farey C:M = " + std::to_string(ratio.x) + ":" + std::to_string(ratio.y));
 		}
 
-//		Log("Generated " + std::to_string(size*2));
-		g_CM_table_size = unsigned(size*2);
-	}
-
-	/*
-		Detune table.
-
-		Goes one octave up and one down in discrete steps (designed to be used with a potmeter).
-	*/
-
-	alignas(16) float g_detuneTab[24];
-	unsigned g_detuneTabSize = sizeof(g_detuneTab)/sizeof(float);
-
-	static void CalculateDetuneTable()
-	{
-//		const float grondGetal = 3.f/2.f; // https://www.kvraudio.com/forum/viewtopic.php?t=334960
-		const float grondGetal = 2.f;
-
-		for (unsigned iHalf = 0; iHalf < 12; ++iHalf)
-		{
-			const unsigned semitone = iHalf*7;
-			const float freqMod = powf(grondGetal, iHalf/12.f);
-			g_detuneTab[11-iHalf] = 1.f/freqMod;
-		}
-
-		for (unsigned iHalf = 12; iHalf < 24; ++iHalf)
-		{
-			const unsigned semitone = (iHalf-12)*7;
-			const float freqMod = powf(grondGetal, iHalf/12.f);
-			g_detuneTab[iHalf] = freqMod;
-		}
-
-		// Dump
-//		for (auto detune : g_detuneTab)
-//		{
-//			Log("Detune table entry: " + std::to_string(detune));
-//		}
+		Log("Generated C:M ratios " + std::to_string(size));
+		g_CM_table_size = unsigned(size);
 	}
 
 	/*
@@ -124,9 +87,6 @@ namespace SFM
 
 	void CalculateLUTs()
 	{
-		// Detune table
-		CalculateDetuneTable();
-
 		// Generate FM C:M ratio table
 		GenerateFareySequence();
 

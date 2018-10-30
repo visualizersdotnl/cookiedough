@@ -26,38 +26,39 @@
 		- Not much, play a little, don't push yourself
 
 	Ideas:
-		- Dirt factor (blend noise into carrier signal)
+		- Dirt factor (noise?)
 
 	Priority (pre-VST):
-		- Why the hell does pitch bend crackle again?
-		- Use a unit phase?
-		- Try a 'hold' state to sustain wavetable samples
-		- Introduce the LFO concept, and test it with FM vibrato to begin with
+		- The BLEP oscillators do not seem to be very stable; investigate!
 		- Switch between 1-3 algorithms (see notebook, Boor uses 2-stack setups)
+		- Try to figure out if there's a way to make BLEP work better so it can be reinstated (or perhaps it's most usefulf or LFOs)
 		- Finish interface and let MIDI driver push all in it's own update loop
-		- Turn structures into real classes piece by piece
 		- Prepare for VST & finish documentation
-		- Do some profiling and try using less mutex locks
+		- Try a 'hold' state to sustain wavetable samples
+		- Review mutex usage
 
 	Other tasks: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Optional: sample & hold noise
+		- Research sample & hold
 		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
 		- Floating point bugs (keep adding SampleAssert())
+		- Turn structures into real classes piece by piece
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
-		- Think about wrapping the phases, this allows for simpler oscillator algorithms (faster)
 		- Implement real variable delay line
-		- Investigate use of the 2 noise oscillators
+		- Investigate use of the 2 noise oscillators (and create blue noise, which is the inverse of pink noise)
+		- Think about wrapping the phases, this allows for simpler oscillator algorithms (faster)
 		- Resample wavetable voices to power-of-2 size
 		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
+		- Use multiple threads, SIMD
 
 	Known issues:
-		- MIDI pots crackle a bit
-		- Numerical instability at times
+		- MIDI pots crackle a bit (not important for intended target)
+		- Numerical instability
+		- Crackle when bottlenecked
 */
 
 #ifndef _FM_BISON_H_

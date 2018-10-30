@@ -28,7 +28,6 @@ namespace SFM
 		float m_modRatioC, m_modRatioM;
 		float m_modBrightness;
 		float m_indexLFOFreq;
-		float m_modDetune;
 
 		// Tremolo
 		float m_tremolo;
@@ -69,7 +68,6 @@ namespace SFM
  			m_modRatioM = 0.f;
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
-			m_modDetune = 0.5f; // Based on a potentionmeter going down (left) and up (right) in discrete steps
 
 			// No tremolo
 			m_tremolo = 0.0f;
