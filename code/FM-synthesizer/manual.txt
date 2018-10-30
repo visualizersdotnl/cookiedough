@@ -60,6 +60,7 @@ Thanks, a *lot*, for your advice and willingness:
 
 - When using wavetable carrier forms, frequence modulation is disabled; all other features function as usual.
   This is because applying FM to arbitrary samples often just results in unusable noise.
+  However, the carrier will still be modulated; it functions as a pitch.
 
 - ...
  

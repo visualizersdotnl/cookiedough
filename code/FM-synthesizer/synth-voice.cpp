@@ -35,7 +35,7 @@ namespace SFM
 //		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
 
 		// Silence one-shots (FIXME: is this necessary?)
-		if (true == m_oneShot && m_carrierA.HasCycled(sampleCount))
+		if (true == m_oneShot && true == HasCycled(sampleCount))
 			return 0.f;
 
 		const float ADSR = envelope.SampleForVoice(sampleCount);
@@ -50,7 +50,7 @@ namespace SFM
 		}
 		else if (kDetunedCarriers == m_algorithm)
 		{
-			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation) + m_carrierB.Sample(sampleCount, modulation));
+			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation) + m_carrierB.Sample(sampleCount, -modulation));
 		}
 
 		// Apply pitch bend

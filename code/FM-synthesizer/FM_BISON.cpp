@@ -123,8 +123,8 @@ namespace SFM
 		if (Voice::kDetunedCarriers == voice.m_algorithm)
 		{
 			// Initialize proper detuned second carrier (gives a thicker, almost phaser-like sound)
-			const float detune = powf(3.f/2.f, (0.07f*state.m_algoTweak)/12.f);
-			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-6.f), frequency*state.m_modRatioC*detune);
+			const float detune = powf(3.f/2.f, (0.7f*state.m_algoTweak)/12.f);
+			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*state.m_modRatioC*detune);
 		}
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
@@ -195,7 +195,7 @@ namespace SFM
 					free = true;
 
 				// One-shot done?				
-				if (true == voice.m_oneShot && true == voice.m_carrierA.HasCycled(s_sampleCount))
+				if (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount))
 					free = true;
 				
 				// If to be freed enter grace period

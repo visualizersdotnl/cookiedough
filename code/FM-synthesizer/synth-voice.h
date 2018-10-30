@@ -44,5 +44,19 @@ namespace SFM
 		void InitializeFeedback();
 
 		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
+
+		// Can be used to determine if a one-shot is done
+		bool HasCycled(unsigned sampleCount) /* const */
+		{
+			switch (m_algorithm)
+			{
+			default:
+			case kSingle:
+				return m_carrierA.HasCycled(sampleCount);
+
+			case kDetunedCarriers:
+				return m_carrierA.HasCycled(sampleCount) || m_carrierB.HasCycled(sampleCount);
+			}
+		}
 	};
 }

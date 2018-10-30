@@ -23,5 +23,6 @@ Features for 0.3:
 - VST-ready.
 [X] - Feedback effect.
 [X] - Pitch bend.
+[X] - A lot more! ;)
 [/] - User manual (interface documentation).
  

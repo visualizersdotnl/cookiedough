@@ -34,7 +34,7 @@
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Try a 'hold' state to sustain wavetable samples
-		- Review mutex usage
+		- Review mutex & atomic usage
 
 	Lower priority: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -42,6 +42,7 @@
 		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
+		- Move project to it's own repository (copy all, strip demoscene stuff)
 		- Floating point bugs (keep adding SampleAssert())
 		- Turn structures into real classes piece by piece
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
