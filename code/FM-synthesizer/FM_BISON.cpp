@@ -307,7 +307,7 @@ namespace SFM
 		// ADSR	
 		state.m_ADSR.attack  = WinMidi_GetAttack();
 		state.m_ADSR.decay   = WinMidi_GetDecay();
-		state.m_ADSR.release = WinMidi_GetRelease()*3.f; // Extra room to create pad-like sounds
+		state.m_ADSR.release = WinMidi_GetRelease();
 		state.m_ADSR.sustain = WinMidi_GetSustain();
 
 		// Filter parameters

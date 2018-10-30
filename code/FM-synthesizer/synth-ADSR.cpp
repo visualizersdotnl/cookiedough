@@ -17,13 +17,15 @@ namespace SFM
 
 		const float attack  = truncf(parameters.attack*kSampleRate);
 		const float decay   = truncf(parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(parameters.release*kSampleRate));
+		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf((1.5f*velocity + parameters.release)*kSampleRate));
 		const float sustain = parameters.sustain;
 
-		// Set attack according to velocity (reverse, more velocity means a quicker attack)
+		// Set attack according to velocity; more velocity means more linearity, except for DR
 		velocity = 1.f-velocity;
-		m_voiceADSR.setTargetRatioA(kGoldenRatio + velocity*12.f);
-		m_filterADSR.setTargetRatioA(0.5f*kGoldenRatio + velocity*6.f);
+		m_voiceADSR.setTargetRatioA(velocity);
+		m_filterADSR.setTargetRatioA(velocity*velocity);
+		m_voiceADSR.setTargetRatioDR(1.f-velocity);
+		m_filterADSR.setTargetRatioDR(0.0001f);
 
 		m_voiceADSR.setAttackRate(attack);
 		m_voiceADSR.setDecayRate(decay);
@@ -33,7 +35,7 @@ namespace SFM
 		m_filterADSR.setAttackRate(attack);
 		m_filterADSR.setDecayRate(decay);
 		m_filterADSR.setReleaseRate(release);
-		m_filterADSR.setSustainLevel(0.25f + 0.75f*velocity);
+		m_filterADSR.setSustainLevel(1.f-velocity);
 
 		m_voiceADSR.gate(true);
 		m_filterADSR.gate(true);
@@ -41,9 +43,9 @@ namespace SFM
 
 	void ADSR::Stop(unsigned sampleCount, float velocity)
 	{
-		// Set decay & release according to velocity (aftertouch, less velocity means a slower release) 
-		m_voiceADSR.setTargetRatioDR(kGoldenRatio + velocity*12.f);
-		m_filterADSR.setTargetRatioDR(0.5f*kGoldenRatio + velocity*6.f);
+		// Set decay & release according to velocity (aftertouch); more velocity means more linearity
+		m_voiceADSR.setTargetRatioDR(velocity);
+		m_filterADSR.setTargetRatioDR(0.0001f);
 
 		m_voiceADSR.gate(false);
 		m_filterADSR.gate(false);

@@ -60,9 +60,9 @@ namespace SFM
 
 		// Sort by magnitude first, then by carrier
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x*a.y < b.x*b.y; });
-//		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
+		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
 
-		// Copy to LUT (plus mirrored inverted ratios) & store size
+		// Copy to LUT & store size
 		const size_t size = sequence.size();
 		SFM_ASSERT(size < 256);
 		

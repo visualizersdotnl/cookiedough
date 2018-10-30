@@ -55,7 +55,7 @@ Thanks, a *lot*, for your advice and willingness:
 
 [ How to use ]
 
-- When using wavetable carrier forms, frequence modulation is disabled; all other features function as usual.
+- When using a wavetable carrier form, frequence modulation is disabled; all other features function as usual.
   This is because applying FM to arbitrary samples often just results in unusable noise.
 
 ...

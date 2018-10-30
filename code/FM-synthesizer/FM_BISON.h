@@ -23,7 +23,8 @@
 		- Some calculations in here are what is referred to as "bro science".
 
 	Priority tasks:
-		- Flush ring buffer using two memcpy() Calls
+		- Pulse width should be retrieved before rendering
+		- Flush ring buffer using two memcpy() calls
 		- Finish up interface and let the MIDI driver feed it
 		- Encapsulate the core in a class so there can be instances
 		- Finish documentation as far as possible, read up on VST
@@ -37,7 +38,7 @@
 		- Consider voice lists
 		- Turn structures into real classes piece by piece
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
-		- Tweak velocity & aftertouch
+		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
 		- What can I do with my noise oscillators?
