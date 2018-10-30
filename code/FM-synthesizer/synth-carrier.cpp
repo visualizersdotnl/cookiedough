@@ -62,7 +62,7 @@ namespace SFM
 			signal = oscSine(phase+modulation);
 			break;
 
-		// FIXME
+		// FIXME: I'm not satisfied with the PolyBLEP waves versus BLIT, but if CPU becomes a constraint I might have to switch
 		case kPolySaw:
 			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
 //			signal = oscPolySaw(phase+modulation, m_frequency);
@@ -72,6 +72,10 @@ namespace SFM
 		case kPolySquare:
 			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
 //			signal = oscPolySquare(phase+modulation, m_frequency);
+			break;
+
+		case kPolyPulse:
+			signal = oscPolyPulse(phase+modulation, m_frequency, kGoldenRatio*0.2f); // Don't see a reason to add a duty cycle parameter? (FIXME)
 			break;
 
 		case kDigiTriangle:

@@ -117,7 +117,7 @@ namespace SFM
 		voice.m_algorithm = state.m_algorithm;
 
 		// Initialize carrier(s)
-		const float amplitude = 0.05f + velocity*dBToAmplitude(kMaxVoicedB);
+		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
 
 		if (Voice::kDetunedCarriers == voice.m_algorithm)
@@ -295,7 +295,7 @@ namespace SFM
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
-		state.m_wetness = Clamp(invsqrf(WinMidi_GetFilterWetness()));
+		state.m_wetness = WinMidi_GetFilterWetness());
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
@@ -500,7 +500,7 @@ bool Syntherklaas_Create()
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-//	OscTest();
+	// OscTest();
 
 	return true == midiIn && audioOut;
 }

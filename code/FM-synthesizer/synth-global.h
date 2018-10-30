@@ -55,6 +55,7 @@ namespace SFM
 	const unsigned kOscPeriod = 4096;
 	const unsigned kOscTabAnd = 4096-1;
 	const float kInvOscPeriod = 1.f/kOscPeriod;
+	const unsigned kHalfOscPeriod = kOscPeriod/2;
 
 	// Use to multiply modulation value (radian) to osc. LUT period
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;

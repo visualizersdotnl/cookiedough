@@ -80,6 +80,7 @@ namespace SFM
 	const unsigned kButtonLoopWaves = 113;          // C27
 	const unsigned kButtonAlgoSingle = 96;          // C18
 	const unsigned kButtonAlgoDetunedCarrier = 97;  // C19
+	const unsigned kButtonPulseCarrier = 104;       // C26
 	static int s_curFilter = 0;
 	static int s_loopWaves = 0;
 	static unsigned s_algorithm = 0;
@@ -179,6 +180,9 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						case kButtonPulseCarrier:
+							if (127 == controlVal) s_waveform = kPolyPulse;
+
 						case kButtonAlgoSingle:
 							if (127 == controlVal) s_algorithm = SFM::Voice::kSingle;
 							break;

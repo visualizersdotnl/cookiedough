@@ -22,9 +22,9 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
 			float phase = iSample*pitch;
-//			float sample = oscPolySquare(phase, frequency);
+			float sample = oscPolyPulse(phase, frequency, 0.25f);
 //			float sample = oscDigiSaw(phase);
-			float sample = oscDigiTriangle(phase);
+//			float sample = oscDigiTriangle(phase);
 			buffer[iSample] = sample;
 		}
 

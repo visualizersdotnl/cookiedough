@@ -64,7 +64,7 @@ namespace SFM
 
 		// Copy to LUT (plus mirrored inverted ratios) & store size
 		const size_t size = sequence.size();
-		SFM_ASSERT(size < 512);
+		SFM_ASSERT(size < 256);
 		
 		for (unsigned iRatio = 0; iRatio < size; ++iRatio)
 		{

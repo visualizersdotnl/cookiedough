@@ -23,7 +23,7 @@ and you've got your yearly dose of 1980s pop music.
 [ Features ]
 
 * 24 voice polyphony; all features are processed per voice unless stated otherwise
-* 4 anti-aliased carrier oscillators, 4 wavetable oscillators, and then some (used internally)
+* 5 anti-aliased carrier oscillators, 4 wavetable oscillators, and then some (used internally)
 * Choice of 3 end stage ladder filters that can be applied uniformly or by note velocity
 * FM modulation, brightness & vibrato
 * Tremolo
