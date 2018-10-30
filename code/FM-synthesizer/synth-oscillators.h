@@ -147,7 +147,7 @@ namespace SFM
 
 	const float kPolySoftness = 24.f;
 	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
-	const float kPolyMulRough = 1.f/(kSampleRate/(kPolySoftness*0.5f));
+	const float kPolyMulRough = 1.f/(kSampleRate/8.f);
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
@@ -190,6 +190,11 @@ namespace SFM
 		float value = oscDigiPulse(phase, duty);
 		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRough);
 		value += PolyBLEP(phase, frequency*kPolyMulRough);
+		
+		// FIXME!
+		value = fast_tanhf(value);
+//		SampleAssert(value);
+
 		return value;
 	}
 
@@ -236,12 +241,12 @@ namespace SFM
 	class WavetableOscillator
 	{
 	public:
-		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, float baseHz = 220.f /* A3 */) :
+		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitoneOffs, float baseHz = 220.f /* A3 */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
 ,			m_periodLen(float(m_numSamples)/kOscPeriod)
 	{
-		float pitchMul = powf(2.f, float(octaveOffs));
+		float pitchMul = powf(2.f, float(octaveOffs) + semitoneOffs/12.f);
 		if (octaveOffs < 0) pitchMul = 1.f/pitchMul;
 		m_basePitch = CalculateOscPitch(baseHz*pitchMul);
 		m_rate = 1.f/(m_basePitch/m_periodLen);

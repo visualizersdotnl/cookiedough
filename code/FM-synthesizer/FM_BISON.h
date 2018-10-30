@@ -3,7 +3,7 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	Beta-test list:
+	Beta testers for the VST:
 		- Ronny Pries
 		- Esa Ruoho
 		- Maarten van Strien
@@ -17,50 +17,42 @@
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 
 	Notes:
-		- I started programming with low-level embedded targets in mind; over time I decided to go towards conservative C++11.
-		  At the moment you'll see a somewhat mixed bag and it'll probably stay that way.
-		- There has been no optimization yet; I'm still figuring out the theory and sound.
-		- A lot of calculations are based upon tweaking and thus have no real scientific basis; it is called "bro science".
+		- Code was written directly with firmware in mind, but later on as I found out that this project involved so much new
+		  information I went towards a bit of C++ here and there; I also decided to get the sound right and try to understand
+		  what I'm doing which has led to some wonky design decisions. Nevertheless I will finish this project.
+		- Some calculations in here are what is referred to as "bro science".
 
-	Things to do whilst not motivated (read: not hypomanic or medicated):
-		- Not much, play a little, don't push yourself
-
-	Priority (pre-VST):
-		- PolyBLEP oscillators bug when phase is zero
-		- Tune guitar wave!
-		- Finish interface and let MIDI driver push all in it's own update loop
-		- Prepare for VST & finish documentation
-		- Review mutex & atomic usage
-		- When possible to connect them (either VST or physically) map more values to parameters
-
-	Lower priority: 
+	Priority tasks:
+		- PolyBLEP pulse bugs when phase is zero (I've got a workaround in now)
+		- Flush ring buffer using two memcpy() Calls
+		- Finish up interface and let the MIDI driver feed it
+		- Encapsulate the core in a class so there can be instances
+		- Finish documentation as far as possible, read up on VST
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Try a 'hold' state to sustain wavetable samples
-		- Research sample & hold
 
 	Plumbing:
-		- Move project to it's own repository (copy all, strip demoscene stuff)
-		- Flush ring buffer using two memcpy() calls
-		- Floating point bugs (keep adding SampleAssert())
+		- Review mutex & atomic use
+		- Find more values that'd make sensible parameters
+		- Move project to it's own repository (go for VST directly)
+		- Always keep looking (and placing assertions) to trap floating point bugs
+		- Consider voice lists
 		- Turn structures into real classes piece by piece
-		- If iterating over all voices becomes a hassle use lists instead
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
-	Of later concern / Ideas:
-		- Implement real variable delay line
-		- Investigate use of the 2 noise oscillators (and create blue noise, which is the inverse of pink noise)
-		- Think about wrapping the phases, this allows for simpler oscillator algorithms (faster)
-		- Resample wavetable voices to power-of-2 size
-		- Find hotspots (plenty!) and optimize (use Jelle v/d Beek's tool)
-		- Use multiple threads, SIMD
+	Research:
+		- What can I do with my noise oscillators?
+		- Sample & hold
+		- Real variable delay line
+		- Better wavetable sampling
+		- Profiling & optimization
 
 	Known issues:
-		- Numerical instability!
+		- Numerical instability
 		- MIDI pots crackle a bit (not important for intended target)
 		- Crackle when bottlenecked
 
 	Lesson(s) learned:
-		- Now that I know way more, I should sit down and think of a better design next time
+		- Now that I know way more, I should sit down and think of a better design for next time
 		- It is important to follow through and finish this
 		- Don't keep pushing a feature that's just not working
 */
