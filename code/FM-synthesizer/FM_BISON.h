@@ -19,18 +19,18 @@
 	Notes:
 		- I started programming with low-level embedded targets in mind; over time I decided to go towards conservative C++11.
 		  At the moment you'll see a somewhat mixed bag and it'll probably stay that way.
+		- There has been no optimization yet; I'm still figuring out the theory and sound.
 		- A lot of calculations are based upon tweaking and thus have no real scientific basis; it is called "bro science".
-		- The filters can cock up if you're lacking procesisng power at that particular moment.
 
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
 	Ideas:
 		- Dirt factor (noise?)
-		- Figure out 1 more useful algorithm
+		- Figure out 1 more useful algorithm: could be where I modulate the frequency by another LFO?
 
 	Priority (pre-VST):
-		- The PolyBLEP square wave seems to be unstable: investigate!
+		- Tune guitar wave!
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Try a 'hold' state to sustain wavetable samples
@@ -43,6 +43,7 @@
 
 	Plumbing:
 		- Move project to it's own repository (copy all, strip demoscene stuff)
+		- Flush ring buffer using two memcpy() calls
 		- Floating point bugs (keep adding SampleAssert())
 		- Turn structures into real classes piece by piece
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole

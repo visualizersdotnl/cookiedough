@@ -31,11 +31,13 @@ namespace SFM
 		/* PolyBLEP forms */
 		kPolySaw,
 		kPolySquare,
+		kPolyPulse,
 
 		/* Straight forms (for LFOs) */
 		kDigiSaw,
 		kDigiSquare,
 		kDigiTriangle,
+		kDigiPulse,
 		kWhiteNoise,
 		kPinkNoise,
 
@@ -74,6 +76,15 @@ namespace SFM
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
 		return -1.f + fabsf(roundf(phase*kInvOscPeriod)-(phase*kInvOscPeriod))*4.f;
+	}
+
+	SFM_INLINE float oscDigiPulse(float phase, float duty)
+	{
+		const float time = fmodf(phase*kInvOscPeriod, 1.f);
+		if (time < duty)
+			return 1.f;
+		else
+			return -1.f;
 	}
 
 	/*
@@ -130,12 +141,11 @@ namespace SFM
 		- http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
 
 		In essence this interpolates exponentially around discontinuities.
-
-		FIXME: for now these do not seem to fit my requirements as well as their more expensive BLIT counterparts.
 	*/
 
-	const float kPolySoftness = 32.f;
+	const float kPolySoftness = 24.f;
 	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
+	const float kPolyMulRough = 1.f/(kSampleRate/(kPolySoftness*0.5f));
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
@@ -155,9 +165,6 @@ namespace SFM
 			value = phase*phase + phase+phase + 1.f;
 		}
 
-		// FIXME: this oscillator is *not* stable
-		SampleAssert(value);
-
 		return value;
 	}
 
@@ -170,12 +177,17 @@ namespace SFM
 
 	SFM_INLINE float oscPolySquare(float phase, float frequency)
 	{
-		float value = oscDigiSquare(phase);
+		const float saw = oscPolySaw(phase, frequency);
+		const float shifted = oscPolySaw(phase + kOscPeriod/2, frequency);
+		const float value = shifted-saw;
+		return value;
+	}
 
-		const float delta = frequency*kPolyMul;
-		value = value + PolyBLEP(phase, delta);
-		value = value - PolyBLEP(phase + kOscPeriod/2, delta);			
-
+	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
+	{
+		float value = oscDigiPulse(phase, duty);
+		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRough);
+		value += PolyBLEP(phase, frequency*kPolyMulRough);
 		return value;
 	}
 
@@ -205,7 +217,7 @@ namespace SFM
 		b5 = -0.7616f*b5 - white*0.0168980f; 
 
 		// This is a bit of a judgement call, but it's slightly more sonically pleasing
-		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.314f); 
+		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 0.8f); 
 
 		b6 = white*0.115926f;
 		

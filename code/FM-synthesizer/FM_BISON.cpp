@@ -295,7 +295,7 @@ namespace SFM
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
-		state.m_wetness = WinMidi_GetFilterWetness());
+		state.m_wetness = WinMidi_GetFilterWetness();
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
