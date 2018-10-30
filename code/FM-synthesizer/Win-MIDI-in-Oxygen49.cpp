@@ -188,7 +188,7 @@ namespace SFM
 							break;
 
 						case kButtonNoiseCarrier:
-							if (127 == controlVal) s_waveform = kWhiteNoise;
+							if (127 == controlVal) s_waveform = kPinkNoise;
 							break;
 
 						case kButtonAlgoSingle:

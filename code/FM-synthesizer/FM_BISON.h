@@ -51,7 +51,7 @@
 		- Crackle when bottlenecked
 
 	Lesson(s) learned:
-		- Now that I know way more, I should sit down and think of a better design for next time
+		- Now that I know way more, I should sit down and think of a better design for next time; this has been a proper schooling
 		- It is important to follow through and finish this
 		- Don't keep pushing a feature that's just not working
 */

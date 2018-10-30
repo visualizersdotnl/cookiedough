@@ -209,7 +209,7 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return lutnoisef(phase + mt_randf());
+		return lutnoisef(phase);
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
@@ -229,6 +229,7 @@ namespace SFM
 		b5 = -0.7616f*b5 - white*0.0168980f; 
 
 //		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.33f); 
+		pink = b0+b1+b2+b3+b4+b5+b6 + white*0.5362f;
 
 		b6 = white*0.115926f;
 		

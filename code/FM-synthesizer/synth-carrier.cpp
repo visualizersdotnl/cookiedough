@@ -81,8 +81,8 @@ namespace SFM
 			signal = oscDigiTriangle(phase+modulation);
 			break;
 
-		case kWhiteNoise:
-			signal = oscWhiteNoise(phase+modulation);
+		case kPinkNoise:
+			signal = oscPinkNoise(phase+modulation);
 			break;
 
 		// No FM for wavetable carriers

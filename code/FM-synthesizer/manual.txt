@@ -20,21 +20,18 @@ Native Instruments FM8, a Yamaha DX7 or any other instrument that offers you, in
 more flexibility. But at such a price that it seldom saw proper use; run through the DX7 patches
 and you've got your yearly dose of 1980s pop music.
 
-[ Features ]
-
-* 24 voice polyphony; all features are processed per voice unless stated otherwise
-* 5 anti-aliased carrier oscillators, 4 wavetable oscillators, and then some (used internally)
-* Choice of 3 end stage ladder filters that can be applied uniformly or by note velocity
-* FM modulation, brightness & vibrato
-* Tremolo
-* Pitch bend
-* Global feedback effect
-* Industry standard ADSR envelope
-* 2 basic algorithms
-
 [ Design in a nutshell ]
 
-...
+- 24 voice polyphony
+- FM synthesis with 2 algorithms & 6 oscillators
+- FM modulation, brightness, vibrato
+- 4 autonomous wavetable oscillators provide percussion, piano & guitar
+- End-stage ladder filter with 3 variations, ran per voice, optionally modulated by ADSR
+- Configurable feedback effect
+- Intuitive ADSR envelope
+- Tremolo
+- Pitch bend
+- Master drive
 
 [ Third party credits ]
 
