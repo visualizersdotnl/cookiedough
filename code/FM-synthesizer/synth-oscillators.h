@@ -103,7 +103,7 @@ namespace SFM
 
 		// Steps from min. 8 (*might* alias, but not likely) to kNyquist 
 		const float step = kNyquist/frequency;
-		const unsigned harmonics = 8 + unsigned(step/kAudibleLowHz);
+		const unsigned harmonics = 12 + unsigned(step/kAudibleLowHz);
 
 		Log("Carrier harmonics: " + std::to_string(harmonics));
 		return harmonics;
@@ -145,9 +145,11 @@ namespace SFM
 		In essence this interpolates exponentially around discontinuities.
 	*/
 
-	const float kPolySoftness = 24.f;
-	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
-	const float kPolyMulRough = 1.f/(kSampleRate/8.f);
+	const float kPolySoft = 24.f;
+	const float kPolyRougher = 12.f;
+
+	const float kPolyMul = 1.f/(kSampleRate/kPolySoft);
+	const float kPolyMulRougher = 1.f/(kSampleRate/kPolyRougher);
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
@@ -193,14 +195,13 @@ namespace SFM
 		phase += kOscPeriod;
 
 		float value = oscDigiPulse(phase, duty);
-		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRough);
-		value += PolyBLEP(phase, frequency*kPolyMulRough);
-		
-		// FIXME!
-		value = fast_tanhf(value);
+		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRougher);
+		value += PolyBLEP(phase, frequency*kPolyMulRougher);
+
 //		SampleAssert(value);
 
-		return value;
+		// This makes it sound just that little bit smoother
+		return fast_tanhf(value);
 	}
 
 	/*
@@ -209,7 +210,7 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise(float phase)
 	{
-		return lutnoisef(phase);
+		return lutnoisef(phase + mt_randf()*kOscPeriod);
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
@@ -219,7 +220,7 @@ namespace SFM
 		const float white = oscWhiteNoise(phase);
 
 		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
-		static float pink = 0.5f;
+		static float pink = 0.232344f;
 
 		b0 = 0.99886f*b0 + white*0.0555179f;
 		b1 = 0.99332f*b1 + white*0.0750759f; 
@@ -228,7 +229,6 @@ namespace SFM
 		b4 = 0.55000f*b4 + white*0.5329522f; 
 		b5 = -0.7616f*b5 - white*0.0168980f; 
 
-//		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 1.33f); 
 		pink = b0+b1+b2+b3+b4+b5+b6 + white*0.5362f;
 
 		b6 = white*0.115926f;

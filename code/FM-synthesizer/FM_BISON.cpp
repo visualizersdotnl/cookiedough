@@ -388,7 +388,7 @@ namespace SFM
 			// FIXME: this is ugly as sin, but I still refuse to have state in my oscillators (might revisit that at some point)
 			const float kPulseWidths[3] = 
 			{
-				0.1f, 0.314f, 0.624f
+				0.1f*kGoldenRatio, 0.1f*kPI, 0.1f*k2PI
 			};
 
 			const float pulseWidth = kPulseWidths[state.m_pulseWidth];
