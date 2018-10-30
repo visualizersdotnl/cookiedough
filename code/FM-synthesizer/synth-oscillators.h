@@ -217,7 +217,7 @@ namespace SFM
 		b5 = -0.7616f*b5 - white*0.0168980f; 
 
 		// This is a bit of a judgement call, but it's slightly more sonically pleasing
-		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 0.8f); 
+		pink = lowpassf(b0+b1+b2+b3+b4+b5+b6 + white*0.5362f, pink, 0.33f); 
 
 		b6 = white*0.115926f;
 		

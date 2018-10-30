@@ -9,6 +9,7 @@
 
 namespace SFM
 {
+	// To be initialized manually
 	struct Carrier
 	{
 		Waveform m_form;

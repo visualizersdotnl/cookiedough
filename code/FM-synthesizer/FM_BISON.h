@@ -28,6 +28,7 @@
 	Ideas ( ** BEFORE ADDING ANY MORE FEATURES RESEARCH OTHER SYNTHESIZERS! **):
 		- Dirt factor (noise?)
 		- Figure out 1 more useful algorithm: could be where I modulate the frequency by another LFO?
+		- So yes: LFO for more depth!
 
 	Priority (pre-VST):
 		- Tune guitar wave!

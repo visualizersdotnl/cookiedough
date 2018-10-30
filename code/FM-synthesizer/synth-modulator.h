@@ -12,6 +12,7 @@
 
 namespace SFM
 {
+	// To be initialized manually
 	struct Modulator
 	{
 		unsigned m_sampleOffs;

@@ -13,6 +13,7 @@
 
 namespace SFM
 {
+	// To be initialized manually
 	class Voice
 	{
 	public:
@@ -29,7 +30,6 @@ namespace SFM
 
 		bool m_enabled;
 
-		// To be initialized manually
 		Algorithm m_algorithm;
 		Carrier m_carrierA, m_carrierB;
 		Modulator m_modulator;

@@ -75,7 +75,7 @@ namespace SFM
 			break;
 
 		case kPolyPulse:
-			signal = oscPolyPulse(phase+modulation, m_frequency, kGoldenRatio*0.2f); // Don't see a reason to add a duty cycle parameter? (FIXME)
+			signal = oscPolyPulse(phase+modulation, m_frequency, 0.25f); // Should be a parameter (FIXME)
 			break;
 
 		case kDigiTriangle:
