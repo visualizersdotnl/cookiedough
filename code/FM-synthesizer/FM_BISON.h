@@ -25,7 +25,7 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Ideas:
+	Ideas ( ** BEFORE ADDING ANY MORE FEATURES RESEARCH OTHER SYNTHESIZERS! **):
 		- Dirt factor (noise?)
 		- Figure out 1 more useful algorithm: could be where I modulate the frequency by another LFO?
 
@@ -33,11 +33,11 @@
 		- Tune guitar wave!
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
-		- Try a 'hold' state to sustain wavetable samples
 		- Review mutex & atomic usage
 
 	Lower priority: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
+		- Try a 'hold' state to sustain wavetable samples
 		- Research sample & hold
 		- Almost all crackle and pop is gone but I'm not convinced yet
 

@@ -98,7 +98,7 @@ namespace SFM
 	const unsigned kPerc8 = 49;
 
 	// Pitch bend (14-bit signed, wheel rests in the middle, little longer ramp time)
-	static MIDI_Smoothed s_pitchBendS(0.5f, 16383, 0.075f); 
+	static MIDI_Smoothed s_pitchBendS(0.5f, 16383, 0.085f); 
 	static float s_pitchBend;
 
 	static unsigned s_voices[127];
