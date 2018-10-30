@@ -64,7 +64,7 @@ namespace SFM
 	};
 
 	/*
-		ADSR_Simple (for testing purposes only)
+		ADSR_Simple
 	*/
 
 	class ADSR_Simple

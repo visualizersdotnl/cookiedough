@@ -49,7 +49,8 @@ namespace SFM
 	private:
 		unsigned m_readIdx;
 		unsigned m_writeIdx;
-		float m_buffer[kRingBufferSize];
+
+		alignas(16) float m_buffer[kRingBufferSize];
 	};
 }
 	

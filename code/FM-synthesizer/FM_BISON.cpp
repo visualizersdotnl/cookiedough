@@ -120,9 +120,9 @@ namespace SFM
 		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*state.m_modRatioC);
 
-		if (Voice::kDetunedCarriers == voice.m_algorithm)
+		if (Voice::kDoubleCarriers == voice.m_algorithm)
 		{
-			// Initialize proper detuned second carrier (gives a thicker, almost phaser-like sound)
+			// Initialize a detuned second carrier (gives a thicker, almost phaser-like sound)
 			const float detune = powf(3.f/2.f, (0.7f*state.m_algoTweak)/12.f);
 			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*state.m_modRatioC*detune);
 		}

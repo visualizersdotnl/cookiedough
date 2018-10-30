@@ -23,6 +23,7 @@ namespace SFM
 	enum Waveform
 	{
 		kSine,
+		kCosine,
 
 		/* BLIT forms */
 		kSoftSaw,
@@ -58,6 +59,7 @@ namespace SFM
 	*/
 
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
+	SFM_INLINE float oscCos(float phase)  { return lutcosf(phase); }
 
 	/*
 		Digital sawtooth, square & triangle (alias at audible frequencies).

@@ -15,7 +15,7 @@ namespace SFM
 
 	SFM_INLINE void CopyModulator(const Modulator &from, Modulator &to, float freqMul)
 	{
-		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, from.m_indexModFreq);
+		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, from.m_indexLFO.GetFrequency());
 	}
 
 	void Voice::InitializeFeedback()
@@ -40,17 +40,19 @@ namespace SFM
 
 		const float ADSR = envelope.SampleForVoice(sampleCount);
 		
-		float modulation = m_modulator.Sample(sampleCount, modBrightness);
+		const float modulation = m_modulator.Sample(sampleCount, modBrightness);
 
 		// Sample carrier(s)
 		float sample = 0.f;
-		if (kSingle == m_algorithm)
+		switch (m_algorithm)
 		{
+		case kSingle:
 			sample = m_carrierA.Sample(sampleCount, modulation);
-		}
-		else if (kDetunedCarriers == m_algorithm)
-		{
+			break;
+
+		case kDoubleCarriers:
 			sample = fast_tanhf(m_carrierA.Sample(sampleCount, modulation) + m_carrierB.Sample(sampleCount, -modulation));
+			break;
 		}
 
 		// Apply pitch bend

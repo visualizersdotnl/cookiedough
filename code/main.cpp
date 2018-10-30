@@ -16,7 +16,7 @@
 // codename: cookiedough (2009-2018)
 // property of visualizers.nl (http://www.visualizers.nl)
 
-// 32-bit build DISCONTINUD (as of August 2018), because:
+// 32-bit build DISCONTINUED (as of August 2018), because:
 // - OpenMP not working properly
 // - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
 // - other potential SSE 4.1 / 64-bit instruction use

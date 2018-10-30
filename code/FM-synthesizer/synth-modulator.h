@@ -9,10 +9,11 @@
 #pragma once
 
 #include "synth-global.h"
+#include "synth-LFO.h"
 
 namespace SFM
 {
-	// To be initialized manually
+	// Initialized manually
 	struct Modulator
 	{
 		unsigned m_sampleOffs;
@@ -20,8 +21,7 @@ namespace SFM
 		float m_frequency;
 		float m_pitch;
 		float m_phaseShift;
-		float m_indexModFreq;
-		float m_indexModPitch;
+		LFO m_indexLFO;
 		
 		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In kOscPeriod */, float indexModFreq);
 		float Sample(unsigned sampleCount, float brightness);

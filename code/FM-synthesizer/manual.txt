@@ -30,7 +30,7 @@ and you've got your yearly dose of 1980s pop music.
 * Pitch bend
 * Global feedback effect
 * Industry standard ADSR envelope
-* 3 different algorithms (FIXME)
+* 2 basic algorithms
 
 [ Design in a nutshell ]
 
@@ -62,5 +62,4 @@ Thanks, a *lot*, for your advice and willingness:
   This is because applying FM to arbitrary samples often just results in unusable noise.
   However, the carrier will still be modulated; it functions as a pitch.
 
-- ...
- 
+...

@@ -25,28 +25,25 @@
 	Things to do whilst not motivated (read: not hypomanic or medicated):
 		- Not much, play a little, don't push yourself
 
-	Ideas ( ** BEFORE ADDING ANY MORE FEATURES RESEARCH OTHER SYNTHESIZERS! **):
-		- Dirt factor (noise?)
-		- Figure out 1 more useful algorithm: could be where I modulate the frequency by another LFO?
-		- So yes: LFO for more depth!
-
 	Priority (pre-VST):
+		- PolyBLEP oscillators bug when phase is zero
 		- Tune guitar wave!
 		- Finish interface and let MIDI driver push all in it's own update loop
 		- Prepare for VST & finish documentation
 		- Review mutex & atomic usage
+		- When possible to connect them (either VST or physically) map more values to parameters
 
 	Lower priority: 
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Try a 'hold' state to sustain wavetable samples
 		- Research sample & hold
-		- Almost all crackle and pop is gone but I'm not convinced yet
 
 	Plumbing:
 		- Move project to it's own repository (copy all, strip demoscene stuff)
 		- Flush ring buffer using two memcpy() calls
 		- Floating point bugs (keep adding SampleAssert())
 		- Turn structures into real classes piece by piece
+		- If iterating over all voices becomes a hassle use lists instead
 		- Move all math needed from Std3DMath to synth-math.h, generally stop depending on Bevacqua as a whole
 
 	Of later concern / Ideas:
@@ -58,9 +55,14 @@
 		- Use multiple threads, SIMD
 
 	Known issues:
+		- Numerical instability!
 		- MIDI pots crackle a bit (not important for intended target)
-		- Numerical instability
 		- Crackle when bottlenecked
+
+	Lesson(s) learned:
+		- Now that I know way more, I should sit down and think of a better design next time
+		- It is important to follow through and finish this
+		- Don't keep pushing a feature that's just not working
 */
 
 #ifndef _FM_BISON_H_

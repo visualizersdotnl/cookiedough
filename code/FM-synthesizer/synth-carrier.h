@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Carrier wave.
+
+	Only supports a limited set of waveforms (see implementation).
 */
 
 #pragma once
@@ -9,14 +11,14 @@
 
 namespace SFM
 {
-	// To be initialized manually
+	// Initialized manually
 	struct Carrier
 	{
+		unsigned m_sampleOffs;
 		Waveform m_form;
 		float m_amplitude;
 		float m_frequency;
 		float m_pitch;
-		unsigned m_sampleOffs;
 		unsigned m_numHarmonics;
 		float m_cycleLen; // In samples
 

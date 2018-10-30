@@ -12,11 +12,11 @@ namespace SFM
 {
 	void Carrier::Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency)
 	{
+		m_sampleOffs = sampleCount;
 		m_form = form;
 		m_amplitude = amplitude;
 		m_frequency = frequency;
 		m_pitch = CalculateOscPitch(frequency);
-		m_sampleOffs = sampleCount;
 		m_numHarmonics = GetCarrierHarmonics(frequency);
 	
 		switch (m_form)
@@ -51,7 +51,6 @@ namespace SFM
 		// Convert modulation to LUT period
 		modulation *= kRadToOscLUT;
 
-		// FIXME: get rid of switch!
 		float signal = 0.f;
 		switch (m_form)
 		{
@@ -100,9 +99,9 @@ namespace SFM
 			break;
 		}
 
-		const float wave = m_amplitude*signal;
-		SampleAssert(wave);
+		signal *= m_amplitude;
+		SampleAssert(signal);
 
-		return wave;
+		return signal;
 	}
 }

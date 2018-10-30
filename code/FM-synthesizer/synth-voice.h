@@ -13,14 +13,14 @@
 
 namespace SFM
 {
-	// To be initialized manually
+	// Initialized manually
 	class Voice
 	{
 	public:
 		enum Algorithm
 		{
 			kSingle,
-			kDetunedCarriers,
+			kDoubleCarriers,
 			kNumAlgorithms
 		};
 
@@ -35,6 +35,8 @@ namespace SFM
 		Modulator m_modulator;
 		Modulator m_ampMod;
 		bool m_oneShot; // For wavetable samples
+		
+		// Filter instance for this particular voice
 		LadderFilter *m_pFilter;
 
 		// Call before use to initialize pitched carriers and modulators (used for pitch bend)
@@ -54,7 +56,7 @@ namespace SFM
 			case kSingle:
 				return m_carrierA.HasCycled(sampleCount);
 
-			case kDetunedCarriers:
+			case kDoubleCarriers:
 				return m_carrierA.HasCycled(sampleCount) || m_carrierB.HasCycled(sampleCount);
 			}
 		}

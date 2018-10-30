@@ -76,14 +76,14 @@ namespace SFM
 	static float s_tremolo = 0.f;
 
 	// Button mapping
-	const unsigned kButtonFilterSwitch = 116;       // C28
-	const unsigned kButtonLoopWaves = 113;          // C27
-	const unsigned kButtonAlgoSingle = 96;          // C18
-	const unsigned kButtonAlgoDetunedCarrier = 97;  // C19
-	const unsigned kButtonPulseCarrier = 104;       // C26
+	const unsigned kButtonFilterSwitch = 116;        // C28
+	const unsigned kButtonLoopWaves = 113;           // C27
+	const unsigned kButtonAlgoSingle = 96;           // C18
+	const unsigned kButtonAlgoDoubleCarriers = 97;   // C19
+	const unsigned kButtonPulseCarrier = 104;        // C26
 	static int s_curFilter = 0;
 	static int s_loopWaves = 0;
-	static unsigned s_algorithm = 0;
+	static Voice::Algorithm s_algorithm = Voice::kSingle;
 
 	static Waveform s_waveform = kSine;
 
@@ -184,11 +184,11 @@ namespace SFM
 							if (127 == controlVal) s_waveform = kPolyPulse;
 
 						case kButtonAlgoSingle:
-							if (127 == controlVal) s_algorithm = SFM::Voice::kSingle;
+							if (127 == controlVal) s_algorithm = Voice::kSingle;
 							break;
 
-						case kButtonAlgoDetunedCarrier:
-							if (127 == controlVal) s_algorithm = SFM::Voice::kDetunedCarriers;
+						case kButtonAlgoDoubleCarriers:
+							if (127 == controlVal) s_algorithm = Voice::kDoubleCarriers;
 							break;
 
 						case kButtonFilterSwitch:
@@ -448,6 +448,6 @@ namespace SFM
 	}
 
 	// Algorithm
-	unsigned WinMidi_GetAlgorithm() { return s_algorithm;       }
-	float WinMidi_GetAlgoTweak()    { return s_algoTweak.Get(); }
+	Voice::Algorithm WinMidi_GetAlgorithm() { return s_algorithm;       }
+	float WinMidi_GetAlgoTweak()            { return s_algoTweak.Get(); }
 }

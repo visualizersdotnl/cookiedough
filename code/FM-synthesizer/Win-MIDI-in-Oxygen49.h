@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "synth-voice.h"
+
 namespace SFM
 {
 	unsigned WinMidi_GetNumDevices();
@@ -56,6 +58,6 @@ namespace SFM
 	bool WinMidi_GetLoopWaves();
 
 	// Algorithm
-	unsigned WinMidi_GetAlgorithm();
+	Voice::Algorithm WinMidi_GetAlgorithm();
 	float WinMidi_GetAlgoTweak();
 }

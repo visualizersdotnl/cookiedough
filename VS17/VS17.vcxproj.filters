@@ -62,7 +62,7 @@
     <Filter Include="/code\/FM-synthesizer\/wavetable">
       <UniqueIdentifier>{8851bf8c-39f4-4b3d-b2d9-a9a4f36c3b6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\/3rdparty\ADSR">
+    <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR">
       <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -155,7 +155,7 @@
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
-      <Filter>/code\/FM-synthesizer\/3rdparty\ADSR</Filter>
+      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
@@ -188,6 +188,9 @@
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-LFO.cpp">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -331,7 +334,7 @@
       <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
-      <Filter>/code\/FM-synthesizer\/3rdparty\ADSR</Filter>
+      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
@@ -385,6 +388,9 @@
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h">
+      <Filter>/code\/FM-synthesizer\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-LFO.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
   </ItemGroup>
