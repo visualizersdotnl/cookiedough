@@ -30,6 +30,7 @@ namespace SFM
 		// Modulator parameters [0..1]
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
+		float m_modFinetuneC, m_modFinetuneM;
 		float m_modBrightness;
 		float m_indexLFOFreq;
 
@@ -43,7 +44,8 @@ namespace SFM
 		unsigned m_pulseWidth;
 
 		// ADSR parameters
-		ADSR::Parameters m_ADSR;
+		ADSR::Parameters m_voiceADSR;
+		ADSR::Parameters m_filterADSR;
 
 		// Filter wetness [0..1]
 		float m_wetness;
@@ -76,7 +78,9 @@ namespace SFM
 			// No FM
 			m_modIndex = 0.f;
 			m_modRatioC = 0.f;
- 			m_modRatioM = 0.f;
+ 			m_modFinetuneC = 0.f;
+			m_modRatioM = 0.f;
+			m_modFinetuneM = 0.f;
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
 
@@ -89,11 +93,13 @@ namespace SFM
 			// Smallest pulse width
 			m_pulseWidth = 0;
 
-			// Default ADSR envelope
-			m_ADSR.attack  = kSampleRate/8;
-			m_ADSR.decay   = kSampleRate/4;
-			m_ADSR.release = kSampleRate/4;
-			m_ADSR.sustain = kRootHalf;
+			// Default ADSR envelopes
+			m_voiceADSR.attack  = kSampleRate/8;
+			m_voiceADSR.decay   = kSampleRate/4;
+			m_voiceADSR.release = kSampleRate/4;
+			m_voiceADSR.sustain = kRootHalf;
+
+			m_filterADSR = m_voiceADSR;
 
 			// Default filter (none, MOOG as default)
 			m_curFilter = 0;

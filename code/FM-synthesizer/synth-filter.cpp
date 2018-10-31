@@ -8,12 +8,12 @@
 
 namespace SFM
 {
-	void MicrotrackerMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
+	void MicrotrackerMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
-			const float ADSR = envelope.SampleForFilter(sampleCount);
+			const float ADSR = m_ADSR.Sample(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 			const float feedback = m_P3;
@@ -42,14 +42,14 @@ namespace SFM
 		}
 	}
 
-	void ImprovedMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
+	void ImprovedMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		double dV0, dV1, dV2, dV3;
 
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
-			const float ADSR = envelope.SampleForFilter(sampleCount);
+			const float ADSR = m_ADSR.Sample(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 			const double drive = 1.3;
@@ -95,7 +95,7 @@ namespace SFM
 		return ((a + 105.0)*a + 945.0) / ((15.0*a + 420.0)*a + 945.0);
 	}
 
-	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope)
+	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		const double f = m_cutoff;
 		const double r = (40.0/9.0) * m_resonance;
@@ -103,7 +103,7 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
-			const float ADSR = envelope.SampleForFilter(sampleCount);
+			const float ADSR = m_ADSR.Sample(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 			// Input with half delay, for non-linearities

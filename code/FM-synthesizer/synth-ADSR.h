@@ -33,38 +33,31 @@ namespace SFM
 
 		unsigned m_sampleOffs;
 
-		::ADSR m_voiceADSR;
-		::ADSR m_filterADSR;
+		::ADSR m_ADSR;
 
 		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
 		void Stop(unsigned sampleCount, float velocity);
 
 		void Reset()
 		{
-			m_voiceADSR.reset();
-			m_filterADSR.reset();
+			m_ADSR.reset();
 		}
 
-		float SampleForVoice(unsigned sampleCount)
+		float Sample(unsigned sampleCount)
 		{
-			return m_voiceADSR.process();
+			return m_ADSR.process();
 		}
 
-		float SampleForFilter(unsigned sampleCount)
-		{
-			return m_filterADSR.process();
-		}
-		
 		bool IsIdle(unsigned sampleCount) /* const */
 		{
-			const bool isIdle = m_voiceADSR.getState() == ::ADSR::env_idle;
-			SFM_ASSERT(false == isIdle || (true == isIdle && 0.f == m_voiceADSR.getOutput()));
-			return m_voiceADSR.getState() == ::ADSR::env_idle;
+			const bool isIdle = m_ADSR.getState() == ::ADSR::env_idle;
+			SFM_ASSERT(false == isIdle || (true == isIdle && 0.f == m_ADSR.getOutput()));
+			return m_ADSR.getState() == ::ADSR::env_idle;
 		}
 	};
 
 	/*
-		ADSR_Simple
+		ADSR_Simple (unused)
 	*/
 
 	class ADSR_Simple

@@ -18,6 +18,12 @@ namespace SFM
 	extern float g_sinLUT[kOscPeriod];
 	extern float g_noiseLUT[kOscPeriod];
 
+	// Early MOOG style 3-setting pulse wave
+	const float kPulseWidths[3] = 
+	{
+		0.1f, 0.314f, 0.75f
+	};
+
 	void CalculateLUTs();
 
 	/*

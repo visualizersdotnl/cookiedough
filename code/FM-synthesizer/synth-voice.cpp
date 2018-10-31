@@ -38,7 +38,7 @@ namespace SFM
 		if (true == m_oneShot && true == HasCycled(sampleCount))
 			return 0.f;
 
-		const float ADSR = envelope.SampleForVoice(sampleCount);
+		const float ADSR = envelope.Sample(sampleCount);
 		
 		const float modulation = m_modulator.Sample(sampleCount, modBrightness);
 

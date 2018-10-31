@@ -15,7 +15,7 @@ namespace SFM
 {
 	unsigned WinMidi_GetNumDevices();
 
-	bool WinMidi_Start(unsigned iDevice);
+	bool WinMidi_Start();
 	void WinMidi_Stop();
 
 	/*

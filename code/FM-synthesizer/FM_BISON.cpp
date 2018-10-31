@@ -40,7 +40,7 @@ namespace SFM
 		Ring buffer.
 	*/
 
-	static std::mutex s_ringBufLock;
+	static std::mutex s_ringBufMutex;
 	static FIFO s_ringBuf;
 
 	/*
@@ -136,7 +136,7 @@ namespace SFM
 
 		if (Voice::kDoubleCarriers == voice.m_algorithm)
 		{
-			// Initialize a detuned second carrier (gives a thicker, almost phaser-like sound)
+			// Initialize a detuned second carrier by going from 1 to a perfect-fifth (gives a thicker, almost phaser-like sound)
 			const float detune = powf(3.f/2.f, (0.7f*state.m_algoTweak)/12.f);
 			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*modRatioC*detune);
 		}
@@ -156,9 +156,6 @@ namespace SFM
 		// FIXME: perhaps this should be optional?
 		voice.m_oneShot = state.m_loopWaves ?  false : oscIsWavetable(request.form);
 
-		// Set ADSR
-		s_ADSRs[iVoice].Start(s_sampleCount, state.m_ADSR, velocity);
-
 		// Get & reset filter
 		switch (state.m_curFilter)
 		{
@@ -177,6 +174,10 @@ namespace SFM
 		}
 
 		voice.m_pFilter->Reset();		
+
+		// Set ADSRs (voice & filter)
+		s_ADSRs[iVoice].Start(s_sampleCount, state.m_voiceADSR, velocity);
+		voice.m_pFilter->SetADSRParameters(s_sampleCount, state.m_filterADSR);
 		
 		voice.m_enabled = true;
 		++state.m_active;
@@ -288,8 +289,13 @@ namespace SFM
 		state.m_modRatioC = (float) g_CM_table[tabIndex][0];
 		state.m_modRatioM = (float) g_CM_table[tabIndex][1];
 
+		// FIXME: attach controls
+//		state.m_modRatioC += WinMidi_GetTremolo();
+//		state.m_modRatioM += WinMidi_GetModulationBrightness(); 
+
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
-		state.m_modBrightness = WinMidi_GetModulationBrightness();
+//		state.m_modBrightness = WinMidi_GetModulationBrightness();
+		state.m_modBrightness = 0.5f;
 
 		// Modulation index LFO frequency
 		const float frequency = WinMidi_GetModulationLFOFrequency();
@@ -304,11 +310,14 @@ namespace SFM
 		// Pulse osc. width
 		state.m_pulseWidth = WinMidi_GetPulseWidth();
 
-		// ADSR	
-		state.m_ADSR.attack  = WinMidi_GetAttack();
-		state.m_ADSR.decay   = WinMidi_GetDecay();
-		state.m_ADSR.release = WinMidi_GetRelease();
-		state.m_ADSR.sustain = WinMidi_GetSustain();
+		// Voice ADSR	
+		state.m_voiceADSR.attack  = WinMidi_GetAttack();
+		state.m_voiceADSR.decay   = WinMidi_GetDecay();
+		state.m_voiceADSR.release = WinMidi_GetRelease();
+		state.m_voiceADSR.sustain = WinMidi_GetSustain();
+
+		// Filter ADSR (FIXME: just a copy now)
+		state.m_filterADSR = state.m_voiceADSR;
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
@@ -329,11 +338,13 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
+	const float kFeedbackAmplitude = dBToAmplitude(-3.f);
+
 	SFM_INLINE void ProcessDelay(FM &state, float &mix)
 	{
 		// Process delay
 		const float delayPitch = state.m_feedbackPitch;
-		const float delayed = s_delayMatrix.Read(delayPitch)*0.66f;
+		const float delayed = s_delayMatrix.Read(delayPitch)*kFeedbackAmplitude;
 		s_delayMatrix.Write(mix, delayed*state.m_feedback);
 
 		// Apply delay
@@ -345,20 +356,21 @@ namespace SFM
 	{
 		static float loudest = 0.f;
 
-		std::lock_guard<std::mutex> ringLock(s_ringBufLock);
+		unsigned available = -1;
+
+		// Lock all state & ring buffer
+		std::lock_guard<std::mutex> stateLock(s_stateMutex);
+		std::lock_guard<std::mutex> ringLock(s_ringBufMutex);
 
 		// See if there's enough space in the ring buffer to justify rendering
 		if (true == s_ringBuf.IsFull())
 			return loudest;
 
-		const unsigned available = s_ringBuf.GetAvailable();
+		available = s_ringBuf.GetAvailable();
 		if (available > kMinSamplesPerUpdate)
 			return loudest;
 
 		const unsigned numSamples = kRingBufferSize-available;
-
-		// Lock all state
-		std::lock_guard<std::mutex> stateLock(s_stateMutex);
 
 		// Update voices
 		UpdateVoices(s_shadowState);
@@ -385,12 +397,6 @@ namespace SFM
 		}
 		else
 		{
-			// FIXME: this is ugly as sin, but I still refuse to have state in my oscillators (might revisit that at some point)
-			const float kPulseWidths[3] = 
-			{
-				0.1f*kGoldenRatio, 0.1f*kPI, 0.1f*k2PI
-			};
-
 			const float pulseWidth = kPulseWidths[state.m_pulseWidth];
 
 			// Render dry samples for each voice (feedback)
@@ -398,9 +404,10 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				Voice &voice = voices[iVoice];
+				ADSR &voiceADSR = s_ADSRs[iVoice];
+
 				if (true == voice.m_enabled)
 				{
-					ADSR &envelope = s_ADSRs[iVoice];
 					float *buffer = s_voiceBuffers[curVoice];
 
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -410,12 +417,12 @@ namespace SFM
 						// Probed on this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
-						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, envelope, pulseWidth);
+						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR, pulseWidth);
 						buffer[iSample] = sample;
 					}
 
-					voice.m_pFilter->SetParameters(state.m_filterParams);
-					voice.m_pFilter->Apply(buffer, numSamples, state.m_wetness, s_sampleCount, envelope);
+					voice.m_pFilter->SetLiveParameters(state.m_filterParams);
+					voice.m_pFilter->Apply(buffer, numSamples, state.m_wetness, s_sampleCount);
 
 					++curVoice; // Do *not* use for anything other than temporary buffers
 				}
@@ -434,7 +441,9 @@ namespace SFM
 				{
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
-					mix = fast_tanhf(mix+sample);
+
+					// Just clamp here, we'll round it off later
+					mix = Clamp(mix+sample);
 				}
 
 				// Process delay
@@ -468,13 +477,14 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 {
 	const unsigned numSamplesReq = length/sizeof(float);
 
-	std::lock_guard<std::mutex> lock(s_ringBufLock);
+	std::lock_guard<std::mutex> lock(s_ringBufMutex);
 	{
 		const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
 		const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
 
 		if (numSamplesAvail < numSamplesReq)
 		{
+//			SFM_ASSERT(false);
 			Log("Buffer underrun");
 		}
 
@@ -518,11 +528,8 @@ bool Syntherklaas_Create()
 	s_voiceReq.clear();
 	s_voiceReleaseReq.clear();
 
-	// Test: Oxygen 49 driver + SDL2
-	const auto numDevs = WinMidi_GetNumDevices();
-	const bool midiIn = WinMidi_Start(0);
-
-	// SDL2 audio stream	
+	// Oxygen 49 driver + SDL2
+	const bool midiIn = WinMidi_Start();
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test

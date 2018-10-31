@@ -28,6 +28,11 @@ namespace SFM
 
 	/*
 		Interface (base class).
+
+		Notes:
+			- Reset() needs to be called per voice
+			- SetADSRParameters() must be called per voice
+			- SetLiveParameters() can be called whilst rendering
 	*/
 
 	class LadderFilter
@@ -37,8 +42,27 @@ namespace SFM
 		virtual ~LadderFilter() {}
 
 		virtual void Reset() = 0;
-		virtual void SetParameters(const FilterParameters &parameters) = 0;
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope) = 0;
+
+		void SetADSRParameters(unsigned sampleCount, const ADSR::Parameters &parameters)
+		{
+			m_ADSR.Start(sampleCount, parameters, 1.f);
+		}
+
+		void SetLiveParameters(const FilterParameters &parameters)
+		{
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+			SetEnvelopeInfluence(parameters.envInfl);
+		}
+
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount) = 0;
+
+	protected:
+		ADSR m_ADSR;
+
+		virtual void SetCutoff(float value) = 0;
+		virtual void SetResonance(float value) = 0;
+		virtual void SetEnvelopeInfluence(float value) = 0;
 	};
 
 	/*
@@ -86,14 +110,7 @@ namespace SFM
 			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
 		}
 
-		virtual void SetParameters(const FilterParameters &parameters)
-		{
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
-		}
-
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
 	};
 
 	/*
@@ -150,14 +167,7 @@ namespace SFM
 				m_V[iPole] = m_dV[iPole] = m_tV[iPole] = 0.0;
 		}
 
-		virtual void SetParameters(const FilterParameters &parameters)
-		{
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
-		}
-
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
 	};
 
 	/*
@@ -202,13 +212,6 @@ namespace SFM
 			m_state[0] = m_state[1] = m_state[2] = m_state[3] = 0.0;
 		}
 
-		virtual void SetParameters(const FilterParameters &parameters)
-		{
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
-		}
-
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount, ADSR &envelope);
+		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
 	};
 }

@@ -22,13 +22,17 @@
 		  what I'm doing which has led to some wonky design decisions. Nevertheless I will finish this project.
 		- Some calculations in here are what is referred to as "bro science".
 
-	Priority tasks:
-		- Pulse width should be retrieved before rendering
-		- Flush ring buffer using two memcpy() calls
+	Tasks for new controller:
+		- Set up filter ADSR controls and connect them
+		- Attach and connect FM finetuning
+		- Any more parameters you wish?
 		- Finish up interface and let the MIDI driver feed it
+
+	Priority tasks:
 		- Encapsulate the core in a class so there can be instances
 		- Finish documentation as far as possible, read up on VST
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
+		- Flush ring buffer using two memcpy() calls
 
 	Plumbing:
 		- Review mutex & atomic use
@@ -118,7 +122,11 @@ namespace SFM
 
 		// Modulation
 		void SetModulationIndex(float value);
-		void SetModulationRatio(float value); // Indexes a 15-deep 'Farey Sequence' C:M table
+		void SetModulationRatio(float value); // Indexes a 'Farey Sequence' C:M table
+
+		// Should be small values, added to the ratio
+		void SetModulationFinetune(float C,float M); 
+
 		void SetModulationBrightness(float value);
 		void SetModulationLFOFrequency(float value);
 		

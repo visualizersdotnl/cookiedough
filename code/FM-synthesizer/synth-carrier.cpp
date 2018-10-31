@@ -61,10 +61,9 @@ namespace SFM
 			signal = oscSine(phase+modulation);
 			break;
 
-		// FIXME: I'm not satisfied with the PolyBLEP waves versus BLIT, but if CPU becomes a constraint I might have to switch
 		case kPolySaw:
-			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
-//			signal = oscPolySaw(phase+modulation, m_frequency);
+//			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
+			signal = oscPolySaw(phase+modulation, m_frequency);
 			break;
 
 		// FIXME

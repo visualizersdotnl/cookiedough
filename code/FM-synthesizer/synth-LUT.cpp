@@ -62,9 +62,9 @@ namespace SFM
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x*a.y < b.x*b.y; });
 		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
 
-		// Copy to LUT & store size
+		// Copy to LUT & it's inverse & store size
 		const size_t size = sequence.size();
-		SFM_ASSERT(size < 256);
+		SFM_ASSERT(size*2 < 256);
 		
 		for (unsigned iRatio = 0; iRatio < size; ++iRatio)
 		{
@@ -72,12 +72,14 @@ namespace SFM
 
 			g_CM_table[iRatio][0] = ratio.x;
 			g_CM_table[iRatio][1] = ratio.y;
+			g_CM_table[iRatio+size][1] = ratio.x;
+			g_CM_table[iRatio+size][0] = ratio.y;
 
 			Log("Farey C:M = " + std::to_string(ratio.x) + ":" + std::to_string(ratio.y));
 		}
 
 		Log("Generated C:M ratios " + std::to_string(size));
-		g_CM_table_size = unsigned(size);
+		g_CM_table_size = unsigned(size*2);
 	}
 
 	/*

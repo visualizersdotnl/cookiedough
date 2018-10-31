@@ -31,8 +31,8 @@ namespace SFM
 	}
 
 	// From and to dB
-	inline float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
-	inline float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);      }
+	SFM_INLINE float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
+	SFM_INLINE float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);      }
 
 	// For assertions, mostly
 	inline bool InAudibleSpectrum(float frequency)

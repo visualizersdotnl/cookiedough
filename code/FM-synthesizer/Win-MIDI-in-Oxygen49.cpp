@@ -303,7 +303,7 @@ namespace SFM
 						if (-1 == s_voices[controlIdx])
 							TriggerVoice(s_voices+controlIdx, s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						else
-							Log("NOTE_ON could not be triggered due to lag."); // FIXME: bad situation
+							Log("NOTE_ON could not be triggered due to latency."); // FIXME: bad situation
 
 						break;
 					}
@@ -351,43 +351,58 @@ namespace SFM
 		return midiInGetNumDevs();
 	}
 
-	bool WinMidi_Start(unsigned devIdx = 0)
+	bool WinMidi_Start()
 	{
-		if (WinMidi_GetNumDevices() < devIdx)
-		{
-			SFM_ASSERT(false);
-			return false;
-		}
-
 		MIDIINCAPS devCaps;
-		const MMRESULT result = midiInGetDevCaps(devIdx, &devCaps, sizeof(MIDIINCAPS));
-		SFM_ASSERT(MMSYSERR_NOERROR == result); 
-		Log("Using MIDI device: " + std::string(devCaps.szPname));
+		
+		unsigned iOxygen49 = -1;
 
-		const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
-		if (MMSYSERR_NOERROR == openRes)
+		const unsigned numDevices = WinMidi_GetNumDevices();
+		for (unsigned iDev = 0; iDev < numDevices; ++iDev)
 		{
-			s_header.lpData = (LPSTR) s_buffer;
-			s_header.dwBufferLength = kMidiBufferLength;
-			s_header.dwFlags = 0;
-
-			const auto hdrPrepRes = midiInPrepareHeader(s_hMidiIn, &s_header, sizeof(MIDIHDR));
-			if (MMSYSERR_NOERROR == hdrPrepRes)
+			const MMRESULT result = midiInGetDevCaps(iDev, &devCaps, sizeof(MIDIINCAPS));
+			SFM_ASSERT(MMSYSERR_NOERROR == result); 
+			const std::string devName(devCaps.szPname);
+ 			
+			if ("Oxygen 49" == devName)
 			{
-				const auto queueRes = midiInAddBuffer(s_hMidiIn, &s_header, sizeof(MIDIHDR));
-				if (MMSYSERR_NOERROR == queueRes)
-				{
-					// Reset voice indices (to -1)
-					memset(s_voices, 0xff, 127*sizeof(unsigned));
+				iOxygen49 = iDev;
+				break;
+			}
+		}		
 
-					const auto startRes = midiInStart(s_hMidiIn);
-					if (MMSYSERR_NOERROR == startRes)
+		if (-1 != iOxygen49)
+		{
+			Log("Detected correct MIDI device: " + std::string(devCaps.szPname));
+			const unsigned devIdx = iOxygen49;
+
+			const auto openRes = midiInOpen(&s_hMidiIn, devIdx, (DWORD_PTR) WinMidiProc, NULL, CALLBACK_FUNCTION);
+			if (MMSYSERR_NOERROR == openRes)
+			{
+				s_header.lpData = (LPSTR) s_buffer;
+				s_header.dwBufferLength = kMidiBufferLength;
+				s_header.dwFlags = 0;
+
+				const auto hdrPrepRes = midiInPrepareHeader(s_hMidiIn, &s_header, sizeof(MIDIHDR));
+				if (MMSYSERR_NOERROR == hdrPrepRes)
+				{
+					const auto queueRes = midiInAddBuffer(s_hMidiIn, &s_header, sizeof(MIDIHDR));
+					if (MMSYSERR_NOERROR == queueRes)
 					{
-						return true;
+						// Reset voice indices (to -1)
+						memset(s_voices, 0xff, 127*sizeof(unsigned));
+
+						const auto startRes = midiInStart(s_hMidiIn);
+						if (MMSYSERR_NOERROR == startRes)
+						{
+							return true;
+						}
 					}
 				}
 			}
 		}
+
+		Error(kFatal, "Can't find the Oxygen 49 MIDI keyboard");
 
 		return false;
 	}

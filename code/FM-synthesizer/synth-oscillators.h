@@ -145,14 +145,16 @@ namespace SFM
 		In essence this interpolates exponentially around discontinuities.
 	*/
 
-	const float kPolySoft = 24.f;
-	const float kPolyRougher = 12.f;
+	const float kPolySoft = 12.f;
+	const float kPolyRougher = 8.f;
 
 	const float kPolyMul = 1.f/(kSampleRate/kPolySoft);
 	const float kPolyMulRougher = 1.f/(kSampleRate/kPolyRougher);
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
+		// PolyBLEP() doesn't like a negative phase
+		phase += kOscPeriod;
 		SFM_ASSERT(phase >= 0.f);
 
 		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
@@ -191,9 +193,6 @@ namespace SFM
 
 	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
 	{
-		// PolyBLEP() doesn't like a negative phase
-		phase += kOscPeriod;
-
 		float value = oscDigiPulse(phase, duty);
 		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRougher);
 		value += PolyBLEP(phase, frequency*kPolyMulRougher);
