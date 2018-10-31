@@ -23,12 +23,12 @@ and you've got your yearly dose of 1980s pop music.
 [ Design in a nutshell ]
 
 - 24 voice polyphony
-- FM synthesis with 2 algorithms & 6 oscillators
-- FM modulation, brightness, vibrato
-- 4 autonomous wavetable oscillators provide percussion, piano & guitar
-- End-stage ladder filter with 3 variations, ran per voice, optionally modulated by ADSR
+- FM synthesis for 6 carrier oscillators
+- FM settings: depth, coarse ratio, finetuning, brightness, vibrato
+- Wavetable synthesis for 4 oscillators
+- Per-voice ladder filters with cutoff, resonance, wetness and envelope
 - Configurable feedback effect
-- Intuitive ADSR envelope
+- Intuitive ADSR envelopes
 - Tremolo
 - Pitch bend
 - Master drive
@@ -54,8 +54,5 @@ Thanks, a *lot*, for your advice and willingness:
 - Everyone at the KVR audio forum!
 
 [ How to use ]
-
-- When using a wavetable carrier form, frequence modulation is disabled; all other features function as usual.
-  This is because applying FM to arbitrary samples often just results in unusable noise.
 
 ...
