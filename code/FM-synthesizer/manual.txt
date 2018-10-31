@@ -23,10 +23,10 @@ and you've got your yearly dose of 1980s pop music.
 [ Design in a nutshell ]
 
 - 24 voice polyphony
-- FM synthesis for 6 carrier oscillators
+- FM synthesis for 6 anti-aliased carrier oscillators
 - FM settings: depth, coarse ratio, finetuning, brightness, vibrato
 - Wavetable synthesis for 4 oscillators
-- Per-voice ladder filters with cutoff, resonance, wetness and envelope
+- Per-voice ladder filters (select 1 out of 3) with cutoff, resonance, wetness and ADSR envelope
 - Configurable feedback effect
 - Intuitive ADSR envelopes
 - Tremolo
