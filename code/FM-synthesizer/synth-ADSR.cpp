@@ -16,7 +16,7 @@ namespace SFM
 
 		// 25% longer attack & 50% longer release on max. velocity
 		const float attackScale  = 1.f + 0.25f*velocity;
-		const float releaseScale = 1.f + 0.5f*velocity;
+		const float releaseScale = 1.f + 1.5f*velocity;
 		
 		const float attack  = 2.f + truncf(attackScale*parameters.attack*kSampleRate);
 		const float decay   = 2.f + truncf(parameters.decay*kSampleRate);
