@@ -117,7 +117,7 @@ namespace SFM
 		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = std::max<float>(kEpsilon, value*kPI);
+			m_resonance = std::max<float>(kEpsilon, value*3.33f);
 		}
 
 		virtual void SetEnvelopeInfluence(float value)

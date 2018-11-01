@@ -346,12 +346,12 @@ namespace SFM
 		}
 	}
 
-	unsigned WinMidi_GetNumDevices()
+	SFM_INLINE unsigned WinMidi_GetNumDevices()
 	{
 		return midiInGetNumDevs();
 	}
 
-	bool WinMidi_Start()
+	bool WinMidi_Oxygen49_Start()
 	{
 		MIDIINCAPS devCaps;
 		
@@ -369,6 +369,8 @@ namespace SFM
 				iOxygen49 = iDev;
 				break;
 			}
+
+			Log("Enumerated MIDI device: " + devName);
 		}		
 
 		if (-1 != iOxygen49)
@@ -407,7 +409,7 @@ namespace SFM
 		return false;
 	}
 
-	void WinMidi_Stop(/* Only one device (#0) at a time for now (FIXME) */)
+	void WinMidi_Oxygen49_Stop()
 	{
 		if (NULL != s_hMidiIn)
 		{

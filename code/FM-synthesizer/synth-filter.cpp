@@ -5,9 +5,17 @@
 
 #include "synth-global.h"
 #include "synth-filter.h"
+#include "synth-math.h"
 
 namespace SFM
 {
+	SFM_INLINE float Blend(float dry, float wet, float global, float ADSR, float influence)
+	{
+		float mix = lerpf<float>(dry, wet, global);
+		mix = fast_tanhf(mix + wet*ADSR*influence);
+		return mix;
+	}
+
 	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -35,8 +43,7 @@ namespace SFM
 			m_P3 += (m_P2-m_P3)*m_cutoff;
 			m_P3 = ultra_tanhf(m_P3);
 
-			const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
-			const float sample = lerpf<float>(dry, out, wetness); 
+			const float sample = Blend(dry, m_P3, globalWetness, ADSR, m_envInfl);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
@@ -74,8 +81,7 @@ namespace SFM
 			m_dV[3] = dV3;
 			m_tV[3] = fast_tanh(m_V[3] / (2.0*kVT));
 
-			const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
-			const float sample = lerpf<float>(dry, float(m_V[3]), wetness); 
+			const float sample = Blend(dry, float(m_V[3]), globalWetness, ADSR, m_envInfl);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
@@ -142,8 +148,7 @@ namespace SFM
 			m_state[2] += 2*f * (y1 - y2);
 			m_state[3] += 2*f * (y2 - t4*y3);
 
-			const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
-			const float sample = lerpf<float>(dry, float(y3), wetness); 
+			const float sample = Blend(dry, float(y3), globalWetness, ADSR, m_envInfl);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;

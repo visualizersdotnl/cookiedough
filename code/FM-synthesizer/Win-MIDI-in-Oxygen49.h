@@ -13,10 +13,8 @@
 
 namespace SFM
 {
-	unsigned WinMidi_GetNumDevices();
-
-	bool WinMidi_Start();
-	void WinMidi_Stop();
+	bool WinMidi_Oxygen49_Start();
+	void WinMidi_Oxygen49_Stop();
 
 	/*
 		Pull-style values, all normalized [0..1]

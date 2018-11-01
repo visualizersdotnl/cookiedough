@@ -22,11 +22,11 @@
 		- Some calculations in here are what is referred to as "bro science".
 
 	Tasks for new controller:
-		- Set up filter ADSR controls and connect them
 		- Attach and connect FM finetuning
-		- Connect filter drive
+		- Fix: filters clip when stopped short (like Frank Costanza does it)
 		- Any more parameters you wish?
 		- Finish up interface and let the MIDI driver feed it
+		- Should one not scale the upper and lower limit of the pitch bend depending on octave?
 
 	Priority tasks:
 		- Encapsulate the core in a class so there can be instances
@@ -48,6 +48,7 @@
 		- What can I do with my noise oscillators?
 		- Sample & hold
 		- Real variable delay line
+		- Panning (stereo imitation)
 		- Better wavetable sampling
 		- Profiling & optimization
 
@@ -131,23 +132,29 @@ namespace SFM
 		void SetModulationLFOFrequency(float value);
 		
 		// Filter
-		void SetFilterType(int value); // 1 = Improved MOOG ladder, 2 = Microtracker MOOG ladder, 0 (default) = Teemu's transistor ladder
-		void SetFilterDrive(float value);
+		void SetFilterType(VoiceFilter value); 
+		void SetFilterDrive(float value); // [0.5..1.5]
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);
-		void SetFilterEnvelopeInfluence(float value); // Filter envelope is a tweaked copy of the current ADSR
+		void SetFilterEnvelopeInfluence(float value);
 
 		// Feedback
 		void SetFeedback(float value);
 		void SetFeedbackWetness(float value);
 		void SetFeedbackPitch(float value);
 
-		// ADSR (also used, automatically altered, by filter)
+		// Voice ADSR
 		void SetAttack(float value);
 		void SetDecay(float value);
 		void SetSustain(float value);
 		void SetRelease(float value);
+
+		// Filter ADSR
+		void SetFilterAttack(float value);
+		void SetFilterDecay(float vvalue);
+		void SetSFilterustain(float value);
+		void SetFilterRelease(float value);
 
 		// Tremolo
 		void SetTremolo(float value);

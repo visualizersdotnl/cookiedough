@@ -21,8 +21,9 @@
 #include "synth-math.h"
 #include "synth-LUT.h"
 
-// Win32 MIDI input (M-AUDIO Oxygen 49)
+// Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
+#include "Win-MIDI-in-BeatStep.h"
 
 // SDL2 audio output
 #include "SDL2-audio-out.h"
@@ -260,13 +261,13 @@ namespace SFM
 	/*
 		Parameter update.
 
-		Currently there's only one of these for the Oxygen 49 MIDI driver.
+		Currently there's only one of these for the Oxygen 49 + Arturia BeatStep driver.
 
 		Ideally all inputs interact on sample level, but this is impractical and only done for the pitch bend wheel.
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
 
-	static void UpdateState_Oxygen49(float time)
+	static void UpdateState_Oxy49_BeatStep(float time)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
@@ -294,8 +295,7 @@ namespace SFM
 //		state.m_modRatioM += WinMidi_GetModulationBrightness(); 
 
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
-//		state.m_modBrightness = WinMidi_GetModulationBrightness();
-		state.m_modBrightness = 0.5f;
+		state.m_modBrightness = WinMidi_GetModulationBrightness();
 
 		// Modulation index LFO frequency
 		const float frequency = WinMidi_GetModulationLFOFrequency();
@@ -308,7 +308,7 @@ namespace SFM
 		state.m_loopWaves = WinMidi_GetLoopWaves();
 
 		// Pulse osc. width
-		state.m_pulseWidth = WinMidi_GetPulseWidth();
+		state.m_pulseWidth = kPulseWidths[WinMidi_GetPulseWidth()]; // FIXME: assert!
 
 		// Voice ADSR	
 		state.m_voiceADSR.attack  = WinMidi_GetAttack();
@@ -316,13 +316,16 @@ namespace SFM
 		state.m_voiceADSR.release = WinMidi_GetRelease();
 		state.m_voiceADSR.sustain = WinMidi_GetSustain();
 
-		// Filter ADSR (FIXME: just a copy now)
-		state.m_filterADSR = state.m_voiceADSR;
+		// Filter ADSR
+		state.m_filterADSR.attack  = WinMidi_GetFilterAttack();
+		state.m_filterADSR.decay   = WinMidi_GetFilterDecay();
+		state.m_filterADSR.sustain = WinMidi_GetFilterSustain();
+		state.m_filterADSR.attack  = WinMidi_GetFilterAttack();
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
 		state.m_wetness = WinMidi_GetFilterWetness();
-		state.m_filterParams.drive = 1.33f; // FIXME
+		state.m_filterParams.drive = 0.5f + WinMidi_GetFilterDrive();
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
@@ -398,8 +401,6 @@ namespace SFM
 		}
 		else
 		{
-			const float pulseWidth = kPulseWidths[state.m_pulseWidth];
-
 			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -418,7 +419,7 @@ namespace SFM
 						// Probed on this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
-						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR, pulseWidth);
+						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR, state.m_pulseWidth);
 						buffer[iSample] = sample;
 					}
 
@@ -443,8 +444,7 @@ namespace SFM
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
 
-					// Just clamp here, we'll round it off later
-					mix = Clamp(mix+sample);
+					mix = SoftClamp(mix+sample);
 				}
 
 				// Process delay
@@ -530,19 +530,20 @@ bool Syntherklaas_Create()
 	s_voiceReleaseReq.clear();
 
 	// Oxygen 49 driver + SDL2
-	const bool midiIn = WinMidi_Start();
+	const bool midiIn = WinMidi_Oxygen49_Start() && WinMidi_BeatStep_Start();
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-	OscTest();
+//	OscTest();
 
 	return true == midiIn && audioOut;
 }
 
 void Syntherklaas_Destroy()
 {
-	WinMidi_Stop();
 	SDL2_DestroyAudio();
+	WinMidi_Oxygen49_Stop();
+	WinMidi_BeatStep_Stop();
 }
 
 /*
@@ -555,8 +556,8 @@ float Syntherklaas_Render(uint32_t *pDest, float time, float delta)
 
 	float loudest = 0.f;
 
-	// Update state for M-AUDIO Oxygen 49
-	UpdateState_Oxygen49(time);
+	// Update state for M-AUDIO Oxygen 49 & Arturia BeatStep
+	UpdateState_Oxy49_BeatStep(time);
 	
 	// Render
 	loudest = Render(time);

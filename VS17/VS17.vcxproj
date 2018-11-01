@@ -57,6 +57,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
@@ -130,6 +131,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h" />
+    <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />

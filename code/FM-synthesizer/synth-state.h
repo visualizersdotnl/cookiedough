@@ -41,7 +41,7 @@ namespace SFM
 		bool m_loopWaves;
 
 		// Pulse oscillator width (no multiples, that tends to sound likewise)
-		unsigned m_pulseWidth;
+		float m_pulseWidth;
 
 		// ADSR parameters
 		ADSR::Parameters m_voiceADSR;
@@ -89,7 +89,7 @@ namespace SFM
 			m_loopWaves = false;
 
 			// Smallest pulse width
-			m_pulseWidth = 0;
+			m_pulseWidth = kPulseWidths[0];
 
 			// Default ADSR envelopes
 			m_voiceADSR.attack  = kSampleRate/8;
@@ -97,6 +97,7 @@ namespace SFM
 			m_voiceADSR.release = kSampleRate/4;
 			m_voiceADSR.sustain = kRootHalf;
 
+			// Copy for filter
 			m_filterADSR = m_voiceADSR;
 
 			// Default filter (;

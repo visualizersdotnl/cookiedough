@@ -17,7 +17,7 @@
 #define SFM_ASSERT VIZ_ASSERT
 
 // Set to 1 to kill all SFM log output
-#define SFM_NO_LOGGING 0
+#define SFM_NO_LOGGING 1
 
 #include "synth-log.h"
 #include "synth-error.h"
@@ -61,7 +61,7 @@ namespace SFM
 	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
 
 	// Drive range
-	const float kDriveHidB = 12.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
+	const float kDriveHidB = 6.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
 }
 
 #include "synth-LUT.h"

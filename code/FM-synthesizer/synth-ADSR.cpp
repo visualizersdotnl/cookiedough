@@ -14,34 +14,25 @@ namespace SFM
 
 		m_sampleOffs = sampleCount;
 
-		const float attack  = truncf(parameters.attack*kSampleRate);
-		const float decay   = truncf(parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf((1.5f*velocity + parameters.release)*kSampleRate));
+		// 25% longer attack & 50% longer release on max. velocity
+		const float attackScale  = 1.f + 0.25f*velocity;
+		const float releaseScale = 1.f + 0.5f*velocity;
+		
+		const float attack  = 2.f + truncf(attackScale*parameters.attack*kSampleRate);
+		const float decay   = 2.f + truncf(parameters.decay*kSampleRate);
+		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(releaseScale*parameters.release*kSampleRate)); // Velocity decides not only volume but also release
 		const float sustain = parameters.sustain;
-
-		// Set attack according to velocity; more velocity means more linearity
-		velocity = 1.f-velocity;
-		m_ADSR.setTargetRatioA(velocity);
-		m_ADSR.setTargetRatioDR(velocity*0.5f);
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
 		m_ADSR.setReleaseRate(release);
 		m_ADSR.setSustainLevel(sustain);
 
-		m_ADSR.setAttackRate(attack);
-		m_ADSR.setDecayRate(decay);
-		m_ADSR.setReleaseRate(release);
-		m_ADSR.setSustainLevel(1.f);
-
 		m_ADSR.gate(true);
 	}
 
 	void ADSR::Stop(unsigned sampleCount, float velocity)
 	{
-		// Set decay & release according to velocity (aftertouch); more velocity means more linearity
-		m_ADSR.setTargetRatioDR(velocity);
-
 		// Go into release state.
 		m_ADSR.gate(false);
 	}
