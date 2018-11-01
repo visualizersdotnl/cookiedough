@@ -159,17 +159,17 @@ namespace SFM
 		// Get & reset filter
 		switch (state.m_curFilter)
 		{
+		default:
+		case 0: // A bit more expressive (default)
+			voice.m_pFilter = s_teemuFilters+iVoice;
+			break;
+
 		case 1: // Classic MOOG
 			voice.m_pFilter = s_improvedFilters+iVoice;
 			break;
 
-		case 2: // Tempered variant
+		case 2: // Microtracker
 			voice.m_pFilter = s_MicrotrackerFilters+iVoice;
-			break;
-
-		default:
-		case 0: // A bit more expressive (default)
-			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 		}
 
@@ -322,6 +322,7 @@ namespace SFM
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
 		state.m_wetness = WinMidi_GetFilterWetness();
+		state.m_filterParams.drive = 1.33f; // FIXME
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();

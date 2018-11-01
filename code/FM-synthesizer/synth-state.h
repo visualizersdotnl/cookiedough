@@ -40,7 +40,7 @@ namespace SFM
 		// Loop wavetable oscillators
 		bool m_loopWaves;
 
-		// Pulse oscillator width [0..2]: 0 = 0.10, 1 = 0.25, 2 = 0.75
+		// Pulse oscillator width (no multiples, that tends to sound likewise)
 		unsigned m_pulseWidth;
 
 		// ADSR parameters
@@ -62,9 +62,7 @@ namespace SFM
 		void Reset(unsigned sampleCount)
 		{
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-			{
 				m_voices[iVoice].m_enabled = false;
-			}
 
 			m_active = 0;
 
@@ -101,9 +99,10 @@ namespace SFM
 
 			m_filterADSR = m_voiceADSR;
 
-			// Default filter (none, MOOG as default)
+			// Default filter (;
 			m_curFilter = 0;
 			m_wetness = 0.f;
+			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
 			m_filterParams.envInfl = 0.f;

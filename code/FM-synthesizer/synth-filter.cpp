@@ -29,7 +29,7 @@ namespace SFM
 			m_resoCoeffs[1] = m_resoCoeffs[0];
 			m_resoCoeffs[0] = feedback;
 
-			m_P0 += (fast_tanhf(dry*1.3f - m_resonance*out) - fast_tanhf(m_P0)) * m_cutoff;
+			m_P0 += (fast_tanhf(dry*m_drive - m_resonance*out) - fast_tanhf(m_P0)) * m_cutoff;
 			m_P1 += (fast_tanhf(m_P0) - fast_tanhf(m_P1)) * m_cutoff;
 			m_P2 += (fast_tanhf(m_P1) - fast_tanhf(m_P2)) * m_cutoff;
 			m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
@@ -53,7 +53,7 @@ namespace SFM
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
 			const double drive = 1.3;
-			dV0 = -m_cutoff * (fast_tanh((drive*dry + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
+			dV0 = -m_cutoff * (fast_tanh((dry*m_drive + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
 			m_V[0] += (dV0 + m_dV[0]) / (2.0*kSampleRate);
 			m_dV[0] = dV0;
 			m_tV[0] = fast_tanh(m_V[0] / (2.0*kVT));
@@ -102,12 +102,14 @@ namespace SFM
 
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			const float dry = pSamples[iSample];
+			/* const */ float dry = pSamples[iSample];
 			const float ADSR = m_ADSR.Sample(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
+			dry *= m_drive;
+
 			// Input with half delay, for non-linearities
-			double ih = 0.5 * (dry + m_inputDelay); 
+			double ih = 0.5 * (dry* + m_inputDelay); 
 			m_inputDelay = dry;
 
 			// Evaluate the non-linear gains

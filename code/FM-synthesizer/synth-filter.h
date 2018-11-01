@@ -33,12 +33,13 @@ namespace SFM
 			- Reset() needs to be called per voice
 			- SetADSRParameters() must be called per voice
 			- SetLiveParameters() can be called whilst rendering
+			- Drive is expected to have an effect
 	*/
 
 	class LadderFilter
 	{
 	public:
-		LadderFilter() {}
+		LadderFilter() { m_drive = 1.f; }
 		virtual ~LadderFilter() {}
 
 		virtual void Reset() = 0;
@@ -50,6 +51,7 @@ namespace SFM
 
 		void SetLiveParameters(const FilterParameters &parameters)
 		{
+			SetDrive(parameters.drive);	
 			SetCutoff(parameters.cutoff);
 			SetResonance(parameters.resonance);
 			SetEnvelopeInfluence(parameters.envInfl);
@@ -58,7 +60,14 @@ namespace SFM
 		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount) = 0;
 
 	protected:
+		float m_drive;
 		ADSR m_ADSR;
+
+		void SetDrive(float value)
+		{
+			SFM_ASSERT(value >= 0.f);
+			m_drive = value;
+		}
 
 		virtual void SetCutoff(float value) = 0;
 		virtual void SetResonance(float value) = 0;
@@ -83,7 +92,7 @@ namespace SFM
 		float m_P0, m_P1, m_P2, m_P3;
 		float m_resoCoeffs[3];
 
-		void SetCutoff(float value)
+		virtual void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 1000.f;
@@ -91,13 +100,13 @@ namespace SFM
 			m_cutoff = std::min<float>(1.f, value); // Also known as omega
 		}
 
-		void SetResonance(float value)
+		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_resonance = std::max<float>(kEpsilon, value*4.f);
 		}
 
-		void SetEnvelopeInfluence(float value)
+		virtual void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_envInfl = value;
@@ -140,7 +149,7 @@ namespace SFM
 		double m_dV[4];
 		double m_tV[4];
 
-		void SetCutoff(float value)
+		virtual void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 1000.f;
@@ -148,13 +157,13 @@ namespace SFM
 			m_cutoff = 4.0*kPI * kVT * value * (1.0-omega) / (1.0+omega);
 		}
 
-		void SetResonance(float value)
+		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_resonance = std::max<double>(kEpsilon, value*4.0);
 		}
 
-		void SetEnvelopeInfluence(float value)
+		virtual void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_envInfl = value;
@@ -185,7 +194,7 @@ namespace SFM
 		double m_inputDelay;
 		double m_state[4];
 
-		void SetCutoff(float value)
+		virtual void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 1000.f;
@@ -193,13 +202,13 @@ namespace SFM
 			m_cutoff = value; // Also known as omega
 		}
 
-		void SetResonance(float value)
+		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_resonance = value;
 		}
 
-		void SetEnvelopeInfluence(float value)
+		virtual void SetEnvelopeInfluence(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_envInfl = value;

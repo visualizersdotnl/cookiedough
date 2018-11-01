@@ -43,13 +43,13 @@ I've used people's knowledge, articles and code extensively, so credit is due:
 - ADSR implementation by Nigel Redmon of earlevel.com
 - juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
 
-Thanks, a *lot*, for your advice and willingness:
+Thanks, a *lot*, for your advice and willingness (in no particular order):
 - Pieter v/d Meer
 - Tammo Hinrichs
 - Ronny Pries
+- Stijn Haring-Kuipers
 - Maarten van Strien
 - Alex Bartholomeus
-- Stijn Haring-Kuipers
 - Mark Smith
 - Everyone at the KVR audio forum!
 

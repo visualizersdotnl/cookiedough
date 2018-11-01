@@ -25,6 +25,7 @@
 	Tasks for new controller:
 		- Set up filter ADSR controls and connect them
 		- Attach and connect FM finetuning
+		- Connect filter drive
 		- Any more parameters you wish?
 		- Finish up interface and let the MIDI driver feed it
 
@@ -132,6 +133,7 @@ namespace SFM
 		
 		// Filter
 		void SetFilterType(int value); // 1 = Improved MOOG ladder, 2 = Microtracker MOOG ladder, 0 (default) = Teemu's transistor ladder
+		void SetFilterDrive(float value);
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);

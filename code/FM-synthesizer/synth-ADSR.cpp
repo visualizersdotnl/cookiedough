@@ -42,6 +42,7 @@ namespace SFM
 		// Set decay & release according to velocity (aftertouch); more velocity means more linearity
 		m_ADSR.setTargetRatioDR(velocity);
 
+		// Go into release state.
 		m_ADSR.gate(false);
 	}
 
