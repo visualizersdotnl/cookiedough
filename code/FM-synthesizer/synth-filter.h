@@ -35,7 +35,6 @@ namespace SFM
 		// Normalized [0..1]
 		float cutoff;
 		float resonance;
-		float envInfl;
 	};
 
 	/*
@@ -43,9 +42,8 @@ namespace SFM
 
 		Notes:
 			- Reset() needs to be called per voice
-			- SetADSRParameters() must be called per voice
+			- Start() must be called per voice
 			- SetLiveParameters() can be called whilst rendering
-			- Drive is expected to have an effect
 	*/
 
 	class LadderFilter
@@ -56,9 +54,9 @@ namespace SFM
 
 		virtual void Reset() = 0;
 
-		void SetADSRParameters(unsigned sampleCount, const ADSR::Parameters &parameters)
+		void Start(unsigned sampleCount, const ADSR::Parameters &parameters, float velocity)
 		{
-			m_ADSR.Start(sampleCount, parameters, 1.f);
+			m_ADSR.Start(sampleCount, parameters, velocity);
 		}
 
 		void SetLiveParameters(const FilterParameters &parameters)
@@ -66,10 +64,9 @@ namespace SFM
 			SetDrive(parameters.drive);	
 			SetCutoff(parameters.cutoff);
 			SetResonance(parameters.resonance);
-			SetEnvelopeInfluence(parameters.envInfl);
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount) = 0;
+		virtual void Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount) = 0;
 
 	protected:
 		float m_drive;
@@ -83,7 +80,6 @@ namespace SFM
 
 		virtual void SetCutoff(float value) = 0;
 		virtual void SetResonance(float value) = 0;
-		virtual void SetEnvelopeInfluence(float value) = 0;
 	};
 
 	/*
@@ -101,7 +97,6 @@ namespace SFM
 	private:
 		float m_cutoff;
 		float m_resonance;
-		float m_envInfl;
 
 		float m_P0, m_P1, m_P2, m_P3;
 		float m_resoCoeffs[3];
@@ -119,12 +114,6 @@ namespace SFM
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			m_resonance = std::max<float>(kEpsilon, value*3.33f);
 		}
-
-		virtual void SetEnvelopeInfluence(float value)
-		{
-			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = value;
-		}
 	
 	public:
 		virtual void Reset()
@@ -133,7 +122,7 @@ namespace SFM
 			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount);
 	};
 
 	/*
@@ -157,7 +146,6 @@ namespace SFM
 	private:
 		double m_cutoff;
 		double m_resonance;
-		float m_envInfl;
 
 		double m_V[4];
 		double m_dV[4];
@@ -177,12 +165,6 @@ namespace SFM
 			m_resonance = std::max<double>(kEpsilon, value*4.0);
 		}
 
-		virtual void SetEnvelopeInfluence(float value)
-		{
-			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = value;
-		}
-
 	public:
 		virtual void Reset()
 		{
@@ -190,7 +172,7 @@ namespace SFM
 				m_V[iPole] = m_dV[iPole] = m_tV[iPole] = 0.0;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount);
 	};
 
 	/*
@@ -203,7 +185,6 @@ namespace SFM
 	private:
 		double m_cutoff;
 		double m_resonance;
-		float m_envInfl;
 
 		double m_inputDelay;
 		double m_state[4];
@@ -222,12 +203,6 @@ namespace SFM
 			m_resonance = value;
 		}
 
-		virtual void SetEnvelopeInfluence(float value)
-		{
-			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_envInfl = value;
-		}
-
 	public:
 		virtual void Reset()
 		{
@@ -235,6 +210,6 @@ namespace SFM
 			m_state[0] = m_state[1] = m_state[2] = m_state[3] = 0.0;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount);
 	};
 }

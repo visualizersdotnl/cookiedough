@@ -178,7 +178,7 @@ namespace SFM
 
 		// Set ADSRs (voice & filter)
 		s_ADSRs[iVoice].Start(s_sampleCount, state.m_voiceADSR, velocity);
-		voice.m_pFilter->SetADSRParameters(s_sampleCount, state.m_filterADSR);
+		voice.m_pFilter->Start(s_sampleCount, state.m_filterADSR, velocity);
 		
 		voice.m_enabled = true;
 		++state.m_active;
@@ -229,6 +229,8 @@ namespace SFM
 			SFM_ASSERT(-1 != request.index);
 			
 			Voice &voice = state.m_voices[request.index];
+
+			// Stop voice ADSR; filter ADSR just sustains, and that should be OK
 			s_ADSRs[request.index].Stop(s_sampleCount, request.velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
@@ -316,19 +318,19 @@ namespace SFM
 		state.m_voiceADSR.release = WinMidi_GetRelease();
 		state.m_voiceADSR.sustain = WinMidi_GetSustain();
 
-		// Filter ADSR
+		// Filter ADS(R)
 		state.m_filterADSR.attack  = WinMidi_GetFilterAttack();
 		state.m_filterADSR.decay   = WinMidi_GetFilterDecay();
 		state.m_filterADSR.sustain = WinMidi_GetFilterSustain();
-		state.m_filterADSR.attack  = WinMidi_GetFilterAttack();
+		state.m_filterADSR.release = 0.f;
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
+
 		state.m_wetness = WinMidi_GetFilterWetness();
 		state.m_filterParams.drive = 0.5f + WinMidi_GetFilterDrive();
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
-		state.m_filterParams.envInfl = WinMidi_GetFilterEnvInfl();
 
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();

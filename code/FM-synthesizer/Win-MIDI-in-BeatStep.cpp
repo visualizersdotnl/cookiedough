@@ -40,9 +40,8 @@ namespace SFM
 	const unsigned kPotFilterA = 10;      // Set 1, R1
 	const unsigned kPotFilterD = 74;      // Set 1, R2
 	const unsigned kPotFilterS = 71;      // Set 1, R3
-	const unsigned kPotFilterR = 76;      // Set 1, R4
 	static MIDI_Smoothed s_filterDrive;
-	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f, s_filterR = 0.f;
+	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f;
 
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -91,10 +90,6 @@ namespace SFM
 
 					case kPotFilterS:
 						s_filterS = controlVal/127.f;
-						break;
-
-					case kPotFilterR:
-						s_filterR = controlVal/127.f;
 						break;
 
 					default:
@@ -210,5 +205,4 @@ namespace SFM
 	float WinMidi_GetFilterAttack()   { return s_filterA;           }
 	float WinMidi_GetFilterDecay()    { return s_filterD;           }
 	float WinMidi_GetFilterSustain()  { return s_filterS;           } 
-	float WinMidi_GetFilterRelease()  { return s_filterR;           }
 }

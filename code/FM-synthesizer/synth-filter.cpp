@@ -9,14 +9,13 @@
 
 namespace SFM
 {
-	SFM_INLINE float Blend(float dry, float wet, float global, float ADSR, float influence)
+	SFM_INLINE float Blend(float dry, float wet, float wetness, float ADSR)
 	{
-		float mix = lerpf<float>(dry, wet, global);
-		mix = fast_tanhf(mix + wet*ADSR*influence);
-		return mix;
+		const float sample = lerpf<float>(dry, lerpf<float>(dry, wet, wetness) /* Try non-linear? */, ADSR);
+		return fast_tanhf(sample);
 	}
 
-	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
+	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
@@ -43,14 +42,14 @@ namespace SFM
 			m_P3 += (m_P2-m_P3)*m_cutoff;
 			m_P3 = ultra_tanhf(m_P3);
 
-			const float sample = Blend(dry, m_P3, globalWetness, ADSR, m_envInfl);
+			const float sample = Blend(dry, m_P3, wetness, ADSR);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
 		}
 	}
 
-	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
+	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount)
 	{
 		double dV0, dV1, dV2, dV3;
 
@@ -81,7 +80,7 @@ namespace SFM
 			m_dV[3] = dV3;
 			m_tV[3] = fast_tanh(m_V[3] / (2.0*kVT));
 
-			const float sample = Blend(dry, float(m_V[3]), globalWetness, ADSR, m_envInfl);
+			const float sample = Blend(dry, float(m_V[3]), wetness, ADSR);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
@@ -102,7 +101,7 @@ namespace SFM
 		return ((a + 105.0)*a + 945.0) / ((15.0*a + 420.0)*a + 945.0);
 	}
 
-	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
+	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float wetness, unsigned sampleCount)
 	{
 		const double f = m_cutoff;
 		const double r = (40.0/9.0) * m_resonance;
@@ -148,7 +147,7 @@ namespace SFM
 			m_state[2] += 2*f * (y1 - y2);
 			m_state[3] += 2*f * (y2 - t4*y3);
 
-			const float sample = Blend(dry, float(y3), globalWetness, ADSR, m_envInfl);
+			const float sample = Blend(dry, float(y3), wetness, ADSR);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;

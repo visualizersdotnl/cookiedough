@@ -44,12 +44,12 @@ namespace SFM
 	const unsigned kPotCutoff = 22;            // C11
 	const unsigned kPotResonance = 23;         // C12
 	const unsigned kPotFilterMix = 61;         // C10
-	const unsigned kPotFilterEnvInfl = 24;     // C13
+	const unsigned kPotUnused1 = 24;           // C13
 	const unsigned kPotMasterDrive = 26;       // C14
 	const unsigned kPotAlgoTweak = 95;         // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
-	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness, s_filterEnvInfl;
+	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
 	static MIDI_Smoothed s_masterDrive;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 	static MIDI_Smoothed s_algoTweak;
@@ -225,10 +225,6 @@ namespace SFM
 
 						case kPotMasterDrive:
 							s_masterDrive.Set(controlVal);
-							break;
-
-						case kPotFilterEnvInfl:
-							s_filterEnvInfl.Set(controlVal);
 							break;
 
 						case kPotFeedback:
@@ -432,7 +428,6 @@ namespace SFM
 	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
 	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
 	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }
-	float WinMidi_GetFilterEnvInfl()   { return s_filterEnvInfl.Get();  }
 
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback.Get();        }

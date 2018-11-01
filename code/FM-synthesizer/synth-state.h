@@ -106,7 +106,6 @@ namespace SFM
 			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;
-			m_filterParams.envInfl = 0.f;
 
 			// Default feedback
 			m_feedback = 0.f;

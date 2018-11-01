@@ -53,6 +53,8 @@
 		- Profiling & optimization
 
 	Known issues:
+		- Normalize wavetables
+
 		- Numerical instability
 		- MIDI pots crackle a bit (not important for intended target)
 		- Crackle when bottlenecked

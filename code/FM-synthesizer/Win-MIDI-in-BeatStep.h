@@ -17,9 +17,8 @@ namespace SFM
 	*/
 
 	// Filter
-	float WinMidi_GetFilterDrive() ;
+	float WinMidi_GetFilterDrive() ; // MOOG 1974's emphasis parameter
 	float WinMidi_GetFilterAttack();
 	float WinMidi_GetFilterDecay();
 	float WinMidi_GetFilterSustain();
-	float WinMidi_GetFilterRelease();
 }
