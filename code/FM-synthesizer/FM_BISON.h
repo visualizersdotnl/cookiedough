@@ -10,11 +10,10 @@
 		- Mark Smith
 
 	Third-party code used:
-		- Magnus Jonsson's Microtracker MOOG filter
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- ADSR implementation by Nigel Redmon of earlevel.com
 		- juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
-		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 
 	Notes:
 		- Code was written directly with firmware in mind, but later on as I found out that this project involved so much new

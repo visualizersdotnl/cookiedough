@@ -58,8 +58,8 @@ namespace SFM
 
 	// Runtime
 	static ADSR s_ADSRs[kMaxVoices];
-	static ImprovedMoogFilter s_improvedFilters[kMaxVoices];
-	static MicrotrackerMoogFilter s_MicrotrackerFilters[kMaxVoices];
+	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
+	static CleanFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
 	
@@ -160,16 +160,16 @@ namespace SFM
 		switch (state.m_curFilter)
 		{
 		default:
-		case 0: // A bit more expressive (default)
+		case kTeemuFilter: // A bit more expressive (default)
 			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 
-		case 1: // Classic MOOG
+		case kImprovedMOOGFilter:
 			voice.m_pFilter = s_improvedFilters+iVoice;
 			break;
 
-		case 2: // Microtracker
-			voice.m_pFilter = s_MicrotrackerFilters+iVoice;
+		case kCleanFilter:
+			voice.m_pFilter = s_cleanFilters+iVoice;
 			break;
 		}
 
@@ -521,7 +521,7 @@ bool Syntherklaas_Create()
 	{
 		s_ADSRs[iVoice].Reset();
 		s_improvedFilters[iVoice].Reset();
-		s_MicrotrackerFilters[iVoice].Reset();
+		s_cleanFilters[iVoice].Reset();
 		s_teemuFilters[iVoice].Reset();
 	}
 

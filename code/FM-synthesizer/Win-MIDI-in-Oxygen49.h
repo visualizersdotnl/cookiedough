@@ -23,7 +23,7 @@ namespace SFM
 	*/
 
 	// Filter
-	int   WinMidi_GetCurFilter();
+	VoiceFilter WinMidi_GetCurFilter();
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterWetness();

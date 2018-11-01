@@ -232,7 +232,7 @@ namespace SFM
 
 		b6 = white*0.115926f;
 		
-		return pink;
+		return Clamp(pink);
    }
 
    /*

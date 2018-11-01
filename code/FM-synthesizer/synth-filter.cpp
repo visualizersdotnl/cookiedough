@@ -8,7 +8,7 @@
 
 namespace SFM
 {
-	void MicrotrackerMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
+	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
@@ -29,10 +29,11 @@ namespace SFM
 			m_resoCoeffs[1] = m_resoCoeffs[0];
 			m_resoCoeffs[0] = feedback;
 
-			m_P0 += (fast_tanhf(dry*m_drive - m_resonance*out) - fast_tanhf(m_P0)) * m_cutoff;
-			m_P1 += (fast_tanhf(m_P0) - fast_tanhf(m_P1)) * m_cutoff;
-			m_P2 += (fast_tanhf(m_P1) - fast_tanhf(m_P2)) * m_cutoff;
-			m_P3 += (fast_tanhf(m_P2) - fast_tanhf(m_P3)) * m_cutoff;
+			m_P0 += (dry*m_drive - m_resonance*out - fast_tanhf(m_P0)) * m_cutoff;
+			m_P1 += (m_P0-m_P1)*m_cutoff;
+			m_P2 += (m_P1-m_P2)*m_cutoff;
+			m_P3 += (m_P2-m_P3)*m_cutoff;
+			m_P3 = ultra_tanhf(m_P3);
 
 			const float wetness = lerpf<float>(globalWetness, ADSR, m_envInfl);
 			const float sample = lerpf<float>(dry, out, wetness); 
@@ -42,7 +43,7 @@ namespace SFM
 		}
 	}
 
-	void ImprovedMoogFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
+	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float globalWetness, unsigned sampleCount)
 	{
 		double dV0, dV1, dV2, dV3;
 

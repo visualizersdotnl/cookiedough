@@ -12,6 +12,18 @@
 namespace SFM
 {
 	/*
+		Filter types & order.
+	*/
+
+	enum VoiceFilter
+	{
+		kCleanFilter,
+		kImprovedMOOGFilter,
+		kTeemuFilter,
+		kNumFilters
+	};
+
+	/*
 		Filter parameters.
 	*/
 
@@ -75,14 +87,16 @@ namespace SFM
 	};
 
 	/*
-		Microtracker MOOG filter
+		Filter based on Microtracker MOOG ladder filter, turned into a very *clean* filter,
+		Huey Lewis would love it.
 		
 		Credit:
 		- Based on an implementation by Magnus Jonsson
 		- https://github.com/magnusjonsson/microtracker (unlicense)
+		- Modified to sound square (refer to a 1960s slang dictionary, thank you)
 	*/
 
-	class MicrotrackerMoogFilter : public LadderFilter
+	class CleanFilter : public LadderFilter
 	{
 	private:
 		float m_cutoff;
@@ -97,13 +111,13 @@ namespace SFM
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
 			value *= 1000.f;
 			value = value*2.f*kPI/kSampleRate;
-			m_cutoff = std::min<float>(1.f, value); // Also known as omega
+			m_cutoff = std::max<float>(kEpsilon, value); // Also known as omega
 		}
 
 		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = std::max<float>(kEpsilon, value*4.f);
+			m_resonance = std::max<float>(kEpsilon, value*kPI);
 		}
 
 		virtual void SetEnvelopeInfluence(float value)
@@ -138,7 +152,7 @@ namespace SFM
 	// Thermal voltage (26 milliwats at room temperature)
 	const double kVT = 0.312;
 
-	class ImprovedMoogFilter : public LadderFilter
+	class ImprovedMOOGFilter : public LadderFilter
 	{
 	private:
 		double m_cutoff;

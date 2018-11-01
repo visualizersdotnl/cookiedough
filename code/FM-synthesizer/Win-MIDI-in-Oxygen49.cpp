@@ -83,7 +83,7 @@ namespace SFM
 	const unsigned kButtonPulseCarrier = 104;        // C26
 	const unsigned kButtonPulseWidthToggle = 103;    // C25
 	const unsigned kButtonNoiseCarrier = 102;        // C24
-	static int s_curFilter = 0;
+	static VoiceFilter s_curFilter = kCleanFilter;
 	static int s_loopWaves = 0;
 	static unsigned s_pulseWidth = 0;
 	static Voice::Algorithm s_algorithm = Voice::kSingle;
@@ -200,7 +200,7 @@ namespace SFM
 							break;
 
 						case kButtonFilterSwitch:
-							if (127 == controlVal) s_curFilter = (s_curFilter+1) % 3;
+							if (127 == controlVal) s_curFilter = VoiceFilter((s_curFilter+1) % kNumFilters);
 							break;
 
 						case kButtonLoopWaves:
@@ -426,7 +426,7 @@ namespace SFM
 	*/
 
 	// Filter
-	int   WinMidi_GetCurFilter()       { return s_curFilter;            }
+	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;            }
 	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
 	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
 	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }

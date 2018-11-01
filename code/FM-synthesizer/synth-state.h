@@ -51,7 +51,7 @@ namespace SFM
 		float m_wetness;
 
 		// Filter parameters
-		int m_curFilter;
+		VoiceFilter m_curFilter;
 		FilterParameters m_filterParams;
 
 		// Feedback (delay) effect parameters
@@ -100,7 +100,7 @@ namespace SFM
 			m_filterADSR = m_voiceADSR;
 
 			// Default filter (;
-			m_curFilter = 0;
+			m_curFilter = kCleanFilter;
 			m_wetness = 0.f;
 			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;
