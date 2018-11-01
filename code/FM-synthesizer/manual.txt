@@ -26,9 +26,9 @@ and you've got your yearly dose of 1980s pop music.
 - FM synthesis for 6 anti-aliased carrier oscillators
 - FM settings: depth, coarse ratio, finetuning, brightness, vibrato
 - Wavetable synthesis for 4 oscillators
-- Per-voice ladder filters (select 1 out of 3) with cutoff, resonance, wetness and ADSR envelope
+- Per-voice ladder filters (select 1 out of 3) with drive, cutoff, resonance, wetness and ADS envelope
 - Configurable feedback effect
-- Intuitive ADSR envelopes
+- Intuitive ADS(R) envelopes
 - Tremolo
 - Pitch bend
 - Master drive

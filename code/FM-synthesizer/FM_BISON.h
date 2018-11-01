@@ -139,7 +139,6 @@ namespace SFM
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);
-		void SetFilterEnvelopeInfluence(float value);
 
 		// Feedback
 		void SetFeedback(float value);
@@ -152,11 +151,10 @@ namespace SFM
 		void SetSustain(float value);
 		void SetRelease(float value);
 
-		// Filter ADSR
+		// Filter ADS
 		void SetFilterAttack(float value);
 		void SetFilterDecay(float vvalue);
-		void SetSFilterustain(float value);
-		void SetFilterRelease(float value);
+		void SetFilterustain(float value);
 
 		// Tremolo
 		void SetTremolo(float value);
