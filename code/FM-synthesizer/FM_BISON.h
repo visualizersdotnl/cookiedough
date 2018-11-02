@@ -23,7 +23,7 @@
 		- The design is, not on purpose, a bit like the mini MOOG.
 
 	Priority tasks:
-		- #1 -- Selectable second carrier waveform
+		- #1 -- Selectable second carrier waveform: perhaps either the same or a cosine?
 		- #2 -- Blend in pink or white noise according to rotary
 		- Map which paramaters activate on NOTE_ON and which ones are real-time
 		- Take a good look at: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
@@ -45,11 +45,11 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
-		- What can I do with my noise oscillators?
+		- Arp.
 		- Sample & hold
-		- Real variable delay line
 		- Panning (stereo imitation)
 		- Better wavetable sampling
+		- Real variable delay line
 		- Profiling & optimization
 
 	Known issues:
