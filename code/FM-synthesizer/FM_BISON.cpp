@@ -454,7 +454,7 @@ namespace SFM
 
 				// Apply drive and soft clamp
 //				mix = ultra_tanhf(mix*state.m_drive);
-				mix = ultra_tanhf(mix*state.m_drive * (1.f+ 0.001f*oscPinkNoise(time)));
+				mix = ultra_tanhf(mix*state.m_drive + 0.0016f*mix*oscPinkNoise(time));
 				SampleAssert(mix);
 
 				// Write

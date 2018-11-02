@@ -23,8 +23,9 @@
 		- The design is, not on purpose, a bit like the mini MOOG.
 
 	Priority tasks:
+		- #1 -- Selectable second carrier waveform
+		- #2 -- Blend in pink or white noise according to rotary
 		- Map which paramaters activate on NOTE_ON and which ones are real-time
-		- MOOG adds noise to signal: why and how?
 		- Take a good look at: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 		- Finish up interface and let the MIDI driver feed it
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
