@@ -154,8 +154,9 @@ namespace SFM
 		const float broFrequency = invsqrf(tremolo)*0.25f*goldenTen; // Not sure if I should mess with the "feel" of the control here (FIXME)
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
-		// FIXME: perhaps this should be optional?
+		// Case specific
 		voice.m_oneShot = state.m_loopWaves ?  false : oscIsWavetable(request.form);
+		voice.m_pulseWidth = state.m_pulseWidth;
 
 		// Get & reset filter
 		switch (state.m_curFilter)
@@ -420,7 +421,7 @@ namespace SFM
 						// Probed on this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
 
-						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR, state.m_pulseWidth);
+						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR);
 						buffer[iSample] = sample;
 					}
 
@@ -452,7 +453,8 @@ namespace SFM
 				ProcessDelay(state, mix);
 
 				// Apply drive and soft clamp
-				mix = ultra_tanhf(mix*state.m_drive);
+//				mix = ultra_tanhf(mix*state.m_drive);
+				mix = ultra_tanhf(mix*state.m_drive * (1.f+ 0.001f*oscPinkNoise(time)));
 				SampleAssert(mix);
 
 				// Write

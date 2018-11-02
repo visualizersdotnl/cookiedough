@@ -34,7 +34,12 @@ namespace SFM
 		Carrier m_carrierA, m_carrierB;
 		Modulator m_modulator;
 		Modulator m_ampMod;
-		bool m_oneShot; // For wavetable samples
+
+		// For wavetable samples
+		bool m_oneShot;
+
+		// For pulse-based waveforms
+		float m_pulseWidth;
 		
 		// Filter instance for this particular voice
 		LadderFilter *m_pFilter;
@@ -45,7 +50,7 @@ namespace SFM
 		Modulator m_modulatorHi, m_modulatorLo;
 		void InitializeFeedback();
 
-		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope, float pulseWidth);
+		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
 
 		// Can be used to determine if a one-shot is done
 		bool HasCycled(unsigned sampleCount) /* const */
