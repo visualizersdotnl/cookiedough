@@ -23,12 +23,12 @@
 		- The design is, not on purpose, a bit like the mini MOOG.
 
 	Today:
-		- Fix noise blend: it does not sound very pleasing at the moment
-		- Chart which parameters are relevant real-time and which only per voice (i.e. per NOTE_ON)
+		- Fix noise blend: it does not sound very pleasing at the moment (search for MOOG exmaples)
 		- Move oscillator selection to BeatStep
+		- Move all parameters that are not boolean or enumerated or per-voice to MIDI_Smoothed (probably a lot will go then)
+		- Chart which parameters are relevant real-time and which only per voice (i.e. per NOTE_ON)
 		- Chart which paramaters activate on NOTE_ON and which ones are real-time, and:
 		  + Move them to a per-N samples update and retain the MIDI_Smoothed propery
-		- Do I need to use MIDI_Smoothed on any BeatStep parameters?
 		- Gradually move parameters to BeatStep (oscillators are a prime target; keep in mind that some you want to keep on the keyboard for fast access)
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
