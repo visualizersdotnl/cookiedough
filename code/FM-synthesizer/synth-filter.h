@@ -17,9 +17,9 @@ namespace SFM
 
 	enum VoiceFilter
 	{
-		kCleanFilter,
-		kImprovedMOOGFilter,
 		kTeemuFilter,
+		kImprovedMOOGFilter,
+		kCleanFilter,
 		kNumFilters
 	};
 

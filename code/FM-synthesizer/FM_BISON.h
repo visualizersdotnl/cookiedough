@@ -20,22 +20,21 @@
 		  information I went towards a bit of C++ here and there; I also decided to get the sound right and try to understand
 		  what I'm doing which has led to some wonky design decisions. Nevertheless I will finish this project.
 		- Some calculations in here are what is referred to as "bro science".
-
-	Tasks for new controller:
-		- Attach and connect FM finetuning
-		- Fix: filters clip when stopped short (like Frank Costanza does it)
-		- Any more parameters you wish?
-		- Finish up interface and let the MIDI driver feed it
-		- Should one not scale the upper and lower limit of the pitch bend depending on octave?
+		- The design is, not on purpose, a bit like the mini MOOG.
 
 	Priority tasks:
-		- Encapsulate the core in a class so there can be instances
-		- Finish documentation as far as possible, read up on VST
+		- Move pulse width to voice state!
+		- Take a good look at: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
+		  + Idea: add white/pink noise in a certain amount during mixdown
+		- Finish up interface and let the MIDI driver feed it
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Flush ring buffer using two memcpy() calls
+		- Finish documentation as far as possible, read up on VST
 
 	Plumbing:
+		- Flush ring buffer using two memcpy() calls
+		- Encapsulate the core in a class so there can be instances
 		- Review mutex & atomic use
+		- Normalize wavetables
 		- Find more values that'd make sensible parameters
 		- Move project to it's own repository (go for VST directly)
 		- Always keep looking (and placing assertions) to trap floating point bugs
@@ -53,10 +52,9 @@
 		- Profiling & optimization
 
 	Known issues:
-		- Normalize wavetables
-
-		- Numerical instability
+		- Fix: filters clip when stopped short (like Frank Costanza does it)
 		- MIDI pots crackle a bit (not important for intended target)
+		- Numerical instability
 		- Crackle when bottlenecked
 
 	Lesson(s) learned:
@@ -126,16 +124,12 @@ namespace SFM
 		// Modulation
 		void SetModulationIndex(float value);
 		void SetModulationRatio(float value); // Indexes a 'Farey Sequence' C:M table
-
-		// Should be small values, added to the ratio
-		void SetModulationFinetune(float C,float M); 
-
 		void SetModulationBrightness(float value);
 		void SetModulationLFOFrequency(float value);
 		
 		// Filter
 		void SetFilterType(VoiceFilter value); 
-		void SetFilterDrive(float value); // [0.5..1.5]
+		void SetFilterDrive(float value);
 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
 		void SetFilterWetness(float value);

@@ -131,7 +131,7 @@ namespace SFM
 
 		// Initialize carrier(s)
 		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
-		const float modRatioC = true == isWave ? 1.f :state.m_modRatioC; // No carrier modulation if wavetable osc.
+		const float modRatioC = true == isWave ? 1.f : state.m_modRatioC;  // No carrier modulation if wavetable osc.
 
 		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
 
@@ -160,15 +160,18 @@ namespace SFM
 		// Get & reset filter
 		switch (state.m_curFilter)
 		{
+		// #1
 		default:
 		case kTeemuFilter: // A bit more expressive (default)
 			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 
+		// #2
 		case kImprovedMOOGFilter:
 			voice.m_pFilter = s_improvedFilters+iVoice;
 			break;
-
+		
+		// #3
 		case kCleanFilter:
 			voice.m_pFilter = s_cleanFilters+iVoice;
 			break;
@@ -292,10 +295,6 @@ namespace SFM
 		state.m_modRatioC = (float) g_CM_table[tabIndex][0];
 		state.m_modRatioM = (float) g_CM_table[tabIndex][1];
 
-		// FIXME: attach controls
-//		state.m_modRatioC += WinMidi_GetTremolo();
-//		state.m_modRatioM += WinMidi_GetModulationBrightness(); 
-
 		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
 		state.m_modBrightness = WinMidi_GetModulationBrightness();
 
@@ -328,14 +327,14 @@ namespace SFM
 		state.m_curFilter = WinMidi_GetCurFilter();
 
 		state.m_wetness = WinMidi_GetFilterWetness();
-		state.m_filterParams.drive = 0.5f + WinMidi_GetFilterDrive();
+		state.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*6.f); // FIXME: parameter domain
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
-		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f;
+		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f; // FIXE: parameter domain
 	}
 
 	/*

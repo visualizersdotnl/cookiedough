@@ -30,7 +30,6 @@ namespace SFM
 		// Modulator parameters [0..1]
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
-		float m_modFinetuneC, m_modFinetuneM;
 		float m_modBrightness;
 		float m_indexLFOFreq;
 
@@ -76,9 +75,7 @@ namespace SFM
 			// No FM
 			m_modIndex = 0.f;
 			m_modRatioC = 0.f;
- 			m_modFinetuneC = 0.f;
 			m_modRatioM = 0.f;
-			m_modFinetuneM = 0.f;
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
 
@@ -97,11 +94,13 @@ namespace SFM
 			m_voiceADSR.release = kSampleRate/4;
 			m_voiceADSR.sustain = kRootHalf;
 
-			// Copy for filter
+			// Neutered copys for filter
 			m_filterADSR = m_voiceADSR;
+			m_filterADSR.sustain = 0.f;
+			m_filterADSR.release = 0.f;
 
-			// Default filter (;
-			m_curFilter = kCleanFilter;
+			// Default filter
+			m_curFilter = kTeemuFilter;
 			m_wetness = 0.f;
 			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;

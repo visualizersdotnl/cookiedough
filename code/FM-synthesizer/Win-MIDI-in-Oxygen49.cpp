@@ -83,7 +83,7 @@ namespace SFM
 	const unsigned kButtonPulseCarrier = 104;        // C26
 	const unsigned kButtonPulseWidthToggle = 103;    // C25
 	const unsigned kButtonNoiseCarrier = 102;        // C24
-	static VoiceFilter s_curFilter = kCleanFilter;
+	static VoiceFilter s_curFilter = kTeemuFilter;
 	static int s_loopWaves = 0;
 	static unsigned s_pulseWidth = 0;
 	static Voice::Algorithm s_algorithm = Voice::kSingle;

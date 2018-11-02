@@ -16,12 +16,17 @@ namespace SFM
 
 		// 25% longer attack & 50% longer release on max. velocity
 		const float attackScale  = 1.f + 0.25f*velocity;
-		const float releaseScale = 1.f + 1.5f*velocity;
+		const float releaseScale = 1.f + 2.f*velocity;
 		
-		const float attack  = 2.f + truncf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = 2.f + truncf(parameters.decay*kSampleRate);
+		const float attack  = 4.f + truncf(attackScale*parameters.attack*kSampleRate);
+		const float decay   = 4.f + truncf(parameters.decay*kSampleRate);
 		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(releaseScale*parameters.release*kSampleRate)); // Velocity decides not only volume but also release
 		const float sustain = parameters.sustain;
+
+		// Harder touch, less linear
+		const float invVel = 1.314f-velocity;
+		m_ADSR.setTargetRatioA(invVel);
+		m_ADSR.setTargetRatioDR(invVel);
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
@@ -33,6 +38,10 @@ namespace SFM
 
 	void ADSR::Stop(unsigned sampleCount, float velocity)
 	{
+		// Harder touch, less linear
+		const float invVel = 1.314f-velocity;
+		m_ADSR.setTargetRatioDR(invVel);
+
 		// Go into release state.
 		m_ADSR.gate(false);
 	}
