@@ -235,6 +235,16 @@ namespace SFM
 		return Clamp(pink);
    }
 
+   // Approximation at best
+   	SFM_INLINE float oscBrownNoise(float phase)
+	{
+		static float value = 0.23423f;
+		float pink = oscPinkNoise(phase);
+		value = lowpassf(value, pink, 4.f);
+		return value;
+	}
+
+
    /*
 		Wavetable oscillator(s)
 
@@ -245,12 +255,12 @@ namespace SFM
 	class WavetableOscillator
 	{
 	public:
-		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitoneOffs, float baseHz = 220.f /* A3 */) :
+		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitones, float baseHz = 220.f /* A3 */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
 ,			m_periodLen(float(m_numSamples)/kOscPeriod)
 	{
-		float pitchMul = powf(2.f, float(octaveOffs) + semitoneOffs/12.f);
+		float pitchMul = powf(2.f, float(octaveOffs) + semitones/12.f);
 		if (octaveOffs < 0) pitchMul = 1.f/pitchMul;
 		m_basePitch = CalculateOscPitch(baseHz*pitchMul);
 		m_rate = 1.f/(m_basePitch/m_periodLen);

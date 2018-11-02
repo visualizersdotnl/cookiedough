@@ -43,14 +43,13 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotCutoff = 22;            // C11
 	const unsigned kPotResonance = 23;         // C12
-	const unsigned kPotFilterMix = 61;         // C10
+	const unsigned kPotFilterContour = 61;      // C10
 	const unsigned kPotUnused1 = 24;           // C13
-	const unsigned kPotMasterDrive = 26;       // C14
+	const unsigned kPotUnused2 = 26;           // C14
 	const unsigned kPotAlgoTweak = 95;         // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
-	static MIDI_Smoothed s_cutoff, s_resonance, s_filterWetness;
-	static MIDI_Smoothed s_masterDrive;
+	static MIDI_Smoothed s_cutoff, s_resonance, s_filterContour;
 	static MIDI_Smoothed s_feedback, s_feedbackWetness;
 	static MIDI_Smoothed s_algoTweak;
 
@@ -101,7 +100,7 @@ namespace SFM
 	const unsigned kPerc8 = 49;
 
 	// Pitch bend (14-bit signed, wheel rests in the middle, little longer ramp time)
-	static MIDI_Smoothed s_pitchBendS(0.5f, 16383, 0.085f); 
+	static MIDI_Smoothed s_pitchBendS(0.5f, 16383);
 	static float s_pitchBend;
 
 	static unsigned s_voices[127];
@@ -135,6 +134,8 @@ namespace SFM
 
 				if (CHANNEL_PERCUSSION == channel)
 				{
+					/* Carrier waveforms (note: not all currently mapped on these buttons, I ran out */
+
 					switch (controlIdx)
 					{
 					case kPerc1:
@@ -183,6 +184,8 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						/* Carrier waveforms */
+
 						case kButtonPulseCarrier:
 							if (127 == controlVal) s_waveform = kPolyPulse;
 							break;
@@ -191,53 +194,33 @@ namespace SFM
 							if (127 == controlVal) s_waveform = kPinkNoise;
 							break;
 
-						case kButtonAlgoSingle:
-							if (127 == controlVal) s_algorithm = Voice::kSingle;
-							break;
-
-						case kButtonAlgoDoubleCarriers:
-							if (127 == controlVal) s_algorithm = Voice::kDoubleCarriers;
-							break;
-
-						case kButtonFilterSwitch:
-							if (127 == controlVal) s_curFilter = VoiceFilter((s_curFilter+1) % kNumFilters);
+						case kButtonPulseWidthToggle:
+							if (127 == controlVal) s_pulseWidth = ++s_pulseWidth % 3;
 							break;
 
 						case kButtonLoopWaves:
 							if (127 == controlVal) s_loopWaves ^= 1;
 							break;
 
-						case kButtonPulseWidthToggle:
-							if (127 == controlVal) s_pulseWidth = ++s_pulseWidth % 3;
-							break;
-
-						case kPotCutoff:
-							s_cutoff.Set(controlVal);
-							break;
-
-						case kPotResonance:
-							s_resonance.Set(controlVal);
-							break;
-
-						case kPotFilterMix:
-							s_filterWetness.Set(controlVal);
-							break;
-
-						case kPotMasterDrive:
-							s_masterDrive.Set(controlVal);
-							break;
-
-						case kPotFeedback:
-							s_feedback.Set(controlVal);
-							break;
-
-						case kPotFeedbackWetness:
-							s_feedbackWetness.Set(controlVal);
-							break;
+						/* FM */
 
 						case kModIndex:
 							s_modIndex.Set(controlVal);
 							break;
+
+						case kFaderModRatio:
+							s_modRatio = controlVal/127.f;
+							break;
+
+						case kFaderModLFOFreq:
+							s_modLFOFreq = controlVal/127.f;
+							break;
+
+						case kFaderModBrightness:
+							s_modBrightness = controlVal/127.f;
+							break;
+
+						/* ADSR */
 
 						case kFaderA:
 							s_A = controlVal/127.f;
@@ -255,28 +238,56 @@ namespace SFM
 							s_R = controlVal/127.f;
 							break;
 
-						case kFaderModRatio:
-							s_modRatio = controlVal/127.f;
-							break;
+						/* Feedback */
 
 						case kFaderFeedbackPitch:
 							s_feedbackPitch = controlVal/127.f;
 							break;
 
-						case kPotAlgoTweak:
-							s_algoTweak.Set(controlVal);
+						case kPotFeedback:
+							s_feedback.Set(controlVal);
 							break;
+
+						case kPotFeedbackWetness:
+							s_feedbackWetness.Set(controlVal);
+							break;
+
+						/* Tremolo */
 
 						case kFaderTremolo:
 							s_tremolo = controlVal/127.f;
 							break;
+						
+						/* Algorithm */
 
-						case kFaderModLFOFreq:
-							s_modLFOFreq = controlVal/127.f;
+						case kPotAlgoTweak:
+							s_algoTweak.Set(controlVal);
 							break;
 
-						case kFaderModBrightness:
-							s_modBrightness = controlVal/127.f;
+						case kButtonAlgoSingle:
+							if (127 == controlVal) s_algorithm = Voice::kSingle;
+							break;
+
+						case kButtonAlgoDoubleCarriers:
+							if (127 == controlVal) s_algorithm = Voice::kDoubleCarriers;
+							break;
+
+						/* Filter */
+
+						case kButtonFilterSwitch:
+							if (127 == controlVal) s_curFilter = VoiceFilter((s_curFilter+1) % kNumFilters);
+							break;
+
+						case kPotCutoff:
+							s_cutoff.Set(controlVal);
+							break;
+
+						case kPotResonance:
+							s_resonance.Set(controlVal);
+							break;
+
+						case kPotFilterContour:
+							s_filterContour.Set(controlVal);
 							break;
 
 						default:
@@ -427,16 +438,14 @@ namespace SFM
 	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;            }
 	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
 	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
-	float WinMidi_GetFilterWetness()   { return s_filterWetness.Get();  }
+	float WinMidi_GetFilterContour()   { return s_filterContour.Get();  }
 
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
 	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
 	float WinMidi_GetFeedbackPitch()    { return s_feedbackPitch;         }
 
-	// Master drive & pitch bend
-	float WinMidi_GetMasterDrive() { return s_masterDrive.Get(); }
-
+	// Pitch bend
 	float WinMidi_GetPitchBend()   
 	{ 
 		return s_pitchBendS.Get(); 

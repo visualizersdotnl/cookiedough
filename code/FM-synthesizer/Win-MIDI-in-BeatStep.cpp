@@ -36,11 +36,15 @@ namespace SFM
 	*/
 
 	// Rotary mapping
+	const unsigned kPotMasterDrive = 7;   // Level/Rate (big rotary)
+	const unsigned kPotNoisyness = 17;    // 
 	const unsigned kPotFilterDrive = 114; // Set 3, R9
 	const unsigned kPotFilterA = 10;      // Set 1, R1
 	const unsigned kPotFilterD = 74;      // Set 1, R2
 	const unsigned kPotFilterS = 71;      // Set 1, R3
+	static float s_masterDrive = 0.f;
 	static MIDI_Smoothed s_filterDrive;
+	static float s_noisyness = 0.f;
 	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f;
 
 	static void WinMidiProc(
@@ -76,6 +80,19 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
+					/*  Master drive (voice volume) */
+
+					case kPotMasterDrive:
+						s_masterDrive = controlVal/127.f;
+						break;
+
+					/* Noisyness */
+
+					case kPotNoisyness:
+						s_noisyness = controlVal/127.f;
+
+					/* Filter */
+
 					case kPotFilterDrive:
 						s_filterDrive.Set(controlVal);
 						break;
@@ -199,6 +216,12 @@ namespace SFM
 	/*
 		Pull-style controls
 	*/
+
+	// Master
+	float WinMidi_GetMasterDrive()    { return s_masterDrive; }
+
+	// Noisyness
+	float WinMidi_GetNoisyness()      { return s_noisyness; }
 
 	// Filter
 	float WinMidi_GetFilterDrive()    { return s_filterDrive.Get(); }

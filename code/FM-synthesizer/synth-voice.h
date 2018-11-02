@@ -48,7 +48,7 @@ namespace SFM
 		// Not the most elegant solution, but it doesn't depend on any delay line(s)
 		Carrier m_carrierHi, m_carrierLo;
 		Modulator m_modulatorHi, m_modulatorLo;
-		void InitializeFeedback();
+		void InitializePitchBend();
 
 		float Sample(unsigned sampleCount, float pitchBend, float modBrightness, ADSR &envelope);
 

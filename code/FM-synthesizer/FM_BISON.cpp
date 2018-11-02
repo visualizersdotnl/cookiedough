@@ -146,8 +146,8 @@ namespace SFM
 		const float modFrequency = frequency*state.m_modRatioM;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq*goldenTen);
 
-		// Initialize feedback delay line(s)
-		voice.InitializeFeedback();
+		// Initialize pitch bend operators
+		voice.InitializePitchBend();
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
@@ -326,9 +326,8 @@ namespace SFM
 
 		// Filter parameters
 		state.m_curFilter = WinMidi_GetCurFilter();
-
-		state.m_wetness = WinMidi_GetFilterWetness();
-		state.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*6.f); // FIXME: parameter domain
+		state.m_filterContour = WinMidi_GetFilterContour();
+		state.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*6.f);
 		state.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		state.m_filterParams.resonance = WinMidi_GetFilterResonance();
 
@@ -418,15 +417,20 @@ namespace SFM
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 
-						// Probed on this level for accuracy
-						const float pitchBend = 2.f*(WinMidi_GetPitchBend()-0.5f);
+						// Probed at this level for accuracy
+						const float pitchBend = 2.f*(WinMidi_GetPitchBendRaw()-0.5f);
+						const float noisyness = WinMidi_GetNoisyness()*0.1f*kGoldenRatio;
 
-						const float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR);
+						float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR);
+						
+						// FIXME
+						sample += sample*oscBrownNoise(time)*noisyness;
+						
 						buffer[iSample] = sample;
 					}
 
 					voice.m_pFilter->SetLiveParameters(state.m_filterParams);
-					voice.m_pFilter->Apply(buffer, numSamples, state.m_wetness, s_sampleCount);
+					voice.m_pFilter->Apply(buffer, numSamples, state.m_filterContour, s_sampleCount);
 
 					++curVoice; // Do *not* use for anything other than temporary buffers
 				}
@@ -452,9 +456,12 @@ namespace SFM
 				// Process delay
 				ProcessDelay(state, mix);
 
-				// Apply drive and soft clamp
-//				mix = ultra_tanhf(mix*state.m_drive);
-				mix = ultra_tanhf(mix*state.m_drive + 0.0016f*mix*oscPinkNoise(time));
+				// Apply drive, add noise & soft clamp
+				const float noise = oscPinkNoise(time);
+				// Probed at this level for accuracy
+				const float noiseAmount = WinMidi_GetNoisyness()*0.1314f;
+
+				mix = SoftClamp(mix*state.m_drive + mix*noise*noiseAmount);
 				SampleAssert(mix);
 
 				// Write

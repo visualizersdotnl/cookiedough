@@ -24,15 +24,14 @@ namespace SFM
 	VoiceFilter WinMidi_GetCurFilter();
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
-	float WinMidi_GetFilterWetness();
+	float WinMidi_GetFilterContour();
 
 	// Feedback
 	float WinMidi_GetFeedback();
 	float WinMidi_GetFeedbackWetness();
 	float WinMidi_GetFeedbackPitch();
 
-	// Master drive & pitch bend
-	float WinMidi_GetMasterDrive();
+	// Pitch bend
 	float WinMidi_GetPitchBendRaw(); // [-1..1]
 	float WinMidi_GetPitchBend(); // [0..1]
 

@@ -100,8 +100,7 @@ namespace SFM
 
 		void Reset();
 
-		float SampleForVoice(unsigned sampleCount);
-		float SampleForFilter(unsigned sampleCount) { return 1.f; } // FIXME
+		float Sample(unsigned sampleCount);
 		
 		bool IsIdle(unsigned sampleCount) const
 		{

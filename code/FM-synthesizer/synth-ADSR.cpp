@@ -80,7 +80,7 @@ namespace SFM
 		m_output = 0.f;
 	}
 
-	float ADSR_Simple::SampleForVoice(unsigned sampleCount)
+	float ADSR_Simple::Sample(unsigned sampleCount)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 

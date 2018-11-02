@@ -46,8 +46,8 @@ namespace SFM
 		ADSR::Parameters m_voiceADSR;
 		ADSR::Parameters m_filterADSR;
 
-		// Filter wetness [0..1]
-		float m_wetness;
+		// Filter contour (ADSR influence) [0..1]
+		float m_filterContour;
 
 		// Filter parameters
 		VoiceFilter m_curFilter;
@@ -101,7 +101,7 @@ namespace SFM
 
 			// Default filter
 			m_curFilter = kTeemuFilter;
-			m_wetness = 0.f;
+			m_filterContour = 0.f;
 			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;

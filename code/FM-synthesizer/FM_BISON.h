@@ -22,11 +22,21 @@
 		- Some calculations in here are what is referred to as "bro science".
 		- The design is, not on purpose, a bit like the mini MOOG.
 
+	Today:
+		- Fix noise blend: it does not sound very pleasing at the moment
+		- Chart which parameters are relevant real-time and which only per voice (i.e. per NOTE_ON)
+		- Move oscillator selection to BeatStep
+		- Chart which paramaters activate on NOTE_ON and which ones are real-time, and:
+		  + Move them to a per-N samples update and retain the MIDI_Smoothed propery
+		- Do I need to use MIDI_Smoothed on any BeatStep parameters?
+		- Gradually move parameters to BeatStep (oscillators are a prime target; keep in mind that some you want to keep on the keyboard for fast access)
+
+	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
+
 	Priority tasks:
-		- #1 -- Selectable second carrier waveform: perhaps either the same or a cosine?
-		- #2 -- Blend in pink or white noise according to rotary
-		- Map which paramaters activate on NOTE_ON and which ones are real-time
-		- Take a good look at: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
+		- #0 -- Consider if more parameters can be moved to the BeatStep
+		- #1 -- Selectable second carrier waveform
+		- #2 -- Algorithm with at least 1 more oscillator (MOOG-style)
 		- Finish up interface and let the MIDI driver feed it
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Finish documentation as far as possible, read up on VST
@@ -110,6 +120,8 @@ namespace SFM
 
 		/*
 			Parameters.
+
+			All in [0..1] range unless stated otherwise.
 		*/
 
 		// Algorithm
@@ -130,11 +142,11 @@ namespace SFM
 		
 		// Filter
 		void SetFilterType(VoiceFilter value); 
-		void SetFilterDrive(float value);
-		void SetFilterCutoff(float value);
+		void SetFilterDrive(float value); // Linear representation of [0..1]*+6dB
+ 		void SetFilterCutoff(float value);
 		void SetFilterResonance(float value);
-		void SetFilterWetness(float value);
-
+		void SetFilterContour(float value);
+		
 		// Feedback
 		void SetFeedback(float value);
 		void SetFeedbackWetness(float value);
@@ -153,6 +165,9 @@ namespace SFM
 
 		// Tremolo
 		void SetTremolo(float value);
+
+		// Noisyness (amount of pink noise added during final mix)
+		void SetNoisyness(float value);
 
 		// One-shot 
 		void SetCarrierOneShot(bool value);

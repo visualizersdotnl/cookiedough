@@ -18,10 +18,10 @@ namespace SFM
 		to.Initialize(from.m_sampleOffs, from.m_index, from.m_frequency*freqMul, from.m_phaseShift, from.m_indexLFO.GetFrequency());
 	}
 
-	void Voice::InitializeFeedback()
+	void Voice::InitializePitchBend()
 	{
-		// Up/down 4 halftones
-		const float up = powf(2.f, 4.f/12.f);
+		// Up/down 1 semitone
+		const float up = powf(2.f, 1.f/12.f);
 		const float down = 1.f/up;
 		CopyCarrier(m_carrierA, m_carrierHi, up);
 		CopyCarrier(m_carrierA, m_carrierLo, down);
@@ -55,20 +55,20 @@ namespace SFM
 			break;
 		}
 
-		// Apply pitch bend
+		// Apply pitch bend (exponential)
 		if (pitchBend < 0.f)
 		{
 			const float delta = pitchBend+1.f;
 			const float modulation = m_modulatorLo.Sample(sampleCount, modBrightness);
 			const float low = m_carrierLo.Sample(sampleCount, modulation);
-			sample = lerpf<float>(low, sample, delta);
+			sample = lerpf<float>(low, sample, delta*delta);
 		}
 		else if (pitchBend > 0.f)
 		{
 			const float delta = pitchBend;
 			const float modulation = m_modulatorHi.Sample(sampleCount, modBrightness);
 			const float high = m_carrierHi.Sample(sampleCount, modulation);
-			sample = lerpf<float>(sample, high, pitchBend);
+			sample = lerpf<float>(sample, high, pitchBend*pitchBend);
 		}
 		
 		sample *= ADSR;

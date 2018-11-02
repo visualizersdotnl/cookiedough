@@ -1,0 +1,11 @@
+
+-- Real-time controls --
+
+- Pitch bend
+- Noisyness
+- ..
+
+-- Per-voice controls --
+
+- Master drive
+- ...
