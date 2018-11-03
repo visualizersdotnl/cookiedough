@@ -23,7 +23,7 @@ namespace SFM
 		float m_cycleLen; // In samples
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
-		float Sample(unsigned sampleCount, float modulation, float pulseWidth = 0.25f);
+		float Sample(unsigned sampleCount, float modulation, float pulseWidth);
 
 		// To implement one-shot (FIXME: maybe move to a more generic place)
 		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */

@@ -41,6 +41,7 @@ namespace SFM
 		kDigiPulse,
 		kWhiteNoise,
 		kPinkNoise,
+		kBrownishNoise,
 
 		/* Wavetable */
 		kKick808,
@@ -52,6 +53,11 @@ namespace SFM
 	SFM_INLINE bool oscIsWavetable(Waveform form)
 	{
 		return form >= kKick808 && form <= kElectricPiano;
+	}
+
+	SFM_INLINE bool oscIsProcedural(Waveform form)
+	{
+		return false == oscIsWavetable(form);
 	}
 
 	/*
@@ -154,7 +160,8 @@ namespace SFM
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
 		// PolyBLEP() doesn't like a negative phase
-		phase += kOscPeriod;
+//		phase += kOscPeriod;
+		phase = fabsf(phase);
 		SFM_ASSERT(phase >= 0.f);
 
 		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
@@ -196,30 +203,27 @@ namespace SFM
 		float value = oscDigiPulse(phase, duty);
 		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRougher);
 		value += PolyBLEP(phase, frequency*kPolyMulRougher);
-
-//		SampleAssert(value);
-
-		// This makes it sound just that little bit smoother
-		return fast_tanhf(value);
+		return value;
 	}
 
 	/*
 		Noise oscillator(s).
 	*/
 
-	SFM_INLINE float oscWhiteNoise(float phase)
+	SFM_INLINE float oscWhiteNoise()
 	{
-		return lutnoisef(phase + mt_randf()*kOscPeriod);
+		// There's a noise LUT, but this has way better distribution
+		return -1.f + 2.f*mt_randf();
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
 	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
-	SFM_INLINE float oscPinkNoise(float phase)
+	SFM_INLINE float oscPinkNoise()
 	{
-		const float white = oscWhiteNoise(phase);
+		const float white = oscWhiteNoise();
 
 		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
-		static float pink = 0.232344f;
+		static float pink = 0.f;
 
 		b0 = 0.99886f*b0 + white*0.0555179f;
 		b1 = 0.99332f*b1 + white*0.0750759f; 
@@ -232,18 +236,17 @@ namespace SFM
 
 		b6 = white*0.115926f;
 		
-		return Clamp(pink);
+		return SoftClamp(pink);
    }
 
    // Approximation at best
-   	SFM_INLINE float oscBrownNoise(float phase)
+   	SFM_INLINE float oscBrownishNoise()
 	{
-		static float value = 0.23423f;
-		float pink = oscPinkNoise(phase);
-		value = lowpassf(value, pink, 4.f);
+		static float value = 0.f;
+		const float noise = oscWhiteNoise();
+		value = lowpassf(value, noise, kGoldenRatio);
 		return value;
 	}
-
 
    /*
 		Wavetable oscillator(s)

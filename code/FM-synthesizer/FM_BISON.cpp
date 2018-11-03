@@ -128,26 +128,42 @@ namespace SFM
 
 		// Algorithm
 		voice.m_algorithm = state.m_algorithm;
-
+	
 		// Initialize carrier(s)
 		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
 		const float modRatioC = true == isWave ? 1.f : state.m_modRatioC;  // No carrier modulation if wavetable osc.
 
-		voice.m_carrierA.Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
 
-		if (Voice::kDoubleCarriers == voice.m_algorithm)
+		switch (voice.m_algorithm)
 		{
-			// Initialize a detuned second carrier by going from 1 to a perfect-fifth (gives a thicker, almost phaser-like sound)
-			const float detune = powf(3.f/2.f, (0.7f*state.m_algoTweak)/12.f);
-			voice.m_carrierB.Initialize(s_sampleCount, request.form, amplitude*dBToAmplitude(-3.f), frequency*modRatioC*detune);
+		case Voice::kSingle:
+			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
+			break;
+
+		case Voice::kDoubleCarriers:
+			{
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
+
+				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
+				const float detune = powf(2.f, (kGoldenRatio*state.m_doubleDetune)/12.f);
+				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*modRatioC*detune);
+			}
+
+			break;
+
+		case Voice::kMiniMOOG:
+			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*state.m_carrierVol[0], frequency*modRatioC);
+			voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*state.m_carrierVol[1], frequency*modRatioC);
+			voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*state.m_carrierVol[2], frequency*modRatioC);
+			break;
 		}
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
 		const float modFrequency = frequency*state.m_modRatioM;
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq*goldenTen);
 
-		// Initialize pitch bend operators
-		voice.InitializePitchBend();
+		// Initialize pitch bend operators (FIXME)
+//		voice.InitializePitchBend();
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
@@ -155,8 +171,8 @@ namespace SFM
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
 
 		// Case specific
-		voice.m_oneShot = state.m_loopWaves ?  false : oscIsWavetable(request.form);
-		voice.m_pulseWidth = state.m_pulseWidth;
+		voice.m_oneShot = state.m_loopWaves ? false : oscIsWavetable(request.form);
+		voice.m_pulseWidth = 0.05f + 0.94f*bellf(state.m_pulseWidth);
 
 		// Get & reset filter
 		switch (state.m_curFilter)
@@ -214,8 +230,9 @@ namespace SFM
 				if (true == envelope.IsIdle(s_sampleCount))
 					free = true;
 
-				// One-shot done?				
-				if (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount))
+				// One-shot done?
+				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm
+				if (Voice::kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount)))
 					free = true;
 				
 				// Free
@@ -269,7 +286,7 @@ namespace SFM
 
 		Currently there's only one of these for the Oxygen 49 + Arturia BeatStep driver.
 
-		Ideally all inputs interact on sample level, but this is impractical and only done for the pitch bend wheel.
+		Ideally all inputs interact on sample level, but this is impractical and only done for a few parameters.
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
 
@@ -278,10 +295,18 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		FM &state = s_shadowState;
 
-		// Algorithm
-		state.m_algorithm = (Voice::Algorithm) WinMidi_GetAlgorithm();
+		// Algorithm (1, 2 & 3)
+		state.m_algorithm = (Voice::Algo) WinMidi_GetAlgorithm();
 		SFM_ASSERT(state.m_algorithm < Voice::kNumAlgorithms);
-		state.m_algoTweak = WinMidi_GetAlgoTweak();
+		
+		// For algorithm #2
+		state.m_doubleDetune = WinMidi_GetDoubleDetune();
+		state.m_doubleVolume = WinMidi_GetDoubleVolume();
+
+		// For algorithm #3
+		state.m_carrierVol[0] = WinMidi_GetCarrierVolume1();
+		state.m_carrierVol[1] = WinMidi_GetCarrierVolume2();
+		state.m_carrierVol[2] = WinMidi_GetCarrierVolume3();
 
 		// Drive
 		state.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
@@ -310,7 +335,7 @@ namespace SFM
 		state.m_loopWaves = WinMidi_GetLoopWaves();
 
 		// Pulse osc. width
-		state.m_pulseWidth = kPulseWidths[WinMidi_GetPulseWidth()]; // FIXME: assert!
+		state.m_pulseWidth = WinMidi_GetPulseWidth();
 
 		// Voice ADSR	
 		state.m_voiceADSR.attack  = WinMidi_GetAttack();
@@ -334,7 +359,7 @@ namespace SFM
 		// Feedback parameters
 		state.m_feedback = WinMidi_GetFeedback();
 		state.m_feedbackWetness = WinMidi_GetFeedbackWetness();
-		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f; // FIXE: parameter domain
+		state.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f; // FIXME: move bias elsewhere
 	}
 
 	/*
@@ -408,6 +433,9 @@ namespace SFM
 			{
 				Voice &voice = voices[iVoice];
 				ADSR &voiceADSR = s_ADSRs[iVoice];
+	
+				// Pick single volume for algorithm #2, and 3 of them for the MiniMOOG algorithm
+				const float *pVol = (Voice::kDoubleCarriers == voice.m_algorithm) ? &state.m_doubleVolume : state.m_carrierVol;
 
 				if (true == voice.m_enabled)
 				{
@@ -419,20 +447,17 @@ namespace SFM
 
 						// Probed at this level for accuracy
 						const float pitchBend = 2.f*(WinMidi_GetPitchBendRaw()-0.5f);
-						const float noisyness = WinMidi_GetNoisyness()*0.1f*kGoldenRatio;
+						const float noisyness = WinMidi_GetNoisyness();
 
-						float sample = voice.Sample(sampleCount, pitchBend, state.m_modBrightness, voiceADSR);
-						
-						// FIXME
-						sample += sample*oscBrownNoise(time)*noisyness;
-						
+						const float sample = voice.Sample(sampleCount, state.m_modBrightness, voiceADSR, noisyness, pVol);
 						buffer[iSample] = sample;
 					}
 
+					// Filter voice
 					voice.m_pFilter->SetLiveParameters(state.m_filterParams);
 					voice.m_pFilter->Apply(buffer, numSamples, state.m_filterContour, s_sampleCount);
 
-					++curVoice; // Do *not* use for anything other than temporary buffers
+					++curVoice; // Do *not* use to index anything other than the temporary buffers
 				}
 			}
 
@@ -456,12 +481,9 @@ namespace SFM
 				// Process delay
 				ProcessDelay(state, mix);
 
-				// Apply drive, add noise & soft clamp
-				const float noise = oscPinkNoise(time);
-				// Probed at this level for accuracy
-				const float noiseAmount = WinMidi_GetNoisyness()*0.1314f;
-
-				mix = SoftClamp(mix*state.m_drive + mix*noise*noiseAmount);
+				// Apply master drive and clamp one last time
+				mix = SoftClamp(mix*state.m_drive);
+				
 				SampleAssert(mix);
 
 				// Write

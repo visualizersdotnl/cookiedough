@@ -47,7 +47,7 @@ namespace SFM
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
-
+	
 		// Convert modulation to LUT period
 		modulation *= kRadToOscLUT;
 
@@ -62,14 +62,11 @@ namespace SFM
 			break;
 
 		case kPolySaw:
-//			signal = oscSoftSaw(phase+modulation, m_numHarmonics);
 			signal = oscPolySaw(phase+modulation, m_frequency);
 			break;
 
-		// FIXME
-		case kPolySquare:
+		case kSoftSquare:
 			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
-//			signal = oscPolySquare(phase+modulation, m_frequency);
 			break;
 
 		case kPolyPulse:
@@ -80,8 +77,8 @@ namespace SFM
 			signal = oscDigiTriangle(phase+modulation);
 			break;
 
-		case kPinkNoise:
-			signal = oscPinkNoise(phase+modulation);
+		case kWhiteNoise:
+			signal = oscWhiteNoise();
 			break;
 
 		// No FM for wavetable carriers
@@ -103,7 +100,12 @@ namespace SFM
 		}
 
 		signal *= m_amplitude;
-		SampleAssert(signal);
+	
+		// This is potentially OK to go beyond, we're mixing amd clamping down the line anyway
+//		SampleAssert(signal);
+
+		// So, we do:
+		SFM_ASSERT(true == FloatCheck(signal));
 
 		return signal;
 	}

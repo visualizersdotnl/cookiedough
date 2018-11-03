@@ -27,4 +27,19 @@ namespace SFM
 	float WinMidi_GetFilterAttack();
 	float WinMidi_GetFilterDecay();
 	float WinMidi_GetFilterSustain();
+
+	// Carrier oscillator
+	Waveform WinMidi_GetCarrierOscillator();
+	float WinMidi_GetPulseWidth();
+
+	// Algorithm #2
+	float WinMidi_GetDoubleDetune();
+	float WinMidi_GetDoubleVolume();
+
+	// Algorithm #3
+	float WinMidi_GetCarrierVolume1();
+	float WinMidi_GetCarrierVolume2();
+	float WinMidi_GetCarrierVolume3();
+	Waveform WinMidi_GetCarrierOscillator2();
+	Waveform WinMidi_GetCarrierOscillator3();
 }

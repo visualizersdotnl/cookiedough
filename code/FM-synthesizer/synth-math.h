@@ -75,4 +75,11 @@ namespace SFM
 
 	// GLSL frac()
 	SFM_INLINE float fracf(float value) { return value - std::truncf(value); }
+
+	// Bell curve approx.
+	SFM_INLINE float bellf(float value)
+	{
+		const float sine = sinf(value*kHalfPI);
+		return (sine*sine);
+	}
 }

@@ -20,10 +20,16 @@ namespace SFM
 		Voice m_voices[kMaxVoices];
 		unsigned m_active;
 
-		// Algorithm
-		Voice::Algorithm m_algorithm;
-		float m_algoTweak;
+		// Algorithms
+		Voice::Algo m_algorithm;
 
+		// #2
+		float m_doubleDetune;
+		float m_doubleVolume;
+
+		// #3 (oscillator 2 & 3 forms are pulled in place)
+		float m_carrierVol[3];
+		
 		// Master drive [0..N]
 		float m_drive;
 
@@ -65,9 +71,17 @@ namespace SFM
 
 			m_active = 0;
 
-			// Simple algorithm
-			m_algorithm = Voice::kSingle;
-			m_algoTweak = 0.f;
+			// Single carrier algorithm, zero out other parameters
+			m_algorithm = Voice::Algo::kSingle;
+
+			// Algo #2
+			m_doubleDetune = 0.f;
+			m_doubleVolume = 0.f;
+
+			// Algo #3
+			m_carrierVol[0] = 1.f;
+			m_carrierVol[1] = 0.f;
+			m_carrierVol[2] = 0.f;
 
 			// Neutral
 			m_drive = 1.f;
@@ -85,8 +99,8 @@ namespace SFM
 			// Don't loop waves
 			m_loopWaves = false;
 
-			// Smallest pulse width
-			m_pulseWidth = kPulseWidths[0];
+			// Default pulse width
+			m_pulseWidth = kPI*0.1f;
 
 			// Default ADSR envelopes
 			m_voiceADSR.attack  = kSampleRate/8;

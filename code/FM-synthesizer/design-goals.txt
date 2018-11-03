@@ -1,28 +1,6 @@
 
-FM. BISON synthesizer design.
+For 0.3:
 
-Features for version 0.1:
-
-[X] - 1 hardcoded tone (patch).
-[X] - Polyphony of 8; no voice stealing.
-[X] - 1 global ADSR which modulates amplitude.
-[X] - 1 simple filter for low-pass cutoff and resonance.
-[X] - Controls for: filter, master drive, modulation, oscillator type & ADSR.
-
-Features for 0.2:
-
-[X] - More elaborate filter (MOOG) plus wet<->dry mix.
-[X] - Actual modulation ratios (C:M).
-[X] - Better tweaked parameters.
-[X] - Modulator brightness.
-[X] - Swap pink-ish noise for 808 kick drum.
-[X] - 808 snare.
-
-Features for 0.3:
+- VST.
 - Voice stealing.
-- VST-ready.
-[X] - Feedback effect.
-[X] - Pitch bend.
-[X] - A lot more! ;)
-[/] - User manual (interface documentation).
- - See main header.
+- Slight optimization or tone down the number of filters.

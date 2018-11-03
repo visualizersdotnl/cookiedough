@@ -13,7 +13,6 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- ADSR implementation by Nigel Redmon of earlevel.com
-		- juce_LinearSmoothedValues.h taken from the Juce library by ROLI Ltd. (only used for test MIDI driver)
 
 	Notes:
 		- Code was written directly with firmware in mind, but later on as I found out that this project involved so much new
@@ -21,32 +20,23 @@
 		  what I'm doing which has led to some wonky design decisions. Nevertheless I will finish this project.
 		- Some calculations in here are what is referred to as "bro science".
 		- The design is, not on purpose, a bit like the mini MOOG.
-
-	Today:
-		- Fix noise blend: it does not sound very pleasing at the moment (search for MOOG exmaples)
-		- Move oscillator selection to BeatStep
-		- Move all parameters that are not boolean or enumerated or per-voice to MIDI_Smoothed (probably a lot will go then)
-		- Chart which parameters are relevant real-time and which only per voice (i.e. per NOTE_ON)
-		- Chart which paramaters activate on NOTE_ON and which ones are real-time, and:
-		  + Move them to a per-N samples update and retain the MIDI_Smoothed propery
-		- Gradually move parameters to BeatStep (oscillators are a prime target; keep in mind that some you want to keep on the keyboard for fast access)
+		- No optimization as of yet, not at all.
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Priority tasks:
-		- #0 -- Consider if more parameters can be moved to the BeatStep
-		- #1 -- Selectable second carrier waveform
-		- #2 -- Algorithm with at least 1 more oscillator (MOOG-style)
+		- Update parameters multiple times per render cycle?
+		- Reinstate pitch bend
+		- Figure out if MIDI parameters need smoothing at all
 		- Finish up interface and let the MIDI driver feed it
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Finish documentation as far as possible, read up on VST
 
 	Plumbing:
 		- Flush ring buffer using two memcpy() calls
-		- Encapsulate the core in a class so there can be instances
 		- Review mutex & atomic use
+		- Encapsulate the core in a class so there can be instances
 		- Normalize wavetables
-		- Find more values that'd make sensible parameters
 		- Move project to it's own repository (go for VST directly)
 		- Always keep looking (and placing assertions) to trap floating point bugs
 		- Consider voice lists
@@ -55,18 +45,16 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
-		- Arp.
 		- Sample & hold
-		- Panning (stereo imitation)
 		- Better wavetable sampling
 		- Real variable delay line
 		- Profiling & optimization
 
 	Known issues:
-		- Fix: filters clip when stopped short (like Frank Costanza does it)
+		- Filters clip when stopped short (like Frank Costanza does it)
 		- MIDI pots crackle a bit (not important for intended target)
 		- Numerical instability
-		- Crackle when bottlenecked
+		- Crackle when bottlenecked (should not be the case in production phase)
 
 	Lesson(s) learned:
 		- Now that I know way more, I should sit down and think of a better design for next time; this has been a proper schooling
@@ -122,11 +110,12 @@ namespace SFM
 			Parameters.
 
 			All in [0..1] range unless stated otherwise.
+			FIXME: update (keep in mind that at this moment some values are pulled directly from the MIDI drivers)
 		*/
 
 		// Algorithm
-		void SetAlgorithm(Voice::Algorithm algorithm);
-		void SetAlgoTweak(float value);
+		void SetAlgorithm(Voice::Algo algorithm);
+		// FIXME: ...
 
 		// Master drive
 		void SetMasterDrive(float drive);

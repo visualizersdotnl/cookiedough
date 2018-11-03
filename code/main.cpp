@@ -175,8 +175,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	CalculateCosLUT();
 
 	// set simplest rounding mode, since we do a fair bit of ftol()
-	_controlfp(_MCW_RC, _RC_CHOP);
-
+	if (false == kTestBedForFM)
+		_controlfp(_MCW_RC, _RC_CHOP);
+		
 	bool utilInit = true;
 
 	utilInit &= Image_Create();
@@ -217,7 +218,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					static float prevLoudest = 0.f;
 					float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
 					if (loudest == 0.f) loudest = prevLoudest;
-					prevLoudest = lowpassf(prevLoudest, loudest, 0.3f);
+					prevLoudest = lowpassf(prevLoudest, loudest, 4.f);
 
 					unsigned length = 1+unsigned(loudest*1279.f);
 

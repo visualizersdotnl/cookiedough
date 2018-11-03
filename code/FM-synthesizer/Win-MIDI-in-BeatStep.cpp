@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the Arturia BeatStep; an addition to the Oxygen 49.
+
+	** This is not production quality code, it's just for my home setup. **
 */
 
 #include "synth-global.h"
@@ -36,17 +38,53 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotMasterDrive = 7;   // Level/Rate (big rotary)
-	const unsigned kPotNoisyness = 17;    // 
-	const unsigned kPotFilterDrive = 114; // Set 3, R9
-	const unsigned kPotFilterA = 10;      // Set 1, R1
-	const unsigned kPotFilterD = 74;      // Set 1, R2
-	const unsigned kPotFilterS = 71;      // Set 1, R3
-	static float s_masterDrive = 0.f;
-	static MIDI_Smoothed s_filterDrive;
-	static float s_noisyness = 0.f;
-	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f;
+	const unsigned kPotMasterDrive = 7;        // Level/Rate (big rotary)
+	const unsigned kPotNoisyness = 17;         // Set 4, B13
+	const unsigned kPotPulseWidth = 91;        // Set 4, B14
+	const unsigned kPotFilterDrive = 114;      // Set 3, B9
+	const unsigned kPotFilterA = 10;           // Set 1, B1
+	const unsigned kPotFilterD = 74;           // Set 1, B2
+	const unsigned kPotFilterS = 71;           // Set 1, B3
+	const unsigned kPotDoubleDetune = 72;      // Set 4, B16
+	const unsigned kPotDoubleVolume = 79;      // Set 4, B15
+	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, B5
+	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, B6
+	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, B8
 
+	static float s_masterDrive = 0.f;
+	static float s_filterDrive;
+	static float s_noisyness = 0.f;
+	static float s_pulseWidth = 0.f;
+	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f;
+	static float s_doubleDetune = 0.f;
+	static float s_doubleVolume = 0.f;
+	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
+
+	// Button mapping
+
+	// Procedural
+	const unsigned kButtonOscSine = 44;           // Button 1
+	const unsigned kButtonOscTriangle = 45;       // Button 2
+	const unsigned kButtonOscAnalogueSaw = 46;    // Button 3
+	const unsigned kButtonOscAnalogueSquare = 47; // Button 4
+	const unsigned kButtonOscPulse = 48;          // Button 5
+	const unsigned kButtonOscNoise = 49;          // Button 6
+	const unsigned kButtonOsc2_Sin = 50;          // Button 7
+	const unsigned kButtonOsc2_Saw = 42;          // Button 15
+	const unsigned kButtonOsc3_Pulse = 51;        // Button 8
+	const unsigned kButtonOsc3_Square = 43;       // Button 16
+
+	// Wavetable
+	const unsigned kButtonOscPiano = 36;    // Button 9
+	const unsigned kButtonOsc808Kick = 37;; // Button 10
+	const unsigned kButtonOsc808Snare = 38; // Button 11
+	const unsigned kButtonOscGuitar = 39;   // Button 12
+
+	// Oscillators (defaults by hardware layout)
+	static Waveform s_waveform = kSine;
+	static Waveform s_waveformOsc2 = kSine;
+	static Waveform s_waveformOsc3 = kPolyPulse;
+	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
 		UINT wMsg,
@@ -66,6 +104,7 @@ namespace SFM
 				unsigned channel = MsgChan(dwParam1);
 				unsigned controlIdx = MsgParam1(dwParam1);
 				unsigned controlVal = MsgParam2(dwParam1);
+				const float fControlVal = controlVal/127.f;
 
 #ifdef DUMP_MIDI_EVENTS
 				// Dumps incoming events, very useful
@@ -80,33 +119,119 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
+					/* Algorithm #3 */
+
+					case kPot_MOOG_CarrierVol1:
+						s_mCarrierVol1 = fControlVal;
+						break;
+
+					case kPot_MOOG_CarrierVol2:
+						s_mCarrierVol2 = fControlVal;
+						break;
+
+					case kPot_MOOG_CarrierVol3:
+						s_mCarrierVol3 = fControlVal;
+						break;
+
+					case kButtonOsc2_Sin:
+						s_waveformOsc2 = kSine;
+						break;
+
+					case kButtonOsc2_Saw:
+						s_waveformOsc2 = kPolySaw;
+						break;
+
+					case kButtonOsc3_Pulse:
+						s_waveformOsc3 = kPolyPulse;
+						break;
+
+					case kButtonOsc3_Square:
+						s_waveformOsc3 = kSoftSquare;
+						break;
+
+					/* Algorithm #2 */
+
+					case kPotDoubleDetune:
+						s_doubleDetune = fControlVal;
+						break;
+
+					case kPotDoubleVolume:
+						s_doubleVolume = fControlVal;
+						break;
+
 					/*  Master drive (voice volume) */
 
 					case kPotMasterDrive:
-						s_masterDrive = controlVal/127.f;
+						s_masterDrive = fControlVal;
 						break;
 
 					/* Noisyness */
 
 					case kPotNoisyness:
-						s_noisyness = controlVal/127.f;
+						s_noisyness = fControlVal;
 
 					/* Filter */
 
 					case kPotFilterDrive:
-						s_filterDrive.Set(controlVal);
+						s_filterDrive = fControlVal;
 						break;
 					
 					case kPotFilterA:
-						s_filterA = controlVal/127.f;
+						s_filterA = fControlVal;
 						break;
 
 					case kPotFilterD:
-						s_filterD = controlVal/127.f;
+						s_filterD = fControlVal;
 						break;
 
 					case kPotFilterS:
-						s_filterS = controlVal/127.f;
+						s_filterS = fControlVal;
+						break;
+
+					/* Oscillators */
+
+					case kPotPulseWidth:
+						s_pulseWidth = fControlVal;
+						break;
+
+					case kButtonOscSine:
+						s_waveform = kSine;
+						break;
+
+					case kButtonOscTriangle:
+						s_waveform = kDigiTriangle;
+						break;
+
+					case kButtonOscAnalogueSaw:
+						s_waveform = kPolySaw;
+						break;
+
+					case kButtonOscAnalogueSquare:
+						s_waveform = kSoftSquare;
+						break;
+
+					case kButtonOscPulse:
+						s_waveform = kPolyPulse;
+						break;
+
+					case kButtonOscNoise:
+						s_waveform = kWhiteNoise;
+						break;
+
+					case kButtonOscPiano:
+						s_waveform = kElectricPiano;
+						break;
+
+					case kButtonOsc808Kick:
+						s_waveform = kKick808;
+						break;
+
+					case kButtonOsc808Snare:
+						s_waveform = kSnare808;
+						break;
+
+					case kButtonOscGuitar:
+						s_waveform = kGuitar;
 						break;
 
 					default:
@@ -118,7 +243,7 @@ namespace SFM
 			}
 
 		case MIM_LONGDATA:
-			// FIXE: implement!
+			// FIXE: implement?
 			Log("BeatStep MIDI: implement MIM_LONGDATA!");
 			break;
 
@@ -224,8 +349,23 @@ namespace SFM
 	float WinMidi_GetNoisyness()      { return s_noisyness; }
 
 	// Filter
-	float WinMidi_GetFilterDrive()    { return s_filterDrive.Get(); }
-	float WinMidi_GetFilterAttack()   { return s_filterA;           }
-	float WinMidi_GetFilterDecay()    { return s_filterD;           }
-	float WinMidi_GetFilterSustain()  { return s_filterS;           } 
+	float WinMidi_GetFilterDrive()    { return s_filterDrive;   }
+	float WinMidi_GetFilterAttack()   { return s_filterA;       }
+	float WinMidi_GetFilterDecay()    { return s_filterD;       }
+	float WinMidi_GetFilterSustain()  { return s_filterS;       }
+
+	// Oscillators
+	Waveform WinMidi_GetCarrierOscillator() { return s_waveform;   }
+	float    WinMidi_GetPulseWidth()        { return s_pulseWidth; }
+
+	// Algorithm #2
+	float WinMidi_GetDoubleDetune() { return s_doubleDetune; }
+	float WinMidi_GetDoubleVolume() { return s_doubleVolume; }
+
+	// Algorithm #3
+	float WinMidi_GetCarrierVolume1()        { return s_mCarrierVol1; }
+	float WinMidi_GetCarrierVolume2()        { return s_mCarrierVol2; }
+	float WinMidi_GetCarrierVolume3()        { return s_mCarrierVol3; }
+	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2; }
+	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3; }
 }

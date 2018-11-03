@@ -1,11 +1,18 @@
 
--- Real-time controls --
-
-- Pitch bend
+- Pitch bend (out of order since 03/11/2018)
 - Noisyness
-- ..
-
--- Per-voice controls --
-
+- Filter cutoff, resonance & contour
+- Algorithm select: single carrier, detuned carriers, MiniMOOG 3 carrier design
 - Master drive
-- ...
+- Feedback pitch
+- FM coarse control
+- FM brightness
+- FM vibrato
+- Voice ADSR
+- Filter ADS
+- Filter drive
+- Pulse oscillator width
+- Modulation depth
+- Filters: Teemu, Improved MOOG, clean (tame)
+- One-shot for wavetable oscillators
+- Oscillator selection (full range for first, limited range for second and third which only oscillate in MiniMOOG-mode)

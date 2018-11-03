@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "3rdparty/juce_LinearSmoothedValue.h"
-
 namespace SFM
 {
 	// Lookup table to translate any MIDI key to a frequency (see implementation for base)
@@ -44,34 +42,5 @@ namespace SFM
 		MIDI_SYSTEM_RESET = 0xff,
 		/* Meta event - for MIDI files only */
 		MIDI_META_EVENT = 0xff
-	};
-
-	// For output range [0..1]
-	class MIDI_Smoothed
-	{
-	public:
-		MIDI_Smoothed(float value = 0.f, unsigned range = 127, float ramp = 0.025f /* Works OK-ish for pots on Oxygen 49 */) :
-			m_range(range)
-,			m_value(value)
-		{
-			m_value.reset(kSampleRate, ramp);
-		}
-
-	private:
-		const unsigned m_range;
-		juce::LinearSmoothedValue<float> m_value;
-
-	public:
-		void Set(unsigned iValue)
-		{
-			const float value = float(iValue)/m_range;
-			m_value.setValue(value);
-		}
-
-		float Get() /* const */
-		{
-			// return Clamp(m_value.getNextValue());
-			return m_value.getTargetValue();
-		}
 	};
 }

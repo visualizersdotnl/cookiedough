@@ -2,14 +2,17 @@
 /*
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
 
-	** This is not production quality code, it's just for my home rig. **
+	** This is not production quality code, it's just for my home setup. **
 
 	- Keep it in P01 for this mapping to work (or adjust if it doesn't, I often screw around here).
 	- Use the octave button to fiddle around the gamut.
 */
 
 #include "synth-global.h"
+
 #include "Win-MIDI-in-Oxygen49.h"
+#include "Win-MIDI-in-BeatStep.h"
+
 #include "synth-midi.h"
 #include "FM_BISON.h"
 #include "synth-voice.h"
@@ -43,19 +46,17 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotCutoff = 22;            // C11
 	const unsigned kPotResonance = 23;         // C12
-	const unsigned kPotFilterContour = 61;      // C10
-	const unsigned kPotUnused1 = 24;           // C13
-	const unsigned kPotUnused2 = 26;           // C14
-	const unsigned kPotAlgoTweak = 95;         // C17
+	const unsigned kPotFilterContour = 61;     // C10
+	const unsigned kPotUnused1 = 95;           // C17
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
-	static MIDI_Smoothed s_cutoff, s_resonance, s_filterContour;
-	static MIDI_Smoothed s_feedback, s_feedbackWetness;
-	static MIDI_Smoothed s_algoTweak;
+
+	static float s_cutoff = 0.f, s_resonance = 0.f, s_filterContour = 0.f;
+	static float s_feedback = 0.f, s_feedbackWetness = 0.f;
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
-	static MIDI_Smoothed s_modIndex;
+	static float s_modIndex = 0.f;
 
 	// Fader mapping
 	const unsigned kFaderA = 20; // C1
@@ -67,6 +68,7 @@ namespace SFM
 	const unsigned kFaderTremolo = 25;        // C5
 	const unsigned kFaderModLFOFreq = 73;     // C6
 	const unsigned kFaderModBrightness = 74;  // C7
+
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 	static float s_modRatio = 0.f;
 	static float s_feedbackPitch = 0.f;
@@ -79,17 +81,13 @@ namespace SFM
 	const unsigned kButtonLoopWaves = 113;           // C27
 	const unsigned kButtonAlgoSingle = 96;           // C18
 	const unsigned kButtonAlgoDoubleCarriers = 97;   // C19
-	const unsigned kButtonPulseCarrier = 104;        // C26
-	const unsigned kButtonPulseWidthToggle = 103;    // C25
-	const unsigned kButtonNoiseCarrier = 102;        // C24
+	const unsigned kButtonAlgoMiniMOOG = 98;         // C20
+
 	static VoiceFilter s_curFilter = kTeemuFilter;
 	static int s_loopWaves = 0;
-	static unsigned s_pulseWidth = 0;
-	static Voice::Algorithm s_algorithm = Voice::kSingle;
+	static Voice::Algo s_algorithm = Voice::kSingle;
 
-	static Waveform s_waveform = kSine;
-
-	// Percussion channel indices (used to select carrier waveform)
+	// Percussion channel indices (FIXME: unused)
 	const unsigned kPerc1 = 36;
 	const unsigned kPerc2 = 38;
 	const unsigned kPerc3 = 42;
@@ -99,9 +97,8 @@ namespace SFM
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
 
-	// Pitch bend (14-bit signed, wheel rests in the middle, little longer ramp time)
-	static MIDI_Smoothed s_pitchBendS(0.5f, 16383);
-	static float s_pitchBend;
+	// Pitch bend (14-bit signed, wheel rests in the middle)
+	static float s_pitchBend = 0.5f;
 
 	static unsigned s_voices[127];
 
@@ -124,6 +121,7 @@ namespace SFM
 				unsigned channel = MsgChan(dwParam1);
 				unsigned controlIdx = MsgParam1(dwParam1);
 				unsigned controlVal = MsgParam2(dwParam1);
+				const float fControlVal = controlVal/127.f;
 
 #ifdef DUMP_MIDI_EVENTS
 				// Dumps incoming events, very useful
@@ -134,47 +132,6 @@ namespace SFM
 
 				if (CHANNEL_PERCUSSION == channel)
 				{
-					/* Carrier waveforms (note: not all currently mapped on these buttons, I ran out */
-
-					switch (controlIdx)
-					{
-					case kPerc1:
-						s_waveform = kSine;
-						break;
-
-					case kPerc2:
-						s_waveform = kPolySaw;
-						break;
-
-					case kPerc3:
-						s_waveform = kPolySquare;
-						break;
-
-					case kPerc4:
-						s_waveform = kGuitar;
-						break;
-
-					case kPerc5:
-						s_waveform = kElectricPiano;
-						break;
-
-					case kPerc6:
-						s_waveform = kDigiTriangle;
-						break;
-
-					case kPerc7:
-						s_waveform = kKick808;
-						break;
-
-					case kPerc8:
-						s_waveform = kSnare808;
-						break;
-
-					default:
-						s_waveform = kSine;
-						break;
-					}
-
 					return;
 				}
 
@@ -184,85 +141,63 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
-						/* Carrier waveforms */
-
-						case kButtonPulseCarrier:
-							if (127 == controlVal) s_waveform = kPolyPulse;
-							break;
-
-						case kButtonNoiseCarrier:
-							if (127 == controlVal) s_waveform = kPinkNoise;
-							break;
-
-						case kButtonPulseWidthToggle:
-							if (127 == controlVal) s_pulseWidth = ++s_pulseWidth % 3;
-							break;
-
-						case kButtonLoopWaves:
-							if (127 == controlVal) s_loopWaves ^= 1;
-							break;
-
 						/* FM */
 
 						case kModIndex:
-							s_modIndex.Set(controlVal);
+							s_modIndex = fControlVal;
 							break;
 
 						case kFaderModRatio:
-							s_modRatio = controlVal/127.f;
+							s_modRatio = fControlVal;
 							break;
 
 						case kFaderModLFOFreq:
-							s_modLFOFreq = controlVal/127.f;
+							s_modLFOFreq = fControlVal;
 							break;
 
 						case kFaderModBrightness:
-							s_modBrightness = controlVal/127.f;
+							s_modBrightness = fControlVal;
 							break;
 
 						/* ADSR */
 
 						case kFaderA:
-							s_A = controlVal/127.f;
+							s_A = fControlVal;
 							break;
 
 						case kFaderD:
-							s_D= controlVal/127.f;
+							s_D= fControlVal;
 							break;
 
 						case kFaderS:
-							s_S= controlVal/127.f;
+							s_S= fControlVal;
 							break;
 
 						case kFaderR:
-							s_R = controlVal/127.f;
+							s_R = fControlVal;
 							break;
 
 						/* Feedback */
 
 						case kFaderFeedbackPitch:
-							s_feedbackPitch = controlVal/127.f;
+							s_feedbackPitch = fControlVal;
 							break;
 
 						case kPotFeedback:
-							s_feedback.Set(controlVal);
+							s_feedback = fControlVal;
 							break;
 
 						case kPotFeedbackWetness:
-							s_feedbackWetness.Set(controlVal);
+							s_feedbackWetness = fControlVal;
 							break;
 
 						/* Tremolo */
 
 						case kFaderTremolo:
-							s_tremolo = controlVal/127.f;
+							s_tremolo = fControlVal;
 							break;
 						
-						/* Algorithm */
-
-						case kPotAlgoTweak:
-							s_algoTweak.Set(controlVal);
-							break;
+						/* Algorithm select */
 
 						case kButtonAlgoSingle:
 							if (127 == controlVal) s_algorithm = Voice::kSingle;
@@ -272,6 +207,10 @@ namespace SFM
 							if (127 == controlVal) s_algorithm = Voice::kDoubleCarriers;
 							break;
 
+						case kButtonAlgoMiniMOOG:
+							if (127 == controlVal) s_algorithm = Voice::kMiniMOOG;
+							break;
+
 						/* Filter */
 
 						case kButtonFilterSwitch:
@@ -279,17 +218,23 @@ namespace SFM
 							break;
 
 						case kPotCutoff:
-							s_cutoff.Set(controlVal);
+							s_cutoff = fControlVal;
 							break;
 
 						case kPotResonance:
-							s_resonance.Set(controlVal);
+							s_resonance = fControlVal;
 							break;
 
 						case kPotFilterContour:
-							s_filterContour.Set(controlVal);
+							s_filterContour = fControlVal;
 							break;
 
+						/* One-shot */
+
+						case kButtonLoopWaves:
+							if (127 == controlVal) s_loopWaves ^= 1;
+							break;
+						
 						default:
 							break;
 						}
@@ -300,7 +245,6 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-						s_pitchBendS.Set(bend);
 						s_pitchBend = float(bend)/8192.f - 1.f;
 						break;
 					}
@@ -308,9 +252,10 @@ namespace SFM
 				case NOTE_ON:
 					{
 						if (-1 == s_voices[controlIdx])
-							TriggerVoice(s_voices+controlIdx, s_waveform, g_midiToFreqLUT[controlIdx], controlVal/127.f);
+							TriggerVoice(s_voices+controlIdx, WinMidi_GetCarrierOscillator(), g_midiToFreqLUT[controlIdx], controlVal/127.f);
 						else
-							Log("NOTE_ON could not be triggered due to latency."); // FIXME: bad situation
+							// Only happens when CPU-bound past the limit
+							Log("NOTE_ON could not be triggered due to latency.");
 
 						break;
 					}
@@ -332,7 +277,7 @@ namespace SFM
 			}
 
 		case MIM_LONGDATA:
-			// FIXE: implement!
+			// FIXE: implement?
 			Log("Oxy49 MIDI: implement MIM_LONGDATA!");
 			break;
 
@@ -435,32 +380,27 @@ namespace SFM
 	*/
 
 	// Filter
-	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;            }
-	float WinMidi_GetFilterCutoff()    { return s_cutoff.Get();         }
-	float WinMidi_GetFilterResonance() { return s_resonance.Get();      }
-	float WinMidi_GetFilterContour()   { return s_filterContour.Get();  }
+	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;      }
+	float WinMidi_GetFilterCutoff()    { return s_cutoff;         }
+	float WinMidi_GetFilterResonance() { return s_resonance;      }
+	float WinMidi_GetFilterContour()   { return s_filterContour;  }
 
 	// Feedback
-	float WinMidi_GetFeedback()         { return s_feedback.Get();        }
-	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness.Get(); }
-	float WinMidi_GetFeedbackPitch()    { return s_feedbackPitch;         }
+	float WinMidi_GetFeedback()         { return s_feedback;         }
+	float WinMidi_GetFeedbackWetness()  { return s_feedbackWetness;  }
+	float WinMidi_GetFeedbackPitch()    { return s_feedbackPitch;    }
 
 	// Pitch bend
-	float WinMidi_GetPitchBend()   
-	{ 
-		return s_pitchBendS.Get(); 
-	}
-
 	float WinMidi_GetPitchBendRaw()   
 	{ 
 		return s_pitchBend;
 	}
 
 	// Modulation main
-	float WinMidi_GetModulationIndex()        { return s_modIndex.Get();  }
-	float WinMidi_GetModulationRatio()        { return s_modRatio;        }
-	float WinMidi_GetModulationBrightness()   { return s_modBrightness;   }
-	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;      }
+	float WinMidi_GetModulationIndex()        { return s_modIndex;      }
+	float WinMidi_GetModulationRatio()        { return s_modRatio;      }
+	float WinMidi_GetModulationBrightness()   { return s_modBrightness; }
+	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;    }
 
 	// Master ADSR
 	float WinMidi_GetAttack()          { return s_A; }
@@ -480,14 +420,6 @@ namespace SFM
 		return 0 != s_loopWaves;
 	}
 
-	// Algorithm
-	Voice::Algorithm WinMidi_GetAlgorithm() { return s_algorithm;       }
-	float WinMidi_GetAlgoTweak()            { return s_algoTweak.Get(); }
-
-	// Pulse osc. width
-	unsigned WinMidi_GetPulseWidth()
-	{
-		SFM_ASSERT(s_pulseWidth < 3);
-		return s_pulseWidth;
-	}
+	// Algorithm select
+	Voice::Algo WinMidi_GetAlgorithm() { return s_algorithm; }
 }

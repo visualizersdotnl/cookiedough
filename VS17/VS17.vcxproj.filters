@@ -333,9 +333,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h">
       <Filter>/code\/FM-synthesizer\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\3rdparty\juce_LinearSmoothedValue.h">
-      <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
     </ClInclude>

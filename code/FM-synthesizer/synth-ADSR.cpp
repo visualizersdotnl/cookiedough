@@ -18,14 +18,15 @@ namespace SFM
 		const float attackScale  = 1.f + 0.25f*velocity;
 		const float releaseScale = 1.f + 2.f*velocity;
 		
-		const float attack  = 4.f + truncf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = 4.f + truncf(parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/500.f /* 2ms. min */, truncf(releaseScale*parameters.release*kSampleRate)); // Velocity decides not only volume but also release
+		const float attack  = truncf(attackScale*parameters.attack*kSampleRate);
+		const float decay   = truncf(parameters.decay*kSampleRate);
+		const float release = std::max<float>(kSampleRate/500.f /* 2ms min. */, truncf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
 		// Harder touch, less linear
-		const float invVel = 1.314f-velocity;
-		m_ADSR.setTargetRatioA(invVel);
+		const float invVel = 1.f-velocity;
+		const float goldenOffs = kGoldenRatio*0.1f;
+		m_ADSR.setTargetRatioA(goldenOffs + invVel);
 		m_ADSR.setTargetRatioDR(invVel);
 
 		m_ADSR.setAttackRate(attack);

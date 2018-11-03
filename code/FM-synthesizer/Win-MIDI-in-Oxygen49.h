@@ -3,7 +3,7 @@
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
 
 	- For time being this serves as the physical interface driver.
-	- All values are within [0..1] range; rotaries and faders are interpolated.
+	- All values are within [0..1] range unless clearly stated otherwise.
 	- It should be pretty straightforward to modify the implementation to fit another instrument.
 */
 
@@ -53,10 +53,6 @@ namespace SFM
 	// Loop wavetable samples on/off
 	bool WinMidi_GetLoopWaves();
 
-	// Algorithm
-	Voice::Algorithm WinMidi_GetAlgorithm();
-	float WinMidi_GetAlgoTweak();
-
-	// Pulse osc. width
-	unsigned WinMidi_GetPulseWidth();
+	// Algorithm select
+	Voice::Algo WinMidi_GetAlgorithm();
 }
