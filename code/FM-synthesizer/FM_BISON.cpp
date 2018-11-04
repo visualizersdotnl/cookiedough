@@ -172,7 +172,7 @@ namespace SFM
 
 		// Case specific
 		voice.m_oneShot = state.m_loopWaves ? false : oscIsWavetable(request.form);
-		voice.m_pulseWidth = 0.05f + 0.94f*bellf(state.m_pulseWidth);
+		voice.m_pulseWidth = 0.15f + 0.7f*state.m_pulseWidth;
 
 		// Get & reset filter
 		switch (state.m_curFilter)

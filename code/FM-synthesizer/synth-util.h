@@ -78,7 +78,7 @@ namespace SFM
 	{
 		if (value != 0.f && fabsf(value) < std::numeric_limits<float>::denorm_min())
 			return false;
-
+			 
 		return !std::isnan(value);
 	}
 

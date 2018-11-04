@@ -18,8 +18,8 @@ namespace SFM
 		const float attackScale  = 1.f + 0.25f*velocity;
 		const float releaseScale = 1.f + 2.f*velocity;
 		
-		const float attack  = truncf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = truncf(parameters.decay*kSampleRate);
+		const float attack  = 1.f + truncf(attackScale*parameters.attack*kSampleRate);
+		const float decay   = 1.f + truncf(parameters.decay*kSampleRate);
 		const float release = std::max<float>(kSampleRate/500.f /* 2ms min. */, truncf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
@@ -57,8 +57,8 @@ namespace SFM
 
 		m_sampleOffs = sampleCount;
 
-		m_attack  = unsigned(parameters.attack*kSampleRate);
-		m_decay   = unsigned(parameters.decay*kSampleRate);
+		m_attack  = 1 + unsigned(parameters.attack*kSampleRate);
+		m_decay   = 1+ unsigned(parameters.decay*kSampleRate);
 		m_release = std::max<unsigned>(kSampleRate/1000 /* 1ms */, unsigned(parameters.release*kSampleRate));
 		m_sustain = parameters.sustain;
 

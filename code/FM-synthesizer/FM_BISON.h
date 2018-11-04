@@ -24,7 +24,23 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
+	Immediate problems:
+		- All waveforms are too loud and clip when played as chord: should I scale them back a little perhaps?
+		  Also take a look at your default voice amplitude, that could be the easiest fix!
+		- PolyBLEP issues:
+		  + Negative values: removing fabsf() fixed a lot of clicks, but the fix will of course not hold up; review function
+		  * Reintroduce 3-step pulse to carefully hand-pick a few that sound good (0.15, 0.33 & 0.66 are good numbers)
+		- If and when it all works, try kPolySoftness as a parameter?
+		- Check behaviour in Audacity
+		- There are now 2 wet<->dry controls basically; one on the nevelope as a whole and one if you just alter sustain; change it?
+		- Filtering per channel: necesaary?
+		- The noise doesn't sound either good nor MOOG-like
+		- MOOG mode should be more fun, investigate options
+
 	Priority tasks:
+		- After speakingt to Jan:
+			- Feedback
+			- Sample & hold (crush your sample numbers)
 		- Update parameters multiple times per render cycle?
 		- Reinstate pitch bend
 		- Figure out if MIDI parameters need smoothing at all
@@ -113,15 +129,34 @@ namespace SFM
 			FIXME: update (keep in mind that at this moment some values are pulled directly from the MIDI drivers)
 		*/
 
-		// Algorithm
+		// Algorithm select (#1 does not require any extra parameters)
 		void SetAlgorithm(Voice::Algo algorithm);
-		// FIXME: ...
+		
+		// Algorithm #2
+		void SetDoubleCarrierDetune(float value);
+		void SetDoubleCarrierVolume(float value);
+
+		// Algorithm #3
+		void SetCarrierVolume1(float value);
+		void SetCarrierVolume2(float value);
+		void SetCarrierVolume3(float value);
+		void SetCarrierWaveform2(Waveform form);
+		void SetCarrierWaveform3(Waveform form);
 
 		// Master drive
 		void SetMasterDrive(float drive);
 
 		// Pitch bend
 		void SetPitchBend(float value);
+
+		// Noise
+		void SetNoisyness(float value);
+
+		// Tremolo
+		void SetTremolo(float value);
+
+		// One-shot (for wavetable samples only)
+		void SetCarrierOneShot(bool value);
 
 		// Modulation
 		void SetModulationIndex(float value);
@@ -152,15 +187,8 @@ namespace SFM
 		void SetFilterDecay(float vvalue);
 		void SetFilterustain(float value);
 
-		// Tremolo
-		void SetTremolo(float value);
-
-		// Noisyness (amount of pink noise added during final mix)
-		void SetNoisyness(float value);
-
-		// One-shot 
-		void SetCarrierOneShot(bool value);
 	};
 }
-
 #endif // _FM_BISON_H_
+
+

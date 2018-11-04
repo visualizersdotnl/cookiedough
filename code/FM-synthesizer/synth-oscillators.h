@@ -107,9 +107,8 @@ namespace SFM
 	{
 		SFM_ASSERT(frequency >= kAudibleLowHz && frequency <= kAudibleNyquist);
 
-		// Steps from min. 8 (*might* alias, but not likely) to kNyquist 
-		const float step = kNyquist/frequency;
-		const unsigned harmonics = 12 + unsigned(step/kAudibleLowHz);
+		// FIXME: must calculate number of steps to kNyquist; note that this depends on the type of wave being generated
+		const unsigned harmonics = 16;
 
 		Log("Carrier harmonics: " + std::to_string(harmonics));
 		return harmonics;
@@ -151,17 +150,14 @@ namespace SFM
 		In essence this interpolates exponentially around discontinuities.
 	*/
 
-	const float kPolySoft = 12.f;
-	const float kPolyRougher = 8.f;
-
-	const float kPolyMul = 1.f/(kSampleRate/kPolySoft);
-	const float kPolyMulRougher = 1.f/(kSampleRate/kPolyRougher);
+	const float kPolySoftness = 12.f; // FIXME: might be a fun parameter to test once the oscillators sound OK
+	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
 
 	SFM_INLINE float PolyBLEP(float phase, float delta)
 	{
-		// PolyBLEP() doesn't like a negative phase
+		// PolyBLEP() doesn't like a negative phase (FIXME!)
 //		phase += kOscPeriod;
-		phase = fabsf(phase);
+//		phase = fabsf(phase);
 		SFM_ASSERT(phase >= 0.f);
 
 		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
@@ -201,8 +197,8 @@ namespace SFM
 	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
 	{
 		float value = oscDigiPulse(phase, duty);
-		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolyMulRougher);
-		value += PolyBLEP(phase, frequency*kPolyMulRougher);
+		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolySoftness);
+		value += PolyBLEP(phase, frequency*kPolySoftness);
 		return value;
 	}
 
@@ -274,13 +270,10 @@ namespace SFM
 		const float index = phase*m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
-		const float delta = fracf(index);
+		const float delta = index-from;
 		const float A = m_pTable[from%m_numSamples];
-		const float B = m_pTable[from%m_numSamples];
+		const float B = m_pTable[to%m_numSamples];
 		return lerpf<float>(A, B, delta);
-		
-//		const unsigned sample = unsigned(phase*m_rate);
-//		return m_pTable[sample%m_numSamples];
 	}
 
 	float GetLength() const

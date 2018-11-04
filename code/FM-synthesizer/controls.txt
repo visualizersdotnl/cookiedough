@@ -1,18 +1,37 @@
 
+** GLOBAL **
+
+- Master drive
 - Pitch bend (out of order since 03/11/2018)
 - Noisyness
-- Filter cutoff, resonance & contour
 - Algorithm select: single carrier, detuned carriers, MiniMOOG 3 carrier design
-- Master drive
-- Feedback pitch
-- FM coarse control
-- FM brightness
-- FM vibrato
-- Voice ADSR
-- Filter ADS
-- Filter drive
-- Pulse oscillator width
-- Modulation depth
-- Filters: Teemu, Improved MOOG, clean (tame)
 - One-shot for wavetable oscillators
-- Oscillator selection (full range for first, limited range for second and third which only oscillate in MiniMOOG-mode)
+- Tremolo
+- Pulse oscillator width (duty cycle)
+
+** FEEDBACK **
+
+- Depth
+- Wetness
+- Pitch
+
+** FILTER **
+
+- Type (Teemu, Improved, Clean)
+- Drive
+- Cutoff
+- Resonance
+- Contour
+- ADS envelope
+
+** FM **
+
+- Index/depth
+- Coarse control
+- Brightness
+- Vibrato
+
+** Oscillator selection **
+
+- Procedural: sine, triangle, analog saw, analog square, pulse, noise
+- Wavetable (not FM modulated): piano, 808 kick, 808 snare, guitar (only available as primary carrier osc.)
