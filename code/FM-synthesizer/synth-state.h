@@ -28,6 +28,7 @@ namespace SFM
 		float m_doubleVolume;
 
 		// #3 (oscillator 2 & 3 forms are pulled in place)
+		float m_slavesDetune;
 		float m_carrierVol[3];
 		
 		// Master drive [0..N]
@@ -79,6 +80,7 @@ namespace SFM
 			m_doubleVolume = 0.f;
 
 			// Algo #3
+			m_slavesDetune  = 0.f;
 			m_carrierVol[0] = 1.f;
 			m_carrierVol[1] = 0.f;
 			m_carrierVol[2] = 0.f;

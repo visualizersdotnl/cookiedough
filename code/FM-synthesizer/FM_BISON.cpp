@@ -109,7 +109,7 @@ namespace SFM
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
-		VoiceReleaseRequest request;
+		VoiceReleaseRequest request; 
 		request.index = index;
 		request.velocity = velocity;
 
@@ -133,7 +133,6 @@ namespace SFM
 		const float amplitude = velocity*kMaxVoiceAmp;
 		const float modRatioC = true == isWave ? 1.f : state.m_modRatioC;  // No carrier modulation if wavetable osc.
 
-
 		switch (voice.m_algorithm)
 		{
 		case Voice::kSingle:
@@ -152,9 +151,17 @@ namespace SFM
 			break;
 
 		case Voice::kMiniMOOG:
-			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*state.m_carrierVol[0], frequency*modRatioC);
-			voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*state.m_carrierVol[1], frequency*modRatioC);
-			voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*state.m_carrierVol[2], frequency*modRatioC);
+			{
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*state.m_carrierVol[0], frequency*modRatioC);
+
+				// FIXE: this could/should be more subtle
+				const float centered  = -0.5f + state.m_slavesDetune; 
+				const float detune    = powf(2.f, floorf(centered*12.f));
+				const float slaveFreq = frequency*modRatioC*detune;
+				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*state.m_carrierVol[1], slaveFreq);
+				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*state.m_carrierVol[2], slaveFreq);
+			}
+
 			break;
 		}
 
@@ -304,6 +311,7 @@ namespace SFM
 		state.m_doubleVolume = WinMidi_GetDoubleVolume();
 
 		// For algorithm #3
+		state.m_slavesDetune  = WinMidi_GetSlavesDetune();
 		state.m_carrierVol[0] = WinMidi_GetCarrierVolume1();
 		state.m_carrierVol[1] = WinMidi_GetCarrierVolume2();
 		state.m_carrierVol[2] = WinMidi_GetCarrierVolume3();
@@ -435,7 +443,7 @@ namespace SFM
 				ADSR &voiceADSR = s_ADSRs[iVoice];
 	
 				// Pick single volume for algorithm #2, and 3 of them for the MiniMOOG algorithm
-				const float *pVol = (Voice::kDoubleCarriers == voice.m_algorithm) ? &state.m_doubleVolume : state.m_carrierVol;
+				const float *volumes = (Voice::kDoubleCarriers == voice.m_algorithm) ? &state.m_doubleVolume : state.m_carrierVol;
 
 				if (true == voice.m_enabled)
 				{
@@ -449,7 +457,7 @@ namespace SFM
 						const float pitchBend = 2.f*(WinMidi_GetPitchBendRaw()-0.5f);
 						const float noisyness = WinMidi_GetNoisyness();
 
-						const float sample = voice.Sample(sampleCount, state.m_modBrightness, voiceADSR, noisyness, pVol);
+						const float sample = voice.Sample(sampleCount, state.m_modBrightness, voiceADSR, noisyness, volumes);
 						buffer[iSample] = sample;
 					}
 

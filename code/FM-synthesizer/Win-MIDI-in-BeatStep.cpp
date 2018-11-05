@@ -38,7 +38,7 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotUnused2 = 7;            // Level/Rate (big rotary)
+	const unsigned kPot_MOOG_SlavesDetune = 7; // Level/Rate (big rotary)
 	const unsigned kPotNoisyness = 17;         // Set 4, B13
 	const unsigned kPotPulseWidth = 91;        // Set 4, B14
 	const unsigned kPotUnused1 = 114;          // Set 3, B9
@@ -47,15 +47,16 @@ namespace SFM
 	const unsigned kPotFilterS = 71;           // Set 1, B3
 	const unsigned kPotDoubleDetune = 72;      // Set 4, B16
 	const unsigned kPotDoubleVolume = 79;      // Set 4, B15
-	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, B5
-	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, B6
-	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, B8
+	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, R5
+	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
+	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
 	static float s_filterA = 0.f, s_filterD = 0.f, s_filterS = 0.f;
 	static float s_doubleDetune = 0.f;
 	static float s_doubleVolume = 0.f;
+	static float s_slavesDetune = 0.f;
 	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
 
 	// Button mapping
@@ -118,6 +119,10 @@ namespace SFM
 					switch (controlIdx)
 					{
 					/* Algorithm #3 */
+
+					case kPot_MOOG_SlavesDetune:
+						s_slavesDetune = fControlVal;
+						break;
 
 					case kPot_MOOG_CarrierVol1:
 						s_mCarrierVol1 = fControlVal;
@@ -350,6 +355,7 @@ namespace SFM
 	float WinMidi_GetCarrierVolume1()        { return s_mCarrierVol1; }
 	float WinMidi_GetCarrierVolume2()        { return s_mCarrierVol2; }
 	float WinMidi_GetCarrierVolume3()        { return s_mCarrierVol3; }
+	float WinMidi_GetSlavesDetune()          { return s_slavesDetune; }
 	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2; }
 	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3; }
 }

@@ -133,10 +133,7 @@ namespace SFM
 	}
 
 	/*
-		PolyBLEP saw & square.
-
-		Why no triangle? A triangle wave does not exhibit clear discontinuities and thus I'd like to think that any extra effort is wasted;
-		instead if you want to soften that sound use a filter or other features of the synthesizer to get there.
+		PolyBLEP saw, square & pulse.
 
 		Information used:
 		- http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
@@ -179,6 +176,26 @@ namespace SFM
 		const float saw = oscPolySaw(phase, frequency);
 		const float shifted = oscPolySaw(phase + 0.5f, frequency);
 		const float value = shifted-saw;
+		return value;
+	}
+
+	SFM_INLINE float PulseBLEP(float phase, float delta)
+	{
+		phase = fmodf(phase, 1.f);
+
+		float value = 0.f;
+
+		if (phase < delta)
+		{
+			phase /= delta;
+			value = phase+phase - phase*phase - 1.f;
+		}
+		else if (phase > 1.f-delta)
+		{
+			phase = (phase-1.f)/delta;
+			value = phase*phase + phase+phase + 1.f;
+		}
+
 		return value;
 	}
 
@@ -243,17 +260,19 @@ namespace SFM
 		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitones, float baseHz = 220.f /* A3 */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
-,			m_periodLen(float(m_numSamples))
 	{
-		float pitchMul = powf(2.f, float(octaveOffs) + semitones/12.f);
-		if (octaveOffs < 0) pitchMul = 1.f/pitchMul;
-		m_basePitch = CalculatePitch(baseHz*pitchMul);
-		m_rate = m_basePitch/m_periodLen;
+		m_periodLen = m_numSamples/(float)kSampleRate;
+		
+		const float tonalOffs = float(octaveOffs) + (semitones/12.f);
+		const float pitchMul = powf(2.f, tonalOffs);
+		const float basePitch = CalculatePitch(baseHz*pitchMul);
+
+		m_rate = basePitch*m_periodLen;
 	}
 
 	SFM_INLINE float Sample(float phase) const
 	{
-		const float index = phase*m_rate;
+		const float index = phase/m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
 		const float delta = index-from;
@@ -264,15 +283,14 @@ namespace SFM
 
 	float GetLength() const
 	{
-		return floorf(m_periodLen/m_rate);
+		return m_numSamples*m_rate;
 	}
 
 	private:
 		const float *m_pTable;
 		const unsigned m_numSamples;
-		/* const */ float m_basePitch;
-		const float m_periodLen;
-		/* const */ float m_rate;
+		float m_periodLen;
+		float m_rate;
 	};
 
 	WavetableOscillator &getOscKick808();
