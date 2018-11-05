@@ -18,7 +18,7 @@ namespace SFM
 		m_form = form;
 		m_depth = depth;
 		m_frequency = frequency;
-		m_pitch = CalculateOscPitch(frequency);
+		m_pitch = CalculatePitch(frequency);
 
 		m_enabled = true;
 	}

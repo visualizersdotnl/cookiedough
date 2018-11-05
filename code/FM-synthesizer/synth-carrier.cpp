@@ -16,8 +16,7 @@ namespace SFM
 		m_form = form;
 		m_amplitude = amplitude;
 		m_frequency = frequency;
-		m_pitch = CalculateOscPitch(frequency);
-		m_numHarmonics = GetCarrierHarmonics(frequency);
+		m_pitch = CalculatePitch(frequency);
 	
 		switch (m_form)
 		{
@@ -38,7 +37,7 @@ namespace SFM
 			break;
 			
 		default:
-			m_cycleLen = kOscPeriod;
+			m_cycleLen = 1.f;
 			break;
 		}
 	}
@@ -47,9 +46,6 @@ namespace SFM
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
-	
-		// Convert modulation to LUT period
-		modulation *= kRadToOscLUT;
 
 		float signal = 0.f;
 		switch (m_form)
@@ -66,15 +62,15 @@ namespace SFM
 			break;
 
 		case kSoftSquare:
-			signal = oscSoftSquare(phase+modulation, m_numHarmonics);
+			signal = oscSoftSquare(phase+modulation, 8);
 			break;
 
 		case kPolyPulse:
 			signal = oscPolyPulse(phase+modulation, m_frequency, pulseWidth);
 			break;
 
-		case kDigiTriangle:
-			signal = oscDigiTriangle(phase+modulation);
+		case kSofterTriangle:
+			signal = oscSofterTriangle(phase+modulation);
 			break;
 
 		case kWhiteNoise:

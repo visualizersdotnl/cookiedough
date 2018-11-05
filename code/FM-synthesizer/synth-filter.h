@@ -6,7 +6,6 @@
 #pragma once
 
 #include "synth-global.h"
-#include "synth-math.h"
 #include "synth-ADSR.h"
 
 namespace SFM

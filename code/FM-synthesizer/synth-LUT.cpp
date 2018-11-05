@@ -11,8 +11,8 @@
 
 namespace SFM
 {
-	alignas(16) float g_sinLUT[kOscPeriod];
-	alignas(16) float g_noiseLUT[kOscPeriod];
+	alignas(16) float g_sinLUT[kOscLUTSize];
+	alignas(16) float g_noiseLUT[kOscLUTSize];
 
 	/*
 		Farey sequence generator (ham-fisted but it does the job).
@@ -95,8 +95,8 @@ namespace SFM
 #if 0
 		// Plain sinus
 		float angle = 0.f;
-		const float angleStep = k2PI/kOscPeriod;
-		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
+		const float angleStep = k2PI/kOscLUTSize;
+		for (unsigned iStep = 0; iStep < kOscLUTSize; ++iStep)
 		{
 			g_sinLUT[iStep] = sinf(angle);
 			angle += angleStep;
@@ -110,13 +110,13 @@ namespace SFM
 		*/
 
 		const float frequency = 1.f;
-		const float theta = k2PI*frequency/kOscPeriod;
+		const float theta = k2PI*frequency/kOscLUTSize;
 		const float epsilon = 2.f*sinf(theta/2.f);
 		
 		float N, prevN = sinf(-1.f*theta);
 		float Q, prevQ = cosf(-1.f*theta);
 
-		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
+		for (unsigned iStep = 0; iStep < kOscLUTSize; ++iStep)
 		{
 			Q = prevQ - epsilon*prevN;
 			N = epsilon*Q + prevN;
@@ -127,7 +127,7 @@ namespace SFM
 #endif
 
 		// White noise (Mersenne-Twister)
-		for (unsigned iStep = 0; iStep < kOscPeriod; ++iStep)
+		for (unsigned iStep = 0; iStep < kOscLUTSize; ++iStep)
 		{
 			g_noiseLUT[iStep] = -1.f + 2.f*mt_randf();
 		}

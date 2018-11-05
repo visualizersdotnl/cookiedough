@@ -5,7 +5,6 @@
 
 #include "synth-global.h"
 #include "synth-filter.h"
-#include "synth-math.h"
 
 namespace SFM
 {

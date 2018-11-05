@@ -14,7 +14,7 @@ namespace SFM
 	{
 		const unsigned seconds = 2;
 		const float frequency = 220.f;
-		float pitch = CalculateOscPitch(frequency);
+		float pitch = CalculatePitch(frequency);
 	
 		float buffer[kSampleRate*seconds];
 
@@ -22,9 +22,22 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
 			float phase = iSample*pitch;
-			float sample = oscPolyPulse(phase, frequency, 0.25f);
+
+			// Broken
+//			float sample = oscPolyPulse(phase, frequency, 0.33f);
+			float sample = oscSofterTriangle(phase);
+			
+			// Status: OK
+//			float sample = oscPolySquare(phase, frequency);
+//			float sample = oscPolySaw(phase, frequency);
+
+			// Status: OK+
+//			float sample = oscSoftSquare(phase, 8);
 //			float sample = oscDigiSaw(phase);
 //			float sample = oscDigiTriangle(phase);
+//			float sample = oscDigiPulse(phase, 0.25f);
+//			float sample = oscSoftSaw(phase, 16);
+
 			buffer[iSample] = sample;
 		}
 

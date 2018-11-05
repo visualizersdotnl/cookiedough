@@ -44,14 +44,16 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotCutoff = 22;            // C11
+	const unsigned kPotMasterDrive = 26;       // C14
+	const unsigned kPotCutoff = 22;            // C10
 	const unsigned kPotResonance = 23;         // C12
-	const unsigned kPotFilterContour = 61;     // C10
-	const unsigned kPotUnused1 = 95;           // C17
+	const unsigned kPotFilterContour = 61;     // C12
+	const unsigned kPotFilterDrive =24;        // C13
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
 
-	static float s_cutoff = 0.f, s_resonance = 0.f, s_filterContour = 0.f;
+	static float s_masterDrive = 0.f;
+	static float s_cutoff = 0.f, s_resonance = 0.f, s_filterContour = 0.f, s_filterDrive = 0.f;
 	static float s_feedback = 0.f, s_feedbackWetness = 0.f;
 
 	// Wheel mapping
@@ -141,6 +143,12 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+					/*  Master drive (voice volume) */
+
+						case kPotMasterDrive:
+							s_masterDrive = fControlVal;
+							break;
+
 						/* FM */
 
 						case kModIndex:
@@ -227,6 +235,10 @@ namespace SFM
 
 						case kPotFilterContour:
 							s_filterContour = fControlVal;
+							break;
+
+						case kPotFilterDrive:
+							s_filterDrive = fControlVal;
 							break;
 
 						/* One-shot */
@@ -379,11 +391,15 @@ namespace SFM
 		Pull-style controls
 	*/
 
+	// Master
+	float WinMidi_GetMasterDrive()     { return s_masterDrive;    }
+
 	// Filter
 	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;      }
 	float WinMidi_GetFilterCutoff()    { return s_cutoff;         }
 	float WinMidi_GetFilterResonance() { return s_resonance;      }
 	float WinMidi_GetFilterContour()   { return s_filterContour;  }
+	float WinMidi_GetFilterDrive()     { return s_filterDrive;    }
 
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback;         }

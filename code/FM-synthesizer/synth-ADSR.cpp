@@ -18,8 +18,9 @@ namespace SFM
 		const float attackScale  = 1.f + 0.25f*velocity;
 		const float releaseScale = 1.f + 2.f*velocity;
 		
-		const float attack  = 1.f + truncf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = 1.f + truncf(parameters.decay*kSampleRate);
+		// Attack & release have a minimum to prevent clicking
+		const float attack  = std::max<float>(kSampleRate/1000.f /* 1ms. min. */,  truncf(attackScale*parameters.attack*kSampleRate));
+		const float decay   = truncf(parameters.decay*kSampleRate);
 		const float release = std::max<float>(kSampleRate/500.f /* 2ms min. */, truncf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
@@ -57,8 +58,8 @@ namespace SFM
 
 		m_sampleOffs = sampleCount;
 
-		m_attack  = 1 + unsigned(parameters.attack*kSampleRate);
-		m_decay   = 1+ unsigned(parameters.decay*kSampleRate);
+		m_attack  = 16+unsigned(parameters.attack*kSampleRate);
+		m_decay   = 16+unsigned(parameters.decay*kSampleRate);
 		m_release = std::max<unsigned>(kSampleRate/1000 /* 1ms */, unsigned(parameters.release*kSampleRate));
 		m_sustain = parameters.sustain;
 
@@ -119,11 +120,11 @@ namespace SFM
 				break;
 			}
 
-		case kRelease: // Smoothstep
+		case kRelease: // Exponential
 			{
 				const float step = 1.f/m_release;
 				const float delta = sample*step;
-				m_output = lerpf(m_sustain, 0.f, smoothstepf(delta));
+				m_output = lerpf(m_sustain, 0.f, delta*delta);
 				if (m_output <= 0.f)
 				{
 					m_output = 0.f;

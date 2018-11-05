@@ -130,7 +130,7 @@ namespace SFM
 		voice.m_algorithm = state.m_algorithm;
 	
 		// Initialize carrier(s)
-		const float amplitude = velocity*dBToAmplitude(kMaxVoicedB);
+		const float amplitude = velocity*kMaxVoiceAmp;
 		const float modRatioC = true == isWave ? 1.f : state.m_modRatioC;  // No carrier modulation if wavetable osc.
 
 
@@ -168,11 +168,11 @@ namespace SFM
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
 		const float broFrequency = invsqrf(tremolo)*0.25f*goldenTen; // Not sure if I should mess with the "feel" of the control here (FIXME)
-		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, kOscPeriod/4.f, 0.f);
+		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, 0.25f, 0.f);
 
 		// Case specific
 		voice.m_oneShot = state.m_loopWaves ? false : oscIsWavetable(request.form);
-		voice.m_pulseWidth = 0.15f + 0.7f*state.m_pulseWidth;
+		voice.m_pulseWidth = 0.33f; // state.m_pulseWidth;
 
 		// Get & reset filter
 		switch (state.m_curFilter)
@@ -475,18 +475,18 @@ namespace SFM
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
 
-					mix = SoftClamp(mix+sample);
+					mix = Clamp(mix+sample);
 				}
 
 				// Process delay
 				ProcessDelay(state, mix);
 
-				// Apply master drive and clamp one last time
-				mix = SoftClamp(mix*state.m_drive);
-				
-				SampleAssert(mix);
+				// Drive
+				const float drive = WinMidi_GetMasterDrive();
+				mix = ultra_tanhf(mix*drive);
 
 				// Write
+				SampleAssert(mix);
 				s_ringBuf.Write(mix);
 
 				loudest = std::max<float>(loudest, fabsf(mix));
@@ -566,7 +566,7 @@ bool Syntherklaas_Create()
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-//	OscTest();
+	OscTest();
 
 	return true == midiIn && audioOut;
 }

@@ -2,17 +2,13 @@
 /*
 	Syntherklaas FM -- Oscillators.
 
-	Important to know:
-		- These oscillators are and shall remain stateless (unless there's a good reason not to).
-		- The incoming phase is currently [0...N] with a period of kOscPeriod taylored for LUT sampling (FIXME: up for review as it's more often than not reversed).
-		- Some basic oscillators aren't as fast as they could be because I currently do *not* wrap phase.
+	These oscillators are and shall remain stateless (unless there's a good reason not to).
 */
 
 #pragma once
 
 #include "synth-global.h"
 #include "synth-random.h"
-#include "synth-math.h"
 
 namespace SFM
 {
@@ -34,10 +30,11 @@ namespace SFM
 		kPolySquare,
 		kPolyPulse,
 
-		/* Straight forms (for LFOs) */
+		/* Straight forms */
 		kDigiSaw,
 		kDigiSquare,
 		kDigiTriangle,
+		kSofterTriangle,
 		kDigiPulse,
 		kWhiteNoise,
 		kPinkNoise,
@@ -73,7 +70,7 @@ namespace SFM
 
 	SFM_INLINE float oscDigiSaw(float phase)
 	{
-		return fmodf(phase*kInvOscPeriod, 1.f)*2.f - 1.f;
+		return fmodf(phase, 1.f)*2.f - 1.f;
 	}
 
 	SFM_INLINE float oscDigiSquare(float phase)
@@ -83,16 +80,25 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		return -1.f + fabsf(roundf(phase*kInvOscPeriod)-(phase*kInvOscPeriod))*4.f;
+		return -1.f + fabsf(roundf(phase)-phase)*4.f;
 	}
 
 	SFM_INLINE float oscDigiPulse(float phase, float duty)
 	{
-		const float time = fmodf(phase*kInvOscPeriod, 1.f);
+		const float time = fmodf(phase, 1.f);
 		if (time < duty)
 			return 1.f;
 		else
 			return -1.f;
+	}
+
+	/*
+		Clamped triangle; little softer on the ears, but essentially a hack.
+	*/
+
+	SFM_INLINE float oscSofterTriangle(float phase)
+	{
+		return fast_tanhf(-1.f + fabsf(roundf(phase)-phase)*4.f);
 	}
 
 	/*
@@ -101,22 +107,10 @@ namespace SFM
 		These variants are very nice but computationally expensive.
 	*/
 
-	const float kHarmonicsPrecHz = kAudibleLowHz;
-
-	SFM_INLINE unsigned GetCarrierHarmonics(float frequency)
-	{
-		SFM_ASSERT(frequency >= kAudibleLowHz && frequency <= kAudibleNyquist);
-
-		// FIXME: must calculate number of steps to kNyquist; note that this depends on the type of wave being generated
-		const unsigned harmonics = 16;
-
-		Log("Carrier harmonics: " + std::to_string(harmonics));
-		return harmonics;
-	}
-
 	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
 	{
-		float signal = 0.f, accPhase = phase*-1.f;
+		phase *= -1.f;
+		float signal = 0.f, accPhase = phase;
 		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
 		{
 			signal += lutsinf(accPhase)/(1.f+iHarmonic);
@@ -150,18 +144,12 @@ namespace SFM
 		In essence this interpolates exponentially around discontinuities.
 	*/
 
-	const float kPolySoftness = 12.f; // FIXME: might be a fun parameter to test once the oscillators sound OK
-	const float kPolyMul = 1.f/(kSampleRate/kPolySoftness);
+	const float kPolySoftness = 8.f; // Might be a fun parameter to test once the oscillators sound OK (FIXME)
+	const float kPolyDiv = kSampleRate/kPolySoftness; // FIXME: recip.
 
-	SFM_INLINE float PolyBLEP(float phase, float delta)
+	SFM_INLINE float SawBLEP(float phase, float delta)
 	{
-		// PolyBLEP() doesn't like a negative phase (FIXME!)
-//		phase += kOscPeriod;
-//		phase = fabsf(phase);
-		SFM_ASSERT(phase >= 0.f);
-
-		// This could go if I'd wrap my phase but I don't have to since I do not suffer from drift (I do not add but multiply by an integer sample count)
-		phase = fmodf(phase*kInvOscPeriod, 1.f);
+		phase = fmodf(phase, 1.f);
 
 		float value = 0.f;
 
@@ -182,14 +170,14 @@ namespace SFM
 	SFM_INLINE float oscPolySaw(float phase, float frequency)
 	{
 		float value = oscDigiSaw(phase);
-		value -= PolyBLEP(phase, frequency*kPolyMul);
+		value -= SawBLEP(phase+1.f, frequency/kPolyDiv);
 		return value;
 	}
 
 	SFM_INLINE float oscPolySquare(float phase, float frequency)
 	{
 		const float saw = oscPolySaw(phase, frequency);
-		const float shifted = oscPolySaw(phase + kOscPeriod/2, frequency);
+		const float shifted = oscPolySaw(phase + 0.5f, frequency);
 		const float value = shifted-saw;
 		return value;
 	}
@@ -197,8 +185,6 @@ namespace SFM
 	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
 	{
 		float value = oscDigiPulse(phase, duty);
-		value -= PolyBLEP(phase - duty*kOscPeriod, frequency*kPolySoftness);
-		value += PolyBLEP(phase, frequency*kPolySoftness);
 		return value;
 	}
 
@@ -208,7 +194,7 @@ namespace SFM
 
 	SFM_INLINE float oscWhiteNoise()
 	{
-		// There's a noise LUT, but this has way better distribution
+		// No need for the noise LUT (FIXME: yet)
 		return -1.f + 2.f*mt_randf();
 	}
 
@@ -232,7 +218,7 @@ namespace SFM
 
 		b6 = white*0.115926f;
 		
-		return SoftClamp(pink);
+		return pink;
    }
 
    // Approximation at best
@@ -257,12 +243,12 @@ namespace SFM
 		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitones, float baseHz = 220.f /* A3 */) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
-,			m_periodLen(float(m_numSamples)/kOscPeriod)
+,			m_periodLen(float(m_numSamples))
 	{
 		float pitchMul = powf(2.f, float(octaveOffs) + semitones/12.f);
 		if (octaveOffs < 0) pitchMul = 1.f/pitchMul;
-		m_basePitch = CalculateOscPitch(baseHz*pitchMul);
-		m_rate = 1.f/(m_basePitch/m_periodLen);
+		m_basePitch = CalculatePitch(baseHz*pitchMul);
+		m_rate = m_basePitch/m_periodLen;
 	}
 
 	SFM_INLINE float Sample(float phase) const
@@ -278,7 +264,7 @@ namespace SFM
 
 	float GetLength() const
 	{
-		return floorf(m_periodLen/m_rate * (kOscPeriod));
+		return floorf(m_periodLen/m_rate);
 	}
 
 	private:

@@ -12,41 +12,34 @@
 
 namespace SFM 
 {
-	// Frequency to sinus LUT pitch
-	SFM_INLINE float CalculateOscPitch(float frequency)
+	// Frequency to pitch
+	SFM_INLINE float CalculatePitch(float frequency)
 	{
-		return (frequency*kOscPeriod)/kSampleRate;
+		return frequency/kSampleRate;
 	}
 
 	// Frequency to angular pitch
 	SFM_INLINE float CalculateAngularPitch(float frequency)
 	{
-		return (frequency/kSampleRate)*k2PI;
+		return CalculatePitch(frequency)*k2PI;
 	}
 
-	// This can be, for example, used to drive extra filtering
-	SFM_INLINE float CalculateNoiseRate(float frequency)
-	{
-		return (frequency*kSampleRate)/kAudibleNyquist;
-	}
-
-	// From and to dB
+	// To and from dB
 	SFM_INLINE float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
 	SFM_INLINE float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);      }
 
-	// For assertions, mostly
+	// Is frequency audible?
 	inline bool InAudibleSpectrum(float frequency)
 	{
 		return frequency >= kAudibleLowHz && frequency <= kAudibleHighHz;
 	}
 
-	// Unsigned integer is-power-of-2 check
 	SFM_INLINE const bool IsPow2(unsigned value)
 	{
 		return value != 0 && !(value & (value - 1));
 	}
 
-	// Soft (sigmoid) clamp
+	// Soft clamp
 	SFM_INLINE float SoftClamp(float sample)
 	{
 		return fast_tanhf(sample);
@@ -63,7 +56,7 @@ namespace SFM
 		return sample;
 	}
 
-	// Sample mix
+	// Good way to mix 2 samples
 	SFM_INLINE float Mix(float sampleA, float sampleB)
 	{
 		return fast_tanhf(sampleA+sampleB);
@@ -71,7 +64,7 @@ namespace SFM
 
 	/*
 		Floating point error detection
-		FIXME: didn't seem to compile out of the box on OSX (clang)
+		FIXME: does not compile on OSX?
 	*/
 
 	SFM_INLINE bool FloatCheck(float value)

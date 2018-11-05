@@ -7,7 +7,7 @@
 
 namespace SFM
 {
-	// Lookup table to translate any MIDI key to a frequency (see implementation for base)
+	// LUT to get frequency for a MIDI key
 	extern float g_midiToFreqLUT[127];
 	void CalculateMidiToFrequencyLUT(float baseFreq = 440.f);
 

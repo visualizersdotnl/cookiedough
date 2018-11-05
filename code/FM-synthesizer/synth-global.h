@@ -9,7 +9,7 @@
 
 #pragma once
 
-// FIXME: only necessary when depending on the Kurt Bevacqua engine as our base
+// FIXME: only necessary when depending on the Kurt Bevacqua engine as testbed (FIXME)
 #include "../main.h"
 
 // Alias with Bevacqua's existing mechanisms (FIXME: adapt target platform's)
@@ -21,7 +21,6 @@
 
 #include "synth-log.h"
 #include "synth-error.h"
-#include "synth-math.h"
 
 namespace SFM
 {
@@ -48,21 +47,12 @@ namespace SFM
 	const unsigned kMaxVoices = 24; 
 
 	// Max. voice amplitude 
-	const float kMaxVoicedB = -3.609121289; // 66% in dB (I've read Impulse Tracker did/does that)
+	const float kMaxVoiceAmp = 0.66f;
 
-	// Define oscillator period as a discrete amount of steps (i.e. in samples)
-	// IMPORTANT: other LUTs and such also use this number
-	const unsigned kOscPeriod = 4096;
-	const unsigned kOscTabAnd = 4096-1;
-	const float kInvOscPeriod = 1.f/kOscPeriod;
-	const unsigned kHalfOscPeriod = kOscPeriod/2;
-
-	// Use to multiply modulation value (radian) to osc. LUT period
-	const float kRadToOscLUT = (1.f/k2PI)*kOscPeriod;
-
-	// Drive range
+	// Master drive range
 	const float kDriveHidB = 6.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
 }
 
 #include "synth-LUT.h"
+// #include "synth-math.h"
 #include "synth-util.h"

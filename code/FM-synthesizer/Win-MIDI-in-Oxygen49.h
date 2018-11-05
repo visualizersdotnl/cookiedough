@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM -- Windows (Win32) MIDI input explicitly designed for the M-AUDIO Oxygen 49.
 
-	- For time being this serves as the physical interface driver.
+	- For time being this serves as the (hardcoded) physical interface driver, with the BeatStep counterpart.
 	- All values are within [0..1] range unless clearly stated otherwise.
 	- It should be pretty straightforward to modify the implementation to fit another instrument.
 */
@@ -20,11 +20,15 @@ namespace SFM
 		Pull-style values, all normalized [0..1]
 	*/
 
+	// Master
+	float WinMidi_GetMasterDrive();
+
 	// Filter
 	VoiceFilter WinMidi_GetCurFilter();
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterContour();
+	float WinMidi_GetFilterDrive();
 
 	// Feedback
 	float WinMidi_GetFeedback();

@@ -14,7 +14,7 @@ namespace SFM
 		m_sampleOffs = sampleCount;
 		m_index = index;
 		m_frequency = frequency;
-		m_pitch = CalculateOscPitch(frequency);
+		m_pitch = CalculatePitch(frequency);
 		m_phaseShift = phaseShift;
 		m_indexLFO.Initialize(sampleCount, kCosine, 1.f, indexModFreq);
 	}

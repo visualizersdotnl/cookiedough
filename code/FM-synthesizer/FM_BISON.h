@@ -15,32 +15,25 @@
 		- ADSR implementation by Nigel Redmon of earlevel.com
 
 	Notes:
-		- Code was written directly with firmware in mind, but later on as I found out that this project involved so much new
-		  information I went towards a bit of C++ here and there; I also decided to get the sound right and try to understand
-		  what I'm doing which has led to some wonky design decisions. Nevertheless I will finish this project.
-		- Some calculations in here are what is referred to as "bro science".
-		- The design is, not on purpose, a bit like the mini MOOG.
-		- No optimization as of yet, not at all.
+		- Code started out with firmware in mind but later on I had to focus on the sound 100% and thus it became a little
+		  heavy on the CPU and uses more and more C++
+		- Some calculations in here are what is referred to as "bro science"
+		- The design is, not on purpose, a bit like the mini MOOG
+		- To be optimized
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- All waveforms are too loud and clip when played as chord: should I scale them back a little perhaps?
-		  Also take a look at your default voice amplitude, that could be the easiest fix!
-		- PolyBLEP issues:
-		  + Negative values: removing fabsf() fixed a lot of clicks, but the fix will of course not hold up; review function
-		  * Reintroduce 3-step pulse to carefully hand-pick a few that sound good (0.15, 0.33 & 0.66 are good numbers)
+		- Fix sample playback
+		- Fix pulse: write matching PolyBLEP() function
+		- The noise doesn't sound either good nor MOOG-like
 		- If and when it all works, try kPolySoftness as a parameter?
-		- Check behaviour in Audacity
 		- There are now 2 wet<->dry controls basically; one on the nevelope as a whole and one if you just alter sustain; change it?
 		- Filtering per channel: necesaary?
-		- The noise doesn't sound either good nor MOOG-like
 		- MOOG mode should be more fun, investigate options
 
 	Priority tasks:
-		- After speakingt to Jan:
-			- Feedback
-			- Sample & hold (crush your sample numbers)
+		- After speakingt to Jan: look into feedback
 		- Update parameters multiple times per render cycle?
 		- Reinstate pitch bend
 		- Figure out if MIDI parameters need smoothing at all
@@ -49,6 +42,7 @@
 		- Finish documentation as far as possible, read up on VST
 
 	Plumbing:
+		- Move shared MIDI code to Win-Midi-in.cpp/h
 		- Flush ring buffer using two memcpy() calls
 		- Review mutex & atomic use
 		- Encapsulate the core in a class so there can be instances
@@ -61,7 +55,7 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
-		- Sample & hold
+		- Sample & hold (bitcrushing can be done by holding integer sample count)
 		- Better wavetable sampling
 		- Real variable delay line
 		- Profiling & optimization

@@ -8,7 +8,6 @@
 #pragma once
 
 #include "synth-modulator.h"
-#include "synth-math.h"
 
 namespace SFM
 {

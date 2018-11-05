@@ -44,26 +44,29 @@
     <Filter Include="/code\/FM-synthesizer">
       <UniqueIdentifier>{02b361b2-fc11-49b2-a40d-c1d429408e53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\Core">
-      <UniqueIdentifier>{1dcb50fa-d145-4984-98c4-babe18486116}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer\Driver%28s%29">
-      <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty">
       <UniqueIdentifier>{62651d01-6f2d-404d-92ac-dc89f8e19c73}</UniqueIdentifier>
     </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty\/tinymt">
       <UniqueIdentifier>{8913e425-5f41-4208-9318-c0f2461119ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\Documentation">
-      <UniqueIdentifier>{3082668a-436a-4913-a835-221db8cb1532}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer\/wavetable">
       <UniqueIdentifier>{8851bf8c-39f4-4b3d-b2d9-a9a4f36c3b6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR">
       <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\core">
+      <UniqueIdentifier>{1dcb50fa-d145-4984-98c4-babe18486116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\core\test">
+      <UniqueIdentifier>{700239b4-979b-4dd4-a529-5231d4e1308c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\documentation">
+      <UniqueIdentifier>{3082668a-436a-4913-a835-221db8cb1532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\driver">
+      <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -146,55 +149,55 @@
       <Filter>/code\filters &amp; blitters</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
       <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillators.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-LFO.cpp">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
+      <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,76 +328,76 @@
       <Filter>/code\util-lib</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.h">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-global.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-log.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-LUT.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-math.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-test.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-LFO.h">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.h">
-      <Filter>/code\/FM-synthesizer\Driver%28s%29</Filter>
+      <Filter>/code\/FM-synthesizer\driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-test.h">
+      <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -435,16 +438,16 @@
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\code\FM-synthesizer\manual.txt">
-      <Filter>/code\/FM-synthesizer\Documentation</Filter>
+      <Filter>/code\/FM-synthesizer\documentation</Filter>
     </Text>
     <Text Include="..\code\FM-synthesizer\design-goals.txt">
-      <Filter>/code\/FM-synthesizer\Documentation</Filter>
+      <Filter>/code\/FM-synthesizer\documentation</Filter>
     </Text>
     <Text Include="..\code\FM-synthesizer\wavetable\guide.txt">
       <Filter>/code\/FM-synthesizer\/wavetable</Filter>
     </Text>
     <Text Include="..\code\FM-synthesizer\controls.txt">
-      <Filter>/code\/FM-synthesizer\Core</Filter>
+      <Filter>/code\/FM-synthesizer\documentation</Filter>
     </Text>
   </ItemGroup>
 </Project>

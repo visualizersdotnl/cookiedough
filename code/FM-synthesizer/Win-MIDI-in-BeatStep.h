@@ -16,14 +16,10 @@ namespace SFM
 		Pull-style values, all normalized [0..1]
 	*/
 
-	// Master
-	float WinMidi_GetMasterDrive();
-
 	// Noisyness
 	float WinMidi_GetNoisyness();
 
 	// Filter
-	float WinMidi_GetFilterDrive();
 	float WinMidi_GetFilterAttack();
 	float WinMidi_GetFilterDecay();
 	float WinMidi_GetFilterSustain();

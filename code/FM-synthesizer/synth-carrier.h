@@ -19,7 +19,6 @@ namespace SFM
 		float m_amplitude;
 		float m_frequency;
 		float m_pitch;
-		unsigned m_numHarmonics;
 		float m_cycleLen; // In samples
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
