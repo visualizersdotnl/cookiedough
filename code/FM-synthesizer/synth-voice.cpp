@@ -47,7 +47,7 @@ namespace SFM
 		sample = lerpf<float>(sample, sample*pinkNoise, noise);
 
 		// Finally, modulate amplitude ('tremolo')
-		sample *= m_ampMod.Sample(sampleCount, 0.f);
+		sample *= m_ampMod.Sample(sampleCount);
 
 		SampleAssert(sample);
 

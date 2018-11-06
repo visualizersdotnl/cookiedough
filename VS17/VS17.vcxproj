@@ -196,6 +196,7 @@
   <ItemGroup>
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\code\FM-synthesizer\controls.txt" />
+    <Text Include="..\code\FM-synthesizer\design-0.2-NL.txt" />
     <Text Include="..\code\FM-synthesizer\design-goals.txt" />
     <Text Include="..\code\FM-synthesizer\manual.txt" />
     <Text Include="..\code\FM-synthesizer\wavetable\guide.txt" />

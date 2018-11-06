@@ -134,7 +134,8 @@ namespace SFM
 		// Initialize carrier(s)
 		const float amplitude = velocity*kMaxVoiceAmp;
 		const float modRatioC = true == isWave ? 1.f : state.m_modRatioC;  // No carrier modulation if wavetable osc.
-
+//		const float modRatioC = 1.f;
+	
 		switch (voice.m_algorithm)
 		{
 		case Voice::kSingle:
@@ -146,7 +147,7 @@ namespace SFM
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
-				const float detune = powf(2.f, (kGoldenRatio*state.m_doubleDetune)/12.f);
+				const float detune = powf(2.f, (kGoldenRatio*0.5f*state.m_doubleDetune)/12.f);
 				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*modRatioC*detune);
 			}
 
@@ -154,18 +155,17 @@ namespace SFM
 
 		case Voice::kMiniMOOG:
 			{
-				const float baseFreq = frequency*modRatioC;
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*state.m_carrierVol[0], frequency*modRatioC);
 
 				// FIXE: this could/should be more subtle
 				const float centered  = -0.5f + state.m_slavesDetune; 
-				const float detune    = powf(2.f, truncf(centered*6.f));
-				const float slaveFreq = baseFreq*detune;
+				const float detune    = powf(2.f, ceilf(centered*6.f));
+				const float slaveFreq = frequency*modRatioC*detune;
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*state.m_carrierVol[1], slaveFreq);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*state.m_carrierVol[2], slaveFreq);
 
 				// Start synchro.
-				s_synchros[iVoice].Start(s_sampleCount, baseFreq, voice.m_carriers[0].m_cycleLen);
+				s_synchros[iVoice].Start(s_sampleCount, frequency*modRatioC, voice.m_carriers[0].m_cycleLen);
 			}
 
 			break;
@@ -173,6 +173,7 @@ namespace SFM
 
 		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
 		const float modFrequency = frequency*state.m_modRatioM;
+//		const float modFrequency = frequency*(state.m_modRatioM/state.m_modRatioC);
 		voice.m_modulator.Initialize(s_sampleCount, state.m_modIndex, modFrequency, 0.f, state.m_indexLFOFreq*goldenTen);
 
 		// Initialize pitch bend operators (FIXME)
@@ -180,8 +181,8 @@ namespace SFM
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = state.m_tremolo;
-		const float broFrequency = invsqrf(tremolo)*0.25f*goldenTen; // Not sure if I should mess with the "feel" of the control here (FIXME)
-		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, 0.25f, 0.f);
+		const float tremFreq = invsqrf(tremolo)*0.25f*goldenTen; // This look a bit dodgy but sounds good
+		voice.m_ampMod.Initialize(s_sampleCount, kCosine, 1.f, tremFreq);
 
 		// One shot?
 		voice.m_oneShot = state.m_loopWaves ? false : oscIsWavetable(request.form);

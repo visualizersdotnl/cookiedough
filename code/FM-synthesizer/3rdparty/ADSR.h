@@ -15,10 +15,11 @@
 //  You may copy and distribute verbatim copies of this document.
 //  You may modify and use this source code to create binary code for your own purposes, free or commercial.
 //
+
 //
 // Adapted by syntherklaas.org for FM. BISON, changes made:
 // - Fixed warnings
-// - Added 1 sample cooldown period to avoid clicks
+// - Fixed process() to proceed to decay state immediately after attack to eliminate a click
 //
 
 #ifndef ADRS_h
@@ -80,13 +81,14 @@ inline float ADSR::process() {
                 output = 1.f;
                 state = env_decay;
             }
-            break;
+			else // Immediately go into decay state, eliminating a click when ADS is zero!
+				break;
         case env_decay:
-            output = decayBase + output * decayCoef;
-            if (output <= sustainLevel) {
-                output = sustainLevel;
-                state = env_sustain;
-            }
+			output = decayBase + output * decayCoef;
+			if (output <= sustainLevel) {
+				output = sustainLevel;
+				state = env_sustain;
+			}
             break;
         case env_sustain:
             break;

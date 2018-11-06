@@ -57,20 +57,20 @@ namespace SFM
 			signal = oscSine(phase+modulation);
 			break;
 
-		case kPolySaw:
-			signal = oscPolySaw(phase+modulation, m_frequency);
+		case kSoftSaw:
+			signal = oscSoftSaw(phase+modulation, m_frequency);
 			break;
 
 		case kSoftSquare:
-			signal = oscSoftSquare(phase+modulation, 8);
+			signal = oscSoftSquare(phase+modulation, m_frequency);
 			break;
 
-		case kPolyPulse:
-			signal = oscPolyPulse(phase+modulation, m_frequency, pulseWidth);
+		case kDigiPulse:
+			signal = oscDigiPulse(phase+modulation, pulseWidth);
 			break;
 
 		case kSofterTriangle:
-			signal = oscSofterTriangle(phase+modulation);
+			signal = oscDigiTriangle(phase+modulation);
 			break;
 
 		case kWhiteNoise:

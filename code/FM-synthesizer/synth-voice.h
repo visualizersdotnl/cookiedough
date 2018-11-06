@@ -10,6 +10,7 @@
 #include "synth-modulator.h"
 #include "synth-ADSR.h."
 #include "synth-filter.h"
+// #include "synth-LFO.h."
 
 namespace SFM
 {
@@ -34,7 +35,7 @@ namespace SFM
 		Algo m_algorithm;
 		Carrier m_carriers[3];
 		Modulator m_modulator;
-		Modulator m_ampMod;
+		LFO m_ampMod;
 
 		// For wavetable samples
 		bool m_oneShot;

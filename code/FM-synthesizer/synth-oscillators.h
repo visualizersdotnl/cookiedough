@@ -25,11 +25,6 @@ namespace SFM
 		kSoftSaw,
 		kSoftSquare,
 
-		/* PolyBLEP forms */
-		kPolySaw,
-		kPolySquare,
-		kPolyPulse,
-
 		/* Straight forms */
 		kDigiSaw,
 		kDigiSquare,
@@ -79,8 +74,10 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		return -1.f + fabsf(roundf(phase)-phase)*4.f;
+		return 2.f*(asinf(lutsinf(phase))*(1.f/kPI));
 	}
+
+	SFM_INLINE float oscSofterTriangle(float phase) { return fast_tanhf(oscDigiTriangle(phase)); }
 
 	SFM_INLINE float oscDigiPulse(float phase, float duty)
 	{
@@ -92,22 +89,21 @@ namespace SFM
 	}
 
 	/*
-		Clamped triangle; little softer on the ears, but essentially a hack.
-	*/
-
-	SFM_INLINE float oscSofterTriangle(float phase)
-	{
-		return fast_tanhf(-1.f + fabsf(roundf(phase)-phase)*4.f);
-	}
-
-	/*
 		Band-limited saw and square (BLIT).
 
 		These variants are very nice but computationally expensive.
 	*/
 
-	SFM_INLINE float oscSoftSaw(float phase, unsigned numHarmonics) 
+	SFM_INLINE unsigned BLIT_GetNumHarmonics(float frequency)
 	{
+		const unsigned numHarmonics = (unsigned) ceilf(0.5f * (kSampleRate/frequency));
+		return std::max<unsigned>(1, numHarmonics>>1);
+	}
+
+	SFM_INLINE float oscSoftSaw(float phase, float frequency) 
+	{
+		const unsigned numHarmonics = BLIT_GetNumHarmonics(frequency);
+
 		phase *= -1.f;
 		float signal = 0.f, accPhase = phase;
 		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
@@ -119,8 +115,10 @@ namespace SFM
 		return signal*(2.f/kPI);
 	}
 
-	SFM_INLINE float oscSoftSquare(float phase, unsigned numHarmonics) 
+	SFM_INLINE float oscSoftSquare(float phase, float frequency) 
 	{ 
+		const unsigned numHarmonics = BLIT_GetNumHarmonics(frequency);
+		
 		float signal = 0.f, accPhase = phase;
 		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
 		{
@@ -129,79 +127,6 @@ namespace SFM
 		}
 
 		return signal*(4.f/kPI);
-	}
-
-	/*
-		PolyBLEP saw, square & pulse.
-
-		Information used:
-		- http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
-
-		In essence this interpolates exponentially around discontinuities.
-	*/
-
-	const float kPolySoftness = 8.f; // Might be a fun parameter to test once the oscillators sound OK (FIXME)
-	const float kPolyDiv = kSampleRate/kPolySoftness; // FIXME: recip.
-
-	SFM_INLINE float SawBLEP(float phase, float delta)
-	{
-		phase = fmodf(phase, 1.f);
-
-		float value = 0.f;
-
-		if (phase < delta)
-		{
-			phase /= delta;
-			value = phase+phase - phase*phase - 1.f;
-		}
-		else if (phase > 1.f-delta)
-		{
-			phase = (phase-1.f)/delta;
-			value = phase*phase + phase+phase + 1.f;
-		}
-
-		return value;
-	}
-
-	SFM_INLINE float oscPolySaw(float phase, float frequency)
-	{
-		float value = oscDigiSaw(phase);
-		value -= SawBLEP(phase+1.f, frequency/kPolyDiv);
-		return value;
-	}
-
-	SFM_INLINE float oscPolySquare(float phase, float frequency)
-	{
-		const float saw = oscPolySaw(phase, frequency);
-		const float shifted = oscPolySaw(phase + 0.5f, frequency);
-		const float value = shifted-saw;
-		return value;
-	}
-
-	SFM_INLINE float PulseBLEP(float phase, float delta)
-	{
-		phase = fmodf(phase, 1.f);
-
-		float value = 0.f;
-
-		if (phase < delta)
-		{
-			phase /= delta;
-			value = phase+phase - phase*phase - 1.f;
-		}
-		else if (phase > 1.f-delta)
-		{
-			phase = (phase-1.f)/delta;
-			value = phase*phase + phase+phase + 1.f;
-		}
-
-		return value;
-	}
-
-	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
-	{
-		float value = oscDigiPulse(phase, duty);
-		return value;
 	}
 
 	/*

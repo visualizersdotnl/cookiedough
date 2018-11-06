@@ -24,19 +24,15 @@ namespace SFM
 			float phase = iSample*pitch;
 
 			// Broken
-			float sample = oscPolyPulse(phase, frequency, 0.33f);
+			float sample = oscDigiPulse(phase, 0.15f);
 //			float sample = oscSofterTriangle(phase);
-			
-			// Status: OK
-//			float sample = oscPolySquare(phase, frequency);
-//			float sample = oscPolySaw(phase, frequency);
 
 			// Status: OK+
-//			float sample = oscSoftSquare(phase, 8);
+//			float sample = oscSoftSquare(phase, frequency);
 //			float sample = oscDigiSaw(phase);
 //			float sample = oscDigiTriangle(phase);
 //			float sample = oscDigiPulse(phase, 0.25f);
-//			float sample = oscSoftSaw(phase, 16);
+//			float sample = oscSoftSaw(phase, frequency);
 
 			buffer[iSample] = sample;
 		}

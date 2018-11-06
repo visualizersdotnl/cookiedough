@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Lookup tables.
+
+	These could and should be generated offline for a production target.
 */
 
 #include "synth-global.h"
