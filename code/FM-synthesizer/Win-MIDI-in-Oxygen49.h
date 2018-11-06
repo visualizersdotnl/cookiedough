@@ -59,4 +59,7 @@ namespace SFM
 
 	// Algorithm select
 	Voice::Algo WinMidi_GetAlgorithm();
+
+	// Algorithm #3
+	float WinMidi_GetSlaveFM();
 }

@@ -19,15 +19,14 @@ namespace SFM
 		float m_amplitude;
 		float m_frequency;
 		float m_pitch;
-		float m_cycleLen; // In period(s)
+		float m_cycleLen; // In units of sample rate
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
 		float Sample(unsigned sampleCount, float modulation, float pulseWidth);
 
-		// To implement one-shot (FIXME: maybe move to a more generic place)
 		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */
 		{
-			return ceilf((sampleCount-m_sampleOffs)*m_pitch) >= m_cycleLen;
+			return (sampleCount-m_sampleOffs)*m_pitch >= m_cycleLen;
 		}
 
 		SFM_INLINE bool IsWavetableForm() /* const */

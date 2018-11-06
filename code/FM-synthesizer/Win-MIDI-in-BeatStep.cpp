@@ -39,14 +39,14 @@ namespace SFM
 
 	// Rotary mapping
 	const unsigned kPot_MOOG_SlavesDetune = 7; // Level/Rate (big rotary)
-	const unsigned kPotNoisyness = 17;         // Set 4, B13
-	const unsigned kPotPulseWidth = 91;        // Set 4, B14
-	const unsigned kPotUnused1 = 114;          // Set 3, B9
-	const unsigned kPotFilterA = 10;           // Set 1, B1
-	const unsigned kPotFilterD = 74;           // Set 1, B2
-	const unsigned kPotFilterS = 71;           // Set 1, B3
-	const unsigned kPotDoubleDetune = 72;      // Set 4, B16
-	const unsigned kPotDoubleVolume = 79;      // Set 4, B15
+	const unsigned kPotNoisyness = 17;         // Set 4, R13
+	const unsigned kPotPulseWidth = 91;        // Set 4, R14
+	const unsigned kPotUnused1 = 114;          // Set 3, R9
+	const unsigned kPotFilterA = 10;           // Set 1, R1
+	const unsigned kPotFilterD = 74;           // Set 1, R2
+	const unsigned kPotFilterS = 71;           // Set 1, R3
+	const unsigned kPotDoubleDetune = 72;      // Set 4, R16
+	const unsigned kPotDoubleVolume = 79;      // Set 4, R15
 	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, R5
 	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
 	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
@@ -72,6 +72,9 @@ namespace SFM
 	const unsigned kButtonOsc2_Saw = 42;          // Button 15
 	const unsigned kButtonOsc3_Pulse = 51;        // Button 8
 	const unsigned kButtonOsc3_Square = 43;       // Button 16
+	const unsigned kButton_MOOG_HardSync = 41;    // Button 14
+
+	static bool s_hardSync = false;
 
 	// Wavetable
 	const unsigned kButtonOscPiano = 36;    // Button 9
@@ -119,6 +122,9 @@ namespace SFM
 					switch (controlIdx)
 					{
 					/* Algorithm #3 */
+
+					case kButton_MOOG_HardSync:
+						if (controlVal == 127) s_hardSync = !s_hardSync;
 
 					case kPot_MOOG_SlavesDetune:
 						s_slavesDetune = fControlVal;
@@ -356,6 +362,7 @@ namespace SFM
 	float WinMidi_GetCarrierVolume2()        { return s_mCarrierVol2; }
 	float WinMidi_GetCarrierVolume3()        { return s_mCarrierVol3; }
 	float WinMidi_GetSlavesDetune()          { return s_slavesDetune; }
+	bool  WinMidi_GetHardSync()              { return s_hardSync;     }
 	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2; }
 	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3; }
 }

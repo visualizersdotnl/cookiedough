@@ -127,6 +127,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-state.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-synchro.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h" />

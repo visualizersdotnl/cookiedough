@@ -51,10 +51,12 @@ namespace SFM
 	const unsigned kPotFilterDrive =24;        // C13
 	const unsigned kPotFeedback = 27;          // C15
 	const unsigned kPotFeedbackWetness = 62;   // C16
+	const unsigned kPot_MOOG_slaveFM = 95;     // C17
 
 	static float s_masterDrive = 0.f;
 	static float s_cutoff = 0.f, s_resonance = 0.f, s_filterContour = 0.f, s_filterDrive = 0.f;
 	static float s_feedback = 0.f, s_feedbackWetness = 0.f;
+	static float s_slaveFM = 0.f;
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -143,7 +145,7 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
-					/*  Master drive (voice volume) */
+						/*  Master drive (voice volume) */
 
 						case kPotMasterDrive:
 							s_masterDrive = fControlVal;
@@ -217,6 +219,11 @@ namespace SFM
 
 						case kButtonAlgoMiniMOOG:
 							if (127 == controlVal) s_algorithm = Voice::kMiniMOOG;
+							break;
+
+						/* Algorithm #3 */
+						case kPot_MOOG_slaveFM:
+							s_slaveFM = fControlVal;
 							break;
 
 						/* Filter */
@@ -438,4 +445,10 @@ namespace SFM
 
 	// Algorithm select
 	Voice::Algo WinMidi_GetAlgorithm() { return s_algorithm; }
+
+	// Algorithm #3
+	float WinMidi_GetSlaveFM()
+	{
+		return s_slaveFM;
+	}
 }

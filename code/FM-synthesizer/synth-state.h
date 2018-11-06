@@ -4,6 +4,8 @@
 
 	Everything is copied per render cycle to a 'live' state; because of this it is important
 	*not* to have any state altered during rendering as it will be lost.
+
+	This is a strict limitation; to sidestep this add one or more objects to the runtime state.
 */
 
 #pragma once
@@ -28,7 +30,9 @@ namespace SFM
 		float m_doubleVolume;
 
 		// #3 (oscillator 2 & 3 forms are pulled in place)
+		bool  m_hardSync;
 		float m_slavesDetune;
+		float m_slaveFM;
 		float m_carrierVol[3];
 		
 		// Master drive [0..N]
@@ -80,7 +84,9 @@ namespace SFM
 			m_doubleVolume = 0.f;
 
 			// Algo #3
+			m_hardSync      = false;
 			m_slavesDetune  = 0.f;
+			m_slaveFM       = 0.f;
 			m_carrierVol[0] = 1.f;
 			m_carrierVol[1] = 0.f;
 			m_carrierVol[2] = 0.f;

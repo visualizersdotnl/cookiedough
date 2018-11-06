@@ -38,7 +38,6 @@ namespace SFM
 		kDigiPulse,
 		kWhiteNoise,
 		kPinkNoise,
-		kBrownishNoise,
 
 		/* Wavetable */
 		kKick808,
@@ -235,17 +234,8 @@ namespace SFM
 
 		b6 = white*0.115926f;
 		
-		return pink;
+		return Clamp(pink);
    }
-
-   // Approximation at best
-   	SFM_INLINE float oscBrownishNoise()
-	{
-		static float value = 0.f;
-		const float noise = oscWhiteNoise();
-		value = lowpassf(value, noise, kGoldenRatio);
-		return value;
-	}
 
    /*
 		Wavetable oscillator(s)

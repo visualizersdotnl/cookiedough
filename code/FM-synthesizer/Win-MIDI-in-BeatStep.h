@@ -37,6 +37,7 @@ namespace SFM
 	float WinMidi_GetCarrierVolume2();
 	float WinMidi_GetCarrierVolume3();
 	float WinMidi_GetSlavesDetune();
+	bool  WinMidi_GetHardSync();
 	Waveform WinMidi_GetCarrierOscillator2();
 	Waveform WinMidi_GetCarrierOscillator3();
 }

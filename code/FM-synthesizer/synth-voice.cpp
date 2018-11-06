@@ -8,7 +8,7 @@
 
 namespace SFM
 {
-	float Voice::Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[])
+	float Voice::Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[], float slaveFM)
 	{
 		// Silence one-shots
 		const int firstCarrierMul = !(true == m_oneShot && true == HasCycled(sampleCount));
@@ -33,16 +33,18 @@ namespace SFM
 
 		case kMiniMOOG:
 			{
+				const float slaveMod = modulation*slaveFM;
 				const float A = m_carriers[0].Sample(sampleCount, modulation, pulseWidth) * firstCarrierMul;
-				const float B = m_carriers[1].Sample(sampleCount, modulation, pulseWidth);
-				const float C = m_carriers[2].Sample(sampleCount, modulation, pulseWidth);
+				const float B = m_carriers[1].Sample(sampleCount, slaveMod, pulseWidth);
+				const float C = m_carriers[2].Sample(sampleCount, slaveMod, pulseWidth);
 				sample = fast_tanhf(carrierVolumes[0]*A + carrierVolumes[1]*B + carrierVolumes[2]*C);
 			}
 			break;
 		}
 
 		// Add noise (can create nice distortion effects)
-		sample += sample*noise*oscBrownishNoise();
+		const float pinkNoise = oscPinkNoise();
+		sample = lerpf<float>(sample, sample*pinkNoise, noise);
 
 		// Finally, modulate amplitude ('tremolo')
 		sample *= m_ampMod.Sample(sampleCount, 0.f);

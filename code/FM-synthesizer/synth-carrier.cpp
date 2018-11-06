@@ -97,7 +97,7 @@ namespace SFM
 
 		signal *= m_amplitude;
 	
-		// This is potentially OK to go beyond, we're mixing amd clamping down the line anyway
+		// It is potentially OK to go beyond, we're mixing amd clamping down the line anyway
 //		SampleAssert(signal);
 
 		// So, we do:

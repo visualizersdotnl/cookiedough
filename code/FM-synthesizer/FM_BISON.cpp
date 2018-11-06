@@ -20,6 +20,7 @@
 #include "synth-delayline.h"
 #include "synth-math.h"
 #include "synth-LUT.h"
+#include "synth-synchro.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -57,12 +58,13 @@ namespace SFM
 	static FM s_shadowState;
 	static FM s_renderState;
 
-	// Runtime
+	// Runtime (state may be altered on Render())
 	static ADSR s_ADSRs[kMaxVoices];
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
 	static CleanFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
+	static Synchro s_synchros[kMaxVoices];
 	
 	/*
 		Voice API.
@@ -152,14 +154,18 @@ namespace SFM
 
 		case Voice::kMiniMOOG:
 			{
+				const float baseFreq = frequency*modRatioC;
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*state.m_carrierVol[0], frequency*modRatioC);
 
 				// FIXE: this could/should be more subtle
 				const float centered  = -0.5f + state.m_slavesDetune; 
-				const float detune    = powf(2.f, floorf(centered*12.f));
-				const float slaveFreq = frequency*modRatioC*detune;
+				const float detune    = powf(2.f, truncf(centered*6.f));
+				const float slaveFreq = baseFreq*detune;
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*state.m_carrierVol[1], slaveFreq);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*state.m_carrierVol[2], slaveFreq);
+
+				// Start synchro.
+				s_synchros[iVoice].Start(s_sampleCount, baseFreq, voice.m_carriers[0].m_cycleLen);
 			}
 
 			break;
@@ -177,9 +183,11 @@ namespace SFM
 		const float broFrequency = invsqrf(tremolo)*0.25f*goldenTen; // Not sure if I should mess with the "feel" of the control here (FIXME)
 		voice.m_ampMod.Initialize(s_sampleCount, 1.f, broFrequency, 0.25f, 0.f);
 
-		// Case specific
+		// One shot?
 		voice.m_oneShot = state.m_loopWaves ? false : oscIsWavetable(request.form);
-		voice.m_pulseWidth = 0.33f; // state.m_pulseWidth;
+
+		// Pulse osc. duty cycle
+		voice.m_pulseWidth = 0.15f + 0.7f*state.m_pulseWidth;
 
 		// Get & reset filter
 		switch (state.m_curFilter)
@@ -216,9 +224,9 @@ namespace SFM
 	}
 
 	// Updates all voices as follows:
-	// - Check if a currently active voice is to be terminated.
-	// - Handle all requested voice releases.
-	// - Trigger all requested voices.
+	// - Check if a currently active voice is to be terminated
+	// - Handle all requested voice releases
+	// - Trigger all requested voices
 	static void UpdateVoices(FM &state)
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
@@ -238,13 +246,15 @@ namespace SFM
 					free = true;
 
 				// One-shot done?
-				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm
+				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm (see synth-voice.cpp)
 				if (Voice::kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount)))
 					free = true;
 				
 				// Free
 				if (true == free)
 				{
+					s_synchros[iVoice].Stop();
+
 					voice.m_enabled = false;
 					--state.m_active;
 				}
@@ -288,6 +298,32 @@ namespace SFM
 		s_voiceReleaseReq.clear();
 	}
 
+	// Update hard sync. in kMiniMOOG mode
+	static void UpdateHardSync(FM &state)
+	{
+		SFM_ASSERT(false == s_stateMutex.try_lock());
+
+		if (false == state.m_hardSync)
+			return;
+
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		{
+			Voice &voice = state.m_voices[iVoice];
+			const bool enabled = voice.m_enabled;
+			if (true == enabled)
+			{
+				if (Voice::kMiniMOOG == voice.m_algorithm)
+				{
+					if (true == s_synchros[iVoice].Tick(s_sampleCount))
+					{
+						voice.m_carriers[1].m_sampleOffs = s_sampleCount;
+						voice.m_carriers[2].m_sampleOffs = s_sampleCount;
+					}
+				}
+			}
+		}
+	}
+
 	/*
 		Parameter update.
 
@@ -312,6 +348,8 @@ namespace SFM
 
 		// For algorithm #3
 		state.m_slavesDetune  = WinMidi_GetSlavesDetune();
+		state.m_hardSync      = WinMidi_GetHardSync();
+		state.m_slaveFM       = WinMidi_GetSlaveFM();
 		state.m_carrierVol[0] = WinMidi_GetCarrierVolume1();
 		state.m_carrierVol[1] = WinMidi_GetCarrierVolume2();
 		state.m_carrierVol[2] = WinMidi_GetCarrierVolume3();
@@ -409,9 +447,9 @@ namespace SFM
 			return loudest;
 
 		const unsigned numSamples = kRingBufferSize-available;
-
-		// Update voices
+		
 		UpdateVoices(s_shadowState);
+		UpdateHardSync(s_shadowState);
 
 		// Make copy of state for rendering
 		s_renderState = s_shadowState;
@@ -454,11 +492,11 @@ namespace SFM
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 
-						// Probed at this level for accuracy
+						// Probed at this level for accuracy (FIXME)
 						const float pitchBend = 2.f*(WinMidi_GetPitchBendRaw()-0.5f);
 						const float noisyness = WinMidi_GetNoisyness();
 
-						const float sample = voice.Sample(sampleCount, state.m_modBrightness, noisyness, volumes);
+						const float sample = voice.Sample(sampleCount, state.m_modBrightness, noisyness, volumes, state.m_slaveFM);
 						buffer[iSample] = sample;
 					}
 

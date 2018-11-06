@@ -6,7 +6,7 @@
 #pragma once
 
 #include "synth-global.h"
-	#include "synth-carrier.h"
+#include "synth-carrier.h"
 #include "synth-modulator.h"
 #include "synth-ADSR.h."
 #include "synth-filter.h"
@@ -46,7 +46,7 @@ namespace SFM
 		LadderFilter *m_pFilter;
 
 		// Pointer to 3 floats expected if algorithm is kMiniMOOG, just 1 in case of kDoubleCarriers
-		float Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[]);
+		float Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[], float slaveFM);
 
 		// Can be used to determine if a one-shot is done
 		bool HasCycled(unsigned sampleCount) /* const */

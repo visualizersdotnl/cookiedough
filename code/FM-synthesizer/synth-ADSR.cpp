@@ -19,9 +19,9 @@ namespace SFM
 		const float releaseScale = 1.f + 2.f*velocity;
 		
 		// Attack & release have a minimum to prevent clicking
-		const float attack  = std::max<float>(kSampleRate/1000.f /* 1ms. min. */,  truncf(attackScale*parameters.attack*kSampleRate));
+		const float attack  = truncf(attackScale*parameters.attack*kSampleRate);
 		const float decay   = truncf(parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/500.f /* 2ms min. */, truncf(releaseScale*parameters.release*kSampleRate));
+		const float release = std::max<float>(attack+decay > 0 ? kSampleRate/500.f /* 2ms min. */ : 0, truncf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 
 		// Harder touch, less linear

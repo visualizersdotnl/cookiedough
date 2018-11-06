@@ -24,8 +24,8 @@ namespace SFM
 			float phase = iSample*pitch;
 
 			// Broken
-//			float sample = oscPolyPulse(phase, frequency, 0.33f);
-			float sample = oscSofterTriangle(phase);
+			float sample = oscPolyPulse(phase, frequency, 0.33f);
+//			float sample = oscSofterTriangle(phase);
 			
 			// Status: OK
 //			float sample = oscPolySquare(phase, frequency);

@@ -399,6 +399,9 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h">
       <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-synchro.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
