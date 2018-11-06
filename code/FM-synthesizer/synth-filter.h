@@ -48,10 +48,11 @@ namespace SFM
 	class LadderFilter
 	{
 	public:
-		LadderFilter() { m_drive = 1.f; }
+		LadderFilter() :
+			m_drive(1.f)
+		{}
+		
 		virtual ~LadderFilter() {}
-
-		virtual void Reset() = 0;
 
 		void Start(unsigned sampleCount, const ADSR::Parameters &parameters, float velocity)
 		{
@@ -65,6 +66,7 @@ namespace SFM
 			SetResonance(parameters.resonance);
 		}
 
+		virtual void Reset() = 0;
 		virtual void Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount) = 0;
 
 	protected:

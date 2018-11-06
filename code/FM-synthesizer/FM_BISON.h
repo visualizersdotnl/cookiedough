@@ -13,22 +13,22 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- ADSR implementation by Nigel Redmon of earlevel.com
+		- MinBLEP table generator by Daniel Werner
 
 	Notes:
 		- Code started out with firmware in mind but later on I had to focus on the sound 100% and thus it became a little
 		  heavy on the CPU and uses more and more C++
 		- Some calculations in here are what is referred to as "bro science"
-		- The design is, not on purpose, a bit like the mini MOOG
+		- The design is, not on purpose, a bit like the MiniMOOG
 		- To be optimized
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Implement MinBLEP() for: pulse, hard sync. (priority)
-		- Is your approach to FM even right: read book
+		- Implement MinBLEP approach: need oscillators with state
 
 	Priority tasks:
-		- Update parameters multiple times per render cycle
+		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Investigate and implement operator feedback
 		- Reinstate pitch bend
 		- Create interface and stash synthezier into an object
@@ -38,7 +38,6 @@
 	Plumbing:
 		- Move shared MIDI code to Win-Midi-in.cpp/h
 		- Flush ring buffer using two memcpy() calls
-		- Review mutex & atomic use (it's excessive now)
 		- Move project to it's own repository (go for VST directly)
 		- Consider voice lists
 		- Turn structures into real classes piece by piece
@@ -79,23 +78,11 @@ namespace SFM
 {
 	/*
 		API exposed to (MIDI) input.
+		I'm assuming all TriggerVoice() and ReleaseVoice() calls will be made from the same thread, or at least not concurrently.
 	*/
 
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
-
-	/*
-		New API (WIP) for compatibility with VST.
-
-		All parameters are normalized [0..1] unless specified otherwise.
-	*/
-
-	class FM_BISON
-	{
-	public:
-		FM_BISON() {}
-		~FM_BISON() {}
-	};
 }
 #endif // _FM_BISON_H_
 

@@ -68,6 +68,9 @@
     <Filter Include="/code\/FM-synthesizer\driver">
       <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer\/3rdparty\MinBLEP">
+      <UniqueIdentifier>{0b93cfca-9fa3-4239-87c7-9196e4505092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -198,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
       <Filter>/code\/FM-synthesizer\core\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\3rdparty\MinBLEP.cpp">
+      <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -384,9 +390,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-state.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
@@ -400,6 +403,12 @@
       <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-synchro.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\3rdparty\MinBLEP.h">
+      <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
   </ItemGroup>

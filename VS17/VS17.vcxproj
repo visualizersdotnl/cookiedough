@@ -43,6 +43,7 @@
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\3rdparty\MinBLEP.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h" />
+    <ClInclude Include="..\code\FM-synthesizer\3rdparty\MinBLEP.h" />
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h" />
@@ -126,7 +128,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-state.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-synchro.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h" />

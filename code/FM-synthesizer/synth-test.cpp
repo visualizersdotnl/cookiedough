@@ -18,20 +18,19 @@ namespace SFM
 	
 		float buffer[kSampleRate*seconds];
 
-		float phase = 0.f;
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
 			float phase = iSample*pitch;
 
-			// Broken
-			float sample = oscDigiPulse(phase, 0.15f);
-//			float sample = oscSofterTriangle(phase);
+			float sample = oscDigiPulse(phase, 0.33f);
 
 			// Status: OK+
+//			float sample = oscSoftPulse(phase, frequency, 0.5f);
+//			float sample = oscSofterTriangle(phase);
 //			float sample = oscSoftSquare(phase, frequency);
 //			float sample = oscDigiSaw(phase);
 //			float sample = oscDigiTriangle(phase);
-//			float sample = oscDigiPulse(phase, 0.25f);
+//			float sample = oscDigiPulse(phase, 0.5f);
 //			float sample = oscSoftSaw(phase, frequency);
 
 			buffer[iSample] = sample;

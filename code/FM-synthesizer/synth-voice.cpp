@@ -43,8 +43,7 @@ namespace SFM
 		}
 
 		// Add noise (can create nice distortion effects)
-		const float pinkNoise = oscPinkNoise();
-		sample = lerpf<float>(sample, sample*pinkNoise, noise);
+		sample = lerpf<float>(sample, sample*oscWhiteNoise(), noise);
 
 		// Finally, modulate amplitude ('tremolo')
 		sample *= m_ampMod.Sample(sampleCount);

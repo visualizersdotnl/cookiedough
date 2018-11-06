@@ -1,11 +1,6 @@
 
 /*
-	Syntherklaas FM -- Global (state) PODs.
-
-	Everything is copied per render cycle to a 'live' state; because of this it is important
-	*not* to have any state altered during rendering as it will be lost.
-
-	This is a strict limitation; to sidestep this add one or more objects to the runtime state.
+	Syntherklaas FM -- Parameter state.
 */
 
 #pragma once
@@ -17,19 +12,16 @@
 
 namespace SFM
 {
-	struct FM
+	struct Parameters
 	{
-		Voice m_voices[kMaxVoices];
-		unsigned m_active;
-
 		// Algorithms
 		Voice::Algo m_algorithm;
 
-		// #2
+		// Algorithm #2
 		float m_doubleDetune;
 		float m_doubleVolume;
 
-		// #3 (oscillator 2 & 3 forms are pulled in place)
+		// Algorithm #3 (oscillator 2 & 3 forms are pulled in place)
 		bool  m_hardSync;
 		float m_slavesDetune;
 		float m_slaveFM;
@@ -50,7 +42,7 @@ namespace SFM
 		// Loop wavetable oscillators
 		bool m_loopWaves;
 
-		// Pulse oscillator width (no multiples, that tends to sound likewise)
+		// Pulse oscillator width
 		float m_pulseWidth;
 
 		// ADSR parameters
@@ -69,13 +61,8 @@ namespace SFM
 		float m_feedbackWetness;
 		float m_feedbackPitch;
 
-		void Reset(unsigned sampleCount)
+		void SetDefaults()
 		{
-			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-				m_voices[iVoice].m_enabled = false;
-
-			m_active = 0;
-
 			// Single carrier algorithm, zero out other parameters
 			m_algorithm = Voice::Algo::kSingle;
 

@@ -82,10 +82,7 @@ namespace SFM
 	SFM_INLINE float oscDigiPulse(float phase, float duty)
 	{
 		const float time = fmodf(phase, 1.f);
-		if (time < duty)
-			return 1.f;
-		else
-			return -1.f;
+		return (time < duty) ? 1.f : -1.f;
 	}
 
 	/*
@@ -96,8 +93,8 @@ namespace SFM
 
 	SFM_INLINE unsigned BLIT_GetNumHarmonics(float frequency)
 	{
-		const unsigned numHarmonics = (unsigned) ceilf(0.5f * (kSampleRate/frequency));
-		return std::max<unsigned>(1, numHarmonics>>1);
+		const unsigned numHarmonics = (unsigned) floorf(kNyquist/(kAudibleLowHz+frequency));
+		return numHarmonics;
 	}
 
 	SFM_INLINE float oscSoftSaw(float phase, float frequency) 

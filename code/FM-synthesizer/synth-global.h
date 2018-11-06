@@ -32,16 +32,15 @@ namespace SFM
 	const unsigned kMinSamplesPerUpdate = kRingBufferSize/2;
 
 	// Reasonable audible spectrum
-	const float kAudibleLowHz = 12.f;
+	const float kAudibleLowHz = 20.f;
 	const float kAudibleHighHz = 22000.f;
 
 	// LFO ranges
 	const float kMaxSubLFO = kAudibleLowHz;
 	const float kMaxSonicLFO = kAudibleHighHz;	
 
-	// Nyquist frequencies.
+	// Nyquist frequency
 	const float kNyquist = kSampleRate/2.f;
-	const float kAudibleNyquist = std::min<float>(kAudibleHighHz, kNyquist);
 
 	// Max. number of voices
 	const unsigned kMaxVoices = 24; 
