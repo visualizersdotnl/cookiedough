@@ -440,13 +440,14 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				Voice &voice = voices[iVoice];
-				ADSR &voiceADSR = s_ADSRs[iVoice];
-	
-				// Pick single volume for algorithm #2, and 3 of them for the MiniMOOG algorithm
-				const float *volumes = (Voice::kDoubleCarriers == voice.m_algorithm) ? &state.m_doubleVolume : state.m_carrierVol;
 
 				if (true == voice.m_enabled)
 				{
+					ADSR &voiceADSR = s_ADSRs[iVoice];
+
+					// Pick single volume for algorithm #2, and 3 of them for the MiniMOOG algorithm
+					const float *volumes = (Voice::kDoubleCarriers == voice.m_algorithm) ? &state.m_doubleVolume : state.m_carrierVol;
+
 					float *buffer = s_voiceBuffers[curVoice];
 
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -457,13 +458,21 @@ namespace SFM
 						const float pitchBend = 2.f*(WinMidi_GetPitchBendRaw()-0.5f);
 						const float noisyness = WinMidi_GetNoisyness();
 
-						const float sample = voice.Sample(sampleCount, state.m_modBrightness, voiceADSR, noisyness, volumes);
+						const float sample = voice.Sample(sampleCount, state.m_modBrightness, noisyness, volumes);
 						buffer[iSample] = sample;
 					}
 
 					// Filter voice
 					voice.m_pFilter->SetLiveParameters(state.m_filterParams);
 					voice.m_pFilter->Apply(buffer, numSamples, state.m_filterContour, s_sampleCount);
+
+					// Apply ADSR
+					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+					{
+						const unsigned sampleCount = s_sampleCount+iSample;
+						const float ADSR = voiceADSR.Sample(sampleCount);
+						buffer[iSample] *= ADSR;
+					}
 
 					++curVoice; // Do *not* use to index anything other than the temporary buffers
 				}

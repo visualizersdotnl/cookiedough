@@ -88,7 +88,7 @@ namespace SFM
 		Credit:
 		- Based on an implementation by Magnus Jonsson
 		- https://github.com/magnusjonsson/microtracker (unlicense)
-		- Modified to sound square (refer to a 1960s slang dictionary, thank you)
+		- Modified to sound like the filter equivalent of Ned Flanders
 	*/
 
 	class CleanFilter : public LadderFilter

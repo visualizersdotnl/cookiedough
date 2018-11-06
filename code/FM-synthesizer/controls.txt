@@ -4,7 +4,7 @@
 - Master drive
 - Pitch bend (out of order since 03/11/2018)
 - Noisyness
-- Algorithm select: single carrier, detuned carriers, MiniMOOG 3 carrier design
+- Algorithm select: single carrier, detuned carriers, MiniMOOG 3 carrier design: 3 oscillators, detune control for the 2 slaves
 - One-shot for wavetable oscillators
 - Tremolo
 - Pulse oscillator width (duty cycle)

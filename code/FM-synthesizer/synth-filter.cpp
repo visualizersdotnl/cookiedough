@@ -87,7 +87,8 @@ namespace SFM
 	}
 
 	/*
-		Teemu's filter.
+		Transistor ladder filter by Teemu Voipio
+		Source: https://www.kvraudio.com/forum/viewtopic.php?t=349859
 
 		I've left most of Teemu's code more or less intact, including variable names and comments.
 	*/

@@ -8,16 +8,12 @@
 
 namespace SFM
 {
-	float Voice::Sample(unsigned sampleCount, float brightness, ADSR &envelope, float noise, const float carrierVolumes[])
+	float Voice::Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[])
 	{
-		// Assumption: any artifacts this yields are migitated by soft clamping down the line
-//		SFM_ASSERT(pitchBend >= -1.f && pitchBend <= 1.f);
-
 		// Silence one-shots
 		const int firstCarrierMul = !(true == m_oneShot && true == HasCycled(sampleCount));
 
-		const float ADSR = envelope.Sample(sampleCount);
-
+		// Get FM
 		const float modulation = m_modulator.Sample(sampleCount, brightness);
 
 		// Sample carrier(s)
@@ -46,18 +42,12 @@ namespace SFM
 		}
 
 		// Add noise (can create nice distortion effects)
-	//	sample += sample*noise*oscBrownishNoise();
-		
-		// Factor in ADSR
-		sample *= ADSR;
+		sample += sample*noise*oscBrownishNoise();
 
 		// Finally, modulate amplitude ('tremolo')
-//		sample *= m_ampMod.Sample(sampleCount, 0.f);
+		sample *= m_ampMod.Sample(sampleCount, 0.f);
 
-		// This ain't that alarming since we clamp just about everywhere
-		SFM_ASSERT(sample >= -1.f && sample <= 1.f);
-	
-		SFM_ASSERT(true == FloatCheck(sample));
+		SampleAssert(sample);
 
 		return sample;
 	}

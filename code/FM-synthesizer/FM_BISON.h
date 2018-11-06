@@ -24,7 +24,7 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Detune 2 oscillators (big range) in mode #3, look at 'HARDSYNC' -> In progress
+		- In progress: algorithm #3, detune 2 oscillators (big range) in mode #3, look at 'HARDSYNC'
 		- Fix pulse: write matching PolyBLEP() function
 		- The noise doesn't sound either good nor MOOG-like
 		- If and when it all works, try kPolySoftness as a parameter?
@@ -61,7 +61,6 @@
 		- Profiling & optimization
 
 	Known issues:
-		- Filters clip when stopped short (like Frank Costanza does it)
 		- MIDI pots crackle a bit (not important for intended target)
 		- Numerical instability
 		- Crackle when bottlenecked (should not be the case in production phase)
