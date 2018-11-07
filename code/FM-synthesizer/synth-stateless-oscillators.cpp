@@ -4,7 +4,7 @@
 */
 
 #include "synth-global.h"
-#include "synth-oscillators.h"
+#include "synth-stateless-oscillators.h"
 
 // Wavetable(s)
 #include "wavetable/wavKick808.h"  

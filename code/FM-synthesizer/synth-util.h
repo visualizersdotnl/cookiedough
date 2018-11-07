@@ -56,12 +56,6 @@ namespace SFM
 		return sample;
 	}
 
-	// Good way to mix 2 samples
-	SFM_INLINE float Mix(float sampleA, float sampleB)
-	{
-		return fast_tanhf(sampleA+sampleB);
-	}
-
 	/*
 		Floating point error detection
 		FIXME: does not compile on OSX?

@@ -39,13 +39,13 @@ namespace SFM
 				const float C = m_carriers[2].Sample(sampleCount, slaveMod, pulseWidth);
 
 				const float *pVols = parameters.m_carrierVol;
-				sample = Mix(pVols[0]*A, Mix(pVols[1]*B, pVols[2]*C));
+				sample = Clamp(pVols[0]*A + SoftClamp(pVols[1]*B + pVols[2]*C));
 			}
 			break;
 		}
 
-		// Add noise (can create nice distortion effects)
-		sample = lerpf<float>(sample, sample*oscWhiteNoise(), parameters.m_noisyness);
+		// Add noise
+		sample = Clamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
 
 		// Finally, modulate amplitude ('tremolo')
 		sample *= m_ampMod.Sample(sampleCount);

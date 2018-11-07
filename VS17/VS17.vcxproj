@@ -55,7 +55,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-oscillators.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp" />
@@ -127,7 +127,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillator.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-stateless-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-ringbuffer.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h" />

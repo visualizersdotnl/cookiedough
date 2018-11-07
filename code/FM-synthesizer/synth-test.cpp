@@ -5,7 +5,7 @@
 
 #include "synth-global.h"
 // #include "synth-test.h"
-#include "synth-oscillators.h"
+#include "synth-stateless-oscillators.h"
 #include "FM_BISON.h"
 
 namespace SFM 

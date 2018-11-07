@@ -116,9 +116,12 @@ namespace SFM
 			/* const */ float dry = pSamples[iSample];
 			const float ADSR = SampleEnv(m_ADSR, invert);
 
+			// Dry*Drive
+			const float driven = dry*m_drive;
+
 			// Input with half delay, for non-linearities
-			double ih = 0.5 * (dry*m_drive + m_inputDelay); 
-			m_inputDelay = dry;
+			double ih = 0.5 * (driven + m_inputDelay); 
+			m_inputDelay = driven;
 
 			// Evaluate the non-linear gains
 			double t0 = tanhXdX(ih - r * m_state[3]);
@@ -138,7 +141,7 @@ namespace SFM
 			double y3 = (g3*m_state[3] + f3*g2*m_state[2] + f2*g1*m_state[1] + f1*g0*m_state[0] + f0*dry) / (1 + r*f0);
 
 			// Then solve the remaining outputs (with the non-linear gains here)
-			double xx = t0*(dry - r*y3);
+			double xx = t0*(driven - r*y3);
 			double y0 = t1*g0*(m_state[0] + f*xx);
 			double y1 = t2*g1*(m_state[1] + f*y0);
 			double y2 = t3*g2*(m_state[2] + f*y1);

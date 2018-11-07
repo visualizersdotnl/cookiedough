@@ -68,7 +68,7 @@
 #define _FM_BISON_H_
 
 #include "synth-global.h"
-#include "synth-oscillators.h"
+#include "synth-stateless-oscillators.h"
 #include "synth-voice.h"
 
 bool Syntherklaas_Create();

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "synth-oscillators.h"
+#include "synth-stateless-oscillators.h"
 
 namespace SFM
 {
@@ -105,7 +105,7 @@ namespace SFM
 				case kSoftSquare:
 
 				default:
-					signal = oscWhiteNoise();
+					signal = oscWhiteNoise(phase);
 					Log("Oscillator: unsupported waveform");
 					SFM_ASSERT(false);
 					break;
@@ -139,7 +139,7 @@ namespace SFM
 				/* Noise */
 
 				case kWhiteNoise:
-					signal = oscWhiteNoise();
+					signal = oscWhiteNoise(modulated);
 					break;
 
 				case kPinkNoise:

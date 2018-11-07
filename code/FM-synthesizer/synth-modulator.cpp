@@ -5,7 +5,7 @@
 
 #include "synth-global.h"
 #include "synth-modulator.h"
-#include "synth-oscillators.h"
+#include "synth-stateless-oscillators.h"
 
 namespace SFM
 {

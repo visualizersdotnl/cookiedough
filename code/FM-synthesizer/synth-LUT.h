@@ -27,10 +27,7 @@ namespace SFM
 
 	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
-		unsigned from = unsigned(index);
-		const float delta = index-from;
-		const float A = LUT[from&(kOscLUTSize-1)];
-		return A;
+		return LUT[unsigned(index) & kOscLUTSize-1];
 	}
 
 	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index*kOscLUTSize);   }

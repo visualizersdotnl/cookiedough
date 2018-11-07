@@ -184,9 +184,6 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-oscillators.cpp">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
@@ -206,6 +203,9 @@
       <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -384,9 +384,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-oscillators.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
@@ -412,6 +409,9 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillator.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-stateless-oscillators.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -218,20 +218,20 @@ namespace SFM
 		Noise oscillator(s).
 	*/
 
-	SFM_INLINE float oscWhiteNoise()
+	SFM_INLINE float oscWhiteNoise(float phase)
 	{
 		// No need for the noise LUT (FIXME: yet)
-		return -1.f + 2.f*mt_randf();
+		return lutnoisef(phase + mt_randf());
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
 	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
 	SFM_INLINE float oscPinkNoise()
 	{
-		const float white = oscWhiteNoise();
+		const float white = -1.f + 2.f*mt_randf();
 
 		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
-		static float pink = 0.f;
+		static float pink = kGoldenRatio/2.f;
 
 		b0 = 0.99886f*b0 + white*0.0555179f;
 		b1 = 0.99332f*b1 + white*0.0750759f; 
@@ -266,12 +266,12 @@ namespace SFM
 		const float pitchMul = powf(2.f, tonalOffs);
 		const float basePitch = CalculatePitch(baseHz*pitchMul);
 
-		m_rate = basePitch*m_periodLen;
+		m_rate = 1.f/(basePitch*m_periodLen);
 	}
 
 	SFM_INLINE float Sample(float phase) const
 	{
-		const float index = phase/m_rate;
+		const float index = phase*m_rate;
 		const unsigned from = unsigned(index);
 		const unsigned to = from+1;
 		const float delta = index-from;
@@ -282,7 +282,7 @@ namespace SFM
 
 	float GetLength() const
 	{
-		return m_numSamples*m_rate;
+		return m_numSamples/m_rate;
 	}
 
 	private:
