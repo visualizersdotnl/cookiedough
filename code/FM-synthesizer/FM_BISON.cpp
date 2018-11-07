@@ -403,7 +403,7 @@ namespace SFM
 		s_parameters.m_curFilter = WinMidi_GetCurFilter();
 		s_parameters.m_filterContour = WinMidi_GetFilterContour();
 		s_parameters.m_flipFilterEnv = WinMidi_GetFilterFlipEnvelope();
-		s_parameters.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*kMaxFilterDrivedB);
+		s_parameters.m_filterParams.drive = dBToAmplitude(kMaxFilterDrivedB)*WinMidi_GetFilterDrive();
 		s_parameters.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.m_filterParams.resonance = WinMidi_GetFilterResonance();
 

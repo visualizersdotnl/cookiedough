@@ -204,7 +204,7 @@ namespace SFM
 						break;
 
 					case kButtonOscTriangle:
-						s_waveform = kSofterTriangle;
+						s_waveform = kPolyTriangle;
 						break;
 
 					case kButtonOscAnalogueSaw:
@@ -324,7 +324,7 @@ namespace SFM
 			}
 		}
 
-		Error(kFatal, "Can't find the Oxygen 49 MIDI keyboard");
+		Error(kFatal, "Can't find the BeatStep MIDI keyboard");
 
 		return false;
 	}

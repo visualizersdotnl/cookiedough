@@ -79,8 +79,8 @@ namespace SFM
 			signal = oscPolyPulse(phase+modulation, m_frequency, pulseWidth);
 			break;
 
-		case kSofterTriangle:
-			signal = oscDigiTriangle(phase+modulation);
+		case kPolyTriangle:
+			signal = oscPolyTriangle(phase+modulation, m_frequency);
 			break;
 
 		case kWhiteNoise:

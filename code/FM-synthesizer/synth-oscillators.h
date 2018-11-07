@@ -23,7 +23,6 @@ namespace SFM
 		kDigiSaw,
 		kDigiSquare,
 		kDigiTriangle,
-		kSofterTriangle,
 		kDigiPulse,
 
 		/* BLIT forms */
@@ -34,6 +33,7 @@ namespace SFM
 		kPolyPulse,
 		kPolySaw,
 		kPolySquare,
+		kPolyTriangle,
 
 		/* Noise */
 		kWhiteNoise,
@@ -79,10 +79,26 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
+/*
+		phase = fabsf(fmodf(phase, 1.f));
+		
+		float square = oscDigiSquare(phase);
+		float triangle;
+
+		if (phase < 0.25f)
+			triangle = square*phase*4.f;
+		else if (phase < 0.5f)
+			triangle = square*(0.5f-phase)*4.f;
+		else if (phase < 0.75f)
+			triangle = square*(phase-0.5f)*4.f;
+		else
+			triangle = square*(1.f-phase)*4.f;
+
+		return triangle;
+*/
+
 		return 2.f*(asinf(lutsinf(phase))*(1.f/kPI));
 	}
-
-	SFM_INLINE float oscSofterTriangle(float phase) { return fast_tanhf(oscDigiTriangle(phase)); }
 
 	SFM_INLINE float oscDigiPulse(float phase, float duty)
 	{
@@ -98,7 +114,7 @@ namespace SFM
 
 	SFM_INLINE unsigned BLIT_GetNumHarmonics(float frequency)
 	{
-		const unsigned numHarmonics = (unsigned) floorf(kNyquist/(kAudibleLowHz+frequency));
+		const unsigned numHarmonics = unsigned(kNyquist/(kAudibleLowHz+frequency));
 		return numHarmonics;
 	}
 
@@ -132,7 +148,7 @@ namespace SFM
 	}
 
 	/*
-		PolyBLEP pulse, saw & square.
+		PolyBLEP pulse, saw, square & triangle.
 
 		Exponentially curves along the discontinuities.
 		Not perfect but a whole lot faster than BLIT; they are here until I've implemented MinBLEP.
@@ -190,6 +206,26 @@ namespace SFM
 	SFM_INLINE float oscPolySquare(float phase, float frequency)
 	{
 		return oscPolyPulse(phase, frequency, 0.5f);
+	}
+
+	SFM_INLINE float oscPolyTriangle(float phase, float frequency)
+	{
+		phase = fabsf(fmodf(phase, 1.f));
+		
+		const float square = oscPolyPulse(phase, frequency, 0.5f);
+
+		// FIXME: turn this into something decent!
+		float triangle;
+		if (phase < 0.25f)
+			triangle = square*phase*4.f;
+		else if (phase < 0.5f)
+			triangle = square*(0.5f-phase)*4.f;
+		else if (phase < 0.75f)
+			triangle = square*(phase-0.5f)*4.f;
+		else
+			triangle = square*(1.f-phase)*4.f;
+
+		return triangle;
 	}
 
 	/*

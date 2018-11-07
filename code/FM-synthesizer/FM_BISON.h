@@ -30,7 +30,7 @@
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Investigate and implement operator feedback
 		- Reinstate pitch bend
-		- Create interface and stash synthezier into an object
+		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- First draft of manual
 

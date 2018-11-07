@@ -23,9 +23,9 @@ namespace SFM
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
 		
-		const float triangle = oscDigiTriangle(phase);
-		const float sine = lutsinf(phase);
-		const float modulation = sine + (sine-triangle)*brightness;
+		const float shape = oscPolySquare(phase, m_frequency);
+		const float sine = oscSine(phase);
+		const float modulation = sine + (sine-shape)*brightness;
 
 		const float index = m_index*m_indexLFO.Sample(sampleCount);
 
