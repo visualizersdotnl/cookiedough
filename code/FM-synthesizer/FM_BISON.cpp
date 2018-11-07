@@ -20,7 +20,6 @@
 #include "synth-delayline.h"
 #include "synth-math.h"
 #include "synth-LUT.h"
-#include "synth-synchro.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -78,7 +77,6 @@ namespace SFM
 	static CleanFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
-	static Synchro s_synchros[kMaxVoices];
 	
 	/*
 		Voice API.
@@ -158,14 +156,20 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*s_parameters.m_carrierVol[0], frequency);
 
-				const float detune    = powf(2.f, -3.f + truncf(s_parameters.m_slavesDetune*6.f));
+				// Same as above, but with a range of 3 octaves
+				const float detune = powf(3.f/2.f, (-12.f + 24.f*s_parameters.m_slavesDetune)/12.f);
 				const float slaveFreq = frequency*detune;
 
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*s_parameters.m_carrierVol[1], slaveFreq);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*s_parameters.m_carrierVol[2], slaveFreq);
 
-				// Start synchro.
-				s_synchros[iVoice].Start(s_sampleCount, frequency, voice.m_carriers[0].m_cycleLen);
+				// Want hard sync.?
+				if (true == s_parameters.m_hardSync)
+				{
+					// Enslave them!
+					voice.m_carriers[1].m_oscillator.SetMasterFrequency(frequency);
+					voice.m_carriers[2].m_oscillator.SetMasterFrequency(frequency);
+				}
 			}
 
 			break;
@@ -239,7 +243,7 @@ namespace SFM
 				
 				// If ADSR envelope has ran it's course, voice can be freed.
 				ADSR &envelope = s_ADSRs[iVoice];
-				if (true == envelope.IsIdle(s_sampleCount))
+				if (true == envelope.IsIdle())
 					free = true;
 
 				// One-shot done?
@@ -250,8 +254,6 @@ namespace SFM
 				// Free
 				if (true == free)
 				{
-					s_synchros[iVoice].Stop();
-
 					voice.m_enabled = false;
 					--s_active;
 				}
@@ -293,32 +295,6 @@ namespace SFM
 		// All release requests have been honoured; as for triggers, they may have to wait
 		// if there's no slot available at this time.
 		s_voiceReleaseReq.clear();
-	}
-
-	// Update hard sync. in kMiniMOOG mode
-	static void UpdateHardSync()
-	{
-		SFM_ASSERT(false == s_stateMutex.try_lock());
-
-		if (false == s_parameters.m_hardSync)
-			return;
-
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-		{
-			Voice &voice = s_voices[iVoice];
-			const bool enabled = voice.m_enabled;
-			if (true == enabled)
-			{
-				if (kMiniMOOG == voice.m_algorithm)
-				{
-					if (true == s_synchros[iVoice].Tick(s_sampleCount))
-					{
-						voice.m_carriers[1].m_sampleOffs = s_sampleCount;
-						voice.m_carriers[2].m_sampleOffs = s_sampleCount;
-					}
-				}
-			}
-		}
 	}
 
 	/*
@@ -455,7 +431,6 @@ namespace SFM
 
 		// Handle voice logic
 		UpdateVoices();
-		UpdateHardSync();
 
 		const unsigned numVoices = s_active;
 

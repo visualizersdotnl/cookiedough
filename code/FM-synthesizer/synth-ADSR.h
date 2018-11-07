@@ -45,7 +45,7 @@ namespace SFM
 			return m_ADSR.process();
 		}
 
-		bool IsIdle(unsigned sampleCount) /* const */
+		bool IsIdle() /* const */
 		{
 			const bool isIdle = m_ADSR.getState() == ::ADSR::env_idle;
 			SFM_ASSERT(false == isIdle || (true == isIdle && 0.f == m_ADSR.getOutput()));

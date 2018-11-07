@@ -16,23 +16,46 @@ namespace SFM
 		/* const */ Waveform m_form;
 		/* const */ float m_frequency;
 		/* const */ float m_pitch;
+		/* const */ float m_masterPitch;
 
 	public:
 		// Unspecified oscillator will yield 1.0
 		Oscillator() :
-			m_form(kCosine), m_frequency(1.f), m_pitch(0.f) {}
+			m_sampleOffs(-1), m_form(kCosine), m_frequency(1.f), m_pitch(0.f), m_masterPitch(0.f) {}
 
 		Oscillator(unsigned sampleCount, Waveform form, float frequency) : 
 			m_sampleOffs(sampleCount)
 ,			m_form(form)
 ,			m_frequency(frequency)
 ,			m_pitch(CalculatePitch(frequency))
-		{}
+		{
+			m_masterPitch = m_pitch;
+		}
+
+		// We'll wrap around this pitch; so by default it's identical
+		// It enables to hard sync. this oscillator (slave mode)
+		void SetMasterFrequency(float frequency)
+		{
+			m_masterPitch = CalculatePitch(frequency);
+		}
+
+		float GetPitch() const       { return m_pitch; }
+		Waveform GetWaveform() const { return m_form;  }
 
 		float Sample(unsigned sampleCount, float modulation, float duty = 0.5f)
 		{
 			const unsigned sample = sampleCount-m_sampleOffs;
-			const float phase = sample*m_pitch;
+			float phase = sample*m_pitch;
+			const float masterPhase = sample*m_masterPitch;
+			
+			// Wrap?
+			if (masterPhase >= 1.f)
+			{
+				phase = 0.f;
+				m_sampleOffs = sampleCount;
+			}
+
+			const float modulated = phase+modulation;;
 
 			float signal;
 			switch (m_form)
@@ -54,29 +77,29 @@ namespace SFM
 					break;
 
 				case kSine:
-					signal = oscSine(phase+modulation);
+					signal = oscSine(modulated);
 					break;
 					
 				case kCosine:
-					signal = oscCos(phase+modulation);
+					signal = oscCos(modulated);
 					break;
 
 				/* PolyBLEP forms */
 				
 				case kPolyPulse:
-					signal = oscPolyPulse(phase+modulation, m_frequency, duty);
+					signal = oscPolyPulse(modulated, m_frequency, duty);
 					break;
 
 				case kPolySaw:
-					signal = oscPolySaw(phase+modulation, m_frequency);
+					signal = oscPolySaw(modulated, m_frequency);
 					break;
 
 				case kPolySquare:
-					signal = oscPolySquare(phase+modulation, m_frequency);
+					signal = oscPolySquare(modulated, m_frequency);
 					break;
 
 				case kPolyTriangle:
-					signal = oscPolyTriangle(phase+modulation, m_frequency);
+					signal = oscPolyTriangle(modulated, m_frequency);
 					break;
 
 				/* Noise */
@@ -109,16 +132,6 @@ namespace SFM
 			}
 
 			return signal;
-		}
-
-		float GetPitch() const 
-		{ 
-			return m_pitch; 
-		}
-
-		Waveform GetWaveform() const 
-		{
-			return m_form;
 		}
 	};
 }

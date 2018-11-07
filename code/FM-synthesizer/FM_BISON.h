@@ -24,13 +24,9 @@
 
 	Immediate problems:
 		- Finish carrier oscillator
-		  + Wrapping phase
-		  + Hard sync.
 		  + MinBLEP
 		- MiniMOOG mode:
-			+ Test hard sync.
-			+ Main carrier should get some prevalence in the mix, if wanted (third knob?)
-			+ Refine detune range
+		  + Main carrier should get some prevalence in the mix, if wanted (third knob?)
 
 	Priority tasks:
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
