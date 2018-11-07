@@ -23,7 +23,7 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- MiniMOOG mode: hard sync., detune range
+		- MiniMOOG mode: hard sync., detune range, main carrier drive?
 		- Implement MinBLEP approach: need oscillator with state; or is there another way to make hard sync. sound nice?
 
 	Priority tasks:
