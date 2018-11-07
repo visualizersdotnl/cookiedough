@@ -13,7 +13,7 @@
 
 namespace SFM
 {
-	// Initialized manually
+	// FIXME: create class
 	struct Modulator
 	{
 		unsigned m_sampleOffs;

@@ -10,7 +10,7 @@
 
 namespace SFM
 {
-	// Initialized manually
+	// FIXME: create class
 	struct Carrier
 	{
 		unsigned m_sampleOffs;
