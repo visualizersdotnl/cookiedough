@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Stateless oscillator functions.
+	Syntherklaas FM -- Stateless oscillators.
 */
 
 #include "synth-global.h"
@@ -23,10 +23,10 @@ namespace SFM
 		But for now it is fine (FIXME).
 	*/
 
-	static WavetableOscillator s_kickOsc(g_wavKick808, sizeof(g_wavKick808), 0, 0, 233.08f);           // Tuned OK
-	static WavetableOscillator s_snareOsc(g_wavSnare808, sizeof(g_wavSnare808), 2, 0, 220.f);          // Tuned OK
-	static WavetableOscillator s_guitarOsc(g_wavGuitar, sizeof(g_wavGuitar), 1, -4, 130.81f);          // Tuned OK
-	static WavetableOscillator s_elecPianoOsc(g_wavElecPiano, sizeof(g_wavElecPiano), -2, 1, 261.63f); // Tuned OK
+	static WavetableOscillator s_kickOsc(g_wavKick808, sizeof(g_wavKick808), 0, 0, 233.08f);            // Tuned OK
+	static WavetableOscillator s_snareOsc(g_wavSnare808, sizeof(g_wavSnare808), 2, 0, 220.f);           // Tuned OK
+	static WavetableOscillator s_guitarOsc(g_wavGuitar, sizeof(g_wavGuitar), 1, -4, 130.81f);           // Tuned OK
+	static WavetableOscillator s_elecPianoOsc(g_wavElecPiano, sizeof(g_wavElecPiano), -2, -3, 261.63f); // Tuned OK
 	
 	WavetableOscillator &getOscKick808()   { return s_kickOsc;   }
 	WavetableOscillator &getOscSnare808()  { return s_snareOsc;  }
