@@ -225,6 +225,7 @@ namespace SFM
 							break;
 
 						/* Algorithm #3 */
+
 						case kPot_MOOG_slaveFM:
 							s_slaveFM = fControlVal;
 							break;

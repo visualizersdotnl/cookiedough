@@ -62,17 +62,18 @@ namespace SFM
 	// Button mapping
 
 	// Procedural
-	const unsigned kButtonOscSine = 44;           // Button 1
-	const unsigned kButtonOscTriangle = 45;       // Button 2
-	const unsigned kButtonOscAnalogueSaw = 46;    // Button 3
-	const unsigned kButtonOscAnalogueSquare = 47; // Button 4
-	const unsigned kButtonOscPulse = 48;          // Button 5
-	const unsigned kButtonOscNoise = 49;          // Button 6
-	const unsigned kButtonOsc2_Sin = 50;          // Button 7
-	const unsigned kButtonOsc2_Saw = 42;          // Button 15
-	const unsigned kButtonOsc3_Pulse = 51;        // Button 8
-	const unsigned kButtonOsc3_Square = 43;       // Button 16
-	const unsigned kButton_MOOG_HardSync = 41;    // Button 14
+	const unsigned kButtonOscSine = 44;            // Button 1
+	const unsigned kButtonOscTriangle = 45;        // Button 2
+	const unsigned kButtonOscAnalogueSaw = 46;     // Button 3
+	const unsigned kButtonOscAnalogueSquare = 47;  // Button 4
+	const unsigned kButtonOscPulse = 48;           // Button 5
+	const unsigned kButtonOscNoise = 49;           // Button 6
+	const unsigned kButtonOsc2_Sin = 50;           // Button 7
+	const unsigned kButtonOsc2_Saw = 42;           // Button 15
+	const unsigned kButtonOsc3_Pulse = 51;         // Button 8
+	const unsigned kButtonOsc3_Square = 43;        // Button 16
+	const unsigned kButton_MOOG_HardSync_On = 41;  // Button 14
+	const unsigned kButton_MOOG_HardSync_Off = 40; // Button 13
 
 	static bool s_hardSync = false;
 
@@ -85,7 +86,7 @@ namespace SFM
 	// Oscillators (defaults by hardware layout)
 	static Waveform s_waveform = kSine;
 	static Waveform s_waveformOsc2 = kSine;
-	static Waveform s_waveformOsc3 = kSoftSquare;
+	static Waveform s_waveformOsc3 = kPolySquare;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -123,8 +124,13 @@ namespace SFM
 					{
 					/* Algorithm #3 */
 
-					case kButton_MOOG_HardSync:
-						if (controlVal == 127) s_hardSync = !s_hardSync;
+					case kButton_MOOG_HardSync_On:
+						s_hardSync = true;
+						break;
+
+					case kButton_MOOG_HardSync_Off:
+						s_hardSync = false;
+						break;
 
 					case kPot_MOOG_SlavesDetune:
 						s_slavesDetune = fControlVal;

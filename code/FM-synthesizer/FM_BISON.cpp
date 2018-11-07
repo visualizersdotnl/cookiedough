@@ -148,7 +148,7 @@ namespace SFM
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
-				const float detune = powf(2.f, (kGoldenRatio*0.5f*s_parameters.m_doubleDetune)/12.f);
+				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
 				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*detune);
 			}
 
@@ -158,10 +158,9 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*s_parameters.m_carrierVol[0], frequency);
 
-				// FIXE: this could/should be more subtle
-				const float centered  = -0.5f + s_parameters.m_slavesDetune; 
-				const float detune    = powf(2.f, ceilf(centered*6.f));
+				const float detune    = powf(2.f, -3.f + truncf(s_parameters.m_slavesDetune*6.f));
 				const float slaveFreq = frequency*detune;
+
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*s_parameters.m_carrierVol[1], slaveFreq);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*s_parameters.m_carrierVol[2], slaveFreq);
 
@@ -185,7 +184,7 @@ namespace SFM
 		voice.m_oneShot = s_parameters.m_loopWaves ? false : oscIsWavetable(request.form);
 
 		// Pulse osc. duty cycle
-		voice.m_pulseWidth = 0.15f + 0.7f*s_parameters.m_pulseWidth;
+		voice.m_pulseWidth = 0.1f + 0.8f*s_parameters.m_pulseWidth;
 
 		// Get & reset filter
 		switch (s_parameters.m_curFilter)
