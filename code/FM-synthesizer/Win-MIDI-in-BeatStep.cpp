@@ -85,7 +85,7 @@ namespace SFM
 	// Oscillators (defaults by hardware layout)
 	static Waveform s_waveform = kSine;
 	static Waveform s_waveformOsc2 = kSine;
-	static Waveform s_waveformOsc3 = kDigiPulse;
+	static Waveform s_waveformOsc3 = kSoftSquare;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -147,15 +147,15 @@ namespace SFM
 						break;
 
 					case kButtonOsc2_Saw:
-						s_waveformOsc2 = kSoftSaw;
+						s_waveformOsc2 = kPolySaw;
 						break;
 
 					case kButtonOsc3_Pulse:
-						s_waveformOsc3 = kDigiPulse;
+						s_waveformOsc3 = kPolyPulse;
 						break;
 
 					case kButtonOsc3_Square:
-						s_waveformOsc3 = kSoftSquare;
+						s_waveformOsc3 = kPolySquare;
 						break;
 
 					/* Algorithm #2 */
@@ -202,15 +202,15 @@ namespace SFM
 						break;
 
 					case kButtonOscAnalogueSaw:
-						s_waveform = kSoftSaw;
+						s_waveform = kPolySaw;
 						break;
 
 					case kButtonOscAnalogueSquare:
-						s_waveform = kSoftSquare;
+						s_waveform = kPolySquare;
 						break;
 
 					case kButtonOscPulse:
-						s_waveform = kDigiPulse;
+						s_waveform = kPolyPulse;
 						break;
 
 					case kButtonOscNoise:

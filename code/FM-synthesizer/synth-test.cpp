@@ -21,8 +21,10 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < kSampleRate*seconds; ++iSample)
 		{
 			float phase = iSample*pitch;
-
-			float sample = oscDigiPulse(phase, 0.33f);
+	
+			float sample = oscPolySquare(phase, frequency);
+//			float sample = oscPolyPulse(phase-300.f, frequency, 0.33f);
+//			float sample = oscDigiPulse(phase, 0.33f);
 //			float sample = oscSoftPulse(phase, frequency, 0.5f);
 //			float sample = oscSofterTriangle(phase);
 //			float sample = oscSoftSquare(phase, frequency);

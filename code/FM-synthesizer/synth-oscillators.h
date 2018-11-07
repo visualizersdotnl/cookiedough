@@ -19,16 +19,23 @@ namespace SFM
 		kSine,
 		kCosine,
 
-		/* BLIT forms */
-		kSoftSaw,
-		kSoftSquare,
-
 		/* Straight forms */
 		kDigiSaw,
 		kDigiSquare,
 		kDigiTriangle,
 		kSofterTriangle,
 		kDigiPulse,
+
+		/* BLIT forms */
+		kSoftSaw,
+		kSoftSquare,
+
+		/* PolyBLEP forms */
+		kPolyPulse,
+		kPolySaw,
+		kPolySquare,
+
+		/* Noise */
 		kWhiteNoise,
 		kPinkNoise,
 
@@ -122,6 +129,65 @@ namespace SFM
 		}
 
 		return signal*(4.f/kPI);
+	}
+
+	/*
+		PolyBLEP pulse, saw & square.
+
+		Exponentially curves along the discontinuities.
+		Not perfect but a whole lot faster than BLIT; they are here until I've implemented MinBLEP.
+
+		Source: http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
+	*/
+
+	const float kPolyWidth = 4.f; // This is rather "soft", it could make a fine parameter (FIXME)
+	const float kPolyMul = 1.f/(kSampleRate/kPolyWidth);
+
+	SFM_INLINE float DualPolyBLEP(float t, float w)
+	{
+		// Not near point?
+		if (fabsf(t) >= w)
+			return 0.0f;
+
+		// Near point: smoothen
+		t /= w;
+		float tt1 = t*t + 1.f;
+		if (t >= 0.f)
+			tt1 = -tt1;
+		
+		return tt1 + t+t;
+	}
+
+	SFM_INLINE float oscPolyPulse(float phase, float frequency, float duty)
+	{
+		// Wrapped positive value
+		phase = fabsf(fmodf(phase, 1.f)); 
+
+		const float width = frequency*kPolyMul;
+		const float closestUp = float(phase-0.5f >= 0.f);
+		const float closestDown = float(phase-0.5f >= duty) - float(phase+0.5f < duty) + duty;
+		
+		float pulse = oscDigiPulse(phase, duty);
+		pulse += DualPolyBLEP(phase - closestUp, width);
+		pulse -= DualPolyBLEP(phase - closestDown, width);
+		return pulse;
+	}
+
+	SFM_INLINE float oscPolySaw(float phase, float frequency)
+	{
+		// Wrapped positive value
+		phase = fabsf(fmodf(phase, 1.f)); 
+
+		const float closestUp = float(phase-0.5f >= 0.f);
+	
+		float saw = oscDigiSaw(phase);
+		saw -= DualPolyBLEP(phase - closestUp, frequency*kPolyMul);
+		return saw;
+	}
+
+	SFM_INLINE float oscPolySquare(float phase, float frequency)
+	{
+		return oscPolyPulse(phase, frequency, 0.5f);
 	}
 
 	/*
