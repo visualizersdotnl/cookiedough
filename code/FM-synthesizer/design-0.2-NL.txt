@@ -1,6 +1,6 @@
 
 
-Hoe werkt FM. BISON?
+Hoe werkt FM. BISON? (Last updated 07/11/2018)
 
 Allereerst: het is een polyfone synthesizer; d.w.z: meerdere toetsen tegelijk.
 
@@ -88,9 +88,9 @@ En dan zijn we klaar.
 Procedural:
 	- Sinus
 	- Triangle
-	- Soft saw
-	- Soft square
-	- Pulse
+	- Soft/Poly saw
+	- Soft/Poly square
+	- Poly pulse
 	- Noise
 
 Wavetable (enkel beschikbaar als basis carrier, tevens als one-shot):
@@ -108,6 +108,7 @@ Ongeveer alle parameters worden effectief zodra een nieuwe stem getriggerd wordt
 
 - Filter cutoff
 - Filter resonance
+- Filter drive
 - Slave FM influence
 
 En wellicht nog een en ander.

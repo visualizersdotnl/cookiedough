@@ -1,7 +1,0 @@
-
-For 0.3:
-
-- Remove all odd sounds and clicks as far as possible.
-- VST.
-- Voice stealing.
-- Slight optimization or tone down the number of filters.
