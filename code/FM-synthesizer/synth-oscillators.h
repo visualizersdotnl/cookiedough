@@ -1,8 +1,6 @@
 
 /*
-	Syntherklaas FM -- Oscillators.
-
-	These oscillators are and shall remain stateless (unless there's a good reason not to).
+	Syntherklaas FM -- Stateless oscillators.
 */
 
 #pragma once

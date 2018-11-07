@@ -136,50 +136,49 @@ namespace SFM
 	
 		// Initialize carrier(s)
 		const float amplitude = velocity*kMaxVoiceAmp;
-		const float modRatioC = true == isWave ? 1.f : s_parameters.m_modRatioC;  // No carrier modulation if wavetable osc.
 	
 		switch (voice.m_algorithm)
 		{
-		case Voice::kSingle:
-			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
+		case kSingle:
+			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency);
 			break;
 
-		case Voice::kDoubleCarriers:
+		case kDoubleCarriers:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency*modRatioC);
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(2.f, (kGoldenRatio*0.5f*s_parameters.m_doubleDetune)/12.f);
-				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*modRatioC*detune);
+				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*detune);
 			}
 
 			break;
 
-		case Voice::kMiniMOOG:
+		case kMiniMOOG:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*s_parameters.m_carrierVol[0], frequency*modRatioC);
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*s_parameters.m_carrierVol[0], frequency);
 
 				// FIXE: this could/should be more subtle
 				const float centered  = -0.5f + s_parameters.m_slavesDetune; 
 				const float detune    = powf(2.f, ceilf(centered*6.f));
-				const float slaveFreq = frequency*modRatioC*detune;
+				const float slaveFreq = frequency*detune;
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*s_parameters.m_carrierVol[1], slaveFreq);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*s_parameters.m_carrierVol[2], slaveFreq);
 
 				// Start synchro.
-				s_synchros[iVoice].Start(s_sampleCount, frequency*modRatioC, voice.m_carriers[0].m_cycleLen);
+				s_synchros[iVoice].Start(s_sampleCount, frequency, voice.m_carriers[0].m_cycleLen);
 			}
 
 			break;
 		}
 
-		// Initialize freq. modulator & their pitched counterparts (for pitch bend)
-		const float modFrequency = frequency*s_parameters.m_modRatioM;
-		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, 0.f, s_parameters.m_indexLFOFreq*goldenTen);
+		// Initialize freq. modulator
+		const float modFrequency = frequency * (s_parameters.m_modRatioM/s_parameters.m_modRatioC);
+		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_indexLFOFreq*goldenTen);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
-		const float tremFreq = invsqrf(tremolo)*0.25f*goldenTen; // This look a bit dodgy but sounds good
+		const float tremFreq = tremolo*0.25f*goldenTen; // This look a bit dodgy but sounds good
 		voice.m_ampMod.Initialize(s_sampleCount, kCosine, 1.f, tremFreq);
 
 		// One shot?
@@ -246,7 +245,7 @@ namespace SFM
 
 				// One-shot done?
 				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm (see synth-voice.cpp)
-				if (Voice::kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount)))
+				if (kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount)))
 					free = true;
 				
 				// Free
@@ -311,7 +310,7 @@ namespace SFM
 			const bool enabled = voice.m_enabled;
 			if (true == enabled)
 			{
-				if (Voice::kMiniMOOG == voice.m_algorithm)
+				if (kMiniMOOG == voice.m_algorithm)
 				{
 					if (true == s_synchros[iVoice].Tick(s_sampleCount))
 					{
@@ -329,6 +328,11 @@ namespace SFM
 		Currently there's only one of these for the Oxygen 49 + Arturia BeatStep driver.
 
 		Ideally all inputs interact on sample level, but this is impractical and only done for a few parameters.
+
+		FIXME:
+			- Update parameters every N samples.
+			- Remove all rogue parameter probes.
+
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
 
@@ -337,8 +341,8 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
 		// Algorithm (1, 2 & 3)
-		s_parameters.m_algorithm = (Voice::Algo) WinMidi_GetAlgorithm();
-		SFM_ASSERT(s_parameters.m_algorithm < Voice::kNumAlgorithms);
+		s_parameters.m_algorithm = WinMidi_GetAlgorithm();
+		SFM_ASSERT(s_parameters.m_algorithm < kNumAlgorithms);
 		
 		// For algorithm #2
 		s_parameters.m_doubleDetune = WinMidi_GetDoubleDetune();
@@ -371,7 +375,10 @@ namespace SFM
 		// Modulation index LFO frequency
 		const float frequency = WinMidi_GetModulationLFOFrequency();
 		s_parameters.m_indexLFOFreq = frequency;
-		
+
+		// Noise
+		s_parameters.m_noisyness = WinMidi_GetNoisyness();
+
 		// Tremolo
 		s_parameters.m_tremolo = WinMidi_GetTremolo();
 
@@ -476,19 +483,11 @@ namespace SFM
 				{
 					ADSR &voiceADSR = s_ADSRs[iVoice];
 
-					// Pick single volume for algorithm #2, and 3 of them for the MiniMOOG algorithm
-					const float *volumes = (Voice::kDoubleCarriers == voice.m_algorithm) ? &s_parameters.m_doubleVolume : s_parameters.m_carrierVol;
-
 					float *buffer = s_voiceBuffers[curVoice];
-
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
-
-						// FIXME
-						const float noisyness = WinMidi_GetNoisyness();
-
-						const float sample = voice.Sample(sampleCount, s_parameters.m_modBrightness, noisyness, volumes, s_parameters.m_slaveFM);
+						const float sample = voice.Sample(sampleCount, s_parameters);
 						buffer[iSample] = sample;
 					}
 

@@ -9,20 +9,19 @@
 
 namespace SFM
 {
-	void Modulator::Initialize(unsigned sampleCount, float index, float frequency, float phaseShift, float indexModFreq)
+	void Modulator::Initialize(unsigned sampleCount, float index, float frequency, float indexModFreq)
 	{
 		m_sampleOffs = sampleCount;
 		m_index = index;
 		m_frequency = frequency;
 		m_pitch = CalculatePitch(frequency);
-		m_phaseShift = phaseShift;
 		m_indexLFO.Initialize(sampleCount, kCosine, 1.f, indexModFreq);
 	}
 
 	float Modulator::Sample(unsigned sampleCount, float brightness)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
-		const float phase = sample*m_pitch + m_phaseShift;
+		const float phase = sample*m_pitch;
 		
 		const float triangle = oscDigiTriangle(phase);
 		const float sine = lutsinf(phase);

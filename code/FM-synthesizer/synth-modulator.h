@@ -20,10 +20,9 @@ namespace SFM
 		float m_index;
 		float m_frequency;
 		float m_pitch;
-		float m_phaseShift;
 		LFO m_indexLFO;
 		
-		void Initialize(unsigned sampleCount, float index, float frequency, float phaseShift /* In kOscPeriod */, float indexModFreq);
+		void Initialize(unsigned sampleCount, float index, float frequency, float indexModFreq);
 		float Sample(unsigned sampleCount, float brightness);
 	};
 }

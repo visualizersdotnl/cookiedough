@@ -58,7 +58,7 @@ namespace SFM
 	bool WinMidi_GetLoopWaves();
 
 	// Algorithm select
-	Voice::Algo WinMidi_GetAlgorithm();
+	Algorithm WinMidi_GetAlgorithm();
 
 	// Algorithm #3
 	float WinMidi_GetSlaveFM();

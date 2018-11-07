@@ -23,8 +23,6 @@ namespace SFM
 			float phase = iSample*pitch;
 
 			float sample = oscDigiPulse(phase, 0.33f);
-
-			// Status: OK+
 //			float sample = oscSoftPulse(phase, frequency, 0.5f);
 //			float sample = oscSofterTriangle(phase);
 //			float sample = oscSoftSquare(phase, frequency);

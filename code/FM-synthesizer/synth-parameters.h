@@ -6,16 +6,24 @@
 #pragma once
 
 #include "synth-global.h"
-#include "synth-voice.h"
 #include "synth-ADSR.h"
 #include "synth-filter.h"
 
 namespace SFM
 {
+	// Available algorithms
+	enum Algorithm
+	{
+		kSingle,
+		kDoubleCarriers,
+		kMiniMOOG,
+		kNumAlgorithms
+	};
+
+	// Most global parameters; some are still "pulled" in place (FIXME)
 	struct Parameters
 	{
-		// Algorithms
-		Voice::Algo m_algorithm;
+		Algorithm m_algorithm;
 
 		// Algorithm #2
 		float m_doubleDetune;
@@ -35,6 +43,9 @@ namespace SFM
 		float m_modRatioC, m_modRatioM;
 		float m_modBrightness;
 		float m_indexLFOFreq;
+
+		// Noise
+		float m_noisyness;
 
 		// Tremolo
 		float m_tremolo;
@@ -64,7 +75,7 @@ namespace SFM
 		void SetDefaults()
 		{
 			// Single carrier algorithm, zero out other parameters
-			m_algorithm = Voice::Algo::kSingle;
+			m_algorithm = kSingle;
 
 			// Algo #2
 			m_doubleDetune = 0.f;
@@ -88,8 +99,11 @@ namespace SFM
 			m_modBrightness = 0.f;
 			m_indexLFOFreq = 0.f;
 
+			// No noise
+			m_noisyness = 0.f;
+
 			// No tremolo
-			m_tremolo = 0.0f;
+			m_tremolo = 0.f;
 
 			// Don't loop waves
 			m_loopWaves = false;

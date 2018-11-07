@@ -37,7 +37,7 @@ namespace SFM
 			break;
 			
 		default:
-			m_cycleLen = 1.f;
+			m_cycleLen = kSampleRate/m_frequency;
 			break;
 		}
 	}

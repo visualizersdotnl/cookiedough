@@ -112,10 +112,8 @@ namespace SFM
 			const float ADSR = m_ADSR.Sample(sampleCount);
 			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
 
-			dry *= m_drive;
-
 			// Input with half delay, for non-linearities
-			double ih = 0.5 * (dry* + m_inputDelay); 
+			double ih = 0.5 * (dry*m_drive + m_inputDelay); 
 			m_inputDelay = dry;
 
 			// Evaluate the non-linear gains

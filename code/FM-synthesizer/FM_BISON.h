@@ -16,16 +16,15 @@
 		- MinBLEP table generator by Daniel Werner
 
 	Notes:
-		- Code started out with firmware in mind but later on I had to focus on the sound 100% and thus it became a little
-		  heavy on the CPU and uses more and more C++
+		- Code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
 		- Some calculations in here are what is referred to as "bro science"
-		- The design is, not on purpose, a bit like the MiniMOOG
 		- To be optimized
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Implement MinBLEP approach: need oscillators with state
+		- Proper detune table
+		- Implement MinBLEP approach: need oscillator with state?
 
 	Priority tasks:
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
@@ -33,7 +32,7 @@
 		- Reinstate pitch bend
 		- Create interface and stash synthezier into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
-		- Finish documentation as far as possible, read up on VST
+		- First draft of manual
 
 	Plumbing:
 		- Move shared MIDI code to Win-Midi-in.cpp/h

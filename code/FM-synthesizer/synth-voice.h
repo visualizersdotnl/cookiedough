@@ -8,9 +8,10 @@
 #include "synth-global.h"
 #include "synth-carrier.h"
 #include "synth-modulator.h"
-#include "synth-ADSR.h."
-#include "synth-filter.h"
+// #include "synth-ADSR.h."
+// #include "synth-filter.h"
 // #include "synth-LFO.h."
+#include "synth-parameters.h"
 
 namespace SFM
 {
@@ -18,21 +19,13 @@ namespace SFM
 	class Voice
 	{
 	public:
-		enum Algo
-		{
-			kSingle,
-			kDoubleCarriers,
-			kMiniMOOG,
-			kNumAlgorithms
-		};
-
 		Voice() :
 			m_enabled(false)
 		{}
 
 		bool m_enabled;
 
-		Algo m_algorithm;
+		Algorithm m_algorithm;
 		Carrier m_carriers[3];
 		Modulator m_modulator;
 		LFO m_ampMod;
@@ -46,8 +39,7 @@ namespace SFM
 		// Filter instance for this particular voice
 		LadderFilter *m_pFilter;
 
-		// Pointer to 3 floats expected if algorithm is kMiniMOOG, just 1 in case of kDoubleCarriers
-		float Sample(unsigned sampleCount, float brightness, float noise, const float carrierVolumes[], float slaveFM);
+		float Sample(unsigned sampleCount, const Parameters &parameters);
 
 		// Can be used to determine if a one-shot is done
 		bool HasCycled(unsigned sampleCount) /* const */

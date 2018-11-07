@@ -2,7 +2,8 @@
 /*
 	Syntherklaas FM -- Lookup tables.
 
-	These could and should be generated offline for a production target.
+	FIXME:
+		- These could and should be generated offline for a production target.
 */
 
 #include "synth-global.h"
@@ -23,7 +24,7 @@ namespace SFM
 		I learned about this here: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
-	const unsigned kFareyOrder = 9; // Being conservative is not a bad thing here in terms of predictability
+	const unsigned kFareyOrder = 7; // Being conservative is not a bad thing here in terms of predictability
 
 	alignas(16) unsigned g_CM_table[256][2];
 	unsigned g_CM_table_size = -1;
@@ -60,13 +61,12 @@ namespace SFM
 			x1 = x2, x2 = x, y1 = y2, y2 = y;
 		} 
 
-		// Sort by magnitude first, then by carrier
-		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return (a.x*a.x + a.y*a.y) < b.x*b.x + b.y*b.y; });
-		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
+		// Sort by modulator
+		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.y < b.y; });
 
 		// Copy to LUT & it's inverse & store size
 		const size_t size = sequence.size();
-		SFM_ASSERT(size*2 < 256);
+		SFM_ASSERT(size < 256);
 		
 		for (unsigned iRatio = 0; iRatio < size; ++iRatio)
 		{
@@ -74,14 +74,12 @@ namespace SFM
 
 			g_CM_table[iRatio][0] = ratio.x;
 			g_CM_table[iRatio][1] = ratio.y;
-			g_CM_table[iRatio+size][1] = ratio.x;
-			g_CM_table[iRatio+size][0] = ratio.y;
 
 			Log("Farey C:M = " + std::to_string(ratio.x) + ":" + std::to_string(ratio.y));
 		}
 
 		Log("Generated C:M ratios " + std::to_string(size));
-		g_CM_table_size = unsigned(size*2);
+		g_CM_table_size = unsigned(size);
 	}
 
 	/*

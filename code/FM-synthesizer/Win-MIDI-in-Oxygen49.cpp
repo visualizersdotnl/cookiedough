@@ -89,7 +89,7 @@ namespace SFM
 
 	static VoiceFilter s_curFilter = kTeemuFilter;
 	static int s_loopWaves = 0;
-	static Voice::Algo s_algorithm = Voice::kSingle;
+	static Algorithm s_algorithm = kSingle;
 
 	// Percussion channel indices (FIXME: unused)
 	const unsigned kPerc1 = 36;
@@ -210,15 +210,15 @@ namespace SFM
 						/* Algorithm select */
 
 						case kButtonAlgoSingle:
-							if (127 == controlVal) s_algorithm = Voice::kSingle;
+							if (127 == controlVal) s_algorithm = kSingle;
 							break;
 
 						case kButtonAlgoDoubleCarriers:
-							if (127 == controlVal) s_algorithm = Voice::kDoubleCarriers;
+							if (127 == controlVal) s_algorithm = kDoubleCarriers;
 							break;
 
 						case kButtonAlgoMiniMOOG:
-							if (127 == controlVal) s_algorithm = Voice::kMiniMOOG;
+							if (127 == controlVal) s_algorithm = kMiniMOOG;
 							break;
 
 						/* Algorithm #3 */
@@ -444,7 +444,7 @@ namespace SFM
 	}
 
 	// Algorithm select
-	Voice::Algo WinMidi_GetAlgorithm() { return s_algorithm; }
+	Algorithm WinMidi_GetAlgorithm() { return s_algorithm; }
 
 	// Algorithm #3
 	float WinMidi_GetSlaveFM()

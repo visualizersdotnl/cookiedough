@@ -1,7 +1,7 @@
 
 
 /*
-	Syntherklaas FM -- Oscillators.
+	Syntherklaas FM -- Stateless oscillators.
 */
 
 #include "synth-global.h"
