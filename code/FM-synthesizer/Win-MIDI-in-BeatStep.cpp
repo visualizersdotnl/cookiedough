@@ -69,8 +69,8 @@ namespace SFM
 	const unsigned kButtonOscPulse = 48;           // Button 5
 	const unsigned kButtonOscNoise = 49;           // Button 6
 	const unsigned kButtonOsc2_Sin = 50;           // Button 7
-	const unsigned kButtonOsc2_Saw = 42;           // Button 15
-	const unsigned kButtonOsc3_Pulse = 51;         // Button 8
+	const unsigned kButtonOsc2_Pulse = 42;         // Button 15
+	const unsigned kButtonOsc3_Triangle = 51;      // Button 8
 	const unsigned kButtonOsc3_Square = 43;        // Button 16
 	const unsigned kButton_MOOG_HardSync_On = 41;  // Button 14
 	const unsigned kButton_MOOG_HardSync_Off = 40; // Button 13
@@ -86,7 +86,7 @@ namespace SFM
 	// Oscillators (defaults by hardware layout)
 	static Waveform s_waveform = kSine;
 	static Waveform s_waveformOsc2 = kSine;
-	static Waveform s_waveformOsc3 = kPolySquare;
+	static Waveform s_waveformOsc3 = kPolyTriangle;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -152,12 +152,12 @@ namespace SFM
 						s_waveformOsc2 = kSine;
 						break;
 
-					case kButtonOsc2_Saw:
-						s_waveformOsc2 = kPolySaw;
+					case kButtonOsc2_Pulse:
+						s_waveformOsc2 = kPolyPulse;
 						break;
 
-					case kButtonOsc3_Pulse:
-						s_waveformOsc3 = kPolyPulse;
+					case kButtonOsc3_Triangle:
+						s_waveformOsc3 = kPolyTriangle;
 						break;
 
 					case kButtonOsc3_Square:

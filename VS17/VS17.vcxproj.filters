@@ -205,6 +205,9 @@
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\MinBLEP.cpp">
       <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -409,6 +412,9 @@
       <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-oscillator.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
   </ItemGroup>

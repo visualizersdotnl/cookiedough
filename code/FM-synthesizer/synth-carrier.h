@@ -1,13 +1,12 @@
 
 /*
 	Syntherklaas FM -- Carrier wave.
-
-	Only supports a limited set of waveforms (see implementation).
 */
 
 #pragma once
 
-#include "synth-oscillators.h"
+// #include "synth-oscillators.h"
+#include "synth-oscillator.h"
 
 namespace SFM
 {
@@ -15,23 +14,22 @@ namespace SFM
 	struct Carrier
 	{
 		unsigned m_sampleOffs;
-		Waveform m_form;
 		float m_amplitude;
 		float m_frequency;
-		float m_pitch;
 		float m_cycleLen;
+		Oscillator m_oscillator;
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
 		float Sample(unsigned sampleCount, float modulation, float pulseWidth);
 
 		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */
 		{
-			return (sampleCount-m_sampleOffs)*m_pitch >= m_cycleLen;
+			return (sampleCount-m_sampleOffs)*m_oscillator.GetPitch() >= m_cycleLen;
 		}
 
 		SFM_INLINE bool IsWavetableForm() /* const */
 		{
-			return oscIsWavetable(m_form);
+			return oscIsWavetable(m_oscillator.GetWaveform());
 		}
 	};
 }

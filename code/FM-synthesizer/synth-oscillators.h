@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Stateless oscillators.
+	Syntherklaas FM -- Stateless oscillator functions.
 */
 
 #pragma once
@@ -161,7 +161,7 @@ namespace SFM
 	const float kPolyWidth = 2.f; // This is rather "soft", it could make a fine parameter (FIXME)
 	const float kPolyMul = 1.f/(kSampleRate/kPolyWidth);
 
-	SFM_INLINE float DualPolyBLEP(float t, float w)
+	SFM_INLINE float BiPolyBLEP(float t, float w)
 	{
 		// Not near point?
 		if (fabsf(t) >= w)
@@ -186,8 +186,8 @@ namespace SFM
 		const float closestDown = float(phase-0.5f >= duty) - float(phase+0.5f < duty) + duty;
 		
 		float pulse = oscDigiPulse(phase, duty);
-		pulse += DualPolyBLEP(phase - closestUp, width);
-		pulse -= DualPolyBLEP(phase - closestDown, width);
+		pulse += BiPolyBLEP(phase - closestUp, width);
+		pulse -= BiPolyBLEP(phase - closestDown, width);
 		return pulse;
 	}
 
@@ -199,7 +199,7 @@ namespace SFM
 		const float closestUp = float(phase-0.5f >= 0.f);
 	
 		float saw = oscDigiSaw(phase);
-		saw -= DualPolyBLEP(phase - closestUp, frequency*kPolyMul);
+		saw -= BiPolyBLEP(phase - closestUp, frequency*kPolyMul);
 		return saw;
 	}
 
@@ -217,15 +217,15 @@ namespace SFM
 		// FIXME: turn this into something decent!
 		float triangle;
 		if (phase < 0.25f)
-			triangle = square*phase*4.f;
+			triangle = square*phase;
 		else if (phase < 0.5f)
-			triangle = square*(0.5f-phase)*4.f;
+			triangle = square*(0.5f-phase);
 		else if (phase < 0.75f)
-			triangle = square*(phase-0.5f)*4.f;
+			triangle = square*(phase-0.5f);
 		else
-			triangle = square*(1.f-phase)*4.f;
+			triangle = square*(1.f-phase);
 
-		return triangle;
+		return triangle*4.f;
 	}
 
 	/*
