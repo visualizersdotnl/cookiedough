@@ -137,10 +137,12 @@ namespace SFM
 		Exponentially curves along the discontinuities.
 		Not perfect but a whole lot faster than BLIT; they are here until I've implemented MinBLEP.
 
+		They would be a bit faster in a non-stateless form.
+
 		Source: http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
 	*/
 
-	const float kPolyWidth = 4.f; // This is rather "soft", it could make a fine parameter (FIXME)
+	const float kPolyWidth = 2.f; // This is rather "soft", it could make a fine parameter (FIXME)
 	const float kPolyMul = 1.f/(kSampleRate/kPolyWidth);
 
 	SFM_INLINE float DualPolyBLEP(float t, float w)

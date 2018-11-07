@@ -16,14 +16,14 @@
 		- MinBLEP table generator by Daniel Werner
 
 	Notes:
-		- Code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
+		- This code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
 		- Some calculations in here are what is referred to as "bro science"
 		- To be optimized
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Proper detune table!
+		- Proper detune in MiniMOOG mode.
 		- Implement MinBLEP approach: need oscillator with state; or is there another way to make hard sync. sound nice?
 
 	Priority tasks:
@@ -44,6 +44,7 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
+		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- If bitcrushing is worth having
 		- Better wavetable sampling
 		- Real variable delay line
