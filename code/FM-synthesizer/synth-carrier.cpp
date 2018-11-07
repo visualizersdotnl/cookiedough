@@ -14,31 +14,6 @@ namespace SFM
 	{
 		m_sampleOffs = sampleCount;
 		m_amplitude = amplitude;
-		m_frequency = frequency;
-	
-		switch (form)
-		{
-		case kKick808:
-			m_cycleLen = getOscKick808().GetLength();
-			break;
-
-		case kSnare808:
-			m_cycleLen = getOscSnare808().GetLength();
-			break;
-
-		case kGuitar:
-			m_cycleLen = getOscGuitar().GetLength();
-			break;
-
-		case kElectricPiano:
-			m_cycleLen = getOscElecPiano().GetLength();
-			break;
-			
-		default:
-			m_cycleLen = -1.f;
-			break;
-		}
-
 		m_oscillator = Oscillator(sampleCount, form, frequency);
 	}
 
@@ -47,10 +22,7 @@ namespace SFM
 		const float signal = m_amplitude * m_oscillator.Sample(sampleCount, modulation, pulseWidth);
 	
 		// It is potentially OK to go beyond, we're mixing amd clamping down the line anyway
-//		SampleAssert(signal);
-
-		// So, we do:
-		SFM_ASSERT(true == FloatCheck(signal));
+		SampleAssert(signal);
 
 		return signal;
 	}

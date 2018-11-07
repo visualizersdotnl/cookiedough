@@ -15,8 +15,6 @@ namespace SFM
 	{
 		unsigned m_sampleOffs;
 		float m_amplitude;
-		float m_frequency;
-		float m_cycleLen;
 		Oscillator m_oscillator;
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
@@ -24,12 +22,7 @@ namespace SFM
 
 		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */
 		{
-			return (sampleCount-m_sampleOffs)*m_oscillator.GetPitch() >= m_cycleLen;
-		}
-
-		SFM_INLINE bool IsWavetableForm() /* const */
-		{
-			return oscIsWavetable(m_oscillator.GetWaveform());
+			return (sampleCount-m_sampleOffs)*m_oscillator.GetPitch() >= m_oscillator.GetPeriodLength();
 		}
 	};
 }

@@ -53,9 +53,6 @@
     <Filter Include="/code\/FM-synthesizer\/wavetable">
       <UniqueIdentifier>{8851bf8c-39f4-4b3d-b2d9-a9a4f36c3b6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR">
-      <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer\core">
       <UniqueIdentifier>{1dcb50fa-d145-4984-98c4-babe18486116}</UniqueIdentifier>
     </Filter>
@@ -70,6 +67,9 @@
     </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty\MinBLEP">
       <UniqueIdentifier>{0b93cfca-9fa3-4239-87c7-9196e4505092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29">
+      <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +161,7 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
-      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
+      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
@@ -346,7 +346,7 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
-      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR</Filter>
+      <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-voice.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
