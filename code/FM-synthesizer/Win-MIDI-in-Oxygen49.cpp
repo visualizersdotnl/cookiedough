@@ -86,6 +86,7 @@ namespace SFM
 	const unsigned kButtonAlgoSingle = 96;           // C18
 	const unsigned kButtonAlgoDoubleCarriers = 97;   // C19
 	const unsigned kButtonAlgoMiniMOOG = 98;         // C20
+	const unsigned kButtonFlipFilterEnv = 117;       // C29
 
 	static VoiceFilter s_curFilter = kTeemuFilter;
 	static int s_loopWaves = 0;
@@ -100,6 +101,8 @@ namespace SFM
 	const unsigned kPerc6 = 45;
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
+
+	static bool s_flipFilterEnv = false;
 
 	// Pitch bend (14-bit signed, wheel rests in the middle)
 	static float s_pitchBend = 0.5f;
@@ -227,6 +230,10 @@ namespace SFM
 							break;
 
 						/* Filter */
+
+						case kButtonFlipFilterEnv:
+							if (127 == controlVal) s_flipFilterEnv = !s_flipFilterEnv;
+							break;
 
 						case kButtonFilterSwitch:
 							if (127 == controlVal) s_curFilter = VoiceFilter((s_curFilter+1) % kNumFilters);
@@ -399,14 +406,15 @@ namespace SFM
 	*/
 
 	// Master
-	float WinMidi_GetMasterDrive()     { return s_masterDrive;    }
+	float WinMidi_GetMasterDrive() { return s_masterDrive; }
 
 	// Filter
-	VoiceFilter WinMidi_GetCurFilter() { return s_curFilter;      }
-	float WinMidi_GetFilterCutoff()    { return s_cutoff;         }
-	float WinMidi_GetFilterResonance() { return s_resonance;      }
-	float WinMidi_GetFilterContour()   { return s_filterContour;  }
-	float WinMidi_GetFilterDrive()     { return s_filterDrive;    }
+	VoiceFilter WinMidi_GetCurFilter()    { return s_curFilter;      }
+	float WinMidi_GetFilterCutoff()       { return s_cutoff;         }
+	float WinMidi_GetFilterResonance()    { return s_resonance;      }
+	float WinMidi_GetFilterContour()      { return s_filterContour;  }
+	float WinMidi_GetFilterDrive()        { return s_filterDrive;    }
+	bool  WinMidi_GetFilterFlipEnvelope() { return s_flipFilterEnv;  }
 
 	// Feedback
 	float WinMidi_GetFeedback()         { return s_feedback;         }

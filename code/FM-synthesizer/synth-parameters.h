@@ -60,11 +60,10 @@ namespace SFM
 		ADSR::Parameters m_voiceADSR;
 		ADSR::Parameters m_filterADSR;
 
-		// Filter contour (ADSR influence) [0..1]
-		float m_filterContour;
-
 		// Filter parameters
 		VoiceFilter m_curFilter;
+		float m_filterContour; // Filter contour (ADSR influence) [0..1]
+		bool m_flipFilterEnv;  // Filter envelope inversion
 		FilterParameters m_filterParams;
 
 		// Feedback (delay) effect parameters
@@ -117,14 +116,16 @@ namespace SFM
 			m_voiceADSR.release = kSampleRate/4;
 			m_voiceADSR.sustain = kRootHalf;
 
-			// Neutered copys for filter
-			m_filterADSR = m_voiceADSR;
+			// Zero filter ADS(R)
+			m_filterADSR.attack  = 0.f;
+			m_filterADSR.release = 0.f;
 			m_filterADSR.sustain = 0.f;
 			m_filterADSR.release = 0.f;
 
 			// Default filter
 			m_curFilter = kTeemuFilter;
 			m_filterContour = 0.f;
+			m_flipFilterEnv = false;
 			m_filterParams.drive = 1.f;
 			m_filterParams.cutoff = 1.f;
 			m_filterParams.resonance = 0.1f;

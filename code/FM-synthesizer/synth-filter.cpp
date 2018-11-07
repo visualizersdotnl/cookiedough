@@ -14,13 +14,19 @@ namespace SFM
 		return fast_tanhf(sample);
 	}
 
-	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount)
+	SFM_INLINE float SampleEnv(ADSR &envelope, bool invert)
+	{
+		const float ADSR = envelope.Sample();
+		SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
+		return (true == invert) ? 1.f-ADSR : ADSR;
+	}
+
+	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
-			const float ADSR = m_ADSR.Sample(sampleCount);
-			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
+			const float ADSR = SampleEnv(m_ADSR, invert);
 
 			const float feedback = m_P3;
 			SampleAssert(feedback);
@@ -48,15 +54,14 @@ namespace SFM
 		}
 	}
 
-	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount)
+	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
 	{
 		double dV0, dV1, dV2, dV3;
 
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
-			const float ADSR = m_ADSR.Sample(sampleCount);
-			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
+			const float ADSR = SampleEnv(m_ADSR, invert);
 
 			const double drive = 1.3;
 			dV0 = -m_cutoff * (fast_tanh((dry*m_drive + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
@@ -101,7 +106,7 @@ namespace SFM
 		return ((a + 105.0)*a + 945.0) / ((15.0*a + 420.0)*a + 945.0);
 	}
 
-	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount)
+	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
 	{
 		const double f = m_cutoff;
 		const double r = (40.0/9.0) * m_resonance;
@@ -109,8 +114,7 @@ namespace SFM
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			/* const */ float dry = pSamples[iSample];
-			const float ADSR = m_ADSR.Sample(sampleCount);
-			SFM_ASSERT(ADSR >= 0.f && ADSR <= 1.f);
+			const float ADSR = SampleEnv(m_ADSR, invert);
 
 			// Input with half delay, for non-linearities
 			double ih = 0.5 * (dry*m_drive + m_inputDelay); 

@@ -403,7 +403,8 @@ namespace SFM
 		// Filter parameters
 		s_parameters.m_curFilter = WinMidi_GetCurFilter();
 		s_parameters.m_filterContour = WinMidi_GetFilterContour();
-		s_parameters.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*6.f);
+		s_parameters.m_flipFilterEnv = WinMidi_GetFilterFlipEnvelope();
+		s_parameters.m_filterParams.drive = dBToAmplitude(WinMidi_GetFilterDrive()*kMaxFilterDrivedB);
 		s_parameters.m_filterParams.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.m_filterParams.resonance = WinMidi_GetFilterResonance();
 
@@ -493,13 +494,13 @@ namespace SFM
 
 					// Filter voice
 					voice.m_pFilter->SetLiveParameters(s_parameters.m_filterParams);
-					voice.m_pFilter->Apply(buffer, numSamples, s_parameters.m_filterContour, s_sampleCount);
+					voice.m_pFilter->Apply(buffer, numSamples, s_parameters.m_filterContour, s_parameters.m_flipFilterEnv, s_sampleCount);
 
 					// Apply ADSR
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
-						const float ADSR = voiceADSR.Sample(sampleCount);
+						const float ADSR = voiceADSR.Sample();
 						buffer[iSample] *= ADSR;
 					}
 

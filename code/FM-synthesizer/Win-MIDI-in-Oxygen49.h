@@ -29,6 +29,7 @@ namespace SFM
 	float WinMidi_GetFilterResonance();
 	float WinMidi_GetFilterContour();
 	float WinMidi_GetFilterDrive();
+	bool  WinMidi_GetFilterFlipEnvelope();
 
 	// Feedback
 	float WinMidi_GetFeedback();

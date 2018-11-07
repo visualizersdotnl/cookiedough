@@ -67,7 +67,7 @@ namespace SFM
 		}
 
 		virtual void Reset() = 0;
-		virtual void Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount) = 0;
+		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount) = 0;
 
 	protected:
 		float m_drive;
@@ -123,7 +123,7 @@ namespace SFM
 			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount);
 	};
 
 	/*
@@ -173,7 +173,7 @@ namespace SFM
 				m_V[iPole] = m_dV[iPole] = m_tV[iPole] = 0.0;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount);
 	};
 
 	/*
@@ -211,6 +211,6 @@ namespace SFM
 			m_state[0] = m_state[1] = m_state[2] = m_state[3] = 0.0;
 		}
 
-		virtual void Apply(float *pSamples, unsigned numSamples, float contour, unsigned sampleCount);
+		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount);
 	};
 }

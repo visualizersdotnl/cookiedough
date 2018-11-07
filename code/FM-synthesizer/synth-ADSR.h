@@ -40,7 +40,7 @@ namespace SFM
 			m_ADSR.reset();
 		}
 
-		float Sample(unsigned sampleCount)
+		float Sample()
 		{
 			return m_ADSR.process();
 		}

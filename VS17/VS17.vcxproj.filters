@@ -452,14 +452,8 @@
     <Text Include="..\code\FM-synthesizer\manual.txt">
       <Filter>/code\/FM-synthesizer\documentation</Filter>
     </Text>
-    <Text Include="..\code\FM-synthesizer\design-goals.txt">
-      <Filter>/code\/FM-synthesizer\documentation</Filter>
-    </Text>
     <Text Include="..\code\FM-synthesizer\wavetable\guide.txt">
       <Filter>/code\/FM-synthesizer\/wavetable</Filter>
-    </Text>
-    <Text Include="..\code\FM-synthesizer\controls.txt">
-      <Filter>/code\/FM-synthesizer\documentation</Filter>
     </Text>
     <Text Include="..\code\FM-synthesizer\design-0.2-NL.txt">
       <Filter>/code\/FM-synthesizer\documentation</Filter>
