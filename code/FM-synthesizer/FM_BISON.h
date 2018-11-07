@@ -42,13 +42,14 @@
 		- Move project to it's own repository (go for VST directly)
 		- Consider voice lists
 		- Turn structures into real classes piece by piece
+		  + Certain structures, as things mature, look more and more alike: boil it down to the essence
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
 		- Tweak velocity & aftertouch (it sounds OK now)
+		  + I've heard synthesizers getting "brighter" as you hit the keys harder
 
 	Research:
 		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- If bitcrushing is worth having
-		- Better wavetable sampling
 		- Real variable delay line
 		- Profiling & optimization
 
