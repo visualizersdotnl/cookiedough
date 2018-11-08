@@ -43,7 +43,7 @@ namespace SFM
 	const float kNyquist = kSampleRate/2.f;
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 24; 
+	const unsigned kMaxVoices = 16; 
 
 	// Max. voice amplitude 
 	const float kMaxVoiceAmp = 0.7079457843841379f; // -3dB
@@ -53,6 +53,7 @@ namespace SFM
 
 	// Master drive range
 	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
+
 }
 
 #include "synth-LUT.h"

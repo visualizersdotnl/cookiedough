@@ -76,9 +76,11 @@ namespace SFM
 		float GetPitch() const        { return m_pitch;     }
 		float GetPeriodLength() const { return m_periodLen; }
 
+		// Parameter 'crush' must be a power of 2, performs exponential sample & hold
 		float Sample(unsigned sampleCount, float modulation, float duty = 0.5f)
 		{
-			const unsigned sample = sampleCount-m_sampleOffs;
+			/* const */ unsigned sample = sampleCount-m_sampleOffs;
+
 			float phase = sample*m_pitch;
 			const float masterPhase = sample*m_masterPitch;
 			
@@ -89,7 +91,7 @@ namespace SFM
 				m_sampleOffs = sampleCount;
 			}
 
-			const float modulated = phase+modulation;;
+			const float modulated = phase+modulation;
 
 			float signal;
 			switch (m_form)

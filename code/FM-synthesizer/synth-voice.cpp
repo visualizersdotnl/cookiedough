@@ -18,6 +18,7 @@ namespace SFM
 
 		// Sample carrier(s)
 		float sample = 0.f;
+
 		const float pulseWidth = m_pulseWidth;
 	
 		switch (m_algorithm)

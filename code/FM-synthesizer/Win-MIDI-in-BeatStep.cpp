@@ -50,6 +50,7 @@ namespace SFM
 	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, R5
 	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
 	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
+	const unsigned kPotUnused2 = 16;           // Set 3, R12
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
@@ -178,6 +179,7 @@ namespace SFM
 
 					case kPotNoisyness:
 						s_noisyness = fControlVal;
+						break;
 
 					/* Filter */
 					
@@ -348,12 +350,12 @@ namespace SFM
 	*/
 
 	// Noisyness
-	float WinMidi_GetNoisyness()      { return s_noisyness; }
+	float WinMidi_GetNoisyness() { return s_noisyness; }
 
 	// Filter
-	float WinMidi_GetFilterAttack()   { return s_filterA;       }
-	float WinMidi_GetFilterDecay()    { return s_filterD;       }
-	float WinMidi_GetFilterSustain()  { return s_filterS;       }
+	float WinMidi_GetFilterAttack()   { return s_filterA; }
+	float WinMidi_GetFilterDecay()    { return s_filterD; }
+	float WinMidi_GetFilterSustain()  { return s_filterS; }
 
 	// Oscillators
 	Waveform WinMidi_GetCarrierOscillator() { return s_waveform;   }

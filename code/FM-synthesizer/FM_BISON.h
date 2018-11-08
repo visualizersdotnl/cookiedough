@@ -23,10 +23,11 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Finish carrier oscillator
-		  + MinBLEP
+		- Finish sensible "crushing" effect
+		- Phase out carrier object
 		- MiniMOOG mode:
 		  + Main carrier should get some prevalence in the mix, if wanted (third knob?)
+		- MinBLEP?
 
 	Priority tasks:
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
@@ -49,7 +50,6 @@
 
 	Research:
 		- Monophonic mode (with legato, staccato, glissando et cetera)
-		- If bitcrushing is worth having
 		- Real variable delay line
 		- Profiling & optimization
 

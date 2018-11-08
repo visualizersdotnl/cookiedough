@@ -438,7 +438,7 @@ namespace SFM
 		{
 			loudest = 0.f;
 
-			// Render silence (we still have to run the delay filter)
+			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				float mix = 0.f;
@@ -475,7 +475,8 @@ namespace SFM
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 						const float ADSR = voiceADSR.Sample();
-						buffer[iSample] *= ADSR;
+						const float sample = buffer[iSample];
+						buffer[iSample] = sample*ADSR;
 					}
 
 					++curVoice; // Do *not* use to index anything other than the temporary buffers

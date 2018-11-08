@@ -17,8 +17,22 @@ namespace SFM
 		float m_amplitude;
 		Oscillator m_oscillator;
 
-		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
-		float Sample(unsigned sampleCount, float modulation, float pulseWidth);
+		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency)
+		{
+			m_sampleOffs = sampleCount;
+			m_amplitude = amplitude;
+			m_oscillator = Oscillator(sampleCount, form, frequency);
+		}
+
+		float Sample(unsigned sampleCount, float modulation, float pulseWidth)
+		{
+			const float signal = m_amplitude * m_oscillator.Sample(sampleCount, modulation, pulseWidth);
+	
+			// It is potentially OK to go beyond, we're mixing amd clamping down the line anyway
+			SampleAssert(signal);
+
+			return signal;
+		}
 
 		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */
 		{
