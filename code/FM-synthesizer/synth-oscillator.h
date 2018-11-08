@@ -15,6 +15,7 @@ namespace SFM
 		unsigned m_sampleOffs;
 		/* const */ Waveform m_form;
 		/* const */ float m_frequency;
+		/* const */ float m_amplitude;
 		/* const */ float m_pitch;
 		float m_masterPitch;
 		/* const */ float m_periodLen;
@@ -22,13 +23,14 @@ namespace SFM
 	public:
 		// Unspecified oscillator will yield 1.0
 		Oscillator() :
-			m_sampleOffs(-1), m_form(kCosine), m_frequency(1.f), m_pitch(0.f), m_masterPitch(0.f), m_periodLen(1.f) {}
+			m_sampleOffs(-1), m_form(kCosine), m_frequency(1.f), m_amplitude(1.f), m_pitch(0.f), m_masterPitch(0.f), m_periodLen(1.f) {}
 
-		Oscillator(unsigned sampleCount, Waveform form, float frequency) : 
+		Oscillator(unsigned sampleCount, Waveform form, float frequency, float amplitude) : 
 			m_sampleOffs(sampleCount)
 ,			m_form(form)
 ,			m_frequency(frequency)
 ,			m_pitch(CalculatePitch(frequency))
+,			m_amplitude(amplitude)
 		{
 			m_masterPitch = m_pitch;
 
@@ -79,8 +81,7 @@ namespace SFM
 		// Parameter 'crush' must be a power of 2, performs exponential sample & hold
 		float Sample(unsigned sampleCount, float modulation, float duty = 0.5f)
 		{
-			/* const */ unsigned sample = sampleCount-m_sampleOffs;
-
+			const unsigned sample = sampleCount-m_sampleOffs;
 			float phase = sample*m_pitch;
 			const float masterPhase = sample*m_masterPitch;
 			
@@ -167,7 +168,15 @@ namespace SFM
 					break;
 			}
 
+			signal *= m_amplitude;
+			SampleAssert(signal);
+
 			return signal;
+		}
+
+		SFM_INLINE bool HasCycled(unsigned sampleCount) /* const */
+		{
+			return (sampleCount-m_sampleOffs)*m_pitch >= m_periodLen;
 		}
 	};
 }

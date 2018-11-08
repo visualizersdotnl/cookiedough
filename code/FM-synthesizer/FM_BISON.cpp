@@ -138,37 +138,37 @@ namespace SFM
 		switch (voice.m_algorithm)
 		{
 		case kSingle:
-			voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency);
+			voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude);
 			break;
 
 		case kDoubleCarriers:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude, frequency);
+				voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1].Initialize(s_sampleCount, request.form, dBToAmplitude(-3.f), frequency*detune);
+				voice.m_carriers[1] = Oscillator(s_sampleCount, request.form, frequency*detune, dBToAmplitude(-3.f));
 			}
 
 			break;
 
 		case kMiniMOOG:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, amplitude*s_parameters.m_carrierVol[0], frequency);
+				voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
 
 				// Same as above, but with a range of 3 octaves
 				const float detune = powf(3.f/2.f, (-12.f + 24.f*s_parameters.m_slavesDetune)/12.f);
 				const float slaveFreq = frequency*detune;
 
-				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), amplitude*s_parameters.m_carrierVol[1], slaveFreq);
-				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), amplitude*s_parameters.m_carrierVol[2], slaveFreq);
+				voice.m_carriers[1] = Oscillator(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
+				voice.m_carriers[2] = Oscillator(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, amplitude*s_parameters.m_carrierVol[2]);
 
 				// Want hard sync.?
 				if (true == s_parameters.m_hardSync)
 				{
 					// Enslave them!
-					voice.m_carriers[1].m_oscillator.SetMasterFrequency(frequency);
-					voice.m_carriers[2].m_oscillator.SetMasterFrequency(frequency);
+					voice.m_carriers[1].SetMasterFrequency(frequency);
+					voice.m_carriers[2].SetMasterFrequency(frequency);
 				}
 			}
 

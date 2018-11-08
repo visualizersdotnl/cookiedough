@@ -6,7 +6,7 @@
 #pragma once
 
 #include "synth-global.h"
-#include "synth-carrier.h"
+#include "synth-oscillator.h"
 #include "synth-modulator.h"
 // #include "synth-ADSR.h."
 // #include "synth-filter.h"
@@ -26,7 +26,7 @@ namespace SFM
 		bool m_enabled;
 
 		Algorithm m_algorithm;
-		Carrier m_carriers[3];
+		Oscillator m_carriers[3];
 		Modulator m_modulator;
 		LFO m_ampMod;
 

@@ -169,9 +169,6 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-carrier.cpp">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
@@ -355,9 +352,6 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-ADSR.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-carrier.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h">
