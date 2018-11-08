@@ -412,6 +412,7 @@ namespace SFM
 	}
 
 	// Molests a sample down to about 4-bit
+	// This used to be slow (conversion) but with the right parameters the compiler doesn't make it a big deal
 	SFM_INLINE float Nintendize(float sample)
 	{
 		int8_t quantized = int8_t(sample*127.f);
@@ -475,7 +476,7 @@ namespace SFM
 						const unsigned sampleCount = s_sampleCount+iSample;
 						const float sample = voice.Sample(sampleCount, s_parameters);
 						
-						// Get lo-fi counterpart to blend with
+						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);
 						
 						buffer[iSample] = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));

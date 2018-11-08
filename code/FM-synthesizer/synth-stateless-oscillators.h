@@ -100,7 +100,8 @@ namespace SFM
 
 	SFM_INLINE unsigned BLIT_GetNumHarmonics(float frequency)
 	{
-		const unsigned numHarmonics = unsigned(kNyquist/(kAudibleLowHz+frequency));
+		SFM_ASSERT(frequency >= kAudibleLowHz);
+		const unsigned numHarmonics = unsigned(kNyquist/(frequency-kAudibleLowHz));
 		return numHarmonics;
 	}
 
