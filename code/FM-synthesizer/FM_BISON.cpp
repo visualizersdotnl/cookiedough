@@ -354,6 +354,9 @@ namespace SFM
 		// Noise
 		s_parameters.m_noisyness = WinMidi_GetNoisyness();
 
+		// Nintendize
+		s_parameters.m_Nintendize = WinMidi_GetNintendize();
+
 		// Tremolo
 		s_parameters.m_tremolo = WinMidi_GetTremolo();
 
@@ -386,7 +389,7 @@ namespace SFM
 		// Feedback parameters
 		s_parameters.m_feedback = WinMidi_GetFeedback();
 		s_parameters.m_feedbackWetness = WinMidi_GetFeedbackWetness();
-		s_parameters.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f; // FIXME: move bias elsewhere
+		s_parameters.m_feedbackPitch = -1.f + WinMidi_GetFeedbackPitch()*2.f;
 	}
 
 	/*
@@ -406,6 +409,14 @@ namespace SFM
 
 		// Apply delay
 		mix = mix + s_parameters.m_feedbackWetness*delayed;
+	}
+
+	// Molests a sample down to about 4-bit
+	SFM_INLINE float Nintendize(float sample)
+	{
+		int8_t quantized = int8_t(sample*127.f);
+		quantized &= ~31;
+		return quantized/127.f;
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -463,7 +474,11 @@ namespace SFM
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 						const float sample = voice.Sample(sampleCount, s_parameters);
-						buffer[iSample] = sample;
+						
+						// Get lo-fi counterpart to blend with
+						const float Nintendized = Nintendize(sample);
+						
+						buffer[iSample] = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
 					}
 
 					// Filter voice

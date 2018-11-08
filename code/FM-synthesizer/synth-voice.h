@@ -52,10 +52,10 @@ namespace SFM
 				// In MiniMOOG-mode, only the first carrier is allowed non-procedural
 
 			case kSingle:
-				return m_carriers[0].HasCycled(sampleCount);
+				return m_carriers[0].HasCycled();
 
 			case kDoubleCarriers:
-				return m_carriers[1].HasCycled(sampleCount) || m_carriers[1].HasCycled(sampleCount);
+				return m_carriers[1].HasCycled() || m_carriers[1].HasCycled();
 			}
 		}
 	};

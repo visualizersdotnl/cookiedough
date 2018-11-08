@@ -19,6 +19,9 @@ namespace SFM
 	// Noisyness
 	float WinMidi_GetNoisyness();
 
+	// Nintendize
+	float WinMidi_GetNintendize();
+
 	// Filter
 	float WinMidi_GetFilterAttack();
 	float WinMidi_GetFilterDecay();

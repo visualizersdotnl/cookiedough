@@ -44,10 +44,9 @@ namespace SFM
 		float m_modBrightness;
 		float m_indexLFOFreq;
 
-		// Noise
+		// Noise, Nintendize, tremolo
 		float m_noisyness;
-
-		// Tremolo
+		float m_Nintendize;
 		float m_tremolo;
 
 		// Loop wavetable oscillators
@@ -100,6 +99,9 @@ namespace SFM
 
 			// No noise
 			m_noisyness = 0.f;
+
+			// No chiptune-ish crap
+			m_Nintendize = 0.f;
 
 			// No tremolo
 			m_tremolo = 0.f;

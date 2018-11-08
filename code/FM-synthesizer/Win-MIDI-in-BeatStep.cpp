@@ -50,7 +50,7 @@ namespace SFM
 	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, R5
 	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
 	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
-	const unsigned kPotUnused2 = 16;           // Set 3, R12
+	const unsigned kPotNintendize = 16;        // Set 3, R12
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
@@ -59,6 +59,7 @@ namespace SFM
 	static float s_doubleVolume = 0.f;
 	static float s_slavesDetune = 0.f;
 	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
+	static float s_Nintendize = 0.f;
 
 	// Button mapping
 
@@ -179,6 +180,12 @@ namespace SFM
 
 					case kPotNoisyness:
 						s_noisyness = fControlVal;
+						break;
+
+					/* Nintendize */
+
+					case kPotNintendize:
+						s_Nintendize = fControlVal;
 						break;
 
 					/* Filter */
@@ -351,6 +358,9 @@ namespace SFM
 
 	// Noisyness
 	float WinMidi_GetNoisyness() { return s_noisyness; }
+
+	// Nintendize
+	float WinMidi_GetNintendize() { return s_Nintendize; }
 
 	// Filter
 	float WinMidi_GetFilterAttack()   { return s_filterA; }
