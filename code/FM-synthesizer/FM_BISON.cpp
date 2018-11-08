@@ -138,30 +138,30 @@ namespace SFM
 		switch (voice.m_algorithm)
 		{
 		case kSingle:
-			voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude);
+			voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude);
 			break;
 
 		case kDoubleCarriers:
 			{
-				voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude);
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1] = Oscillator(s_sampleCount, request.form, frequency*detune, dBToAmplitude(-3.f));
+				voice.m_carriers[1].Initialize(s_sampleCount, request.form, frequency*detune, dBToAmplitude(-3.f));
 			}
 
 			break;
 
 		case kMiniMOOG:
 			{
-				voice.m_carriers[0] = Oscillator(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
 
 				// Same as above, but with a range of 3 octaves
 				const float detune = powf(3.f/2.f, (-12.f + 24.f*s_parameters.m_slavesDetune)/12.f);
 				const float slaveFreq = frequency*detune;
 
-				voice.m_carriers[1] = Oscillator(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
-				voice.m_carriers[2] = Oscillator(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, amplitude*s_parameters.m_carrierVol[2]);
+				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
+				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, amplitude*s_parameters.m_carrierVol[2]);
 
 				// Want hard sync.?
 				if (true == s_parameters.m_hardSync)
@@ -344,7 +344,7 @@ namespace SFM
 		s_parameters.m_modRatioC = (float) g_CM_table[tabIndex][0];
 		s_parameters.m_modRatioM = (float) g_CM_table[tabIndex][1];
 
-		// Modulation brightness affects the modulator's oscillator blend (sine <-> triangle)
+		// Modulation brightness affects the modulator's oscillator blend
 		s_parameters.m_modBrightness = WinMidi_GetModulationBrightness();
 
 		// Modulation index LFO frequency

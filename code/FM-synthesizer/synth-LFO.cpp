@@ -10,24 +10,19 @@
 
 namespace SFM
 {
-	void LFO::Initialize(unsigned sampleCount, Waveform form, float depth, float frequency)
+	void LFO::Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency)
 	{
 		SFM_ASSERT(frequency <= kMaxSonicLFO);
 
 		m_sampleOffs = sampleCount;
 		m_form = form;
-		m_depth = depth;
+		m_amplitude = amplitude;
 		m_frequency = frequency;
 		m_pitch = CalculatePitch(frequency);
-
-		m_enabled = true;
 	}
 
 	float LFO::Sample(unsigned sampleCount)
 	{
-		if (false == m_enabled)
-			return 1.f;
-
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
 
@@ -35,7 +30,10 @@ namespace SFM
 		switch (m_form)
 		{
 		default:
-			SFM_ASSERT(false); // Unsupported oscillator
+			// Unsupported oscillator
+			signal = 0.f;
+			SFM_ASSERT(false); 
+			break;
 
 		case kCosine:
 			signal = oscCos(phase);
@@ -60,6 +58,6 @@ namespace SFM
 
 		SampleAssert(signal);
 
-		return m_depth*signal;
+		return m_amplitude*signal;
 	}
 }

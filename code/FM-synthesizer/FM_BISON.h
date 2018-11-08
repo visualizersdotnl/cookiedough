@@ -23,7 +23,6 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Immediate problems:
-		- Idea: pulse wave sample & hold LFO
 		- MiniMOOG mode:
 		  + Main carrier should get some prevalence in the mix, if wanted (third knob?)
 		- MinBLEP?

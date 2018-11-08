@@ -49,7 +49,7 @@ namespace SFM
 		alignas(16) float m_buffer[kSampleRate];
 	};
 
-	// Simple 1D matrix to blend between 3 evenly spaced delay lines (hack, but works perfectly)
+	// Simple 1D matrix to blend between 3 evenly spaced delay lines (hack, but works fine)
 	class DelayMatrix
 	{
 	public:

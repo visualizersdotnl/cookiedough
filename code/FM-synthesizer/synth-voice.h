@@ -48,9 +48,7 @@ namespace SFM
 			{
 			default:
 
-			case kMiniMOOG:
-				// In MiniMOOG-mode, only the first carrier is allowed non-procedural
-
+			case kMiniMOOG: // In MiniMOOG-mode, only the first carrier is allowed non-procedural
 			case kSingle:
 				return m_carriers[0].HasCycled();
 

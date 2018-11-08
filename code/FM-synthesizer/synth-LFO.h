@@ -14,37 +14,17 @@ namespace SFM
 {
 	class LFO
 	{
-	public:
-		LFO() : m_enabled(false) {}
-
 	private:
-		bool m_enabled;
-	
 		unsigned m_sampleOffs;
 		Waveform m_form;
-		float m_depth;
+		float m_amplitude;
 		float m_frequency;
 		float m_pitch;
 
 	public:		
-		void Initialize(unsigned sampleCount, Waveform form, float depth, float frequency);
+		LFO() : m_amplitude(0.f) {}
+
+		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
 		float Sample(unsigned sampleCount);
-
-		void Stop()
-		{
-			SFM_ASSERT(true == m_enabled);
-			m_enabled = false;
-		}
-
-		void Restart(unsigned sampleCount)
-		{
-			SFM_ASSERT(false == m_enabled);
-			m_enabled = true;
-
-			m_sampleOffs = sampleCount;
-		}
-
-		bool IsEnabled() const     { return m_enabled;   }
-		float GetFrequency() const { return m_frequency; }
 	};
 }

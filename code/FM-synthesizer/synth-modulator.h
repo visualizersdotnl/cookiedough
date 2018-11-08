@@ -2,27 +2,28 @@
 /*
 	Syntherklaas FM -- Frequency modulator.
 
-	This modulator has a brightness component which shifts between a sine and a triangle waveform
-	and a frequency by which the index (or depth, if you like) can be modulated.
+	This type of modulator is specific to FM. BISON.
 */
 
 #pragma once
 
 #include "synth-global.h"
+#include "synth-oscillator.h"
 #include "synth-LFO.h"
 
 namespace SFM
 {
-	// FIXME: create class
-	struct Modulator
+	class Modulator
 	{
-		unsigned m_sampleOffs;
+	private:
 		float m_index;
-		float m_frequency;
-		float m_pitch;
+
+		Oscillator m_oscSoft;
+		Oscillator m_oscSharp;
 		LFO m_indexLFO;
-		
-		void Initialize(unsigned sampleCount, float index, float frequency, float indexModFreq);
+
+	public:		
+		void Initialize(unsigned sampleCount, float index, float freqPM, float freqAM);
 		float Sample(unsigned sampleCount, float brightness);
 	};
 }
