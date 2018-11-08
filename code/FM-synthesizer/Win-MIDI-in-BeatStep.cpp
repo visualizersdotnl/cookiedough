@@ -47,6 +47,7 @@ namespace SFM
 	const unsigned kPotFilterS = 71;           // Set 1, R3
 	const unsigned kPotDoubleDetune = 72;      // Set 4, R16
 	const unsigned kPotDoubleVolume = 79;      // Set 4, R15
+	const unsigned kPot_MOOG_slavesLP = 73;    // Set 2, R7
 	const unsigned kPot_MOOG_CarrierVol1 = 77; // Set 2, R5
 	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
 	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
@@ -58,6 +59,7 @@ namespace SFM
 	static float s_doubleDetune = 0.f;
 	static float s_doubleVolume = 0.f;
 	static float s_slavesDetune = 0.f;
+	static MIDI_Smoothed s_slavesLP(0.33f);
 	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
 	static float s_Nintendize = 0.f;
 
@@ -136,6 +138,10 @@ namespace SFM
 
 					case kPot_MOOG_SlavesDetune:
 						s_slavesDetune = fControlVal;
+						break;
+
+					case kPot_MOOG_slavesLP:
+						s_slavesLP.Set(fControlVal);
 						break;
 
 					case kPot_MOOG_CarrierVol1:
@@ -376,11 +382,12 @@ namespace SFM
 	float WinMidi_GetDoubleVolume() { return s_doubleVolume; }
 
 	// Algorithm #3
-	float WinMidi_GetCarrierVolume1()        { return s_mCarrierVol1; }
-	float WinMidi_GetCarrierVolume2()        { return s_mCarrierVol2; }
-	float WinMidi_GetCarrierVolume3()        { return s_mCarrierVol3; }
-	float WinMidi_GetSlavesDetune()          { return s_slavesDetune; }
-	bool  WinMidi_GetHardSync()              { return s_hardSync;     }
-	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2; }
-	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3; }
+	float WinMidi_GetCarrierVolume1()        { return s_mCarrierVol1;   }
+	float WinMidi_GetCarrierVolume2()        { return s_mCarrierVol2;   }
+	float WinMidi_GetCarrierVolume3()        { return s_mCarrierVol3;   }
+	float WinMidi_GetSlavesLowpass()         { return s_slavesLP.Get(); }
+	float WinMidi_GetSlavesDetune()          { return s_slavesDetune;   }
+	bool  WinMidi_GetHardSync()              { return s_hardSync;       }
+	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2;   }
+	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3;   }
 }

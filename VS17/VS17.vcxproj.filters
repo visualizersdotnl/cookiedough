@@ -408,6 +408,9 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-stateless-oscillators.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-single-pole-filters.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

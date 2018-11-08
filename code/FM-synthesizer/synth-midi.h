@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "synth-single-pole-filters.h"
+
 namespace SFM
 {
 	// LUT to get frequency for a MIDI key
@@ -42,5 +44,28 @@ namespace SFM
 		MIDI_SYSTEM_RESET = 0xff,
 		/* Meta event - for MIDI files only */
 		MIDI_META_EVENT = 0xff
+	};
+
+	// To smooth out MIDI values if needed (for ex. rotaries)
+	class MIDI_Smoothed
+	{
+	public:
+		MIDI_Smoothed(float amount)
+		{
+			m_LPF.SetCutoff(amount);
+		}
+
+		void Set(float value)
+		{
+			m_LPF.Apply(value);
+		}
+
+		float Get() const
+		{
+			return m_LPF.GetValue();
+		}
+
+	private:
+		LowpassFilter m_LPF;
 	};
 }

@@ -170,6 +170,9 @@ namespace SFM
 					voice.m_carriers[1].SetMasterFrequency(frequency);
 					voice.m_carriers[2].SetMasterFrequency(frequency);
 				}
+
+				// Reset LPF
+				voice.m_LPF.Reset();
 			}
 
 			break;
@@ -232,16 +235,22 @@ namespace SFM
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
-		// See if any voices are done
+		// Update active voices
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			Voice &voice = s_voices[iVoice];
 			const bool enabled = voice.m_enabled;
+
 			if (true == enabled)
 			{
+				// If in MiniMOOG mode, set lowpass cutoff
+				if (kMiniMOOG == voice.m_algorithm)
+					voice.m_LPF.SetCutoff(s_parameters.m_slavesLP);
+				
+				// See if any voices are done
 				bool free = false;
 				
-				// If ADSR envelope has ran it's course, voice can be freed.
+				// If ADSR envelope has ran it's course, voice can be freed
 				ADSR &envelope = s_ADSRs[iVoice];
 				if (true == envelope.IsIdle())
 					free = true;
@@ -324,7 +333,9 @@ namespace SFM
 		s_parameters.m_doubleVolume = WinMidi_GetDoubleVolume();
 
 		// For algorithm #3
+		const float slavesLP = WinMidi_GetSlavesLowpass();
 		s_parameters.m_slavesDetune  = WinMidi_GetSlavesDetune();
+		s_parameters.m_slavesLP      = std::max<float>(kEpsilon, clampf(0.f, 1.f, slavesLP*slavesLP));
 		s_parameters.m_hardSync      = WinMidi_GetHardSync();
 		s_parameters.m_slaveFM       = WinMidi_GetSlaveFM();
 		s_parameters.m_carrierVol[0] = WinMidi_GetCarrierVolume1();

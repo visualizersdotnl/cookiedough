@@ -32,6 +32,7 @@ namespace SFM
 		// Algorithm #3 (oscillator 2 & 3 forms are pulled in place)
 		bool  m_hardSync;
 		float m_slavesDetune;
+		float m_slavesLP;
 		float m_slaveFM;
 		float m_carrierVol[3];
 		
@@ -82,6 +83,7 @@ namespace SFM
 			// Algo #3
 			m_hardSync      = false;
 			m_slavesDetune  = 0.f;
+			m_slavesLP      = 0.f;
 			m_slaveFM       = 0.f;
 			m_carrierVol[0] = 1.f;
 			m_carrierVol[1] = 0.f;

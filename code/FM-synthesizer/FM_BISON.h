@@ -22,42 +22,34 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Immediate problems:
-		- MiniMOOG mode:
-		  + Main carrier should get some prevalence in the mix, if wanted (third knob?)
-		- MinBLEP?
-
 	Priority tasks:
+		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Investigate and implement operator feedback
-		- Reinstate pitch bend
 		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- First draft of manual
 
 	Plumbing:
-		- Move shared MIDI code to Win-Midi-in.cpp/h
-		- Flush ring buffer using two memcpy() calls
-		- Move project to it's own repository (go for VST directly)
-		- Consider voice lists
-		- Turn structures into real classes piece by piece
-		  + Certain structures, as things mature, look more and more alike: boil it down to the essence
+		- Make use of smoothed controls in MIDI (gradually as needed)
+		- Flush ring buffer using 2 memcpy() calls
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
 		- Tweak velocity & aftertouch (it sounds OK now)
-		  + I've heard synthesizers getting "brighter" as you hit the keys harder
 
 	Research:
+		- I've heard synthesizers getting "brighter" as you hit the keys harder
+		- MinBLEP
 		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- Real variable delay line
 		- Profiling & optimization
 
 	Known issues:
+		- Sometimes an ADSR seems to hang up a voice
 		- MIDI pots crackle a bit (not important for intended target)
 		- Numerical instability
 		- Crackle when bottlenecked (should not be the case in production phase)
 
 	Lesson(s) learned:
-		- Now that I know way more, I should sit down and think of a better design for next time; this has been a proper schooling
 		- It is important to follow through and finish this
 		- Don't keep pushing a feature that's just not working
 */

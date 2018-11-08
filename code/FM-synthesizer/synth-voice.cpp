@@ -40,7 +40,12 @@ namespace SFM
 				const float C = m_carriers[2].Sample(sampleCount, slaveMod, pulseWidth);
 
 				const float *pVols = parameters.m_carrierVol;
-				sample = Clamp(pVols[0]*A + SoftClamp(pVols[1]*B + pVols[2]*C));
+ 
+				// Let us hope Sylvana Simons never reads this
+				const float slaves = SoftClamp(pVols[1]*B + pVols[2]*C);
+				const float filtered = m_LPF.Apply(slaves);
+
+				sample = Clamp(pVols[0]*A + filtered);
 			}
 			break;
 		}

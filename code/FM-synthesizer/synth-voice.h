@@ -12,6 +12,7 @@
 // #include "synth-filter.h"
 // #include "synth-LFO.h."
 #include "synth-parameters.h"
+#include "synth-single-pole-filters.h"
 
 namespace SFM
 {
@@ -29,6 +30,9 @@ namespace SFM
 		Oscillator m_carriers[3];
 		Modulator m_modulator;
 		LFO m_ampMod;
+
+		// For Algorithm #3
+		LowpassFilter m_LPF;
 
 		// For wavetable samples
 		bool m_oneShot;
