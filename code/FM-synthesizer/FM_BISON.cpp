@@ -128,8 +128,8 @@ namespace SFM
 		const float goldenTen = kGoldenRatio*10.f;
 
 		const float frequency = request.frequency;
-		const float velocity = request.velocity;
-		const bool isWave = oscIsWavetable(request.form);
+		const float velocity  = request.velocity;
+		const bool  isWave    = oscIsWavetable(request.form);
 
 		// Algorithm
 		voice.m_algorithm = s_parameters.m_algorithm;
@@ -367,7 +367,8 @@ namespace SFM
 		// Noise
 		s_parameters.m_noisyness = WinMidi_GetNoisyness();
 
-		// Formant vowel
+		// Formant (vowel)
+		s_parameters.m_formant = WinMidi_GetFormant();
 		s_parameters.m_formantVowel = WinMidi_GetFormantVowel();
 
 		// Nintendize
@@ -485,17 +486,20 @@ namespace SFM
 				if (true == voice.m_enabled)
 				{
 					ADSR &voiceADSR = s_ADSRs[iVoice];
+
 					FormantShaper &shaper = s_formantShapers[iVoice];
 					const FormantShaper::Vowel vowel = s_parameters.m_formantVowel;
-
+					const float formant = s_parameters.m_formant;
+	
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
 						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
 
-						// Shape
-						sample = shaper.Apply(sample, vowel);
+						// Shape by formant
+						float shaped = shaper.Apply(sample, vowel);
+						sample = lerpf<float>(sample, shaped, invsqrf(formant));;
 
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);

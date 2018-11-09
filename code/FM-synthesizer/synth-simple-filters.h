@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- 1-pole filters; useful for very basic input or signal filtering.
+	Syntherklaas FM -- Simple filters; useful for very basic input or signal filtering.
 */
 
 #pragma once
@@ -10,6 +10,8 @@
 namespace SFM
 {
 	const float kLowpassDCBlockerCutoff = 10.f/kSampleRate;
+
+	/* Lowpass (1-pole) */
 
 	class LowpassFilter
 	{
@@ -35,6 +37,7 @@ namespace SFM
 	SFM_INLINE float Apply(float input)
 	{
 		m_feedback = input*m_gain + m_feedback*m_cutoff;
+		m_feedback *= 0.995f;
 		return m_feedback;
 	}
 
@@ -49,6 +52,8 @@ namespace SFM
 
 		float m_feedback;
 	};
+
+	/* Highpass (1-pole) */
 
 	class HighpassFilter
 	{
@@ -67,13 +72,14 @@ namespace SFM
 	void SetCutoff(float cutoff)
 	{
 		SFM_ASSERT(cutoff >= 0.f && cutoff <= 1.f);
-		m_cutoff = -expf(-2.f*kPI*(0.5f-cutoff));
-		m_gain = 1.f-m_cutoff;
+		m_cutoff = -expf(-2.f*kPI*(1.f-cutoff));
+		m_gain = 1.f+m_cutoff;
 	}
 
 	SFM_INLINE float Apply(float input)
 	{
 		m_feedback = input*m_gain + m_feedback*m_cutoff;
+		m_feedback *= 0.995f;
 		return m_feedback;
 	}
 
@@ -89,4 +95,4 @@ namespace SFM
 		float m_feedback;
 	};
 }
-                                                                               
+                                           

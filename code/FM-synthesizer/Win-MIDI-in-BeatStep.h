@@ -19,6 +19,9 @@ namespace SFM
 	// Noisyness
 	float WinMidi_GetNoisyness();
 
+	// Formant (FS1R-style)
+	float WinMidi_GetFormant();
+
 	// Nintendize
 	float WinMidi_GetNintendize();
 

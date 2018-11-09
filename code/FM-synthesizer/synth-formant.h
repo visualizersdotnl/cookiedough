@@ -37,6 +37,6 @@ namespace SFM
 			memset(m_memory, 0, 10*sizeof(double));
 		}
 
-		float Apply(float sample, Vowel vowel);
+		float Apply(float sample, int vowel);
 	};
 }

@@ -2,7 +2,10 @@
 /*
 	Syntherklaas FM -- Formant shaper (filter).
 
-	FIXME: use ring buffer
+	FIXME:
+		- This is a rather cheap and lo-fi way of doing this, but the alternative (bandpassing 3 times per vowel)
+		  is probably not worth the cost
+		- Use ring buffer
 */
 
 #include "synth-global.h"
@@ -48,8 +51,10 @@ const double kVowelCoeffs[SFM::FormantShaper::kNumVowels][11]=
 
 namespace SFM
 {
-	float FormantShaper::Apply(float sample, Vowel vowel)
+	float FormantShaper::Apply(float sample, int vowel)
 	{
+		SFM_ASSERT(vowel < kNumVowels);			
+
 		if (kNeutral == vowel)
 			return sample;
 

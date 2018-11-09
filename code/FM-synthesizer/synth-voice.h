@@ -12,7 +12,7 @@
 // #include "synth-filter.h"
 // #include "synth-LFO.h."
 #include "synth-parameters.h"
-#include "synth-single-pole-filters.h"
+#include "synth-simple-filters.h"
 
 namespace SFM
 {
@@ -33,6 +33,7 @@ namespace SFM
 
 		// For Algorithm #3
 		LowpassFilter m_LPF;
+//		HighpassFilter m_LPF;
 
 		// For wavetable samples
 		bool m_oneShot;

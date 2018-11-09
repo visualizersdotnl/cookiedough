@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "synth-single-pole-filters.h"
+#include "synth-simple-filters.h"
 
 namespace SFM
 {

@@ -52,6 +52,7 @@ namespace SFM
 	const unsigned kPot_MOOG_CarrierVol2 = 93; // Set 2, R6
 	const unsigned kPot_MOOG_CarrierVol3 = 75; // Set 2, R8
 	const unsigned kPotNintendize = 16;        // Set 3, R12
+	const unsigned kPotFormant = 19;           // Set 3, R11
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
@@ -62,6 +63,7 @@ namespace SFM
 	static MIDI_Smoothed s_slavesLP(0.33f);
 	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
 	static float s_Nintendize = 0.f;
+	static MIDI_Smoothed s_formant(0.33f);
 
 	// Button mapping
 
@@ -186,6 +188,11 @@ namespace SFM
 
 					case kPotNoisyness:
 						s_noisyness = fControlVal;
+						break;
+
+					/* Formant */
+					case kPotFormant:
+						s_formant.Set(fControlVal);
 						break;
 
 					/* Nintendize */
@@ -390,4 +397,10 @@ namespace SFM
 	bool  WinMidi_GetHardSync()              { return s_hardSync;       }
 	Waveform WinMidi_GetCarrierOscillator2() { return s_waveformOsc2;   }
 	Waveform WinMidi_GetCarrierOscillator3() { return s_waveformOsc3;   }
+
+	// Formant (rotary)
+	float WinMidi_GetFormant()
+	{
+		return s_formant.Get();
+	}
 }
