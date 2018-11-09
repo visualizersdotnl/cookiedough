@@ -26,8 +26,9 @@
 
 	Priority:
 		- Formant shaping is *very* basic, a few ideas:
-		  + Here's some fine information to refine the technique: https://www.soundonsound.com/techniques/formant-synthesis
 		  + Maybe interpolate (rotary) between the vowels (like the FS1X seems to do) instead of just using one at a time full blast (like the FS1R)
+		  + Here's some fine information to refine the technique (requires bandpass): https://www.soundonsound.com/techniques/formant-synthesis
+		    + Create these using a (cheap-ish) bandpass filter?
 		  + Soft clamping in the filter itself to prevent overdrive?
 		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
