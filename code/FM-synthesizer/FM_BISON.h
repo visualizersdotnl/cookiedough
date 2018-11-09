@@ -8,12 +8,14 @@
 		- Esa Ruoho
 		- Maarten van Strien
 		- Mark Smith
+		- Bernd H.
 
-	Third-party code used:
-		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+	Third-party / References:
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
-		- ADSR implementation by Nigel Redmon of earlevel.com
 		- Butterworth filter from http://www.musicdsp.org (see header file for details)
+		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+		- ADSR implementation by Nigel Redmon of earlevel.com
+		- Basic formant filter by alex@smartelectronix.com (http://www.musicdsp.org)
 
 	Notes:
 		- This code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
@@ -34,6 +36,7 @@
 	Plumbing:
 		- Make use of smoothed controls in MIDI (gradually as needed)
 		- Flush ring buffer using 2 memcpy() calls
+		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
 		- Tweak velocity & aftertouch (it sounds OK now)
 

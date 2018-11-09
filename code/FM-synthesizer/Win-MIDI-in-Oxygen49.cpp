@@ -93,7 +93,7 @@ namespace SFM
 	static int s_loopWaves = 0;
 	static Algorithm s_algorithm = kSingle;
 
-	// Percussion channel indices (FIXME: unused)
+	// Percussion channel indices
 	const unsigned kPerc1 = 36;
 	const unsigned kPerc2 = 38;
 	const unsigned kPerc3 = 42;
@@ -102,6 +102,8 @@ namespace SFM
 	const unsigned kPerc6 = 45;
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
+
+	static int s_formantVowel = -1;
 
 	static bool s_flipFilterEnv = false;
 
@@ -140,6 +142,33 @@ namespace SFM
 
 				if (CHANNEL_PERCUSSION == channel)
 				{
+					switch (controlIdx)
+					{
+					case kPerc5:
+						s_formantVowel = -1;
+						break;
+
+					case kPerc6:
+						s_formantVowel = kVowelA;
+						break;
+
+					case kPerc7:
+						s_formantVowel = kVowelE;
+						break;
+
+					case kPerc8:
+						s_formantVowel = kVowelI;
+						break;
+
+					case kPerc1:
+						s_formantVowel = kVowelO;
+						break;
+
+					case kPerc2:
+						s_formantVowel = kVowelU;
+						break;
+					}
+
 					return;
 				}
 
@@ -460,5 +489,11 @@ namespace SFM
 	float WinMidi_GetSlaveFM()
 	{
 		return s_slaveFM;
+	}
+
+	// Formant vowel
+	int WinMidi_GetFormantVowel()
+	{
+		return s_formantVowel;
 	}
 }

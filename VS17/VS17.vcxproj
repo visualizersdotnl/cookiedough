@@ -48,6 +48,7 @@
     <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-formant.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LFO.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-delayline.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-formant.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-LFO.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-single-pole-filters.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-math.h" />

@@ -20,6 +20,7 @@
 #include "synth-delayline.h"
 #include "synth-math.h"
 #include "synth-LUT.h"
+#include "synth-formant.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -73,10 +74,11 @@ namespace SFM
 	static Voice s_voices[kMaxVoices];
 	static unsigned s_active = 0;
 	static ADSR s_ADSRs[kMaxVoices];
-	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
-	static ButterworthFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
+	static ButterworthFilter s_cleanFilters[kMaxVoices];
+	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
+	static FormantShaper s_formantShapers[kMaxVoices];
 	
 	/*
 		Voice API.
@@ -201,7 +203,7 @@ namespace SFM
 			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 
-		case kButterworthFilter:
+		case kButterworthFilter: // Completely different response curve than either other (harsher, "wider" resonance)
 			voice.m_pFilter = s_cleanFilters+iVoice;
 			break;
 
@@ -210,11 +212,14 @@ namespace SFM
 			break;
 		}
 
-		voice.m_pFilter->Reset();		
+		voice.m_pFilter->Reset();	
 
 		// Set ADSRs (voice & filter)
 		s_ADSRs[iVoice].Start(s_sampleCount, s_parameters.m_voiceADSR, velocity);
 		voice.m_pFilter->Start(s_sampleCount, s_parameters.m_filterADSR, velocity);
+
+		// Reset formant shaper
+		s_formantShapers[iVoice].Reset();
 		
 		voice.m_enabled = true;
 		++s_active;
@@ -362,6 +367,9 @@ namespace SFM
 		// Noise
 		s_parameters.m_noisyness = WinMidi_GetNoisyness();
 
+		// Formant vowel
+		s_parameters.m_formantVowel = WinMidi_GetFormantVowel();
+
 		// Nintendize
 		s_parameters.m_Nintendize = WinMidi_GetNintendize();
 
@@ -482,11 +490,14 @@ namespace SFM
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
-						const float sample = voice.Sample(sampleCount, s_parameters);
-						
+						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
+
+						// Shape
+						if (-1 != s_parameters.m_formantVowel)
+							sample = s_formantShapers[iVoice].Apply(sample, FormantVowel(s_parameters.m_formantVowel));
+
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);
-						
 						buffer[iSample] = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
 					}
 

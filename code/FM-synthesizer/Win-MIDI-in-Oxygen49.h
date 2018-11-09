@@ -63,4 +63,7 @@ namespace SFM
 
 	// Algorithm #3
 	float WinMidi_GetSlaveFM();
+
+	// Formant vowel
+	int WinMidi_GetFormantVowel();
 }

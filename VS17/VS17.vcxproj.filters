@@ -202,6 +202,9 @@
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.cpp">
       <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-formant.cpp">
+      <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -407,6 +410,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.h">
       <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\synth-formant.h">
+      <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
