@@ -74,7 +74,7 @@ namespace SFM
 	static unsigned s_active = 0;
 	static ADSR s_ADSRs[kMaxVoices];
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
-	static CleanFilter s_cleanFilters[kMaxVoices];
+	static ButterworthFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
 	
@@ -196,20 +196,17 @@ namespace SFM
 		// Get & reset filter
 		switch (s_parameters.m_curFilter)
 		{
-		// #1
 		default:
 		case kTeemuFilter: // A bit more expressive (default)
 			voice.m_pFilter = s_teemuFilters+iVoice;
 			break;
 
-		// #2
+		case kButterworthFilter:
+			voice.m_pFilter = s_cleanFilters+iVoice;
+			break;
+
 		case kImprovedMOOGFilter:
 			voice.m_pFilter = s_improvedFilters+iVoice;
-			break;
-		
-		// #3
-		case kCleanFilter:
-			voice.m_pFilter = s_cleanFilters+iVoice;
 			break;
 		}
 

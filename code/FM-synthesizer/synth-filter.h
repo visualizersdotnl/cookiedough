@@ -5,20 +5,22 @@
 
 #pragma once
 
+#include "3rdparty/FilterButterworth24dB.h"
+
 #include "synth-global.h"
 #include "synth-ADSR.h"
 
 namespace SFM
 {
 	/*
-		Filter types & order.
+		Filter types & their order.
 	*/
 
 	enum VoiceFilter
 	{
 		kTeemuFilter,
+		kButterworthFilter,
 		kImprovedMOOGFilter,
-		kCleanFilter,
 		kNumFilters
 	};
 
@@ -59,7 +61,7 @@ namespace SFM
 			m_ADSR.Start(sampleCount, parameters, velocity);
 		}
 
-		void SetLiveParameters(const FilterParameters &parameters)
+		virtual void SetLiveParameters(const FilterParameters &parameters)
 		{
 			SetDrive(parameters.drive);	
 			SetCutoff(parameters.cutoff);
@@ -84,43 +86,43 @@ namespace SFM
 	};
 
 	/*
-		Filter based on Microtracker MOOG ladder filter, turned into a very *clean* filter,
-		Huey Lewis would love it.
-		
-		Credit:
-		- Based on an implementation by Magnus Jonsson
-		- https://github.com/magnusjonsson/microtracker (unlicense)
-		- Modified to sound like the filter equivalent of Ned Flanders
+		Butterworth filter.
 	*/
 
-	class CleanFilter : public LadderFilter
+	class ButterworthFilter : public LadderFilter
 	{
 	private:
+		CFilterButterworth24dB m_filter;
+
 		float m_cutoff;
 		float m_resonance;
-
-		float m_P0, m_P1, m_P2, m_P3;
-		float m_resoCoeffs[3];
 
 		virtual void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			value *= 1000.f;
-			value = value*2.f*kPI/kSampleRate;
-			m_cutoff = std::max<float>(kEpsilon, value); // Also known as omega
+			m_cutoff = value*kNyquist;
 		}
 
 		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = std::max<float>(kEpsilon, value*3.33f);
+			m_resonance = value;
 		}
 	
 	public:
+		virtual void SetLiveParameters(const FilterParameters &parameters)
+		{
+			SetDrive(parameters.drive);	
+			SetCutoff(parameters.cutoff);
+			SetResonance(parameters.resonance);
+
+			m_filter.Set(m_cutoff, m_resonance);
+		}
+
 		virtual void Reset()
 		{
-			m_P0 = m_P1 = m_P2 = m_P3 = 0.f;
-			m_resoCoeffs[0] = m_resoCoeffs[1] = m_resoCoeffs[2] = 0.f;
+			m_filter.Reset();
+			m_filter.SetSampleRate(kSampleRate);
 		}
 
 		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount);

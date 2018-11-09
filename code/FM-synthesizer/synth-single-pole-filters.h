@@ -1,8 +1,6 @@
 
 /*
-	Syntherklaas FM -- 1-pole filter(s).
-
-	Useful information: http://www.earlevel.com/main/2012/12/15/a-one-pole-filter/
+	Syntherklaas FM -- 1-pole filters; useful for very basic input or signal filtering.
 */
 
 #pragma once
@@ -91,3 +89,4 @@ namespace SFM
 		float m_feedback;
 	};
 }
+                                                                               

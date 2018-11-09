@@ -65,9 +65,6 @@
     <Filter Include="/code\/FM-synthesizer\driver">
       <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\/3rdparty\MinBLEP">
-      <UniqueIdentifier>{0b93cfca-9fa3-4239-87c7-9196e4505092}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29">
       <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
     </Filter>
@@ -196,14 +193,14 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
       <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\3rdparty\MinBLEP.cpp">
-      <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.cpp">
+      <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -396,9 +393,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h">
       <Filter>/code\/FM-synthesizer\core\test</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\3rdparty\MinBLEP.h">
-      <Filter>/code\/FM-synthesizer\/3rdparty\MinBLEP</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
@@ -410,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-single-pole-filters.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.h">
+      <Filter>/code\/FM-synthesizer\/3rdparty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

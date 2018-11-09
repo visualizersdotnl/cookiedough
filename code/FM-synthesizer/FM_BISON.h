@@ -13,7 +13,7 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- ADSR implementation by Nigel Redmon of earlevel.com
-		- MinBLEP table generator by Daniel Werner
+		- Butterworth filter from http://www.musicdsp.org (see header file for details)
 
 	Notes:
 		- This code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
@@ -22,9 +22,10 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Priority tasks:
+	Priority:
 		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
+		- Implement "sample & hold" in LFO by using a square wave and a member variable or 2
 		- Investigate and implement operator feedback
 		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
@@ -38,6 +39,7 @@
 
 	Research:
 		- I've heard synthesizers getting "brighter" as you hit the keys harder
+		- Read about filters a bit more!
 		- MinBLEP
 		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- Real variable delay line
@@ -45,8 +47,7 @@
 
 	Known issues:
 		- Sometimes an ADSR seems to hang up a voice
-		- MIDI pots crackle a bit (not important for intended target)
-		- Numerical instability
+		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)
 
 	Lesson(s) learned:

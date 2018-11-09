@@ -54,7 +54,8 @@ namespace SFM
 	const unsigned kPot_MOOG_slaveFM = 95;     // C17
 
 	static float s_masterDrive = 0.f;
-	static float s_cutoff = 0.f, s_resonance = 0.f, s_filterContour = 0.f, s_filterDrive = 0.f;
+	static MIDI_Smoothed s_cutoff(0.25f);
+	static float s_resonance = 0.f, s_filterContour = 0.f, s_filterDrive = 0.f;
 	static float s_feedback = 0.f, s_feedbackWetness = 0.f;
 	static float s_slaveFM = 0.f;
 
@@ -241,7 +242,7 @@ namespace SFM
 							break;
 
 						case kPotCutoff:
-							s_cutoff = fControlVal;
+							s_cutoff.Set(fControlVal);
 							break;
 
 						case kPotResonance:
@@ -411,7 +412,7 @@ namespace SFM
 
 	// Filter
 	VoiceFilter WinMidi_GetCurFilter()    { return s_curFilter;      }
-	float WinMidi_GetFilterCutoff()       { return s_cutoff;         }
+	float WinMidi_GetFilterCutoff()       { return s_cutoff.Get();   }
 	float WinMidi_GetFilterResonance()    { return s_resonance;      }
 	float WinMidi_GetFilterContour()      { return s_filterContour;  }
 	float WinMidi_GetFilterDrive()        { return s_filterDrive;    }

@@ -3,7 +3,7 @@
 	Syntherklaas FM -- Stateless oscillator functions.
 
 	These functions all accept any value where [0..1] is the length of one period.
-	This costs a few cycles and could be locked down but this way is *very* flexible and non-assuming to use.
+	This costs a few cycles extra here and there which can be avoided if need be; this is however very flexible.
 */
 
 #pragma once
