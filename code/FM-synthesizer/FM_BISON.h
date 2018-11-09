@@ -25,6 +25,9 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Priority:
+		- Formant shaping is *very* basic, a few ideas:
+		  + Soft clamping in the filter itself to prevent overdrive
+		  + Maybe interpolate (rotary) between the vowels (like the FS1X seems to do) instead of just using one at a time full blast
 		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Implement "sample & hold" in LFO by using a square wave and a member variable or 2
