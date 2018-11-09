@@ -21,33 +21,14 @@ namespace SFM
 		return (true == invert) ? 1.f-ADSR : ADSR;
 	}
 
-	void CleanFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
+	void ButterworthFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
 			const float ADSR = SampleEnv(m_ADSR, invert);
 
-			const float feedback = m_P3;
-			SampleAssert(feedback);
-
-			// Coefficients optimized using differential evolution
-			// to make feedback gain 4.0 correspond closely to the
-			// border of instability, for all values of omega.
-			const float out = feedback*0.360891f + m_resoCoeffs[0]*0.417290f + m_resoCoeffs[1]*0.177896f + m_resoCoeffs[2]*0.0439725f;
-
-			// Move window
-			m_resoCoeffs[2] = m_resoCoeffs[1];
-			m_resoCoeffs[1] = m_resoCoeffs[0];
-			m_resoCoeffs[0] = feedback;
-
-			m_P0 += (dry*m_drive - m_resonance*out - fast_tanhf(m_P0)) * m_cutoff;
-			m_P1 += (m_P0-m_P1)*m_cutoff;
-			m_P2 += (m_P1-m_P2)*m_cutoff;
-			m_P3 += (m_P2-m_P3)*m_cutoff;
-			m_P3 = ultra_tanhf(m_P3);
-
-			const float sample = Blend(dry, m_P3, contour, ADSR);
+			const float sample = Blend(dry, m_filter.Run(dry*m_drive), contour, ADSR);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
@@ -63,7 +44,6 @@ namespace SFM
 			const float dry = pSamples[iSample];
 			const float ADSR = SampleEnv(m_ADSR, invert);
 
-			const double drive = 1.3;
 			dV0 = -m_cutoff * (fast_tanh((dry*m_drive + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
 			m_V[0] += (dV0 + m_dV[0]) / (2.0*kSampleRate);
 			m_dV[0] = dV0;
