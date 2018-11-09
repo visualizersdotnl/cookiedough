@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Lookup tables.
+	Syntherklaas FM -- Non-oscillator lookup tables.
 */
 
 #pragma once
@@ -13,21 +13,15 @@ namespace SFM
 	extern unsigned g_CM_table[][2];
 	extern unsigned g_CM_table_size;
 
-	// Sinus, noise [-1..1]
-	const unsigned kOscLUTSize = 4096;
-
 	extern float g_sinLUT[kOscLUTSize];
 	extern float g_noiseLUT[kOscLUTSize];
 
 	void CalculateLUTs();
 
-	/*
-		A full period is kOscLUTSize, so multiply before calling.
-	*/
-
+	//	A full period is kLUTSize, so multiply before calling.
 	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
-		return LUT[unsigned(index) & kOscLUTSize-1];
+		return LUT[unsigned(index) & kOscLUTAnd];
 	}
 
 	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index*kOscLUTSize);   }

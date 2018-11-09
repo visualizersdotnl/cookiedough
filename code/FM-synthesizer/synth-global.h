@@ -53,7 +53,10 @@ namespace SFM
 
 	// Master drive range
 	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
-
+	
+	// Size of (oscillator) LUTs
+	const unsigned kOscLUTSize = 4096;
+	const unsigned kOscLUTAnd = kOscLUTSize-1;
 }
 
 #include "synth-LUT.h"

@@ -499,7 +499,7 @@ namespace SFM
 
 						// Shape by formant
 						float shaped = shaper.Apply(sample, vowel);
-						sample = lerpf<float>(sample, shaped, invsqrf(formant));;
+						sample = lerpf<float>(sample, shaped, invsqrf(formant));
 
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);
@@ -629,7 +629,7 @@ bool Syntherklaas_Create()
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-	OscTest();
+//	OscTest();
 
 	return true == midiIn && audioOut;
 }

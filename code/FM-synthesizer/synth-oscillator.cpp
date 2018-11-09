@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Carrier oscillator.
+	Syntherklaas FM -- Oscillator (VCO).
 */
 
 #include "synth-global.h" 
@@ -9,7 +9,7 @@
 namespace SFM
 {
 	float Oscillator::Sample(unsigned sampleCount, float modulation, float duty /* = 0.5f */)
-	{
+	{	
 		const unsigned sample = sampleCount-m_sampleOffs;
 		float phase = sample*m_pitch;
 		const float masterPhase = sample*m_masterPitch;

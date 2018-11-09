@@ -10,8 +10,8 @@
 #include <Windows.h> // for audio.h
 #include "audio.h"
 
-// const char *kHost = "localhost";
-const char *kHost = "192.168.87.138";
+const char *kHost = "localhost";
+// const char *kHost = "192.168.87.138";
 
 static sync_device *s_hRocket = nullptr;
 

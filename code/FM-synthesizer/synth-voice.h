@@ -33,7 +33,6 @@ namespace SFM
 
 		// For Algorithm #3
 		LowpassFilter m_LPF;
-//		HighpassFilter m_LPF;
 
 		// For wavetable samples
 		bool m_oneShot;

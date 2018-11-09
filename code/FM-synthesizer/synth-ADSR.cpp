@@ -14,8 +14,8 @@ namespace SFM
 
 		m_sampleOffs = sampleCount;
 
-		// 25% longer attack & 50% longer release on max. velocity
-		const float attackScale  = 1.f + 0.25f*velocity;
+		// 25% shorter attack & 100% longer release on max. velocity
+		const float attackScale  = 1.f - 0.25f*velocity;
 		const float releaseScale = 1.f + 2.f*velocity;
 		
 		// Attack & release have a minimum to prevent clicking
@@ -41,7 +41,7 @@ namespace SFM
 	void ADSR::Stop(unsigned sampleCount, float velocity)
 	{
 		// Harder touch, less linear
-		const float invVel = 1.314f-velocity;
+		const float invVel = 1.f-velocity;
 		m_ADSR.setTargetRatioDR(invVel);
 
 		// Go into release state.

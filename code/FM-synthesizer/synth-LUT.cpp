@@ -1,9 +1,6 @@
 
 /*
-	Syntherklaas FM -- Lookup tables.
-
-	FIXME:
-		- These could and should be generated offline for a production target.
+	Syntherklaas FM -- Non-oscillator lookup tables.
 */
 
 #include "synth-global.h"
@@ -21,7 +18,7 @@ namespace SFM
 		Farey sequence generator (ham-fisted but it does the job).
 		This sequence gives the most sonically pleasing FM C:M ratios.
 
-		I learned about this here: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
+		Reference: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
 	const unsigned kFareyOrder = 7; // Being conservative is not a bad thing here in terms of predictability
@@ -92,20 +89,8 @@ namespace SFM
 		// Generate FM C:M ratio table
 		GenerateFareySequence();
 
-#if 0
-		// Plain sinus
-		float angle = 0.f;
-		const float angleStep = k2PI/kOscLUTSize;
-		for (unsigned iStep = 0; iStep < kOscLUTSize; ++iStep)
-		{
-			g_sinLUT[iStep] = sinf(angle);
-			angle += angleStep;
-		}
-#endif
-
-#if 1
 		/* 
-			Gordon-Smith oscillator
+			Gordon-Smith oscillator (generate sine wave)
 			Allows for frequency changes with minimal artifacts (first-order filter)
 		*/
 
@@ -124,7 +109,6 @@ namespace SFM
 			prevN = N;
 			g_sinLUT[iStep] = Clamp(N);
 		}
-#endif
 
 		// White noise (Mersenne-Twister)
 		for (unsigned iStep = 0; iStep < kOscLUTSize; ++iStep)

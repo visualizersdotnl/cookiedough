@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Carrier oscillator (FIXME: work in progress)
+	Syntherklaas FM -- Oscillator (VCO).
 */
 
 #pragma once
