@@ -485,6 +485,8 @@ namespace SFM
 				if (true == voice.m_enabled)
 				{
 					ADSR &voiceADSR = s_ADSRs[iVoice];
+					FormantShaper &shaper = s_formantShapers[iVoice];
+					const FormantShaper::Vowel vowel = s_parameters.m_formantVowel;
 
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -493,8 +495,7 @@ namespace SFM
 						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
 
 						// Shape
-						if (-1 != s_parameters.m_formantVowel)
-							sample = s_formantShapers[iVoice].Apply(sample, FormantVowel(s_parameters.m_formantVowel));
+						sample = shaper.Apply(sample, vowel);
 
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);

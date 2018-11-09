@@ -9,18 +9,20 @@
 
 namespace SFM
 {
-	enum FormantVowel
-	{
-		kVowelA,
-		kVowelE,
-		kVowelI,
-		kVowelO,
-		kVowelU,
-		kNumVowels
-	};
-
 	class FormantShaper
 	{
+	public:
+		enum Vowel
+		{
+			kNeutral   = -1,
+			kVowelA    =  0,
+			kVowelE    =  1,
+			kVowelI    =  2,
+			kVowelO    =  3,
+			kVowelU    =  4,
+			kNumVowels
+		};
+
 	private:
 		double m_memory[10];
 
@@ -35,6 +37,6 @@ namespace SFM
 			memset(m_memory, 0, 10*sizeof(double));
 		}
 
-		float Apply(float sample, FormantVowel vowel);
+		float Apply(float sample, Vowel vowel);
 	};
 }

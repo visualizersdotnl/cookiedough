@@ -65,5 +65,5 @@ namespace SFM
 	float WinMidi_GetSlaveFM();
 
 	// Formant vowel
-	int WinMidi_GetFormantVowel();
+	FormantShaper::Vowel WinMidi_GetFormantVowel();
 }

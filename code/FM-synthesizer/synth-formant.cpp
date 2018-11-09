@@ -8,7 +8,7 @@
 #include "synth-global.h"
 #include "synth-formant.h"
 
-const double kVowelCoeffs[SFM::kNumVowels][11]= 
+const double kVowelCoeffs[SFM::FormantShaper::kNumVowels][11]= 
 {
 	// A
 	{ 
@@ -48,8 +48,11 @@ const double kVowelCoeffs[SFM::kNumVowels][11]=
 
 namespace SFM
 {
-	float FormantShaper::Apply(float sample, FormantVowel vowel)
+	float FormantShaper::Apply(float sample, Vowel vowel)
 	{
+		if (kNeutral == vowel)
+			return sample;
+
 		double result;
 			
 		result  = kVowelCoeffs[vowel][0]  * sample;

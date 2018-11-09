@@ -103,7 +103,7 @@ namespace SFM
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
 
-	static int s_formantVowel = -1;
+	static FormantShaper::Vowel s_formantVowel = FormantShaper::kNeutral;
 
 	static bool s_flipFilterEnv = false;
 
@@ -145,27 +145,27 @@ namespace SFM
 					switch (controlIdx)
 					{
 					case kPerc5:
-						s_formantVowel = -1;
+						s_formantVowel = FormantShaper::kNeutral;
 						break;
 
 					case kPerc6:
-						s_formantVowel = kVowelA;
+						s_formantVowel = FormantShaper::kVowelA;
 						break;
 
 					case kPerc7:
-						s_formantVowel = kVowelE;
+						s_formantVowel = FormantShaper::kVowelE;
 						break;
 
 					case kPerc8:
-						s_formantVowel = kVowelI;
+						s_formantVowel = FormantShaper::kVowelI;
 						break;
 
 					case kPerc1:
-						s_formantVowel = kVowelO;
+						s_formantVowel = FormantShaper::kVowelO;
 						break;
 
 					case kPerc2:
-						s_formantVowel = kVowelU;
+						s_formantVowel = FormantShaper::kVowelU;
 						break;
 					}
 
@@ -492,7 +492,7 @@ namespace SFM
 	}
 
 	// Formant vowel
-	int WinMidi_GetFormantVowel()
+	FormantShaper::Vowel WinMidi_GetFormantVowel()
 	{
 		return s_formantVowel;
 	}

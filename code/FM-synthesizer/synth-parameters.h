@@ -48,7 +48,7 @@ namespace SFM
 
 		// Noise, formant shaper vowel, Nintendize, tremolo
 		float m_noisyness;
-		int   m_formantVowel;
+		FormantShaper::Vowel m_formantVowel;
 		float m_Nintendize;
 		float m_tremolo;
 
@@ -105,7 +105,7 @@ namespace SFM
 			m_noisyness = 0.f;
 
 			// No shaping
-			m_formantVowel = -1;
+			m_formantVowel = FormantShaper::kNeutral;
 
 			// No chiptune-ish crap
 			m_Nintendize = 0.f;
