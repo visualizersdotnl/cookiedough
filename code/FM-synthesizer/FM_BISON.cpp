@@ -368,8 +368,9 @@ namespace SFM
 		s_parameters.m_noisyness = WinMidi_GetNoisyness();
 
 		// Formant (vowel)
-		s_parameters.m_formant = WinMidi_GetFormant();
 		s_parameters.m_formantVowel = WinMidi_GetFormantVowel();
+		s_parameters.m_formant = WinMidi_GetFormant();
+		s_parameters.m_formantStep =  WinMidi_GetFormantStep();
 
 		// Nintendize
 		s_parameters.m_Nintendize = WinMidi_GetNintendize();
@@ -488,8 +489,10 @@ namespace SFM
 					ADSR &voiceADSR = s_ADSRs[iVoice];
 
 					FormantShaper &shaper = s_formantShapers[iVoice];
+
 					const FormantShaper::Vowel vowel = s_parameters.m_formantVowel;
 					const float formant = s_parameters.m_formant;
+					const float formantStep = s_parameters.m_formantStep; // Between current and next vowel
 	
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -498,8 +501,8 @@ namespace SFM
 						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
 
 						// Shape by formant
-						float shaped = shaper.Apply(sample, vowel);
-						sample = lerpf<float>(sample, shaped, invsqrf(formant));
+						float shaped = shaper.Apply(sample, vowel, formantStep);
+						sample = lerpf<float>(sample, shaped, formant);
 
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);

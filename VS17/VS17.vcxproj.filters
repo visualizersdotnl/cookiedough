@@ -458,8 +458,5 @@
     <Text Include="..\code\FM-synthesizer\wavetable\guide.txt">
       <Filter>/code\/FM-synthesizer\/wavetable</Filter>
     </Text>
-    <Text Include="..\code\FM-synthesizer\design-0.2-NL.txt">
-      <Filter>/code\/FM-synthesizer\documentation</Filter>
-    </Text>
   </ItemGroup>
 </Project>

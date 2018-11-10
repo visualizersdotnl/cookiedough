@@ -46,10 +46,11 @@ namespace SFM
 		float m_modBrightness;
 		float m_indexLFOFreq;
 
-		// Noise, formant shaper vowel, Nintendize, tremolo
+		// Noise, formant shaper parameters, Nintendize, tremolo
 		float m_noisyness;
 		FormantShaper::Vowel m_formantVowel;
 		float m_formant;
+		float m_formantStep;
 		float m_Nintendize;
 		float m_tremolo;
 
@@ -106,8 +107,9 @@ namespace SFM
 			m_noisyness = 0.f;
 
 			// No shaping
-			m_formant = 0.f;
 			m_formantVowel = FormantShaper::kNeutral;
+			m_formant = 0.f;
+			m_formantStep = 0.f;
 
 			// No chiptune-ish crap
 			m_Nintendize = 0.f;

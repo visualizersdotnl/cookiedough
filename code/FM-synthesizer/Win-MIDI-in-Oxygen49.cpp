@@ -53,8 +53,8 @@ namespace SFM
 	const unsigned kPotFeedbackWetness = 62;   // C16
 	const unsigned kPot_MOOG_slaveFM = 95;     // C17
 
-	static float s_masterDrive = 0.f;
-	static MIDI_Smoothed s_cutoff(0.25f);
+	static MIDI_Smoothed s_masterDrive;
+	static MIDI_Smoothed s_cutoff;
 	static float s_resonance = 0.f, s_filterContour = 0.f, s_filterDrive = 0.f;
 	static float s_feedback = 0.f, s_feedbackWetness = 0.f;
 	static float s_slaveFM = 0.f;
@@ -181,7 +181,7 @@ namespace SFM
 						/*  Master drive (voice volume) */
 
 						case kPotMasterDrive:
-							s_masterDrive = fControlVal;
+							s_masterDrive.Set(fControlVal);
 							break;
 
 						/* FM */
@@ -437,7 +437,7 @@ namespace SFM
 	*/
 
 	// Master
-	float WinMidi_GetMasterDrive() { return s_masterDrive; }
+	float WinMidi_GetMasterDrive() { return s_masterDrive.Get(); }
 
 	// Filter
 	VoiceFilter WinMidi_GetCurFilter()    { return s_curFilter;      }

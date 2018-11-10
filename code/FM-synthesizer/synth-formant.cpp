@@ -2,14 +2,13 @@
 /*
 	Syntherklaas FM -- Formant shaper (filter).
 
-	FIXME:
-		- This is a rather cheap and lo-fi way of doing this, but the alternative (bandpassing 3 times per vowel)
-		  is probably not worth the cost
-		- Use ring buffer
+	This is a rather cheap way of doing this, but the alternative (bandpassing 3 times per vowel)
+	is probably not worth the cost; I most of all want this to be an effect.
 */
 
 #include "synth-global.h"
 #include "synth-formant.h"
+#include "synth-util.h" 
 
 const double kVowelCoeffs[SFM::FormantShaper::kNumVowels][11]= 
 {
@@ -51,39 +50,59 @@ const double kVowelCoeffs[SFM::FormantShaper::kNumVowels][11]=
 
 namespace SFM
 {
-	float FormantShaper::Apply(float sample, int vowel)
+	float FormantShaper::Calculate(float sample, int vowel, unsigned iBuf)
 	{
-		SFM_ASSERT(vowel < kNumVowels);			
+		SFM_ASSERT(vowel < kNumVowels);
+		SFM_ASSERT(iBuf < 2);
 
 		if (kNeutral == vowel)
+		{
 			return sample;
+		}
+
+		double *buffer = m_rings[iBuf];
 
 		double result;
-			
 		result  = kVowelCoeffs[vowel][0]  * sample;
-		result += kVowelCoeffs[vowel][1]  * m_memory[0];
-		result += kVowelCoeffs[vowel][2]  * m_memory[1];
-		result += kVowelCoeffs[vowel][3]  * m_memory[2];
-		result += kVowelCoeffs[vowel][4]  * m_memory[3];
-		result += kVowelCoeffs[vowel][5]  * m_memory[4];
-		result += kVowelCoeffs[vowel][6]  * m_memory[5];
-		result += kVowelCoeffs[vowel][7]  * m_memory[6];
-		result += kVowelCoeffs[vowel][8]  * m_memory[7];
-		result += kVowelCoeffs[vowel][9]  * m_memory[8];
-		result += kVowelCoeffs[vowel][10] * m_memory[9];
+		result += kVowelCoeffs[vowel][1]  * buffer[0];
+		result += kVowelCoeffs[vowel][2]  * buffer[1];
+		result += kVowelCoeffs[vowel][3]  * buffer[2];
+		result += kVowelCoeffs[vowel][4]  * buffer[3];
+		result += kVowelCoeffs[vowel][5]  * buffer[4];
+		result += kVowelCoeffs[vowel][6]  * buffer[5];
+		result += kVowelCoeffs[vowel][7]  * buffer[6];
+		result += kVowelCoeffs[vowel][8]  * buffer[7];
+		result += kVowelCoeffs[vowel][9]  * buffer[8];
+		result += kVowelCoeffs[vowel][10] * buffer[9];
 
-		m_memory[9] = m_memory[8];
-		m_memory[8] = m_memory[7];
-		m_memory[7] = m_memory[6];
-		m_memory[6] = m_memory[5];
-		m_memory[5] = m_memory[4];
-		m_memory[4] = m_memory[3];
-		m_memory[3] = m_memory[2];
-		m_memory[2] = m_memory[1];
-		m_memory[1] = m_memory[0];
+		buffer[9] = buffer[8];
+		buffer[8] = buffer[7];
+		buffer[7] = buffer[6];
+		buffer[6] = buffer[5];
+		buffer[5] = buffer[4];
+		buffer[4] = buffer[3];
+		buffer[3] = buffer[2];
+		buffer[2] = buffer[1];
+		buffer[1] = buffer[0];
+		buffer[0] = result;
 
-		m_memory[0] = result;
+		
+		// Takes the edge off suprisingly well without screwing up the effect
+		result = fast_tanh(result);
 
 		return float(result);
+	}
+
+	float FormantShaper::Apply(float sample, int vowel, float step /* = 0.f */)
+	{
+		const unsigned vowelA = vowel;
+		const int vowelB = (vowelA+1) % kNumVowels;
+
+		SFM_ASSERT(step >= 0.f && step <= 1.f);
+		const float result = lerpf<float>(Calculate(sample, vowelA, 0), Calculate(sample, vowelB, 1), step*step);
+
+		SampleAssert(result);
+
+		return result;
 	}
 }

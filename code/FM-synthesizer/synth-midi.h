@@ -50,9 +50,9 @@ namespace SFM
 	class MIDI_Smoothed
 	{
 	public:
-		MIDI_Smoothed(float amount)
+		MIDI_Smoothed(float cutoff = 0.15f)
 		{
-			m_LPF.SetCutoff(amount);
+			m_LPF.SetCutoff(cutoff);
 		}
 
 		void Set(float value)

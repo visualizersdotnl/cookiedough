@@ -21,6 +21,7 @@ namespace SFM
 
 	// Formant (FS1R-style)
 	float WinMidi_GetFormant();
+	float WinMidi_GetFormantStep();
 
 	// Nintendize
 	float WinMidi_GetNintendize();
