@@ -41,7 +41,6 @@ namespace SFM
 	const unsigned kPot_MOOG_SlavesDetune = 7; // Level/Rate (big rotary)
 	const unsigned kPotNoisyness = 17;         // Set 4, R13
 	const unsigned kPotPulseWidth = 91;        // Set 4, R14
-	const unsigned kPotUnused1 = 114;          // Set 3, R9
 	const unsigned kPotFilterA = 10;           // Set 1, R1
 	const unsigned kPotFilterD = 74;           // Set 1, R2
 	const unsigned kPotFilterS = 71;           // Set 1, R3
@@ -54,6 +53,7 @@ namespace SFM
 	const unsigned kPotNintendize = 16;        // Set 3, R12
 	const unsigned kPotFormant = 19;           // Set 3, R11
 	const unsigned kPotFormantStep = 18;       // Set 3, R10
+	const unsigned kPotBassBoost = 114;        // Set 3, R9
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
@@ -65,6 +65,7 @@ namespace SFM
 	static float s_mCarrierVol1 = 0.f, s_mCarrierVol2 = 0.f, s_mCarrierVol3 = 0.f;
 	static float s_Nintendize = 0.f;
 	static MIDI_Smoothed s_formant, s_formantStep(0.33f);
+	static float s_bassBoost = 0.f;
 
 	// Button mapping
 
@@ -204,6 +205,11 @@ namespace SFM
 
 					case kPotNintendize:
 						s_Nintendize = fControlVal;
+						break;
+
+					/* Bass boost */
+					case kPotBassBoost:
+						s_bassBoost = fControlVal;
 						break;
 
 					/* Filter */
@@ -376,6 +382,9 @@ namespace SFM
 
 	// Noisyness
 	float WinMidi_GetNoisyness() { return s_noisyness; }
+
+	// Bass boost
+	float WinMidi_GetBassBoost() { return s_bassBoost; }
 
 	// Nintendize
 	float WinMidi_GetNintendize() { return s_Nintendize; }

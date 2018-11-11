@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Simple filters; useful for very basic input or signal filtering.
+	Syntherklaas FM -- Simple filters; useful for basic oscillator or signal filtering.
 */
 
 #pragma once

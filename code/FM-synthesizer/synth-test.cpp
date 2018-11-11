@@ -27,12 +27,12 @@ namespace SFM
 //			float sample = oscDigiPulse(phase, 0.33f);
 //			float sample = oscSoftPulse(phase, frequency, 0.5f);
 //			float sample = oscSofterTriangle(phase);
-//			float sample = oscSoftSquare(phase, frequency);
+			float sample = oscSoftSquare(phase, frequency);
 //			float sample = oscDigiSaw(phase);
 //			float sample = oscDigiTriangle(phase);
 //			float sample = oscDigiPulse(phase, 0.5f);
 //			float sample = oscSoftSaw(phase, frequency);
-			float sample = oscPolyTriangle(phase, frequency);
+//			float sample = oscPolyTriangle(phase, frequency);
 
 			buffer[iSample] = sample;
 		}

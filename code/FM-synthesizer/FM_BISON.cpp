@@ -79,6 +79,7 @@ namespace SFM
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
 	static FormantShaper s_formantShapers[kMaxVoices];
+	static LowpassFilter s_bassBoostLPF;
 	
 	/*
 		Voice API.
@@ -384,6 +385,9 @@ namespace SFM
 		// Pulse osc. width
 		s_parameters.m_pulseWidth = WinMidi_GetPulseWidth();
 
+		// Bass boost
+		s_parameters.m_bassBoost = WinMidi_GetBassBoost();
+
 		// Voice ADSR	
 		s_parameters.m_voiceADSR.attack  = WinMidi_GetAttack();
 		s_parameters.m_voiceADSR.decay   = WinMidi_GetDecay();
@@ -500,13 +504,15 @@ namespace SFM
 						const unsigned sampleCount = s_sampleCount+iSample;
 						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
 
+						// Blend with Nintendized version
+						const float Nintendized = Nintendize(sample);
+						sample = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
+
 						// Shape by formant
 						float shaped = shaper.Apply(sample, vowel, formantStep);
 						sample = lerpf<float>(sample, shaped, formant);
 
-						// Blend with Nintendized version
-						const float Nintendized = Nintendize(sample);
-						buffer[iSample] = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
+						buffer[iSample] = sample;
 					}
 
 					// Filter voice
@@ -529,7 +535,8 @@ namespace SFM
 			loudest = 0.f;
 
 			// Mix & store voices
-			static float prevMix = 0.f;
+			const float bassBoost = s_parameters.m_bassBoost;
+
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				const unsigned sampleCount = s_sampleCount+iSample;
@@ -542,9 +549,13 @@ namespace SFM
 
 					mix = Clamp(mix+sample);
 				}
-
+				
 				// Process delay
 				ProcessDelay(mix);
+
+				// Bass boost
+				s_bassBoostLPF.SetCutoff(1.f/(kMaxSubLFO + kMaxSubLFO*bassBoost));
+				mix += bassBoost*s_bassBoostLPF.Apply(mix);
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
@@ -626,6 +637,9 @@ bool Syntherklaas_Create()
 	// Reset voice deques
 	s_voiceReq.clear();
 	s_voiceReleaseReq.clear();
+
+	// Reset boost LPF
+	s_bassBoostLPF.Reset();
 
 	// Oxygen 49 driver + SDL2
 	const bool midiIn = WinMidi_Oxygen49_Start() && WinMidi_BeatStep_Start();

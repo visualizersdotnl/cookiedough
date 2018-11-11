@@ -27,13 +27,13 @@ namespace SFM
 		float signal;
 		switch (m_form)
 		{
-			/* Straight forms (not supported) */
+			/* Straight forms (not supported, see LFO) */
 			case kDigiSaw:
 			case kDigiSquare:
 			case kDigiTriangle:
 			case kDigiPulse:
 
-			/* BLIT forms (not supported) */
+			/* BLIT forms (not supported, performance issue) */
 			case kSoftSaw:
 			case kSoftSquare:
 

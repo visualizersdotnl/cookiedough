@@ -60,6 +60,9 @@ namespace SFM
 		// Pulse oscillator width
 		float m_pulseWidth;
 
+		// Bass boost
+		float m_bassBoost;
+
 		// ADSR parameters
 		ADSR::Parameters m_voiceADSR;
 		ADSR::Parameters m_filterADSR;
@@ -122,6 +125,9 @@ namespace SFM
 
 			// Default pulse width
 			m_pulseWidth = kPI*0.1f;
+
+			// No bass boost
+			m_bassBoost = 0.f;
 
 			// Default ADSR envelopes
 			m_voiceADSR.attack  = kSampleRate/8;

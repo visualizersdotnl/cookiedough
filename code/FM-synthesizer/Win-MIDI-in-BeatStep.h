@@ -23,6 +23,9 @@ namespace SFM
 	float WinMidi_GetFormant();
 	float WinMidi_GetFormantStep();
 
+	// Bass boost
+	float WinMidi_GetBassBoost();
+
 	// Nintendize
 	float WinMidi_GetNintendize();
 
