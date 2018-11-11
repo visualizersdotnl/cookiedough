@@ -19,25 +19,28 @@ namespace SFM
 		// Sample carrier(s)
 		float sample = 0.f;
 
+		// No drift
+		const float drift = 0.f;
+
 		const float pulseWidth = m_pulseWidth;
 	
 		switch (m_algorithm)
 		{
 		case kSingle:
-			sample = m_carriers[0].Sample(sampleCount, modulation, pulseWidth) * firstCarrierMul;
+			sample = m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) * firstCarrierMul;
 			break;
 
 		case kDoubleCarriers:
-			sample  = fast_tanhf(m_carriers[0].Sample(sampleCount, modulation, pulseWidth) + parameters.m_doubleVolume*m_carriers[1].Sample(sampleCount, modulation, pulseWidth));
+			sample  = fast_tanhf(m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) + parameters.m_doubleVolume*m_carriers[1].Sample(sampleCount, drift, modulation, pulseWidth));
 			sample *= firstCarrierMul; // Carrier #2 is a copy of #1
 			break;
 
 		case kMiniMOOG:
 			{
 				const float slaveMod = modulation*parameters.m_slaveFM;
-				const float A = m_carriers[0].Sample(sampleCount, modulation, pulseWidth) * firstCarrierMul;
-				const float B = m_carriers[1].Sample(sampleCount, slaveMod, pulseWidth);
-				const float C = m_carriers[2].Sample(sampleCount, slaveMod, pulseWidth);
+				const float A = m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) * firstCarrierMul;
+				const float B = m_carriers[1].Sample(sampleCount, drift, slaveMod, pulseWidth);
+				const float C = m_carriers[2].Sample(sampleCount, drift, slaveMod, pulseWidth);
 
 				const float *pVols = parameters.m_carrierVol;
  

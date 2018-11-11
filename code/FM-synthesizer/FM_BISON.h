@@ -31,15 +31,13 @@
 		  + Step 3: kill LFO, it's deadweight now
 
 	Priority:
+		- Investigate and implement operator feedback, plus an extra operator (and per-key stuff)
 		- Formant shaping is *very* basic, a few ideas:
-		  + Maybe interpolate (rotary) between the vowels (like the FS1X seems to do) instead of just using one at a time full blast (like the FS1R)
 		  + Here's some fine information to refine the technique (requires bandpass): https://www.soundonsound.com/techniques/formant-synthesis
 		    + Create these using a (cheap-ish) bandpass filter?
-		  + Soft clamping in the filter itself to prevent overdrive?
 		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Implement "sample & hold"
-		- Investigate and implement operator feedback
 		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- First draft of manual

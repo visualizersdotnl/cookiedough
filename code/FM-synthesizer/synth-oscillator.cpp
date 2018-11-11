@@ -8,7 +8,7 @@
 
 namespace SFM
 {
-	float Oscillator::Sample(unsigned sampleCount, float modulation, float duty /* = 0.5f */)
+	float Oscillator::Sample(unsigned sampleCount, float drift, float modulation, float duty /* = 0.5f */)
 	{	
 		const unsigned sample = sampleCount-m_sampleOffs;
 		float phase = sample*m_pitch;

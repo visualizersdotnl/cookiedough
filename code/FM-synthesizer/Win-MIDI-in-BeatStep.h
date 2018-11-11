@@ -51,4 +51,7 @@ namespace SFM
 	bool  WinMidi_GetHardSync();
 	Waveform WinMidi_GetCarrierOscillator2();
 	Waveform WinMidi_GetCarrierOscillator3();
+
+	// Note random
+	float WinMidi_GetNoteRandomAmount();
 }

@@ -35,6 +35,10 @@ namespace SFM
 			SFM_ASSERT(false); 
 			break;
 
+		case kSine:
+			signal = oscSine(phase);
+			break;
+
 		case kCosine:
 			signal = oscCos(phase);
 			break;
@@ -53,6 +57,10 @@ namespace SFM
 
 		case kDigiSquare:
 			signal = oscDigiSquare(phase);
+			break;
+
+		case kWhiteNoise:
+			signal = oscWhiteNoise(phase);
 			break;
 		}
 

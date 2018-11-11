@@ -92,6 +92,7 @@ namespace SFM
 	static VoiceFilter s_curFilter = kTeemuFilter;
 	static int s_loopWaves = 0;
 	static Algorithm s_algorithm = kSingle;
+	static bool s_flipFilterEnv = false;
 
 	// Percussion channel indices
 	const unsigned kPerc1 = 36;
@@ -104,8 +105,6 @@ namespace SFM
 	const unsigned kPerc8 = 49;
 
 	static FormantShaper::Vowel s_formantVowel = FormantShaper::kNeutral;
-
-	static bool s_flipFilterEnv = false;
 
 	// Pitch bend (14-bit signed, wheel rests in the middle)
 	static float s_pitchBend = 0.5f;

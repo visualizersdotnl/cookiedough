@@ -31,7 +31,8 @@ namespace SFM
 			m_pitch(0.f), 
 			m_masterPitch(0.f), 
 			m_periodLen(1.f), 
-			m_hasCycled(false) {}
+			m_hasCycled(false)
+			{}
 
 		void Initialize(unsigned sampleCount, Waveform form, float frequency, float amplitude)
 		{
@@ -90,6 +91,6 @@ namespace SFM
 		float GetPeriodLength() const { return m_periodLen; }
 		bool HasCycled() const        { return m_hasCycled; }
 
-		float Sample(unsigned sampleCount, float modulation, float duty = 0.5f);
+		float Sample(unsigned sampleCount, float drift, float modulation, float duty = 0.5f);
 	};
 }

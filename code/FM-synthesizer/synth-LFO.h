@@ -22,7 +22,15 @@ namespace SFM
 		float m_pitch;
 
 	public:		
-		LFO() : m_amplitude(0.f) {}
+		LFO() 
+		{
+			Reset();
+		}
+
+		void Reset()
+		{
+			m_amplitude = 0.f;
+		}
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
 		float Sample(unsigned sampleCount);

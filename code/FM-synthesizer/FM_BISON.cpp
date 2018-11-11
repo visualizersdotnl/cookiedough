@@ -128,7 +128,12 @@ namespace SFM
 
 		const float goldenTen = kGoldenRatio*10.f;
 
-		const float frequency = request.frequency;
+		float frequency = request.frequency;
+
+		// Randomize note a little if wanted
+		const float deviation = mt_randf()*0.04f*s_parameters.m_noteRandomAmount;
+		frequency *= powf(2.f, deviation/12.f);
+		
 		const float velocity  = request.velocity;
 		const bool  isWave    = oscIsWavetable(request.form);
 
@@ -137,20 +142,23 @@ namespace SFM
 	
 		// Initialize carrier(s)
 		const float amplitude = velocity*kMaxVoiceAmp;
+
+		// It's frequency
+		const float carrierFreq = frequency;
 	
 		switch (voice.m_algorithm)
 		{
 		case kSingle:
-			voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude);
+			voice.m_carriers[0].Initialize(s_sampleCount, request.form, carrierFreq, amplitude);
 			break;
 
 		case kDoubleCarriers:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude);
+				voice.m_carriers[0].Initialize(s_sampleCount, request.form, carrierFreq, amplitude);
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1].Initialize(s_sampleCount, request.form, frequency*detune, dBToAmplitude(-3.f));
+				voice.m_carriers[1].Initialize(s_sampleCount, request.form, carrierFreq*detune, dBToAmplitude(-3.f));
 			}
 
 			break;
@@ -161,7 +169,7 @@ namespace SFM
 
 				// Same as above, but with a range of 3 octaves
 				const float detune = powf(3.f/2.f, (-12.f + 24.f*s_parameters.m_slavesDetune)/12.f);
-				const float slaveFreq = frequency*detune;
+				const float slaveFreq = carrierFreq*detune;
 
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
 				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, amplitude*s_parameters.m_carrierVol[2]);
@@ -347,6 +355,9 @@ namespace SFM
 
 		// Drive
 		s_parameters.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
+
+		// Note random
+		s_parameters.m_noteRandomAmount = WinMidi_GetNoteRandomAmount();
 
 		// Modulation index
 		const float alpha = 1.f/dBToAmplitude(-12.f);

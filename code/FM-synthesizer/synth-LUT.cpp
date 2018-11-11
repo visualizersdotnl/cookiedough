@@ -21,7 +21,7 @@ namespace SFM
 		Reference: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
-	const unsigned kFareyOrder = 7; // Being conservative is not a bad thing here in terms of predictability
+	const unsigned kFareyOrder = 18;
 
 	alignas(16) unsigned g_CM_table[256][2];
 	unsigned g_CM_table_size = -1;
@@ -58,8 +58,8 @@ namespace SFM
 			x1 = x2, x2 = x, y1 = y2, y2 = y;
 		} 
 
-		// Sort by modulator
-		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.y < b.y; });
+		// Sort by carrier
+		std::sort(sequence.begin(), sequence.end(), [](const Ratio &a, const Ratio &b) -> bool { return a.x < b.x; });
 
 		// Copy to LUT & it's inverse & store size
 		const size_t size = sequence.size();

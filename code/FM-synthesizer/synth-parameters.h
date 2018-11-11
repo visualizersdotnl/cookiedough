@@ -40,6 +40,9 @@ namespace SFM
 		// Master drive [0..N]
 		float m_drive;
 
+		// Note randomize influence
+		float m_noteRandomAmount;
+
 		// Modulator parameters [0..1]
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
@@ -98,6 +101,9 @@ namespace SFM
 
 			// Neutral
 			m_drive = 1.f;
+
+			// No random deviation
+			m_noteRandomAmount = 0.f;
 
 			// No FM
 			m_modIndex = 0.f;
