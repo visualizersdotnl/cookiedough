@@ -27,16 +27,25 @@ namespace SFM
 		float signal;
 		switch (m_form)
 		{
-			/* Straight forms (not supported, see LFO) */
+			/* Straight digital */
+	
 			case kDigiSaw:
+				return oscDigiSaw(modulated);
+				break;
+
 			case kDigiSquare:
+				return oscDigiSquare(modulated);
+
 			case kDigiTriangle:
+				return oscDigiTriangle(modulated);
+
 			case kDigiPulse:
+				return oscDigiPulse(modulated, duty);
+				break;
 
 			/* BLIT forms (not supported, performance issue) */
 			case kSoftSaw:
 			case kSoftSquare:
-
 			default:
 				signal = oscWhiteNoise(phase);
 				Log("Oscillator: unsupported waveform");

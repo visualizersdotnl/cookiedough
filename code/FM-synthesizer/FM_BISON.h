@@ -27,8 +27,8 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Extra priority tasks:
-		- Algo #3 clips too much
-		- Guitar is 1 octave off
+		- Re-research: FM, perfect fifths
+		- The battle against clipping chords (in the works)
 		- Fix bitcrusher, it sounds stupid now
 		- Idea for note drift: oscillator keeps a running phase and uses the error between that and the PLL phase to simulate continuous drift
 
@@ -36,7 +36,6 @@
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Mmke oscillator (VCO) use them
-		  + Step 3: kill LFO, it's deadweight now
 
 	R&D tasks:
 		- Investigate and implement operator feedback, plus an extra operator (and per-key stuff)
@@ -65,8 +64,8 @@
 		- Real variable delay line
 		- Profiling & optimization
 
-	Known issues:
-		- Sometimes an ADSR seems to hang up a voice
+	Known bugs:
+		- Sometimes an ADSR seems to hang up a voice; or is it a race-condition on NOTE_OFF?
 		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)
 

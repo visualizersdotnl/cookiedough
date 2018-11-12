@@ -9,7 +9,6 @@
 
 #include "synth-global.h"
 #include "synth-oscillator.h"
-#include "synth-LFO.h"
 
 namespace SFM
 {
@@ -20,7 +19,7 @@ namespace SFM
 
 		Oscillator m_oscSoft;
 		Oscillator m_oscSharp;
-		LFO m_indexLFO;
+		Oscillator m_indexLFO;
 
 	public:		
 		void Initialize(unsigned sampleCount, float index, float freqPM, float freqAM);

@@ -184,9 +184,6 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-LFO.cpp">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp">
       <Filter>/code\/FM-synthesizer\driver</Filter>
     </ClCompile>
@@ -385,9 +382,6 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-LFO.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.h">

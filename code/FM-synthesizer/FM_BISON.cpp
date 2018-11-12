@@ -134,10 +134,11 @@ namespace SFM
 		const float drift = kMaxNoteDrift*s_parameters.m_noteDrift;
 		const int cents = int(oscWhiteNoise(mt_randf())*drift);
 		
+		float jitter = 1.f;
 		if (0 != cents)
-			frequency *= powf(2.f, (cents*0.01f)/12.f);
+			jitter = powf(2.f, (cents*0.01f)/12.f);
 		
-		FloatAssert(frequency);
+		FloatAssert(jitter);
 
 		const float velocity  = request.velocity;
 		const bool  isWave    = oscIsWavetable(request.form);
@@ -149,7 +150,7 @@ namespace SFM
 		const float amplitude = velocity*kMaxVoiceAmp;
 
 		// It's frequency
-		const float carrierFreq = frequency;
+		const float carrierFreq = frequency*jitter*s_parameters.m_modRatioC;
 	
 		switch (voice.m_algorithm)
 		{
@@ -163,8 +164,8 @@ namespace SFM
 
 				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1].Initialize(s_sampleCount, request.form, carrierFreq*detune, dBToAmplitude(-3.f));
-			}
+				voice.m_carriers[1].Initialize(s_sampleCount, request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
+			}	
 
 			break;
 
@@ -172,12 +173,15 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
 
-				// Same as above, but with a range of 4 octaves
-				const float detune = powf(3.f/2.f, (-24.f + 48.f*s_parameters.m_slavesDetune)/12.f);
+				// Range of 4 octaves
+				const float detune = powf(2.f, (-24.f + 48.f*s_parameters.m_slavesDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
-				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
-				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, amplitude*s_parameters.m_carrierVol[2]);
+				// Reduced amplitude for slaves
+				const float slaveAmp = amplitude*dBToAmplitude(-3.f);
+
+				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
+				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
 
 				// Want hard sync.?
 				if (true == s_parameters.m_hardSync)
@@ -195,13 +199,13 @@ namespace SFM
 		}
 
 		// Initialize freq. modulator
-		const float modFrequency = frequency * (s_parameters.m_modRatioM/s_parameters.m_modRatioC);
+		const float modFrequency = frequency*jitter*s_parameters.m_modRatioM;
 		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_indexLFOFreq*goldenTen);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
-		const float tremFreq = tremolo*0.25f*goldenTen; // This look a bit dodgy but sounds good
-		voice.m_ampMod.Initialize(s_sampleCount, kCosine, 1.f, tremFreq);
+		const float tremoloFreq = tremolo*0.25f*goldenTen; // FIXME?
+		voice.m_AM.Initialize(s_sampleCount, kCosine, tremoloFreq, kMaxVoiceAmp);
 
 		// One shot?
 		voice.m_oneShot = s_parameters.m_loopWaves ? false : oscIsWavetable(request.form);
@@ -563,7 +567,7 @@ namespace SFM
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
 
-					mix = Clamp(mix+sample);
+					mix = SoftClamp(mix+sample);
 				}
 				
 				// Process delay

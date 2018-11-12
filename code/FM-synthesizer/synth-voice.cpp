@@ -48,7 +48,7 @@ namespace SFM
 				const float slaves = SoftClamp(pVols[1]*B + pVols[2]*C);
 				const float filtered = m_LPF.Apply(slaves);
 
-				sample = Clamp(pVols[0]*A + filtered);
+				sample = SoftClamp(pVols[0]*A + filtered);
 			}
 			break;
 		}
@@ -57,7 +57,7 @@ namespace SFM
 		sample = Clamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
 
 		// Finally, modulate amplitude ('tremolo')
-		sample *= m_ampMod.Sample(sampleCount, pulseWidth);
+		sample *= m_AM.Sample(sampleCount, 0.f, 0.f, pulseWidth);
 
 		SampleAssert(sample);
 

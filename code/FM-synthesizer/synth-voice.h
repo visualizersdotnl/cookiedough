@@ -10,7 +10,6 @@
 #include "synth-modulator.h"
 // #include "synth-ADSR.h."
 // #include "synth-filter.h"
-// #include "synth-LFO.h."
 #include "synth-parameters.h"
 #include "synth-simple-filters.h"
 
@@ -29,7 +28,7 @@ namespace SFM
 		Algorithm m_algorithm;
 		Oscillator m_carriers[3];
 		Modulator m_modulator;
-		LFO m_ampMod;
+		Oscillator m_AM;
 
 		// For Algorithm #3
 		LowpassFilter m_LPF;
