@@ -28,7 +28,7 @@ namespace SFM
 			SetLastError((nullptr == message) ? "Syntherklaas FM: unspecified fatal error" : message);
 
 		default:
-			SFM_ASSERT(false);
+ 			SFM_ASSERT(false);
 		}
 	}
 };

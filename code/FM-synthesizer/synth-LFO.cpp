@@ -21,7 +21,7 @@ namespace SFM
 		m_pitch = CalculatePitch(frequency);
 	}
 
-	float LFO::Sample(unsigned sampleCount)
+	float LFO::Sample(unsigned sampleCount, float duty)
 	{
 		const unsigned sample = sampleCount-m_sampleOffs;
 		const float phase = sample*m_pitch;
@@ -44,7 +44,7 @@ namespace SFM
 			break;
 
 		case kDigiPulse:
-			signal = oscDigiPulse(phase, 0.25f); // Should be a parameter (FIXME)
+			signal = oscDigiPulse(phase, duty);
 			break;
 
 		case kDigiSaw:

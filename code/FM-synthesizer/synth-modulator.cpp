@@ -22,6 +22,9 @@ namespace SFM
 		const float modulation = lerpf<float>(m_oscSoft.Sample(sampleCount, 0.f, 0.f), m_oscSharp.Sample(sampleCount, 0.f, 0.f), brightness);
 		const float index = m_index*m_indexLFO.Sample(sampleCount);
 
+		SampleAssert(modulation);
+		FloatAssert(index);
+
 		return index*modulation;
 	}
 }

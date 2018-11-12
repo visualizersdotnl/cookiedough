@@ -129,11 +129,16 @@ namespace SFM
 		const float goldenTen = kGoldenRatio*10.f;
 
 		float frequency = request.frequency;
-
-		// Randomize note a little if wanted
-		const float deviation = mt_randf()*0.04f*s_parameters.m_noteRandomAmount;
-		frequency *= powf(2.f, deviation/12.f);
 		
+		// Randomize note frequency little if wanted (in (almost) entire cents)
+		const float drift = kMaxNoteDrift*s_parameters.m_noteRandomAmount;
+		const int cents = int(oscWhiteNoise(mt_randf())*drift);
+		
+		if (0 != cents)
+			frequency *= powf(2.f, (cents*0.01f)/12.f);
+		
+		FloatAssert(frequency);
+
 		const float velocity  = request.velocity;
 		const bool  isWave    = oscIsWavetable(request.form);
 

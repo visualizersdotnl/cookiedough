@@ -21,7 +21,7 @@ namespace SFM
 		Reference: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 	*/
 
-	const unsigned kFareyOrder = 18;
+	const unsigned kFareyOrder = 9;
 
 	alignas(16) unsigned g_CM_table[256][2];
 	unsigned g_CM_table_size = -1;

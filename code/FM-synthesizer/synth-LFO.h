@@ -33,6 +33,6 @@ namespace SFM
 		}
 
 		void Initialize(unsigned sampleCount, Waveform form, float amplitude, float frequency);
-		float Sample(unsigned sampleCount);
+		float Sample(unsigned sampleCount, float duty = 0.5f);
 	};
 }

@@ -17,6 +17,8 @@
 		- ADSR implementation by Nigel Redmon of earlevel.com
 		- Basic formant filter by alex@smartelectronix.com (http://www.musicdsp.org)
 
+		And a few more bits and pieces; all credited in the code.
+
 	Notes:
 		- This code is a product of ever changing knowledge & goals, and thus a bit inconsistent left and right
 		- Some calculations in here are what is referred to as "bro science"
@@ -25,9 +27,10 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Bitch-ass priority task(s):
+		- Fix bitcrusher, it sounds stupid now
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
-		  + Step 2: Make oscillator (VCO) use them
+		  + Step 2: Mmke oscillator (VCO) use them
 		  + Step 3: kill LFO, it's deadweight now
 
 	Priority:

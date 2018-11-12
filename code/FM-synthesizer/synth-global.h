@@ -57,6 +57,9 @@ namespace SFM
 	// Size of (oscillator) LUTs
 	const unsigned kOscLUTSize = 4096;
 	const unsigned kOscLUTAnd = kOscLUTSize-1;
+
+	// Max. note drift (in cents)
+	const unsigned kMaxNoteDrift = 6;
 }
 
 #include "synth-LUT.h"

@@ -58,7 +58,6 @@ namespace SFM
 
 	/*
 		Floating point error detection
-		FIXME: does not compile on OSX?
 	*/
 
 	SFM_INLINE bool FloatCheck(float value)
@@ -66,7 +65,18 @@ namespace SFM
 		if (value != 0.f && fabsf(value) < std::numeric_limits<float>::denorm_min())
 			return false;
 			 
-		return !std::isnan(value);
+		 if (true == std::isnan(value))
+			return false;
+
+		if (true == std::isinf(value))
+			return false;
+
+		return true;
+	}
+
+	SFM_INLINE void FloatAssert(float value)
+	{
+		SFM_ASSERT(true == FloatCheck(value));
 	}
 
 	/*
@@ -81,6 +91,6 @@ namespace SFM
 	SFM_INLINE void SampleAssert(float sample)
 	{
 		SFM_ASSERT(sample >= -1.f && sample <= 1.f);
-		SFM_ASSERT(true == FloatCheck(sample));
+		SFM_ASSERT(true == FloatCheck(sample));	
 	}
 }

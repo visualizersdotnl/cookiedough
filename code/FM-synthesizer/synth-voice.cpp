@@ -37,7 +37,7 @@ namespace SFM
 
 		case kMiniMOOG:
 			{
-				const float slaveMod = modulation*parameters.m_slaveFM;
+				const float slaveMod = modulation*parameters.m_slaveFM; 
 				const float A = m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) * firstCarrierMul;
 				const float B = m_carriers[1].Sample(sampleCount, drift, slaveMod, pulseWidth);
 				const float C = m_carriers[2].Sample(sampleCount, drift, slaveMod, pulseWidth);
@@ -57,7 +57,7 @@ namespace SFM
 		sample = Clamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
 
 		// Finally, modulate amplitude ('tremolo')
-		sample *= m_ampMod.Sample(sampleCount);
+		sample *= m_ampMod.Sample(sampleCount, pulseWidth);
 
 		SampleAssert(sample);
 
