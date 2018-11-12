@@ -47,7 +47,7 @@ namespace SFM
 		float m_modIndex;
 		float m_modRatioC, m_modRatioM;
 		float m_modBrightness;
-		float m_indexLFOFreq;
+		float m_modVibrato;
 
 		// Noise, formant shaper parameters, Nintendize, tremolo
 		float m_noisyness;
@@ -110,7 +110,7 @@ namespace SFM
 			m_modRatioC = 0.f;
 			m_modRatioM = 0.f;
 			m_modBrightness = 0.f;
-			m_indexLFOFreq = 0.f;
+			m_modVibrato = 0.f;
 
 			// No noise
 			m_noisyness = 0.f;

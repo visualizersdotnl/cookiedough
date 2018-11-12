@@ -53,6 +53,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\synth-operator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-formant.h" />
+    <ClInclude Include="..\code\FM-synthesizer\synth-operator.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-simple-filters.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-math.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-global.h" />

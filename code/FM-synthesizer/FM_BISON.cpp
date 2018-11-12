@@ -140,6 +140,8 @@ namespace SFM
 		
 		FloatAssert(jitter);
 
+		frequency *= jitter;
+
 		const float velocity  = request.velocity;
 		const bool  isWave    = oscIsWavetable(request.form);
 
@@ -148,47 +150,44 @@ namespace SFM
 	
 		// Initialize carrier(s)
 		const float amplitude = velocity*kMaxVoiceAmp;
-
-		// It's frequency
-		const float carrierFreq = frequency*jitter*s_parameters.m_modRatioC;
+		const float carrierFreq = frequency;
 	
 		switch (voice.m_algorithm)
 		{
 		case kSingle:
-			voice.m_carriers[0].Initialize(s_sampleCount, request.form, carrierFreq, amplitude);
+			voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 			break;
 
 		case kDoubleCarriers:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, carrierFreq, amplitude);
+				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 
-				// Initialize a detuned second carrier by going from 1 to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
+				// Initialize a detuned second carrier by going from equal to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
 				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1].Initialize(s_sampleCount, request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
+				voice.m_carriers[1].Initialize(request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
 			}	
 
 			break;
 
 		case kMiniMOOG:
 			{
-				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
+				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
 
-				// Range of 4 octaves
-				const float detune = powf(2.f, (-24.f + 48.f*s_parameters.m_slavesDetune)/12.f);
+				const float detune = powf(3.f/2.f, kMOOGDetuneRange*s_parameters.m_slavesDetune/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
 				// Reduced amplitude for slaves
 				const float slaveAmp = amplitude*dBToAmplitude(-3.f);
 
-				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
-				voice.m_carriers[2].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator3(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
+				voice.m_carriers[1].Initialize(WinMidi_GetCarrierOscillator2(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
+				voice.m_carriers[2].Initialize(WinMidi_GetCarrierOscillator3(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
 
 				// Want hard sync.?
 				if (true == s_parameters.m_hardSync)
 				{
 					// Enslave them!
-					voice.m_carriers[1].SetMasterFrequency(frequency);
-					voice.m_carriers[2].SetMasterFrequency(frequency);
+					voice.m_carriers[1].SyncTo(carrierFreq);
+					voice.m_carriers[2].SyncTo(carrierFreq);
 				}
 
 				// Reset LPF
@@ -199,13 +198,13 @@ namespace SFM
 		}
 
 		// Initialize freq. modulator
-		const float modFrequency = frequency*jitter*s_parameters.m_modRatioM;
-		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_indexLFOFreq*goldenTen);
+		const float modFrequency = carrierFreq * (s_parameters.m_modRatioM/s_parameters.m_modRatioC);
+		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_modVibrato*goldenTen);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
 		const float tremoloFreq = tremolo*0.25f*goldenTen; // FIXME?
-		voice.m_AM.Initialize(s_sampleCount, kCosine, tremoloFreq, kMaxVoiceAmp);
+		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
 
 		// One shot?
 		voice.m_oneShot = s_parameters.m_loopWaves ? false : oscIsWavetable(request.form);
@@ -336,6 +335,8 @@ namespace SFM
 		FIXME:
 			- Update parameters every N samples.
 			- Remove all rogue parameter probes.
+			  + WinMidi_GetPitchBend()
+			  + WinMidi_GetMasterDrive()
 
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
@@ -382,8 +383,8 @@ namespace SFM
 		s_parameters.m_modBrightness = WinMidi_GetModulationBrightness();
 
 		// Modulation index LFO frequency
-		const float frequency = WinMidi_GetModulationLFOFrequency();
-		s_parameters.m_indexLFOFreq = frequency;
+		const float frequency = WinMidi_GetModulationVibrato();
+		s_parameters.m_modVibrato = frequency;
 
 		// Noise
 		s_parameters.m_noisyness = WinMidi_GetNoisyness();
@@ -510,6 +511,10 @@ namespace SFM
 
 				if (true == voice.m_enabled)
 				{
+					// FIXME: move!
+					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
+					voice.m_carriers[0].PitchBend(bend);
+
 					ADSR &voiceADSR = s_ADSRs[iVoice];
 
 					FormantShaper &shaper = s_formantShapers[iVoice];

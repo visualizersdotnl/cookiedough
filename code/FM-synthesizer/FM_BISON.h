@@ -27,10 +27,11 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Extra priority tasks:
-		- Re-research: FM, perfect fifths
-		- The battle against clipping chords (in the works)
 		- Fix bitcrusher, it sounds stupid now
-		- Idea for note drift: oscillator keeps a running phase and uses the error between that and the PLL phase to simulate continuous drift
+		- Cascade pitch bend?
+		- Create operator class and turn voice into an algorithm (eliminate SFM::Modulator?)
+		- The battle against clipping chords (in the works)
+		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator
 
 	Priority task:
 		- Precalculate wavetables for all oscillators and use them
@@ -38,11 +39,10 @@
 		  + Step 2: Mmke oscillator (VCO) use them
 
 	R&D tasks:
-		- Investigate and implement operator feedback, plus an extra operator (and per-key stuff)
+		- Consider fine-tuning FM ratio
 		- Formant shaping is *very* basic, a few ideas:
 		  + Here's some fine information to refine the technique (requires bandpass): https://www.soundonsound.com/techniques/formant-synthesis
 		    + Create these using a (cheap-ish) bandpass filter?
-		- Reinstate pitch bend
 		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
 		- Implement "sample & hold"
 		- Create interface and stash synthesizer into an object

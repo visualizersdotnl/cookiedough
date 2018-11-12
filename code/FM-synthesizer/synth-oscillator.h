@@ -13,42 +13,39 @@ namespace SFM
 	{
 	private:
 		unsigned m_sampleOffs;
-		/* const */ Waveform m_form;
-		/* const */ float m_frequency;
-		/* const */ float m_amplitude;
-		/* const */ float m_pitch;
-		float m_masterPitch;
-		/* const */ float m_periodLen;
-		bool m_hasCycled;
+		
+		Waveform m_form;
+
+		float m_amplitude;
+
+		float m_frequency;
+		float m_syncFrequency;
+		float m_pitch;
+
+		float m_period;
+		float m_syncPeriod;
+
+		unsigned m_cycles;
+		float m_phase;
 
 	public:
 		// Default oscillator will yield 1.0
-		Oscillator() :
-			m_sampleOffs(-1), 
-			m_form(kCosine), 
-			m_frequency(1.f), 
-			m_amplitude(1.f), 
-			m_pitch(0.f), 
-			m_masterPitch(0.f), 
-			m_periodLen(1.f), 
-			m_hasCycled(false)
-			{}
-
-		void Initialize(unsigned sampleCount, Waveform form, float frequency, float amplitude)
+		Oscillator()
 		{
-			m_sampleOffs = sampleCount;
+			Initialize(kCosine, 0.f, 1.f);
+		}
+
+		void Initialize(Waveform form, float frequency, float amplitude)
+		{
 			m_form = form;
+			m_amplitude = amplitude;
+
 			m_frequency = frequency;
 			m_pitch = CalculatePitch(frequency);
-			m_amplitude = amplitude;
-			m_hasCycled = false;
-			
-			// No sync.
-			m_masterPitch = m_pitch;
 
 			if (false == oscIsWavetable(form))
-			{
-				m_periodLen = 1.f;
+			{	
+				m_period = 1.f;
 			}
 			else
 			{
@@ -56,41 +53,61 @@ namespace SFM
 				switch (form)
 				{
 				case kKick808:
-					m_periodLen = getOscKick808().GetLength();
+					m_period = getOscKick808().GetLength();
 					break;
 
 				case kSnare808:
-					m_periodLen = getOscSnare808().GetLength();
+					m_period = getOscSnare808().GetLength();
 					break;
 
 				case kGuitar:
-					m_periodLen = getOscGuitar().GetLength();
+					m_period = getOscGuitar().GetLength();
 					break;
 
 				case kElectricPiano:
-					m_periodLen = getOscElecPiano().GetLength();
+					m_period = getOscElecPiano().GetLength();
 					break;
 				
 				default:
-					m_periodLen = 1.f;
+					m_period = 1.f;
 					SFM_ASSERT(false);
 					break;
 				}				
 			}
+
+			// No sync.
+			SyncTo(frequency);
+
+			m_phase = 0.f;
+			m_cycles = 0;
 		}
 
-		// We'll wrap around this pitch; so by default it's identical
-		// It enables to hard sync. this oscillator (slave mode)
-		void SetMasterFrequency(float frequency)
+		// Synchronize to freq. (hard sync.)
+		void SyncTo(float frequency)
 		{
-			m_masterPitch = CalculatePitch(frequency);
+			m_syncFrequency = frequency;
+
+			float ratio = 1.f;
+			if (0.f != m_syncFrequency)
+				ratio = m_frequency/m_syncFrequency;
+
+			m_syncPeriod = m_period*ratio;
+			FloatAssert(m_syncPeriod);
 		}
 
-		Waveform GetWaveform() const  { return m_form;      }
-		float GetPitch() const        { return m_pitch;     }
-		float GetPeriodLength() const { return m_periodLen; }
-		bool HasCycled() const        { return m_hasCycled; }
+		// Pitch bend
+		void PitchBend(float semitones)
+		{
+			const float bend = powf(2.f, semitones/12.f);
+			m_pitch = CalculatePitch(m_frequency*bend);
+		}
 
-		float Sample(unsigned sampleCount, float drift, float modulation, float duty = 0.5f);
+		Waveform GetWaveform() const  { return m_form;        }
+		float GetFrequency() const    { return m_frequency;   }
+		float GetPitch() const        { return m_pitch;       }
+		float GetPeriodLength() const { return m_period;      }
+		bool HasCycled() const        { return 0 != m_cycles; }
+
+		float Sample(float drift, float modulation, float duty = 0.5f);
 	};
 }

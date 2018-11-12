@@ -71,13 +71,13 @@ namespace SFM
 	const unsigned kFaderModRatio = 70;       // C8
 	const unsigned kFaderFeedbackPitch = 63;  // C9
 	const unsigned kFaderTremolo = 25;        // C5
-	const unsigned kFaderModLFOFreq = 73;     // C6
+	const unsigned kFaderModVibrato = 73;     // C6
 	const unsigned kFaderModBrightness = 74;  // C7
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 	static float s_modRatio = 0.f;
 	static float s_feedbackPitch = 0.f;
-	static float s_modLFOFreq = 0.f;
+	static float s_modVibrato = 0.f;
 	static float s_modBrightness = 0.f;
 	static float s_tremolo = 0.f;
 
@@ -107,7 +107,7 @@ namespace SFM
 	static FormantShaper::Vowel s_formantVowel = FormantShaper::kNeutral;
 
 	// Pitch bend (14-bit signed, wheel rests in the middle)
-	static float s_pitchBend = 0.5f;
+	static float s_pitchBend;
 
 	static unsigned s_voices[127];
 
@@ -193,8 +193,8 @@ namespace SFM
 							s_modRatio = fControlVal;
 							break;
 
-						case kFaderModLFOFreq:
-							s_modLFOFreq = fControlVal;
+						case kFaderModVibrato:
+							s_modVibrato = fControlVal;
 							break;
 
 						case kFaderModBrightness:
@@ -301,7 +301,8 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-						s_pitchBend = float(bend)/8192.f - 1.f;
+						s_pitchBend = (float(bend)/8192.f) - 1.f;
+						Log("Pitch bend: " + std::to_string(s_pitchBend));
 						break;
 					}
 
@@ -452,16 +453,13 @@ namespace SFM
 	float WinMidi_GetFeedbackPitch()    { return s_feedbackPitch;    }
 
 	// Pitch bend
-	float WinMidi_GetPitchBendRaw()   
-	{ 
-		return s_pitchBend;
-	}
+	float WinMidi_GetPitchBend() { return s_pitchBend; }
 
 	// Modulation main
-	float WinMidi_GetModulationIndex()        { return s_modIndex;      }
-	float WinMidi_GetModulationRatio()        { return s_modRatio;      }
-	float WinMidi_GetModulationBrightness()   { return s_modBrightness; }
-	float WinMidi_GetModulationLFOFrequency() { return s_modLFOFreq;    }
+	float WinMidi_GetModulationIndex()      { return s_modIndex;      }
+	float WinMidi_GetModulationRatio()      { return s_modRatio;      }
+	float WinMidi_GetModulationBrightness() { return s_modBrightness; }
+	float WinMidi_GetModulationVibrato()    { return s_modVibrato;    }
 
 	// Master ADSR
 	float WinMidi_GetAttack()          { return s_A; }

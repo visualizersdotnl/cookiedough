@@ -12,15 +12,15 @@ namespace SFM
 	{
 		m_index = index;
 
-		m_oscSoft.Initialize(sampleCount, kSine, freqPM, 1.f);
-		m_oscSharp.Initialize(sampleCount, kPolyTriangle, freqPM, 1.f);
-		m_indexLFO.Initialize(sampleCount, kCosine, freqAM, 1.f);
+		m_oscSoft.Initialize(kSine, freqPM, 1.f);
+		m_oscSharp.Initialize(kPolyTriangle, freqPM, 1.f);
+		m_indexLFO.Initialize(kCosine, freqAM, 1.f);
 	}
 
 	float Modulator::Sample(unsigned sampleCount, float brightness)
 	{
-		const float modulation = lerpf<float>(m_oscSoft.Sample(sampleCount, 0.f, 0.f), m_oscSharp.Sample(sampleCount, 0.f, 0.f), brightness);
-		const float index = m_index*m_indexLFO.Sample(sampleCount, 0.f, 0.f);
+		const float modulation = lerpf<float>(m_oscSoft.Sample(0.f, 0.f), m_oscSharp.Sample(0.f, 0.f), brightness);
+		const float index = m_index*m_indexLFO.Sample(0.f, 0.f);
 
 		SampleAssert(modulation);
 		FloatAssert(index);

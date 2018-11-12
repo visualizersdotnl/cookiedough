@@ -46,7 +46,7 @@ namespace SFM
 	const unsigned kMaxVoices = 24; 
 
 	// Max. voice amplitude 
-	const float kMaxVoiceAmp = 0.7079457843841379f; // -3dB
+	const float kMaxVoiceAmp = 0.66f;
 
 	// Max. filter drive (dB)
 	const float kMaxFilterDrivedB = 6.f;
@@ -59,7 +59,13 @@ namespace SFM
 	const unsigned kOscLUTAnd = kOscLUTSize-1;
 
 	// Max. note drift (in cents)
-	const unsigned kMaxNoteDrift = 6;
+	const unsigned kMaxNoteDrift = 10;
+
+	// Max. detune (in semitones) in MOOG mode
+	const float kMOOGDetuneRange = 24.f;
+
+	// Pitch bend rane (in semitones)
+	const float kPitchBendRange = 16.f;
 }
 
 #include "synth-LUT.h"

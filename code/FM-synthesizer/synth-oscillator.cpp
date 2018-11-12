@@ -8,20 +8,15 @@
 
 namespace SFM
 {
-	float Oscillator::Sample(unsigned sampleCount, float drift, float modulation, float duty /* = 0.5f */)
+	float Oscillator::Sample(float drift, float modulation, float duty /* = 0.5f */)
 	{	
-		const unsigned sample = sampleCount-m_sampleOffs;
-		float phase = sample*m_pitch;
-		const float masterPhase = sample*m_masterPitch;
-			
-		// Wrap?
-		if (masterPhase >= m_periodLen)
+		if (m_phase >= m_syncPeriod)
 		{
-			phase = 0.f;
-			m_sampleOffs = sampleCount;
-			m_hasCycled = true;
+			m_phase -= m_syncPeriod;
+			++m_cycles;
 		}
 
+		const float phase = m_phase;
 		const float modulated = phase+modulation;
 
 		float signal;
@@ -35,9 +30,11 @@ namespace SFM
 
 			case kDigiSquare:
 				return oscDigiSquare(modulated);
+				break;
 
 			case kDigiTriangle:
 				return oscDigiTriangle(modulated);
+				break;
 
 			case kDigiPulse:
 				return oscDigiPulse(modulated, duty);
@@ -109,6 +106,9 @@ namespace SFM
 
 		signal *= m_amplitude;
 		SampleAssert(signal);
+
+		// Advance
+		m_phase += m_pitch;
 
 		return signal;
 	}

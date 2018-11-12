@@ -27,20 +27,20 @@ namespace SFM
 		switch (m_algorithm)
 		{
 		case kSingle:
-			sample = m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) * firstCarrierMul;
+			sample = m_carriers[0].Sample(drift, modulation, pulseWidth) * firstCarrierMul;
 			break;
 
 		case kDoubleCarriers:
-			sample  = fast_tanhf(m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) + parameters.m_doubleVolume*m_carriers[1].Sample(sampleCount, drift, modulation, pulseWidth));
+			sample  = fast_tanhf(m_carriers[0].Sample(drift, modulation, pulseWidth) + parameters.m_doubleVolume*m_carriers[1].Sample(drift, modulation, pulseWidth));
 			sample *= firstCarrierMul; // Carrier #2 is a copy of #1
 			break;
 
 		case kMiniMOOG:
 			{
 				const float slaveMod = modulation*parameters.m_slaveFM; 
-				const float A = m_carriers[0].Sample(sampleCount, drift, modulation, pulseWidth) * firstCarrierMul;
-				const float B = m_carriers[1].Sample(sampleCount, drift, slaveMod, pulseWidth);
-				const float C = m_carriers[2].Sample(sampleCount, drift, slaveMod, pulseWidth);
+				const float A = m_carriers[0].Sample(drift, modulation, pulseWidth) * firstCarrierMul;
+				const float B = m_carriers[1].Sample(drift, slaveMod, pulseWidth);
+				const float C = m_carriers[2].Sample(drift, slaveMod, pulseWidth);
 
 				const float *pVols = parameters.m_carrierVol;
  
@@ -57,7 +57,7 @@ namespace SFM
 		sample = Clamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
 
 		// Finally, modulate amplitude ('tremolo')
-		sample *= m_AM.Sample(sampleCount, 0.f, 0.f, pulseWidth);
+		sample *= m_AM.Sample(0.f, 0.f, pulseWidth);
 
 		SampleAssert(sample);
 
