@@ -26,14 +26,19 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Bitch-ass priority task(s):
+	Extra priority tasks:
+		- Algo #3 clips too much
+		- Guitar is 1 octave off
 		- Fix bitcrusher, it sounds stupid now
+		- Idea for note drift: oscillator keeps a running phase and uses the error between that and the PLL phase to simulate continuous drift
+
+	Priority task:
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Mmke oscillator (VCO) use them
 		  + Step 3: kill LFO, it's deadweight now
 
-	Priority:
+	R&D tasks:
 		- Investigate and implement operator feedback, plus an extra operator (and per-key stuff)
 		- Formant shaping is *very* basic, a few ideas:
 		  + Here's some fine information to refine the technique (requires bandpass): https://www.soundonsound.com/techniques/formant-synthesis

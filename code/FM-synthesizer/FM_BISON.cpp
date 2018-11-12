@@ -131,7 +131,7 @@ namespace SFM
 		float frequency = request.frequency;
 		
 		// Randomize note frequency little if wanted (in (almost) entire cents)
-		const float drift = kMaxNoteDrift*s_parameters.m_noteRandomAmount;
+		const float drift = kMaxNoteDrift*s_parameters.m_noteDrift;
 		const int cents = int(oscWhiteNoise(mt_randf())*drift);
 		
 		if (0 != cents)
@@ -172,8 +172,8 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(s_sampleCount, request.form, frequency, amplitude*s_parameters.m_carrierVol[0]);
 
-				// Same as above, but with a range of 3 octaves
-				const float detune = powf(3.f/2.f, (-12.f + 24.f*s_parameters.m_slavesDetune)/12.f);
+				// Same as above, but with a range of 4 octaves
+				const float detune = powf(3.f/2.f, (-24.f + 48.f*s_parameters.m_slavesDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
 				voice.m_carriers[1].Initialize(s_sampleCount, WinMidi_GetCarrierOscillator2(), slaveFreq, amplitude*s_parameters.m_carrierVol[1]);
@@ -361,9 +361,9 @@ namespace SFM
 		// Drive
 		s_parameters.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
-		// Note random
-		s_parameters.m_noteRandomAmount = WinMidi_GetNoteRandomAmount();
-
+		// Note (VCO) drift
+		s_parameters.m_noteDrift = WinMidi_GetNoteDrift();
+	
 		// Modulation index
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 		s_parameters.m_modIndex = WinMidi_GetModulationIndex()*alpha;

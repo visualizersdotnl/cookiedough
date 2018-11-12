@@ -52,6 +52,6 @@ namespace SFM
 	Waveform WinMidi_GetCarrierOscillator2();
 	Waveform WinMidi_GetCarrierOscillator3();
 
-	// Note random
-	float WinMidi_GetNoteRandomAmount();
+	// Note (VCO )drift
+	float WinMidi_GetNoteDrift();
 }

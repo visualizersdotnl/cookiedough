@@ -60,7 +60,7 @@
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
-//const bool kTestBedForFM = false;
+// const bool kTestBedForFM = false;
 const bool kTestBedForFM = true;
 
 // Undef. for < 60FPS warning
@@ -204,41 +204,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 			Display display;
 			if (display.Open(kTitle, 1280, 303, kFullScreen))
 			{
-				Syntherklaas_Create();
-
-				Timer timer;
-
-				float oldTime = 0.f, newTime = 0.f;
-				while (true == HandleEvents())
+				if (Syntherklaas_Create())
 				{
-					oldTime = newTime;
-					newTime = timer.Get();
-					const float delta = newTime-oldTime;
-					
-					// sloppy VU meter
-					static float prevLoudest = 0.f;
-					float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
-					if (loudest == 0.f) loudest = prevLoudest;
-					prevLoudest = lowpassf(prevLoudest, loudest, 4.f);
+					Timer timer;
 
-					unsigned length = 1+unsigned(loudest*1279.f);
-
-					for (int iY = 3; iY < 15; ++iY)
-						cspan(bumper + 1280*iY, 1, 1280, 1280, 0, 0x7f7f7f);
-
-					for (int iY = 3; iY < 15; ++iY)
+					float oldTime = 0.f, newTime = 0.f;
+					while (true == HandleEvents())
 					{
-						if (iY & 1)
-							cspan(bumper + 1280*iY, 1, length, length, 0x007f00, 0xff0000);
-						else
-							cspan(bumper + 1280*iY, 1, length, length, 0xff7f00, 0xff0000);
+						oldTime = newTime;
+						newTime = timer.Get();
+						const float delta = newTime-oldTime;
+					
+						// sloppy VU meter
+						static float prevLoudest = 0.f;
+						float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
+						if (loudest == 0.f) loudest = prevLoudest;
+						prevLoudest = lowpassf(prevLoudest, loudest, 4.f);
+
+						unsigned length = 1+unsigned(loudest*1279.f);
+
+						for (int iY = 3; iY < 15; ++iY)
+							cspan(bumper + 1280*iY, 1, 1280, 1280, 0, 0x7f7f7f);
+
+						for (int iY = 3; iY < 15; ++iY)
+						{
+							if (iY & 1)
+								cspan(bumper + 1280*iY, 1, length, length, 0x007f00, 0xff0000);
+							else
+								cspan(bumper + 1280*iY, 1, length, length, 0xff7f00, 0xff0000);
+						}
+
+						display.Update(bumper);
 					}
 
-					display.Update(bumper);
+					// bypass message box
+					avgFPS = 60.f;
 				}
-
-				// bypass message box
-				avgFPS = 60.f;
 			}
 		}
 		else

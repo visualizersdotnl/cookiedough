@@ -54,7 +54,7 @@ namespace SFM
 	const unsigned kPotFormant = 19;           // Set 3, R11
 	const unsigned kPotFormantStep = 18;       // Set 3, R10
 	const unsigned kPotBassBoost = 114;        // Set 3, R9
-	const unsigned kPotNoteRandomAmt = 76;     // Set 1, R4
+	const unsigned kPotNoteDrift = 76;         // Set 1, R4
 
 	static float s_noisyness = 0.f;
 	static float s_pulseWidth = 0.f;
@@ -67,7 +67,7 @@ namespace SFM
 	static float s_Nintendize = 0.f;
 	static MIDI_Smoothed s_formant, s_formantStep(0.33f);
 	static float s_bassBoost = 0.f;
-	static float s_noteRandomAmt = 0.f;
+	static float s_noteDrift = 0.f;
 
 	// Button mapping
 
@@ -216,10 +216,10 @@ namespace SFM
 						s_bassBoost = fControlVal;
 						break;
 
-					/* Note random */
+					/* Note (VCO) drift */
 
-					case kPotNoteRandomAmt:
-						s_noteRandomAmt = fControlVal;
+					case kPotNoteDrift:
+						s_noteDrift= fControlVal;
 						break;
 
 					/* Filter */
@@ -426,9 +426,9 @@ namespace SFM
 	float WinMidi_GetFormant()     { return s_formant.Get();     }
 	float WinMidi_GetFormantStep() { return s_formantStep.Get(); }
 
-	// Note random
-	float WinMidi_GetNoteRandomAmount()
+	// Note (VCO) drift
+	float WinMidi_GetNoteDrift()
 	{
-		return s_noteRandomAmt;
+		return s_noteDrift;
 	}
 }
