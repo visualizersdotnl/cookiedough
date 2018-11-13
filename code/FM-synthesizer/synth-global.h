@@ -21,6 +21,7 @@
 
 #include "synth-log.h"
 #include "synth-error.h"
+#include "synth-math.h"
 
 namespace SFM
 {
@@ -66,8 +67,10 @@ namespace SFM
 
 	// Pitch bend rane (in semitones)
 	const float kPitchBendRange = 16.f;
+
+	// Feedback amplitude	
+	const float kFeedbackAmplitude = kRootHalf; // ~3dB
 }
 
 #include "synth-LUT.h"
-// #include "synth-math.h"
 #include "synth-util.h"

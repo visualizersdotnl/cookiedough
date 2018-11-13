@@ -44,6 +44,14 @@ namespace SFM
 
 		float Sample(unsigned sampleCount, const Parameters &parameters);
 
+		// FIXME: modulator too?
+		void PitchBend(float bend)
+		{
+			m_carriers[0].PitchBend(bend);
+			m_carriers[2].PitchBend(bend);
+			m_carriers[3].PitchBend(bend);
+		}
+
 		// Can be used to determine if a one-shot is done
 		bool HasCycled(unsigned sampleCount) /* const */
 		{

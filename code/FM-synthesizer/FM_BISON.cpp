@@ -246,9 +246,9 @@ namespace SFM
 			*request.pIndex = iVoice;
 	}
 
-	// Updates all voices as follows:
-	// - Check if a currently active voice is to be terminated
 	// - Handle all requested voice releases
+	// - Updates all voices as follows:
+	// - Update voices (includes termination)
 	// - Trigger all requested voices
 	static void UpdateVoices()
 	{
@@ -441,8 +441,6 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	const float kFeedbackAmplitude = dBToAmplitude(-3.f);
-
 	SFM_INLINE void ProcessDelay(float &mix)
 	{
 		// Process delay
@@ -513,7 +511,7 @@ namespace SFM
 				{
 					// FIXME: move!
 					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
-					voice.m_carriers[0].PitchBend(bend);
+					voice.PitchBend(bend);
 
 					ADSR &voiceADSR = s_ADSRs[iVoice];
 

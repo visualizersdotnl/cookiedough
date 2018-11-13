@@ -2,6 +2,8 @@
 
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
+	
+	A polyphonic hybrid FM/PCM synthesis engine.
 
 	Beta testers for the VST:
 		- Ronny Pries
@@ -26,27 +28,23 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Extra priority tasks:
-		- Create operator class and turn voice into an algorithm (eliminate SFM::Modulator?)
-		  + The idea seems to be that an operator is defined purely by a ratio of the base frequency, just like I do now with the single Modulator instance
-		  + Await the VOLCA FM before you do more work on this, rather do some pulmbing tasks
-		- Fix bitcrusher, it sounds halfway stupid now
-		- Cascade pitch bend?
-		- The battle against clipping chords (in the works)
-		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator
-
 	Priority task:
+		- Implement Operator class and integrate it with current structure (Voice/Modulator, eliminate the latter)
+		- Fix pitch bend
+		- Fix bitcrusher, it sounds halfway stupid now
+		  + Maybe implement at another level?
+		- Await the Volca FM to learn more about FM synthesis
+		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator for drift
+		- The battle against clipping chords (in the works)
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Mmke oscillator (VCO) use them
 
 	R&D tasks:
 		- Consider fine-tuning FM ratio
-		- Formant shaping is *very* basic, a few ideas:
-		  + Here's some fine information to refine the technique (requires bandpass): https://www.soundonsound.com/techniques/formant-synthesis
-		    + Create these using a (cheap-ish) bandpass filter?
-		- Update parameters multiple times per render cycle (eliminate all rogue MIDI parameter calls)
-		- Implement "sample & hold"
+		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
+		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
+		- Implement "sample & hold" noise
 		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- First draft of manual
@@ -59,14 +57,15 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
-		- I've heard synthesizers getting "brighter" as you hit the keys harder
-		- Read about filters a bit more!
+		- I've heard synthesizers getting "brighter" as you hit the keys harder (probably operator envelope)
+		- Read about filters a bit more
 		- MinBLEP
 		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- Real variable delay line
 		- Profiling & optimization
 
 	Known bugs:
+		- Some controls should respond non-linear
 		- NOTE_OFF doesn't always get processed (I think it's the MIDI code)
 		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)
