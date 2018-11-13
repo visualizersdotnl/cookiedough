@@ -75,7 +75,7 @@ namespace SFM
 	static unsigned s_active = 0;
 	static ADSR s_ADSRs[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
-	static ButterworthFilter s_cleanFilters[kMaxVoices];
+	static ButterworthFilter s_butterFilters[kMaxVoices];
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
 	static FormantShaper s_formantShapers[kMaxVoices];
@@ -228,7 +228,7 @@ namespace SFM
 			break;
 
 		case kButterworthFilter: // Completely different response curve than either other (harsher, "wider" resonance)
-			voice.m_pFilter = s_cleanFilters+iVoice;
+			voice.m_pFilter = s_butterFilters+iVoice;
 			break;
 
 		case kImprovedMOOGFilter:
@@ -382,8 +382,8 @@ namespace SFM
 
 		// Get modulation ratio
 		const unsigned ratioIdx = unsigned(WinMidi_GetModulationRatio()*(g_CM_size-1));
-		s_parameters.m_modRatioM = g_CM[ratioIdx][1];
-		s_parameters.m_modRatioC = g_CM[ratioIdx][0];
+		s_parameters.m_modRatioM = (float) g_CM[ratioIdx][1];
+		s_parameters.m_modRatioC = (float) g_CM[ratioIdx][0];
 
 		unsigned test = g_CM_size;
 
@@ -661,7 +661,7 @@ bool Syntherklaas_Create()
 		s_voices[iVoice].m_enabled = false;
 		s_ADSRs[iVoice].Reset();
 		s_improvedFilters[iVoice].Reset();
-		s_cleanFilters[iVoice].Reset();
+		s_butterFilters[iVoice].Reset();
 		s_teemuFilters[iVoice].Reset();
 	}
 
