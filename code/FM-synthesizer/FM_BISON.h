@@ -29,7 +29,8 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
-		- Rebuild C:M strategy
+		- Rebuild C:M strategy: "Try to plot the freqs you get from k*pow(2,n/12) on a grid of n and see which ones fully or almost collide."
+		  + In progress...
 		- Implement first draft of operator
 
 	Wait for musician(s) to decide:

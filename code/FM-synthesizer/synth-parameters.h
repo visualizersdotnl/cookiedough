@@ -45,7 +45,7 @@ namespace SFM
 
 		// Modulator parameters [0..1]
 		float m_modIndex;
-		float m_modRatioC, m_modRatioM;
+		float m_modRatio;
 		float m_modBrightness;
 		float m_modVibrato;
 
@@ -107,8 +107,7 @@ namespace SFM
 
 			// No FM
 			m_modIndex = 0.f;
-			m_modRatioC = 0.f;
-			m_modRatioM = 0.f;
+			m_modRatio = 0.f;
 			m_modBrightness = 0.f;
 			m_modVibrato = 0.f;
 

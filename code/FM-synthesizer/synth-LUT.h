@@ -2,8 +2,8 @@
 /*
 	Syntherklaas FM -- Various lookup tables.
 
-	- Sine/Cosine
 	- Coarse FM frequency ratios
+	- Sine/Cosine
 	- Noise
 */
 
@@ -13,9 +13,9 @@
 
 namespace SFM
 {
-	// Generated Carrier:Modulation ratio table
-	extern unsigned g_CM_table[][2];
-	extern unsigned g_CM_table_size;
+	// Farey sequence (9th order)
+	extern unsigned g_CM[][2];
+	extern unsigned g_CM_size;
 
 	extern float g_sinLUT[kOscLUTSize];
 	extern float g_noiseLUT[kOscLUTSize];

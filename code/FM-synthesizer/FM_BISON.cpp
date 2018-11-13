@@ -165,7 +165,7 @@ namespace SFM
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 
 				// Initialize a detuned second carrier by going from equal to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
-				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f) * (0.5f + 0.5f*velocityExp);
+				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
 				voice.m_carriers[1].Initialize(request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
 			}	
 
@@ -201,8 +201,8 @@ namespace SFM
 		}
 
 		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
-		const float ratio = s_parameters.m_modRatioM/s_parameters.m_modRatioC;
-		const float modFrequency = carrierFreq*powf(2.f, ratio/6.f);
+		const float ratio = s_parameters.m_modRatio;
+		const float modFrequency = carrierFreq*ratio;
 		const float modIndex = s_parameters.m_modIndex*velocityExp;
 		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
 
@@ -380,11 +380,12 @@ namespace SFM
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 		s_parameters.m_modIndex = WinMidi_GetModulationIndex()*alpha;
 
-		// Get ratio from precalculated table (see synth-LUT.cpp)
-		const unsigned tabIndex = (unsigned) (WinMidi_GetModulationRatio()*(g_CM_table_size-1));
-		SFM_ASSERT(tabIndex < g_CM_table_size);
-		s_parameters.m_modRatioC = (float) g_CM_table[tabIndex][0];
-		s_parameters.m_modRatioM = (float) g_CM_table[tabIndex][1];
+		// Get modulation ratio
+		const unsigned ratioIdx = unsigned(WinMidi_GetModulationRatio()*(g_CM_size-1));
+		const float coarseRatio = (float) g_CM[ratioIdx][1] / (float) g_CM[ratioIdx][0];
+		s_parameters.m_modRatio = coarseRatio;
+
+		unsigned test = g_CM_size;
 
 		// Modulation brightness affects the modulator's oscillator blend
 		s_parameters.m_modBrightness = WinMidi_GetModulationBrightness();
