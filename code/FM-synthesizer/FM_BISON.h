@@ -29,7 +29,7 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
-		- My C:M table is completely full of shit: rethink and rebuild
+		- Rebuild C:M strategy
 		- Implement first draft of operator
 
 	Wait for musician(s) to decide:
