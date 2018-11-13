@@ -30,44 +30,44 @@
 
 	Tasks for 13/11:
 		- Bug in filter (I think) used for MiniMOOG mode
+		- Pitch bend doesn't affect modulation, but it should
 		- Implement first draft of operator
 
+	Wait for musician(s) to decide:
+		- How key velocity influences voices
+
 	Priority task:
-		- Tweak velocity influence on modulation!
-		- Take flaws out of pitch bend
-		- Jan says adding lowpassed noise to the modulation causes drift
-		- Win the battle against clipping chords (in the works)
+		- Jan Marguc says adding lowpassed noise to the modulation causes drift
 
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Make oscillator (VCO) use them
+		  + This is not a high-priority task
 
 	R&D tasks:
-		- Reconsider FM ratios, but for what?
-		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
-		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
-		- Implement "sample & hold" noise
 		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
+		- Implement "sample & hold" noise
+		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
+		- Reconsider FM ratio approach
+		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
 		- First draft of manual
 
 	Plumbing:
-		- Make use of smoothed (lowpassed) controls in MIDI 
 		- Flush ring buffer using 2 memcpy() calls
 		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
-		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
+		- Learn more about portamento et cetera and investigate a monophonic mode
 		- Read about filters a bit more
 		- MinBLEP
-		- Monophonic mode (with legato, staccato, glissando et cetera)
 		- Real variable delay line
 		- Profiling & optimization
 
 	Known bugs:
 		- Some controls should respond non-linear
-		- NOTE_OFF doesn't always get processed (I think it's the MIDI code)
+		- NOTE_OFF doesn't always get processed (I think it's the MIDI code, reproduce by letting a key "bounce")
 		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)
 
