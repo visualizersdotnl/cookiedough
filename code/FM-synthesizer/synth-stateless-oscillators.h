@@ -65,6 +65,7 @@ namespace SFM
 		Sinus oscillator.
 	*/
 
+//	SFM_INLINE float oscSine(float phase) { return sinf(phase*k2PI); }
 	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
 	SFM_INLINE float oscCos(float phase)  { return lutcosf(phase); }
 
