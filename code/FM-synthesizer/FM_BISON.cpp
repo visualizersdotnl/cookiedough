@@ -143,8 +143,8 @@ namespace SFM
 		frequency *= jitter;
 
 		const float velocity    = request.velocity;
-		const float velocityExp = Clamp(invsqrf(velocity)); // This one does well to scale pretty much anything you don't have a specific idea for
-
+		const float velocityExp = velocity*velocity;
+		
 		const bool  isWave = oscIsWavetable(request.form);
 
 		// Algorithm
@@ -201,7 +201,7 @@ namespace SFM
 		}
 
 		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
-		const float ratio = s_parameters.m_modRatio;
+		const float ratio = s_parameters.m_modRatioM;
 		const float modFrequency = carrierFreq*ratio;
 		const float modIndex = s_parameters.m_modIndex*velocityExp;
 		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
@@ -363,7 +363,7 @@ namespace SFM
 		// For algorithm #3
 		const float slavesLP = WinMidi_GetSlavesLowpass();
 		s_parameters.m_slavesDetune  = WinMidi_GetSlavesDetune();
-		s_parameters.m_slavesLP      = std::max<float>(kEpsilon, clampf(0.f, 1.f, slavesLP*slavesLP));
+		s_parameters.m_slavesLP      = std::max<float>(kEpsilon, clampf(0.f, 1.f, invsqrf(slavesLP)));
 		s_parameters.m_hardSync      = WinMidi_GetHardSync();
 		s_parameters.m_slaveFM       = WinMidi_GetSlaveFM();
 		s_parameters.m_carrierVol[0] = WinMidi_GetCarrierVolume1();
@@ -382,8 +382,8 @@ namespace SFM
 
 		// Get modulation ratio
 		const unsigned ratioIdx = unsigned(WinMidi_GetModulationRatio()*(g_CM_size-1));
-		const float coarseRatio = (float) g_CM[ratioIdx][1] / (float) g_CM[ratioIdx][0];
-		s_parameters.m_modRatio = coarseRatio;
+		s_parameters.m_modRatioM = g_CM[ratioIdx][1];
+		s_parameters.m_modRatioC = g_CM[ratioIdx][0];
 
 		unsigned test = g_CM_size;
 

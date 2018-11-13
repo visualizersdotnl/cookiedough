@@ -18,6 +18,7 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com
 		- Basic formant filter by alex@smartelectronix.com (http://www.musicdsp.org)
+		- Barry Truax: http://www.sfu.ca/~truax/fmtut.html
 
 		And a few more bits and pieces; all credited in the code.
 
@@ -29,8 +30,6 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
-		- Rebuild C:M strategy: "Try to plot the freqs you get from k*pow(2,n/12) on a grid of n and see which ones fully or almost collide."
-		  + In progress...
 		- Implement first draft of operator
 
 	Wait for musician(s) to decide:
@@ -50,7 +49,6 @@
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Implement "sample & hold" noise
 		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
-		- Reconsider FM ratio approach
 		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
 		- First draft of manual
 
