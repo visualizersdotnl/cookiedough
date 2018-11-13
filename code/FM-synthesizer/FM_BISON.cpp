@@ -173,7 +173,8 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
 
-				const float detune = powf(3.f/2.f, kMOOGDetuneRange*s_parameters.m_slavesDetune/12.f);
+				const float amount = -1.f*kMOOGDetuneRange + 2.f*s_parameters.m_slavesDetune*kMOOGDetuneRange;
+				const float detune = powf(2.f, amount/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
 				// Reduced amplitude for slaves
@@ -197,10 +198,13 @@ namespace SFM
 			break;
 		}
 
-		// Initialize freq. modulator
+		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
 		const float ratio = s_parameters.m_modRatioM/s_parameters.m_modRatioC;
-		const float modFrequency = frequency * powf(2.f, ratio/6.f);
-		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_modVibrato*goldenTen * velocity /* Less velocity: less vibrato */);
+		const float modFrequency = carrierFreq*powf(2.f, ratio/6.f);
+		const float modIndex = s_parameters.m_modIndex*velocity;
+		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocity;
+
+		voice.m_modulator.Initialize(s_sampleCount, modIndex, modFrequency, modVibrato);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;

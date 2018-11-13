@@ -48,13 +48,14 @@ namespace SFM
 				const float slaves = SoftClamp(pVols[1]*B + pVols[2]*C);
 				const float filtered = m_LPF.Apply(slaves);
 
+				// Slight overdrive on main carrier
 				sample = SoftClamp(pVols[0]*A + filtered);
 			}
 			break;
 		}
 
 		// Add noise
-		sample = Clamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
+		sample = SoftClamp(sample + parameters.m_noisyness*oscWhiteNoise(modulation));
 
 		// Finally, modulate amplitude ('tremolo')
 		sample *= m_AM.Sample(0.f, 0.f, pulseWidth);

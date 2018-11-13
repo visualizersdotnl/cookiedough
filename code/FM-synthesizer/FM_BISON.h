@@ -29,23 +29,21 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
-		- Implement first draft of Operator
-		- Review FM strategy
+		- Bug in filter (I think) used for MiniMOOG mode
+		- Implement first draft of operator
 
 	Priority task:
-		- Implement Operator class and integrate it with current structure (Voice/Modulator, eliminate the latter)
-		- Fix pitch bend?
-		- Fix bitcrusher, it sounds halfway stupid now
-		  + Maybe implement at another level?
-		- ** Await the Volca FM to learn more about FM synthesis **
-		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator for drift
-		- The battle against clipping chords (in the works)
+		- Tweak velocity influence on modulation!
+		- Take flaws out of pitch bend
+		- Jan says adding lowpassed noise to the modulation causes drift
+		- Win the battle against clipping chords (in the works)
+
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Make oscillator (VCO) use them
 
 	R&D tasks:
-		- Reconsider FM ratios
+		- Reconsider FM ratios, but for what?
 		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
 		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
 		- Implement "sample & hold" noise
@@ -61,7 +59,6 @@
 		- Tweak velocity & aftertouch (it sounds OK now)
 
 	Research:
-		- I've heard synthesizers getting "brighter" as you hit the keys harder (probably operator envelope)
 		- Read about filters a bit more
 		- MinBLEP
 		- Monophonic mode (with legato, staccato, glissando et cetera)
