@@ -142,8 +142,10 @@ namespace SFM
 
 		frequency *= jitter;
 
-		const float velocity  = request.velocity;
-		const bool  isWave    = oscIsWavetable(request.form);
+		const float velocity    = request.velocity;
+		const float velocityExp = Clamp(invsqrf(velocity)); // This one does well to scale pretty much anything you don't have a specific idea for
+
+		const bool  isWave = oscIsWavetable(request.form);
 
 		// Algorithm
 		voice.m_algorithm = s_parameters.m_algorithm;
@@ -163,7 +165,7 @@ namespace SFM
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 
 				// Initialize a detuned second carrier by going from equal to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
-				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
+				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f) * (0.5f + 0.5f*velocityExp);
 				voice.m_carriers[1].Initialize(request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
 			}	
 
@@ -201,14 +203,14 @@ namespace SFM
 		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
 		const float ratio = s_parameters.m_modRatioM/s_parameters.m_modRatioC;
 		const float modFrequency = carrierFreq*powf(2.f, ratio/6.f);
-		const float modIndex = s_parameters.m_modIndex*velocity;
-		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocity;
+		const float modIndex = s_parameters.m_modIndex*velocityExp;
+		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
 
 		voice.m_modulator.Initialize(s_sampleCount, modIndex, modFrequency, modVibrato);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
-		const float tremoloFreq = tremolo*0.25f*goldenTen; // FIXME?
+		const float tremoloFreq = tremolo*0.25f*goldenTen*velocityExp;
 		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
 
 		// One shot?
@@ -251,7 +253,7 @@ namespace SFM
 			*request.pIndex = iVoice;
 	}
 
-	// - Handle all requested voice releases
+	// - Hxandle all requested voice releases
 	// - Updates all voices as follows:
 	// - Update voices (includes termination)
 	// - Trigger all requested voices

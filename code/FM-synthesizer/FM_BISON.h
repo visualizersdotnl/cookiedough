@@ -29,12 +29,12 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
-		- Bug in filter (I think) used for MiniMOOG mode
-		- Pitch bend doesn't affect modulation, but it should
+		- My C:M table is completely full of shit: rethink and rebuild
 		- Implement first draft of operator
 
 	Wait for musician(s) to decide:
-		- How key velocity influences voices
+		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start
+		  of a voice *or* tweaking the individual use cases
 
 	Priority task:
 		- Jan Marguc says adding lowpassed noise to the modulation causes drift

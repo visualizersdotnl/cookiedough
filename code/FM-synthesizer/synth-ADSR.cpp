@@ -26,9 +26,8 @@ namespace SFM
 
 		// Harder touch, less linear
 		const float invVel = 1.f-velocity;
-		const float goldenOffs = kGoldenRatio*0.1f;
-		m_ADSR.setTargetRatioA(goldenOffs + invVel);
-		m_ADSR.setTargetRatioDR(invVel);
+		m_ADSR.setTargetRatioA(0.1f + invVel);
+		m_ADSR.setTargetRatioDR(0.1f + invVel);
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
@@ -42,7 +41,7 @@ namespace SFM
 	{
 		// Harder touch, less linear
 		const float invVel = 1.f-velocity;
-		m_ADSR.setTargetRatioDR(invVel);
+		m_ADSR.setTargetRatioDR(0.1f + invVel);
 
 		// Go into release state.
 		m_ADSR.gate(false);

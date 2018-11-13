@@ -47,8 +47,7 @@ namespace SFM
 				// Let us hope Sylvana Simons never reads this
 				const float slaves = SoftClamp(pVols[1]*B + pVols[2]*C);
 				const float filtered = m_LPF.Apply(slaves);
-
-				// Slight overdrive on main carrier
+				
 				sample = SoftClamp(pVols[0]*A + filtered);
 			}
 			break;

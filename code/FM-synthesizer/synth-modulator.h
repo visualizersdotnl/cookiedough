@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM -- Frequency modulator.
 
-	This type of modulator is specific to FM. BISON.
+	This type of modulator needs to be replaced by Operator class(es).
 */
 
 #pragma once
@@ -16,10 +16,12 @@ namespace SFM
 	{
 	private:
 		float m_index;
+		Oscillator m_indexLFO;
 
+	public:
+		// These are temporarily available for pitch bendss
 		Oscillator m_oscSoft;
 		Oscillator m_oscSharp;
-		Oscillator m_indexLFO;
 
 	public:		
 		void Initialize(unsigned sampleCount, float index, float freqPM, float freqAM);
