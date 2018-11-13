@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Non-oscillator lookup tables.
+	Syntherklaas FM -- Various lookup tables.
 */
 
 #include "synth-global.h"

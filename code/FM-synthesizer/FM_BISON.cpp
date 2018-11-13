@@ -198,8 +198,9 @@ namespace SFM
 		}
 
 		// Initialize freq. modulator
-		const float modFrequency = carrierFreq * (s_parameters.m_modRatioM/s_parameters.m_modRatioC);
-		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_modVibrato*goldenTen);
+		const float ratio = s_parameters.m_modRatioM/s_parameters.m_modRatioC;
+		const float modFrequency = frequency * powf(2.f, ratio/6.f);
+		voice.m_modulator.Initialize(s_sampleCount, s_parameters.m_modIndex, modFrequency, s_parameters.m_modVibrato*goldenTen * velocity /* Less velocity: less vibrato */);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;

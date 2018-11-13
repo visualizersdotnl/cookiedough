@@ -30,10 +30,11 @@
 
 	Tasks for 13/11:
 		- Implement first draft of Operator
+		- Review FM strategy
 
 	Priority task:
 		- Implement Operator class and integrate it with current structure (Voice/Modulator, eliminate the latter)
-		- Fix pitch bend
+		- Fix pitch bend?
 		- Fix bitcrusher, it sounds halfway stupid now
 		  + Maybe implement at another level?
 		- ** Await the Volca FM to learn more about FM synthesis **

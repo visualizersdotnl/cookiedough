@@ -1,6 +1,10 @@
 
 /*
-	Syntherklaas FM -- Non-oscillator lookup tables.
+	Syntherklaas FM -- Various lookup tables.
+
+	- Sine/Cosine
+	- Coarse FM frequency ratios
+	- Noise
 */
 
 #pragma once
