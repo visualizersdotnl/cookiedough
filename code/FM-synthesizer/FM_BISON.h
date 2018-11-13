@@ -28,20 +28,23 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
+	Tasks for 13/11:
+		- Implement first draft of Operator
+
 	Priority task:
 		- Implement Operator class and integrate it with current structure (Voice/Modulator, eliminate the latter)
 		- Fix pitch bend
 		- Fix bitcrusher, it sounds halfway stupid now
 		  + Maybe implement at another level?
-		- Await the Volca FM to learn more about FM synthesis
+		- ** Await the Volca FM to learn more about FM synthesis **
 		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator for drift
 		- The battle against clipping chords (in the works)
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
-		  + Step 2: Mmke oscillator (VCO) use them
+		  + Step 2: Make oscillator (VCO) use them
 
 	R&D tasks:
-		- Consider fine-tuning FM ratio
+		- Reconsider FM ratios
 		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
 		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
 		- Implement "sample & hold" noise
@@ -50,7 +53,7 @@
 		- First draft of manual
 
 	Plumbing:
-		- Make use of smoothed controls in MIDI (gradually as needed)
+		- Make use of smoothed (lowpassed) controls in MIDI 
 		- Flush ring buffer using 2 memcpy() calls
 		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole

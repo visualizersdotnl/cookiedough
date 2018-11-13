@@ -66,7 +66,7 @@ namespace SFM
 	const float kMOOGDetuneRange = 24.f;
 
 	// Pitch bend rane (in semitones)
-	const float kPitchBendRange = 16.f;
+	const float kPitchBendRange = 12.f;
 
 	// Feedback amplitude	
 	const float kFeedbackAmplitude = kRootHalf; // ~3dB

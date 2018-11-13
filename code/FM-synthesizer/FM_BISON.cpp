@@ -452,12 +452,12 @@ namespace SFM
 		mix = mix + s_parameters.m_feedbackWetness*delayed;
 	}
 
-	// Molests a sample down to about 4-bit
+	// Shave bits off sample
 	// This used to be slow (conversion) but with the right parameters the compiler doesn't make it a big deal
 	SFM_INLINE float Nintendize(float sample)
 	{
 		int8_t quantized = int8_t(sample*127.f);
-		quantized &= ~31;
+		quantized &= ~63;
 		return quantized/127.f;
 	}
 
