@@ -27,9 +27,11 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Extra priority tasks:
-		- Fix bitcrusher, it sounds stupid now
-		- Cascade pitch bend?
 		- Create operator class and turn voice into an algorithm (eliminate SFM::Modulator?)
+		  + The idea seems to be that an operator is defined purely by a ratio of the base frequency, just like I do now with the single Modulator instance
+		  + Await the VOLCA FM before you do more work on this, rather do some pulmbing tasks
+		- Fix bitcrusher, it sounds halfway stupid now
+		- Cascade pitch bend?
 		- The battle against clipping chords (in the works)
 		- Idea for note drift: Jan Marguc says to add blurred noise to the modulator
 
@@ -65,7 +67,7 @@
 		- Profiling & optimization
 
 	Known bugs:
-		- Sometimes an ADSR seems to hang up a voice; or is it a race-condition on NOTE_OFF?
+		- NOTE_OFF doesn't always get processed (I think it's the MIDI code)
 		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)
 

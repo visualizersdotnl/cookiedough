@@ -254,6 +254,19 @@ namespace SFM
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
+		// Process release requests
+		for (auto &request : s_voiceReleaseReq)
+		{
+			SFM_ASSERT(-1 != request.index);
+			
+			Voice &voice = s_voices[request.index];
+
+			// Stop voice ADSR; filter ADSR just sustains, and that should be OK
+			s_ADSRs[request.index].Stop(s_sampleCount, request.velocity);
+
+			Log("Voice released: " + std::to_string(request.index));
+		}
+
 		// Update active voices
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
@@ -286,19 +299,6 @@ namespace SFM
 					--s_active;
 				}
 			}
-		}
-
-		// Process release requests
-		for (auto &request : s_voiceReleaseReq)
-		{
-			SFM_ASSERT(-1 != request.index);
-			
-			Voice &voice = s_voices[request.index];
-
-			// Stop voice ADSR; filter ADSR just sustains, and that should be OK
-			s_ADSRs[request.index].Stop(s_sampleCount, request.velocity);
-
-			Log("Voice released: " + std::to_string(request.index));
 		}
 
 		while (s_voiceReq.size() > 0 && s_active < kMaxVoices-1)
