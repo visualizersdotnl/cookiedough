@@ -70,6 +70,9 @@ namespace SFM
 
 	// Feedback amplitude	
 	const float kFeedbackAmplitude = kRootHalf; // ~3dB
+
+	// Base note Hz
+	const float kBaseHz = 440.f;
 }
 
 #include "synth-LUT.h"

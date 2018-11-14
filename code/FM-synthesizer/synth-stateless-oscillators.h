@@ -261,7 +261,7 @@ namespace SFM
 	class WavetableOscillator
 	{
 	public:
-		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitones, float baseHz = 220.f /* A3 */) :
+		WavetableOscillator(const uint8_t *pTable, unsigned length, int octaveOffs, int semitones, float baseHz = kBaseHz) :
 			m_pTable(reinterpret_cast<const float*>(pTable))
 ,			m_numSamples(length/sizeof(float))
 	{

@@ -11,7 +11,7 @@ namespace SFM
 {
 	// LUT to get frequency for a MIDI key
 	extern float g_midiToFreqLUT[127];
-	void CalculateMidiToFrequencyLUT(float baseFreq = 440.f);
+	void CalculateMidiToFrequencyLUT();
 
 	// Taken from (though I later added what I needed): https://github.com/FluidSynth/fluidsynth/blob/master/src/midi/fluid_midi.h
 	enum MIDI_EventType

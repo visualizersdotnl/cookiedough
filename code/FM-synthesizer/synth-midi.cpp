@@ -10,9 +10,9 @@ namespace SFM
 {
 	float g_midiToFreqLUT[127];
 
-	void CalculateMidiToFrequencyLUT(float baseFreq)
+	void CalculateMidiToFrequencyLUT()
 	{
-		const float base = baseFreq;
+		const float base = kBaseHz;
 		for (unsigned iKey = 0; iKey < 127; ++iKey)
 		{
 			const float frequency = base * powf(2.f, (iKey-69.f)/12.f);
