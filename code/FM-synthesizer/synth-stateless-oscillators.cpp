@@ -11,6 +11,7 @@
 #include "wavetable/wavSnare808.h" 
 #include "wavetable/wavGuitar.h"
 #include "wavetable/wavElecPiano.h"
+#include "wavetable/wavFemale.h"
 
 namespace SFM
 {
@@ -27,9 +28,11 @@ namespace SFM
 	static WavetableOscillator s_snareOsc(g_wavSnare808, sizeof(g_wavSnare808), 2, 0, 220.f);           // Tuned OK
 	static WavetableOscillator s_guitarOsc(g_wavGuitar, sizeof(g_wavGuitar), 1, -4, 130.81f);           // Tuned OK
 	static WavetableOscillator s_elecPianoOsc(g_wavElecPiano, sizeof(g_wavElecPiano), -1, -3, 261.63f); // Tuned OK
+	static WavetableOscillator s_femaleOsc(g_wavFemale, sizeof(g_wavFemale), -2, -2, 233.1f);           // Tuned OK-ish (FIXME)
 	
 	WavetableOscillator &getOscKick808()   { return s_kickOsc;   }
 	WavetableOscillator &getOscSnare808()  { return s_snareOsc;  }
 	WavetableOscillator &getOscGuitar()    { return s_guitarOsc; }
 	WavetableOscillator &getOscElecPiano() { return s_elecPianoOsc; }
+	WavetableOscillator &getOscFemale()    { return s_femaleOsc; }
 }

@@ -48,12 +48,13 @@ namespace SFM
 		kKick808,
 		kSnare808,
 		kGuitar,
-		kElectricPiano
+		kElectricPiano,
+		kFemale
 	};
 
 	SFM_INLINE bool oscIsWavetable(Waveform form)
 	{
-		return form >= kKick808 && form <= kElectricPiano;
+		return form >= kKick808 && form <= kFemale;
 	}
 
 	SFM_INLINE bool oscIsProcedural(Waveform form)
@@ -300,4 +301,5 @@ namespace SFM
 	WavetableOscillator &getOscSnare808();
 	WavetableOscillator &getOscGuitar();
 	WavetableOscillator &getOscElecPiano();
+	WavetableOscillator &getOscFemale();
 }

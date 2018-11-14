@@ -102,6 +102,10 @@ namespace SFM
 			case kElectricPiano:				
 				signal = getOscElecPiano().Sample(phase);
 				break;
+
+			case kFemale:
+				signal = getOscFemale().Sample(phase);
+				break;
 		}
 
 		signal *= m_amplitude;

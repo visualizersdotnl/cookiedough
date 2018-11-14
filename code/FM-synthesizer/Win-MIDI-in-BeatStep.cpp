@@ -279,7 +279,8 @@ namespace SFM
 						break;
 
 					case kButtonOscGuitar:
-						s_waveform = kGuitar;
+						s_waveform = kFemale;
+//						s_waveform = kGuitar;
 						break;
 
 					default:

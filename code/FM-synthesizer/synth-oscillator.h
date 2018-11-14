@@ -49,7 +49,7 @@ namespace SFM
 			}
 			else
 			{
-				// Wavetables have their own period length
+				// Wavetables have their own period length (FIXME)
 				switch (form)
 				{
 				case kKick808:
@@ -66,6 +66,10 @@ namespace SFM
 
 				case kElectricPiano:
 					m_period = getOscElecPiano().GetLength();
+					break;
+
+				case kFemale:
+					m_period = getOscFemale().GetLength();
 					break;
 				
 				default:
