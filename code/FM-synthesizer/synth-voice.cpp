@@ -31,7 +31,7 @@ namespace SFM
 			break;
 
 		case kDoubleCarriers:
-			sample  = fast_tanhf(m_carriers[0].Sample(drift, modulation, pulseWidth) + parameters.m_doubleVolume*m_carriers[1].Sample(drift, modulation, pulseWidth));
+			sample  = fast_tanhf(m_carriers[0].Sample(drift, modulation, pulseWidth) + m_carriers[1].Sample(drift, modulation, pulseWidth));
 			sample *= firstCarrierMul; // Carrier #2 is a copy of #1
 			break;
 

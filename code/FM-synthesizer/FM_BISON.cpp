@@ -142,8 +142,10 @@ namespace SFM
 
 		frequency *= jitter;
 
-		const float velocity    = request.velocity;
-		const float velocityExp = velocity*velocity;
+		// Each has a distinct effect (linear, exponential, inverse exponential)
+		const float velocity       = request.velocity;
+		const float velocityExp    = velocity*velocity;
+		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
 		const bool  isWave = oscIsWavetable(request.form);
 
@@ -164,9 +166,11 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 
-				// Initialize a detuned second carrier by going from equal to a perfect-fifth semitone (gives a thicker, almost phaser-like sound)
-				const float detune = powf(3.f/2.f, s_parameters.m_doubleDetune/12.f);
-				voice.m_carriers[1].Initialize(request.form, carrierFreq*detune, amplitude*dBToAmplitude(-3.f));
+				const float detune = powf(2.f, (0.01f*s_parameters.m_doubleDetune)/12.f);
+				const float slaveFreq = carrierFreq*detune;
+
+				voice.m_carriers[1].Initialize(request.form, slaveFreq, s_parameters.m_doubleVolume*amplitude*dBToAmplitude(-3.f));
+//				voice.m_carriers[1].SyncTo(carrierFreq);
 			}	
 
 			break;
@@ -203,14 +207,14 @@ namespace SFM
 		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
 		const float ratio = s_parameters.m_modRatioM;
 		const float modFrequency = carrierFreq*ratio;
-		const float modIndex = s_parameters.m_modIndex*velocityExp;
+		const float modIndex = s_parameters.m_modIndex*velocity;
 		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
 
 		voice.m_modulator.Initialize(s_sampleCount, modIndex, modFrequency, modVibrato);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
-		const float tremoloFreq = tremolo*0.25f*goldenTen*velocityExp;
+		const float tremoloFreq = tremolo*0.25f*goldenTen * velocityExp;
 		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
 
 		// One shot?
