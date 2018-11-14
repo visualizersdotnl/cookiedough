@@ -30,6 +30,7 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 13/11:
+		- Are samples all -1/+1 octave?
 		- Implement first draft of operator
 
 	Wait for musician(s) to decide:
