@@ -3,7 +3,7 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 	
-	A polyphonic hybrid FM/PCM synthesis engine.
+	A polyphonic hybrid synthesis engine.
 
 	Beta testers for the VST:
 		- Ronny Pries
@@ -39,6 +39,7 @@
 	Priority task:
 		- Jan Marguc says adding lowpassed noise to the modulation causes drift
 
+	Wavetable VCOs:
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Make oscillator (VCO) use them
@@ -56,16 +57,16 @@
 		- Flush ring buffer using 2 memcpy() calls
 		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
+		- Profiling & optimization
 
-	Research:
-		- Learn more about portamento et cetera and investigate a monophonic mode
+	R&D low priority:
+		- Learn more about portamento et cetera and consider a monophonic mode
 		- Read about filters a bit more
 		- MinBLEP
 		- Real variable delay line
-		- Profiling & optimization
 
 	Known bugs:
-		- Some controls should respond non-linear
+		- Some controls should respond in a non-linear fashion
 		- NOTE_OFF doesn't always get processed (I think it's the MIDI code, reproduce by letting a key "bounce")
 		- MIDI pots crackle a bit (not important for intended target, but can be fixed with MIDI_Smoothed!)
 		- Crackle when bottlenecked (should not be the case in production phase)

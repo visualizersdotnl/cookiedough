@@ -19,7 +19,7 @@ namespace SFM
 		Oscillator m_indexLFO;
 
 	public:
-		// These are temporarily available for pitch bendss
+		// These are temporarily available for pitch bend
 		Oscillator m_oscSoft;
 		Oscillator m_oscSharp;
 
