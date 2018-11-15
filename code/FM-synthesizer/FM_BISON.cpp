@@ -544,7 +544,6 @@ namespace SFM
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const unsigned sampleCount = s_sampleCount+iSample;
 						/* const */ float sample = voice.Sample(s_parameters);
 
 						// Blend with Nintendized version
@@ -565,7 +564,6 @@ namespace SFM
 					// Apply ADSR
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						const unsigned sampleCount = s_sampleCount+iSample;
 						const float ADSR = voiceADSR.Sample();
 						const float sample = buffer[iSample];
 						buffer[iSample] = sample*ADSR;
