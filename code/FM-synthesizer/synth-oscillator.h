@@ -82,8 +82,8 @@ namespace SFM
 			// No sync.
 			SyncTo(frequency);
 
-			m_phase = 0.f;
 			m_cycles = 0;
+			m_phase = 0.f;
 		}
 
 		// Synchronize to freq. (hard sync.)
@@ -112,6 +112,6 @@ namespace SFM
 		float GetPeriodLength() const { return m_period;      }
 		bool HasCycled() const        { return 0 != m_cycles; }
 
-		float Sample(float drift, float modulation, float duty = 0.5f);
+		float Sample(float modulation, float duty = 0.5f);
 	};
 }

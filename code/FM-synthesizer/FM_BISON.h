@@ -31,16 +31,13 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	Tasks for 15-16/11:
-		- Get rid of sample count where possible
+		- Implement a decent phase drift
 		- Implement first draft of operator
 		- Ask around if non-linear response to controls is something you'd want in VST
 
 	Wait for musician(s) to decide:
 		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start
 		  of a voice *or* tweaking the individual use cases
-
-	Priority task:
-		- Jan Marguc says adding lowpassed noise to the modulation causes drift
 
 	Wavetable VCOs:
 		- Precalculate wavetables for all oscillators and use them
@@ -57,6 +54,7 @@
 		- First draft of manual
 
 	Plumbing:
+		- Noise type switch is now done in MIDI driver (move it)
 		- Flush ring buffer using 2 memcpy() calls
 		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole

@@ -19,8 +19,8 @@ namespace SFM
 
 	float Modulator::Sample(float brightness)
 	{
-		const float modulation = lerpf<float>(m_oscSoft.Sample(0.f, 0.f), m_oscSharp.Sample(0.f, 0.f), brightness);
-		const float index = m_index*m_indexLFO.Sample(0.f, 0.f);
+		const float modulation = lerpf<float>(m_oscSoft.Sample(0.f), m_oscSharp.Sample(0.f), brightness);
+		const float index = m_index*m_indexLFO.Sample(0.f);
 
 		SampleAssert(modulation);
 		FloatAssert(index);

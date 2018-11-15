@@ -231,9 +231,9 @@ namespace SFM
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
 	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
-	SFM_INLINE float oscPinkNoise()
+	SFM_INLINE float oscPinkNoise(float phase)
 	{
-		const float white = -1.f + 2.f*mt_randf();
+		const float white = oscWhiteNoise(phase);
 
 		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
 		static float pink = kGoldenRatio/2.f;

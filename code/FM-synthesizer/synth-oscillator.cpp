@@ -8,7 +8,7 @@
 
 namespace SFM
 {
-	float Oscillator::Sample(float drift, float modulation, float duty /* = 0.5f */)
+	float Oscillator::Sample(float modulation, float duty /* = 0.5f */)
 	{	
 		if (m_phase >= m_syncPeriod)
 		{
@@ -82,7 +82,7 @@ namespace SFM
 				break;
 
 			case kPinkNoise:
-				signal = oscPinkNoise();
+				signal = oscPinkNoise(modulated);
 				break;
 
 			/* Wavetable (not modulated!) */
