@@ -202,10 +202,9 @@ namespace SFM
 	SFM_INLINE float oscPolyTriangle(float phase, float frequency)
 	{
 		phase = fabsf(fmodf(phase, 1.f));
-		
+
 		const float square = oscPolyPulse(phase, frequency, 0.5f);
 
-		// FIXME: turn this into something decent!
 		float triangle;
 		if (phase < 0.25f)
 			triangle = square*phase;

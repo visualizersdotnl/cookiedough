@@ -149,7 +149,7 @@ namespace SFM
 
 		// Each has a distinct effect (linear, exponential, inverse exponential)
 		const float velocity       = request.velocity;
-		const float velocityExp    = velocity*velocity;
+//		const float velocityExp    = velocity*velocity;
 		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
 		const bool  isWave = oscIsWavetable(request.form);
@@ -171,8 +171,8 @@ namespace SFM
 			{
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
 				
-				// Detune to one cent max. (sounds a bit like contained ring modulation)
-				const float detune = powf(2.f, (0.01f*s_parameters.m_doubleDetune)/12.f);
+				// Detune to two cent max. (sounds a bit like contained ring modulation)
+				const float detune = powf(2.f, (0.02f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
 				voice.m_carriers[1].Initialize(request.form, slaveFreq, s_parameters.m_doubleVolume*amplitude*dBToAmplitude(-3.f));
@@ -213,14 +213,14 @@ namespace SFM
 		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
 		const float ratio = s_parameters.m_modRatioM;
 		const float modFrequency = carrierFreq*ratio;
-		const float modIndex = s_parameters.m_modIndex*velocity;
-		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
+		const float modIndex = s_parameters.m_modIndex*velocityInvExp;
+		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocity;
 
 		voice.m_modulator.Initialize(modIndex, modFrequency, modVibrato);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
-		const float tremoloFreq = tremolo*0.25f*goldenTen * velocityExp;
+		const float tremoloFreq = tremolo*0.25f*goldenTen * velocity;
 		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
 
 		// One shot?
@@ -688,7 +688,7 @@ bool Syntherklaas_Create()
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	// Test
-//	OscTest();
+	OscTest();
 
 	return true == midiIn && audioOut;
 }

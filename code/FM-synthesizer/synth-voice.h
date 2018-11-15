@@ -51,7 +51,7 @@ namespace SFM
 
 		void PitchBend(float bend)
 		{
-			// Bend carriersss
+			// Bend carriers
 			m_carriers[0].PitchBend(bend);
 			m_carriers[2].PitchBend(bend);
 			m_carriers[3].PitchBend(bend);
