@@ -202,7 +202,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-formant.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-operator.cpp">
+    <ClCompile Include="..\code\FM-synthesizer\synth-DX-voice.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -411,7 +411,7 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-simple-filters.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-operator.h">
+    <ClInclude Include="..\code\FM-synthesizer\synth-DX-voice.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
   </ItemGroup>

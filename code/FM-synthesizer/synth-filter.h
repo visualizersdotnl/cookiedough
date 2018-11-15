@@ -58,7 +58,7 @@ namespace SFM
 
 		void Start(unsigned sampleCount, const ADSR::Parameters &parameters, float velocity)
 		{
-			m_ADSR.Start(sampleCount, parameters, velocity);
+			m_ADSR.Start(parameters, velocity);
 		}
 
 		virtual void SetLiveParameters(const FilterParameters &parameters)

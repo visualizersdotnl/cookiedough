@@ -1,6 +1,11 @@
 
 /*
 	Syntherklaas FM - Voice.
+
+	This is actually a multiple FM operator setup but built from a different (subtractive synthesis) perspective; it will in due time
+	be replaced by DX_Voice.
+
+	Number of operators: 6 at max.
 */
 
 #pragma once
@@ -42,7 +47,7 @@ namespace SFM
 		// Filter instance for this particular voice
 		LadderFilter *m_pFilter;
 
-		float Sample(unsigned sampleCount, const Parameters &parameters);
+		float Sample(const Parameters &parameters);
 
 		void PitchBend(float bend)
 		{
@@ -54,10 +59,11 @@ namespace SFM
 			// Bend modulator
 			m_modulator.m_oscSoft.PitchBend(bend);
 			m_modulator.m_oscSharp.PitchBend(bend);
+			m_modulator.m_indexLFO.PitchBend(bend);
 		}
 
 		// Can be used to determine if a one-shot is done
-		bool HasCycled(unsigned sampleCount) /* const */
+		bool HasCycled() /* const */
 		{
 			switch (m_algorithm)
 			{

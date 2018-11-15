@@ -28,12 +28,10 @@ namespace SFM
 			float sustain;
 		};
 
-		unsigned m_sampleOffs;
-
 		::ADSR m_ADSR;
 
-		void Start(unsigned sampleCount, const Parameters &parameters, float velocity);
-		void Stop(unsigned sampleCount, float velocity);
+		void Start(const Parameters &parameters, float velocity);
+		void Stop(float velocity /* Aftertouch */);
 
 		void Reset()
 		{

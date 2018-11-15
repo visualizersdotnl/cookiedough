@@ -8,13 +8,13 @@
 
 namespace SFM
 {
-	float Voice::Sample(unsigned sampleCount, const Parameters &parameters)
+	float Voice::Sample(const Parameters &parameters)
 	{
 		// Silence one-shots
-		const int firstCarrierMul = !(true == m_oneShot && true == HasCycled(sampleCount));
+		const int firstCarrierMul = !(true == m_oneShot && true == HasCycled());
 
 		// Get FM
-		const float modulation = m_modulator.Sample(sampleCount, parameters.m_modBrightness);
+		const float modulation = m_modulator.Sample(parameters.m_modBrightness);
 
 		// Sample carrier(s)
 		float sample = 0.f;

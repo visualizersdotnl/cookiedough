@@ -8,11 +8,9 @@
 
 namespace SFM
 {
-	void ADSR::Start(unsigned sampleCount, const Parameters &parameters, float velocity)
+	void ADSR::Start(const Parameters &parameters, float velocity)
 	{
 		m_ADSR.reset();
-
-		m_sampleOffs = sampleCount;
 
 		// 25% shorter attack & 100% longer release on max. velocity
 		const float attackScale  = 1.f - 0.25f*velocity;
@@ -37,7 +35,7 @@ namespace SFM
 		m_ADSR.gate(true);
 	}
 
-	void ADSR::Stop(unsigned sampleCount, float velocity)
+	void ADSR::Stop(float velocity)
 	{
 		// Harder touch, less linear
 		const float invVel = 1.f-velocity;

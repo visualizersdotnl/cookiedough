@@ -16,15 +16,15 @@ namespace SFM
 	{
 	private:
 		float m_index;
-		Oscillator m_indexLFO; // This one should probably bend as well (FIXME)
 
 	public:
-		// These are temporarily available for pitch bend
+		// These are temporarily (?) available for pitch bend
 		Oscillator m_oscSoft;
 		Oscillator m_oscSharp;
+		Oscillator m_indexLFO;
 
 	public:		
-		void Initialize(unsigned sampleCount, float index, float freqPM, float freqAM);
-		float Sample(unsigned sampleCount, float brightness);
+		void Initialize(float index, float freqPM, float freqAM);
+		float Sample(float brightness);
 	};
 }

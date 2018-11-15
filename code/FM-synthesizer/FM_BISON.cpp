@@ -215,7 +215,7 @@ namespace SFM
 		const float modIndex = s_parameters.m_modIndex*velocity;
 		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocityExp;
 
-		voice.m_modulator.Initialize(s_sampleCount, modIndex, modFrequency, modVibrato);
+		voice.m_modulator.Initialize(modIndex, modFrequency, modVibrato);
 
 		// Initialize amplitude modulator (or 'tremolo')
 		const float tremolo = s_parameters.m_tremolo;
@@ -251,7 +251,7 @@ namespace SFM
 		voice.m_pFilter->Reset();	
 
 		// Set ADSRs (voice & filter)
-		s_ADSRs[iVoice].Start(s_sampleCount, s_parameters.m_voiceADSR, velocity);
+		s_ADSRs[iVoice].Start(s_parameters.m_voiceADSR, velocity);
 		voice.m_pFilter->Start(s_sampleCount, s_parameters.m_filterADSR, velocity);
 
 		// Reset formant shaper
@@ -281,7 +281,7 @@ namespace SFM
 			Voice &voice = s_voices[request.index];
 
 			// Stop voice ADSR; filter ADSR just sustains, and that should be OK
-			s_ADSRs[request.index].Stop(s_sampleCount, request.velocity);
+			s_ADSRs[request.index].Stop(request.velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -308,7 +308,7 @@ namespace SFM
 
 				// One-shot done?
 				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm (see synth-voice.cpp)
-				if (kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled(s_sampleCount)))
+				if (kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled()))
 					free = true;
 				
 				// Free
@@ -545,7 +545,7 @@ namespace SFM
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const unsigned sampleCount = s_sampleCount+iSample;
-						/* const */ float sample = voice.Sample(sampleCount, s_parameters);
+						/* const */ float sample = voice.Sample(s_parameters);
 
 						// Blend with Nintendized version
 						const float Nintendized = Nintendize(sample);

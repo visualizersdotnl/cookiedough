@@ -30,7 +30,8 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Tasks for 13/11:
+	Tasks for 15-16/11:
+		- Get rid of sample count where possible
 		- Implement first draft of operator
 		- Ask around if non-linear response to controls is something you'd want in VST
 
