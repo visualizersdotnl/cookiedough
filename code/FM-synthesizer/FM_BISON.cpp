@@ -71,14 +71,19 @@ namespace SFM
 	static std::deque<VoiceReleaseRequest> s_voiceReleaseReq;
 
 	static Parameters s_parameters;
+
 	static Voice s_voices[kMaxVoices];
 	static unsigned s_active = 0;
 	static ADSR s_ADSRs[kMaxVoices];
-	static TeemuFilter s_teemuFilters[kMaxVoices];
+
 	static ButterworthFilter s_butterFilters[kMaxVoices];
+	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
+
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
+
 	static FormantShaper s_formantShapers[kMaxVoices];
+
 	static LowpassFilter s_bassBoostLPF;
 	
 	/*
@@ -165,7 +170,7 @@ namespace SFM
 		case kDoubleCarriers:
 			{
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
-
+					
 				const float detune = powf(2.f, (0.01f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
@@ -227,15 +232,18 @@ namespace SFM
 		switch (s_parameters.m_curFilter)
 		{
 		default:
-		case kTeemuFilter: // A bit more expressive (default)
-			voice.m_pFilter = s_teemuFilters+iVoice;
-			break;
-
-		case kButterworthFilter: // Completely different response curve than either other (harsher, "wider" resonance)
+		// Agressive and punchy filter; perfect default
+		case kButterworthFilter:
 			voice.m_pFilter = s_butterFilters+iVoice;
 			break;
 
-		case kImprovedMOOGFilter:
+		// Ladder filter that's a bit more expressive
+		case kTeemuFilter: 
+			voice.m_pFilter = s_teemuFilters+iVoice;
+			break;
+
+		// Rather tame, but has the tendency to self-oscillate quickly at higher resonance
+		case kImprovedMOOGFilter:  
 			voice.m_pFilter = s_improvedFilters+iVoice;
 			break;
 		}

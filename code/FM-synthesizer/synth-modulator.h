@@ -16,7 +16,7 @@ namespace SFM
 	{
 	private:
 		float m_index;
-		Oscillator m_indexLFO;
+		Oscillator m_indexLFO; // This one should probably bend as well (FIXME)
 
 	public:
 		// These are temporarily available for pitch bend

@@ -148,7 +148,7 @@ namespace SFM
 			m_filterADSR.release = 0.f;
 
 			// Default filter
-			m_curFilter = kTeemuFilter;
+			m_curFilter = kButterworthFilter;
 			m_filterContour = 0.f;
 			m_flipFilterEnv = false;
 			m_filterParams.drive = 1.f;

@@ -18,8 +18,8 @@ namespace SFM
 
 	enum VoiceFilter
 	{
-		kTeemuFilter,
 		kButterworthFilter,
+		kTeemuFilter,
 		kImprovedMOOGFilter,
 		kNumFilters
 	};

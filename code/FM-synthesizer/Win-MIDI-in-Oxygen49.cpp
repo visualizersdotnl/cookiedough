@@ -89,7 +89,7 @@ namespace SFM
 	const unsigned kButtonAlgoMiniMOOG = 98;         // C20
 	const unsigned kButtonFlipFilterEnv = 117;       // C29
 
-	static VoiceFilter s_curFilter = kTeemuFilter;
+	static VoiceFilter s_curFilter = kButterworthFilter;
 	static int s_loopWaves = 0;
 	static Algorithm s_algorithm = kSingle;
 	static bool s_flipFilterEnv = false;

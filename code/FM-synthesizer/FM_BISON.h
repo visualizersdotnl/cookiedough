@@ -2,6 +2,7 @@
 
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
+	Precursor to the 'GENERALISSIMO FM'
 	
 	A polyphonic hybrid synthesis engine.
 
@@ -31,6 +32,7 @@
 
 	Tasks for 13/11:
 		- Implement first draft of operator
+		- Ask around if non-linear response to controls is something you'd want in VST
 
 	Wait for musician(s) to decide:
 		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start
