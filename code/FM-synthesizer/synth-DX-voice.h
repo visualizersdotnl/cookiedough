@@ -1,6 +1,12 @@
 
 /*
 	Syntherklaas FM - DX-style matrix voice.
+
+	Step by step implementation:
+		- Copy voice spawn function and modify it to create on of these.
+		- Sample this function.
+		- Complete all 3 algorithms in FM_BISON.
+		- Try Yamaha DX7's algorithm 5.
 */
 
 #pragma once
@@ -12,7 +18,7 @@
 namespace SFM
 {
 	// FIXME: move to synth-global.h?
-	const unsigned kNumOperators = 4;
+	const unsigned kNumOperators = 6;
 
 	// Initialized manually
 	class DX_Voice
@@ -25,6 +31,16 @@ namespace SFM
 
 //	public:
 		DX_Voice() : m_enabled(false) {}
+
+		void Reset()
+		{
+			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+			{
+				m_operators[iOp].Initialize(kCosine, 0.f, 1.f);
+				m_routing[iOp] = -1;
+				m_isCarrier[iOp] = false;
+			}
+		}
 
 		float Sample()
 		{
