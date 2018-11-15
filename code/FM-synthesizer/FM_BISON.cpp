@@ -170,7 +170,8 @@ namespace SFM
 		case kDoubleCarriers:
 			{
 				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
-					
+				
+				// Detune to one cent max. (sounds a bit like contained ring modulation)
 				const float detune = powf(2.f, (0.01f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
 
