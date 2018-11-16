@@ -222,17 +222,16 @@ namespace SFM
 		Noise oscillator(s).
 	*/
 
-	SFM_INLINE float oscWhiteNoise(float phase)
+	SFM_INLINE float oscWhiteNoise()
 	{
-		// No need for the noise LUT (FIXME: yet)
-		return lutnoisef(phase + mt_randf());
+		return -1.f + mt_randf()*2.f;
 	}
 
 	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
 	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
 	SFM_INLINE float oscPinkNoise(float phase)
 	{
-		const float white = oscWhiteNoise(phase);
+		const float white = oscWhiteNoise();
 
 		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
 		static float pink = kGoldenRatio/2.f;

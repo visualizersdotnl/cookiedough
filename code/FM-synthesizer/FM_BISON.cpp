@@ -21,6 +21,7 @@
 #include "synth-math.h"
 #include "synth-LUT.h"
 #include "synth-formant.h"
+#include "synth-DX-voice.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -67,23 +68,24 @@ namespace SFM
 		float velocity;
 	};
 
+	// Voice req.
 	static std::deque<VoiceRequest> s_voiceReq;
 	static std::deque<VoiceReleaseRequest> s_voiceReleaseReq;
 
+	// Parameters
 	static Parameters s_parameters;
 
-	static Voice s_voices[kMaxVoices];
+	// Voices
+	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
-	static ADSR s_ADSRs[kMaxVoices];
+	static ADSR s_voiceADSRs[kMaxVoices];
 
+	// FX
 	static ButterworthFilter s_butterFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
 	static ImprovedMOOGFilter s_improvedFilters[kMaxVoices];
-
 	static DelayMatrix s_delayMatrix(kSampleRate/8); // Div. by multiples of 4 sounds OK
-
 	static FormantShaper s_formantShapers[kMaxVoices];
-
 	static LowpassFilter s_bassBoostLPF;
 	
 	/*
@@ -125,19 +127,19 @@ namespace SFM
 		Voice logic.
 	*/
 
-	static void InitializeVoice(const VoiceRequest &request, unsigned iVoice)
+	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
-		Voice &voice = s_voices[iVoice];
-
+		DX_Voice &voice = s_DXvoices[iVoice];
+		
 		const float goldenTen = kGoldenRatio*10.f;
 
 		float frequency = request.frequency;
 		
 		// Randomize note frequency little if wanted (in (almost) entire cents)
 		const float drift = kMaxNoteDrift*s_parameters.m_noteDrift;
-		const int cents = int(oscWhiteNoise(mt_randf())*drift);
+		const int cents = int(ceilf(oscWhiteNoise()*drift));
 		
 		float jitter = 1.f;
 		if (0 != cents)
@@ -154,71 +156,155 @@ namespace SFM
 		
 		const bool  isWave = oscIsWavetable(request.form);
 
-		// Algorithm
-		voice.m_algorithm = s_parameters.m_algorithm;
-	
-		// Initialize carrier(s)
+		// Carrier amplitude & frequency
 		const float amplitude = velocity*kMaxVoiceAmp;
 		const float carrierFreq = frequency;
-	
-		switch (voice.m_algorithm)
+
+		// Modulation ratio, frequency & index
+		const float modRatio   = s_parameters.m_modRatioM;
+		const float modFreq    = carrierFreq*modRatio;
+		const float modIndex   = s_parameters.m_modIndex*velocityInvExp;
+		const float brightness = s_parameters.m_modBrightness;
+
+		// Set up algorithm (hardcoded, could consider a table of sorts)
+		switch (s_parameters.m_algorithm)
 		{
-		case kSingle:
-			voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
-			break;
-
-		case kDoubleCarriers:
+		default:
+		/*
+			Single carrier & modulator
+		*/
+		case Algorithm::kSingle:
 			{
-				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude);
-				
-				// Detune to two cent max. (sounds a bit like contained ring modulation)
-				const float detune = powf(2.f, (0.02f*s_parameters.m_doubleDetune)/12.f);
+				// Carrier
+				voice.m_operators[0].enabled = true;
+				voice.m_operators[0].routing = 1;
+				voice.m_operators[0].isCarrier = true;
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+				voice.m_operators[0].isSlave = false;
+
+				// Modulator #1 (sine)
+				voice.m_operators[1].enabled = true;
+				voice.m_operators[1].routing = 2;
+				voice.m_operators[1].isCarrier = false;
+				voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[1].isSlave = false;
+
+				// Modulator #2 (triangle, sharper)
+				voice.m_operators[2].enabled = true;
+				voice.m_operators[2].routing = -1;
+				voice.m_operators[2].isCarrier = false;
+				voice.m_operators[2].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[2].isSlave = false;
+			}
+
+		/*
+			Dual carrier with slight detune
+		*/
+		case Algorithm::kDoubleCarriers:
+			{
+				// Carrier #1
+				voice.m_operators[0].enabled = true;
+				voice.m_operators[0].routing = 2;
+				voice.m_operators[0].isCarrier = true;
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+
+				// Detune a few cents (sounds a bit like contained ring modulation)
+				const float detune = powf(2.f, (0.04f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*detune;
+				const float slaveAmp = s_parameters.m_doubleVolume*amplitude*dBToAmplitude(-3.f);
 
-				voice.m_carriers[1].Initialize(request.form, slaveFreq, s_parameters.m_doubleVolume*amplitude*dBToAmplitude(-3.f));
-//				voice.m_carriers[1].SyncTo(carrierFreq);
-			}	
+				// Carrier #2
+				voice.m_operators[1].enabled = true;
+				voice.m_operators[1].routing = 2;
+				voice.m_operators[1].isCarrier = true;
+				voice.m_operators[1].oscillator.Initialize(request.form, slaveFreq, slaveAmp);
+				voice.m_operators[1].isSlave = false;
+
+				// Modulator #1 (sine)
+				voice.m_operators[2].enabled = true;
+				voice.m_operators[2].routing = 3;
+				voice.m_operators[2].isCarrier = false;
+				voice.m_operators[2].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[2].isSlave = false;
+
+				// Modulator #2 (triangle, sharper)
+				voice.m_operators[3].enabled = true;
+				voice.m_operators[3].routing = -1;
+				voice.m_operators[3].isCarrier = false;
+				voice.m_operators[3].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[3].isSlave = false;
+			}
 
 			break;
 
-		case kMiniMOOG:
+		/*
+			MiniMOOG model D-style 3 carriers with detune (can be synchronized)
+		*/
+		case Algorithm::kMiniMOOG:
 			{
-				voice.m_carriers[0].Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
+				// Carrier #1
+				voice.m_operators[0].enabled = true;
+				voice.m_operators[0].routing = 3;
+				voice.m_operators[0].isCarrier = true;
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
 
+				// Detune a few cents (sounds a bit like contained ring modulation)
 				const float amount = -1.f*kMOOGDetuneRange + 2.f*s_parameters.m_slavesDetune*kMOOGDetuneRange;
 				const float detune = powf(2.f, amount/12.f);
 				const float slaveFreq = carrierFreq*detune;
-
-				// Reduced amplitude for slaves
 				const float slaveAmp = amplitude*dBToAmplitude(-3.f);
 
-				voice.m_carriers[1].Initialize(WinMidi_GetCarrierOscillator2(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
-				voice.m_carriers[2].Initialize(WinMidi_GetCarrierOscillator3(), slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
+				// Carrier #2
+				voice.m_operators[1].enabled = true;
+				voice.m_operators[1].routing = 3;
+				voice.m_operators[1].isCarrier = true;
+				voice.m_operators[1].oscillator.Initialize(s_parameters.m_slaveForm1, slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
+				voice.m_operators[1].isSlave = true;
+				voice.m_operators[1].filter.Reset();
+				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
 
-				// Want hard sync.?
+				// Carrier #3
+				voice.m_operators[2].enabled = true;
+				voice.m_operators[2].routing = 3;
+				voice.m_operators[2].isCarrier = true;
+				voice.m_operators[2].oscillator.Initialize(s_parameters.m_slaveForm2, slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
+				voice.m_operators[2].isSlave = true;
+				voice.m_operators[2].filter.Reset();
+				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
+
+				// Modulator #1 (sine)
+				voice.m_operators[3].enabled = true;
+				voice.m_operators[3].routing = 4;
+				voice.m_operators[3].isCarrier = false;
+				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[3].isSlave = false;
+
+				// Modulator #2 (triangle, sharper)
+				voice.m_operators[4].enabled = true;
+				voice.m_operators[4].routing = -1;
+				voice.m_operators[4].isCarrier = false;
+				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[4].isSlave = false;
+
+				// Hard sync. slaves?
 				if (true == s_parameters.m_hardSync)
 				{
-					// Enslave them!
-					voice.m_carriers[1].SyncTo(carrierFreq);
-					voice.m_carriers[2].SyncTo(carrierFreq);
+					voice.m_operators[1].oscillator.SyncTo(carrierFreq);
+					voice.m_operators[2].oscillator.SyncTo(carrierFreq);
 				}
-
-				// Reset LPF
-				voice.m_LPF.Reset();
 			}
 
 			break;
 		}
 
-		// Initialize freq. modulator (FM vibrato & index are modulated by note velocity)
-		const float ratio = s_parameters.m_modRatioM;
-		const float modFrequency = carrierFreq*ratio;
-		const float modIndex = s_parameters.m_modIndex*velocityInvExp;
-		const float modVibrato = s_parameters.m_modVibrato*goldenTen*velocity;
+		// Copy voice ADSR for now (FIXME)
+		voice.m_modADSR = s_voiceADSRs[iVoice];
 
-		voice.m_modulator.Initialize(modIndex, modFrequency, modVibrato);
+		// Set FM vibrato
+		const float modVibratoFreq = s_parameters.m_modVibrato*goldenTen*velocity;
+		voice.m_modVibrato.Initialize(kCosine, modVibratoFreq, 1.f);
 
-		// Initialize amplitude modulator (or 'tremolo')
+		// Initialize amplitude modulator (tremolo)
 		const float tremolo = s_parameters.m_tremolo;
 		const float tremoloFreq = tremolo*0.25f*goldenTen * velocity;
 		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
@@ -252,7 +338,7 @@ namespace SFM
 		voice.m_pFilter->Reset();	
 
 		// Set ADSRs (voice & filter)
-		s_ADSRs[iVoice].Start(s_parameters.m_voiceADSR, velocity);
+		s_voiceADSRs[iVoice].Start(s_parameters.m_voiceADSR, velocity);
 		voice.m_pFilter->Start(s_sampleCount, s_parameters.m_filterADSR, velocity);
 
 		// Reset formant shaper
@@ -264,6 +350,7 @@ namespace SFM
 		// Store index if wanted
 		if (nullptr != request.pIndex)
 			*request.pIndex = iVoice;
+		
 	}
 
 	// - Hxandle all requested voice releases
@@ -278,11 +365,9 @@ namespace SFM
 		for (auto &request : s_voiceReleaseReq)
 		{
 			SFM_ASSERT(-1 != request.index);
-			
-			Voice &voice = s_voices[request.index];
 
-			// Stop voice ADSR; filter ADSR just sustains, and that should be OK
-			s_ADSRs[request.index].Stop(request.velocity);
+			// Stop voice ADSR
+			s_voiceADSRs[request.index].Stop(request.velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -290,26 +375,24 @@ namespace SFM
 		// Update active voices
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			Voice &voice = s_voices[iVoice];
+			DX_Voice &voice = s_DXvoices[iVoice];
 			const bool enabled = voice.m_enabled;
 
 			if (true == enabled)
 			{
-				// If in MiniMOOG mode, set lowpass cutoff
-				if (kMiniMOOG == voice.m_algorithm)
-					voice.m_LPF.SetCutoff(s_parameters.m_slavesLP);
+				// Set slave lowpass cutoff
+				voice.SetSlaveCutoff(s_parameters.m_slavesLP);
 				
 				// See if any voices are done
 				bool free = false;
 				
 				// If ADSR envelope has ran it's course, voice can be freed
-				ADSR &envelope = s_ADSRs[iVoice];
+				ADSR &envelope = s_voiceADSRs[iVoice];
 				if (true == envelope.IsIdle())
 					free = true;
 
 				// One-shot done?
-				// We'll just cut the sound of the first carrier if it's the MiniMOOG algorithm (see synth-voice.cpp)
-				if (kMiniMOOG != voice.m_algorithm && (true == voice.m_oneShot && true == voice.HasCycled()))
+				if (true == voice.m_oneShot && true == voice.HasCycled())
 					free = true;
 				
 				// Free
@@ -321,16 +404,17 @@ namespace SFM
 			}
 		}
 
+		// Spawn new voice(s)
 		while (s_voiceReq.size() > 0 && s_active < kMaxVoices-1)
 		{
 			// Pick first free voice (FIXME: need proper heuristic in case we're out of voices)
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				Voice &voice = s_voices[iVoice];
+				DX_Voice &voice = s_DXvoices[iVoice];
 				if (false == voice.m_enabled)
 				{
 					const VoiceRequest request = s_voiceReq.front();
-					InitializeVoice(request, iVoice);
+					InitializeDXVoice(request, iVoice);
 					s_voiceReq.pop_front();
 
 					Log("Voice triggered: " + std::to_string(iVoice));
@@ -365,7 +449,7 @@ namespace SFM
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
-		// Algorithm (1, 2 & 3)
+		// Algorithm
 		s_parameters.m_algorithm = WinMidi_GetAlgorithm();
 		SFM_ASSERT(s_parameters.m_algorithm < kNumAlgorithms);
 		
@@ -379,6 +463,8 @@ namespace SFM
 		s_parameters.m_slavesLP      = std::max<float>(kEpsilon, clampf(0.f, 1.f, invsqrf(slavesLP)));
 		s_parameters.m_hardSync      = WinMidi_GetHardSync();
 		s_parameters.m_slaveFM       = WinMidi_GetSlaveFM();
+		s_parameters.m_slaveForm1    = WinMidi_GetCarrierOscillator2();
+		s_parameters.m_slaveForm2    = WinMidi_GetCarrierOscillator3();
 		s_parameters.m_carrierVol[0] = WinMidi_GetCarrierVolume1();
 		s_parameters.m_carrierVol[1] = WinMidi_GetCarrierVolume2();
 		s_parameters.m_carrierVol[2] = WinMidi_GetCarrierVolume3();
@@ -526,15 +612,15 @@ namespace SFM
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				Voice &voice = s_voices[iVoice];
+				DX_Voice &voice = s_DXvoices[iVoice];
 
 				if (true == voice.m_enabled)
 				{
-					// FIXME: move!
+					// This should keep as close to the sample as possible (FIXME)
 					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
-					voice.PitchBend(bend);
+					voice.SetPitchBend(bend);
 
-					ADSR &voiceADSR = s_ADSRs[iVoice];
+					ADSR &voiceADSR = s_voiceADSRs[iVoice];
 
 					FormantShaper &shaper = s_formantShapers[iVoice];
 
@@ -560,9 +646,9 @@ namespace SFM
 
 					// Filter voice
 					voice.m_pFilter->SetLiveParameters(s_parameters.m_filterParams);
-					voice.m_pFilter->Apply(buffer, numSamples, s_parameters.m_filterContour, s_parameters.m_flipFilterEnv, s_sampleCount);
+					voice.m_pFilter->Apply(buffer, numSamples, s_parameters.m_filterContour, s_parameters.m_flipFilterEnv);
 
-					// Apply ADSR
+					// Apply (carrier) ADSR
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const float ADSR = voiceADSR.Sample();
@@ -669,8 +755,10 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 	{
-		s_voices[iVoice].m_enabled = false;
-		s_ADSRs[iVoice].Reset();
+		// FIXME: migrate
+		s_DXvoices[iVoice].m_enabled = false;
+		s_voiceADSRs[iVoice].Reset();
+
 		s_improvedFilters[iVoice].Reset();
 		s_butterFilters[iVoice].Reset();
 		s_teemuFilters[iVoice].Reset();

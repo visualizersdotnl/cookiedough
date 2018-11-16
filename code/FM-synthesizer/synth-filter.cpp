@@ -21,7 +21,7 @@ namespace SFM
 		return (true == invert) ? 1.f-ADSR : ADSR;
 	}
 
-	void ButterworthFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
+	void ButterworthFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
 	{
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
@@ -35,7 +35,7 @@ namespace SFM
 		}
 	}
 
-	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
+	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
 	{
 		double dV0, dV1, dV2, dV3;
 
@@ -86,7 +86,7 @@ namespace SFM
 		return ((a + 105.0)*a + 945.0) / ((15.0*a + 420.0)*a + 945.0);
 	}
 
-	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert, unsigned sampleCount)
+	void TeemuFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
 	{
 		const double f = m_cutoff;
 		const double r = (40.0/9.0) * m_resonance;

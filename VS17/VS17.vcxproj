@@ -52,13 +52,11 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-DX-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
@@ -126,7 +124,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-log.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-oscillator.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-stateless-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h" />
@@ -134,7 +131,6 @@
     <ClInclude Include="..\code\FM-synthesizer\synth-parameters.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-test.h" />
     <ClInclude Include="..\code\FM-synthesizer\synth-util.h" />
-    <ClInclude Include="..\code\FM-synthesizer\synth-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />

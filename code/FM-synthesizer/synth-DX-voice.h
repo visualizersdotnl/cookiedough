@@ -1,19 +1,27 @@
 
 /*
-	Syntherklaas FM - DX-style matrix voice.
+	Syntherklaas FM - DX-style voice.
 
-	Step by step implementation:
-		- Copy voice spawn function and modify it to create on of these.
-		- Sample this function.
-		- Complete all 3 algorithms in FM_BISON.
-		- Try Yamaha DX7's algorithm 5.
+	Missing:
+		- Spawn function, all previous algorithms
+		- Implement modulator ADSR
+		- Add lowpass for algorithm #3
+		- Operator feedback (try it with algorithm #2)
+		- If number of operators increases these loops become an impractical solution
+
+	Rules:
+		- An operator can only be modulated by an operator above it (index)
+		- If flagged as carrier, they will be mixed at the end
+		- ADSR et cetera have to be applied as well
 */
 
 #pragma once
 
 #include "synth-global.h"
 #include "synth-oscillator.h"
-#include "synth-ADSR.h"
+// #include "synth-ADSR.h"
+#include "synth-parameters.h"
+#include "synth-simple-filters.h"
 
 namespace SFM
 {
@@ -25,34 +33,92 @@ namespace SFM
 	{
 	public:
 		bool m_enabled;
-		Oscillator m_operators[kNumOperators];
-		unsigned m_routing[kNumOperators];
-		bool m_isCarrier[kNumOperators];
 
-//	public:
+		struct Operator
+		{
+			bool enabled;
+			Oscillator oscillator;
+			unsigned routing;
+			bool isCarrier;
+			
+			// Slave operator means it is subject to variable modulation & lowpass
+			bool isSlave;
+			float modAmount;
+			LowpassFilter filter;
+		} m_operators[kNumOperators];
+
+		// Modulator ADSR
+		ADSR m_modADSR;
+
+		// Modulator LFO (vibrato)
+		Oscillator m_modVibrato;
+
+		// Global tremolo
+		Oscillator m_AM;   
+		
+		// For wavetable samples
+		bool m_oneShot;
+
+		// For pulse-based waveforms
+		float m_pulseWidth;
+
+		// Filter instance for this particular voice
+		LadderFilter *m_pFilter;
+	
 		DX_Voice() : m_enabled(false) {}
 
 		void Reset()
 		{
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			{
-				m_operators[iOp].Initialize(kCosine, 0.f, 1.f);
-				m_routing[iOp] = -1;
-				m_isCarrier[iOp] = false;
-			}
+				m_operators[iOp].enabled = false;
+
+			// Defensive (FIXME: trim down)
+			m_modADSR.Reset();
+			m_modVibrato = Oscillator();
+			m_AM = Oscillator();
+			m_oneShot = false;
+			m_pulseWidth = 0.5f;
+			m_pFilter = nullptr;
 		}
 
-		float Sample()
+		float Sample(const Parameters &parameters);
+
+		SFM_INLINE void SetSlaveCutoff(float cutoff)
 		{
-			SFM_ASSERT(true == m_enabled);
+			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+				if (true == m_operators[iOp].isSlave  && true == m_operators[iOp].enabled) 
+					m_operators[iOp].filter.SetCutoff(cutoff);
+		}
 
-			/*
-				- 1. Sample all operators, top down.
-				- 2. Make sure all carriers are mixed into the output signal.
-				- 3. Do as always and factor in ADSR, tremolo, noise et cetera.
-			*/
+		SFM_INLINE void SetPitchBend(float bend)
+		{
+			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+				if (true == m_operators[iOp].enabled) 
+					m_operators[iOp].oscillator.PitchBend(bend);
+		}
 
-			return 0.f;
+		void SetSlaveLowpass(float amount)
+		{
+		}
+
+		SFM_INLINE bool HasCycled() /* const */
+		{
+			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+			{
+				Operator &opDX = m_operators[iOp];
+
+				// Enabled and carrier?
+				if (true == opDX.enabled && true == opDX.isCarrier)
+				{
+					// Not a slave carrier and has cycled?
+					if (false == opDX.isSlave && true == opDX.oscillator.HasCycled())
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 	};
 }

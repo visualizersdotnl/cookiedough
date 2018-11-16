@@ -35,6 +35,8 @@ namespace SFM
 		float m_slavesDetune;
 		float m_slavesLP;
 		float m_slaveFM;
+		Waveform m_slaveForm1;
+		Waveform m_slaveForm2;
 		float m_carrierVol[3];
 		
 		// Master drive [0..N]
@@ -95,6 +97,8 @@ namespace SFM
 			m_slavesDetune  = 0.f;
 			m_slavesLP      = 0.f;
 			m_slaveFM       = 0.f;
+			m_slaveForm1    = kSine;
+			m_slaveForm2    = kPolyTriangle;
 			m_carrierVol[0] = 1.f;
 			m_carrierVol[1] = 0.f;
 			m_carrierVol[2] = 0.f;

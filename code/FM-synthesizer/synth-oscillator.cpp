@@ -44,7 +44,7 @@ namespace SFM
 			case kSoftSaw:
 			case kSoftSquare:
 			default:
-				signal = oscWhiteNoise(phase);
+				signal = oscWhiteNoise();
 				Log("Oscillator: unsupported waveform");
 				SFM_ASSERT(false);
 				break;
@@ -78,7 +78,7 @@ namespace SFM
 			/* Noise */
 
 			case kWhiteNoise:
-				signal = oscWhiteNoise(modulated);
+				signal = oscWhiteNoise();
 				break;
 
 			case kPinkNoise:
@@ -109,7 +109,9 @@ namespace SFM
 		}
 
 		signal *= m_amplitude;
-		SampleAssert(signal);
+
+		// Can not check for range here
+		FloatAssert(signal);
 
 		// Advance
 		m_phase += m_pitch;

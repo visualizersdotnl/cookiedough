@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM - Voice.
 
-	This is actually a multiple FM operator setup but built from a different (subtractive synthesis) perspective; it will in due time
+	This is a multiple FM operator setup but built from a different (subtractive synthesis) perspective; it will in due time
 	be replaced by DX_Voice.
 
 	Number of operators: 6 at max.

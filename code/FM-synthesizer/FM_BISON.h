@@ -30,8 +30,8 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
-	Tasks for 15-16/11:
-		- Implement first draft of DX voice
+	Tasks for *now*:
+		- Fix DX_Voice: performance, envelope
 		- Implement a decent phase drift
 		- Ask around if non-linear response to controls is something you'd want in VST
 

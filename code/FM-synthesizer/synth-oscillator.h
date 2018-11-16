@@ -12,8 +12,6 @@ namespace SFM
 	class Oscillator
 	{
 	private:
-		unsigned m_sampleOffs;
-		
 		Waveform m_form;
 
 		float m_amplitude;

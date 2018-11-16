@@ -68,6 +68,9 @@
     <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29">
       <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer\core\legacy voice &amp; modulator %28ref.%29">
+      <UniqueIdentifier>{08358096-6849-49be-8be3-2b9a86cdf59c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -175,13 +178,7 @@
     <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-modulator.cpp">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer\synth-voice.cpp">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp">
@@ -345,9 +342,6 @@
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-voice.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
@@ -373,9 +367,6 @@
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-midi.h">
-      <Filter>/code\/FM-synthesizer\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer\synth-modulator.h">
       <Filter>/code\/FM-synthesizer\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer\synth-random.h">
