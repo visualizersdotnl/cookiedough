@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "synth-voice.h"
+#include "synth-parameters.h"
+#include "synth-filter.h"
 
 namespace SFM
 {

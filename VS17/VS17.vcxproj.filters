@@ -68,9 +68,6 @@
     <Filter Include="/code\/FM-synthesizer\/3rdparty\earlevel.com ADSR %28modified%29">
       <UniqueIdentifier>{a8e738b9-768a-4d43-968d-3abebe9cc323}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer\core\legacy voice &amp; modulator %28ref.%29">
-      <UniqueIdentifier>{08358096-6849-49be-8be3-2b9a86cdf59c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">

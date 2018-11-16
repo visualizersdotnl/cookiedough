@@ -13,6 +13,7 @@
 #include <deque>
 
 #include "FM_BISON.h"
+
 #include "synth-midi.h"
 #include "synth-parameters.h"
 #include "synth-ringbuffer.h"

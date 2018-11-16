@@ -17,10 +17,9 @@
 
 #pragma once
 
-#include "synth-global.h"
 #include "synth-oscillator.h"
-// #include "synth-ADSR.h"
 #include "synth-parameters.h"
+// #include "synth-ADSR.h"
 #include "synth-simple-filters.h"
 
 namespace SFM

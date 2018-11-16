@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "synth-modulator.h"
-
 namespace SFM
 {
 	class DelayLine

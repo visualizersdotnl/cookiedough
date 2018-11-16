@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "synth-voice.h"
+#include "synth-oscillator.h"
 
 namespace SFM
 {

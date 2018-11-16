@@ -9,7 +9,6 @@
 #include "Win-MIDI-in-BeatStep.h"
 #include "synth-midi.h"
 #include "FM_BISON.h"
-#include "synth-voice.h"
 
 // Bevacqua mainly relies on SDL + std. C(++), so:
 #pragma comment(lib, "Winmm.lib")

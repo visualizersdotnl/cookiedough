@@ -9,6 +9,7 @@
 #include "synth-ADSR.h"
 #include "synth-filter.h"
 #include "synth-formant.h"
+#include "synth-stateless-oscillators.h"
 
 namespace SFM
 {

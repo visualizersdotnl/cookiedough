@@ -7,7 +7,6 @@
 
 #include "3rdparty/FilterButterworth24dB.h"
 
-#include "synth-global.h"
 #include "synth-ADSR.h"
 
 namespace SFM

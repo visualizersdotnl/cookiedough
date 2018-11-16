@@ -82,7 +82,6 @@
 
 #include "synth-global.h"
 #include "synth-stateless-oscillators.h"
-#include "synth-voice.h"
 
 bool Syntherklaas_Create();
 void Syntherklaas_Destroy();
