@@ -32,10 +32,14 @@
 
 	In the works:
 		- Use the weekend to learn about the different ratios using your Volca FM
-		- DX_Voice: feedback (does it work right?)
-		- DX_Voice: create specfic modulation envelope
-		- DX_Voice: performance
-		- Clean up voice instantiation code and spend some time making a proper algorithm for the E. Piano
+		- DX_Voice:
+		  + Is my feedback anywhere near right?
+		  + I suppose I'm aliasing or clipping hard at some point (I can hear it)
+		  + Create specific modulation envelope for operator; this will make a world of difference
+		  * Can I keep a single envelope and LFO for now?
+		  * Provide a cleaner way to define algorithms
+		  * Performance!
+		  * E. Piano; what does that Volca LFO do?
 		- Implement a decent phase drift
  		- Ask around if non-linear response to controls is something you'd want in VST
 

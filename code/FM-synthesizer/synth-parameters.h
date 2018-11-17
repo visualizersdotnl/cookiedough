@@ -10,18 +10,10 @@
 #include "synth-filter.h"
 #include "synth-formant.h"
 #include "synth-stateless-oscillators.h"
+#include "synth-algorithm.h"
 
 namespace SFM
 {
-	// Available algorithms
-	enum Algorithm
-	{
-		kSingle,
-		kDoubleCarriers,
-		kMiniMOOG,
-		kNumAlgorithms
-	};
-
 	// Most global parameters; some are still "pulled" in place (FIXME)
 	struct Parameters
 	{

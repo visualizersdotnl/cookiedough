@@ -1,5 +1,5 @@
 
-- The routine is to convert each sample to mono, edit it a bit, normalize it, and then run 'bin2h.exe' to create the header.
+- The routine is to convert each sample to mono, edit it a bit (amplify), normalize it, and then run 'bin2h.exe' to create the header.
 - The naming convention is along the lines of g_wavPiano et cetera.
 - Headers are not included in the project since they cause my VS2017 to choke enough as it is.
 

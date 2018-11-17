@@ -1,16 +1,14 @@
 
 /*
-	Syntherklaas FM - DX-style voice.
+	Syntherklaas FM - Yamaha DX style voice.
 
 	Missing:
-		- Feedback
-		- Specific envelope (probably need a simpler one) per operator
-		- These loops are an impractical solution
+		- Specific envelope (probably need a simpler one, like ASR) per operator
+		- These loops are an impractical, expensive solution
 
-	Rules:
+	Important:
 		- An operator can only be modulated by an operator above it (index)
-		- If flagged as carrier, they will be mixed at the end
-		- ADSR et cetera have to be applied as well
+		- Feedback can be taken from any level
 */
 
 #pragma once
@@ -35,8 +33,11 @@ namespace SFM
 		{
 			bool enabled;
 			Oscillator oscillator;
-			unsigned routing, feedback;
+			unsigned modulator, feedback;
 			bool isCarrier;
+			float vibrato;
+			
+			// Used for feedback
 			float prevSample;
 			
 			// Slave operator means it is subject to variable modulation & lowpass
@@ -50,15 +51,15 @@ namespace SFM
 			{
 				enabled = false;
 				oscillator = Oscillator();
-				routing = -1;
+				modulator = -1;
 				feedback = -1;
 				isCarrier = false;
+				vibrato = 1.f;
 				prevSample = 0.f;
 				isSlave = false;
 			}
 
 		} m_operators[kNumOperators];
-
 
 		// Modulator ADSR
 		ADSR m_modADSR;
@@ -123,7 +124,7 @@ namespace SFM
 				// Enabled and carrier?
 				if (true == opDX.enabled && true == opDX.isCarrier)
 				{
-					// Not a slave carrier and has cycled?
+					// Not a slave carrier and have cycled?
 					if (false == opDX.isSlave && true == opDX.oscillator.HasCycled())
 					{
 						return true;

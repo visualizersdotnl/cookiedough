@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM - DX-style voice.
+	Syntherklaas FM - Yamaha DX style voice.
 */
 
 #include "synth-global.h"
@@ -14,7 +14,7 @@ namespace SFM
 
 		// Modulation vibrato & ADSR
 		const float modVibrato = m_modVibrato.Sample(0.f);
-		const float modADSR = m_modADSR.Sample();
+		const float modEnv = m_modADSR.Sample();
 
 		// Step 1: process all operators top-down
 		float sampled[kNumOperators];
@@ -30,9 +30,9 @@ namespace SFM
 			{
 				// Get modulation
 				float modulation = 0.f;
-				if (-1 != opDX.routing)
+				if (-1 != opDX.modulator)
 				{
-					const unsigned iModulator = opDX.routing;
+					const unsigned iModulator = opDX.modulator;
 
 					// Sanity checks
 					SFM_ASSERT(iModulator < kNumOperators);
@@ -42,10 +42,13 @@ namespace SFM
 					// Get sample
 					modulation = sampled[iModulator];
 
-					// Apply ADSR & vibrato
-					modulation *= modVibrato;
-					modulation *= modADSR;
+					// Apply vibrato
+					modulation = lerpf<float>(modulation, modulation*modVibrato, opDX.vibrato);
 				}
+
+				// Apply ADSR (FIXME: before or after feedback?)
+				// As it stands the feedback has a low frequency so I do not think I should
+				modulation *= modEnv;
 
 				// Get feedback
 				if (opDX.feedback != -1)
@@ -88,9 +91,9 @@ namespace SFM
 
 			Operator &opDX = m_operators[index];
 
-			if (true == opDX.enabled && true == opDX.isCarrier)
+			if (true == opDX.enabled)
 			{
-				// Mute all wavetable carriers if designated as one-shot (FIXME: move to more efficient place)
+				// Mute all wavetable carriers if designated as one-shot (FIXME: write this efficiently)
 				float muteMul = 1.f;
 				if (true == m_oneShot && true == oscIsWavetable(opDX.oscillator.GetWaveform()) && true == opDX.oscillator.HasCycled())
 					muteMul = 0.f;
@@ -99,10 +102,12 @@ namespace SFM
 
 				// Is carrier: mix
 				if (true == opDX.isCarrier)
+				{
 					mix = SoftClamp(mix + sample);
+				}
 
-				// Store for feedback (FIXME: is this lowpass a right method?)
-				opDX.prevSample = opDX.prevSample*0.9f + sample*0.1f;;
+				// Leaky integrate (I always think this looks sloppy but it works)
+				opDX.prevSample = opDX.prevSample*0.9f + sample*0.1f;
 			}
 		}
 

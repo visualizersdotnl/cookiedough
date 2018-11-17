@@ -81,6 +81,9 @@ namespace SFM
 	static unsigned s_active = 0;
 	static ADSR s_voiceADSRs[kMaxVoices];
 
+	// FIXME: this is a hacky solution to a very specific case; remove or rethink ASAP
+	static Algorithm s_voiceAlgos[kMaxVoices];
+
 	// FX
 	static ButterworthFilter s_butterFilters[kMaxVoices];
 	static TeemuFilter s_teemuFilters[kMaxVoices];
@@ -186,20 +189,19 @@ namespace SFM
 				// Carrier
 				voice.m_operators[0].Reset();
 				voice.m_operators[0].enabled = true;
-				voice.m_operators[0].routing = 1;
+				voice.m_operators[0].modulator = 1;
 				voice.m_operators[0].isCarrier = true;
 				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
 
 				// Modulator #1 (sine)
 				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
-				voice.m_operators[1].routing = 2;
+				voice.m_operators[1].modulator = 2;
 				voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex);
 
 				// Modulator #2 (triangle, sharper)
 				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
-				voice.m_operators[2].routing = -1;
 				voice.m_operators[2].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
 			}
 
@@ -208,45 +210,60 @@ namespace SFM
 		/*
 			This algorithm is currently hijacked for R&D.
 
-			Current attempt: DX7 algorithms
-			Current status: functions like the old one, but sounds a little fatter
+			Current attempt: DX7/Volca algorithm #5, or something that sounds like it
+			Current status: functions like the old one, but sounds *way* thicker
+
+			FIXME: everything!
 		*/
 		case Algorithm::kDoubleCarriers:
 			{
-				// Carrier #1
-				voice.m_operators[0].Reset();
-				voice.m_operators[0].enabled = true;
-				voice.m_operators[0].routing = 2;
-				voice.m_operators[0].isCarrier = true;
-				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
-
 				// Carrier detune
 				const float carrierDetune = powf(2.f, (0.04f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*carrierDetune;
 
+				// For now (FIXME), just translate the detune to a C:M table index
+				const int ratioIdx = unsigned(s_parameters.m_doubleDetune*(g_CM_size-1));
+
+				// Carrier #1
+				voice.m_operators[0].Reset();
+				voice.m_operators[0].enabled = true;
+				voice.m_operators[0].modulator = 3;
+				voice.m_operators[0].isCarrier = true;
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+
 				// Carrier #2
 				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
-				voice.m_operators[1].routing = 4;
+				voice.m_operators[1].modulator = 3;
 				voice.m_operators[1].isCarrier = true;
-				voice.m_operators[1].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume);
+				voice.m_operators[1].isSlave = true;
+				voice.m_operators[1].oscillator.Initialize(kSine, slaveFreq, slaveAmp);
 
-				// Modulator #1 (sine)
+				// Carrier #3
 				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
-				voice.m_operators[2].routing = 3;
-				voice.m_operators[2].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[2].modulator = 5;
+				voice.m_operators[2].isCarrier = true;
+				voice.m_operators[2].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume);
+//				voice.m_operators[2].oscillator.SyncTo(carrierFreq);
 
-				// Modulator #2 (triangle, sharper)
+				// Modulator #1 (sine)
 				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
-				voice.m_operators[3].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[3].modulator = 4;
+				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
 
-				// Modulator #4
+				// Modulator #2 (triangle, sharper)
 				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
-				voice.m_operators[4].feedback = 4;
-				voice.m_operators[4].oscillator.Initialize(kSine, carrierFreq, modIndex);
+				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+
+				// Modulator #3 (just an attempt, really)
+				voice.m_operators[5].Reset();
+				voice.m_operators[5].enabled = true;
+				voice.m_operators[5].feedback = 1;
+				voice.m_operators[5].vibrato = 0.5f;
+				voice.m_operators[5].oscillator.Initialize(kSine, carrierFreq*g_CM[ratioIdx][1], modIndex);
 			}
 
 			break;
@@ -259,9 +276,10 @@ namespace SFM
 		case Algorithm::kMiniMOOG:
 			{
 				// Carrier #1
-				voice.m_operators[1].Reset();
+				voice.m_operators[0].Reset();
 				voice.m_operators[0].enabled = true;
-				voice.m_operators[0].routing = 3;
+				voice.m_operators[0].modulator = 3;
+				voice.m_operators[0].feedback = 0; // Add a little meat
 				voice.m_operators[0].isCarrier = true;
 				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
 
@@ -273,7 +291,7 @@ namespace SFM
 				// Carrier #2
 				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
-				voice.m_operators[1].routing = 3;
+				voice.m_operators[1].modulator = 3;
 				voice.m_operators[1].isCarrier = true;
 				voice.m_operators[1].oscillator.Initialize(s_parameters.m_slaveForm1, slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
 				voice.m_operators[1].isSlave = true;
@@ -283,23 +301,22 @@ namespace SFM
 				// Carrier #3
 				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
-				voice.m_operators[2].routing = 3;
+				voice.m_operators[2].modulator = 3;
 				voice.m_operators[2].isCarrier = true;
 				voice.m_operators[2].oscillator.Initialize(s_parameters.m_slaveForm2, slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
 				voice.m_operators[2].isSlave = true;
 				voice.m_operators[2].filter.Reset();
-				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
+				voice.m_operators[2].modAmount = s_parameters.m_slaveFM;
 
 				// Modulator #1 (sine)
 				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
-				voice.m_operators[3].routing = 4;
+				voice.m_operators[3].modulator = 4;
 				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
 
 				// Modulator #2 (triangle, sharper)
 				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
-				voice.m_operators[4].routing = -1;
 				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
 
 				// Hard sync. slaves?
@@ -312,6 +329,8 @@ namespace SFM
 
 			break;
 		}
+
+		s_voiceAlgos[iVoice] = s_parameters.m_algorithm;
 
 		// Copy voice ADSR for now and start it (FIXME: own envelope!)
 		voice.m_modADSR = s_voiceADSRs[iVoice];
@@ -409,8 +428,12 @@ namespace SFM
 					free = true;
 
 				// One-shot done?
-				if (true == voice.m_oneShot && true == voice.HasCycled())
-					free = true;
+				// In kMiniMOOG mode the other carriers are procedural and thus don't finish as such
+				if (kMiniMOOG != s_voiceAlgos[iVoice])
+				{
+					if (true == voice.m_oneShot && true == voice.HasCycled())
+						free = true;
+				}
 				
 				// Free
 				if (true == free)
@@ -650,13 +673,13 @@ namespace SFM
 					{
 						/* const */ float sample = voice.Sample(s_parameters);
 
-						// Blend with Nintendized version
-						const float Nintendized = Nintendize(sample);
-						sample = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
-
 						// Shape by formant
 						float shaped = shaper.Apply(sample, vowel, formantStep);
 						sample = lerpf<float>(sample, shaped, formant);
+
+						// Blend with Nintendized version
+						const float Nintendized = Nintendize(sample);
+						sample = lerpf<float>(sample, Nintendized, invsqrf(s_parameters.m_Nintendize));
 
 						buffer[iSample] = sample;
 					}
@@ -772,9 +795,9 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 	{
-		// FIXME: migrate
 		s_DXvoices[iVoice].m_enabled = false;
 		s_voiceADSRs[iVoice].Reset();
+		s_voiceAlgos[iVoice] = kNone;
 
 		s_improvedFilters[iVoice].Reset();
 		s_butterFilters[iVoice].Reset();
