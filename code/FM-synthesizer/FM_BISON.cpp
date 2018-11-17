@@ -160,7 +160,7 @@ namespace SFM
 //		const float velocityExp    = velocity*velocity;
 		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
-		const bool  isWave = oscIsWavetable(request.form);
+		const bool isWave = oscIsWavetable(request.form);
 
 		// Carrier amplitude & frequency
 		const float amplitude = velocity*kMaxVoiceAmp;

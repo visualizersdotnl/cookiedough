@@ -1,6 +1,12 @@
 
 /*
 	Syntherklaas FM - Yamaha DX style voice.
+
+	Voice-specific to do:
+		- Get rid of ugly mute condition (in second loop now)
+		- Replace ADSR for simple AD envelope; pick sensible curves yourself
+		- To optimize, firstly, the 2 loops can be collapsed into one
+		- This will all run faster when Oscillator is optimized
 */
 
 #include "synth-global.h"
@@ -74,11 +80,6 @@ namespace SFM
 					sample = opDX.filter.Apply(opDX.oscillator.Sample(opDX.modAmount*modulation, m_pulseWidth));
 	
 				sampled[index] = sample;
-			}
-			else
-			{
-				// FIXME: defensive programming; can be deleted
-				sampled[index] = 0.f;
 			}
 		}
 

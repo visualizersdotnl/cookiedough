@@ -32,43 +32,45 @@
 
 	In the works:
 		- Use the weekend to learn about the different ratios using your Volca FM
+
 		- DX_Voice:
-		  + Is my feedback anywhere near right?
-		  + I suppose I'm aliasing or clipping hard at some point (I can hear it)
-		  + Create specific modulation envelope for operator; this will make a world of difference
-		  * Can I keep a single envelope and LFO for now?
-		  * Provide a cleaner way to define algorithms
-		  * Performance!
-		  * E. Piano; what does that Volca LFO do?
-		- Implement a decent phase drift
+		  + Sound: try feeding operators that all simply have a freq. that is an integer ratio
+		  + Sound: I'm using leaky integration for feedback: is that correct?
+		  + Sound: aliasing & clipping: find out if this is to be expected
+		  + Provide a cleaner way to define algorithms (not necessary for FM. BISON perhaps)
+		  + Performance is horrible now; fix this (I think the biggest problem are my oscillators)
+		    Do yourself a favor and run the CPU profiler first
+		  + Goal: E. Piano DX7 style like it should sound
+
  		- Ask around if non-linear response to controls is something you'd want in VST
 
 	Wait for musician(s) to decide:
 		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start
 		  of a voice *or* tweaking the individual use cases
 
-	Wavetable VCOs:
+	Transition to avetable VCOs:
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Make oscillator (VCO) use them
 		  + This is not a high-priority task
 
 	R&D tasks:
-		- Create interface and stash synthesizer into an object
 		- Voice stealing (see KVR thread: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=91557&sid=fbb06ae34dfe5e582bc8f9f6df8fe728&start=15)
 		- Implement "sample & hold" noise
 		- Update parameters multiple times per render cycle (eliminate rogue MIDI parameter calls)
+		  Some call them "nuggets"
 		- Formant shaping is *very* basic, so: https://www.soundonsound.com/techniques/formant-synthesis
 		- First draft of manual
 
 	Plumbing:
-		- Profiling & optimization (PERFORMANCE IS TERRIBLE!)
+		- Create interface and stash synthesizer into an object
+		- Profiling & optimization
 		- Flush ring buffer using 2 memcpy() calls
 		- See if all global state needs to be global
 		- Move all math needed from Std3DMath to synth-math.h; stop depending on Bevacqua as a whole
 
 	R&D low priority:
-		- Learn more about portamento et cetera and consider a monophonic mode
+		- Learn more about portamento & glissando and see if it is of any use
 		- Read about filters a bit more
 		- MinBLEP
 		- Real variable delay line

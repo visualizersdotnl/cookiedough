@@ -111,10 +111,6 @@ namespace SFM
 					m_operators[iOp].oscillator.PitchBend(bend);
 		}
 
-		void SetSlaveLowpass(float amount)
-		{
-		}
-
 		SFM_INLINE bool HasCycled() /* const */
 		{
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
