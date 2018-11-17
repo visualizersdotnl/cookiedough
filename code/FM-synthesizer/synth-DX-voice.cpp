@@ -3,10 +3,12 @@
 	Syntherklaas FM - Yamaha DX style voice.
 
 	Voice-specific to do:
+		- What happens if I modulate the mod. vibrato LFO with the A(D)SR envelope?
 		- Get rid of ugly mute condition (in second loop now)
-		- Replace ADSR for simple AD envelope; pick sensible curves yourself
 		- To optimize, firstly, the 2 loops can be collapsed into one
 		- This will all run faster when Oscillator is optimized
+		- There is a lot of boolean logic that seems excessive
+		- Add voice amplitude ADSR to class!
 */
 
 #include "synth-global.h"
@@ -18,7 +20,7 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
-		// Modulation vibrato & ADSR
+		// Modulation vibrato & envelope
 		const float modVibrato = m_modVibrato.Sample(0.f);
 		const float modEnv = m_modADSR.Sample();
 
@@ -94,9 +96,9 @@ namespace SFM
 
 			if (true == opDX.enabled)
 			{
-				// Mute all wavetable carriers if designated as one-shot (FIXME: write this efficiently)
+				// Mute carriers that are done (one-shot)
 				float muteMul = 1.f;
-				if (true == m_oneShot && true == oscIsWavetable(opDX.oscillator.GetWaveform()) && true == opDX.oscillator.HasCycled())
+				if (true == opDX.oscillator.IsDone())
 					muteMul = 0.f;
 
 				const float sample = sampled[index]*muteMul;

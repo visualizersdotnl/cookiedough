@@ -63,6 +63,7 @@ namespace SFM
 
 		// ADSR parameters
 		ADSR::Parameters m_voiceADSR;
+		ADSR::Parameters m_modADSR;
 		ADSR::Parameters m_filterADSR;
 
 		// Filter parameters
@@ -132,11 +133,16 @@ namespace SFM
 			// No bass boost
 			m_bassBoost = 0.f;
 
-			// Default ADSR envelopes
+			// Default ADSR envelope
 			m_voiceADSR.attack  = kSampleRate/8;
 			m_voiceADSR.decay   = kSampleRate/4;
 			m_voiceADSR.release = kSampleRate/4;
 			m_voiceADSR.sustain = kRootHalf;
+
+			// Default modulation A(D)SR
+			m_modADSR = m_voiceADSR;
+			m_voiceADSR.decay = 0.f;
+			m_modADSR.sustain = 1.f; 
 
 			// Zero filter ADS(R)
 			m_filterADSR.attack  = 0.f;

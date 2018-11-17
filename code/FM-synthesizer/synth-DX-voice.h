@@ -2,10 +2,6 @@
 /*
 	Syntherklaas FM - Yamaha DX style voice.
 
-	Missing:
-		- Specific envelope (probably need a simpler one, like ASR) per operator
-		- These loops are an impractical, expensive solution
-
 	Important:
 		- An operator can only be modulated by an operator above it (index)
 		- Feedback can be taken from any level
@@ -61,7 +57,7 @@ namespace SFM
 
 		} m_operators[kNumOperators];
 
-		// Modulator ADSR
+		// Modulator envelope
 		ADSR m_modADSR;
 
 		// Modulator LFO (vibrato)
@@ -69,9 +65,6 @@ namespace SFM
 
 		// Global tremolo
 		Oscillator m_AM;   
-		
-		// For wavetable samples
-		bool m_oneShot;
 
 		// For pulse-based waveforms
 		float m_pulseWidth;
@@ -90,7 +83,6 @@ namespace SFM
 			m_modADSR.Reset();
 			m_modVibrato = Oscillator();
 			m_AM = Oscillator();
-			m_oneShot = false;
 			m_pulseWidth = 0.5f;
 			m_pFilter = nullptr;
 		}
@@ -111,7 +103,8 @@ namespace SFM
 					m_operators[iOp].oscillator.PitchBend(bend);
 		}
 
-		SFM_INLINE bool HasCycled() /* const */
+		// Returns the first non-slave carrier operator which is done
+		SFM_INLINE bool IsDone() /* const */
 		{
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			{
@@ -120,8 +113,8 @@ namespace SFM
 				// Enabled and carrier?
 				if (true == opDX.enabled && true == opDX.isCarrier)
 				{
-					// Not a slave carrier and have cycled?
-					if (false == opDX.isSlave && true == opDX.oscillator.HasCycled())
+					// Not a slave & done?
+					if (false == opDX.isSlave && true == opDX.oscillator.IsDone())
 					{
 						return true;
 					}

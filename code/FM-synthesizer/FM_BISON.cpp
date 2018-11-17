@@ -79,6 +79,8 @@ namespace SFM
 	// Voices
 	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
+
+	// Voice envelope (FIXME: move to DX_Voice?)
 	static ADSR s_voiceADSRs[kMaxVoices];
 
 	// FIXME: this is a hacky solution to a very specific case; remove or rethink ASAP
@@ -160,7 +162,9 @@ namespace SFM
 //		const float velocityExp    = velocity*velocity;
 		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
+		// One shot main carrier only if wavetable sample and not looping
 		const bool isWave = oscIsWavetable(request.form);
+		const bool oneShot = s_parameters.m_loopWaves ? false : isWave;
 
 		// Carrier amplitude & frequency
 		const float amplitude = velocity*kMaxVoiceAmp;
@@ -191,18 +195,18 @@ namespace SFM
 				voice.m_operators[0].enabled = true;
 				voice.m_operators[0].modulator = 1;
 				voice.m_operators[0].isCarrier = true;
-				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude, oneShot);
 
 				// Modulator #1 (sine)
 				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
 				voice.m_operators[1].modulator = 2;
-				voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex, false);
 
 				// Modulator #2 (triangle, sharper)
 				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
-				voice.m_operators[2].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[2].oscillator.Initialize(kPolyTriangle, modFreq, brightness, false);
 			}
 
 			break;
@@ -229,7 +233,7 @@ namespace SFM
 				voice.m_operators[0].enabled = true;
 				voice.m_operators[0].modulator = 3;
 				voice.m_operators[0].isCarrier = true;
-				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude, oneShot);
 
 				// Carrier #2
 				voice.m_operators[1].Reset();
@@ -237,33 +241,33 @@ namespace SFM
 				voice.m_operators[1].modulator = 3;
 				voice.m_operators[1].isCarrier = true;
 				voice.m_operators[1].isSlave = true;
-				voice.m_operators[1].oscillator.Initialize(kSine, slaveFreq, slaveAmp);
+				voice.m_operators[1].oscillator.Initialize(kSine, slaveFreq, slaveAmp, false);
 
 				// Carrier #3
 				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
 				voice.m_operators[2].modulator = 5;
 				voice.m_operators[2].isCarrier = true;
-				voice.m_operators[2].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume);
+				voice.m_operators[2].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume, oneShot);
 //				voice.m_operators[2].oscillator.SyncTo(carrierFreq);
 
 				// Modulator #1 (sine)
 				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
 				voice.m_operators[3].modulator = 4;
-				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex, false);
 
 				// Modulator #2 (triangle, sharper)
 				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
-				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness, false);
 
 				// Modulator #3 (just an attempt, really)
 				voice.m_operators[5].Reset();
 				voice.m_operators[5].enabled = true;
 				voice.m_operators[5].feedback = 1;
 				voice.m_operators[5].vibrato = 0.5f;
-				voice.m_operators[5].oscillator.Initialize(kSine, carrierFreq*g_CM[ratioIdx][1], modIndex);
+				voice.m_operators[5].oscillator.Initialize(kSine, carrierFreq*g_CM[ratioIdx][1], modIndex, false);
 			}
 
 			break;
@@ -281,7 +285,7 @@ namespace SFM
 				voice.m_operators[0].modulator = 3;
 				voice.m_operators[0].feedback = 0; // Add a little meat
 				voice.m_operators[0].isCarrier = true;
-				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0]);
+				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude*s_parameters.m_carrierVol[0], oneShot);
 
 				// Detune a few cents (sounds a bit like contained ring modulation)
 				const float amount = -1.f*kMOOGDetuneRange + 2.f*s_parameters.m_slavesDetune*kMOOGDetuneRange;
@@ -293,7 +297,7 @@ namespace SFM
 				voice.m_operators[1].enabled = true;
 				voice.m_operators[1].modulator = 3;
 				voice.m_operators[1].isCarrier = true;
-				voice.m_operators[1].oscillator.Initialize(s_parameters.m_slaveForm1, slaveFreq, slaveAmp*s_parameters.m_carrierVol[1]);
+				voice.m_operators[1].oscillator.Initialize(s_parameters.m_slaveForm1, slaveFreq, slaveAmp*s_parameters.m_carrierVol[1], false);
 				voice.m_operators[1].isSlave = true;
 				voice.m_operators[1].filter.Reset();
 				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
@@ -303,7 +307,7 @@ namespace SFM
 				voice.m_operators[2].enabled = true;
 				voice.m_operators[2].modulator = 3;
 				voice.m_operators[2].isCarrier = true;
-				voice.m_operators[2].oscillator.Initialize(s_parameters.m_slaveForm2, slaveFreq, slaveAmp*s_parameters.m_carrierVol[2]);
+				voice.m_operators[2].oscillator.Initialize(s_parameters.m_slaveForm2, slaveFreq, slaveAmp*s_parameters.m_carrierVol[2], false);
 				voice.m_operators[2].isSlave = true;
 				voice.m_operators[2].filter.Reset();
 				voice.m_operators[2].modAmount = s_parameters.m_slaveFM;
@@ -312,12 +316,12 @@ namespace SFM
 				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
 				voice.m_operators[3].modulator = 4;
-				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
+				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex, false);
 
 				// Modulator #2 (triangle, sharper)
 				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
-				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
+				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness, false);
 
 				// Hard sync. slaves?
 				if (true == s_parameters.m_hardSync)
@@ -332,9 +336,8 @@ namespace SFM
 
 		s_voiceAlgos[iVoice] = s_parameters.m_algorithm;
 
-		// Copy voice ADSR for now and start it (FIXME: own envelope!)
-		voice.m_modADSR = s_voiceADSRs[iVoice];
-		voice.m_modADSR.Start(s_parameters.m_voiceADSR, velocity);
+		// Copy modulation envelope
+		voice.m_modADSR.Start(s_parameters.m_modADSR, velocity);
 
 		// Set FM vibrato
 		const float modVibratoFreq = s_parameters.m_modVibrato*goldenTen*velocity;
@@ -344,9 +347,6 @@ namespace SFM
 		const float tremolo = s_parameters.m_tremolo;
 		const float tremoloFreq = tremolo*0.25f*goldenTen * velocity;
 		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
-
-		// One shot?
-		voice.m_oneShot = s_parameters.m_loopWaves ? false : oscIsWavetable(request.form);
 
 		// Pulse osc. duty cycle
 		voice.m_pulseWidth = 0.1f + 0.8f*s_parameters.m_pulseWidth;
@@ -373,7 +373,7 @@ namespace SFM
 
 		voice.m_pFilter->Reset();	
 
-		// Set ADSRs (voice & filter)
+		// Start voice & filter envelopes
 		s_voiceADSRs[iVoice].Start(s_parameters.m_voiceADSR, velocity);
 		voice.m_pFilter->Start(s_sampleCount, s_parameters.m_filterADSR, velocity);
 
@@ -389,7 +389,7 @@ namespace SFM
 		
 	}
 
-	// - Hxandle all requested voice releases
+	// - Handle all requested voice releases
 	// - Updates all voices as follows:
 	// - Update voices (includes termination)
 	// - Trigger all requested voices
@@ -402,8 +402,10 @@ namespace SFM
 		{
 			SFM_ASSERT(-1 != request.index);
 
-			// Stop voice ADSR
-			s_voiceADSRs[request.index].Stop(request.velocity);
+			// Stop voice & modulation envelopes
+			const float aftertouch = request.velocity;
+			s_voiceADSRs[request.index].Stop(aftertouch);
+			s_DXvoices[iVoice].m_modADSR.Stop(aftertouch);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -422,16 +424,16 @@ namespace SFM
 				// See if any voices are done
 				bool free = false;
 				
-				// If ADSR envelope has ran it's course, voice can be freed
+				// If voice envelope has ran it's course, voice can be freed
 				ADSR &envelope = s_voiceADSRs[iVoice];
 				if (true == envelope.IsIdle())
 					free = true;
 
 				// One-shot done?
-				// In kMiniMOOG mode the other carriers are procedural and thus don't finish as such
+				// In kMiniMOOG mode the other carriers are procedural so it can not finish this way
 				if (kMiniMOOG != s_voiceAlgos[iVoice])
 				{
-					if (true == voice.m_oneShot && true == voice.HasCycled())
+					if (true == voice.IsDone())
 						free = true;
 				}
 				
@@ -477,7 +479,7 @@ namespace SFM
 		Ideally all inputs interact on sample level, but this is impractical and only done for a few parameters.
 
 		FIXME:
-			- Update parameters every N samples.
+			- Update parameters every N samples (nuggets).
 			- Remove all rogue parameter probes.
 			  + WinMidi_GetPitchBend()
 			  + WinMidi_GetMasterDrive()
@@ -561,6 +563,9 @@ namespace SFM
 		s_parameters.m_voiceADSR.decay   = WinMidi_GetDecay();
 		s_parameters.m_voiceADSR.release = WinMidi_GetRelease();
 		s_parameters.m_voiceADSR.sustain = WinMidi_GetSustain();
+
+		// Modulation A(D)SR
+		// FIXME!
 
 		// Filter ADS(R)
 		s_parameters.m_filterADSR.attack  = WinMidi_GetFilterAttack();
@@ -688,7 +693,7 @@ namespace SFM
 					voice.m_pFilter->SetLiveParameters(s_parameters.m_filterParams);
 					voice.m_pFilter->Apply(buffer, numSamples, s_parameters.m_filterContour, s_parameters.m_flipFilterEnv);
 
-					// Apply (carrier) ADSR
+					// Apply voice (carrier) envelope
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const float ADSR = voiceADSR.Sample();
@@ -727,7 +732,7 @@ namespace SFM
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
-				mix = ultra_tanhf(mix*drive);
+				mix = ultra_tanhf(mix*drive); // FIXME: is this soft clip even necessary?
 
 				// Write
 				SampleAssert(mix);
