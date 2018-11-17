@@ -35,9 +35,9 @@
 		- DX_Voice: feedback (does it work right?)
 		- DX_Voice: create specfic modulation envelope
 		- DX_Voice: performance
-		- Clean up voice instantiation code and spend some time making a proper algorithm for the E. Piano
+		- Clean up voice instantiation code
 		- Implement a decent phase drift
- 		- Ask around if non-linear response to controls is something you'd want in VST
+		- Ask around if non-linear response to controls is something you'd want in VST
 
 	Wait for musician(s) to decide:
 		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start

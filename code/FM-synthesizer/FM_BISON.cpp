@@ -133,6 +133,8 @@ namespace SFM
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
 		DX_Voice &voice = s_DXvoices[iVoice];
+
+		voice.Reset();
 		
 		const float goldenTen = kGoldenRatio*10.f;
 
@@ -167,83 +169,97 @@ namespace SFM
 		const float modIndex   = s_parameters.m_modIndex*velocityInvExp;
 		const float brightness = s_parameters.m_modBrightness;
 
+		// Default slave amplitude
+		const float slaveAmp = amplitude*dBToAmplitude(-3.f);
+
 		// Set up algorithm (hardcoded, could consider a table of sorts)
 		switch (s_parameters.m_algorithm)
 		{
 		default:
 		/*
 			Single carrier & modulator
+
+			3 operators
 		*/
 		case Algorithm::kSingle:
 			{
 				// Carrier
+				voice.m_operators[0].Reset();
 				voice.m_operators[0].enabled = true;
 				voice.m_operators[0].routing = 1;
 				voice.m_operators[0].isCarrier = true;
 				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
-				voice.m_operators[0].isSlave = false;
 
 				// Modulator #1 (sine)
+				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
 				voice.m_operators[1].routing = 2;
-				voice.m_operators[1].isCarrier = false;
 				voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex);
-				voice.m_operators[1].isSlave = false;
 
 				// Modulator #2 (triangle, sharper)
+				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
 				voice.m_operators[2].routing = -1;
-				voice.m_operators[2].isCarrier = false;
 				voice.m_operators[2].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
-				voice.m_operators[2].isSlave = false;
 			}
 
+			break;
+
 		/*
-			Dual carrier with slight detune
+			This algorithm is currently hijacked for R&D.
+
+			Current attempt: DX7 algorithms
+			Current status: functions like the old one, but sounds a little fatter
 		*/
 		case Algorithm::kDoubleCarriers:
 			{
 				// Carrier #1
+				voice.m_operators[0].Reset();
 				voice.m_operators[0].enabled = true;
 				voice.m_operators[0].routing = 2;
 				voice.m_operators[0].isCarrier = true;
 				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
 
-				// Detune a few cents (sounds a bit like contained ring modulation)
-				const float detune = powf(2.f, (0.04f*s_parameters.m_doubleDetune)/12.f);
-				const float slaveFreq = carrierFreq*detune;
-				const float slaveAmp = s_parameters.m_doubleVolume*amplitude*dBToAmplitude(-3.f);
+				// Carrier detune
+				const float carrierDetune = powf(2.f, (0.04f*s_parameters.m_doubleDetune)/12.f);
+				const float slaveFreq = carrierFreq*carrierDetune;
 
 				// Carrier #2
+				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
-				voice.m_operators[1].routing = 2;
+				voice.m_operators[1].routing = 4;
 				voice.m_operators[1].isCarrier = true;
-				voice.m_operators[1].oscillator.Initialize(request.form, slaveFreq, slaveAmp);
-				voice.m_operators[1].isSlave = false;
+				voice.m_operators[1].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume);
 
 				// Modulator #1 (sine)
+				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
 				voice.m_operators[2].routing = 3;
-				voice.m_operators[2].isCarrier = false;
 				voice.m_operators[2].oscillator.Initialize(kSine, modFreq, modIndex);
-				voice.m_operators[2].isSlave = false;
 
 				// Modulator #2 (triangle, sharper)
+				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
-				voice.m_operators[3].routing = -1;
-				voice.m_operators[3].isCarrier = false;
 				voice.m_operators[3].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
-				voice.m_operators[3].isSlave = false;
+
+				// Modulator #4
+				voice.m_operators[4].Reset();
+				voice.m_operators[4].enabled = true;
+				voice.m_operators[4].feedback = 4;
+				voice.m_operators[4].oscillator.Initialize(kSine, carrierFreq, modIndex);
 			}
 
 			break;
 
 		/*
 			MiniMOOG model D-style 3 carriers with detune (can be synchronized)
+
+			5 operators
 		*/
 		case Algorithm::kMiniMOOG:
 			{
 				// Carrier #1
+				voice.m_operators[1].Reset();
 				voice.m_operators[0].enabled = true;
 				voice.m_operators[0].routing = 3;
 				voice.m_operators[0].isCarrier = true;
@@ -253,9 +269,9 @@ namespace SFM
 				const float amount = -1.f*kMOOGDetuneRange + 2.f*s_parameters.m_slavesDetune*kMOOGDetuneRange;
 				const float detune = powf(2.f, amount/12.f);
 				const float slaveFreq = carrierFreq*detune;
-				const float slaveAmp = amplitude*dBToAmplitude(-3.f);
 
 				// Carrier #2
+				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
 				voice.m_operators[1].routing = 3;
 				voice.m_operators[1].isCarrier = true;
@@ -265,6 +281,7 @@ namespace SFM
 				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
 
 				// Carrier #3
+				voice.m_operators[2].Reset();
 				voice.m_operators[2].enabled = true;
 				voice.m_operators[2].routing = 3;
 				voice.m_operators[2].isCarrier = true;
@@ -274,18 +291,16 @@ namespace SFM
 				voice.m_operators[1].modAmount = s_parameters.m_slaveFM;
 
 				// Modulator #1 (sine)
+				voice.m_operators[3].Reset();
 				voice.m_operators[3].enabled = true;
 				voice.m_operators[3].routing = 4;
-				voice.m_operators[3].isCarrier = false;
 				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex);
-				voice.m_operators[3].isSlave = false;
 
 				// Modulator #2 (triangle, sharper)
+				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
 				voice.m_operators[4].routing = -1;
-				voice.m_operators[4].isCarrier = false;
 				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness);
-				voice.m_operators[4].isSlave = false;
 
 				// Hard sync. slaves?
 				if (true == s_parameters.m_hardSync)
@@ -298,8 +313,9 @@ namespace SFM
 			break;
 		}
 
-		// Copy voice ADSR for now (FIXME)
+		// Copy voice ADSR for now and start it (FIXME: own envelope!)
 		voice.m_modADSR = s_voiceADSRs[iVoice];
+		voice.m_modADSR.Start(s_parameters.m_voiceADSR, velocity);
 
 		// Set FM vibrato
 		const float modVibratoFreq = s_parameters.m_modVibrato*goldenTen*velocity;

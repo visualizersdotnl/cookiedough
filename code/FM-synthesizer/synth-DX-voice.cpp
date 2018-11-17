@@ -14,7 +14,7 @@ namespace SFM
 
 		// Modulation vibrato & ADSR
 		const float modVibrato = m_modVibrato.Sample(0.f);
-		const float modADSR = 1.f; // m_modADSR.Sample(); (FIXME)
+		const float modADSR = m_modADSR.Sample();
 
 		// Step 1: process all operators top-down
 		float sampled[kNumOperators];
@@ -37,7 +37,7 @@ namespace SFM
 					// Sanity checks
 					SFM_ASSERT(iModulator < kNumOperators);
 					SFM_ASSERT(iModulator > index);
-					SFM_ASSERT(true == m_operators[index].enabled);
+					SFM_ASSERT(true == m_operators[iModulator].enabled);
 
 					// Get sample
 					modulation = sampled[iModulator];
@@ -45,6 +45,20 @@ namespace SFM
 					// Apply ADSR & vibrato
 					modulation *= modVibrato;
 					modulation *= modADSR;
+				}
+
+				// Get feedback
+				if (opDX.feedback != -1)
+				{
+					const unsigned iFeedback = opDX.feedback;
+
+					// Sanity checks
+					SFM_ASSERT(iFeedback < kNumOperators);
+					SFM_ASSERT(true == m_operators[iFeedback].enabled);
+
+					const float feedback = m_operators[iFeedback].prevSample;
+
+					modulation += feedback;
 				}
 
 				// Calculate sample
@@ -65,7 +79,7 @@ namespace SFM
 			}
 		}
 
-		// Step 2: mix carriers
+		// Step 2: mix carriers & store samples for feedback
 		float mix = 0.f;
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
@@ -76,12 +90,19 @@ namespace SFM
 
 			if (true == opDX.enabled && true == opDX.isCarrier)
 			{
-				// Mute all wavetable carriers if designated as one-shot (FIXME: it is a bit harder to prevent this but it can be done more efficiently than right here in this loop)
+				// Mute all wavetable carriers if designated as one-shot (FIXME: move to more efficient place)
 				float muteMul = 1.f;
 				if (true == m_oneShot && true == oscIsWavetable(opDX.oscillator.GetWaveform()) && true == opDX.oscillator.HasCycled())
 					muteMul = 0.f;
 
-				mix = SoftClamp(mix + sampled[index]*muteMul);
+				const float sample = sampled[index]*muteMul;
+
+				// Is carrier: mix
+				if (true == opDX.isCarrier)
+					mix = SoftClamp(mix + sample);
+
+				// Store for feedback (FIXME: is this lowpass a right method?)
+				opDX.prevSample = opDX.prevSample*0.9f + sample*0.1f;;
 			}
 		}
 

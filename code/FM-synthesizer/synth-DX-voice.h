@@ -3,11 +3,9 @@
 	Syntherklaas FM - DX-style voice.
 
 	Missing:
-		- Spawn function, all previous algorithms
-		- Implement modulator ADSR
-		- Add lowpass for algorithm #3
-		- Operator feedback (try it with algorithm #2)
-		- If number of operators increases these loops become an impractical solution
+		- Feedback
+		- Specific envelope (probably need a simpler one) per operator
+		- These loops are an impractical solution
 
 	Rules:
 		- An operator can only be modulated by an operator above it (index)
@@ -37,14 +35,30 @@ namespace SFM
 		{
 			bool enabled;
 			Oscillator oscillator;
-			unsigned routing;
+			unsigned routing, feedback;
 			bool isCarrier;
+			float prevSample;
 			
 			// Slave operator means it is subject to variable modulation & lowpass
 			bool isSlave;
+
+			// So define these:
 			float modAmount;
 			LowpassFilter filter;
+
+			SFM_INLINE void Reset()
+			{
+				enabled = false;
+				oscillator = Oscillator();
+				routing = -1;
+				feedback = -1;
+				isCarrier = false;
+				prevSample = 0.f;
+				isSlave = false;
+			}
+
 		} m_operators[kNumOperators];
+
 
 		// Modulator ADSR
 		ADSR m_modADSR;
@@ -69,7 +83,7 @@ namespace SFM
 		void Reset()
 		{
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-				m_operators[iOp].enabled = false;
+				m_operators[iOp].Reset();
 
 			// Defensive (FIXME: trim down)
 			m_modADSR.Reset();
