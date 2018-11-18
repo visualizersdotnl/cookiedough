@@ -34,9 +34,9 @@
 		- Use the weekend to learn about the different ratios using your Volca FM
 
 		- DX_Voice:
-		  + Swap algorithm #2 controls for modulation A+R, true it into a real FM algorithm
 		  + Tasks are described on top of synth-DX-voice.cpp
 		  + That whole one shot construction feels broken (FIXING NOW)
+		  + Swap algorithm #2 controls for modulation A+R, turn it into a real FM algorithm
 		  + Sound: try feeding operators that all simply have a freq. that is an integer ratio
 		  + Sound: I'm using leaky integration for feedback: is that correct?
 		  + Sound: aliasing & clipping: find out if this is to be expected
