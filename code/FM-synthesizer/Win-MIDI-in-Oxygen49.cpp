@@ -45,7 +45,7 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotMasterDrive = 26;       // C14
 	const unsigned kPotCutoff = 22;            // C10
-	const unsigned kPotResonance = 23;         // C12
+	const unsigned kPotResonance = 23;         // C11
 	const unsigned kPotFilterContour = 61;     // C12
 	const unsigned kPotFilterDrive =24;        // C13
 	const unsigned kPotFeedback = 27;          // C15

@@ -3,8 +3,14 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	- Let's call the VST version the GENERALISSIMO!
-	- For notes refer to abandonded version.
+	Ideas:
+		- Let's call the VST version the GENERALISSIMO!
+		- For notes refer to abandonded version.
+
+	Current task:
+		- Create programable FM voice before anything else
+
+	In short: get FM right, the reintroduce features
 */
 
 #pragma once

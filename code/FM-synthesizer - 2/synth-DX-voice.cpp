@@ -57,7 +57,7 @@ namespace SFM
 
 				// If carrier: mix
 				if (true == opDX.isCarrier)
-					mix += SoftClamp(mix + sample);
+					mix = SoftClamp(mix + sample);
 
 				sampled[index] = sample;
 			}
@@ -70,6 +70,9 @@ namespace SFM
 		}
 
 		SampleAssert(mix);
+
+		// Global ADSR
+		mix *= m_ADSR.Sample();
 
 		return mix;
 	}

@@ -116,6 +116,12 @@ namespace SFM
 		Voice logic.
 	*/
 
+	SFM_INLINE float CalcOpFreq(float frequency, Patch::Operator &patchOp)
+	{
+		frequency *= g_modRatioLUT[patchOp.coarse];
+		return frequency;
+	}
+
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
@@ -127,29 +133,43 @@ namespace SFM
 
 		// Each has a distinct effect (linear, exponential, inverse exponential)
 		const float velocity       = request.velocity;
-//		const float velocityExp    = velocity*velocity;
+		const float velocityExp    = velocity*velocity;
 		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
-		// Carrier amplitude & frequency
-		const float amplitude = velocity*kMaxVoiceAmp;
-		const float carrierFreq = frequency;
+		// Master/global
+		const float masterAmp = velocity*kMaxVoiceAmp;
+		const float masterFreq = frequency;
+		const float modDepth = s_parameters.modDepth;
 
-		// Modulation ratio, frequency & index
-		const float modRatio   = s_parameters.m_modRatioM;
-		const float modFreq    = carrierFreq*modRatio;
-		const float modIndex   = s_parameters.m_modIndex*velocityInvExp;
+		/*
+			Test algorithm
+		*/
 
-		// Carrier
-		voice.m_operators[0].Reset();
+		Patch &patch = s_parameters.patch;
+
+		// Carrier #1
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulator = 1;
 		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude);
+		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
-		// Modulator #1 (sine)
-		voice.m_operators[1].Reset();
+		// Modulator
 		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].oscillator.Initialize(kSine, modFreq, modIndex);
+		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
+
+		/*
+			End of Algorithm
+		*/
+
+		// Default ADSR (FIXME)
+		ADSR::Parameters envParams;
+		envParams.attack  = 0.f;
+		envParams.decay   = 0.33f;
+		envParams.release = 0.33f;
+		envParams.sustain = 0.8f;
+
+		voice.m_ADSR.Reset();
+		voice.m_ADSR.Start(envParams, velocity);
 
 		// Enabled, up counter		
 		voice.m_enabled = true;
@@ -172,9 +192,7 @@ namespace SFM
 			SFM_ASSERT(-1 != request.index);
 
 			DX_Voice &voice = s_DXvoices[request.index];
-			voice.m_enabled = false;
-			--s_active;
-			
+			voice.m_ADSR.Stop(request.velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -187,7 +205,11 @@ namespace SFM
 
 			if (true == enabled)
 			{
-				// ...
+				if (true == voice.m_ADSR.IsIdle())
+				{
+					voice.m_enabled = false;
+					--s_active;
+				}
 			}
 		}
 
@@ -236,18 +258,24 @@ namespace SFM
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
-
 		// Drive
-		s_parameters.m_drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
-	
-		// Modulation index
-		const float alpha = 1.f/dBToAmplitude(-12.f);
-		s_parameters.m_modIndex = WinMidi_GetModulationIndex()*alpha;
+		s_parameters.drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
-		// Get modulation ratio
-		const unsigned ratioIdx = unsigned(WinMidi_GetModulationRatio()*(g_CM_size-1));
-		s_parameters.m_modRatioM = (float) g_CM[ratioIdx][1];
-		s_parameters.m_modRatioC = (float) g_CM[ratioIdx][0];
+		// Modulation depth
+		const float alpha = 1.f/dBToAmplitude(-12.f);
+		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
+
+		/*
+			Uppdate current operator
+		*/
+
+		Patch::Operator &OP = s_parameters.patch.operators[1];
+
+		const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
+		SFM_ASSERT(index < g_numModRatios);
+		OP.coarse = index;
+
+		OP.amplitude = WinMidi_GetOperatorAmplitude();
 	}
 
 	/*
@@ -334,7 +362,7 @@ namespace SFM
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
-				mix = mix*drive;
+				mix = ultra_tanhf(mix*drive);
 
 				// Write
 				SampleAssert(mix);

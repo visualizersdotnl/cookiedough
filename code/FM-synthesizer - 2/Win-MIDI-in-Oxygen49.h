@@ -26,7 +26,12 @@ namespace SFM
 	// Pitch bend
 	float WinMidi_GetPitchBend();
 
-	// Modulation
-	float WinMidi_GetModulationIndex();
-	float WinMidi_GetModulationRatio();
+	// Modulation (depth)
+	float WinMidi_GetModulation();
+
+	// Operator control
+	float WinMidi_GetOperatorCoarse();
+	float WinMidi_GetOperatorFine();
+	float WinMidi_GetOperatorDetune();
+	float WinMidi_GetOperatorAmplitude();
 }

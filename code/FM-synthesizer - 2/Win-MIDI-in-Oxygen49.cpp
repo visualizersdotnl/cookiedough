@@ -42,11 +42,14 @@ namespace SFM
 	*/
 
 	// Rotary mapping
-	const unsigned kPotMasterDrive = 26; // C14
-	const unsigned kPotModRatio = 22;    // C10
+	const unsigned kPotMasterDrive = 26;  // C14
+	const unsigned kPotOpCoarse = 22;     // C10
+	const unsigned kPotOpFine = 23;       // C11
+	const unsigned kPotOpDetune = 61;     // C12
+	const unsigned kPotOpAmplitude = 24;  // C13
 
 	static float s_masterDrive = 0.f;
-	static float s_modRatio = 0.f;
+	static float s_opCoarse = 0.f, s_opFine = 0.f, s_opDetune = 0.f, s_opAmplitude = 0.f;
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -55,7 +58,7 @@ namespace SFM
 	// Pitch bend (14-bit signed, wheel rests in the middle)
 	static float s_pitchBend;
 
-	static unsigned s_voices[127];
+	static unsigned s_voices[127] = { -1 };
 
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -108,8 +111,20 @@ namespace SFM
 							s_modIndex = fControlVal;
 							break;
 
-						case kPotModRatio:
-							s_modRatio = fControlVal;
+						case kPotOpCoarse:
+							s_opCoarse = fControlVal;
+							break;
+
+						case kPotOpFine:
+							s_opFine = fControlVal;
+							break;
+
+						case kPotOpDetune:
+							s_opDetune = fControlVal;
+							break;
+
+						case kPotOpAmplitude:
+							s_opAmplitude = fControlVal;
 							break;
 						}
 					}
@@ -148,6 +163,8 @@ namespace SFM
 					}
 				}
 			}
+
+			return;
 
 		case MIM_LONGDATA:
 			// FIXE: implement?
@@ -255,10 +272,22 @@ namespace SFM
 	// Master
 	float WinMidi_GetMasterDrive() { return s_masterDrive; }
 
-	// Pitch bend
-	float WinMidi_GetPitchBend() { return s_pitchBend; }
+	// Operator control
+	float WinMidi_GetOperatorCoarse()     { return s_opCoarse;    }
+	float WinMidi_GetOperatorFine()       { return s_opFine;      }
+	float WinMidi_GetOperatorDetune()     { return s_opDetune;    }
+	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude; }
 
-	// Modulation
-	float WinMidi_GetModulationIndex() { return s_modIndex; }
-	float WinMidi_GetModulationRatio() { return s_modRatio; }
+	// Modulation index
+	float WinMidi_GetModulation() 
+	{ 
+		return s_modIndex; 
+	}
+
+	// Pitch bend
+	float WinMidi_GetPitchBend() 
+	{ 
+		return s_pitchBend; 
+	}
+
 }

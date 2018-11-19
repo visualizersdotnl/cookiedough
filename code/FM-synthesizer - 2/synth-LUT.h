@@ -1,9 +1,6 @@
 
 /*
 	Syntherklaas FM -- Global lookup tables.
-
-	- Coarse FM frequency ratios
-	- Sine/Cosine
 */
 
 #pragma once
@@ -12,15 +9,16 @@
 
 namespace SFM
 {
-	// Farey sequence (9th order)
-	extern unsigned g_CM[][2];
-	extern unsigned g_CM_size;
+	// Supposedly Yamaha modulation ratios
+	extern float g_modRatioLUT[];
+	extern size_t g_numModRatios;
 
+	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];
 
 	void CalculateLUTs();
 
-	//	A full period is kLUTSize, so multiply before calling.
+	//	A full period is kLUTSize, so multiply before calling
 	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
 		return LUT[unsigned(index) & kOscLUTAnd];

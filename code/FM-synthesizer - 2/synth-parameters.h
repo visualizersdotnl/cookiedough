@@ -6,7 +6,7 @@
 #pragma once
 
 #include "synth-global.h"
-#include "synth-stateless-oscillators.h"
+#include "synth-patch.h"
 
 namespace SFM
 {
@@ -14,21 +14,24 @@ namespace SFM
 	struct Parameters
 	{
 		// Master drive [0..N]
-		float m_drive;
+		float drive;
 
-		// Modulator parameters [0..1]
-		float m_modIndex;
-		float m_modRatioC, m_modRatioM;
+		// Global mod. index
+		float modDepth;
+
+		// Instr. patch
+		Patch patch;
 
 		void SetDefaults()
 		{
-			// Neutral
-			m_drive = 1.f;
+			// Neutral drive
+			drive = 1.f;
 
-			// No FM
-			m_modIndex = 0.f;
-			m_modRatioC = 0.f;
-			m_modRatioM = 0.f;
+			// Neutral modulation
+			modDepth = 1.f;
+
+			// Reset patches
+			patch.Reset();
 		}
 	};
 }

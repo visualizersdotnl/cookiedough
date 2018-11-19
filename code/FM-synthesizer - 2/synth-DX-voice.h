@@ -11,12 +11,10 @@
 
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
+#include "synth-ADSR.h"
 
 namespace SFM
 {
-	// FIXME: move to synth-global.h?
-	const unsigned kNumOperators = 6;
-
 	// Initialized manually
 	class DX_Voice
 	{
@@ -45,6 +43,9 @@ namespace SFM
 
 		// Feedback buffer
 		float m_feedback[kNumOperators];
+
+		// ADSR
+		ADSR m_ADSR;
 	
 		DX_Voice() : m_enabled(false) {}
 
