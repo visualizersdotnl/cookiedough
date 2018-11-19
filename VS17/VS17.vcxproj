@@ -42,23 +42,112 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\FM_BISON.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\SDL2-audio-out.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-DX-voice.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-log.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-LUT.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-oscillator.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-random.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-formant.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-DX-voice.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\FM_BISON.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\SDL2-audio-out.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-ADSR.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-filter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-formant.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-log.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-LUT.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-midi.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-DX-voice.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-oscillator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-stateless-oscillators.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-random.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\synth-test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-BeatStep.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer\Win-MIDI-in-Oxygen49.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OpenMPSupport>
@@ -108,6 +197,22 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\FM_BISON.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\SDL2-audio-out.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-DX-voice.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-error.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-global.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-log.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-LUT.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-math.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-midi.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-oscillator.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-parameters.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-random.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-ringbuffer.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-stateless-oscillators.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-util.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.h" />
     <ClInclude Include="..\code\FM-synthesizer\FM_BISON.h" />

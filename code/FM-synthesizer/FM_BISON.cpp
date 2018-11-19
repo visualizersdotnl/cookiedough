@@ -376,7 +376,6 @@ namespace SFM
 	}
 
 	// - Handle all requested voice releases
-	// - Updates all voices as follows:
 	// - Update voices (includes termination)
 	// - Trigger all requested voices
 	static void UpdateVoices()
@@ -511,8 +510,6 @@ namespace SFM
 		const unsigned ratioIdx = unsigned(WinMidi_GetModulationRatio()*(g_CM_size-1));
 		s_parameters.m_modRatioM = (float) g_CM[ratioIdx][1];
 		s_parameters.m_modRatioC = (float) g_CM[ratioIdx][0];
-
-		unsigned test = g_CM_size;
 
 		// Modulation brightness affects the modulator's oscillator blend
 		s_parameters.m_modBrightness = WinMidi_GetModulationBrightness();
