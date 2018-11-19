@@ -87,7 +87,7 @@ namespace SFM
 				{
 					mix += SoftClamp(mix + sample);
 				}
-	
+
 				sampled[index] = sample;
 			}
 		}
@@ -98,7 +98,7 @@ namespace SFM
 			m_feedback[iOp] =  m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
 		}
 
-		// Final mix
+		// Final mix	
 		float sample = mix;
 
 		// Add noise
