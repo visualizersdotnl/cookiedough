@@ -118,7 +118,8 @@ namespace SFM
 
 	SFM_INLINE float CalcOpFreq(float frequency, Patch::Operator &patchOp)
 	{
-		frequency *= g_modRatioLUT[patchOp.coarse];
+//		frequency *= g_modRatioLUT[patchOp.coarse];
+		frequency *= g_CM[patchOp.coarse][1];
 		return frequency;
 	}
 
@@ -269,13 +270,23 @@ namespace SFM
 			Uppdate current operator
 		*/
 
-		Patch::Operator &OP = s_parameters.patch.operators[1];
+		const unsigned iOp = WinMidi_GetOperator();
+		if (-1 != iOp)
+		{
+			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
-		const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
-		SFM_ASSERT(index < g_numModRatios);
-		OP.coarse = index;
+			Patch::Operator &OP = s_parameters.patch.operators[iOp];
+	
+//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
+//			SFM_ASSERT(index < g_numModRatios);
+//			OP.coarse = index;
 
-		OP.amplitude = WinMidi_GetOperatorAmplitude();
+			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
+			SFM_ASSERT(index < g_CM_size);
+			OP.coarse = index;
+
+			OP.amplitude = WinMidi_GetOperatorAmplitude();
+		}
 	}
 
 	/*

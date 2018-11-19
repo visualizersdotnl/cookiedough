@@ -13,6 +13,10 @@ namespace SFM
 	extern float g_modRatioLUT[];
 	extern size_t g_numModRatios;
 
+	// 9th-order normalized Farey sequence
+	extern unsigned g_CM[][2];
+	extern unsigned g_CM_size;
+
 	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];
 

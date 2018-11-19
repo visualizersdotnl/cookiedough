@@ -6,6 +6,11 @@
 
 	- Keep it in P01 for this mapping to work (or adjust if it doesn't, I often screw around here).
 	- Use the octave button to fiddle around the gamut.
+
+	Operator editing is a little ham-fisted, but these are the rules:
+	- Press percussion pad that corresponds with operator.
+	- Set all parameters to what they should be.
+	- Hold red button (C30) to set.
 */
 
 #include "synth-global.h"
@@ -49,14 +54,35 @@ namespace SFM
 	const unsigned kPotOpAmplitude = 24;  // C13
 
 	static float s_masterDrive = 0.f;
-	static float s_opCoarse = 0.f, s_opFine = 0.f, s_opDetune = 0.f, s_opAmplitude = 0.f;
+
+	static float s_opCoarse[kNumOperators]    = { 0.f };
+	static float s_opFine[kNumOperators]      = { 0.f }; 
+	static float s_opDetune[kNumOperators]    = { 0.f }; 
+	static float s_opAmplitude[kNumOperators] = { 0.f };
+
+	// Button mapping
+	const unsigned kButtonOpRecv = 118; // C30
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
 	static float s_modIndex = 0.f;
 
-	// Pitch bend (14-bit signed, wheel rests in the middle)
+	// Pitch bend (special message, 14-bit signed, wheel rests in the middle)
 	static float s_pitchBend;
+
+	// Percussion channel indices
+	const unsigned kPerc1 = 36;
+	const unsigned kPerc2 = 38;
+	const unsigned kPerc3 = 42;
+	const unsigned kPerc4 = 46;
+	const unsigned kPerc5 = 50;
+	const unsigned kPerc6 = 45;
+	const unsigned kPerc7 = 51;
+	const unsigned kPerc8 = 49;
+
+	// Current (receiving) operator
+	static unsigned s_currentOp = 0;
+	static bool s_opRecv = true;
 
 	static unsigned s_voices[127] = { -1 };
 
@@ -90,6 +116,35 @@ namespace SFM
 
 				if (CHANNEL_PERCUSSION == channel)
 				{
+					switch (controlIdx)
+					{
+					/* Current operator */
+
+					case kPerc1:
+						s_currentOp = 0;
+						break;
+
+					case kPerc2:
+						s_currentOp = 1;
+						break;
+
+					case kPerc3:
+						s_currentOp = 2;
+						break;
+
+					case kPerc4:
+						s_currentOp = 3;
+						break;
+
+					case kPerc5:
+						s_currentOp = 4;
+						break;
+
+					case kPerc6:
+						s_currentOp = 5;
+						break;
+					}
+
 					return;
 				}
 
@@ -107,24 +162,28 @@ namespace SFM
 
 						/* FM */
 
+						case kButtonOpRecv:
+							s_opRecv = (127 == controlVal);
+							break;
+
 						case kModIndex:
 							s_modIndex = fControlVal;
 							break;
 
 						case kPotOpCoarse:
-							s_opCoarse = fControlVal;
+							s_opCoarse[s_currentOp] = fControlVal;
 							break;
 
 						case kPotOpFine:
-							s_opFine = fControlVal;
+							s_opFine[s_currentOp] = fControlVal;
 							break;
 
 						case kPotOpDetune:
-							s_opDetune = fControlVal;
+							s_opDetune[s_currentOp] = fControlVal;
 							break;
 
 						case kPotOpAmplitude:
-							s_opAmplitude = fControlVal;
+							s_opAmplitude[s_currentOp] = fControlVal;
 							break;
 						}
 					}
@@ -273,10 +332,10 @@ namespace SFM
 	float WinMidi_GetMasterDrive() { return s_masterDrive; }
 
 	// Operator control
-	float WinMidi_GetOperatorCoarse()     { return s_opCoarse;    }
-	float WinMidi_GetOperatorFine()       { return s_opFine;      }
-	float WinMidi_GetOperatorDetune()     { return s_opDetune;    }
-	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude; }
+	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[s_currentOp];    }
+	float WinMidi_GetOperatorFine()       { return s_opFine[s_currentOp];      }
+	float WinMidi_GetOperatorDetune()     { return s_opDetune[s_currentOp];    }
+	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[s_currentOp]; }
 
 	// Modulation index
 	float WinMidi_GetModulation() 
@@ -290,4 +349,9 @@ namespace SFM
 		return s_pitchBend; 
 	}
 
+	// Current operator (if receiving)
+	unsigned WinMidi_GetOperator()
+	{
+		return (true == s_opRecv) ? s_currentOp : -1;
+	}
 }

@@ -34,4 +34,7 @@ namespace SFM
 	float WinMidi_GetOperatorFine();
 	float WinMidi_GetOperatorDetune();
 	float WinMidi_GetOperatorAmplitude();
+
+	// Current operator to set (-1 if not receiving)
+	unsigned WinMidi_GetOperator();
 }

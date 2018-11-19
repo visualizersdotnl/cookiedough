@@ -23,6 +23,21 @@ namespace SFM
 
 	size_t g_numModRatios = sizeof(g_modRatioLUT)/sizeof(float);
 
+	// Source: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
+	unsigned g_CM[][2] = {
+		{1, 1},
+		{1, 2},
+		{1, 3},
+		{1, 4},
+		{1, 5}, {2, 5},
+		{1, 6},
+		{1, 7}, {2, 7}, {3, 7},
+		{1, 8}, {3, 8},
+		{1, 9}, {2, 9}, {4, 9}
+	};
+
+	unsigned g_CM_size = sizeof(g_CM)/(2*sizeof(unsigned));
+
 	// Sinus
 	alignas(16) float g_sinLUT[kOscLUTSize];
 
