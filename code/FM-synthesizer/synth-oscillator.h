@@ -15,9 +15,9 @@ namespace SFM
 		/* const */ Waveform m_form;
 		/* const */ float m_frequency;
 		/* const */ float m_amplitude;
-		/* const */ float m_oneShot;
+		/* const */ bool  m_oneShot;
 		/* const */ float m_period;
-
+		
 		float m_syncFrequency;
 		float m_syncPeriod;
 
@@ -109,7 +109,7 @@ namespace SFM
 		float GetFrequency() const    { return m_frequency; }
 		float GetPitch() const        { return m_pitch;     }
 		float GetPeriodLength() const { return m_period;    }
-		unsigned GetCycles() const    { return m_cycles;    }
+		unsigned GetCycle() const     { return m_cycles;    }
 
 		bool IsDone() const
 		{

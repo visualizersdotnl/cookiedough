@@ -3,15 +3,8 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 	Precursor to the 'GENERALISSIMO FM'
-	
-	A polyphonic hybrid synthesis engine.
 
-	Beta testers for the VST:
-		- Ronny Pries
-		- Esa Ruoho
-		- Maarten van Strien
-		- Mark Smith
-		- Bernd H.
+	** PROJECT ABANDONED **
 
 	Third-party / References:
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
@@ -31,19 +24,14 @@
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
 	In the works:
-		- Use the weekend to learn about the different ratios using your Volca FM
-
 		- DX_Voice:
-		  + Tasks are described on top of synth-DX-voice.cpp
-		  + That whole one shot construction feels broken (FIXING NOW)
-		  + Swap algorithm #2 controls for modulation A+R, turn it into a real FM algorithm
+		  + Some tasks are described on top of synth-DX-voice.cpp
 		  + Sound: try feeding operators that all simply have a freq. that is an integer ratio
 		  + Sound: I'm using leaky integration for feedback: is that correct?
 		  + Sound: aliasing & clipping: find out if this is to be expected
 		  + Provide a cleaner way to define algorithms (not necessary for FM. BISON perhaps)
 		  + Performance is horrible now; fix this (I think the biggest problem are my oscillators)
 		    Do yourself a favor and run the CPU profiler first
-		  + Goal: E. Piano DX7 style like it should sound
 
  		- Ask around if non-linear response to controls is something you'd want in VST
 
@@ -51,7 +39,7 @@
 		- How key velocity influences voices; this is easy to tweak by either modifying velocity at the start
 		  of a voice *or* tweaking the individual use cases
 
-	Transition to avetable VCOs:
+	Transition to wavetable VCOs:
 		- Precalculate wavetables for all oscillators and use them
 		  + Step 1: precalculate each oscillator at base frequency
 		  + Step 2: Make oscillator (VCO) use them
@@ -85,8 +73,9 @@
 		- Crackle when bottlenecked (should not be the case in production phase)
 
 	Lesson(s) learned:
+		- I've overengineered because I did not know where to go
 		- It is important to follow through and finish this
-		- Don't keep pushing a feature that's just not working
+		- For a true FM synthesizer you only need sine waves, a more flexible LFOs, and properly programmable operators
 */
 
 #ifndef _FM_BISON_H_

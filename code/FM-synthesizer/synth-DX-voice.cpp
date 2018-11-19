@@ -2,13 +2,11 @@
 /*
 	Syntherklaas FM - Yamaha DX style voice.
 
-	Voice-specific to do:
+	FIXME:
 		- What happens if I modulate the mod. vibrato LFO with the A(D)SR envelope?
-		- Get rid of ugly mute condition (in second loop now)
 		- To optimize, firstly, the 2 loops can be collapsed into one
-		- This will all run faster when Oscillator is optimized
-		- There is a lot of boolean logic that seems excessive
-		- Add voice amplitude ADSR to class!
+		- This will all run faster when Oscillator is optimized or better yet: simplified
+		- There is a lot of boolean logic here I'd rather not have
 */
 
 #include "synth-global.h"
@@ -27,6 +25,7 @@ namespace SFM
 		// Step 1: process all operators top-down
 		float sampled[kNumOperators];
 
+		float mix = 0.f;
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			// Top-down
@@ -67,9 +66,7 @@ namespace SFM
 					SFM_ASSERT(iFeedback < kNumOperators);
 					SFM_ASSERT(true == m_operators[iFeedback].enabled);
 
-					const float feedback = m_operators[iFeedback].prevSample;
-
-					modulation += feedback;
+					modulation += m_feedback[index];
 				}
 
 				// Calculate sample
@@ -79,41 +76,29 @@ namespace SFM
 					sample = opDX.oscillator.Sample(modulation, m_pulseWidth);
 				else
 					// Variable modulation & lowpass
-					sample = opDX.filter.Apply(opDX.oscillator.Sample(opDX.modAmount*modulation, m_pulseWidth));
+					sample = opDX.filter.Apply(opDX.oscillator.Sample(opDX.modAmount, m_pulseWidth));
+
+				// One shot mute?
+				const float muteMul = opDX.oscillator.IsDone() ? 0.f : 1.f;
+				sample *= muteMul;
+
+				// If carrier: mix
+				if (true == opDX.isCarrier)
+				{
+					mix += SoftClamp(mix + sample);
+				}
 	
 				sampled[index] = sample;
 			}
 		}
 
-		// Step 2: mix carriers & store samples for feedback
-		float mix = 0.f;
+		// Step 2: integrate feedback
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
-			// Bottom-up
-			const unsigned index = iOp;
-
-			Operator &opDX = m_operators[index];
-
-			if (true == opDX.enabled)
-			{
-				// Mute carriers that are done (one-shot)
-				float muteMul = 1.f;
-				if (true == opDX.oscillator.IsDone())
-					muteMul = 0.f;
-
-				const float sample = sampled[index]*muteMul;
-
-				// Is carrier: mix
-				if (true == opDX.isCarrier)
-				{
-					mix = SoftClamp(mix + sample);
-				}
-
-				// Leaky integrate (I always think this looks sloppy but it works)
-				opDX.prevSample = opDX.prevSample*0.9f + sample*0.1f;
-			}
+			m_feedback[iOp] =  m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
 		}
 
+		// Final mix
 		float sample = mix;
 
 		// Add noise

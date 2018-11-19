@@ -212,12 +212,7 @@ namespace SFM
 			break;
 
 		/*
-			This algorithm is currently hijacked for R&D.
-
-			Current attempt: DX7/Volca algorithm #5, or something that sounds like it
-			Current status: functions like the old one, but sounds *way* thicker
-
-			FIXME: everything!
+			Double carrier (one detuned) & modulator
 		*/
 		case Algorithm::kDoubleCarriers:
 			{
@@ -225,49 +220,40 @@ namespace SFM
 				const float carrierDetune = powf(2.f, (0.04f*s_parameters.m_doubleDetune)/12.f);
 				const float slaveFreq = carrierFreq*carrierDetune;
 
-				// For now (FIXME), just translate the detune to a C:M table index
+				// Translate the detune to a C:M table index
 				const int ratioIdx = unsigned(s_parameters.m_doubleDetune*(g_CM_size-1));
 
 				// Carrier #1
 				voice.m_operators[0].Reset();
 				voice.m_operators[0].enabled = true;
-				voice.m_operators[0].modulator = 3;
+				voice.m_operators[0].modulator = 2;
 				voice.m_operators[0].isCarrier = true;
 				voice.m_operators[0].oscillator.Initialize(request.form, carrierFreq, amplitude, oneShot);
 
 				// Carrier #2
 				voice.m_operators[1].Reset();
 				voice.m_operators[1].enabled = true;
-				voice.m_operators[1].modulator = 3;
+				voice.m_operators[1].modulator = 4;
 				voice.m_operators[1].isCarrier = true;
-				voice.m_operators[1].isSlave = true;
-				voice.m_operators[1].oscillator.Initialize(kSine, slaveFreq, slaveAmp, false);
-
-				// Carrier #3
-				voice.m_operators[2].Reset();
-				voice.m_operators[2].enabled = true;
-				voice.m_operators[2].modulator = 5;
-				voice.m_operators[2].isCarrier = true;
-				voice.m_operators[2].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume, oneShot);
-//				voice.m_operators[2].oscillator.SyncTo(carrierFreq);
+				voice.m_operators[1].oscillator.Initialize(request.form, slaveFreq, slaveAmp*s_parameters.m_doubleVolume, oneShot);
 
 				// Modulator #1 (sine)
-				voice.m_operators[3].Reset();
-				voice.m_operators[3].enabled = true;
-				voice.m_operators[3].modulator = 4;
-				voice.m_operators[3].oscillator.Initialize(kSine, modFreq, modIndex, false);
+				voice.m_operators[2].Reset();
+				voice.m_operators[2].enabled = true;
+				voice.m_operators[2].modulator = 3;
+				voice.m_operators[2].oscillator.Initialize(kSine, modFreq, modIndex, false);
 
 				// Modulator #2 (triangle, sharper)
+				voice.m_operators[3].Reset();
+				voice.m_operators[3].enabled = true;
+				voice.m_operators[3].oscillator.Initialize(kPolyTriangle, modFreq, brightness, false);
+
+				// Modulator #3
+				const float ratio = g_CM[ratioIdx][1];
 				voice.m_operators[4].Reset();
 				voice.m_operators[4].enabled = true;
-				voice.m_operators[4].oscillator.Initialize(kPolyTriangle, modFreq, brightness, false);
-
-				// Modulator #3 (just an attempt, really)
-				voice.m_operators[5].Reset();
-				voice.m_operators[5].enabled = true;
-				voice.m_operators[5].feedback = 1;
-				voice.m_operators[5].vibrato = 0.5f;
-				voice.m_operators[5].oscillator.Initialize(kSine, carrierFreq*g_CM[ratioIdx][1], modIndex, false);
+				voice.m_operators[4].feedback = 4;
+				voice.m_operators[4].oscillator.Initialize(kSine, slaveFreq*ratio, modIndex*0.66f, false);
 			}
 
 			break;
@@ -275,7 +261,7 @@ namespace SFM
 		/*
 			MiniMOOG model D-style 3 carriers with detune (can be synchronized)
 
-			5 operators
+			5 operators (3 carrier, 2 modulator)
 		*/
 		case Algorithm::kMiniMOOG:
 			{
@@ -336,17 +322,17 @@ namespace SFM
 
 		s_voiceAlgos[iVoice] = s_parameters.m_algorithm;
 
-		// Copy modulation envelope
-		voice.m_modADSR.Start(s_parameters.m_modADSR, velocity);
+		// Start modulation envelope (less responsive to velocity)
+		voice.m_modADSR.Start(s_parameters.m_modADSR, 0.5f + velocity*0.5f);
 
 		// Set FM vibrato
 		const float modVibratoFreq = s_parameters.m_modVibrato*goldenTen*velocity;
-		voice.m_modVibrato.Initialize(kCosine, modVibratoFreq, 1.f);
+		voice.m_modVibrato.Initialize(kCosine, modVibratoFreq, 1.f, false);
 
 		// Initialize amplitude modulator (tremolo)
 		const float tremolo = s_parameters.m_tremolo;
 		const float tremoloFreq = tremolo*0.25f*goldenTen * velocity;
-		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp);
+		voice.m_AM.Initialize(kCosine, tremoloFreq, kMaxVoiceAmp, false);
 
 		// Pulse osc. duty cycle
 		voice.m_pulseWidth = 0.1f + 0.8f*s_parameters.m_pulseWidth;
@@ -405,7 +391,7 @@ namespace SFM
 			// Stop voice & modulation envelopes
 			const float aftertouch = request.velocity;
 			s_voiceADSRs[request.index].Stop(aftertouch);
-			s_DXvoices[iVoice].m_modADSR.Stop(aftertouch);
+			s_DXvoices[request.index].m_modADSR.Stop(aftertouch);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -564,8 +550,11 @@ namespace SFM
 		s_parameters.m_voiceADSR.release = WinMidi_GetRelease();
 		s_parameters.m_voiceADSR.sustain = WinMidi_GetSustain();
 
-		// Modulation A(D)SR
-		// FIXME!
+		// Modulation A(D)SR (adapt sharper version)
+		s_parameters.m_modADSR.attack = s_parameters.m_voiceADSR.attack*0.5f;
+		s_parameters.m_modADSR.decay = 0.f;
+		s_parameters.m_modADSR.release = s_parameters.m_voiceADSR.release*0.5f;
+		s_parameters.m_modADSR.sustain = 1.f;
 
 		// Filter ADS(R)
 		s_parameters.m_filterADSR.attack  = WinMidi_GetFilterAttack();
@@ -732,7 +721,8 @@ namespace SFM
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
-				mix = ultra_tanhf(mix*drive); // FIXME: is this soft clip even necessary?
+				mix = mix*drive;
+//				mix = ultra_tanhf(mix*drive); // FIXME: is this soft clip even necessary?
 
 				// Write
 				SampleAssert(mix);

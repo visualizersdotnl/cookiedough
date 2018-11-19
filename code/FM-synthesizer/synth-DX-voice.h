@@ -29,12 +29,13 @@ namespace SFM
 		{
 			bool enabled;
 			Oscillator oscillator;
+
+			// Indices: -1 means none, in case of modulator always modulater high up in the chain
 			unsigned modulator, feedback;
 			bool isCarrier;
+
+			// Influence [0..1] of global depth/index vibrato
 			float vibrato;
-			
-			// Used for feedback
-			float prevSample;
 			
 			// Slave operator means it is subject to variable modulation & lowpass
 			bool isSlave;
@@ -51,7 +52,6 @@ namespace SFM
 				feedback = -1;
 				isCarrier = false;
 				vibrato = 1.f;
-				prevSample = 0.f;
 				isSlave = false;
 			}
 
@@ -71,13 +71,19 @@ namespace SFM
 
 		// Filter instance for this particular voice
 		LadderFilter *m_pFilter;
+
+		// Feedback buffer
+		float m_feedback[kNumOperators];
 	
 		DX_Voice() : m_enabled(false) {}
 
 		void Reset()
 		{
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+			{
 				m_operators[iOp].Reset();
+				m_feedback[iOp] = 0.f;
+			}
 
 			// Defensive (FIXME: trim down)
 			m_modADSR.Reset();
