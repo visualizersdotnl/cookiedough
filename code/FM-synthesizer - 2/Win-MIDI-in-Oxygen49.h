@@ -45,4 +45,8 @@ namespace SFM
 	float WinMidi_GetDecay();
 	float WinMidi_GetSustain();
 	float WinMidi_GetRelease();
+
+	// Modulation envelope (attack & decay)
+	float WinMidi_GetModEnvA();
+	float WinMidi_GetModEnvD();
 }

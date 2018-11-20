@@ -60,9 +60,14 @@ namespace SFM
 	const unsigned kFaderR = 72;         // C4
 	const unsigned kFaderOpVibrato = 25; // C5
 	const unsigned kFaderVibrato = 73;   // C6
+	const unsigned kFaderModA = 74;      // C7
+	const unsigned kFaderModD = 70;      // C8
 
 	static float s_masterDrive = 0.f;
 	static float s_masterVib = 0.f;
+
+	static float s_modEnvA = 0.f;
+	static float s_modEnvD = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
 	static float s_opCoarse[kNumOperators]    = { 0.f };
@@ -207,6 +212,16 @@ namespace SFM
 
 						case kFaderOpVibrato:
 							s_opVibrato[s_currentOp] = fControlVal;
+							break;
+
+						/* FM envelope */
+
+						case kFaderModA:
+							s_modEnvA = fControlVal;
+							break;
+
+						case kFaderModD:
+							s_modEnvD = fControlVal;
 							break;
 
 						/* ADSR */
@@ -403,4 +418,8 @@ namespace SFM
 	float WinMidi_GetDecay()           { return s_D; }
 	float WinMidi_GetSustain()         { return s_S; }
 	float WinMidi_GetRelease()         { return s_R; }
+
+	// Modulation envelope (attack & decay)
+	float WinMidi_GetModEnvA() { return s_modEnvA; }
+	float WinMidi_GetModEnvD() { return s_modEnvD; }
 }

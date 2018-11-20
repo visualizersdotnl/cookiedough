@@ -11,7 +11,7 @@
 
 namespace SFM
 {
-	// Most global parameters; some are still "pulled" in place (FIXME)
+	// Most global parameters; some are still "pulled" in place (FIXME, see FM-BISON.cpp)
 	struct Parameters
 	{
 		// Master drive [0..N]
@@ -22,6 +22,10 @@ namespace SFM
 
 		// Master ADSR
 		ADSR::Parameters m_envParams;
+
+		// Modulation envelope (close to Volca design)
+		float m_modEnvA;
+		float m_modEnvD;
 
 		// Global mod. index
 		float modDepth;
@@ -42,6 +46,10 @@ namespace SFM
 			m_envParams.decay   = 0.25f;
 			m_envParams.release = 0.25f;
 			m_envParams.sustain = 1.f;
+
+			// Std. mod. env.
+			m_modEnvA = 0.f;
+			m_modEnvD = 0.25f;
 
 			// Neutral modulation
 			modDepth = 1.f;

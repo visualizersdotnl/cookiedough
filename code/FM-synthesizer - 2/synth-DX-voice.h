@@ -55,7 +55,8 @@ namespace SFM
 		// Global pitch bend
 		float m_pitchBend;
 
-		// ADSR
+		// ADSRs (modulation & voice)
+		ADSR m_modADSR;
 		ADSR m_ADSR;
 	
 		DX_Voice() : m_enabled(false) {}
@@ -74,6 +75,10 @@ namespace SFM
 
 			// No pitch bend
 			m_pitchBend = 0.f;
+
+			// Reset envelopes
+			m_modADSR.Reset();
+			m_ADSR.Reset();
 		}
 
 		float Sample(const Parameters &parameters);

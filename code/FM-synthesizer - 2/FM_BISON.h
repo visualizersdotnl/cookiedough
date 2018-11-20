@@ -8,7 +8,6 @@
 		- For all notes on how to do and not to do things: refer to abandonded version
 
 	Current goals (3-4 max.):
-		- Modulation envelope
 		- Bigger C:M table
 		- Smarter way of building & supplying algorithms
  		- Bag of tricks: what do we want and what do we not want?

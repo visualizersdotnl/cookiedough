@@ -15,7 +15,10 @@ namespace SFM
 		// Get vibrato
 		const float vibrato = m_vibrato.Sample(0.f);
 
-		// Step 1: process all operators top-down
+		// Get modulation env.
+		const float modEnv = m_modADSR.Sample();
+
+		// Process all operators top-down
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
@@ -58,6 +61,9 @@ namespace SFM
 				// Factor in vibrato
 				modulation = lerpf<float>(modulation, modulation*vibrato, opDX.vibrato);
 
+				// And the envelope
+				modulation *= modEnv;
+
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation);
 
@@ -69,11 +75,9 @@ namespace SFM
 			}
 		}
 
-		// Step 2: integrate feedback
+		// Integrate feedback
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-		{
 			m_feedback[iOp] =  m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
-		}
 
 		SampleAssert(mix);
 
