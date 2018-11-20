@@ -17,7 +17,7 @@
 	Things that are missing:
 		- Proper LFO
 	
-	In short: get FM right, the reintroduce the goodie bag features
+	In short: get FM right, then reintroduce the goodie bag features
 */
 
 #pragma once
