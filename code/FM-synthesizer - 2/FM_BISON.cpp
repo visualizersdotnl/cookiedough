@@ -235,7 +235,7 @@ namespace SFM
 
 		/*
 			Test algorithm: Volca FM algorithm #5
-			Verdict: of use for "sharp" instruments
+			Verdict: works well if treated right, a keeper!
 		*/
 
 		FM_Patch &patch = s_parameters.patch;
