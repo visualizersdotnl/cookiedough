@@ -162,7 +162,7 @@ namespace SFM
 
 		const float modDepth = s_parameters.modDepth*velocityInvExp;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -231,7 +231,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -334,7 +334,7 @@ namespace SFM
 		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
 
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
+			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato; // FIXME: what?
 
 		// Set mod. env.
 		ADSR::Parameters modEnvParams;

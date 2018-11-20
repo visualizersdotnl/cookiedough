@@ -12,6 +12,7 @@
 	Current goals (3-4 max.):
 		- Bigger C:M table
 		- Smarter way of building & supplying algorithms
+		- Chorus
 
 	Things that are missing:
 		- Proper LFO
