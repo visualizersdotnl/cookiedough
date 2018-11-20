@@ -159,9 +159,10 @@ namespace SFM
 		// Master/global
 		const float masterAmp = velocity*kMaxVoiceAmp;
 		const float masterFreq = frequency;
+
 		const float modDepth = s_parameters.modDepth*velocityInvExp;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -234,7 +235,7 @@ namespace SFM
 
 		/*
 			Test algorithm: Volca FM algorithm #5
-			Verdicht: ?
+			Verdict: of use for "sharp" instruments
 		*/
 
 		FM_Patch &patch = s_parameters.patch;
@@ -264,7 +265,7 @@ namespace SFM
 
 		// Modulator #2
 		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].feedback = 1;
+		voice.m_operators[4].feedback = -1;
 		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
 
 		// Modulator #3
@@ -278,7 +279,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #25
@@ -330,7 +331,7 @@ namespace SFM
 
 		// Set vibrato
 		const float vibFreq = s_parameters.vibrato*10.f*kGoldenRatio*velocity;
-		voice.m_vibrato.Initialize(kPolyTriangle, vibFreq, 1.f);
+		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
 
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
@@ -460,8 +461,8 @@ namespace SFM
 		s_parameters.m_envParams.sustain = WinMidi_GetSustain();
 
 		// Modulation depth
-		const float alpha = kPI;
-		s_parameters.modDepth = -(alpha*0.5f) + WinMidi_GetModulation()*alpha;
+		const float alpha = 1.f/dBToAmplitude(-12.f);
+		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
 
 		// Modulation envelope
 		s_parameters.m_modEnvA = WinMidi_GetModEnvA();
@@ -594,7 +595,7 @@ namespace SFM
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
 
-					mix = SoftClamp(mix+sample);
+					mix = mix+sample;
 				}
 
 				// Drive
