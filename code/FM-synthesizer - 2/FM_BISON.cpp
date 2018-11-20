@@ -178,7 +178,6 @@ namespace SFM
 
 		// Modulator #1
 		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = -1;
 		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
 
 		/*
@@ -190,52 +189,10 @@ namespace SFM
 #if 0
 
 		/*
-			Test algorithm: Volca FM algorithm #28
-			Verdict: useless in it's complexity
-		*/
-
-		FM_Patch &patch = s_parameters.patch;
-
-		// Carrier #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
-
-		// Carrier #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulators[0] = 3;
-		voice.m_operators[1].isCarrier = true;
-		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
-
-		// Carrier #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 4;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
-
-		// Modulator #1
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
-
-		// Modulator #2 & #3
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = 5;
-		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-#if 1
-
-		/*
 			Test algorithm: Volca FM algorithm #5
+
 			Verdict: works well if treated right, a keeper!
+			QA: OK!
 		*/
 
 		FM_Patch &patch = s_parameters.patch;
@@ -279,7 +236,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #25
@@ -473,7 +430,7 @@ namespace SFM
 
 		// Filter
 		s_parameters.filterWet = WinMidi_GetFilterWet();
-		s_parameters.filterParams.drive = 1.f;
+		s_parameters.filterParams.drive = dBToAmplitude(3.f);
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 

@@ -85,10 +85,6 @@ namespace SFM
 		SFM_INLINE void SetPitchBend(float bend)
 		{
 			m_pitchBend = bend;
-
-			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-				if (true == m_operators[iOp].enabled) 
-					m_operators[iOp].oscillator.PitchBend(bend);
 		}
 	};
 }

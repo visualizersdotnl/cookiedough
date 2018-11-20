@@ -18,7 +18,7 @@ namespace SFM
 		// Get modulation env.
 		const float modEnv = m_modADSR.Sample();
 
-		// Process all operators top-down
+		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
@@ -31,7 +31,7 @@ namespace SFM
 
 			if (true == opDX.enabled)
 			{
-				// Get modulation (from 3 sources max.)
+				// Get modulation (from 3 sources maximum, FIXME: get rid of this if it ain't used)
 				float modulation = 0.f;
 				for (unsigned iMod = 0; iMod < 3; ++iMod)
 				{
@@ -66,6 +66,9 @@ namespace SFM
 
 				// And the envelope
 				modulation *= modEnv;
+
+				// Set pitch bend
+				opDX.oscillator.PitchBend(m_pitchBend);
 
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation);

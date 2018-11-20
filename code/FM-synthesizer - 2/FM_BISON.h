@@ -11,13 +11,19 @@
 
 	Current goals (3-4 max.):
 		- Bigger C:M table
+		- Hard sync.?
 		- Smarter way of building & supplying algorithms
-		- Chorus
 
 	Things that are missing:
 		- Proper LFO
+		- Chorus
 	
 	In short: get FM right, then reintroduce the goodie bag features
+
+	Lessons already learned:
+		- The DX7 is far more complex, but isn't it too complex?
+		  If you want to implement that there's no way around LUTs and quasi-spaghetti, 
+		  which is not the goal of this exercise
 */
 
 #pragma once
