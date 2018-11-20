@@ -144,7 +144,9 @@ namespace SFM
 		// Master/global
 		const float masterAmp = velocity*kMaxVoiceAmp;
 		const float masterFreq = frequency;
-		const float modDepth = s_parameters.modDepth;
+		const float modDepth = s_parameters.modDepth*velocityInvExp;
+
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -175,10 +177,57 @@ namespace SFM
 		voice.m_operators[3].feedback = -1;
 		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
 
-		// Modulator #1
+		// Modulator #2
 		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].feedback = 0-1;
+		voice.m_operators[4].feedback = -1;
 		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
+
+		// Modulator #3
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
+		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
+
+		/*
+			End of Algorithm
+		*/
+
+#else
+
+		/*
+			Test algorithm: Volca FM algorithm #25
+		*/
+
+		Patch &patch = s_parameters.patch;
+
+		// Carrier #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulator = -1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
+
+		// Carrier #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].modulator = -1;
+		voice.m_operators[1].isCarrier = true;
+		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
+
+		// Carrier #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulator = -1;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
+
+		// Carrier #4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].modulator = 5;
+		voice.m_operators[3].isCarrier = true;
+		voice.m_operators[3].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[3]), masterAmp*patch.operators[3].amplitude);
+
+		// Carrier #5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].modulator = 5;
+		voice.m_operators[4].isCarrier = true;
+		voice.m_operators[4].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[4]), masterAmp*patch.operators[4].amplitude);
 
 		// Modulator #1
 		voice.m_operators[5].enabled = true;
@@ -188,6 +237,15 @@ namespace SFM
 		/*
 			End of Algorithm
 		*/
+
+#endif
+
+		// Set vibrato
+		const float vibFreq = s_parameters.vibrato*10.f*kGoldenRatio*velocity;
+		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
+
+		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
 
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
@@ -282,6 +340,9 @@ namespace SFM
 		// Drive
 		s_parameters.drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
+		// Vibrato
+		s_parameters.vibrato = WinMidi_GetVibrato();
+
 		// Master ADSR
 		s_parameters.m_envParams.attack  = WinMidi_GetAttack();
 		s_parameters.m_envParams.decay   = WinMidi_GetDecay();
@@ -312,12 +373,16 @@ namespace SFM
 			patchOp.coarse = index;
 
 			// Fine tuning (1 octave, ain't that much?)
-			const float fine = WinMidi_GetOperatorFinetune()*0.99f;
-			patchOp.fine = fine; // powf(2.f, fine);
+			const float fine = WinMidi_GetOperatorFinetune();
+			patchOp.fine = powf(2.f, fine);
 
 			// Go up 7 or down 7 semitones
 			patchOp.detune = powf(2.f, ( -7.f + 14.f*WinMidi_GetOperatorDetune() )/12.f);
 
+			// Vibrato
+			patchOp.vibrato = WinMidi_GetOperatorVibrato();
+			
+			// Amp./Index/Depth
 			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
 		}
 	}

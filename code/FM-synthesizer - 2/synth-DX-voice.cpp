@@ -12,6 +12,9 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
+		// Get vibrato
+		const float vibrato = m_vibrato.Sample(0.f);
+
 		// Step 1: process all operators top-down
 		float sampled[kNumOperators];
 
@@ -51,6 +54,9 @@ namespace SFM
 
 					modulation += m_feedback[index];
 				}
+
+				// Factor in vibrato
+				modulation = lerpf<float>(modulation, modulation*vibrato, opDX.vibrato);
 
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation);

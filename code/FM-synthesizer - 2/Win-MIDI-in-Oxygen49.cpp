@@ -49,23 +49,27 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotMasterDrive = 26;  // C14
 	const unsigned kPotOpCoarse = 22;     // C10
-	const unsigned kPotOpFine = 23;       // C11 ** UNUSED **
+	const unsigned kPotOpFine = 23;       // C11
 	const unsigned kPotOpDetune = 61;     // C12
 	const unsigned kPotOpAmplitude = 24;  // C13
 
+	// Fader mapping
+	const unsigned kFaderA = 20;         // C1
+	const unsigned kFaderD = 21;         // C2
+	const unsigned kFaderS = 71;         // C3
+	const unsigned kFaderR = 72;         // C4
+	const unsigned kFaderOpVibrato = 25; // C5
+	const unsigned kFaderVibrato = 73;   // C6
+
 	static float s_masterDrive = 0.f;
+	static float s_masterVib = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
 	static float s_opCoarse[kNumOperators]    = { 0.f };
 	static float s_opFine[kNumOperators]      = { 0.f }; 
 	static float s_opDetune[kNumOperators]    = { 0.f }; 
 	static float s_opAmplitude[kNumOperators] = { 0.f };
-
-	// Fader mapping
-	const unsigned kFaderA = 20; // C1
-	const unsigned kFaderD = 21; // C2
-	const unsigned kFaderS = 71; // C3
-	const unsigned kFaderR = 72; // C4
+	static float s_opVibrato[kNumOperators]   = { 0.f };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
@@ -169,6 +173,12 @@ namespace SFM
 							s_masterDrive = fControlVal;
 							break;
 
+						/* Master vibrato */
+
+						case kFaderVibrato:
+							s_masterVib = fControlVal;
+							break;
+
 						/* FM */
 
 						case kButtonOpRecv:
@@ -193,6 +203,10 @@ namespace SFM
 
 						case kPotOpAmplitude:
 							s_opAmplitude[s_currentOp] = fControlVal;
+							break;
+
+						case kFaderOpVibrato:
+							s_opVibrato[s_currentOp] = fControlVal;
 							break;
 
 						/* ADSR */
@@ -357,12 +371,14 @@ namespace SFM
 
 	// Master
 	float WinMidi_GetMasterDrive() { return s_masterDrive; }
+	float WinMidi_GetVibrato()     { return s_masterVib;   }
 
 	// Operator control
 	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[s_currentOp];    }
 	float WinMidi_GetOperatorFinetune()   { return s_opFine[s_currentOp];      }
 	float WinMidi_GetOperatorDetune()     { return s_opDetune[s_currentOp];    }
 	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[s_currentOp]; }
+	float WinMidi_GetOperatorVibrato()    { return s_opVibrato[s_currentOp];   }
 
 	// Modulation index
 	float WinMidi_GetModulation() 

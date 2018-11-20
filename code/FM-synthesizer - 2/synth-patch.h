@@ -18,6 +18,9 @@ namespace SFM
 			
 			// [0..1]
 			float amplitude;
+
+			// Vibrato
+			float vibrato;
 		};
 	
 		Operator operators[kNumOperators];
@@ -31,6 +34,7 @@ namespace SFM
 				OP.fine = 0.f;
 				OP.detune = 0.f;
 				OP.amplitude = 1.f;
+				OP.vibrato = 0.f;
 			}
 		}
 	};

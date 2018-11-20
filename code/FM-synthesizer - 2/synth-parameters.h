@@ -17,6 +17,9 @@ namespace SFM
 		// Master drive [0..N]
 		float drive;
 
+		// Master vibrato [0..1]
+		float vibrato;
+
 		// Master ADSR
 		ADSR::Parameters m_envParams;
 
@@ -30,6 +33,9 @@ namespace SFM
 		{
 			// Neutral drive
 			drive = 1.f;
+
+			// No vibrato
+			vibrato = 0.f;
 
 			// Std. ADSR
 			m_envParams.attack  = 0.f;

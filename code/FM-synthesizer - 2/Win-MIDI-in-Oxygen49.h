@@ -22,6 +22,7 @@ namespace SFM
 
 	// Master
 	float WinMidi_GetMasterDrive();
+	float WinMidi_GetVibrato();
 
 	// Pitch bend
 	float WinMidi_GetPitchBend();
@@ -34,6 +35,7 @@ namespace SFM
 	float WinMidi_GetOperatorFinetune();
 	float WinMidi_GetOperatorDetune();
 	float WinMidi_GetOperatorAmplitude();
+	float WinMidi_GetOperatorVibrato();
 
 	// Current operator to set new values to (-1 if none)
 	unsigned WinMidi_GetOperator();

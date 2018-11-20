@@ -7,10 +7,10 @@
 		- Let's call the VST version the GENERALISSIMO!
 		- For all notes on how to do and not to do things: refer to abandonded version
 
-	Current goals (3 max.):
-		- Fine tuning FM
-		- Smarter way of building algorithms
+	Current goals (3-4 max.):
 		- Modulation envelope
+		- Smarter way of building & supplying algorithms
+		- Bag of tricks: what do we want and what do we not want?
 	
 	In short: get FM right, the reintroduce the goodie bag features
 */
