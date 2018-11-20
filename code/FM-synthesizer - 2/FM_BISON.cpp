@@ -20,6 +20,7 @@
 #include "synth-math.h"
 #include "synth-LUT.h"
 #include "synth-DX-voice.h"
+#include "synth-filter.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -76,6 +77,9 @@ namespace SFM
 	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
 
+	// Master filter
+	static ButterworthFilter s_filters[kMaxVoices];
+
 	
 	/*
 		Voice API.
@@ -116,7 +120,7 @@ namespace SFM
 		Voice logic.
 	*/
 
-	SFM_INLINE float CalcOpFreq(float frequency, Patch::Operator &patchOp)
+	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
 	{
 //		frequency *= g_modRatioLUT[patchOp.coarse];
 
@@ -134,7 +138,18 @@ namespace SFM
 		DX_Voice &voice = s_DXvoices[iVoice];
 		voice.Reset();
 		
-		const float frequency = request.frequency;
+		float frequency = request.frequency;
+
+		// Randomize note frequency little if wanted (in (almost) entire cents)
+		const float jitterAmt = kMaxNoteJitter*s_parameters.m_noteJitter;
+		const int cents = int(ceilf(oscWhiteNoise()*jitterAmt));
+
+		float jitter = 1.f;
+		if (0 != cents)
+			jitter = powf(2.f, (cents*0.01f)/12.f);
+		
+		FloatAssert(jitter);
+		frequency *= jitter;
 
 		// Each has a distinct effect (linear, exponential, inverse exponential)
 		const float velocity       = request.velocity;
@@ -149,26 +164,96 @@ namespace SFM
 #if 0
 
 		/*
-			Test algorithm: Volca FM algorithm #5
+			Test algorithm: single carrier & modulator
 		*/
 
-		Patch &patch = s_parameters.patch;
+		FM_Patch &patch = s_parameters.patch;
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulator = 3;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
+
+		// Modulator #1
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = -1;
+		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 0
+
+		/*
+			Test algorithm: Volca FM algorithm #28
+			Verdict: useless in it's complexity
+		*/
+
+		FM_Patch &patch = s_parameters.patch;
+
+		// Carrier #1
+		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
 		// Carrier #2
 		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulator = 4;
+		voice.m_operators[1].modulators[0] = 3;
 		voice.m_operators[1].isCarrier = true;
 		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
 
 		// Carrier #3
 		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulator = 5;
+		voice.m_operators[2].modulators[0] = 4;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
+
+		// Modulator #1
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
+
+		// Modulator #2 & #3
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].modulators[0] = 5;
+		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
+		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 0
+
+		/*
+			Test algorithm: Volca FM algorithm #5
+			Verdicht: ?
+		*/
+
+		FM_Patch &patch = s_parameters.patch;
+
+		// Carrier #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 3;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
+
+		// Carrier #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].modulators[0] = 4;
+		voice.m_operators[1].isCarrier = true;
+		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
+
+		// Carrier #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulators[0] = 5;
 		voice.m_operators[2].isCarrier = true;
 		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
 
@@ -179,7 +264,7 @@ namespace SFM
 
 		// Modulator #2
 		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].feedback = -1;
+		voice.m_operators[4].feedback = 1;
 		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
 
 		// Modulator #3
@@ -191,41 +276,44 @@ namespace SFM
 			End of Algorithm
 		*/
 
-#else
+#endif
+
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #25
+			Verdict: Quite fat sounds if you try hard enough
 		*/
 
-		Patch &patch = s_parameters.patch;
+		FM_Patch &patch = s_parameters.patch;
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulator = -1;
+		voice.m_operators[0].modulators[0] = -1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
 		// Carrier #2
 		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulator = -1;
+		voice.m_operators[1].modulators[0] = -1;
 		voice.m_operators[1].isCarrier = true;
 		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
 
 		// Carrier #3
 		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulator = -1;
+		voice.m_operators[2].modulators[0] = -1;
 		voice.m_operators[2].isCarrier = true;
 		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
 
 		// Carrier #4
 		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulator = 5;
+		voice.m_operators[3].modulators[0] = 5;
 		voice.m_operators[3].isCarrier = true;
 		voice.m_operators[3].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[3]), masterAmp*patch.operators[3].amplitude);
 
 		// Carrier #5
 		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulator = 5;
+		voice.m_operators[4].modulators[0] = 5;
 		voice.m_operators[4].isCarrier = true;
 		voice.m_operators[4].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[4]), masterAmp*patch.operators[4].amplitude);
 
@@ -242,13 +330,25 @@ namespace SFM
 
 		// Set vibrato
 		const float vibFreq = s_parameters.vibrato*10.f*kGoldenRatio*velocity;
-		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
+		voice.m_vibrato.Initialize(kPolyTriangle, vibFreq, 1.f);
 
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
 
+		// Set mod. env.
+		ADSR::Parameters modEnvParams;
+		modEnvParams.attack = s_parameters.m_modEnvA;
+		modEnvParams.decay = 0.f;
+		modEnvParams.release = s_parameters.m_modEnvD;
+		modEnvParams.sustain = 1.f;
+		voice.m_modADSR.Start(modEnvParams, velocity);
+
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
+
+		// Reset & start filter
+		s_filters[iVoice].Reset();
+		s_filters[iVoice].Start(s_parameters.m_envParams, velocity);
 
 		// Enabled, up counter		
 		voice.m_enabled = true;
@@ -268,10 +368,20 @@ namespace SFM
 		// Process release requests
 		for (auto &request : s_voiceReleaseReq)
 		{
-			SFM_ASSERT(-1 != request.index);
+			const unsigned index = request.index;
 
-			DX_Voice &voice = s_DXvoices[request.index];
-			voice.m_ADSR.Stop(request.velocity);
+			SFM_ASSERT(-1 != index);
+
+			DX_Voice &voice = s_DXvoices[index];
+
+			const float aftertouch = request.velocity;
+
+			// Stop main ADSR; this will automatically release the voice
+			voice.m_ADSR.Stop(aftertouch);
+			
+			// Stop secondary envelopes
+			voice.m_modADSR.Stop(aftertouch);
+			s_filters[index].Stop(aftertouch);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -350,8 +460,21 @@ namespace SFM
 		s_parameters.m_envParams.sustain = WinMidi_GetSustain();
 
 		// Modulation depth
-		const float alpha = 1.f/dBToAmplitude(-12.f);
-		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
+		const float alpha = kPI;
+		s_parameters.modDepth = -(alpha*0.5f) + WinMidi_GetModulation()*alpha;
+
+		// Modulation envelope
+		s_parameters.m_modEnvA = WinMidi_GetModEnvA();
+		s_parameters.m_modEnvD = WinMidi_GetModEnvD();
+
+		// Note jitter
+		s_parameters.m_noteJitter = WinMidi_GetNoteJitter();
+
+		// Filter
+		s_parameters.filterWet = WinMidi_GetFilterWet();
+		s_parameters.filterParams.drive = 1.f;
+		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
+		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 
 		/*
 			Uppdate current operator
@@ -362,7 +485,7 @@ namespace SFM
 		{
 			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
-			Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
+			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 	
 //			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
 //			SFM_ASSERT(index < g_numModRatios);
@@ -435,6 +558,7 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
+				ButterworthFilter &filter = s_filters[iVoice];
 
 				if (true == voice.m_enabled)
 				{
@@ -448,6 +572,10 @@ namespace SFM
 						/* const */ float sample = voice.Sample(s_parameters);
 						buffer[iSample] = sample;
 					}
+
+					// Filter voice
+					filter.SetLiveParameters(s_parameters.filterParams);
+					filter.Apply(buffer, numSamples, s_parameters.filterWet, false);
 
 					++curVoice; // Do *not* use to index anything other than the temporary buffers
 				}
