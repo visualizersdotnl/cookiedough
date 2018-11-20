@@ -8,9 +8,15 @@
 		- For all notes on how to do and not to do things: refer to abandonded version
 
 	Current goals (3-4 max.):
+		- Bigger C:M table
 		- Modulation envelope
 		- Smarter way of building & supplying algorithms
 		- Bag of tricks: what do we want and what do we not want?
+		  + Ladder filters
+		  + Feedback
+		  + Drift
+		  + Formant
+		  + ?
 	
 	In short: get FM right, the reintroduce the goodie bag features
 */
