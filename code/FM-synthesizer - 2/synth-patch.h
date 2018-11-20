@@ -11,9 +11,12 @@ namespace SFM
 	{
 		struct Operator
 		{
-			// Related to g_modRatioLUT (synth-LUT.cpp)
-			unsigned coarse;
-
+			// Freq. modifiers (http://afrittemple.com/volca/volca_programming.pdf)
+			unsigned coarse; // Related to LUT (synth-LUT.cpp)
+			float fine;
+			float detune;
+			
+			// [0..1]
 			float amplitude;
 		};
 	
@@ -25,6 +28,8 @@ namespace SFM
 			{	
 				Operator &OP = operators[iOp];
 				OP.coarse = 0;
+				OP.fine = 0.f;
+				OP.detune = 0.f;
 				OP.amplitude = 1.f;
 			}
 		}

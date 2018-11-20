@@ -17,7 +17,7 @@
 //
 
 //
-// Adapted by syntherklaas.org for FM. BISON, changes made:
+// Adapted by syntherklaas.org for FM. BISON / FM. GENERALISSIMO, changes made:
 // - Fixed warnings
 // - Fixed process() to proceed to decay state immediately after attack to eliminate a click
 //

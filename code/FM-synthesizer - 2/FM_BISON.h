@@ -5,12 +5,14 @@
 
 	Ideas:
 		- Let's call the VST version the GENERALISSIMO!
-		- For notes refer to abandonded version.
+		- For all notes on how to do and not to do things: refer to abandonded version
 
-	Current task:
-		- Create programable FM voice before anything else
-
-	In short: get FM right, the reintroduce features
+	Current goals (3 max.):
+		- Fine tuning FM
+		- Smarter way of building algorithms
+		- Modulation envelope
+	
+	In short: get FM right, the reintroduce the goodie bag features
 */
 
 #pragma once
@@ -34,4 +36,3 @@ namespace SFM
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 }
-

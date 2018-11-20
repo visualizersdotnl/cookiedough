@@ -42,6 +42,7 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\FM_BISON.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-ADSR.cpp" />
@@ -52,7 +53,12 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-random.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -198,6 +204,7 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-ADSR.h" />

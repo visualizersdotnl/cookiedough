@@ -31,10 +31,16 @@ namespace SFM
 
 	// Operator control
 	float WinMidi_GetOperatorCoarse();
-	float WinMidi_GetOperatorFine();
+	float WinMidi_GetOperatorFinetune();
 	float WinMidi_GetOperatorDetune();
 	float WinMidi_GetOperatorAmplitude();
 
-	// Current operator to set (-1 if not receiving)
+	// Current operator to set new values to (-1 if none)
 	unsigned WinMidi_GetOperator();
+
+	// Master ADSR
+	float WinMidi_GetAttack();
+	float WinMidi_GetDecay();
+	float WinMidi_GetSustain();
+	float WinMidi_GetRelease();
 }

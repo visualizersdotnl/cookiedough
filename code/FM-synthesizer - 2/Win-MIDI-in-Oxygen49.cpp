@@ -49,16 +49,25 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotMasterDrive = 26;  // C14
 	const unsigned kPotOpCoarse = 22;     // C10
-	const unsigned kPotOpFine = 23;       // C11
+	const unsigned kPotOpFine = 23;       // C11 ** UNUSED **
 	const unsigned kPotOpDetune = 61;     // C12
 	const unsigned kPotOpAmplitude = 24;  // C13
 
 	static float s_masterDrive = 0.f;
 
+	// Keep a copy per operator to make the interface a tad more intuitive
 	static float s_opCoarse[kNumOperators]    = { 0.f };
 	static float s_opFine[kNumOperators]      = { 0.f }; 
 	static float s_opDetune[kNumOperators]    = { 0.f }; 
 	static float s_opAmplitude[kNumOperators] = { 0.f };
+
+	// Fader mapping
+	const unsigned kFaderA = 20; // C1
+	const unsigned kFaderD = 21; // C2
+	const unsigned kFaderS = 71; // C3
+	const unsigned kFaderR = 72; // C4
+
+	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
 	// Button mapping
 	const unsigned kButtonOpRecv = 118; // C30
@@ -184,6 +193,24 @@ namespace SFM
 
 						case kPotOpAmplitude:
 							s_opAmplitude[s_currentOp] = fControlVal;
+							break;
+
+						/* ADSR */
+
+						case kFaderA:
+							s_A = fControlVal;
+							break;
+
+						case kFaderD:
+							s_D= fControlVal;
+							break;
+
+						case kFaderS:
+							s_S= fControlVal;
+							break;
+
+						case kFaderR:
+							s_R = fControlVal;
 							break;
 						}
 					}
@@ -333,7 +360,7 @@ namespace SFM
 
 	// Operator control
 	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[s_currentOp];    }
-	float WinMidi_GetOperatorFine()       { return s_opFine[s_currentOp];      }
+	float WinMidi_GetOperatorFinetune()   { return s_opFine[s_currentOp];      }
 	float WinMidi_GetOperatorDetune()     { return s_opDetune[s_currentOp];    }
 	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[s_currentOp]; }
 
@@ -354,4 +381,10 @@ namespace SFM
 	{
 		return (true == s_opRecv) ? s_currentOp : -1;
 	}
+
+	// Master ADSR
+	float WinMidi_GetAttack()          { return s_A; }
+	float WinMidi_GetDecay()           { return s_D; }
+	float WinMidi_GetSustain()         { return s_S; }
+	float WinMidi_GetRelease()         { return s_R; }
 }

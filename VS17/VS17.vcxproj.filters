@@ -83,6 +83,9 @@
     <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver">
       <UniqueIdentifier>{4527025b-d7a6-4e4f-9059-24bb24df6050}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29">
+      <UniqueIdentifier>{ad326aa5-d0fc-4de0-a89f-6e31e7b7dae5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -243,6 +246,9 @@
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.cpp">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -503,6 +509,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-patch.h">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

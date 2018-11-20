@@ -119,7 +119,11 @@ namespace SFM
 	SFM_INLINE float CalcOpFreq(float frequency, Patch::Operator &patchOp)
 	{
 //		frequency *= g_modRatioLUT[patchOp.coarse];
+
 		frequency *= g_CM[patchOp.coarse][1];
+		frequency *= patchOp.detune;
+		frequency *= patchOp.fine;
+
 		return frequency;
 	}
 
@@ -143,34 +147,50 @@ namespace SFM
 		const float modDepth = s_parameters.modDepth;
 
 		/*
-			Test algorithm
+			Test algorithm: Volca FM algorithm #5
 		*/
 
 		Patch &patch = s_parameters.patch;
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulator = 1;
+		voice.m_operators[0].modulator = 3;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
-		// Modulator
+		// Carrier #2
 		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
+		voice.m_operators[1].modulator = 4;
+		voice.m_operators[1].isCarrier = true;
+		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
+
+		// Carrier #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulator = 5;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
+
+		// Modulator #1
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].feedback = -1;
+		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
+
+		// Modulator #1
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].feedback = 0-1;
+		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
+
+		// Modulator #1
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
+		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
 
 		/*
 			End of Algorithm
 		*/
 
-		// Default ADSR (FIXME)
-		ADSR::Parameters envParams;
-		envParams.attack  = 0.f;
-		envParams.decay   = 0.33f;
-		envParams.release = 0.33f;
-		envParams.sustain = 0.8f;
-
-		voice.m_ADSR.Reset();
-		voice.m_ADSR.Start(envParams, velocity);
+		// Start master ADSR
+		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
 
 		// Enabled, up counter		
 		voice.m_enabled = true;
@@ -262,6 +282,12 @@ namespace SFM
 		// Drive
 		s_parameters.drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
+		// Master ADSR
+		s_parameters.m_envParams.attack  = WinMidi_GetAttack();
+		s_parameters.m_envParams.decay   = WinMidi_GetDecay();
+		s_parameters.m_envParams.release = WinMidi_GetRelease();
+		s_parameters.m_envParams.sustain = WinMidi_GetSustain();
+
 		// Modulation depth
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
@@ -275,17 +301,24 @@ namespace SFM
 		{
 			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
-			Patch::Operator &OP = s_parameters.patch.operators[iOp];
+			Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 	
 //			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
 //			SFM_ASSERT(index < g_numModRatios);
-//			OP.coarse = index;
+//			patchOp.coarse = index;
 
 			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
 			SFM_ASSERT(index < g_CM_size);
-			OP.coarse = index;
+			patchOp.coarse = index;
 
-			OP.amplitude = WinMidi_GetOperatorAmplitude();
+			// Fine tuning (1 octave, ain't that much?)
+			const float fine = WinMidi_GetOperatorFinetune()*0.99f;
+			patchOp.fine = fine; // powf(2.f, fine);
+
+			// Go up 7 or down 7 semitones
+			patchOp.detune = powf(2.f, ( -7.f + 14.f*WinMidi_GetOperatorDetune() )/12.f);
+
+			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
 		}
 	}
 
