@@ -49,4 +49,12 @@ namespace SFM
 	// Modulation envelope (attack & decay)
 	float WinMidi_GetModEnvA();
 	float WinMidi_GetModEnvD();
+
+	// Filter
+	float WinMidi_GetCutoff();
+	float WinMidi_GetResonance();
+	float WinMidi_GetFilterWet();
+
+	// Note jitter
+	float WinMidi_GetNoteJitter();
 }

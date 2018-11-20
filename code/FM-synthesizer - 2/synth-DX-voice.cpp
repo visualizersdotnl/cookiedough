@@ -31,19 +31,22 @@ namespace SFM
 
 			if (true == opDX.enabled)
 			{
-				// Get modulation
+				// Get modulation (from 3 sources max.)
 				float modulation = 0.f;
-				if (-1 != opDX.modulator)
+				for (unsigned iMod = 0; iMod < 3; ++iMod)
 				{
-					const unsigned iModulator = opDX.modulator;
+					if (-1 != opDX.modulators[iMod])
+					{
+						const unsigned iModulator = opDX.modulators[iMod];
 
-					// Sanity checks
-					SFM_ASSERT(iModulator < kNumOperators);
-					SFM_ASSERT(iModulator > index);
-					SFM_ASSERT(true == m_operators[iModulator].enabled);
+						// Sanity checks
+						SFM_ASSERT(iModulator < kNumOperators);
+						SFM_ASSERT(iModulator > index);
+						SFM_ASSERT(true == m_operators[iModulator].enabled);
 
-					// Get sample
-					modulation = sampled[iModulator];
+						// Get sample
+						modulation += sampled[iModulator];
+					}
 				}
 
 				// Get feedback

@@ -7,7 +7,7 @@
 
 namespace SFM
 {
-	struct Patch
+	struct FM_Patch
 	{
 		struct Operator
 		{

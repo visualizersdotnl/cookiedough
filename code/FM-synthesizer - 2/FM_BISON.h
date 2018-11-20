@@ -3,6 +3,8 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
+	Third party credits: see previous iteration
+
 	Ideas:
 		- Let's call the VST version the GENERALISSIMO!
 		- For all notes on how to do and not to do things: refer to abandonded version
@@ -10,12 +12,9 @@
 	Current goals (3-4 max.):
 		- Bigger C:M table
 		- Smarter way of building & supplying algorithms
- 		- Bag of tricks: what do we want and what do we not want?
-		  + Drift
-		  + Ladder filter: Butterworth only!
-		  + Feedback
-		  + Formant
-		  + Stop when it won't fit no more
+
+	Things that are missing:
+		- Proper LFO
 	
 	In short: get FM right, the reintroduce the goodie bag features
 */

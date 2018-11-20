@@ -52,22 +52,32 @@ namespace SFM
 	const unsigned kPotOpFine = 23;       // C11
 	const unsigned kPotOpDetune = 61;     // C12
 	const unsigned kPotOpAmplitude = 24;  // C13
+	const unsigned kPotCutoff = 27;       // C15
+	const unsigned kPotResonance = 62;    // C16
+	const unsigned kPotFilterWet = 95;    // C17
 
 	// Fader mapping
-	const unsigned kFaderA = 20;         // C1
-	const unsigned kFaderD = 21;         // C2
-	const unsigned kFaderS = 71;         // C3
-	const unsigned kFaderR = 72;         // C4
-	const unsigned kFaderOpVibrato = 25; // C5
-	const unsigned kFaderVibrato = 73;   // C6
-	const unsigned kFaderModA = 74;      // C7
-	const unsigned kFaderModD = 70;      // C8
+	const unsigned kFaderA = 20;          // C1
+	const unsigned kFaderD = 21;          // C2
+	const unsigned kFaderS = 71;          // C3
+	const unsigned kFaderR = 72;          // C4
+	const unsigned kFaderOpVibrato = 25;  // C5
+	const unsigned kFaderVibrato = 73;    // C6
+	const unsigned kFaderModA = 74;       // C7
+	const unsigned kFaderModD = 70;       // C8
+	const unsigned kFaderNoteJitter = 63; // C9
 
 	static float s_masterDrive = 0.f;
 	static float s_masterVib = 0.f;
 
 	static float s_modEnvA = 0.f;
 	static float s_modEnvD = 0.f;
+
+	static float s_noteJitter = 0.f;
+
+	static float s_cutoff = 0.f;
+	static float s_resonance = 0.f;
+	static float s_filterWet = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
 	static float s_opCoarse[kNumOperators]    = { 0.f };
@@ -182,6 +192,26 @@ namespace SFM
 
 						case kFaderVibrato:
 							s_masterVib = fControlVal;
+							break;
+
+						/* Filter */
+
+						case kPotCutoff:
+							s_cutoff = fControlVal;
+							break;
+
+						case kPotResonance:
+							s_resonance = fControlVal;
+							break;
+
+						case kPotFilterWet:
+							s_filterWet = fControlVal;
+							break;
+
+						/* Note jitter */
+
+						case kFaderNoteJitter:
+							s_noteJitter = fControlVal;
 							break;
 
 						/* FM */
@@ -422,4 +452,12 @@ namespace SFM
 	// Modulation envelope (attack & decay)
 	float WinMidi_GetModEnvA() { return s_modEnvA; }
 	float WinMidi_GetModEnvD() { return s_modEnvD; }
+
+	// Filter
+	float WinMidi_GetCutoff()     { return s_cutoff;    } 
+	float WinMidi_GetResonance()  { return s_resonance; }
+	float WinMidi_GetFilterWet()  { return s_filterWet; }
+
+	// Note jitter
+	float WinMidi_GetNoteJitter() { return s_noteJitter; } 
 }

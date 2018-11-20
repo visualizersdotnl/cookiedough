@@ -64,6 +64,9 @@ namespace SFM
 
 	// Number of FM synthesis operators
 	const unsigned kNumOperators = 6;
+
+	// Max. note jitter (in cents)
+	const unsigned kMaxNoteJitter = 10;
 }
 
 #include "synth-LUT.h"

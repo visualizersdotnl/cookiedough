@@ -27,7 +27,7 @@ namespace SFM
 			Oscillator oscillator;
 
 			// Indices: -1 means none, in case of modulator always modulater high up in the chain
-			unsigned modulator, feedback;
+			unsigned modulators[3], feedback;
 
 			// Amount of vibrato
 			float vibrato;
@@ -38,12 +38,11 @@ namespace SFM
 			{
 				enabled = false;
 				oscillator = Oscillator();
-				modulator = -1;
+				modulators[0] = modulators[1] = modulators[2] = -1;
 				feedback = -1;
 				vibrato = 0.f;
 				isCarrier = false;
 			}
-
 		} m_operators[kNumOperators];
 
 		// Feedback buffer

@@ -250,6 +250,12 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.cpp">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\FilterButterworth24dB.cpp">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-filter.cpp">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -512,6 +518,12 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\FilterButterworth24dB.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -43,10 +43,12 @@
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\FilterButterworth24dB.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\FM_BISON.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-DX-voice.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-filter.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp" />
@@ -205,11 +207,13 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\FilterButterworth24dB.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-DX-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-error.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-global.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-log.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-LUT.h" />

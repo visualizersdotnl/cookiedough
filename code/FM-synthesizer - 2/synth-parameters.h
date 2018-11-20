@@ -7,7 +7,8 @@
 
 #include "synth-global.h"
 #include "synth-patch.h"
-#include "synth-ADSR.h"
+// #include "synth-ADSR.h"
+#include "synth-filter.h"
 
 namespace SFM
 {
@@ -27,11 +28,18 @@ namespace SFM
 		float m_modEnvA;
 		float m_modEnvD;
 
+		// Note jitter
+		float m_noteJitter;
+
 		// Global mod. index
 		float modDepth;
 
 		// Instr. patch
-		Patch patch;
+		FM_Patch patch;
+
+		// Filter parameters
+		float filterWet;
+		FilterParameters filterParams;
 
 		void SetDefaults()
 		{
@@ -51,11 +59,20 @@ namespace SFM
 			m_modEnvA = 0.f;
 			m_modEnvD = 0.25f;
 
+			// 50% jitter
+			m_noteJitter = 0.5f;
+
 			// Neutral modulation
 			modDepth = 1.f;
 
 			// Reset patches
 			patch.Reset();
+
+			// Filter off
+			filterWet = 0.f;
+			filterParams.cutoff = 1.f;
+			filterParams.resonance = 0.f;
+			filterParams.drive = 1.f;
 		}
 	};
 }
