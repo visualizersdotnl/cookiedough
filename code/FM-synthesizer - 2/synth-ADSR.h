@@ -6,7 +6,7 @@
 #pragma once
 
 // Nice implementation by Nigel Redmon (earlevel.com)
-	#include "3rdparty/ADSR.h"
+#include "3rdparty/ADSR.h"
 
 namespace SFM
 {

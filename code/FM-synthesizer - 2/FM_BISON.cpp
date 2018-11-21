@@ -79,7 +79,6 @@ namespace SFM
 
 	// Master filter
 	static ButterworthFilter s_filters[kMaxVoices];
-
 	
 	/*
 		Voice API.
@@ -332,14 +331,14 @@ namespace SFM
 
 			DX_Voice &voice = s_DXvoices[index];
 
-			const float aftertouch = request.velocity;
+			const float velocity = request.velocity;
 
 			// Stop main ADSR; this will automatically release the voice
-			voice.m_ADSR.Stop(aftertouch);
+			voice.m_ADSR.Stop(velocity);
 			
 			// Stop secondary envelopes
-			voice.m_modADSR.Stop(aftertouch);
-			s_filters[index].Stop(aftertouch);
+			voice.m_modADSR.Stop(velocity);
+			s_filters[index].Stop(velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -473,7 +472,6 @@ namespace SFM
 	*/
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
-
 
 	// Returns loudest signal (linear amplitude)
 	static float Render(float time)

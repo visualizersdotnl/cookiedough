@@ -28,6 +28,6 @@ namespace SFM
 		return LUT[unsigned(index) & kOscLUTAnd];
 	}
 
-	SFM_INLINE float lutsinf(float index)   { return SampleLUT(g_sinLUT, index*kOscLUTSize);   }
-	SFM_INLINE float lutcosf(float index)   { return lutsinf(index + 0.25f); }
+	SFM_INLINE float lutsinf(float index) { return SampleLUT(g_sinLUT, index*kOscLUTSize);   }
+	SFM_INLINE float lutcosf(float index) { return lutsinf(index + 0.25f); }
 }

@@ -3,7 +3,17 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	Third party credits: see previous iteration
+	This is my second attempt at an FM synthesizer:
+	- 6 programmable operators with a shared modulation envelope
+	- Master drive & ADSR
+	- Master Butterworth filter
+	- Global modulation control
+	- Pitch bend
+	- Multiple tried & tested FM algorithms
+
+	Until this feature set works and is reasonably efficient, no other features are to be added.
+
+	Third party credits: see previous iteration (FIXME)
 
 	Ideas:
 		- Let's call the VST version the GENERALISSIMO!

@@ -6,7 +6,7 @@
 
 	** PROJECT ABANDONED **
 	
-	A whole lot is off, buggy, slow and or wrong here.
+	A whole lot is off, buggy, slow and/or wrong here.
 
 	Third-party / References:
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)

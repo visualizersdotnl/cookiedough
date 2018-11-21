@@ -21,6 +21,11 @@ namespace SFM
 		22.49, 23.55f, 24.22f, 25.95f
 	};
 
+	/*
+		"The Computer Music Tutorial mentions that ratios that are near to but not right on integer ratios sound more natural, or less synthethic, especially when you involve more operators. 
+		 There is a fair bit of info in it on FM synthesis."
+	*/
+
 	size_t g_numModRatios = sizeof(g_modRatioLUT)/sizeof(float);
 
 	// Source: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
@@ -43,6 +48,7 @@ namespace SFM
 
 	/*
 		Depending on target platform/hardware I may want to dump this to disk/ROM.
+		Also, in reality, I only neet 1/4th of it.
 	*/
 
 	void CalculateLUTs()
