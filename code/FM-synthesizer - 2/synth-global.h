@@ -67,6 +67,9 @@ namespace SFM
 
 	// Max. note jitter (in cents)
 	const unsigned kMaxNoteJitter = 10;
+
+	// Delay spread max (div. on kSampleRate)
+	const int kDelaySpread = 16;
 }
 
 #include "synth-LUT.h"

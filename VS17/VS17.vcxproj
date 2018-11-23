@@ -54,6 +54,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-random.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -211,6 +212,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-ADSR.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-delay-line.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-DX-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h" />
@@ -226,6 +228,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-ringbuffer.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-stateless-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-util.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\FilterButterworth24dB.h" />

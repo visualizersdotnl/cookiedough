@@ -21,9 +21,11 @@
 #include "synth-LUT.h"
 #include "synth-DX-voice.h"
 #include "synth-filter.h"
+#include "synth-delay-line.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
+#include "Win-MIDI-in-BeatStep.h"
 
 // SDL2 audio output
 #include "SDL2-audio-out.h"
@@ -161,7 +163,7 @@ namespace SFM
 
 		const float modDepth = s_parameters.modDepth*velocityInvExp;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -235,11 +237,11 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #25
-			Verdict: Quite fat sounds if you try hard enough
+			Verdict: Quite fat sounds if you try hard enough (but generally it's horse shit)
 		*/
 
 		FM_Patch &patch = s_parameters.patch;
@@ -285,20 +287,32 @@ namespace SFM
 
 #endif
 
-		// Set vibrato
-		const float vibFreq = s_parameters.vibrato*10.f*kGoldenRatio*velocity;
+		// Freq. scale
+		const float freqScale = masterFreq/g_midiFreqRange;
+
+		// Set tremolo LFO
+		const float tremFreq = s_parameters.tremolo*kAudibleLowHz*(freqScale+velocity);
+		voice.m_tremolo.Initialize(kCosine, tremFreq, 1.f);
+
+		// Set vibrato LFO
+		const float vibFreq = s_parameters.vibrato*kAudibleLowHz*(freqScale+velocity);
 		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
 
+		// Set per-operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato; // FIXME: what?
+		{
+			// Tremolo/Vibrato
+			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
+			voice.m_operators[iOp].tremolo = patch.operators[iOp].tremolo;
 
-		// Set mod. env.
-		ADSR::Parameters modEnvParams;
-		modEnvParams.attack = s_parameters.m_modEnvA;
-		modEnvParams.decay = 0.f;
-		modEnvParams.release = s_parameters.m_modEnvD;
-		modEnvParams.sustain = 1.f;
-		voice.m_modADSR.Start(modEnvParams, velocity);
+			// Mod env.
+			ADSR::Parameters envParams;
+			envParams.attack = s_parameters.patch.operators[iOp].modA;
+			envParams.decay = s_parameters.patch.operators[iOp].modD;
+			envParams.release = 0.f;
+			envParams.sustain = 1.f;
+			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
+		}
 
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
@@ -337,7 +351,11 @@ namespace SFM
 			voice.m_ADSR.Stop(velocity);
 			
 			// Stop secondary envelopes
-			voice.m_modADSR.Stop(velocity);
+
+			// Not necessary; these have an attack and decay and nothing else, so they rest at sustain level
+//			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+//				voice.m_operators[iOp].opEnv.Stop(velocity);
+
 			s_filters[index].Stop(velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
@@ -407,7 +425,8 @@ namespace SFM
 		// Drive
 		s_parameters.drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
-		// Vibrato
+		// Tremolo & vibrato
+		s_parameters.tremolo = WinMidi_GetTremolo();
 		s_parameters.vibrato = WinMidi_GetVibrato();
 
 		// Master ADSR
@@ -419,10 +438,6 @@ namespace SFM
 		// Modulation depth
 		const float alpha = 1.f/dBToAmplitude(-12.f);
 		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
-
-		// Modulation envelope
-		s_parameters.m_modEnvA = WinMidi_GetModEnvA();
-		s_parameters.m_modEnvD = WinMidi_GetModEnvD();
 
 		// Note jitter
 		s_parameters.m_noteJitter = WinMidi_GetNoteJitter();
@@ -459,8 +474,13 @@ namespace SFM
 			// Go up 7 or down 7 semitones
 			patchOp.detune = powf(2.f, ( -7.f + 14.f*WinMidi_GetOperatorDetune() )/12.f);
 
-			// Vibrato
+			// Tremolo & vibrato
+			patchOp.tremolo = WinMidi_GetOperatorTremolo();
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
+
+			// Modulation envelope
+			patchOp.modA = WinMidi_GetModEnvA();
+			patchOp.modD = WinMidi_GetModEnvD();
 			
 			// Amp./Index/Depth
 			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
@@ -470,6 +490,10 @@ namespace SFM
 	/*
 		Render function.
 	*/
+
+	SFM_INLINE void ProcessDelay(float &mix)
+	{
+	}
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
@@ -505,7 +529,17 @@ namespace SFM
 
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-				s_ringBuf.Write(0.f);
+			{
+				float mix = 0.f;
+
+				ProcessDelay(mix);
+
+				// Drive
+				const float drive = WinMidi_GetMasterDrive();
+				mix = ultra_tanhf(mix*drive);
+
+				s_ringBuf.Write(mix);
+			}
 		}
 		else
 		{
@@ -552,6 +586,8 @@ namespace SFM
 
 					mix = mix+sample;
 				}
+
+				ProcessDelay(mix);
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
@@ -629,7 +665,7 @@ bool Syntherklaas_Create()
 	s_voiceReleaseReq.clear();
 
 	// Oxygen 49 driver + SDL2
-	const bool midiIn = WinMidi_Oxygen49_Start(); /*  && WinMidi_BeatStep_Start(); */
+	const bool midiIn = WinMidi_Oxygen49_Start() && WinMidi_BeatStep_Start();
 	const bool audioOut = SDL2_CreateAudio(SDL2_Callback);
 
 	return true == midiIn && audioOut;
@@ -638,8 +674,9 @@ bool Syntherklaas_Create()
 void Syntherklaas_Destroy()
 {
 	SDL2_DestroyAudio();
+
 	WinMidi_Oxygen49_Stop();
-//	WinMidi_BeatStep_Stop();
+	WinMidi_BeatStep_Stop();
 }
 
 /*

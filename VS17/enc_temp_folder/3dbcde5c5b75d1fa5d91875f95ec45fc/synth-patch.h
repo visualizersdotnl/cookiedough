@@ -39,7 +39,6 @@ namespace SFM
 				OP.fine = 0.f;
 				OP.detune = 0.f;
 				OP.amplitude = 1.f;
-				OP.tremolo = 0.f;
 				OP.vibrato = 0.f;
 				OP.modA = 0.f;
 				OP.modD = 0.f;

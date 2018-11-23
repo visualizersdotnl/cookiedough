@@ -29,8 +29,12 @@ namespace SFM
 			// Indices: -1 means none, in case of modulator always modulater high up in the chain
 			unsigned modulators[3], feedback;
 
-			// Amount of vibrato
+			// Amount of tremolo & vibrato
+			float tremolo;
 			float vibrato;
+
+			// Op env.
+			ADSR opEnv;
 
 			bool isCarrier;
 
@@ -40,7 +44,8 @@ namespace SFM
 				oscillator = Oscillator();
 				modulators[0] = modulators[1] = modulators[2] = -1;
 				feedback = -1;
-				vibrato = 0.f;
+				tremolo = 0.f;
+				opEnv.Reset();
 				isCarrier = false;
 			}
 		} m_operators[kNumOperators];
@@ -48,14 +53,16 @@ namespace SFM
 		// Feedback buffer
 		float m_feedback[kNumOperators];
 
-		// Vibrato
+		// Tremolo osc.
+		Oscillator m_tremolo;
+
+		// Vibrato osc.
 		Oscillator m_vibrato;
 
 		// Global pitch bend
 		float m_pitchBend;
 
-		// ADSRs (modulation & voice)
-		ADSR m_modADSR;
+		// Amplitude env.
 		ADSR m_ADSR;
 	
 		DX_Voice() : m_enabled(false) {}
@@ -69,6 +76,9 @@ namespace SFM
 				m_feedback[iOp] = 0.f;
 			}
 
+			// No tremolo
+			m_tremolo.Initialize(kCosine, 0.f, 1.f);
+
 			// No vibrato
 			m_vibrato.Initialize(kCosine, 0.f, 1.f);
 
@@ -76,7 +86,6 @@ namespace SFM
 			m_pitchBend = 0.f;
 
 			// Reset envelopes
-			m_modADSR.Reset();
 			m_ADSR.Reset();
 		}
 

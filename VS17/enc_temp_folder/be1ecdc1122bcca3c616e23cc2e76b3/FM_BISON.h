@@ -21,7 +21,6 @@
 		- For all notes on how to do and not to do things: refer to abandonded version
 
 	Current goals (3-4 max.):
-		- Pitch LFO: make it sound like the Volca FM
 		- Bigger C:M table
 		- Hard sync.?
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
@@ -31,7 +30,8 @@
 		- Consider less operators in trade for an AD-envelope per modulator?
 
 	Things that are missing:
-		- Delay
+		- Pitch LFO (must take all human factors into account, also applies to tremolo)
+		- Delay?
 	
 	In short: get FM right, then reintroduce the goodie bag features
 

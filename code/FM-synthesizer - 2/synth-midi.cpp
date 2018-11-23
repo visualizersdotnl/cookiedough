@@ -9,6 +9,7 @@
 namespace SFM
 {
 	float g_midiToFreqLUT[127];
+	float g_midiFreqRange;
 
 	void CalculateMidiToFrequencyLUT()
 	{
@@ -18,5 +19,7 @@ namespace SFM
 			const float frequency = base * powf(2.f, (iKey-69.f)/12.f);
 			g_midiToFreqLUT[iKey] = fabsf(frequency);
 		}
+
+		g_midiFreqRange = g_midiToFreqLUT[126]-g_midiToFreqLUT[0];
 	}
 }

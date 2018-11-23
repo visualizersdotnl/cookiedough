@@ -18,15 +18,12 @@ namespace SFM
 		// Master drive [0..N]
 		float drive;
 
-		// Master vibrato [0..1]
+		// Vibrato & tremolo [0..1]
 		float vibrato;
+		float tremolo;
 
 		// Master ADSR
 		ADSR::Parameters m_envParams;
-
-		// Modulation envelope (close to Volca design)
-		float m_modEnvA;
-		float m_modEnvD;
 
 		// Note jitter
 		float m_noteJitter;
@@ -46,7 +43,8 @@ namespace SFM
 			// Neutral drive
 			drive = 1.f;
 
-			// No vibrato
+			// No tremolo/vibrato
+			tremolo = 0.f;
 			vibrato = 0.f;
 
 			// Std. ADSR
@@ -54,10 +52,6 @@ namespace SFM
 			m_envParams.decay   = 0.25f;
 			m_envParams.release = 0.25f;
 			m_envParams.sustain = 1.f;
-
-			// Std. mod. env.
-			m_modEnvA = 0.f;
-			m_modEnvD = 0.25f;
 
 			// 50% jitter
 			m_noteJitter = 0.5f;

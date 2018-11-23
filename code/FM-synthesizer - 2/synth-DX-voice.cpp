@@ -12,11 +12,14 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
-		// Get vibrato
-		const float vibrato = m_vibrato.Sample(0.f);
+		// Get global ADSR
+		float ADSR = m_ADSR.Sample();
 
-		// Get modulation env.
-		const float modEnv = m_modADSR.Sample();
+		// Get tremolo
+		const float tremolo = m_tremolo.Sample(0.f);
+
+		// Get vibrato
+		const float vibrato = powf(2.f, m_vibrato.Sample(0.f)*ADSR);
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];
@@ -61,34 +64,37 @@ namespace SFM
 					modulation += m_feedback[index];
 				}
 
-				// Factor in vibrato
-				modulation = lerpf<float>(modulation, modulation*vibrato, opDX.vibrato);
-
-				// And the envelope
-				modulation *= modEnv;
-
 				// Set pitch bend
-				opDX.oscillator.PitchBend(m_pitchBend);
+				float bend = m_pitchBend + opDX.vibrato*vibrato;
+				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation);
 
+				// Store sample for feedback at this point; feels like a sane spot: straight out of the oscillator
+				sampled[index] = sample;
+
+				// Factor in tremolo
+				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
+
+				// And the mod. envelope
+				sample *= opDX.opEnv.Sample();
+
 				// If carrier: mix
 				if (true == opDX.isCarrier)
 					mix = SoftClamp(mix + sample);
-
-				sampled[index] = sample;
 			}
 		}
 
 		// Integrate feedback
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			m_feedback[iOp] =  m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
+			m_feedback[iOp] = m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
+
+		// Factor in ADSR
+		mix *= ADSR;
 
 		SampleAssert(mix);
 
-		// Global ADSR
-		mix *= m_ADSR.Sample();
 
 		return mix;
 	}

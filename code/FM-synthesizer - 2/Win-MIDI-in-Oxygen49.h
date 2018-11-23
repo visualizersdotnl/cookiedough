@@ -16,13 +16,18 @@ namespace SFM
 	bool WinMidi_Oxygen49_Start();
 	void WinMidi_Oxygen49_Stop();
 
+	// ** HACK: beatstep also wants to know the current operator, for now **
+	extern unsigned g_currentOp;
+
 	/*
 		Pull-style values, all normalized [0..1]
 	*/
 
 	// Master
 	float WinMidi_GetMasterDrive();
-	float WinMidi_GetVibrato();
+
+	// Tremolo
+	float WinMidi_GetTremolo();
 
 	// Pitch bend
 	float WinMidi_GetPitchBend();
@@ -35,7 +40,7 @@ namespace SFM
 	float WinMidi_GetOperatorFinetune();
 	float WinMidi_GetOperatorDetune();
 	float WinMidi_GetOperatorAmplitude();
-	float WinMidi_GetOperatorVibrato();
+	float WinMidi_GetOperatorTremolo();
 
 	// Current operator to set new values to (-1 if none)
 	unsigned WinMidi_GetOperator();

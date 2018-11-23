@@ -1,8 +1,6 @@
 
 /*
-	Syntherklaas FM -- Delay line
-
-	Good reading material: https://www.dsprelated.com/freebooks/pasp/FDN_Reverberation.html
+	Syntherklaas FM -- Hacky delay line.
 */
 
 #pragma once

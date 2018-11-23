@@ -11,6 +11,8 @@
 	- Press percussion pad that corresponds with operator.
 	- Set all parameters to what they should be.
 	- Hold red button (C30) to set.
+
+	FIXME: notes may be outdated
 */
 
 #include "synth-global.h"
@@ -19,6 +21,7 @@
 
 #include "synth-midi.h"
 #include "FM_BISON.h"
+
 
 // Bevacqua mainly relies on SDL + std. C(++), so:
 #pragma comment(lib, "Winmm.lib")
@@ -61,17 +64,17 @@ namespace SFM
 	const unsigned kFaderD = 21;          // C2
 	const unsigned kFaderS = 71;          // C3
 	const unsigned kFaderR = 72;          // C4
-	const unsigned kFaderOpVibrato = 25;  // C5
-	const unsigned kFaderVibrato = 73;    // C6
+	const unsigned kFaderOpTremolo = 25;  // C5
+	const unsigned kFaderTremolo = 73;    // C6
 	const unsigned kFaderModA = 74;       // C7
 	const unsigned kFaderModD = 70;       // C8
 	const unsigned kFaderNoteJitter = 63; // C9
 
 	static float s_masterDrive = 0.f;
-	static float s_masterVib = 0.f;
+	static float s_tremolo = 0.f;
 
-	static float s_modEnvA = 0.f;
-	static float s_modEnvD = 0.f;
+	static float s_modEnvA[kNumOperators] = { 0.f };
+	static float s_modEnvD[kNumOperators] = { 0.f };
 
 	static float s_noteJitter = 0.f;
 
@@ -84,7 +87,7 @@ namespace SFM
 	static float s_opFine[kNumOperators]      = { 0.f }; 
 	static float s_opDetune[kNumOperators]    = { 0.f }; 
 	static float s_opAmplitude[kNumOperators] = { 0.f };
-	static float s_opVibrato[kNumOperators]   = { 0.f };
+	static float s_opTremolo[kNumOperators]   = { 0.f };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
@@ -109,7 +112,7 @@ namespace SFM
 	const unsigned kPerc8 = 49;
 
 	// Current (receiving) operator
-	static unsigned s_currentOp = 0;
+	/* static */ unsigned g_currentOp = 0;
 	static bool s_opRecv = true;
 
 	static unsigned s_voices[127] = { -1 };
@@ -149,27 +152,27 @@ namespace SFM
 					/* Current operator */
 
 					case kPerc1:
-						s_currentOp = 0;
+						g_currentOp = 0;
 						break;
 
 					case kPerc2:
-						s_currentOp = 1;
+						g_currentOp = 1;
 						break;
 
 					case kPerc3:
-						s_currentOp = 2;
+						g_currentOp = 2;
 						break;
 
 					case kPerc4:
-						s_currentOp = 3;
+						g_currentOp = 3;
 						break;
 
 					case kPerc5:
-						s_currentOp = 4;
+						g_currentOp = 4;
 						break;
 
 					case kPerc6:
-						s_currentOp = 5;
+						g_currentOp = 5;
 						break;
 					}
 
@@ -190,8 +193,8 @@ namespace SFM
 
 						/* Master vibrato */
 
-						case kFaderVibrato:
-							s_masterVib = fControlVal;
+						case kFaderTremolo:
+							s_tremolo = fControlVal;
 							break;
 
 						/* Filter */
@@ -225,33 +228,33 @@ namespace SFM
 							break;
 
 						case kPotOpCoarse:
-							s_opCoarse[s_currentOp] = fControlVal;
+							s_opCoarse[g_currentOp] = fControlVal;
 							break;
 
 						case kPotOpFine:
-							s_opFine[s_currentOp] = fControlVal;
+							s_opFine[g_currentOp] = fControlVal;
 							break;
 
 						case kPotOpDetune:
-							s_opDetune[s_currentOp] = fControlVal;
+							s_opDetune[g_currentOp] = fControlVal;
 							break;
 
 						case kPotOpAmplitude:
-							s_opAmplitude[s_currentOp] = fControlVal;
+							s_opAmplitude[g_currentOp] = fControlVal;
 							break;
 
-						case kFaderOpVibrato:
-							s_opVibrato[s_currentOp] = fControlVal;
+						case kFaderOpTremolo:
+							s_opTremolo[g_currentOp] = fControlVal;
 							break;
 
 						/* FM envelope */
 
 						case kFaderModA:
-							s_modEnvA = fControlVal;
+							s_modEnvA[g_currentOp] = fControlVal;
 							break;
 
 						case kFaderModD:
-							s_modEnvD = fControlVal;
+							s_modEnvD[g_currentOp] = fControlVal;
 							break;
 
 						/* ADSR */
@@ -414,16 +417,16 @@ namespace SFM
 		Pull-style controls
 	*/
 
-	// Master
+	// Master & Tremolo
 	float WinMidi_GetMasterDrive() { return s_masterDrive; }
-	float WinMidi_GetVibrato()     { return s_masterVib;   }
+	float WinMidi_GetTremolo()     { return s_tremolo;   }
 
 	// Operator control
-	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[s_currentOp];    }
-	float WinMidi_GetOperatorFinetune()   { return s_opFine[s_currentOp];      }
-	float WinMidi_GetOperatorDetune()     { return s_opDetune[s_currentOp];    }
-	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[s_currentOp]; }
-	float WinMidi_GetOperatorVibrato()    { return s_opVibrato[s_currentOp];   }
+	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[g_currentOp];    }
+	float WinMidi_GetOperatorFinetune()   { return s_opFine[g_currentOp];      }
+	float WinMidi_GetOperatorDetune()     { return s_opDetune[g_currentOp];    }
+	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[g_currentOp]; }
+	float WinMidi_GetOperatorTremolo()    { return s_opTremolo[g_currentOp];   }
 
 	// Modulation index
 	float WinMidi_GetModulation() 
@@ -440,7 +443,7 @@ namespace SFM
 	// Current operator (if receiving)
 	unsigned WinMidi_GetOperator()
 	{
-		return (true == s_opRecv) ? s_currentOp : -1;
+		return (true == s_opRecv) ? g_currentOp : -1;
 	}
 
 	// Master ADSR
@@ -450,8 +453,8 @@ namespace SFM
 	float WinMidi_GetRelease()         { return s_R; }
 
 	// Modulation envelope (attack & decay)
-	float WinMidi_GetModEnvA() { return s_modEnvA; }
-	float WinMidi_GetModEnvD() { return s_modEnvD; }
+	float WinMidi_GetModEnvA() { return s_modEnvA[g_currentOp]; }
+	float WinMidi_GetModEnvD() { return s_modEnvD[g_currentOp]; }
 
 	// Filter
 	float WinMidi_GetCutoff()     { return s_cutoff;    } 
