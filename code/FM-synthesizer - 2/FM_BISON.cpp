@@ -79,8 +79,9 @@ namespace SFM
 	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
 
-	// Master filter
-	static ButterworthFilter s_filters[kMaxVoices];
+	// Master filters
+	static ButterworthFilter s_hardFilters[kMaxVoices];
+	static TeemuFilter s_softFilters[kMaxVoices];
 	
 	/*
 		Voice API.
@@ -318,9 +319,17 @@ namespace SFM
 		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
 
 		// Reset & start filter
-		s_filters[iVoice].Reset();
-		s_filters[iVoice].Start(s_parameters.m_envParams, velocity);
+		LadderFilter *pFilter;
+		if (0 == s_parameters.filterType)
+			pFilter = s_hardFilters+iVoice;
+		else
+			pFilter = s_softFilters+iVoice;
 
+		pFilter->Reset();
+		pFilter->Start(s_parameters.m_envParams, velocity);
+
+		voice.m_pFilter = pFilter;
+		
 		// Enabled, up counter		
 		voice.m_enabled = true;
 		++s_active;
@@ -356,7 +365,7 @@ namespace SFM
 //			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 //				voice.m_operators[iOp].opEnv.Stop(velocity);
 
-			s_filters[index].Stop(velocity);
+			voice.m_pFilter->Stop(velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -443,6 +452,7 @@ namespace SFM
 		s_parameters.m_noteJitter = WinMidi_GetNoteJitter();
 
 		// Filter
+		s_parameters.filterType = WinMidi_GetFilterType();
 		s_parameters.filterWet = WinMidi_GetFilterWet();
 		s_parameters.filterParams.drive = dBToAmplitude(3.f);
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
@@ -471,8 +481,9 @@ namespace SFM
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 
-			// Go up 7 or down 7 semitones
-			patchOp.detune = powf(2.f, ( -7.f + 14.f*WinMidi_GetOperatorDetune() )/12.f);
+			// Go up or down half a semitone
+			float cents = ( -50.f + 100.f*WinMidi_GetOperatorDetune() ) * 0.01f;
+			patchOp.detune = powf(2.f, cents/12.f);
 
 			// Tremolo & vibrato
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
@@ -548,10 +559,12 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
-				ButterworthFilter &filter = s_filters[iVoice];
-
+				
 				if (true == voice.m_enabled)
 				{
+					SFM_ASSERT(nullptr != voice.m_pFilter);
+					LadderFilter &filter = *voice.m_pFilter;
+				
 					// This should keep as close to the sample as possible (FIXME)
 					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
 					voice.SetPitchBend(bend);

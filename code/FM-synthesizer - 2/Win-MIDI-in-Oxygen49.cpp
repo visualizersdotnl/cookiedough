@@ -92,7 +92,9 @@ namespace SFM
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
 	// Button mapping
-	const unsigned kButtonOpRecv = 118; // C30
+	const unsigned kButtonOpRecv = 118;     // C30
+	const unsigned kButtonFilterHard = 103; // C25
+	const unsigned kButtonFilterSoft = 104; // C26
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -110,6 +112,8 @@ namespace SFM
 	const unsigned kPerc6 = 45;
 	const unsigned kPerc7 = 51;
 	const unsigned kPerc8 = 49;
+
+	static int s_filterType = 0;
 
 	// Current (receiving) operator
 	/* static */ unsigned g_currentOp = 0;
@@ -209,6 +213,14 @@ namespace SFM
 
 						case kPotFilterWet:
 							s_filterWet = fControlVal;
+							break;
+
+						case kButtonFilterHard:
+							s_filterType = 0;
+							break;
+
+						case kButtonFilterSoft:
+							s_filterType = 1;
 							break;
 
 						/* Note jitter */
@@ -457,9 +469,10 @@ namespace SFM
 	float WinMidi_GetModEnvD() { return s_modEnvD[g_currentOp]; }
 
 	// Filter
-	float WinMidi_GetCutoff()     { return s_cutoff;    } 
-	float WinMidi_GetResonance()  { return s_resonance; }
-	float WinMidi_GetFilterWet()  { return s_filterWet; }
+	int   WinMidi_GetFilterType() { return s_filterType; }
+	float WinMidi_GetCutoff()     { return s_cutoff;     } 
+	float WinMidi_GetResonance()  { return s_resonance;  }
+	float WinMidi_GetFilterWet()  { return s_filterWet;  }
 
 	// Note jitter
 	float WinMidi_GetNoteJitter() { return s_noteJitter; } 

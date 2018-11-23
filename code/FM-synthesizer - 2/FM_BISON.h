@@ -4,34 +4,39 @@
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
 	This is my second attempt at an FM synthesizer:
-	- 6 programmable operators with a shared modulation envelope
+	- 6 programmable operators with modulation envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
-	- Master Butterworth filter
+	- Master Butterworth (sharp & clear) & MOOG (soft) ladder filters
 	- Global modulation control
 	- Pitch bend
 	- Multiple tried & tested FM algorithms
-	- Paraphonic (24 voices)
+	- Polyphonic (24 voices)
+	- Adjustable tone jitter (for analogue VCO warmth)
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 
-	Third party credits: see previous iteration (FIXME)
+	Third party credits:
+	- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
+	- Butterworth filter from http://www.musicdsp.org (see header file for details)
+	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Ideas:
 		- Let's call the VST version the GENERALISSIMO!
 		- For all notes on how to do and not to do things: refer to abandonded version
 
 	Current goals (3-4 max.):
-		- Pitch LFO: make it sound like the Volca FM
+		- Review fine & detune
 		- Bigger C:M table
 		- Hard sync.?
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 
 	Sound idea(s):
 		- If a modulator is noisy, it sounds cool if the envelope is almost closed!
-		- Consider less operators in trade for an AD-envelope per modulator?
 
 	Things that are missing:
 		- Delay
+		- Cherry pick from the first iteration's lists
 	
 	In short: get FM right, then reintroduce the goodie bag features
 

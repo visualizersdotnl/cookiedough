@@ -56,6 +56,7 @@ namespace SFM
 	float WinMidi_GetModEnvD();
 
 	// Filter
+	int   WinMidi_GetFilterType();
 	float WinMidi_GetCutoff();
 	float WinMidi_GetResonance();
 	float WinMidi_GetFilterWet();

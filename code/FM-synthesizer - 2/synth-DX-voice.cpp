@@ -68,7 +68,7 @@ namespace SFM
 				float bend = m_pitchBend + opDX.vibrato*vibrato;
 				opDX.oscillator.PitchBend(bend);
 
-				// Calculate sample
+				// Calculate sample (FIXME: is this the right spot?)
 				float sample = opDX.oscillator.Sample(modulation);
 
 				// Store sample for feedback at this point; feels like a sane spot: straight out of the oscillator
@@ -87,6 +87,7 @@ namespace SFM
 		}
 
 		// Integrate feedback
+		// The DX7 does this variably (by bit shift it seems checking Dexed), this works for us now!
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
 

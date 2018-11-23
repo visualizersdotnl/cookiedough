@@ -64,6 +64,9 @@ namespace SFM
 
 		// Amplitude env.
 		ADSR m_ADSR;
+
+		// Master filter
+		LadderFilter *m_pFilter;
 	
 		DX_Voice() : m_enabled(false) {}
 
@@ -87,6 +90,9 @@ namespace SFM
 
 			// Reset envelopes
 			m_ADSR.Reset();
+
+			// No filter (must be set!)
+			m_pFilter = nullptr;
 		}
 
 		float Sample(const Parameters &parameters);

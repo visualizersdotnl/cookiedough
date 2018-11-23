@@ -35,6 +35,7 @@ namespace SFM
 		FM_Patch patch;
 
 		// Filter parameters
+		int filterType; // 0 = Harsh, 1 = Soft
 		float filterWet;
 		FilterParameters filterParams;
 
@@ -63,6 +64,7 @@ namespace SFM
 			patch.Reset();
 
 			// Filter off
+			filterType = 0;
 			filterWet = 0.f;
 			filterParams.cutoff = 1.f;
 			filterParams.resonance = 0.f;
