@@ -19,4 +19,9 @@ namespace SFM
 	// Vibrato & operator vibrato control
 	float WinMidi_GetVibrato();
 	float WinMidi_GetOperatorVibrato();
+
+	// Delay
+	float WinMidi_GetDelayWet();
+	float WinMidi_GetDelayRate();
+	float WinMidi_GetDelayWidth();
 }

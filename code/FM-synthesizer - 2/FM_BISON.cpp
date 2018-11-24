@@ -82,6 +82,9 @@ namespace SFM
 	// Master filters
 	static ButterworthFilter s_hardFilters[kMaxVoices];
 	static TeemuFilter s_softFilters[kMaxVoices];
+
+	static DelayLine s_delayLine(kSampleRate);
+	static Oscillator s_delayLFO;
 	
 	/*
 		Voice API.
@@ -164,13 +167,13 @@ namespace SFM
 
 		const float modDepth = s_parameters.modDepth*velocityInvExp;
 
-#if 1
+		FM_Patch &patch = s_parameters.patch;
+
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
 		*/
-
-		FM_Patch &patch = s_parameters.patch;
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
@@ -188,7 +191,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -196,8 +199,6 @@ namespace SFM
 			Verdict: works well if treated right, a keeper!
 			QA: OK!
 		*/
-
-		FM_Patch &patch = s_parameters.patch;
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
@@ -241,46 +242,30 @@ namespace SFM
 #if 0
 
 		/*
-			Test algorithm: Volca FM algorithm #25
-			Verdict: Quite fat sounds if you try hard enough (but generally it's horse shit)
+			Test algorithm: Kylian's algorithm #4
+			Verdict: ...
 		*/
 
-		FM_Patch &patch = s_parameters.patch;
+		// Modulator #3
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
+
+		// Modulator #2
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[2]), modDepth*patch.operators[2].amplitude);
+
+		// Modulator #1
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
+		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
 
 		// Carrier #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = -1;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].modulators[1] = 2;
+		voice.m_operators[0].modulators[2] = 3;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
-
-		// Carrier #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulators[0] = -1;
-		voice.m_operators[1].isCarrier = true;
-		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
-
-		// Carrier #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = -1;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
-
-		// Carrier #4
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulators[0] = 5;
-		voice.m_operators[3].isCarrier = true;
-		voice.m_operators[3].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[3]), masterAmp*patch.operators[3].amplitude);
-
-		// Carrier #5
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].isCarrier = true;
-		voice.m_operators[4].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[4]), masterAmp*patch.operators[4].amplitude);
-
-		// Modulator #1
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = 5;
-		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
 
 		/*
 			End of Algorithm
@@ -297,7 +282,7 @@ namespace SFM
 
 		// Set vibrato LFO
 		const float vibFreq = s_parameters.vibrato*kAudibleLowHz*(freqScale+velocity);
-		voice.m_vibrato.Initialize(kCosine, vibFreq, 1.f);
+		voice.m_vibrato.Initialize(kCosine, vibFreq, 2.f);
 
 		// Set per-operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -482,6 +467,7 @@ namespace SFM
 			patchOp.fine = powf(2.f, fine);
 
 			// Go up or down half a semitone
+			// This is different from the DX7, but -7 to +7 semitones seems excessive
 			float cents = ( -50.f + 100.f*WinMidi_GetOperatorDetune() ) * 0.01f;
 			patchOp.detune = powf(2.f, cents/12.f);
 
@@ -504,6 +490,25 @@ namespace SFM
 
 	SFM_INLINE void ProcessDelay(float &mix)
 	{
+		// FIXME: move & right amount?
+		s_delayLFO.PitchBend(12.f*WinMidi_GetDelayRate());
+
+		const float LFO = s_delayLFO.Sample(0.f);
+
+		// FIXME: also interpolate ahead
+		const float width = 8.f + 16.f*WinMidi_GetDelayWidth();
+		const float A = s_delayLine.Tap(width + width*LFO);
+
+		s_delayLine.Next();
+		s_delayLine.Write(mix);
+
+		// FIXME: move
+		float wet = WinMidi_GetDelayWet()*kRootHalf;
+		
+		// FIXME: too loud?
+		float mixed = SoftClamp(mix + A*wet);
+
+		mix = mixed;
 	}
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
@@ -669,9 +674,10 @@ bool Syntherklaas_Create()
 
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-	{
-		s_DXvoices[iVoice].m_enabled = false;
-	}
+		s_DXvoices[iVoice].Reset();
+
+	s_delayLine.Reset();
+	s_delayLFO.Initialize(kCosine, kDelayBaseFreq, 1.f);
 
 	// Reset voice deques
 	s_voiceReq.clear();

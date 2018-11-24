@@ -14,6 +14,7 @@
 	- Adjustable tone jitter (for analogue VCO warmth)
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
+	At this point this code is not optimized for speed but there's tons of low hanging fruit.
 
 	Third party credits:
 	- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
@@ -25,17 +26,21 @@
 		- Let's call the VST version the GENERALISSIMO!
 		- For all notes on how to do and not to do things: refer to abandonded version
 
-	Current goals (3-4 max.):
+	Right now:
+		- Finish up primitive flanger/chorus
+		- Research gain tables
+
+	Current goals (3-4 max. please):
 		- Review fine & detune
 		- Bigger C:M table
 		- Hard sync.?
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
+		  + Look at Kilian's work!
 
 	Sound idea(s):
 		- If a modulator is noisy, it sounds cool if the envelope is almost closed!
 
 	Things that are missing:
-		- Delay
 		- Cherry pick from the first iteration's lists
 	
 	In short: get FM right, then reintroduce the goodie bag features

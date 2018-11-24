@@ -43,11 +43,16 @@ namespace SFM
 	// Rotary mapping
 	const unsigned kPotVibrato = 10;     // Set 1, R1
 	const unsigned kPotOpVibrato = 74;   // Set 1, R2
-	const unsigned kPotChorusDepth = 71; // Set 1, R3 (UNUSED)
+	const unsigned kPotDelayWet = 114;   // Set 3, R9
+	const unsigned kPotDelayRate = 18;   // Set 3, R10
+	const unsigned kPotDelayWidth = 19;  // Set 3, R11
 
 	static float s_vibrato = 0.f;
 	static float s_opVibrato[kNumOperators] = { 0.f };
-	static float s_chorusDepth = 0.f; // UNUSED
+
+	static float s_delayWet = 0.f;
+	static float s_delayRate = 0.f;
+	static float s_delayWidth = 0.f;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -83,6 +88,8 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
+					/* Vibrato */
+
 					case kPotVibrato:
 						s_vibrato = fControlVal;
 						break;
@@ -91,11 +98,18 @@ namespace SFM
 						s_opVibrato[g_currentOp] = fControlVal;
 						break;
 
-					case kPotChorusDepth:
-						s_chorusDepth = fControlVal;
+					/* Delay */
+
+					case kPotDelayWet:
+						s_delayWet = fControlVal;
 						break;
 
-					default:
+					case kPotDelayRate:
+						s_delayRate = fControlVal;
+						break;
+
+					case kPotDelayWidth:
+						s_delayWidth = fControlVal;
 						break;
 					}
 				}
@@ -207,6 +221,8 @@ namespace SFM
 	float WinMidi_GetVibrato()         { return s_vibrato; }
 	float WinMidi_GetOperatorVibrato() { return s_opVibrato[WinMidi_GetOperator()]; }
 	
-	// UNUSED
-	float WinMidi_GetChorusDepth() { return s_chorusDepth; }
+	// Delay
+	float WinMidi_GetDelayWet()    { return s_delayWet;   }
+	float WinMidi_GetDelayRate()   { return s_delayRate;  }
+	float WinMidi_GetDelayWidth()  { return s_delayWidth; }
 }
