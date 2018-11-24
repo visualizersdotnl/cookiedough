@@ -495,7 +495,7 @@ namespace SFM
 
 		const float LFO = s_delayLFO.Sample(0.f);
 
-		// FIXME: also interpolate ahead
+		// FIXME: more taps!
 		const float width = 8.f + 16.f*WinMidi_GetDelayWidth();
 		const float A = s_delayLine.Tap(width + width*LFO);
 
