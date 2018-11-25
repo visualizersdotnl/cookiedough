@@ -59,7 +59,8 @@ namespace SFM
 	int   WinMidi_GetFilterType();
 	float WinMidi_GetCutoff();
 	float WinMidi_GetResonance();
-	float WinMidi_GetFilterWet();
+	float WinMidi_GetFilterWet(); // Also known as 'contour'
+	bool  WinMidi_GetFilterInv(); // Invert envelope
 
 	// Note jitter
 	float WinMidi_GetNoteJitter();

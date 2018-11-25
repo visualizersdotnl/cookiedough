@@ -95,6 +95,7 @@ namespace SFM
 			m_pFilter = nullptr;
 		}
 
+		// ** Does not apply ADSR nor filter **
 		float Sample(const Parameters &parameters);
 
 		SFM_INLINE void SetPitchBend(float bend)

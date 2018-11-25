@@ -12,14 +12,11 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
-		// Get global ADSR
-		float ADSR = m_ADSR.Sample();
-
 		// Get tremolo
 		const float tremolo = m_tremolo.Sample(0.f);
 
 		// Get vibrato
-		const float vibrato = powf(2.f, m_vibrato.Sample(0.f)*ADSR);
+		const float vibrato = powf(2.f, m_vibrato.Sample(0.f));
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];
@@ -64,8 +61,11 @@ namespace SFM
 					modulation += m_feedback[index];
 				}
 
+				// Sample operator envelope
+				const float opEnv = opDX.opEnv.Sample();
+
 				// Set pitch bend
-				float bend = m_pitchBend + opDX.vibrato*vibrato;
+				float bend = m_pitchBend + opDX.vibrato*vibrato*opEnv;
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample (FIXME: is this the right spot?)
@@ -77,8 +77,8 @@ namespace SFM
 				// Factor in tremolo
 				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
 
-				// And the mod. envelope
-				sample *= opDX.opEnv.Sample();
+				// And the operator env.
+				sample *= opEnv;
 
 				// If carrier: mix
 				if (true == opDX.isCarrier)
@@ -91,11 +91,7 @@ namespace SFM
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
 
-		// Factor in ADSR
-		mix *= ADSR;
-
 		SampleAssert(mix);
-
 
 		return mix;
 	}

@@ -26,15 +26,15 @@
 	Ideas & such:
 		- Let's call the VST version the GENERALISSIMO!
 
-	Right now:
+	To do:
+		- Bigger C:M table 
+		- Volume issues: ask Pieter and research gain tables
 		- Finish up delay, it's too predictable (including FIXMEs)
-		- Bigger C:M table
-		- Research gain tables because of volume issues
+		- Fix detune, maybe back to the DX7 -7 to +7 semitones
 
 	Current goals (3-4 max. please):
-		- Review fine & detune
-		- Hard sync.
-		- Filter envelope (or just version of voice envelope!)
+		- Hard sync. option?
+		- Filter envelope (possibly inverted version of voice envelope)
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 		  + Look at Kilian's work!
 

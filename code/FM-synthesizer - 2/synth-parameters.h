@@ -35,6 +35,7 @@ namespace SFM
 		FM_Patch patch;
 
 		// Filter parameters
+		bool filterInv; // If true follows inverse voice ADSR
 		int filterType; // 0 = Harsh, 1 = Soft
 		float filterWet;
 		FilterParameters filterParams;
@@ -70,6 +71,7 @@ namespace SFM
 			patch.Reset();
 
 			// Filter off
+			filterInv = false;
 			filterType = 0;
 			filterWet = 0.f;
 			filterParams.cutoff = 1.f;
