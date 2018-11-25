@@ -12,6 +12,7 @@
 	- Multiple tried & tested FM algorithms
 	- Polyphonic (24 voices)
 	- Adjustable tone jitter (for analogue VCO warmth)
+	- Tuneable global delay effect
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 	At this point this code is not optimized for speed but there's tons of low hanging fruit.
@@ -22,33 +23,30 @@
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
-	Ideas:
+	Ideas & such:
 		- Let's call the VST version the GENERALISSIMO!
-		- For all notes on how to do and not to do things: refer to abandonded version
 
 	Right now:
-		- Finish up primitive flanger/chorus
-		- Research gain tables
+		- Finish up delay (including FIXMEs)
+		- Bigger C:M table
+		- Research gain tables because of volume issues
 
 	Current goals (3-4 max. please):
 		- Review fine & detune
-		- Bigger C:M table
 		- Hard sync.?
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 		  + Look at Kilian's work!
 
 	Sound idea(s):
 		- If a modulator is noisy, it sounds cool if the envelope is almost closed!
+		- Consider operator targets instead of the current routing system
 
-	Things that are missing:
+	Things that are missing or broken:
 		- Cherry pick from the first iteration's lists
-	
-	In short: get FM right, then reintroduce the goodie bag features
+		- Potmeters crackle; I see no point in fixing this before I go for VST
 
-	Lessons already learned:
-		- The DX7 is far more complex, but isn't it too complex?
-		  If you want to implement that there's no way around LUTs and quasi-spaghetti, 
-		  which is not the goal of this exercise
+	Lessons learned:
+		- Complexity has been done, it's not the answer
 */
 
 #pragma once

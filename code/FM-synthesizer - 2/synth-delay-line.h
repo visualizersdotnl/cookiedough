@@ -1,57 +1,54 @@
 
 /*
-	Syntherklaas FM -- Delay line.
+	Syntherklaas FM -- Delay line (fractional).
 */
 
 #pragma once
 
 namespace SFM
 {
+	const unsigned kDelayLineSize = kSampleRate;
+	
 	class DelayLine
 	{
 	public:
-		DelayLine(unsigned length) :
-			m_readIdx(0)
-,			m_writeIdx(0)
-,			m_length(length)
+		DelayLine() :
+			m_writeIdx(0)
 		{
-			SFM_ASSERT(length > 0 && length <= kSampleRate);
 			Reset();
 		}
 
 		void Reset()
 		{
-			memset(m_buffer, 0, kSampleRate*sizeof(float));
+			memset(m_buffer, 0, kDelayLineSize*sizeof(float));
 		}
 
 		SFM_INLINE void Write(float sample)
 		{
-			const unsigned index = m_writeIdx % m_length;
+			const unsigned index = m_writeIdx % kDelayLineSize;
 			m_buffer[index] = sample;
 			++m_writeIdx;
 		}
 
-		SFM_INLINE float Tap(float delay)
+		SFM_INLINE float Read(float delay)
 		{
-			int from = int(delay);
-			const float fraction = delay-from;
-			from = m_readIdx-1-from;
+			SFM_ASSERT(delay >= 0.f && delay <= 1.f);
+			delay *= kDelayLineSize;
+				
+			const float fraction = fracf(delay);
+			const int from = m_writeIdx-int(delay)-1;
 			const int to = from-1;
-			const float A = m_buffer[from % m_length];
-			const float B = m_buffer[to   % m_length];
+
+			const float A = m_buffer[from % kDelayLineSize];
+			const float B = m_buffer[to   % kDelayLineSize];
 			const float value = lerpf<float>(A, B, fraction);
+
 			return value;
 		}
 
-		SFM_INLINE void Next()
-		{
-			++m_readIdx;
-		}
-			
 	private:
-		unsigned m_readIdx, m_writeIdx;
-		unsigned m_length;
+		unsigned m_writeIdx;
 
-		alignas(16) float m_buffer[kSampleRate];
+		alignas(16) float m_buffer[kDelayLineSize];
 	};
 }

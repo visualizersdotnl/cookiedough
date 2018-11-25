@@ -39,6 +39,12 @@ namespace SFM
 		float filterWet;
 		FilterParameters filterParams;
 
+		// Delay parameters
+		float delayWet;
+		float delayRate;
+		float delayWidth;
+		float delayFeedback;
+
 		void SetDefaults()
 		{
 			// Neutral drive
@@ -69,6 +75,12 @@ namespace SFM
 			filterParams.cutoff = 1.f;
 			filterParams.resonance = 0.f;
 			filterParams.drive = 1.f;
+
+			// No delay
+			delayWet = 0.f;
+			delayRate = 0.f;
+			delayWidth = 0.f;
+			delayFeedback = 0.f;
 		}
 	};
 }

@@ -83,7 +83,7 @@ namespace SFM
 	static ButterworthFilter s_hardFilters[kMaxVoices];
 	static TeemuFilter s_softFilters[kMaxVoices];
 
-	static DelayLine s_delayLine(kSampleRate);
+	static DelayLine s_delayLine;
 	static Oscillator s_delayLFO;
 	
 	/*
@@ -169,7 +169,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -191,7 +191,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -408,6 +408,8 @@ namespace SFM
 			- Remove all rogue parameter probes.
 			  + WinMidi_GetPitchBend()
 			  + WinMidi_GetMasterDrive()
+			  + WinMidi_GetDelayRate()
+			  + WinMidi_GetDelayFeedback()
 
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
@@ -443,10 +445,13 @@ namespace SFM
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 
-		/*
-			Uppdate current operator
-		*/
+		// Delay
+		s_parameters.delayWet = WinMidi_GetDelayWet();
+		s_parameters.delayRate = WinMidi_GetDelayRate();
+		s_parameters.delayWidth = WinMidi_GetDelayWidth();
+		s_parameters.delayFeedback = WinMidi_GetDelayFeedback();
 
+		// Update current operator
 		const unsigned iOp = WinMidi_GetOperator();
 		if (-1 != iOp)
 		{
@@ -490,25 +495,27 @@ namespace SFM
 
 	SFM_INLINE void ProcessDelay(float &mix)
 	{
-		// FIXME: move & right amount?
-		s_delayLFO.PitchBend(12.f*WinMidi_GetDelayRate());
+		// FIXME: keep as close to sampling as possible
+		const float rate = WinMidi_GetDelayRate();
+		const float feedback = WinMidi_GetDelayFeedback();
 
-		const float LFO = s_delayLFO.Sample(0.f);
+		// FIXME: perhaps create a dedicated LFO class that has nothing to do with tone instead of adding a function to Oscillator?
+		s_delayLFO.PitchBend((feedback+rate)*24.f);
+	
+		// Bias LFO
+		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(rate*rate);
 
-		// FIXME: more taps!
-		const float width = 8.f + 16.f*WinMidi_GetDelayWidth();
-		const float A = s_delayLine.Tap(width + width*LFO);
+		// Take single tap (FIXME?)
+		const float width = s_parameters.delayWidth*kDelayBaseMul;
+		const float tap = width*LFO;
+		const float A = s_delayLine.Read(tap);
 
-		s_delayLine.Next();
-		s_delayLine.Write(mix);
+		// Write
+		s_delayLine.Write(SoftClamp(mix + feedback*A));
 
-		// FIXME: move
-		float wet = WinMidi_GetDelayWet()*kRootHalf;
-		
-		// FIXME: too loud?
-		float mixed = SoftClamp(mix + A*wet);
-
-		mix = mixed;
+		// Mix
+		const float wet = s_parameters.delayWet*kRootHalf;
+		mix = SoftClamp(mix + A*wet);
 	}
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
@@ -570,7 +577,7 @@ namespace SFM
 					SFM_ASSERT(nullptr != voice.m_pFilter);
 					LadderFilter &filter = *voice.m_pFilter;
 				
-					// This should keep as close to the sample as possible (FIXME)
+					// This should be as close to the sample as possible (FIXME)
 					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
 					voice.SetPitchBend(bend);
 	

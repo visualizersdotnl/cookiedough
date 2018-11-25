@@ -69,7 +69,8 @@ namespace SFM
 	const unsigned kMaxNoteJitter = 10;
 
 	// Delay LFO base freq.
-	const float kDelayBaseFreq = 0.1f;
+	const float kDelayBaseMul = 0.001f;
+	const float kDelayBaseFreq = 0.2f;
 }
 
 #include "synth-LUT.h"

@@ -74,5 +74,5 @@ namespace SFM
 	}
 
 	// GLSL frac()
-	SFM_INLINE float fracf(float value) { return value - std::truncf(value); }
+	SFM_INLINE float fracf(float value) { return value - int(value); }
 }

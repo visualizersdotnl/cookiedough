@@ -24,4 +24,5 @@ namespace SFM
 	float WinMidi_GetDelayWet();
 	float WinMidi_GetDelayRate();
 	float WinMidi_GetDelayWidth();
+	float WinMidi_GetDelayFeedback();
 }
