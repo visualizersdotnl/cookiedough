@@ -27,13 +27,14 @@
 		- Let's call the VST version the GENERALISSIMO!
 
 	Right now:
-		- Finish up delay (including FIXMEs)
+		- Finish up delay, it's too predictable (including FIXMEs)
 		- Bigger C:M table
 		- Research gain tables because of volume issues
 
 	Current goals (3-4 max. please):
 		- Review fine & detune
-		- Hard sync.?
+		- Hard sync.
+		- Filter envelope (or just version of voice envelope!)
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 		  + Look at Kilian's work!
 
