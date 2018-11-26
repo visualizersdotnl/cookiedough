@@ -503,7 +503,7 @@ namespace SFM
 		Render function.
 	*/
 
-	SFM_INLINE void ProcessDelay(float &mix)
+	SFM_INLINE void ProcessDelay_1_Tap(float &mix)
 	{
 		// FIXME: keep as close to sampling as possible
 		const float rate = WinMidi_GetDelayRate();
@@ -527,6 +527,8 @@ namespace SFM
 		const float wet = s_parameters.delayWet*kRootHalf;
 		mix = SoftClamp(mix + A*wet);
 	}
+
+	#define ProcessDelay ProcessDelay_1_Tap
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
@@ -701,6 +703,7 @@ bool Syntherklaas_Create()
 
 	s_delayLine.Reset();
 	s_delayLFO.Initialize(kCosine, kDelayBaseFreq, 1.f);
+//	s_delayLFO.Initialize(kDigiTriangle, kDelayBaseFreq, 1.f);
 
 	// Reset voice deques
 	s_voiceReq.clear();

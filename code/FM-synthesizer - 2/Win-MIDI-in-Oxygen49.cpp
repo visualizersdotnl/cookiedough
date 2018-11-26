@@ -119,7 +119,7 @@ namespace SFM
 
 	// Current (receiving) operator
 	/* static */ unsigned g_currentOp = 0;
-	static bool s_opRecv = true;
+	static bool s_opRecv = false;
 
 	static unsigned s_voices[127] = { -1 };
 

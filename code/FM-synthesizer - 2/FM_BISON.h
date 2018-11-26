@@ -27,7 +27,6 @@
 		- Let's call the VST version the GENERALISSIMO!
 
 	Priority bug(s):
-		- Why does receiving operator information work without me pressing that button?
 
 	To do:
 		- Bigger C:M table 
@@ -37,7 +36,7 @@
 		- ?
 
 	Ideas:
-		- Allow per-operator oscillator type (e.g. square, saw)
+		- Allow carrier oscillator type (e.g. square, saw)
 		- ADSR parameters: quick from 0.0 to 0.5, then a wider range follows after that (the Neutron has it)
 		- Give filter it's own AD envelope
 		- Consider operator targets instead of the current routing system
