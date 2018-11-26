@@ -303,7 +303,7 @@ namespace SFM
 		}
 
 		// Start master ADSR
-		voice.m_ADSR.Start(s_parameters.m_envParams, velocity);
+		voice.m_ADSR.Start(s_parameters.envParams, velocity);
 
 		// Reset & start filter
 		LadderFilter *pFilter;
@@ -312,15 +312,8 @@ namespace SFM
 		else
 			pFilter = s_softFilters+iVoice;
 
-		// VCF envelope is adapted from main, but with full-on sustain
-		ADSR::Parameters envParamsVCF;
-		envParamsVCF.attack = s_parameters.m_envParams.attack;
-		envParamsVCF.decay = s_parameters.m_envParams.decay;
-		envParamsVCF.release = s_parameters.m_envParams.release;
-		envParamsVCF.sustain = 1.f; // Always 100%
-
 		pFilter->Reset();
-		pFilter->Start(envParamsVCF, 1.f /* Not sensitive */);
+		pFilter->Start(s_parameters.filterEnvParams, velocity);
 
 		voice.m_pFilter = pFilter;
 		
@@ -359,7 +352,8 @@ namespace SFM
 //			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 //				voice.m_operators[iOp].opEnv.Stop(velocity);
 
-			voice.m_pFilter->Stop(velocity);
+			// Same as above
+//			voice.m_pFilter->Stop(velocity);
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -435,10 +429,10 @@ namespace SFM
 		s_parameters.vibrato = WinMidi_GetVibrato();
 
 		// Master ADSR
-		s_parameters.m_envParams.attack  = WinMidi_GetAttack();
-		s_parameters.m_envParams.decay   = WinMidi_GetDecay();
-		s_parameters.m_envParams.release = WinMidi_GetRelease();
-		s_parameters.m_envParams.sustain = WinMidi_GetSustain();
+		s_parameters.envParams.attack  = WinMidi_GetAttack();
+		s_parameters.envParams.decay   = WinMidi_GetDecay();
+		s_parameters.envParams.release = WinMidi_GetRelease();
+		s_parameters.envParams.sustain = WinMidi_GetSustain();
 
 		// Modulation depth
 		const float alpha = 1.f/dBToAmplitude(-12.f);
@@ -454,6 +448,12 @@ namespace SFM
 		s_parameters.filterParams.drive = 1.f;
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
+
+		// Filter envelope (ADS)
+		s_parameters.filterEnvParams.attack = WinMidi_GetFilterA();
+		s_parameters.filterEnvParams.decay = WinMidi_GetFilterD();
+		s_parameters.filterEnvParams.release = 0.f; // Should never be used (no Stop() call)
+		s_parameters.filterEnvParams.sustain = WinMidi_GetFilterS();
 
 		// Delay
 		s_parameters.delayWet = WinMidi_GetDelayWet();

@@ -47,6 +47,9 @@ namespace SFM
 	const unsigned kPotDelayRate = 18;     // Set 3, R10
 	const unsigned kPotDelayWidth = 19;    // Set 3, R11
 	const unsigned kPotDelayFeedback = 16; // Set 3, R12
+	const unsigned kPotFilterA = 91;       // Set 4, R14
+	const unsigned kPotFilterD = 79;       // Set 4, R15
+	const unsigned kPotFilterS = 72;       // Set 4, R16
 
 	static float s_vibrato = 0.f;
 	static float s_opVibrato[kNumOperators] = { 0.f };
@@ -55,6 +58,10 @@ namespace SFM
 	static float s_delayRate = 0.f;
 	static float s_delayWidth = 0.f;
 	static float s_delayFeedback = 0.f;
+
+	static float s_filterA = 0.f;
+	static float s_filterD = 0.f;
+	static float s_filterS = 0.f;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -116,6 +123,20 @@ namespace SFM
 
 					case kPotDelayFeedback:
 						s_delayFeedback = fControlVal;
+						break;
+
+					/* Filter (ADS) */
+
+					case kPotFilterA:
+						s_filterA = fControlVal;
+						break;
+
+					case kPotFilterD:
+						s_filterD = fControlVal;
+						break;
+
+					case kPotFilterS:
+						s_filterS = fControlVal;
 						break;
 					}
 				}
@@ -232,4 +253,9 @@ namespace SFM
 	float WinMidi_GetDelayRate()     { return s_delayRate;     }
 	float WinMidi_GetDelayWidth()    { return s_delayWidth;    }
 	float WinMidi_GetDelayFeedback() { return s_delayFeedback; }
+
+	// Filter
+	float WinMidi_GetFilterA() { return s_filterA; }
+	float WinMidi_GetFilterD() { return s_filterD; }
+	float WinMidi_GetFilterS() { return s_filterS; }
 }

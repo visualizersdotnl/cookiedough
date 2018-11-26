@@ -23,7 +23,7 @@ namespace SFM
 		float tremolo;
 
 		// Master ADSR
-		ADSR::Parameters m_envParams;
+		ADSR::Parameters envParams;
 
 		// Note jitter
 		float m_noteJitter;
@@ -35,7 +35,8 @@ namespace SFM
 		FM_Patch patch;
 
 		// Filter parameters
-		bool filterInv; // If true follows inverse voice ADSR
+		bool filterInv;
+		ADSR::Parameters filterEnvParams;
 		int filterType; // 0 = Harsh, 1 = Soft
 		float filterWet;
 		FilterParameters filterParams;
@@ -56,10 +57,10 @@ namespace SFM
 			vibrato = 0.f;
 
 			// Std. ADSR
-			m_envParams.attack  = 0.f;
-			m_envParams.decay   = 0.25f;
-			m_envParams.release = 0.25f;
-			m_envParams.sustain = 1.f;
+			envParams.attack  = 0.f;
+			envParams.decay   = 0.25f;
+			envParams.release = 0.25f;
+			envParams.sustain = 1.f;
 
 			// 50% jitter
 			m_noteJitter = 0.5f;
@@ -72,6 +73,7 @@ namespace SFM
 
 			// Filter off
 			filterInv = false;
+			filterEnvParams = envParams;
 			filterType = 0;
 			filterWet = 0.f;
 			filterParams.cutoff = 1.f;

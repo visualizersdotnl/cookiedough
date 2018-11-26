@@ -27,9 +27,8 @@
 		- Let's call the VST version the GENERALISSIMO!
 
 	Priority bug(s):
-		- Something is wrong with filter envelope
 		- Why does receiving operator information work without me pressing that button?
-ss
+
 	To do:
 		- Bigger C:M table 
 		- Volume issues: introduce something called 'constant gain mixing'
