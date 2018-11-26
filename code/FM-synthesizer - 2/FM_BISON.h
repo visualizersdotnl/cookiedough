@@ -26,25 +26,30 @@
 	Ideas & such:
 		- Let's call the VST version the GENERALISSIMO!
 
+	Priority bug(s):
+		- Something is wrong with filter envelope
+		- Why does receiving operaetor information work without me pressing that button?
+
 	To do:
 		- Bigger C:M table 
-		- Volume issues: ask Pieter and research gain tables
+		- Volume issues: introduce something called 'constant gain mixing'
 		- Finish up delay, it's too predictable (including FIXMEs)
 		- Fix detune, maybe back to the DX7 -7 to +7 semitones
+		- ?
 
-	Current goals (3-4 max. please):
-		- Hard sync. option?
-		- Filter envelope (possibly inverted version of voice envelope)
-		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
-		  + Look at Kilian's work!
-
-	Sound idea(s):
-		- If a modulator is noisy, it sounds cool if the envelope is almost closed!
+	Ideas:
+		- Allow per-operator oscillator type (e.g. square, saw)
+		- ADSR parameters: quick from 0.0 to 0.5, then a wider range follows after that (the Neutron has it)
+		- Give filter it's own AD envelope
 		- Consider operator targets instead of the current routing system
+		- Hard sync. option
+		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
+		  + Not really all that necessary
 
 	Things that are missing or broken:
-		- Cherry pick from the first iteration's lists
+		- Mod. wheel should respond during note playback?
 		- Potmeters crackle; I see no point in fixing this before I go for VST
+		- Cherry pick from the first iteration's lists
 
 	Lessons learned:
 		- Complexity has been done, it's not the answer

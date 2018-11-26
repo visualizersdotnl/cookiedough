@@ -82,7 +82,9 @@ namespace SFM
 	// Master filters
 	static ButterworthFilter s_hardFilters[kMaxVoices];
 	static TeemuFilter s_softFilters[kMaxVoices];
+//	static ImprovedMOOGFilter s_softFilters[kMaxVoices];
 
+	// Delay effect
 	static DelayLine s_delayLine;
 	static Oscillator s_delayLFO;
 	
@@ -310,8 +312,15 @@ namespace SFM
 		else
 			pFilter = s_softFilters+iVoice;
 
+		// VCF envelope is adapted from main, but with full-on sustain
+		ADSR::Parameters envParamsVCF;
+		envParamsVCF.attack = s_parameters.m_envParams.attack;
+		envParamsVCF.decay = s_parameters.m_envParams.decay;
+		envParamsVCF.release = s_parameters.m_envParams.release;
+		envParamsVCF.sustain = 1.f; // Always 100%
+
 		pFilter->Reset();
-		pFilter->Start(s_parameters.m_envParams, velocity);
+		pFilter->Start(envParamsVCF, 1.f /* Not sensitive */);
 
 		voice.m_pFilter = pFilter;
 		
@@ -439,9 +448,10 @@ namespace SFM
 		s_parameters.m_noteJitter = WinMidi_GetNoteJitter();
 
 		// Filter
+		s_parameters.filterInv = WinMidi_GetFilterInv();
 		s_parameters.filterType = WinMidi_GetFilterType();
 		s_parameters.filterWet = WinMidi_GetFilterWet();
-		s_parameters.filterParams.drive = dBToAmplitude(3.f);
+		s_parameters.filterParams.drive = 1.f;
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 
@@ -590,7 +600,13 @@ namespace SFM
 
 					// Filter voice
 					filter.SetLiveParameters(s_parameters.filterParams);
-					filter.Apply(buffer, numSamples, s_parameters.filterWet, false);
+					filter.Apply(buffer, numSamples, s_parameters.filterWet /* AKA 'contour' */, s_parameters.filterInv);
+
+					// Apply ADSR (FIXME: slow?)
+					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+					{
+						buffer[iSample] *= voice.m_ADSR.Sample();
+					}
 
 					++curVoice; // Do *not* use to index anything other than the temporary buffers
 				}
