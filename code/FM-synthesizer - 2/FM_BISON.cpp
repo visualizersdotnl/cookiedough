@@ -80,9 +80,8 @@ namespace SFM
 	static unsigned s_active = 0;
 
 	// Master filters
-	static ButterworthFilter s_hardFilters[kMaxVoices];
-	static TeemuFilter s_softFilters[kMaxVoices];
-//	static ImprovedMOOGFilter s_softFilters[kMaxVoices];
+	static UnknownFilter s_cleanFilters[kMaxVoices];
+	static TeemuFilter s_MOOGFilters[kMaxVoices];
 
 	// Delay effect
 	static DelayLine s_delayLine;
@@ -313,9 +312,9 @@ namespace SFM
 		// Reset & start filter
 		LadderFilter *pFilter;
 		if (0 == s_parameters.filterType)
-			pFilter = s_hardFilters+iVoice;
+			pFilter = s_cleanFilters+iVoice;
 		else
-			pFilter = s_softFilters+iVoice;
+			pFilter = s_MOOGFilters+iVoice;
 
 		pFilter->Reset();
 		pFilter->Start(s_parameters.filterEnvParams, velocity);

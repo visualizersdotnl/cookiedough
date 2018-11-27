@@ -19,7 +19,6 @@
 
 	Third party credits:
 	- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
-	- Butterworth filter from http://www.musicdsp.org (see header file for details)
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
@@ -29,11 +28,7 @@
 	Priority bug(s):
 
 	To do:
-		- Bigger C:M table 
 		- Volume issues: introduce something called 'constant gain mixing'
-		- Finish up delay, it's too predictable (including FIXMEs)
-		- Fix detune, maybe back to the DX7 -7 to +7 semitones
-		- ?
 
 	Ideas:
 		- Allow carrier oscillator type (e.g. square, saw)

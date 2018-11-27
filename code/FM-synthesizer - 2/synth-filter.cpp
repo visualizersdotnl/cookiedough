@@ -21,19 +21,50 @@ namespace SFM
 		return (true == invert) ? 1.f-ADSR : ADSR;
 	}
 
-	void ButterworthFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
+	/*
+		Filter (exact source unknown) (http://www.musicdsp.org)
+	*/
+
+	void UnknownFilter:: Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
 	{
+		const float cutoff = 2.f * m_cutoff/kSampleRate;
+		const float resonance = powf(10.f, 0.05f * -m_resonance);
+		const float K = 0.5f*resonance*sinf(kPI*cutoff);
+		const float C1 = 0.5f * (1.f-K) / (1.f+K);
+		const float C2 = (0.5f + C1) * cosf(kPI*cutoff);
+		const float C3 = (0.5f + C1-C2) * 0.25f;
+		const float mA0 = 2.f*C3;
+		const float mA1 = 2.f*2.f*C3;
+		const float mA2 = 2.f*C3;
+		const float mB1 = 2.f*-C2;
+		const float mB2 = 2.f*C1;
+
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
 			const float dry = pSamples[iSample];
 			const float ADSR = SampleEnv(m_ADSR, invert);
 
-			const float sample = Blend(dry, m_filter.Run(dry*m_drive), contour, ADSR);
+			float driven = dry*m_drive;
+
+			float sample = mA0*driven + mA1*m_mX1 + mA2*m_mX2 - mB1*m_mY1 - mB2*m_mY2;
+
+			m_mX2 = m_mX1;
+			m_mX1 = driven;
+			m_mY2 = m_mY1;
+			m_mY1 = sample;
+				
+			sample = tanhf(sample);
+
+			sample = Blend(dry, sample, contour, ADSR);
 			SampleAssert(sample);
 
 			pSamples[iSample] = sample;
 		}
 	}
+
+	/*
+		Improved MOOG filter.
+	*/
 
 	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
 	{

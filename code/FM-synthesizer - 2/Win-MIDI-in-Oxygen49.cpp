@@ -92,10 +92,10 @@ namespace SFM
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
 	// Button mapping
-	const unsigned kButtonOpRecv = 118;     // C30
-	const unsigned kButtonFilterHard = 103; // C25
-	const unsigned kButtonFilterSoft = 104; // C26
-	const unsigned kButtonFilterInv = 102;  // C24
+	const unsigned kButtonOpRecv = 118;      // C30
+	const unsigned kButtonFilterType1 = 103; // C25
+	const unsigned kButtonFilterType2 = 104; // C26
+	const unsigned kButtonFilterInv = 102;   // C24
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -217,11 +217,11 @@ namespace SFM
 							s_filterWet = fControlVal;
 							break;
 
-						case kButtonFilterHard:
+						case kButtonFilterType1:
 							if (127 == controlVal) s_filterType = 0;
 							break;
 
-						case kButtonFilterSoft:
+						case kButtonFilterType2:
 							if (127 == controlVal) s_filterType = 1;
 							break;
 

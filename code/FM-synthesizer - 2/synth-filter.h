@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "3rdparty/FilterButterworth24dB.h"
-
 #include "synth-ADSR.h"
 
 namespace SFM
@@ -91,27 +89,27 @@ namespace SFM
 	};
 
 	/*
-		Butterworth filter.
+		Unknown filter (http://www.musicdsp.org)
 	*/
 
-	class ButterworthFilter : public LadderFilter
+	class UnknownFilter : public LadderFilter
 	{
 	private:
-		CFilterButterworth24dB m_filter;
-
 		float m_cutoff;
 		float m_resonance;
+
+		float m_mX1, m_mX2, m_mY1, m_mY2;
 
 		virtual void SetCutoff(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_cutoff = value*kNyquist;
+			m_cutoff = kAudibleLowHz + value *(kAudibleHighHz-kAudibleLowHz); // Specific range for this filter
 		}
 
 		virtual void SetResonance(float value)
 		{
 			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = value;
+			m_resonance = -25.f + 50.f*value; // -25dB to 25dB
 		}
 	
 	public:
@@ -120,17 +118,15 @@ namespace SFM
 			SetDrive(parameters.drive);	
 			SetCutoff(parameters.cutoff);
 			SetResonance(parameters.resonance);
-
-			m_filter.Set(m_cutoff, m_resonance);
 		}
 
 		virtual void Reset()
 		{
-			m_filter.Reset();
-			m_filter.SetSampleRate(kSampleRate);
+			m_mX1 = m_mX2 = m_mY1 = m_mY2 = 0.f;
 		}
 
 		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert);
+
 	};
 
 	/*
