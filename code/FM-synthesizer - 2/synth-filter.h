@@ -10,18 +10,6 @@
 namespace SFM
 {
 	/*
-		Filter types & their order.
-	*/
-
-	enum VoiceFilter
-	{
-		kButterworthFilter,
-		kTeemuFilter,
-		kImprovedMOOGFilter,
-		kNumFilters
-	};
-
-	/*
 		Filter parameters.
 	*/
 
