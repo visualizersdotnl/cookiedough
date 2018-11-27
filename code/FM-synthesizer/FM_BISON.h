@@ -25,6 +25,9 @@
 
 	MiniMOOG design: https://2.bp.blogspot.com/-RRXuwRC_EkQ/WdO_ZKs1AJI/AAAAAAALMnw/nYf5AlmjevQ1AirnXidFJCeNkomYxdt9QCLcBGAs/s1600/0.jpg
 
+	Watch:
+		- https://www.youtube.com/watch?v=oIChUOV_0w4 -- On distortion
+
 	In the works:
 		- DX_Voice:
 		  + Some tasks are described on top of synth-DX-voice.cpp

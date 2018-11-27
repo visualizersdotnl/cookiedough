@@ -171,10 +171,13 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
+
+			Verdict: keep as simplest algorithm
+			QA: OK!
 		*/
 
 		// Carrier #1
@@ -241,11 +244,11 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Kylian's algorithm #4
-			Verdict: ...
+			Verdict: Not sure yet..
 		*/
 
 		// Modulator #3
