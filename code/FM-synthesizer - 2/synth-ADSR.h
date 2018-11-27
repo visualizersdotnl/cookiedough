@@ -30,7 +30,7 @@ namespace SFM
 		::ADSR m_ADSR;
 
 		void Start(const Parameters &parameters, float velocity);
-		void Stop(float velocity /* Aftertouch */);
+		void Stop(float velocity /* Aftertouch? */);
 
 		void Reset()
 		{

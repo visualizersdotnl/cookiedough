@@ -131,7 +131,9 @@ namespace SFM
 	{
 //		frequency *= g_modRatioLUT[patchOp.coarse];
 
-		frequency *= g_CM[patchOp.coarse][1];
+//		frequency *= g_CM[patchOp.coarse][1] / g_CM[patchOp.coarse][0]; 
+		frequency *= g_CM[patchOp.coarse][1]; // * g_CM[patchOp.coarse][0];
+
 		frequency *= patchOp.detune;
 		frequency *= patchOp.fine;
 
@@ -171,7 +173,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -244,7 +246,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Kylian's algorithm #4
@@ -472,22 +474,25 @@ namespace SFM
 
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 	
-//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
-//			SFM_ASSERT(index < g_numModRatios);
-//			patchOp.coarse = index;
-
-			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
-			SFM_ASSERT(index < g_CM_size);
+			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
+			SFM_ASSERT(index < g_numModRatios);
 			patchOp.coarse = index;
+
+//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
+//			SFM_ASSERT(index < g_CM_size);
+//			patchOp.coarse = index;
 
 			// Fine tuning (1 octave, ain't that much?)
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 
-			// Go up or down half a semitone
-			// This is different from the DX7, but -7 to +7 semitones seems excessive
-			float cents = ( -50.f + 100.f*WinMidi_GetOperatorDetune() ) * 0.01f;
-			patchOp.detune = powf(2.f, cents/12.f);
+			// Slightly
+	//		const float cents = ( -50.f + 100.f*WinMidi_GetOperatorDetune() ) * 0.01f;
+	//		patchOp.detune = powf(2.f, cents/12.f);
+
+			// DX7
+			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
+			patchOp.detune = powf(2.f, semis/12.f);
 
 			// Tremolo & vibrato
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
