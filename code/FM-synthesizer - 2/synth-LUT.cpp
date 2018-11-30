@@ -30,12 +30,12 @@ namespace SFM
 			if (0 == iRatio)
 			{
 				// Octave lower
-				g_ratioLUT[iRatio] = -0.5f;
+				g_ratioLUT[iRatio] = 0.5f;
 			}
 			else
 			{
 				// Semitones up
-				g_ratioLUT[iRatio] = powf(2.f, float(iRatio-1)/12.f);
+				g_ratioLUT[iRatio] = powf(2.f, (iRatio-1)/12.f);
 			}
 		}
 

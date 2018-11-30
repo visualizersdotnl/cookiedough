@@ -146,6 +146,7 @@ namespace SFM
 
 		DX_Voice &voice = s_DXvoices[iVoice];
 		voice.ResetOperators();
+//		voice.Reset();
 		
 		float frequency = request.frequency;
 
@@ -196,7 +197,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #9
@@ -234,6 +235,35 @@ namespace SFM
 		// Operator #6
 		voice.m_operators[5].enabled = true;
 		voice.m_operators[5].feedback = -1;
+		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 1
+
+		/*
+			Test algorithm: Volca FM algorithm #31
+		*/
+
+		// Operators #1 - #5 (carriers)
+		for (unsigned iOp = 0; iOp < 5; ++iOp)
+		{
+			DX_Voice::Operator &opDX = voice.m_operators[iOp];
+			opDX.enabled = true;
+			opDX.isCarrier = true;
+			opDX.oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[iOp]), masterAmp*patch.operators[iOp].amplitude);
+		}
+
+		// Modulate #5
+		voice.m_operators[4].modulators[0] = 5;
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
 		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
 
 		/*

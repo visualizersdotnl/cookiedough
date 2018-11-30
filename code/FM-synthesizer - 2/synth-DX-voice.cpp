@@ -62,18 +62,19 @@ namespace SFM
 					feedback = m_feedback[index];
 				}
 
-				// Sample operator envelope
-				const float opEnv = opDX.opEnv.Sample();
-
-				// Set pitch bend (operator vibrato modulated by op. envelope)
-				const float bend = m_pitchBend + opDX.vibrato*vibrato*opEnv;
+				// Set pitch bend
+				const float bend = m_pitchBend + opDX.vibrato*vibrato;
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation) + feedback;
 
-				// Factor in operator env. & tremolo (amplitude)
-				sample = lerpf<float>(sample*opEnv, sample*tremolo*opEnv, opDX.tremolo);
+				// Tremolo
+				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
+
+				// Sample operator envelope
+				const float opEnv = opDX.opEnv.Sample();
+				sample *= opEnv;
 
 				// Store final sample for modulation and feedback.
 				sampled[index] = sample;
@@ -88,11 +89,10 @@ namespace SFM
 		// There are prettier options to calculate the above and they would be necessary for
 		// more complex (e.g. more operators) matrices but in our case this will do and it's
 		// quite readable to boot.
+		// --------------
 
 		// Store feedback
-		// The DX7 does this in a bit more coarse fashion (see Dexed impl.),
-		// however, we will be civil about it
-		const float amount = 0.5f;
+		// The DX7 does this in a bit more coarse fashion (see Dexed impl.).
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;
 

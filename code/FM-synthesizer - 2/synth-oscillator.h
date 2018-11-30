@@ -55,7 +55,7 @@ namespace SFM
 			if (0.f != m_syncFrequency)
 				ratio = m_frequency/m_syncFrequency;
 
-			m_syncPeriod = 1.f*ratio;
+			m_syncPeriod = ratio;
 			FloatAssert(m_syncPeriod);
 		}
 

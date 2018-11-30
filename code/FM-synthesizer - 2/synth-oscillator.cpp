@@ -10,6 +10,8 @@ namespace SFM
 {
 	float Oscillator::Sample(float modulation, float duty /* = 0.5f */)
 	{	
+		m_phase += m_pitch;
+
 		if (m_phase >= m_syncPeriod)
 		{
 			m_phase -= m_syncPeriod;
@@ -90,9 +92,6 @@ namespace SFM
 
 		// Can not check for range here
 		FloatAssert(signal);
-
-		// Advance
-		m_phase += m_pitch;
 
 		return signal;
 	}

@@ -23,19 +23,21 @@
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Missing for near-DX7/Volca compatibility:
-
-	* I am losing terrain by not having some sharpness in the first phase.
-	* My operator envelope modulates both tremolo, pitch and amplitude; this might not be the way to go.
-	  The Volca FM seems to only modulate pitch with an outside envelope.
-	* My operators do not support per operator velocity sensitivity.
-	* I have no fixed frequency operators.
-	* I lack algorithms.
-	* This 'level scale' deal is a way of making envelopes non-linear; I should understand it a little better.
+		- Stereo
+		- No pitch envelope
+		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
+		  are just as good
+		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)
+		- I do not support 'level scale' (I want to, but it is not crucial to sounding compatible on note level)
+		- My operators do not have programmable velocity sensitivy
+		- I lack algorithms
+		- No fixed frequency operators
 
 	Tasks for today:
-		- Build decent algorithm hardcoding system
+		- Make at least one more working algorithm
+		- Try a pitch envelope algorithm: take the usual ADSR and scale it (bipolar) using a rotary setting 
 
-	For later:
+	Also:
 		- Check parameter ranges
 		- Review operator loop
 		- All FIXMEs
