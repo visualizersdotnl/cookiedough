@@ -59,7 +59,6 @@ namespace SFM
 					SFM_ASSERT(iFeedback < kNumOperators);
 					SFM_ASSERT(true == m_operators[iFeedback].enabled);
 
-//					modulation += m_feedback[index];
 					feedback = m_feedback[index];
 				}
 
@@ -70,18 +69,17 @@ namespace SFM
 				float bend = m_pitchBend + opDX.vibrato*vibrato*opEnv;
 				opDX.oscillator.PitchBend(bend);
 
-				// Calculate sample (FIXME: is this the right spot?)
+				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation) + feedback;
-//				float sample = opDX.oscillator.Sample(modulation);
-
-				// Store sample for feedback at this point; feels like a sane spot: straight out of the oscillator
-				sampled[index] = sample;
 
 				// Factor in tremolo
 				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
 
 				// And the operator env.
 				sample *= opEnv;
+
+				// Store final sample for modulation and feedback.
+				sampled[index] = sample;
 
 				// If carrier: mix
 				if (true == opDX.isCarrier)

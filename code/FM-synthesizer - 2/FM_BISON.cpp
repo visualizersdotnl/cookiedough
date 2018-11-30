@@ -172,7 +172,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -198,7 +198,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -303,11 +303,15 @@ namespace SFM
 			voice.m_operators[iOp].feedbackAmt = patch.operators[iOp].feedbackAmt;
 
 			// Mod env.
+
+			// We always attack to 1.0, then decay works a little different here in that it also decides
+			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero.
+
 			ADSR::Parameters envParams;
 			envParams.attack = s_parameters.patch.operators[iOp].modA;
 			envParams.decay = s_parameters.patch.operators[iOp].modD;
 			envParams.release = 0.f;
-			envParams.sustain = 1.f;
+			envParams.sustain = 1.f-envParams.decay;
 			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
 		}
 
