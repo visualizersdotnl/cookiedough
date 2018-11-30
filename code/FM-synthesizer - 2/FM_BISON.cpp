@@ -128,9 +128,6 @@ namespace SFM
 
 	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
 	{
-//		const float ratio = g_opRatioLUT[patchOp.coarse];
-//		frequency *= ratio;
-
 		// Needs research, see: http://ixox.fr/forum/index.php?topic=69272.0
 		// What we want are constant carrier values, so:
 		const float C = (float) g_CM[patchOp.coarse][0];
@@ -324,8 +321,8 @@ namespace SFM
 			voice.m_ADSR.Stop(velocity);
 			
 			// Stop secondary envelopes
+			// ^^ Not necessary: these have an attack, deyay, sustain and nothing else, so they rest at sustain level
 
-			// Not necessary; these have an attack, deyay, sustain and nothing else, so they rest at sustain level
 /*
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 				voice.m_operators[iOp].opEnv.Stop(velocity);
@@ -449,23 +446,13 @@ namespace SFM
 			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
-			
-			// Indxed supposed Yamaha table
-//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
-//			SFM_ASSERT(index < g_numModRatios);
-//			patchOp.coarse = index;
-
+	
 			// Index Farey sequence
 			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
 			SFM_ASSERT(index < g_CM_size);
 			patchOp.coarse = index;
 
-			// Index straight ratio sequence
-//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_opRatioLUT_size-1));
-//			SFM_ASSERT(index < g_opRatioLUT_size);
-//			patchOp.coarse = index;
-
-			// Fine tuning (1 octave, ain't that much?)
+			// Fine tuning (1 octave like the DX7, ain't that much?)
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 

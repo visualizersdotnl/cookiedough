@@ -6,13 +6,16 @@
 	This is my second attempt at an FM synthesizer:
 	- 6 programmable operators with modulation envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
-	- Master Butterworth (sharp & clear) & MOOG (soft) ladder filters
+	- Master clean 24dB & MOOG 24dB ladder filters
 	- Global modulation control
 	- Pitch bend
 	- Multiple tried & tested FM algorithms
 	- Paraphonic (24 voices)
 	- Adjustable tone jitter (for analogue VCO warmth)
 	- Tuneable global delay effect
+
+	In the works:
+	- LFO key sync. switch
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 	At this point this code is not optimized for speed but there's tons of low hanging fruit.
@@ -23,8 +26,9 @@
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Missing for near-DX7/Volca compatibility:
-		- Tweakable sensitivity to velocity
-		- LFO key sync.
+		- LFO key sync (working on it)
+		- Tweakable sensitivity to velocity (per operator?)
+		- What's this fixed frequency deal good for?
 		- More algorithms!
 
 	Maybes for the above:
@@ -38,12 +42,11 @@
 		- Review operator loop
 
 	Ideas:
-		- Hard sync. option
-
-	Important for VST:
-		- DX detune is now 0 to 14 semitones instead of -7 to +7 due to stupid MIDI potmeter
+		- Operator hard. sync option?
 
 	Things that are missing or broken:
+		- DX detune is now 0 to 14 semitones instead of -7 to +7 due to stupid MIDI potmeter
+		- "Clean" filter plops when cutoff is pulled shut
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 		- Cherry pick from the first iteration's lists

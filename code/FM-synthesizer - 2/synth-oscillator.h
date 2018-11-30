@@ -31,7 +31,7 @@ namespace SFM
 			Initialize(kCosine, 0.f, 1.f);
 		}
 
-		void Initialize(Waveform form, float frequency, float amplitude)
+		void Initialize(Waveform form, float frequency, float amplitude, float phaseShift = 0.f)
 		{
 			m_form = form;
 			m_amplitude = amplitude;
@@ -43,7 +43,7 @@ namespace SFM
 			SyncTo(frequency);
 
 			m_cycles = 0;
-			m_phase = 0.f;
+			m_phase = phaseShift;
 		}
 
 		// Synchronize to freq. (hard sync.)
@@ -69,6 +69,7 @@ namespace SFM
 		Waveform GetWaveform() const  { return m_form;      }
 		float GetFrequency() const    { return m_frequency; }
 		float GetPitch() const        { return m_pitch;     }
+		float GetPhase() const        { return m_phase;     }
 		float GetPeriodLength() const { return 1.f;         }
 		unsigned GetCycle() const     { return m_cycles;    }
 
