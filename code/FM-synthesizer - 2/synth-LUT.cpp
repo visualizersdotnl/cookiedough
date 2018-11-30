@@ -8,6 +8,7 @@
 
 namespace SFM
 {
+/*
 	// Source: https://www.gearslutz.com/board/electronic-music-instruments-and-electronic-music-production/1166873-fm-operator-frequency-ratios.html
 	float g_modRatioLUT[] {
 		0.50f, 0.71f, 0.78f, 0.87f, 1.00f, 1.41f, 1.57f, 1.73f, 
@@ -21,13 +22,14 @@ namespace SFM
 		22.49, 23.55f, 24.22f, 25.95f
 	};
 
-	/*
-		"The Computer Music Tutorial mentions that ratios that are near to but not right on integer ratios sound more natural, or less synthethic, especially when you involve more operators. 
-		 There is a fair bit of info in it on FM synthesis."
-	*/
+	// "The Computer Music Tutorial mentions that ratios that are near to but not right on integer ratios sound more natural, or less synthethic, especially when you involve more operators. 
+	//  There is a fair bit of info in it on FM synthesis."
+	
 
 	size_t g_numModRatios = sizeof(g_modRatioLUT)/sizeof(float);
+*/
 
+	// Farey sequences
 	// Source: http://noyzelab.blogspot.com/2016/04/farey-sequence-tables-for-fm-synthesis.html
 
 /*
@@ -45,7 +47,9 @@ namespace SFM
 	};
 */
 
-/*
+/* 
+	Too many values for a 7-bit MIDI control :)
+
 	// Order 31
 	unsigned g_CM[][2] = {
 		{1, 1},
@@ -103,6 +107,10 @@ namespace SFM
 
 	unsigned g_CM_size = sizeof(g_CM)/(2*sizeof(unsigned));
 
+	// Straight ratio table
+	float g_opRatioLUT[32];
+	size_t g_opRatioLUT_size = sizeof(g_opRatioLUT)/sizeof(unsigned);
+
 	// Sinus
 	alignas(16) float g_sinLUT[kOscLUTSize];
 
@@ -113,6 +121,18 @@ namespace SFM
 
 	void CalculateLUTs()
 	{
+		/*
+			Calc. straight FM ratio LUT 
+
+			This is, supposedly (FIXME: research), what the DX7 does.
+		*/
+
+		g_opRatioLUT[0] = 0.5f;
+		for (unsigned iRatio = 1; iRatio < 32; ++iRatio)
+		{
+			g_opRatioLUT[iRatio] = powf(2.f, (float) iRatio);
+		}
+
 		/* 
 			Gordon-Smith oscillator (sine wave generator)
 		*/

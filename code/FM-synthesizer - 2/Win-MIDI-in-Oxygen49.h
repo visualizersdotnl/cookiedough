@@ -10,6 +10,7 @@
 #pragma once
 
 #include "synth-parameters.h"
+#include "synth-stateless-oscillators.h"
 
 namespace SFM
 {
@@ -52,9 +53,12 @@ namespace SFM
 	float WinMidi_GetSustain();
 	float WinMidi_GetRelease();
 
-	// Modulation envelope (attack & decay)
-	float WinMidi_GetModEnvA();
-	float WinMidi_GetModEnvD();
+	// Operator envelope (attack & decay)
+	float WinMidi_GetOperatorEnvA();
+	float WinMidi_GetOperatorEnvD();
+
+	// LFO shape
+	Waveform WinMidi_GetLFOShape();
 
 	// Filter
 	int   WinMidi_GetFilterType();

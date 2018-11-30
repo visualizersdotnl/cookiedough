@@ -10,7 +10,7 @@
 	- Global modulation control
 	- Pitch bend
 	- Multiple tried & tested FM algorithms
-	- Polyphonic (24 voices)
+	- Paraphonic (24 voices)
 	- Adjustable tone jitter (for analogue VCO warmth)
 	- Tuneable global delay effect
 
@@ -22,30 +22,29 @@
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
-	Ideas & such:
-		- Let's call the VST version the GENERALISSIMO!
+	Missing for near-DX7/Volca compatibility:
+		- Tweakable sensitivity to velocity
+		- LFO key sync.
+		- More algorithms!
 
-	Priority bug(s) / Things I am not sure of: 
-		- Decent algorithm system		
-		- Check parameter ranges, I'm missing on some sounds
-		- Is my feedback right like this or should I give it some overdrive and/or a simple LP filter?
-		- Review the voice loop: is your order of operations right?
-		- My envelope(s)
+	Maybes for the above:
+		- More elaborate operator envelope
+		- Global operator envelope *also* applied to pitch LFO
 
-	To do:
-		- Volume issues: introduce something called 'constant gain mixing'
+	Tasks: 
+		- Look at C:M issue a little closer
+		- Build decent algorithm hardcoding system
+		- Check parameter ranges
+		- Review operator loop
 
 	Ideas:
-		- Allow carrier oscillator type (e.g. square, saw)
 		- Hard sync. option
-		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
-		  + Not really all that necessary
 
 	Important for VST:
 		- DX detune is now 0 to 14 semitones instead of -7 to +7 due to stupid MIDI potmeter
 
 	Things that are missing or broken:
-		- Mod. wheel should respond during note playback?
+		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 		- Cherry pick from the first iteration's lists
 

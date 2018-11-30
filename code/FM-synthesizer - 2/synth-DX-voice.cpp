@@ -15,7 +15,7 @@ namespace SFM
 		// Get tremolo
 		const float tremolo = m_tremolo.Sample(0.f);
 
-		// Get vibrato
+		// Get vibrato (frequency multiplier)
 		const float vibrato = powf(2.f, m_vibrato.Sample(0.f));
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
@@ -65,18 +65,15 @@ namespace SFM
 				// Sample operator envelope
 				const float opEnv = opDX.opEnv.Sample();
 
-				// Set pitch bend
-				float bend = m_pitchBend + opDX.vibrato*vibrato*opEnv;
+				// Set pitch bend (operator vibrato modulated by op. envelope)
+				const float bend = m_pitchBend + opDX.vibrato*vibrato*opEnv;
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample
 				float sample = opDX.oscillator.Sample(modulation) + feedback;
 
-				// Factor in tremolo
-				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
-
-				// And the operator env.
-				sample *= opEnv;
+				// Factor in operator env. & tremolo (amplitude)
+				sample = lerpf<float>(sample*opEnv, sample*tremolo*opEnv, opDX.tremolo);
 
 				// Store final sample for modulation and feedback.
 				sampled[index] = sample;
@@ -88,8 +85,9 @@ namespace SFM
 		} 
 
 		// -- SIDENOTE --
-		// Another option to do the above is to let modulators know who they're modulating and write
-		// to those operators, but that's hardly any faster
+		// There are prettier options to calculate the above and they would be necessary for
+		// more complex (e.g. more operators) matrices but in our case this will do and it's
+		// quite readable to boot.
 
 		// Store feedback
 		// The DX7 does this in a bit more coarse fashion (see Dexed impl.),

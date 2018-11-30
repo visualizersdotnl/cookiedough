@@ -66,15 +66,15 @@ namespace SFM
 	const unsigned kFaderR = 72;             // C4
 	const unsigned kFaderOpTremolo = 25;     // C5
 	const unsigned kFaderTremolo = 73;       // C6
-	const unsigned kFaderModA = 74;          // C7
-	const unsigned kFaderModD = 70;          // C8
+	const unsigned kFaderOpEnvA = 74;        // C7
+	const unsigned kFaderOpEnvD = 70;        // C8
 	const unsigned kFaderOpFeedbackAmt = 63; // C9
 
 	static float s_masterDrive = 0.f;
 	static float s_tremolo = 0.f;
 
-	static float s_modEnvA[kNumOperators] = { 0.f };
-	static float s_modEnvD[kNumOperators] = { 0.f };
+	static float s_opEnvA[kNumOperators] = { 0.f };
+	static float s_opEnvD[kNumOperators] = { 0.f };
 
 	static float s_cutoff = 0.f;
 	static float s_resonance = 0.f;
@@ -119,6 +119,9 @@ namespace SFM
 	// Current (receiving) operator
 	/* static */ unsigned g_currentOp = 0;
 	static bool s_opRecv = false;
+
+	// LFO shape
+	static Waveform s_LFOShape = kCosine;
 
 	static unsigned s_voices[127] = { -1 };
 
@@ -179,6 +182,16 @@ namespace SFM
 					case kPerc6:
 						g_currentOp = 5;
 						break;
+
+					/* LFO shape */
+
+					case kPerc7:
+						s_LFOShape = kCosine;
+						break;
+
+					case kPerc8:
+						s_LFOShape = kDigiSaw;
+						break;
 					}
 
 					return;
@@ -228,7 +241,7 @@ namespace SFM
 							if (127 == controlVal) s_filterInv = !s_filterInv;
 							break;
 
-						/* FM */
+						/* Operator */
 
 						case kButtonOpRecv:
 							s_opRecv = (127 == controlVal);
@@ -262,14 +275,14 @@ namespace SFM
 							s_opTremolo[g_currentOp] = fControlVal;
 							break;
 
-						/* FM envelope */
+						/* Operator envelope */
 
-						case kFaderModA:
-							s_modEnvA[g_currentOp] = fControlVal;
+						case kFaderOpEnvA:
+							s_opEnvA[g_currentOp] = fControlVal;
 							break;
 
-						case kFaderModD:
-							s_modEnvD[g_currentOp] = fControlVal;
+						case kFaderOpEnvD:
+							s_opEnvD[g_currentOp] = fControlVal;
 							break;
 
 						/* ADSR */
@@ -469,8 +482,11 @@ namespace SFM
 	float WinMidi_GetRelease()         { return s_R; }
 
 	// Modulation envelope (attack & decay)
-	float WinMidi_GetModEnvA() { return s_modEnvA[g_currentOp]; }
-	float WinMidi_GetModEnvD() { return s_modEnvD[g_currentOp]; }
+	float WinMidi_GetOperatorEnvA() { return s_opEnvA[g_currentOp]; }
+	float WinMidi_GetOperatorEnvD() { return s_opEnvD[g_currentOp]; }
+
+	// Operaetor LFO shape
+	Waveform WinMidi_GetLFOShape() { return s_LFOShape; }
 
 	// Filter
 	int   WinMidi_GetFilterType() { return s_filterType; }

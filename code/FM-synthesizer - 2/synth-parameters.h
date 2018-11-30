@@ -9,6 +9,7 @@
 #include "synth-patch.h"
 // #include "synth-ADSR.h"
 #include "synth-filter.h"
+#include "synth-stateless-oscillators.h"
 
 namespace SFM
 {
@@ -30,6 +31,9 @@ namespace SFM
 
 		// Global mod. index
 		float modDepth;
+
+		// LFO type
+		Waveform LFOform;
 
 		// Instr. patch
 		FM_Patch patch;
@@ -65,8 +69,11 @@ namespace SFM
 			// 50% jitter
 			m_noteJitter = 0.5f;
 
-			// Neutral modulation
-			modDepth = 1.f;
+			// No modulation
+			modDepth = 0.f;
+
+			// Cosine LFOs
+			LFOform = Waveform::kCosine;
 
 			// Reset patches
 			patch.Reset();

@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Bare instrument patch.
+	Syntherklaas FM -- "Dry" instrument patch.
 */
 
 #pragma once
@@ -24,9 +24,9 @@ namespace SFM
 			float tremolo;
 			float vibrato;
 
-			// Mod. env.
-			float modA;
-			float modD;
+			// Simple envelope
+			float opEnvA;
+			float opEnvD;
 
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop
@@ -46,8 +46,8 @@ namespace SFM
 				OP.amplitude = 1.f;
 				OP.tremolo = 0.f;
 				OP.vibrato = 0.f;
-				OP.modA = 0.f;
-				OP.modD = 0.f;
+				OP.opEnvA = 0.f;
+				OP.opEnvD = 0.f;
 				OP.feedbackAmt = 0.f;
 			}
 		}

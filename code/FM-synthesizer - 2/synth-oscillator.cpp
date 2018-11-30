@@ -25,19 +25,19 @@ namespace SFM
 			/* Straight digital */
 	
 			case kDigiSaw:
-				return oscDigiSaw(modulated);
+				signal = oscDigiSaw(modulated);
 				break;
 
 			case kDigiSquare:
-				return oscDigiSquare(modulated);
+				signal = oscDigiSquare(modulated);
 				break;
 
 			case kDigiTriangle:
-				return oscDigiTriangle(modulated);
+				signal = oscDigiTriangle(modulated);
 				break;
 
 			case kDigiPulse:
-				return oscDigiPulse(modulated, duty);
+				signal = oscDigiPulse(modulated, duty);
 				break;
 
 			/* BLIT forms (not supported, performance issue) */

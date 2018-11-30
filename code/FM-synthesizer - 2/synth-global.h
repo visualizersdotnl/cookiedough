@@ -50,7 +50,7 @@ namespace SFM
 	const float kMaxVoiceAmp = 0.66f;
 
 	// Master drive range
-	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's filtered so it won't go Iron Maiden-crazy
+	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's clamped so it won't go Iron Maiden-crazy; for that, use an overdrive filter
 	
 	// Size of global (oscillator) LUTs
 	const unsigned kOscLUTSize = 4096;
@@ -71,6 +71,9 @@ namespace SFM
 	// Delay LFO base freq.
 	const float kDelayBaseMul = 0.001f;
 	const float kDelayBaseFreq = 0.2f;
+
+	// Vibrato range ([-X..X])
+	const float kVibratoRange = 2.f;
 }
 
 #include "synth-LUT.h"

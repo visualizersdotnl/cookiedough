@@ -9,13 +9,19 @@
 
 namespace SFM
 {
-	// Supposedly Yamaha modulation ratios
+	// FIXME: remove unused tables, eventually
+
+	// Supposed Yamaha modulation ratios
 	extern float g_modRatioLUT[];
 	extern size_t g_numModRatios;
 
-	// 9th-order normalized Farey sequence
+	// Normalized Farey sequence
 	extern unsigned g_CM[][2];
 	extern unsigned g_CM_size;
+
+	// Straight ratio table (-1 to 31 oct.)
+	extern float g_opRatioLUT[];
+	extern size_t g_opRatioLUT_size;
 
 	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];

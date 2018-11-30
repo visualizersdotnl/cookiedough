@@ -128,10 +128,14 @@ namespace SFM
 
 	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
 	{
-//		frequency *= g_modRatioLUT[patchOp.coarse];
+//		const float ratio = g_opRatioLUT[patchOp.coarse];
+//		frequency *= ratio;
 
-//		frequency *= g_CM[patchOp.coarse][1] / g_CM[patchOp.coarse][0]; 
-		frequency *= g_CM[patchOp.coarse][1]; // * g_CM[patchOp.coarse][0];
+		// Needs research, see: http://ixox.fr/forum/index.php?topic=69272.0
+		// What we want are constant carrier values, so:
+		const float C = (float) g_CM[patchOp.coarse][0];
+		const float M = (float) g_CM[patchOp.coarse][1];
+		frequency *= M/C;
 
 		frequency *= patchOp.detune;
 		frequency *= patchOp.fine;
@@ -172,7 +176,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -195,7 +199,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #9
@@ -245,13 +249,12 @@ namespace SFM
 		const float freqScale = masterFreq/g_midiFreqRange;
 
 		// Set tremolo LFO
-		// FIXME: should I even bother scaling tremolo like I do pitch?
-		const float tremFreq = s_parameters.tremolo*kAudibleLowHz*(freqScale+velocity);
-		voice.m_tremolo.Initialize(kCosine, tremFreq, 1.f);
+		const float tremFreq = kGoldenRatio*k2PI*s_parameters.tremolo*velocity; // FIXME
+		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */);
 
 		// Set vibrato LFO
-		const float vibFreq = s_parameters.vibrato*kAudibleLowHz*(freqScale+velocity);
-		voice.m_vibrato.Initialize(kCosine, vibFreq, 2.f);
+		const float vibFreq = kAudibleLowHz*s_parameters.vibrato*(freqScale+velocity);
+		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange);
 
 		// Set per-operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -269,8 +272,8 @@ namespace SFM
 			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero.
 
 			ADSR::Parameters envParams;
-			envParams.attack = s_parameters.patch.operators[iOp].modA;
-			envParams.decay = s_parameters.patch.operators[iOp].modD;
+			envParams.attack = s_parameters.patch.operators[iOp].opEnvA;
+			envParams.decay = s_parameters.patch.operators[iOp].opEnvD;
 			envParams.release = 0.f;
 			envParams.sustain = 1.f-envParams.decay;
 			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
@@ -403,6 +406,9 @@ namespace SFM
 		s_parameters.tremolo = WinMidi_GetTremolo();
 		s_parameters.vibrato = WinMidi_GetVibrato();
 
+		// LFO form
+		s_parameters.LFOform = WinMidi_GetLFOShape();
+
 		// Master ADSR
 		s_parameters.envParams.attack  = WinMidi_GetAttack();
 		s_parameters.envParams.decay   = WinMidi_GetDecay();
@@ -443,13 +449,20 @@ namespace SFM
 			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
-	
-			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
-			SFM_ASSERT(index < g_numModRatios);
+			
+			// Indxed supposed Yamaha table
+//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_numModRatios-1));
+//			SFM_ASSERT(index < g_numModRatios);
+//			patchOp.coarse = index;
+
+			// Index Farey sequence
+			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
+			SFM_ASSERT(index < g_CM_size);
 			patchOp.coarse = index;
 
-//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
-//			SFM_ASSERT(index < g_CM_size);
+			// Index straight ratio sequence
+//			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_opRatioLUT_size-1));
+//			SFM_ASSERT(index < g_opRatioLUT_size);
 //			patchOp.coarse = index;
 
 			// Fine tuning (1 octave, ain't that much?)
@@ -457,7 +470,7 @@ namespace SFM
 			patchOp.fine = powf(2.f, fine);
 
 			// DX7
-			// FIXME: go from -7 to +7 when no longer using that crappy M-AUDIO potmeter!
+			// FIXME: go from -7 to +7 (or something nicer?)
 			const float semis = 14.f*WinMidi_GetOperatorDetune();
 //			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
 			patchOp.detune = powf(2.f, semis/12.f);
@@ -469,9 +482,9 @@ namespace SFM
 			// Feedback amount
 			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount();
 
-			// Modulation envelope
-			patchOp.modA = WinMidi_GetModEnvA();
-			patchOp.modD = WinMidi_GetModEnvD();
+			// Envelope
+			patchOp.opEnvA = WinMidi_GetOperatorEnvA();
+			patchOp.opEnvD = WinMidi_GetOperatorEnvD();
 			
 			// Amp./Index/Depth
 			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
