@@ -26,7 +26,8 @@
 		- Let's call the VST version the GENERALISSIMO!
 
 	Priority bug(s):
-		- Is my feedback right like this or should I give it some overdrive and a filter?ss
+		- Is my feedback right like this or should I give it some overdrive and a filter?
+		- Review the voice loop in any case: is your order of operations right?
 
 	To do:
 		- Volume issues: introduce something called 'constant gain mixing'
