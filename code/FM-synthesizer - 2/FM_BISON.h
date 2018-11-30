@@ -25,7 +25,9 @@
 	Ideas & such:
 		- Let's call the VST version the GENERALISSIMO!
 
-	Priority bug(s):
+	Priority bug(s): 
+		- My attack-decay envelope makes NO sense at all, I am always attacking to 1 and decaying in the same direction,
+		  whereas I feel if decay is zero I should stay at 1, and the longer it takes the more I should go towards a zero sustain
 		- Is my feedback right like this or should I give it some overdrive and a filter?
 		- Review the voice loop in any case: is your order of operations right?
 
