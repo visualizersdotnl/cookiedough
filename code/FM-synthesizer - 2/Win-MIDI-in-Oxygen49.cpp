@@ -60,15 +60,15 @@ namespace SFM
 	const unsigned kPotFilterWet = 95;    // C17
 
 	// Fader mapping
-	const unsigned kFaderA = 20;          // C1
-	const unsigned kFaderD = 21;          // C2
-	const unsigned kFaderS = 71;          // C3
-	const unsigned kFaderR = 72;          // C4
-	const unsigned kFaderOpTremolo = 25;  // C5
-	const unsigned kFaderTremolo = 73;    // C6
-	const unsigned kFaderModA = 74;       // C7
-	const unsigned kFaderModD = 70;       // C8
-	const unsigned kFaderNoteJitter = 63; // C9
+	const unsigned kFaderA = 20;             // C1
+	const unsigned kFaderD = 21;             // C2
+	const unsigned kFaderS = 71;             // C3
+	const unsigned kFaderR = 72;             // C4
+	const unsigned kFaderOpTremolo = 25;     // C5
+	const unsigned kFaderTremolo = 73;       // C6
+	const unsigned kFaderModA = 74;          // C7
+	const unsigned kFaderModD = 70;          // C8
+	const unsigned kFaderOpFeedbackAmt = 63; // C9
 
 	static float s_masterDrive = 0.f;
 	static float s_tremolo = 0.f;
@@ -76,18 +76,17 @@ namespace SFM
 	static float s_modEnvA[kNumOperators] = { 0.f };
 	static float s_modEnvD[kNumOperators] = { 0.f };
 
-	static float s_noteJitter = 0.f;
-
 	static float s_cutoff = 0.f;
 	static float s_resonance = 0.f;
 	static float s_filterWet = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
-	static float s_opCoarse[kNumOperators]    = { 0.f };
-	static float s_opFine[kNumOperators]      = { 0.f }; 
-	static float s_opDetune[kNumOperators]    = { 0.f }; 
-	static float s_opAmplitude[kNumOperators] = { 0.f };
-	static float s_opTremolo[kNumOperators]   = { 0.f };
+	static float s_opFeedbackAmt[kNumOperators]  = { 0.f };
+	static float s_opCoarse[kNumOperators]       = { 0.f };
+	static float s_opFine[kNumOperators]         = { 0.f }; 
+	static float s_opDetune[kNumOperators]       = { 0.f }; 
+	static float s_opAmplitude[kNumOperators]    = { 0.f };
+	static float s_opTremolo[kNumOperators]      = { 0.f };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
@@ -229,16 +228,14 @@ namespace SFM
 							if (127 == controlVal) s_filterInv = !s_filterInv;
 							break;
 
-						/* Note jitter */
-
-						case kFaderNoteJitter:
-							s_noteJitter = fControlVal;
-							break;
-
 						/* FM */
 
 						case kButtonOpRecv:
 							s_opRecv = (127 == controlVal);
+							break;
+
+						case kFaderOpFeedbackAmt:
+							s_opFeedbackAmt[g_currentOp] = fControlVal;
 							break;
 
 						case kModIndex:
@@ -412,7 +409,7 @@ namespace SFM
 			}
 		}
 
-		Error(kFatal, "Can't find the Oxygen 49 MIDI keyboard");
+		Error(kFatal, "Can't find/open the Oxygen 49 MIDI keyboard");
 
 		return false;
 	}
@@ -440,11 +437,12 @@ namespace SFM
 	float WinMidi_GetTremolo()     { return s_tremolo;   }
 
 	// Operator control
-	float WinMidi_GetOperatorCoarse()     { return s_opCoarse[g_currentOp];    }
-	float WinMidi_GetOperatorFinetune()   { return s_opFine[g_currentOp];      }
-	float WinMidi_GetOperatorDetune()     { return s_opDetune[g_currentOp];    }
-	float WinMidi_GetOperatorAmplitude()  { return s_opAmplitude[g_currentOp]; }
-	float WinMidi_GetOperatorTremolo()    { return s_opTremolo[g_currentOp];   }
+	float WinMidi_GetOperatorCoarse()         { return s_opCoarse[g_currentOp];      }
+	float WinMidi_GetOperatorFinetune()       { return s_opFine[g_currentOp];        }
+	float WinMidi_GetOperatorDetune()         { return s_opDetune[g_currentOp];      }
+	float WinMidi_GetOperatorAmplitude()      { return s_opAmplitude[g_currentOp];   }
+	float WinMidi_GetOperatorTremolo()        { return s_opTremolo[g_currentOp];     }
+	float WinMidi_GetOperatorFeedbackAmount() { return s_opFeedbackAmt[g_currentOp]; }
 
 	// Modulation index
 	float WinMidi_GetModulation() 
@@ -480,7 +478,4 @@ namespace SFM
 	float WinMidi_GetResonance()  { return s_resonance;  }
 	float WinMidi_GetFilterWet()  { return s_filterWet;  }
 	bool  WinMidi_GetFilterInv()  { return s_filterInv;  }
-
-	// Note jitter
-	float WinMidi_GetNoteJitter() { return s_noteJitter; } 
 }

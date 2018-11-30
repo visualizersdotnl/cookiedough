@@ -36,6 +36,10 @@ namespace SFM
 			// Op env.
 			ADSR opEnv;
 
+			// Feedback amount
+			float feedbackAmt;
+
+			// Carrier yes/no
 			bool isCarrier;
 
 			SFM_INLINE void Reset()
@@ -46,6 +50,7 @@ namespace SFM
 				feedback = -1;
 				tremolo = 0.f;
 				opEnv.Reset();
+				feedbackAmt = 0.f;
 				isCarrier = false;
 			}
 		} m_operators[kNumOperators];

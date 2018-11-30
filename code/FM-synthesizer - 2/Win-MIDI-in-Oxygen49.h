@@ -41,6 +41,7 @@ namespace SFM
 	float WinMidi_GetOperatorDetune();
 	float WinMidi_GetOperatorAmplitude();
 	float WinMidi_GetOperatorTremolo();
+	float WinMidi_GetOperatorFeedbackAmount();
 
 	// Current operator to set new values to (-1 if none)
 	unsigned WinMidi_GetOperator();
@@ -61,7 +62,4 @@ namespace SFM
 	float WinMidi_GetResonance();
 	float WinMidi_GetFilterWet(); // Also known as 'contour'
 	bool  WinMidi_GetFilterInv(); // Invert envelope
-
-	// Note jitter
-	float WinMidi_GetNoteJitter();
 }

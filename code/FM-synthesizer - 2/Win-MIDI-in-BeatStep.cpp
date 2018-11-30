@@ -50,6 +50,7 @@ namespace SFM
 	const unsigned kPotFilterA = 91;       // Set 4, R14
 	const unsigned kPotFilterD = 79;       // Set 4, R15
 	const unsigned kPotFilterS = 72;       // Set 4, R16
+	const unsigned kPotNoteJitter = 17;    // Set 4, R13
 
 	static float s_vibrato = 0.f;
 	static float s_opVibrato[kNumOperators] = { 0.f };
@@ -62,6 +63,8 @@ namespace SFM
 	static float s_filterA = 0.f;
 	static float s_filterD = 0.f;
 	static float s_filterS = 0.f;
+
+	static float s_noteJitter = 0.f;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -137,6 +140,12 @@ namespace SFM
 
 					case kPotFilterS:
 						s_filterS = fControlVal;
+						break;
+
+					/* Note jitter */
+
+					case kPotNoteJitter:
+						s_noteJitter = fControlVal;
 						break;
 					}
 				}
@@ -221,7 +230,7 @@ namespace SFM
 			}
 		}
 
-		Error(kFatal, "Can't find the BeatStep MIDI keyboard");
+		Error(kFatal, "Can't find/open the BeatStep MIDI keyboard");
 
 		return false;
 	}
@@ -258,4 +267,7 @@ namespace SFM
 	float WinMidi_GetFilterA() { return s_filterA; }
 	float WinMidi_GetFilterD() { return s_filterD; }
 	float WinMidi_GetFilterS() { return s_filterS; }
+
+	// Note jitter
+	float WinMidi_GetNoteJitter() { return s_noteJitter; } 
 }

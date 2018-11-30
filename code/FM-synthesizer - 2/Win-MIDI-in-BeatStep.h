@@ -30,4 +30,7 @@ namespace SFM
 	float WinMidi_GetFilterA();
 	float WinMidi_GetFilterD();
 	float WinMidi_GetFilterS();
+
+	// Note jitter
+	float WinMidi_GetNoteJitter();
 }

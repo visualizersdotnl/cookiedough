@@ -50,6 +50,7 @@ namespace SFM
 				}
 
 				// Get feedback
+				float feedback = 0.f;
 				if (opDX.feedback != -1)
 				{
 					const unsigned iFeedback = opDX.feedback;
@@ -58,7 +59,8 @@ namespace SFM
 					SFM_ASSERT(iFeedback < kNumOperators);
 					SFM_ASSERT(true == m_operators[iFeedback].enabled);
 
-					modulation += m_feedback[index];
+//					modulation += m_feedback[index];
+					feedback = m_feedback[index];
 				}
 
 				// Sample operator envelope
@@ -69,7 +71,8 @@ namespace SFM
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample (FIXME: is this the right spot?)
-				float sample = opDX.oscillator.Sample(modulation);
+				float sample = opDX.oscillator.Sample(modulation) + feedback;
+//				float sample = opDX.oscillator.Sample(modulation);
 
 				// Store sample for feedback at this point; feels like a sane spot: straight out of the oscillator
 				sampled[index] = sample;
@@ -84,12 +87,13 @@ namespace SFM
 				if (true == opDX.isCarrier)
 					mix = SoftClamp(mix + sample);
 			}
-		}
+		}  
 
-		// Integrate feedback
-		// The DX7 does this variably (by bit shift it seems checking Dexed), this works for us now!
+		// Store feedback (FIXME: integrate in prev. loop)
+		// The DX7 does this in a bit more coarse fashion (see Dexed impl.)
+		const float amount = 0.5f;
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			m_feedback[iOp] = m_feedback[iOp]*0.95f + sampled[iOp]*0.05f;
+			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;
 
 		SampleAssert(mix);
 

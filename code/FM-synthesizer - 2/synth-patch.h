@@ -9,6 +9,7 @@ namespace SFM
 {
 	struct FM_Patch
 	{
+		// [0..1] unless stated otherwise
 		struct Operator
 		{
 			// Freq. modifiers (http://afrittemple.com/volca/volca_programming.pdf)
@@ -16,7 +17,7 @@ namespace SFM
 			float fine;
 			float detune;
 			
-			// [0..1]
+			// Linear
 			float amplitude;
 
 			// Tremolo & vibrato
@@ -26,6 +27,10 @@ namespace SFM
 			// Mod. env.
 			float modA;
 			float modD;
+
+			// Feedback amount
+			// This only has effect when operator is used by itself or another in a feedback loop
+			float feedbackAmt;
 		};
 	
 		Operator operators[kNumOperators];
@@ -43,6 +48,7 @@ namespace SFM
 				OP.vibrato = 0.f;
 				OP.modA = 0.f;
 				OP.modD = 0.f;
+				OP.feedbackAmt = 0.f;
 			}
 		}
 	};

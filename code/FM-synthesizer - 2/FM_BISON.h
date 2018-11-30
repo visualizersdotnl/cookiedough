@@ -32,12 +32,13 @@
 
 	Ideas:
 		- Allow carrier oscillator type (e.g. square, saw)
-		- ADSR parameters: quick from 0.0 to 0.5, then a wider range follows after that (the Neutron has it)
-		- Give filter it's own AD envelope
-		- Consider operator targets instead of the current routing system
+		- Consider operator targets instead of the current routing system (which is a tad overcomplicated)
 		- Hard sync. option
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 		  + Not really all that necessary
+
+	Important for VST:
+		- DX detune is now 0 to 14 semitones instead of -7 to +7 due to stupid MIDI potmeter
 
 	Things that are missing or broken:
 		- Mod. wheel should respond during note playback?

@@ -172,7 +172,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -189,6 +189,7 @@ namespace SFM
 
 		// Modulator #1
 		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
 
 		/*
@@ -197,7 +198,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #5
@@ -283,6 +284,7 @@ namespace SFM
 		const float freqScale = masterFreq/g_midiFreqRange;
 
 		// Set tremolo LFO
+		// FIXME: should I even bother scaling tremolo like I do pitch?
 		const float tremFreq = s_parameters.tremolo*kAudibleLowHz*(freqScale+velocity);
 		voice.m_tremolo.Initialize(kCosine, tremFreq, 1.f);
 
@@ -296,6 +298,9 @@ namespace SFM
 			// Tremolo/Vibrato
 			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
 			voice.m_operators[iOp].tremolo = patch.operators[iOp].tremolo;
+
+			// Feedback amount
+			voice.m_operators[iOp].feedbackAmt = patch.operators[iOp].feedbackAmt;
 
 			// Mod env.
 			ADSR::Parameters envParams;
@@ -352,12 +357,13 @@ namespace SFM
 			
 			// Stop secondary envelopes
 
-			// Not necessary; these have an attack and decay and nothing else, so they rest at sustain level
-//			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-//				voice.m_operators[iOp].opEnv.Stop(velocity);
+			// Not necessary; these have an attack, deyay, sustain and nothing else, so they rest at sustain level
+/*
+			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+				voice.m_operators[iOp].opEnv.Stop(velocity);
 
-			// Same as above
-//			voice.m_pFilter->Stop(velocity);
+			voice.m_pFilter->Stop(velocity);
+*/
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -465,7 +471,7 @@ namespace SFM
 		s_parameters.delayWidth = WinMidi_GetDelayWidth();
 		s_parameters.delayFeedback = WinMidi_GetDelayFeedback();
 
-		// Update current operator
+		// Update current operator patch
 		const unsigned iOp = WinMidi_GetOperator();
 		if (-1 != iOp)
 		{
@@ -485,17 +491,18 @@ namespace SFM
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 
-			// Slightly
-	//		const float cents = ( -50.f + 100.f*WinMidi_GetOperatorDetune() ) * 0.01f;
-	//		patchOp.detune = powf(2.f, cents/12.f);
-
 			// DX7
-			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
+			// FIXME: go from -7 to +7 when no longer using that crappy M-AUDIO potmeter!
+			const float semis = 14.f*WinMidi_GetOperatorDetune();
+//			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
 			patchOp.detune = powf(2.f, semis/12.f);
 
 			// Tremolo & vibrato
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
+
+			// Feedback amount
+			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount();
 
 			// Modulation envelope
 			patchOp.modA = WinMidi_GetModEnvA();
