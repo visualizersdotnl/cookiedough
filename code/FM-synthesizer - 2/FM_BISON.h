@@ -25,9 +25,10 @@
 	Ideas & such:
 		- Let's call the VST version the GENERALISSIMO!
 
-	Priority bug(s): 
+	Priority bug(s) / Things I am not sure of: 
 		- Is my feedback right like this or should I give it some overdrive and/or a simple LP filter?
 		- Review the voice loop: is your order of operations right?
+		- My envelope(s)
 
 	To do:
 		- Volume issues: introduce something called 'constant gain mixing'
@@ -49,6 +50,7 @@
 
 	Lessons learned:
 		- Complexity has been done, it's not the answer
+		- Synth. coding is hard for a beginner, give yourself time
 */
 
 #pragma once
