@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Instrument patch.
+	Syntherklaas FM -- Bare instrument patch.
 */
 
 #pragma once

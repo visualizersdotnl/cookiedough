@@ -176,18 +176,15 @@ namespace SFM
 
 		/*
 			Test algorithm: single carrier & modulator
-
-			Verdict: keep as simplest algorithm
-			QA: OK!
 		*/
 
-		// Carrier #1
+		// Operator #1
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
-		// Modulator #1
+		// Operator #1
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
@@ -201,78 +198,42 @@ namespace SFM
 #if 1
 
 		/*
-			Test algorithm: Volca FM algorithm #5
-
-			Verdict: works well if treated right, a keeper!
-			QA: OK!
+			Test algorithm: Volca FM algorithm #9
 		*/
 
-		// Carrier #1
+		// Operator #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 3;
+		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
 
-		// Carrier #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulators[0] = 4;
-		voice.m_operators[1].isCarrier = true;
-		voice.m_operators[1].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[1]), masterAmp*patch.operators[1].amplitude);
-
-		// Carrier #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 5;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
-
-		// Modulator #1
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].feedback = -1;
-		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
-
-		// Modulator #2
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].feedback = -1;
-		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
-
-		// Modulator #3
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = 5;
-		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-#if 0
-
-		/*
-			Test algorithm: Kylian's algorithm #4
-			Verdict: Not sure yet..
-		*/
-
-		// Modulator #3
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
-
-		// Modulator #2
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[2]), modDepth*patch.operators[2].amplitude);
-
-		// Modulator #1
+		// Operator #2
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
 
-		// Carrier #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].modulators[1] = 2;
-		voice.m_operators[0].modulators[2] = 3;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
+		// Operator #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulators[0] = 3;
+		voice.m_operators[2].modulators[1] = 4;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
+
+		// Operator #4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].feedback = -1;
+		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
+
+		// Operator #5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].modulators[0] = 5;
+		voice.m_operators[4].feedback = -1;
+		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = -1;
+		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
 
 		/*
 			End of Algorithm

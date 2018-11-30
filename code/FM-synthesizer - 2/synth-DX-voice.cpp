@@ -22,10 +22,10 @@ namespace SFM
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
-		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
 			// Top-down
-			const unsigned index = (kNumOperators-1)-iOp;
+			const unsigned index = iOp;
 
 			Operator &opDX = m_operators[index];
 
@@ -85,10 +85,15 @@ namespace SFM
 				if (true == opDX.isCarrier)
 					mix = SoftClamp(mix + sample);
 			}
-		}  
+		} 
 
-		// Store feedback (FIXME: integrate in prev. loop)
-		// The DX7 does this in a bit more coarse fashion (see Dexed impl.)
+		// -- SIDENOTE --
+		// Another option to do the above is to let modulators know who they're modulating and write
+		// to those operators, but that's hardly any faster
+
+		// Store feedback
+		// The DX7 does this in a bit more coarse fashion (see Dexed impl.),
+		// however, we will be civil about it
 		const float amount = 0.5f;
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;

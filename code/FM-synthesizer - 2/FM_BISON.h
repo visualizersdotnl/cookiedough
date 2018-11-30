@@ -26,6 +26,8 @@
 		- Let's call the VST version the GENERALISSIMO!
 
 	Priority bug(s) / Things I am not sure of: 
+		- Decent algorithm system		
+		- Check parameter ranges, I'm missing on some sounds
 		- Is my feedback right like this or should I give it some overdrive and/or a simple LP filter?
 		- Review the voice loop: is your order of operations right?
 		- My envelope(s)
@@ -35,7 +37,6 @@
 
 	Ideas:
 		- Allow carrier oscillator type (e.g. square, saw)
-		- Consider operator targets instead of the current routing system (which is a tad overcomplicated)
 		- Hard sync. option
 		- Smarter way of building & supplying algorithms (i.e. a modulation matrix)
 		  + Not really all that necessary
