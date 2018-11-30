@@ -190,7 +190,7 @@ namespace SFM
 						break;
 
 					case kPerc8:
-						s_LFOShape = kDigiSaw;
+						s_LFOShape = kDigiTriangle;
 						break;
 					}
 

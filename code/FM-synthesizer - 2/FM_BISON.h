@@ -4,18 +4,15 @@
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
 	This is my second attempt at an FM synthesizer:
-	- 6 programmable operators with modulation envelope and shared tremolo & vibrato LFOs
+	- 6 programmable operators with envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
 	- Master clean 24dB & MOOG 24dB ladder filters
 	- Global modulation control
 	- Pitch bend
 	- Multiple tried & tested FM algorithms
 	- Paraphonic (24 voices)
-	- Adjustable tone jitter (for analogue VCO warmth)
+	- Adjustable tone jitter (for analogue warmth)
 	- Tuneable global delay effect
-
-	In the works:
-	- LFO key sync. switch
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 	At this point this code is not optimized for speed but there's tons of low hanging fruit.
@@ -26,34 +23,28 @@
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Missing for near-DX7/Volca compatibility:
-		- LFO key sync (working on it)
-		- Tweakable sensitivity to velocity (per operator?)
-		- What's this fixed frequency deal good for?
-		- More algorithms!
 
-	Maybes for the above:
-		- More elaborate operator envelope
-		- Global operator envelope *also* applied to pitch LFO
+	* I am losing terrain by not having some sharpness in the first phase.
+	* My operator envelope modulates both tremolo, pitch and amplitude; this might not be the way to go.
+	  The Volca FM seems to only modulate pitch with an outside envelope.
+	* My operators do not support per operator velocity sensitivity.
+	* I have no fixed frequency operators.
+	* I lack algorithms.
+	* This 'level scale' deal is a way of making envelopes non-linear; I should understand it a little better.
 
-	Tasks: 
-		- Look at C:M issue a little closer
+	Tasks for today:
 		- Build decent algorithm hardcoding system
+
+	For later:
 		- Check parameter ranges
 		- Review operator loop
-
-	Ideas:
-		- Operator hard. sync option?
+		- All FIXMEs
 
 	Things that are missing or broken:
-		- DX detune is now 0 to 14 semitones instead of -7 to +7 due to stupid MIDI potmeter
-		- "Clean" filter plops when cutoff is pulled shut
+		- "Clean" filter plops when cutoff is pulled shut: why?
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 		- Cherry pick from the first iteration's lists
-
-	Lessons learned:
-		- Complexity has been done, it's not the answer
-		- Synth. coding is hard for a beginner, give yourself time
 */
 
 #pragma once

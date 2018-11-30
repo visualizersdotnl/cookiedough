@@ -73,9 +73,9 @@ namespace SFM
 		// Master filter
 		LadderFilter *m_pFilter;
 	
-		DX_Voice() : m_enabled(false) {}
+		DX_Voice() { Reset(); }
 
-		void Reset()
+		void ResetOperators()
 		{
 			// Neutral operators
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -83,6 +83,12 @@ namespace SFM
 				m_operators[iOp].Reset();
 				m_feedback[iOp] = 0.f;
 			}
+		}
+
+		// Full (or "hard") reset
+		void Reset()
+		{
+			ResetOperators();
 
 			// No tremolo
 			m_tremolo.Initialize(kCosine, 0.f, 1.f);
@@ -98,6 +104,9 @@ namespace SFM
 
 			// No filter (must be set!)
 			m_pFilter = nullptr;
+
+			// Disable
+			m_enabled = false;
 		}
 
 		// ** Does not apply ADSR nor filter **

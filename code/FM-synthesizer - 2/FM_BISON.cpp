@@ -128,14 +128,14 @@ namespace SFM
 
 	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
 	{
-		// Needs research, see: http://ixox.fr/forum/index.php?topic=69272.0
-		// What we want are constant carrier values, so:
-		const float C = (float) g_CM[patchOp.coarse][0];
-		const float M = (float) g_CM[patchOp.coarse][1];
-		frequency *= M/C;
+		const unsigned coarse = patchOp.coarse;
+		SFM_ASSERT(coarse < g_ratioLUTSize);
 
-		frequency *= patchOp.detune;
+		frequency *= g_ratioLUT[coarse];
 		frequency *= patchOp.fine;
+
+		// Detune is disabled for now (FIXME)
+//		frequency *= patchOp.detune;
 
 		return frequency;
 	}
@@ -145,12 +145,12 @@ namespace SFM
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
 		DX_Voice &voice = s_DXvoices[iVoice];
-		voice.Reset();
+		voice.ResetOperators();
 		
 		float frequency = request.frequency;
 
 		// Randomize note frequency little if wanted (in (almost) entire cents)
-		const float jitterAmt = kMaxNoteJitter*s_parameters.m_noteJitter;
+		const float jitterAmt = kMaxNoteJitter*s_parameters.noteJitter;
 		const int cents = int(ceilf(oscWhiteNoise()*jitterAmt));
 
 		float jitter = 1.f;
@@ -173,7 +173,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -196,7 +196,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #9
@@ -247,11 +247,13 @@ namespace SFM
 
 		// Set tremolo LFO
 		const float tremFreq = kGoldenRatio*k2PI*s_parameters.tremolo*velocity; // FIXME
-		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */);
+		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*mt_randf();
+		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
 
 		// Set vibrato LFO
 		const float vibFreq = kAudibleLowHz*s_parameters.vibrato*(freqScale+velocity);
-		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange);
+		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*mt_randf();
+		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
 
 		// Set per-operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -319,9 +321,6 @@ namespace SFM
 
 			// Stop main ADSR; this will automatically release the voice
 			voice.m_ADSR.Stop(velocity);
-			
-			// Stop secondary envelopes
-			// ^^ Not necessary: these have an attack, deyay, sustain and nothing else, so they rest at sustain level
 
 /*
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -329,6 +328,8 @@ namespace SFM
 
 			voice.m_pFilter->Stop(velocity);
 */
+
+			// ^^ Secondary envelopes are not stopped as they have no release.
 
 			Log("Voice released: " + std::to_string(request.index));
 		}
@@ -417,13 +418,13 @@ namespace SFM
 		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
 
 		// Note jitter
-		s_parameters.m_noteJitter = WinMidi_GetNoteJitter();
+		s_parameters.noteJitter = WinMidi_GetNoteJitter();
 
 		// Filter
 		s_parameters.filterInv = WinMidi_GetFilterInv();
 		s_parameters.filterType = WinMidi_GetFilterType();
 		s_parameters.filterWet = WinMidi_GetFilterWet();
-		s_parameters.filterParams.drive = 1.f;
+		s_parameters.filterParams.drive = WinMidi_GetFilterDrive();
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 
@@ -446,20 +447,17 @@ namespace SFM
 			SFM_ASSERT(iOp >= 0 && iOp < kNumOperators);
 
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
-	
-			// Index Farey sequence
-			const unsigned index = unsigned(WinMidi_GetOperatorCoarse()*(g_CM_size-1));
-			SFM_ASSERT(index < g_CM_size);
-			patchOp.coarse = index;
+
+			// Volca-style coarse index
+			patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*(g_ratioLUTSize-1));
 
 			// Fine tuning (1 octave like the DX7, ain't that much?)
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 
 			// DX7
-			// FIXME: go from -7 to +7 (or something nicer?)
-			const float semis = 14.f*WinMidi_GetOperatorDetune();
-//			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
+//			const float semis = 14.f*WinMidi_GetOperatorDetune();
+			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
 			patchOp.detune = powf(2.f, semis/12.f);
 
 			// Tremolo & vibrato
@@ -467,7 +465,7 @@ namespace SFM
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
 
 			// Feedback amount
-			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount();
+			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount()*kMaxOperatorFeedback;
 
 			// Envelope
 			patchOp.opEnvA = WinMidi_GetOperatorEnvA();
@@ -682,7 +680,6 @@ bool Syntherklaas_Create()
 
 	s_delayLine.Reset();
 	s_delayLFO.Initialize(kCosine, kDelayBaseFreq, 1.f);
-//	s_delayLFO.Initialize(kDigiTriangle, kDelayBaseFreq, 1.f);
 
 	// Reset voice deques
 	s_voiceReq.clear();

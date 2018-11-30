@@ -27,7 +27,7 @@ namespace SFM
 		ADSR::Parameters envParams;
 
 		// Note jitter
-		float m_noteJitter;
+		float noteJitter;
 
 		// Global mod. index
 		float modDepth;
@@ -67,7 +67,7 @@ namespace SFM
 			envParams.sustain = 1.f;
 
 			// 50% jitter
-			m_noteJitter = 0.5f;
+			noteJitter = 0.5f;
 
 			// No modulation
 			modDepth = 0.f;

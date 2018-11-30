@@ -68,12 +68,19 @@ namespace SFM
 	// Max. note jitter (in cents)
 	const unsigned kMaxNoteJitter = 10;
 
+	// Max. tremolo & vibrato jitter (in unit phase)
+	const float kMaxTremoloJitter = 0.1f*kGoldenRatio;
+	const float kMaxVibratoJitter = 0.2f*kGoldenRatio;
+
 	// Delay LFO base freq.
 	const float kDelayBaseMul = 0.001f;
 	const float kDelayBaseFreq = 0.2f;
 
 	// Vibrato range ([-X..X])
 	const float kVibratoRange = 2.f;
+
+	// Max. operator feedback
+	const float kMaxOperatorFeedback = 1.f;
 }
 
 #include "synth-LUT.h"
