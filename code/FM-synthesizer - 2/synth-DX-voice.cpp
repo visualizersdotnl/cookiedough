@@ -19,7 +19,8 @@ namespace SFM
 		const float vibrato = m_vibrato.Sample(0.f);
 	
 		// Get pitch env.
-		const float pitchEnv = powf(2.f, m_pitchEnv.Sample());
+		const float kPitchEnvRange = 4.f; // FIXME
+		const float pitchEnv = powf(2.f, -(kPitchEnvRange/2.f) + m_pitchEnv.Sample()*kPitchEnvRange);
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];

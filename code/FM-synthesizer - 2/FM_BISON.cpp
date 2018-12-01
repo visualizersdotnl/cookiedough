@@ -171,15 +171,15 @@ namespace SFM
 		// Each has a distinct effect
 		const float velocity       = request.velocity;
 		const float invVelocity    = 1.f-velocity;
-		const float velocityExp    = velocity*velocity;
-		const float velocityInvExp = Clamp(invsqrf(velocity));
+//		const float velocityExp    = velocity*velocity;
+//		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
 		// Master/global
 		const float masterAmp = velocity*kMaxVoiceAmp;
 		const float masterFreq = frequency;
 
 		// FIXME: I find the use of velocityInvExp suspicious
-		const float modDepth = s_parameters.modDepth*velocityInvExp;
+		const float modDepth = s_parameters.modDepth*velocity;
 
 		FM_Patch &patch = s_parameters.patch;
 
