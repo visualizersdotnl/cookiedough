@@ -25,7 +25,8 @@
 	To learn during vacation:
 		- Actual device-based FM programming, take copious notes!
 		- Look for optimizations
-
+		- I *need* level scaling: https://www.youtube.com/watch?v=0XY2IcwNVnk
+`
 	Useful insights:
 		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
 		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled
