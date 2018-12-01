@@ -38,11 +38,10 @@
 		  are just as good, *but* I need sharper control for attacks!
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)
 		- I do not support 'level scale' (I want to, but it is not crucial to sounding compatible on note level)
-		  + Ask Kilian!
+		  + Ask Kilian, see URL above!
 		- My operators do not have programmable velocity sensitivy
 		- I lack algorithms
-		- No fixed frequency operators
-
+	
 	Also:
 		- Check parameter ranges
 		- Review operator loop
