@@ -129,6 +129,13 @@ namespace SFM
 	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
 	{
 		const unsigned coarse = patchOp.coarse;
+
+		if (true == patchOp.fixed)
+		{
+			// Fixed ratio
+			return coarse*patchOp.fine;
+		}
+
 		SFM_ASSERT(coarse < g_ratioLUTSize);
 
 		frequency *= g_ratioLUT[coarse];
@@ -175,7 +182,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -244,7 +251,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #31
@@ -315,7 +322,7 @@ namespace SFM
 		envParams.decay = s_parameters.pitchD;
 		envParams.release = 0.f;
 		envParams.sustain = 1.f-envParams.decay;
-		voice.m_pitchEnv.Start(envParams, velocity);
+		voice.m_pitchEnv.Start(envParams, velocityInvExp /* More audioble when rammin' harder */);
 
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.envParams, velocity);
@@ -463,7 +470,7 @@ namespace SFM
 		s_parameters.filterInv = WinMidi_GetFilterInv();
 		s_parameters.filterType = WinMidi_GetFilterType();
 		s_parameters.filterWet = WinMidi_GetFilterWet();
-		s_parameters.filterParams.drive = WinMidi_GetFilterDrive();
+		s_parameters.filterParams.drive = WinMidi_GetFilterDrive() * dBToAmplitude(kMaxFilterDrivedB);
 		s_parameters.filterParams.cutoff = WinMidi_GetCutoff();
 		s_parameters.filterParams.resonance = WinMidi_GetResonance();
 
@@ -491,13 +498,27 @@ namespace SFM
 
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 
-			// Volca-style coarse index
-			patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*(g_ratioLUTSize-1));
+			const bool fixed = patchOp.fixed = WinMidi_GetOperatorFixed();
 
-			// Fine tuning (1 octave like the DX7, ain't that much?)
-			const float fine = WinMidi_GetOperatorFinetune();
-			patchOp.fine = powf(2.f, fine);
+			if (false == fixed)
+			{
+				// Volca-style coarse index
+				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*(g_ratioLUTSize-1));
 
+				// Fine tuning (1 octave like the DX7, ain't that much?)
+				const float fine = WinMidi_GetOperatorFinetune();
+				patchOp.fine = powf(2.f, fine);
+			}
+			else
+			{
+				// See synth-patch.h for details
+				const unsigned coarseTab[4] = { 1, 10, 100, 1000 };
+				patchOp.coarse = coarseTab[unsigned(WinMidi_GetOperatorCoarse()*3.f)];
+
+				const float fine = WinMidi_GetOperatorFinetune();
+				patchOp.fine = powf(2.f, fine*kFixedFineScale);
+			}
+	
 			// DX7 detune
 			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
 			patchOp.detune = powf(2.f, semis/12.f);

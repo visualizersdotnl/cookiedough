@@ -81,6 +81,9 @@ namespace SFM
 
 	// Max. operator feedback
 	const float kMaxOperatorFeedback = 1.f;
+
+	// Max. filter drive
+	const float kMaxFilterDrivedB = 3.f;
 }
 
 #include "synth-LUT.h"

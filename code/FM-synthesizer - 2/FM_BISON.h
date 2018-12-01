@@ -22,9 +22,20 @@
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
+	Useful insights:
+		- Fixed ratio operators are useful for percussive sounds and such, so support them
+		  + Supported, no controls for it yet!
+
+			"If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
+			1000. FINE adjustment is possible from 1 to 9.772 times."
+
+			So for fixed, we simply need a different interpretation.
+
+		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled.
+
 	Missing for near-DX7/Volca compatibility:
 		- Stereo
-		- Better pitch envelope?
+		- Better pitch envelope!
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
 		  are just as good
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)
@@ -41,6 +52,7 @@
 		- Check parameter ranges
 		- Review operator loop
 		- All FIXMEs
+		- Optimization; you're working with powers of 2 and cache misses left and right
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?

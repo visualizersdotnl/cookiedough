@@ -1,21 +1,33 @@
 
 /*
 	Syntherklaas FM -- "Dry" instrument patch.
+
+	Volca (unofficial) manual: http://afrittemple.com/volca/volca_programming.pdf
+
+	I cite:
+
+	"If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
+	1000. FINE adjustment is possible from 1 to 9.772 times."
 */
 
 #pragma once
 
 namespace SFM
 {
+	const float kFixedFineScale = 9.772f;
+
 	struct FM_Patch
 	{
 		// [0..1] unless stated otherwise
 		struct Operator
 		{
-			// Freq. modifiers (http://afrittemple.com/volca/volca_programming.pdf)
-			unsigned coarse; // Related to LUT (synth-LUT.cpp)
+			// Related to LUT (synth-LUT.cpp)
+			unsigned coarse; 
 			float fine;
 			float detune;
+
+			// Fixed frequency (alters interpretation of coarse and fine)
+			bool fixed;
 			
 			// Linear
 			float amplitude;
@@ -40,9 +52,10 @@ namespace SFM
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			{	
 				Operator &OP = operators[iOp];
-				OP.coarse = 0;
+				OP.coarse = 1;
 				OP.fine = 0.f;
 				OP.detune = 0.f;
+				OP.fixed = false;
 				OP.amplitude = 1.f;
 				OP.tremolo = 0.f;
 				OP.vibrato = 0.f;

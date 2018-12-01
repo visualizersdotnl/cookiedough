@@ -81,6 +81,7 @@ namespace SFM
 	static float s_filterWet = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
+	static bool  s_opFixed[kNumOperators]        = { false };
 	static float s_opFeedbackAmt[kNumOperators]  = { 0.f };
 	static float s_opCoarse[kNumOperators]       = { 0.f };
 	static float s_opFine[kNumOperators]         = { 0.f }; 
@@ -95,6 +96,7 @@ namespace SFM
 	const unsigned kButtonFilterType1 = 103; // C25
 	const unsigned kButtonFilterType2 = 104; // C26
 	const unsigned kButtonFilterInv = 102;   // C24
+	const unsigned kButtonOpFixed = 116;     // C28
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -245,6 +247,14 @@ namespace SFM
 
 						case kButtonOpRecv:
 							s_opRecv = (127 == controlVal);
+							break;
+
+						case kButtonOpFixed:
+							if (127 == controlVal) s_opFixed[g_currentOp] ^= 1; // Toggle
+
+							// Quite handy to keep an eye on this whilst we're in hardware dev. mode
+							Log("Operator " + std::to_string(g_currentOp+1) + " set to ratio mode: " + std::to_string(s_opFixed[g_currentOp]));
+
 							break;
 
 						case kFaderOpFeedbackAmt:
@@ -450,6 +460,7 @@ namespace SFM
 	float WinMidi_GetTremolo()     { return s_tremolo;   }
 
 	// Operator control
+	bool  WinMidi_GetOperatorFixed()          { return s_opFixed[g_currentOp];       }
 	float WinMidi_GetOperatorCoarse()         { return s_opCoarse[g_currentOp];      }
 	float WinMidi_GetOperatorFinetune()       { return s_opFine[g_currentOp];        }
 	float WinMidi_GetOperatorDetune()         { return s_opDetune[g_currentOp];      }

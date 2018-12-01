@@ -37,6 +37,7 @@ namespace SFM
 	float WinMidi_GetModulation();
 
 	// Operator control
+	bool  WinMidi_GetOperatorFixed();
 	float WinMidi_GetOperatorCoarse();
 	float WinMidi_GetOperatorFinetune();
 	float WinMidi_GetOperatorDetune();
