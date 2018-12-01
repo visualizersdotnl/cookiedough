@@ -206,7 +206,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #9
@@ -252,7 +252,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #31
@@ -267,7 +267,7 @@ namespace SFM
 			opDX.oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[iOp]), masterAmp*patch.operators[iOp].amplitude);
 		}
 
-		// Modulate #5
+		// Modulator/Operator #5
 		voice.m_operators[4].modulators[0] = 5;
 
 		// Operator #6
@@ -297,7 +297,7 @@ namespace SFM
 		// Set per-operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
-			// Tremolo/Vibrato
+			// Tremolo/Vibrato amount
 			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
 			voice.m_operators[iOp].tremolo = patch.operators[iOp].tremolo;
 

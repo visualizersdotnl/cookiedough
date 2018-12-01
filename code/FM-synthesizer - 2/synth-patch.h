@@ -21,7 +21,7 @@ namespace SFM
 		// [0..1] unless stated otherwise
 		struct Operator
 		{
-			// Related to LUT (synth-LUT.cpp)
+			// Frequency setting; related to LUT (synth-LUT.cpp)
 			unsigned coarse; 
 			float fine;
 			float detune;
