@@ -60,9 +60,14 @@ namespace SFM
 		}
 
 		// Pitch bend
-		void PitchBend(float semitones)
+		void PitchBendSemis(float semitones)
 		{
 			const float bend = powf(2.f, semitones/12.f);
+			m_pitch = CalculatePitch(m_frequency*bend);
+		}
+
+		void PitchBend(float bend)
+		{
 			m_pitch = CalculatePitch(m_frequency*bend);
 		}
 

@@ -56,8 +56,8 @@ namespace SFM
 	const unsigned kOscLUTSize = 4096;
 	const unsigned kOscLUTAnd = kOscLUTSize-1;
 
-	// Pitch bend rane (in semitones)
-	const float kPitchBendRange = 12.f;
+	// Pitch bend rane (in octaves)
+	const float kPitchBendRange = 1.f;
 
 	// Base note Hz
 	const float kBaseHz = 440.f;

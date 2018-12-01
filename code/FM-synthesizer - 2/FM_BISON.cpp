@@ -170,6 +170,7 @@ namespace SFM
 		const float masterAmp = velocity*kMaxVoiceAmp;
 		const float masterFreq = frequency;
 
+		// FIXME: I find the use of velocityInvExp suspicious
 		const float modDepth = s_parameters.modDepth*velocityInvExp;
 
 		FM_Patch &patch = s_parameters.patch;
@@ -197,7 +198,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca FM algorithm #9
@@ -243,7 +244,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca FM algorithm #31
@@ -298,7 +299,7 @@ namespace SFM
 			// Mod env.
 
 			// We always attack to 1.0, then decay works a little different here in that it also decides
-			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero.
+			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
 
 			ADSR::Parameters envParams;
 			envParams.attack = s_parameters.patch.operators[iOp].opEnvA;
@@ -307,6 +308,14 @@ namespace SFM
 			envParams.sustain = 1.f-envParams.decay;
 			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
 		}
+
+		// Set pitch envelope (handled same as operator AD above)
+		ADSR::Parameters envParams;
+		envParams.attack = s_parameters.pitchA;
+		envParams.decay = s_parameters.pitchD;
+		envParams.release = 0.f;
+		envParams.sustain = 1.f-envParams.decay;
+		voice.m_pitchEnv.Start(envParams, velocity);
 
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.envParams, velocity);
@@ -414,7 +423,7 @@ namespace SFM
 
 		FIXME:
 			- Update parameters every N samples (nuggets).
-			- Remove all rogue parameter probes.
+			- Remove all rogue parameter probes, some of which are:
 			  + WinMidi_GetPitchBend()
 			  + WinMidi_GetMasterDrive()
 			  + WinMidi_GetDelayRate()
@@ -470,6 +479,10 @@ namespace SFM
 		s_parameters.delayWidth = WinMidi_GetDelayWidth();
 		s_parameters.delayFeedback = WinMidi_GetDelayFeedback();
 
+		// Pitch env.
+		s_parameters.pitchA = WinMidi_GetPitchA();
+		s_parameters.pitchD = WinMidi_GetPitchD();
+
 		// Update current operator patch
 		const unsigned iOp = WinMidi_GetOperator();
 		if (-1 != iOp)
@@ -485,8 +498,7 @@ namespace SFM
 			const float fine = WinMidi_GetOperatorFinetune();
 			patchOp.fine = powf(2.f, fine);
 
-			// DX7
-//			const float semis = 14.f*WinMidi_GetOperatorDetune();
+			// DX7 detune
 			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
 			patchOp.detune = powf(2.f, semis/12.f);
 
@@ -531,7 +543,7 @@ namespace SFM
 		s_delayLine.Write(SoftClamp(mix + feedback*A));
 
 		// Mix
-		const float wet = s_parameters.delayWet*kRootHalf;
+		const float wet = s_parameters.delayWet*kMaxVoiceAmp;
 		mix = SoftClamp(mix + A*wet);
 	}
 
@@ -578,7 +590,7 @@ namespace SFM
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
-				mix = ultra_tanhf(mix*drive);
+				mix = (mix*drive);
 
 				s_ringBuf.Write(mix);
 			}

@@ -7,7 +7,7 @@
 	- 6 programmable operators with envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
 	- Master clean 24dB & MOOG 24dB ladder filters
-	- Global modulation control
+	- Global modulation control & pitch envelope (AD)
 	- Pitch bend
 	- Multiple tried & tested FM algorithms
 	- Paraphonic (24 voices)
@@ -24,7 +24,7 @@
 
 	Missing for near-DX7/Volca compatibility:
 		- Stereo
-		- No pitch envelope
+		- Better pitch envelope?
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
 		  are just as good
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)

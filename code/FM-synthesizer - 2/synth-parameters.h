@@ -51,6 +51,10 @@ namespace SFM
 		float delayWidth;
 		float delayFeedback;
 
+		// Pitch env.
+		float pitchA;
+		float pitchD;
+
 		void SetDefaults()
 		{
 			// Neutral drive
@@ -92,6 +96,10 @@ namespace SFM
 			delayRate = 0.f;
 			delayWidth = 0.f;
 			delayFeedback = 0.f;
+
+			// No pitch env.
+			pitchA = 0.f;
+			pitchD = 0.f;
 		}
 	};
 }

@@ -24,7 +24,7 @@ namespace SFM
 			float tremolo;
 			float vibrato;
 
-			// Simple envelope
+			// Amp. envelope
 			float opEnvA;
 			float opEnvD;
 

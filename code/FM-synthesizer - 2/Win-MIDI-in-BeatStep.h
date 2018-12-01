@@ -34,4 +34,8 @@ namespace SFM
 
 	// Note jitter
 	float WinMidi_GetNoteJitter();
+
+	// Pitch env.
+	float WinMidi_GetPitchA();
+	float WinMidi_GetPitchD();
 }

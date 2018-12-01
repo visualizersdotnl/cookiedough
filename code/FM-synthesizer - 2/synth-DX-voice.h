@@ -34,7 +34,7 @@ namespace SFM
 			float vibrato;
 
 			// Op env.
-			ADSR opEnv;
+			ADSR opEnv;			
 
 			// Feedback amount
 			float feedbackAmt;
@@ -70,6 +70,9 @@ namespace SFM
 		// Amplitude env.
 		ADSR m_ADSR;
 
+		// Pitch env.
+		ADSR m_pitchEnv;
+
 		// Master filter
 		LadderFilter *m_pFilter;
 	
@@ -101,6 +104,7 @@ namespace SFM
 
 			// Reset envelopes
 			m_ADSR.Reset();
+			m_pitchEnv.Reset();
 
 			// No filter (must be set!)
 			m_pFilter = nullptr;
@@ -112,6 +116,7 @@ namespace SFM
 		// ** Does not apply ADSR nor filter **
 		float Sample(const Parameters &parameters);
 
+		// In octaves
 		SFM_INLINE void SetPitchBend(float bend)
 		{
 			m_pitchBend = bend;
