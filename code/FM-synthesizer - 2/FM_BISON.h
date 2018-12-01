@@ -26,6 +26,7 @@
 		- Actual device-based FM programming, take copious notes!
 		- Look for optimizations
 		- I *need* level scaling: https://www.youtube.com/watch?v=0XY2IcwNVnk
+		  + Je geeft aan wat het midden van je toetsenbord is voor operator N, en aan weerskanten hoe steep en lang de curve is to demodulate!
 `
 	Useful insights:
 		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
