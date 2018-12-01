@@ -77,7 +77,7 @@ namespace SFM
 			modDepth = 0.f;
 
 			// Cosine LFOs
-			LFOform = Waveform::kCosine;
+			LFOform = Waveform::kSine;
 
 			// Reset patches
 			patch.Reset();

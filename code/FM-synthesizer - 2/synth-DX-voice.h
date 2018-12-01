@@ -94,10 +94,10 @@ namespace SFM
 			ResetOperators();
 
 			// No tremolo
-			m_tremolo.Initialize(kCosine, 0.f, 1.f);
+			m_tremolo.Initialize(kSine, 0.f, 1.f);
 
 			// No vibrato
-			m_vibrato.Initialize(kCosine, 0.f, 1.f);
+			m_vibrato.Initialize(kSine, 0.f, 1.f);
 
 			// No pitch bend
 			m_pitchBend = 0.f;

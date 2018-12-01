@@ -123,7 +123,7 @@ namespace SFM
 	static bool s_opRecv = false;
 
 	// LFO shape
-	static Waveform s_LFOShape = kCosine;
+	static Waveform s_LFOShape = kSine;
 
 	static unsigned s_voices[127] = { -1 };
 
@@ -188,7 +188,7 @@ namespace SFM
 					/* LFO shape */
 
 					case kPerc7:
-						s_LFOShape = kCosine;
+						s_LFOShape = kSine;
 						break;
 
 					case kPerc8:

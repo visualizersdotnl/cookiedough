@@ -133,7 +133,7 @@ namespace SFM
 		if (true == patchOp.fixed)
 		{
 			// Fixed ratio
-			return coarse*patchOp.fine;
+			return coarse + patchOp.fine;
 		}
 
 		SFM_ASSERT(coarse < g_ratioLUTSize);
@@ -168,8 +168,9 @@ namespace SFM
 		FloatAssert(jitter);
 		frequency *= jitter;
 
-		// Each has a distinct effect (linear, exponential, inverse exponential)
+		// Each has a distinct effect
 		const float velocity       = request.velocity;
+		const float invVelocity    = 1.f-velocity;
 		const float velocityExp    = velocity*velocity;
 		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
@@ -284,12 +285,12 @@ namespace SFM
 		const float freqScale = masterFreq/g_midiFreqRange;
 
 		// Set tremolo LFO
-		const float tremFreq = kGoldenRatio*k2PI*s_parameters.tremolo*velocity; // FIXME
+		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity;
 		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*mt_randf();
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
 
 		// Set vibrato LFO
-		const float vibFreq = kAudibleLowHz*s_parameters.vibrato*(freqScale+velocity);
+		const float vibFreq = k2PI*s_parameters.vibrato*(freqScale+velocity);
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*mt_randf();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
 
@@ -316,13 +317,13 @@ namespace SFM
 			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
 		}
 
-		// Set pitch envelope (handled same as operator AD above)
+		// Set pitch envelope (roughly the same as above)
 		ADSR::Parameters envParams;
 		envParams.attack = s_parameters.pitchA;
 		envParams.decay = s_parameters.pitchD;
 		envParams.release = 0.f;
 		envParams.sustain = 1.f-envParams.decay;
-		voice.m_pitchEnv.Start(envParams, velocityInvExp /* More audioble when rammin' harder */);
+		voice.m_pitchEnv.Start(envParams, velocity);
 
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.envParams, velocity);

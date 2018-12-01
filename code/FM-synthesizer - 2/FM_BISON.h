@@ -22,31 +22,24 @@
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
+	To learn during vacation:
+		- Actual device-based FM programming, take copious notes!
+		- Look for optimizations
+
 	Useful insights:
-		- Fixed ratio operators are useful for percussive sounds and such, so support them
-		  + Supported, no controls for it yet!
-
-			"If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
-			1000. FINE adjustment is possible from 1 to 9.772 times."
-
-			So for fixed, we simply need a different interpretation.
-
-		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled.
+		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
+		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled
 
 	Missing for near-DX7/Volca compatibility:
 		- Stereo
-		- Better pitch envelope!
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
-		  are just as good
+		  are just as good, *but* I need sharper control for attacks!
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)
 		- I do not support 'level scale' (I want to, but it is not crucial to sounding compatible on note level)
+		  + Ask Kilian!
 		- My operators do not have programmable velocity sensitivy
 		- I lack algorithms
 		- No fixed frequency operators
-
-	Tasks for today:
-		- Make at least one more working algorithm
-		- Try a pitch envelope algorithm: take the usual ADSR and scale it (bipolar) using a rotary setting 
 
 	Also:
 		- Check parameter ranges

@@ -12,13 +12,14 @@ namespace SFM
 	{
 		m_ADSR.reset();
 
-		// 25% shorter attack & 100% longer release on max. velocity
-		const float attackScale  = 1.f - 0.25f*velocity;
-		const float releaseScale = 1.f + 2.f*velocity;
+		// 50% shorter attack, 25% shorter decay & 100% longer release on max. velocity
+		const float attackScale  = 1.f -  0.5f*velocity;
+		const float decayScale   = 1.f - 0.25f*velocity;
+		const float releaseScale = 1.f +   2.f*velocity;
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = floorf(parameters.decay*kSampleRate);
+		const float decay   = floorf(decayScale*parameters.decay*kSampleRate);
 		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. */, floorf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustain;
 

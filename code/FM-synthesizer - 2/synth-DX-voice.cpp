@@ -15,11 +15,11 @@ namespace SFM
 		// Get tremolo
 		const float tremolo = m_tremolo.Sample(0.f);
 
-		// Get vibrato (frequency multiplier)
-		const float vibrato = powf(2.f, m_vibrato.Sample(0.f));
-
+		// Get vibrato 
+		const float vibrato = m_vibrato.Sample(0.f);
+	
 		// Get pitch env.
-		const float pitchEnv = powf(2.f, -1.f + m_pitchEnv.Sample()*2.f);
+		const float pitchEnv = powf(2.f, m_pitchEnv.Sample());
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];
@@ -66,7 +66,12 @@ namespace SFM
 				}
 
 				// Set pitch bend
-				const float bend = m_pitchBend+pitchEnv + opDX.vibrato*vibrato;
+				float bend = m_pitchBend+pitchEnv;
+
+				const float opVib = opDX.vibrato;
+				if (opVib != 0.f)
+					bend *= powf(2.f, vibrato*opVib);
+
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample
