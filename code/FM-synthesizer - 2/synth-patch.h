@@ -2,6 +2,11 @@
 /*
 	Syntherklaas FM -- "Dry" instrument patch.
 
+	Dry means this does not contain a few global settings on the synthesizer such
+	as LFO type, pitch envelope et cetera. These could quite easily be a part of the
+	patch but I for now decide against it; a patch ideally sounds decent under a variety
+	of global parameters.
+
 	Volca (unofficial) manual: http://afrittemple.com/volca/volca_programming.pdf
 */
 
@@ -9,7 +14,7 @@
 
 namespace SFM
 {
-	// Max. amount of fine tuning for fixed ratio operators
+	// Max. amount of fine tuning for fixed ratio operators (source: Volca FM)
 	const float kFixedFineScale = 9.772f;
 
 	struct FM_Patch
