@@ -45,11 +45,9 @@ namespace SFM
 			float pitchEnvAmt;
 
 			// Level scaling settings
-			// This is very easy to stash into a couple of bits, but for now
-			// I'll settle for inefficient verbosity (FIXME)
-			unsigned levelScaleMiddle; // [0..127] MIDI
-			bool leftLevelScaleExp, rightLevelScaleExp;
-			float leftLevelScaleDir, rightLevelScaleDir; // -1.0 = Down, 0.0 = off, 1.0 = Up
+			// FIXME: optimize!
+			unsigned levelScaleBP; // [0..127] MIDI
+			float levelScaleLeft, levelScaleRight;
  
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop
@@ -90,9 +88,9 @@ namespace SFM
 				OP.pitchEnvAmt = 1.f;
 
 				// No level scaling
-				OP.levelScaleMiddle = 69;
-				OP.leftLevelScaleExp = OP.rightLevelScaleExp = false;
-				OP.leftLevelScaleDir = OP.rightLevelScaleDir = 0.f;
+				OP.levelScaleBP = 69;
+				OP.levelScaleLeft = 0.f;
+				OP.levelScaleRight = 0.f;
 
 				// Zero feedback 
 				OP.feedbackAmt = 0.f;

@@ -28,7 +28,7 @@
 		  + Velocity sensitivity
 		  + Pitch velocity sensitivity
 		  + Envelope release scale
-		- Implement level scaling: the parameters are ready to be used
+		- Finish implementing (linear) level scale
 		- Optimize delay line (see impl.)
 
 	To learn during vacation:

@@ -154,7 +154,16 @@ namespace SFM
 	// Calculate operator amplitude
 	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
-		// FIXME: implement level scaling here
+		const unsigned breakpoint = patchOp.levelScaleBP;
+		if (key < breakpoint)
+		{
+			// FIXME
+		}
+		else if (key > levelScaleBP)
+		{
+			// FIXME
+		}
+
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
 
@@ -181,8 +190,8 @@ namespace SFM
 		frequency *= jitter;
 
 		// Each has a distinct effect
-		const float velocity       = request.velocity;
-		const float invVelocity    = 1.f-velocity;
+		const float velocity    = request.velocity;
+		const float invVelocity = 1.f-velocity;
 		
 		// Master
 		const float masterAmp = kMaxVoiceAmp;
@@ -224,7 +233,7 @@ namespace SFM
 		const float freqScale = masterFreq/g_midiFreqRange;
 
 		// Set tremolo LFO
-		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. irrelevant
+		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. irrelevant (FIXME: or is it?)
 		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*oscWhiteNoise();
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
 
