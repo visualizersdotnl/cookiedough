@@ -3,17 +3,13 @@
 	Syntherklaas FM -- "Dry" instrument patch.
 
 	Volca (unofficial) manual: http://afrittemple.com/volca/volca_programming.pdf
-
-	I cite:
-
-	"If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
-	1000. FINE adjustment is possible from 1 to 9.772 times."
 */
 
 #pragma once
 
 namespace SFM
 {
+	// Max. amount of fine tuning for fixed ratio operators
 	const float kFixedFineScale = 9.772f;
 
 	struct FM_Patch
@@ -27,6 +23,8 @@ namespace SFM
 			float detune;
 
 			// Fixed frequency (alters interpretation of coarse and fine)
+			// "If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
+			// 1000. FINE adjustment is possible from 1 to 9.772 times."
 			bool fixed;
 			
 			// Linear
@@ -40,6 +38,12 @@ namespace SFM
 			float opEnvA;
 			float opEnvD;
 
+			// Velocity sensitivity
+			float velSens;
+
+			// Pitch envelope influence
+			float pitchEnvAmt;
+ 
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop
 			float feedbackAmt;
@@ -61,6 +65,8 @@ namespace SFM
 				OP.vibrato = 0.f;
 				OP.opEnvA = 0.f;
 				OP.opEnvD = 0.f;
+				OP.velSens = 1.f;
+				OP.pitchEnvAmt = 1.f;
 				OP.feedbackAmt = 0.f;
 			}
 		}

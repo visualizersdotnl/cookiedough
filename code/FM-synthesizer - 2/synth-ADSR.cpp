@@ -8,14 +8,19 @@
 
 namespace SFM
 {
-	void ADSR::Start(const Parameters &parameters, float velocity)
+	void ADSR::Start(const Parameters &parameters, float velocity, float freqScale /* = 0.f */)
 	{
 		m_ADSR.reset();
 
-		// 50% shorter attack, 25% shorter decay & 100% longer release on max. velocity
+		SFM_ASSERT(velocity <= 1.f);
+
+		// 50% shorter attack, 25% shorter decay on max. velocity
 		const float attackScale  = 1.f -  0.5f*velocity;
 		const float decayScale   = 1.f - 0.25f*velocity;
-		const float releaseScale = 1.f +   2.f*velocity;
+
+		// Expand release with respect to frequency (i.e. high notes have a shorter release, this makes physical sense)
+		// FIXME: test!
+		const float releaseScale = 1.f + 2.f*(velocity-freqScale);
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
@@ -39,6 +44,7 @@ namespace SFM
 	void ADSR::Stop(float velocity)
 	{
 		// Harder touch, less linear
+		// Not factoring in frequency here; elongating the release cycle (above) should be sufficient
 		const float invVel = 1.f-velocity;
 		m_ADSR.setTargetRatioDR(0.1f + invVel);
 

@@ -29,9 +29,9 @@ namespace SFM
 	{
 		const float cutoff = 2.f * m_cutoff/kSampleRate;
 		const float resonance = powf(10.f, 0.05f * -m_resonance);
-		const float K = 0.5f*resonance*sinf(kPI*cutoff);
+		const float K = 0.5f*resonance*sinf(kPI*cutoff); // lutsinf(0.5f*cutoff)
 		const float C1 = 0.5f * (1.f-K) / (1.f+K);
-		const float C2 = (0.5f + C1) * cosf(kPI*cutoff);
+		const float C2 = (0.5f + C1) * cosf(kPI*cutoff); // lutcosf(0.5f*cutoff)
 		const float C3 = (0.5f + C1-C2) * 0.25f;
 		const float mA0 = 2.f*C3;
 		const float mA1 = 2.f*2.f*C3;
@@ -53,7 +53,7 @@ namespace SFM
 			m_mY2 = m_mY1;
 			m_mY1 = sample;
 				
-			sample = tanhf(sample);
+			sample = fast_tanhf(sample);
 
 			sample = Blend(dry, sample, contour, ADSR);
 			SampleAssert(sample);
@@ -75,7 +75,7 @@ namespace SFM
 			const float dry = pSamples[iSample];
 			const float ADSR = SampleEnv(m_ADSR, invert);
 
-			dV0 = -m_cutoff * (fast_tanh((dry*m_drive + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwats
+			dV0 = -m_cutoff * (fast_tanh((dry*m_drive + m_resonance*m_V[3]) / (2.0*kVT)) + m_tV[0]); // kVT = thermal voltage in milliwatts
 			m_V[0] += (dV0 + m_dV[0]) / (2.0*kSampleRate);
 			m_dV[0] = dV0;
 			m_tV[0] = fast_tanh(m_V[0] / (2.0*kVT));

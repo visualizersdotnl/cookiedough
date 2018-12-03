@@ -22,13 +22,19 @@
 	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
+	Things I've figured I should do:
+		- Test untested changes, and implement input for:
+		  + Velocity sensitivity
+		  + Pitch velocity sensitivity
+		  + Envelope release scale
+		- Implement level scaling
+		- Optimize delay line (see impl.)
+
 	To learn during vacation:
-		- Actual device-based FM programming, take copious notes!
 		- Look for optimizations
 		- I *need* level scaling: https://www.youtube.com/watch?v=0XY2IcwNVnk
-		  + Je geeft aan wat het midden van je toetsenbord is voor operator N, en aan weerskanten hoe steep en lang de curve is to demodulate!
-		    Kijk hier eerst naar!
-`
+		  + Yes, I do: https://github.com/smbolton/hexter/blob/master/src/dx7_voice.c
+
 	Useful insights:
 		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
 		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled
@@ -37,10 +43,8 @@
 		- Stereo
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
 		  are just as good, *but* I need sharper control for attacks!
-		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release)
-		- I do not support 'level scale' (I want to, but it is not crucial to sounding compatible on note level)
-		  + Ask Kilian, see URL above!
-		- My operators do not have programmable velocity sensitivy
+		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release),
+		  and implied S (sustain)
 		- I lack algorithms
 	
 	Also:

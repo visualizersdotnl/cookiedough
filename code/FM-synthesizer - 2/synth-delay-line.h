@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Delay line (fractional).
+
+	FIXME: take fitting power of 2 boundary to kill the modulo
 */
 
 #pragma once

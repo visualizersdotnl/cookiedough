@@ -29,7 +29,7 @@ namespace SFM
 
 		::ADSR m_ADSR;
 
-		void Start(const Parameters &parameters, float velocity);
+		void Start(const Parameters &parameters, float velocity, float freqScale = 0.f);
 		void Stop(float velocity /* Aftertouch? */);
 
 		void Reset()

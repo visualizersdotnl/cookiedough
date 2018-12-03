@@ -34,7 +34,10 @@ namespace SFM
 			float vibrato;
 
 			// Op env.
-			ADSR opEnv;			
+			ADSR opEnv;		
+
+			// Pitch env. influence
+			float pitchEnvAmt;	
 
 			// Feedback amount
 			float feedbackAmt;
@@ -50,6 +53,7 @@ namespace SFM
 				feedback = -1;
 				tremolo = 0.f;
 				opEnv.Reset();
+				pitchEnvAmt = 1.f;
 				feedbackAmt = 0.f;
 				isCarrier = false;
 			}

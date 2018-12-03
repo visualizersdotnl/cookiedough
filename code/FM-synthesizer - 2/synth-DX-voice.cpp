@@ -19,8 +19,7 @@ namespace SFM
 		const float vibrato = m_vibrato.Sample(0.f);
 	
 		// Get pitch env.
-		const float kPitchEnvRange = 4.f; // FIXME
-		const float pitchEnv = powf(2.f, -(kPitchEnvRange/2.f) + m_pitchEnv.Sample()*kPitchEnvRange);
+		const float pitchEnv = m_pitchEnv.Sample();
 
 		// Process all operators top-down (this isn't too pretty but good enough for our amount of operators)
 		float sampled[kNumOperators];
@@ -66,7 +65,10 @@ namespace SFM
 					feedback = m_feedback[index];
 				}
 
-				// Set pitch bend
+				// Set pitch bend (factoring in pitch env. scale & vibrato)
+				const float pitchEnvScale = opDX.pitchEnvAmt*kPitchEnvRange;
+				const float pitchEnv = powf(2.f, -(pitchEnvScale*0.5f) + pitchEnv*pitchEnvScale);
+
 				float bend = m_pitchBend+pitchEnv;
 
 				const float opVib = opDX.vibrato;

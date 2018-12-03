@@ -126,7 +126,8 @@ namespace SFM
 		Voice logic.
 	*/
 
-	SFM_INLINE float CalcOpFreq(float frequency, FM_Patch::Operator &patchOp)
+	// Calculate operator frequency
+	SFM_INLINE float CalcOpFreq(float frequency, const FM_Patch::Operator &patchOp)
 	{
 		const unsigned coarse = patchOp.coarse;
 
@@ -145,6 +146,12 @@ namespace SFM
 //		frequency *= patchOp.detune;
 
 		return frequency;
+	}
+
+	// Calculate operator amplitude
+	SFM_INLINE float CalcOpAmp(float amplitude, float velocity, const FM_Patch::Operator &patchOp)
+	{
+		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
 
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
@@ -171,19 +178,15 @@ namespace SFM
 		// Each has a distinct effect
 		const float velocity       = request.velocity;
 		const float invVelocity    = 1.f-velocity;
-//		const float velocityExp    = velocity*velocity;
-//		const float velocityInvExp = Clamp(invsqrf(velocity));
 		
 		// Master/global
-		const float masterAmp = velocity*kMaxVoiceAmp;
+		const float masterAmp = kMaxVoiceAmp;
 		const float masterFreq = frequency;
-
-		// FIXME: I find the use of velocityInvExp suspicious
-		const float modDepth = s_parameters.modDepth*velocity;
+		const float modDepth = s_parameters.modDepth;
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -193,12 +196,12 @@ namespace SFM
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
+		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), CalcOpAmp(masterAmp, velocity, patch.operators[0]));
 
 		// Operator #1
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
+		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), CalcOpAmp(modDepth, velocity, patch.operators[1]);
 
 		/*
 			End of Algorithm
@@ -206,102 +209,28 @@ namespace SFM
 
 #endif
 
-#if 1
-
-		/*
-			Test algorithm: Volca FM algorithm #9
-		*/
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), masterAmp*patch.operators[0].amplitude);
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), modDepth*patch.operators[1].amplitude);
-
-		// Operator #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[2].modulators[1] = 4;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[2]), masterAmp*patch.operators[2].amplitude);
-
-		// Operator #4
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].feedback = -1;
-		voice.m_operators[3].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[3]), modDepth*patch.operators[3].amplitude);
-
-		// Operator #5
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].feedback = -1;
-		voice.m_operators[4].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[4]), modDepth*patch.operators[4].amplitude);
-
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = -1;
-		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-#if 0
-
-		/*
-			Test algorithm: Volca FM algorithm #31
-		*/
-
-		// Operators #1 - #5 (carriers)
-		for (unsigned iOp = 0; iOp < 5; ++iOp)
-		{
-			DX_Voice::Operator &opDX = voice.m_operators[iOp];
-			opDX.enabled = true;
-			opDX.isCarrier = true;
-			opDX.oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[iOp]), masterAmp*patch.operators[iOp].amplitude);
-		}
-
-		// Modulator/Operator #5
-		voice.m_operators[4].modulators[0] = 5;
-
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = 5;
-		voice.m_operators[5].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[5]), modDepth*patch.operators[5].amplitude);
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-		// Freq. scale
+		// Freq. scale (or key scale if you will)
 		const float freqScale = masterFreq/g_midiFreqRange;
 
 		// Set tremolo LFO
-		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity;
-		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*mt_randf();
+		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. irrelevant
+		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*oscWhiteNoise();
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
 
 		// Set vibrato LFO
-		const float vibFreq = k2PI*s_parameters.vibrato*(freqScale+velocity);
-		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*mt_randf();
+		const float vibFreq = k2PI*s_parameters.vibrato*(velocity+freqScale); // Note Hz. relevant
+		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
 
-		// Set per-operator
+		// Set per operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			// Tremolo/Vibrato amount
 			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
 			voice.m_operators[iOp].tremolo = patch.operators[iOp].tremolo;
 
-			// Feedback amount
+			// Amounts/Sensitivity
+			voice.m_operators[iOp].pitchEnvAmt = patch.operators[iOp].pitchEnvAmt;
 			voice.m_operators[iOp].feedbackAmt = patch.operators[iOp].feedbackAmt;
 
 			// Mod env.
@@ -527,6 +456,10 @@ namespace SFM
 			// Tremolo & vibrato
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
+
+			// FIXME
+			patchOp.velSens = 1.f;
+			patchOp.pithEnvAmt = 1.f;
 
 			// Feedback amount
 			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount()*kMaxOperatorFeedback;

@@ -84,6 +84,9 @@ namespace SFM
 
 	// Max. filter drive
 	const float kMaxFilterDrivedB = 3.f;
+
+	// Pitch envelope max. range (in octaves)
+	const float kPitchEnvRange = 4.f;
 }
 
 #include "synth-LUT.h"
