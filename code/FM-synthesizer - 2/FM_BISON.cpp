@@ -161,17 +161,24 @@ namespace SFM
 		//        and this appears to be a workaround but study it again if this does not work
 		//        well enough (wouldn't be the first time)
 		const unsigned breakpoint = patchOp.levelScaleBP;
-		if (key < breakpoint)
+		if (key < breakpoint && breakpoint > 0)
 		{
 			const float step = 1.f/breakpoint;
 			const float delta = 1.f-(step*key);
 			amplitude += patchOp.levelScaleLeft*delta;
+
+			// EXP
+//			amplitude += patchOp.levelScaleLeft * (delta*delta);
 		}
-		else if (key > breakpoint)
+		else if (key > breakpoint && breakpoint < 127)
 		{
 			const float step = 1.f/(127-breakpoint);
 			const float delta = step*(key-breakpoint);
+
 			amplitude += patchOp.levelScaleRight*delta;
+
+			// EXP
+//			amplitude += patchOp.levelScaleRight * delta*delta;
 		}
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
