@@ -3,7 +3,10 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	This is my second attempt at an FM synthesizer:
+	Second prototype of FM synthesizer
+	To be released as VST by Tasty Chips Electronics
+
+	Features:
 	- 6 programmable operators with envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
 	- Master clean 24dB & MOOG 24dB ladder filters
@@ -56,6 +59,7 @@
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?
+		  Maybe just ask Pieter about using a Biquad?
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 		- Cherry pick from the first iteration's lists

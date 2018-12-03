@@ -200,6 +200,22 @@ namespace SFM
 		return triangle*4.f;
 	}
 
+	//. FIXME: test
+	SFM_INLINE float oscPolyTriangleNew(float phase, float frequency)
+	{
+		phase = fabsf(fmodf(phase, 1.f));
+
+		phase *= 2.f;
+
+		float slope;
+		if (phase < 1.f)
+			slope = oscPolySaw(phase, frequency);
+		else
+			slope = oscPolySaw(1.f-(phase-1.f), frequency);
+
+		return slope;
+	}
+
 	/*
 		Noise oscillator(s).
 	*/	

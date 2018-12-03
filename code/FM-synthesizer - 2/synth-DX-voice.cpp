@@ -38,10 +38,9 @@ namespace SFM
 				float modulation = 0.f;
 				for (unsigned iMod = 0; iMod < 3; ++iMod)
 				{
-					if (-1 != opDX.modulators[iMod])
+					const unsigned iModulator = opDX.modulators[iMod];
+					if (-1 != iModulator)
 					{
-						const unsigned iModulator = opDX.modulators[iMod];
-
 						// Sanity checks
 						SFM_ASSERT(iModulator < kNumOperators);
 						SFM_ASSERT(iModulator > index);
@@ -72,7 +71,7 @@ namespace SFM
 				float bend = m_pitchBend+pitchEnv;
 
 				const float opVib = opDX.vibrato;
-				if (opVib != 0.f)
+				if (opVib != 0.f) // FIXME?
 					bend *= powf(2.f, vibrato*opVib);
 
 				opDX.oscillator.PitchBend(bend);

@@ -24,7 +24,7 @@ namespace SFM
 
 		void Write(float value)
 		{
-			m_buffer[m_writeIdx  & (kRingBufferSize-1)] = value;
+			m_buffer[m_writeIdx & (kRingBufferSize-1)] = value;
 			m_writeIdx = ++m_writeIdx;
 		}
 
