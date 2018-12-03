@@ -13,6 +13,7 @@
 	- Paraphonic (24 voices)
 	- Adjustable tone jitter (for analogue warmth)
 	- Tuneable global delay effect
+	- Yamaha-style level scaling
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 	At this point this code is not optimized for speed but there's tons of low hanging fruit.
@@ -27,7 +28,7 @@
 		  + Velocity sensitivity
 		  + Pitch velocity sensitivity
 		  + Envelope release scale
-		- Implement level scaling
+		- Implement level scaling: the parameters are ready to be used
 		- Optimize delay line (see impl.)
 
 	To learn during vacation:
@@ -44,14 +45,14 @@
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
 		  are just as good, *but* I need sharper control for attacks!
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release),
-		  and implied S (sustain)
+		  and implied S (sustain); I can fix this when going to VST
 		- I lack algorithms
 	
 	Also:
 		- Check parameter ranges
 		- Review operator loop
-		- All FIXMEs
-		- Optimization; you're working with powers of 2 and cache misses left and right
+		- FIXMEs
+		- Optimization
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?

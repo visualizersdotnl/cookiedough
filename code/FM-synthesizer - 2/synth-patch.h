@@ -43,6 +43,13 @@ namespace SFM
 
 			// Pitch envelope influence
 			float pitchEnvAmt;
+
+			// Level scaling settings
+			// This is very easy to stash into a couple of bits, but for now
+			// I'll settle for inefficient verbosity (FIXME)
+			unsigned levelScaleMiddle; // [0..127] MIDI
+			bool leftLevelScaleExp, rightLevelScaleExp;
+			float leftLevelScaleDir, rightLevelScaleDir; // -1.0 = Down, 0.0 = off, 1.0 = Up
  
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop
@@ -56,17 +63,38 @@ namespace SFM
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			{	
 				Operator &OP = operators[iOp];
+
+				// Note tone
 				OP.coarse = 1;
 				OP.fine = 0.f;
 				OP.detune = 0.f;
+
+				// Not fixed ratio
 				OP.fixed = false;
+
+				// Amplitude/Deoth
 				OP.amplitude = 1.f;
+
+				// No tremolo/vibrato
 				OP.tremolo = 0.f;
 				OP.vibrato = 0.f;
+
+				// Flat amplitude env.
 				OP.opEnvA = 0.f;
 				OP.opEnvD = 0.f;
+
+				// Fully sensitive
 				OP.velSens = 1.f;
+
+				// Full pitch env. response
 				OP.pitchEnvAmt = 1.f;
+
+				// No level scaling
+				OP.levelScaleMiddle = 69;
+				OP.leftLevelScaleExp = OP.rightLevelScaleExp = false;
+				OP.leftLevelScaleDir = OP.rightLevelScaleDir = 0.f;
+
+				// Zero feedback 
 				OP.feedbackAmt = 0.f;
 			}
 		}

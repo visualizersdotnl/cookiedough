@@ -328,7 +328,7 @@ namespace SFM
 				case NOTE_ON:
 					{
 						if (-1 == s_voices[controlIdx])
-							TriggerVoice(s_voices+controlIdx, Waveform::kSine, g_midiToFreqLUT[controlIdx], fControlVal);
+							TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
 						else
 							// Only happens when CPU-bound past the limit
 							Log("NOTE_ON could not be triggered due to latency.");

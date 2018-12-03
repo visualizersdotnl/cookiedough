@@ -58,6 +58,7 @@ namespace SFM
 	{
 		unsigned *pIndex;
 		Waveform form;
+		unsigned key; // [0..127] MIDI
 		float frequency;
 		float velocity;
 	};
@@ -91,8 +92,11 @@ namespace SFM
 		Voice API.
 	*/
 
-	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity)
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity)
 	{
+		SFM_ASSERT(key < 127);
+		const float frequency = g_midiToFreqLUT[key];
+
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
@@ -100,6 +104,7 @@ namespace SFM
 		VoiceRequest request;
 		request.pIndex = pIndex;
 		request.form = form;
+		request.key = key;
 		request.frequency = frequency;
 		request.velocity = velocity;
 		s_voiceReq.push_front(request);
@@ -457,7 +462,7 @@ namespace SFM
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
 
-			// FIXME
+			// FIXME: attach controls
 			patchOp.velSens = 1.f;
 			patchOp.pithEnvAmt = 1.f;
 
