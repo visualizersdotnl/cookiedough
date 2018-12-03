@@ -151,12 +151,15 @@ namespace SFM
 		return frequency;
 	}
 
-	// Calculate operator amplitude
+	// Calculate operator amplitude/depth
 	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
 		// Level scaling
-		// This will be a simple linear falloff to either side
+		// This is, for now, a simple linear falloff to either side
 		// FIXME: exponential, DX7-style, ...
+		// FIXME: breakpoint is an actual key here, it works a little different on the DX7
+		//        and this appears to be a workaround but study it again if this does not work
+		//        well enough (wouldn't be the first time)
 		const unsigned breakpoint = patchOp.levelScaleBP;
 		if (key < breakpoint)
 		{
