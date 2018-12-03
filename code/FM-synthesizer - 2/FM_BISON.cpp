@@ -154,14 +154,21 @@ namespace SFM
 	// Calculate operator amplitude
 	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
+		// Level scaling
+		// This will be a simple linear falloff to either side
+		// FIXME: exponential, DX7-style, ...
 		const unsigned breakpoint = patchOp.levelScaleBP;
 		if (key < breakpoint)
 		{
-			// FIXME
+			const float step = 1.f/breakpoint;
+			const float delta = 1.f-(step*key);
+			amplitude += patchOp.levelScaleLeft*delta;
 		}
-		else if (key > levelScaleBP)
+		else if (key > breakpoint)
 		{
-			// FIXME
+			const float step = 1.f/(127-breakpoint);
+			const float delta = step*(key-breakpoint);
+			amplitude += patchOp.levelScaleRight*delta;
 		}
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
@@ -478,6 +485,9 @@ namespace SFM
 			// FIXME: attach controls
 			patchOp.velSens = 1.f;
 			patchOp.pithEnvAmt = 1.f;
+			patchOp.levelScaleBP = 69;
+			patchOp.levelScaleLeft = 0.f;
+			patchOp.levelScaleRight = 0.f;
 
 			// Feedback amount
 			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount()*kMaxOperatorFeedback;

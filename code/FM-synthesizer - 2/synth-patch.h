@@ -47,7 +47,7 @@ namespace SFM
 			// Level scaling settings
 			// FIXME: optimize!
 			unsigned levelScaleBP; // [0..127] MIDI
-			float levelScaleLeft, levelScaleRight;
+			float levelScaleLeft, levelScaleRight; // [-1..1]
  
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop

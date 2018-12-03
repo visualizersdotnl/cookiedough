@@ -28,7 +28,7 @@
 		  + Velocity sensitivity
 		  + Pitch velocity sensitivity
 		  + Envelope release scale
-		- Finish implementing (linear) level scale
+		  + Prelim. level scaling
 		- Optimize delay line (see impl.)
 
 	To learn during vacation:
@@ -52,7 +52,7 @@
 		- Check parameter ranges
 		- Review operator loop
 		- FIXMEs
-		- Optimization
+		- Optimization (!)
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?
