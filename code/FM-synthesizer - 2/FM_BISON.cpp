@@ -59,7 +59,6 @@ namespace SFM
 		unsigned *pIndex;
 		Waveform form;
 		unsigned key; // [0..127] MIDI
-		float frequency;
 		float velocity;
 	};
 
@@ -95,8 +94,8 @@ namespace SFM
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity)
 	{
 		SFM_ASSERT(key < 127);
-		const float frequency = g_midiToFreqLUT[key];
 
+		const float frequency = g_midiToFreqLUT[key];
 		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
@@ -105,7 +104,6 @@ namespace SFM
 		request.pIndex = pIndex;
 		request.form = form;
 		request.key = key;
-		request.frequency = frequency;
 		request.velocity = velocity;
 		s_voiceReq.push_front(request);
 
@@ -154,8 +152,9 @@ namespace SFM
 	}
 
 	// Calculate operator amplitude
-	SFM_INLINE float CalcOpAmp(float amplitude, float velocity, const FM_Patch::Operator &patchOp)
+	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
+		// FIXME: implement level scaling here
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
 
@@ -167,7 +166,8 @@ namespace SFM
 		voice.ResetOperators();
 //		voice.Reset();
 		
-		float frequency = request.frequency;
+		const unsigned key = request.key;
+		float frequency = g_midiToFreqLUT[key];
 
 		// Randomize note frequency little if wanted (in (almost) entire cents)
 		const float jitterAmt = kMaxNoteJitter*s_parameters.noteJitter;
@@ -184,7 +184,7 @@ namespace SFM
 		const float velocity       = request.velocity;
 		const float invVelocity    = 1.f-velocity;
 		
-		// Master/global
+		// Master
 		const float masterAmp = kMaxVoiceAmp;
 		const float masterFreq = frequency;
 		const float modDepth = s_parameters.modDepth;
@@ -201,12 +201,18 @@ namespace SFM
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(request.form, CalcOpFreq(masterFreq, patch.operators[0]), CalcOpAmp(masterAmp, velocity, patch.operators[0]));
+		voice.m_operators[0].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(masterFreq, patch.operators[0]), 
+			CalcOpAmp(masterAmp, key, velocity, patch.operators[0]));
 
 		// Operator #1
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(kSine, CalcOpFreq(masterFreq, patch.operators[1]), CalcOpAmp(modDepth, velocity, patch.operators[1]);
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(masterFreq, patch.operators[1]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[1]);
 
 		/*
 			End of Algorithm
@@ -239,10 +245,8 @@ namespace SFM
 			voice.m_operators[iOp].feedbackAmt = patch.operators[iOp].feedbackAmt;
 
 			// Mod env.
-
 			// We always attack to 1.0, then decay works a little different here in that it also decides
 			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
-
 			ADSR::Parameters envParams;
 			envParams.attack = s_parameters.patch.operators[iOp].opEnvA;
 			envParams.decay = s_parameters.patch.operators[iOp].opEnvD;
