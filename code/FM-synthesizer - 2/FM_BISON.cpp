@@ -165,6 +165,8 @@ namespace SFM
 		{
 			const float step = 1.f/breakpoint;
 			const float delta = 1.f-(step*key);
+
+			// Sign (direction) and depth is all in the scale param.
 			amplitude += patchOp.levelScaleLeft*delta;
 
 			// EXP
@@ -180,6 +182,9 @@ namespace SFM
 			// EXP
 //			amplitude += patchOp.levelScaleRight * delta*delta;
 		}
+
+		// FIXME: wouldn't SoftClamp() be a fun idea?
+		amplitude = Clamp(amplitude);
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
@@ -206,13 +211,11 @@ namespace SFM
 		FloatAssert(jitter);
 		frequency *= jitter;
 
-		// Each has a distinct effect
+		// WHilst it's tempting to use an (inverse) exponential of velocity: don't
+		// do so unless you run into a situation where it makes absolute sense
 		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
 		
-		// Master
-		const float masterAmp = kMaxVoiceAmp;
-		const float masterFreq = frequency;
 		const float modDepth = s_parameters.modDepth;
 
 		FM_Patch &patch = s_parameters.patch;
@@ -229,15 +232,15 @@ namespace SFM
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			request.form, 
-			CalcOpFreq(masterFreq, patch.operators[0]), 
-			CalcOpAmp(masterAmp, key, velocity, patch.operators[0]));
+			CalcOpFreq(frequency, patch.operators[0]), 
+			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
 
 		// Operator #1
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 
-			CalcOpFreq(masterFreq, patch.operators[1]), 
+			CalcOpFreq(frequency, patch.operators[1]), 
 			CalcOpAmp(modDepth, key, velocity, patch.operators[1]);
 
 		/*
@@ -247,7 +250,7 @@ namespace SFM
 #endif
 
 		// Freq. scale (or key scale if you will)
-		const float freqScale = masterFreq/g_midiFreqRange;
+		const float freqScale = frequency/g_midiFreqRange;
 
 		// Set tremolo LFO
 		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. irrelevant (FIXME: or is it?)
