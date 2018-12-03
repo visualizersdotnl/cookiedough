@@ -20,6 +20,10 @@
 
 	Until this feature set works and is reasonably efficient, no other features are to be added.
 	At this point this code is not optimized for speed but there's tons of low hanging fruit.
+	
+	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
+	bag of language use at the moment.
+
 
 	Third party credits:
 	- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
@@ -33,6 +37,8 @@
 		  + Envelope release scale
 		  + Prelim. level scaling
 		- Optimize delay line (see impl.)
+		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
+		  "obvious"
 
 	To learn during vacation:
 		- Look for optimizations
@@ -55,7 +61,6 @@
 		- Check parameter ranges
 		- Review operator loop
 		- FIXMEs
-		- Optimization (!)
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?

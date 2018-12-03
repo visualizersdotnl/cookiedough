@@ -68,7 +68,6 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		// Return derivative
 		return 2.f*(asinf(oscSine(phase))*(1.f/kPI));
 	}
 
@@ -200,7 +199,7 @@ namespace SFM
 		return triangle*4.f;
 	}
 
-	//. FIXME: test
+	// FIXME: test
 	SFM_INLINE float oscPolyTriangleNew(float phase, float frequency)
 	{
 		phase = fabsf(fmodf(phase, 1.f));
