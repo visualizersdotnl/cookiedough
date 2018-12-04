@@ -75,7 +75,7 @@ namespace SFM
 				// Not fixed ratio
 				OP.fixed = false;
 
-				// Amplitude/Deoth
+				// Amplitude/depth
 				OP.amplitude = 1.f;
 
 				// No tremolo/vibrato
