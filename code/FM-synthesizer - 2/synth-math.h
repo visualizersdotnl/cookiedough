@@ -14,9 +14,9 @@ namespace SFM
 	const float k2PI = 2.f*kPI;
 	const float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
 	const float kGoldenRatio = 1.61803398875f;
-	const float kRootHalf = 0.70710678118;
+	const float kRootHalf = 0.70710678118f;
 
-	// Fast approx. hyperbolic tangent function
+	// Fast approx. hyperbolic tangent funsction
 	// Taken from: https://www.kvraudio.com/forum/viewtopic.php?f=33&t=388650&sid=84cf3f5e70cec61f4b19c5031fe3a2d5
 	SFM_INLINE float fast_tanhf(float x) 
 	{

@@ -22,7 +22,6 @@
 #include "synth-midi.h"
 #include "FM_BISON.h"
 
-
 // Bevacqua mainly relies on SDL + std. C(++), so:
 #pragma comment(lib, "Winmm.lib")
 #include <Windows.h>

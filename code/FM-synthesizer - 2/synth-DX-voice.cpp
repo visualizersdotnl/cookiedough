@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM - Yamaha DX style voice.
+	Syntherklaas FM - Yamaha DX-style voice.
 */
 
 #include "synth-global.h"

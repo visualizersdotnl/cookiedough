@@ -211,7 +211,7 @@ namespace SFM
 		FloatAssert(jitter);
 		frequency *= jitter;
 
-		// WHilst it's tempting to use an (inverse) exponential of velocity: don't
+		// Whilst it's tempting to use an (inverse) exponential of velocity: don't
 		// do so unless you run into a situation where it makes absolute sense
 		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
@@ -265,23 +265,29 @@ namespace SFM
 		// Set per operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
+			const FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
+			DX_Voice::Operator &voiceOp = voice.m_operators[iOp];
+
+			// Adj. velocity
+			const float patchVel = patchOp.velSens*velocity;
+
 			// Tremolo/Vibrato amount
-			voice.m_operators[iOp].vibrato = patch.operators[iOp].vibrato;
-			voice.m_operators[iOp].tremolo = patch.operators[iOp].tremolo;
+			voiceOp.vibrato = patchOp.vibrato;
+			voiceOp.tremolo = patchOp.tremolo;
 
 			// Amounts/Sensitivity
-			voice.m_operators[iOp].pitchEnvAmt = patch.operators[iOp].pitchEnvAmt;
-			voice.m_operators[iOp].feedbackAmt = patch.operators[iOp].feedbackAmt;
+			voiceOp.pitchEnvAmt = patchOp.pitchEnvAmt;
+			voiceOp.feedbackAmt = patchOp.feedbackAmt;
 
 			// Mod env.
 			// We always attack to 1.0, then decay works a little different here in that it also decides
 			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
 			ADSR::Parameters envParams;
-			envParams.attack = s_parameters.patch.operators[iOp].opEnvA;
-			envParams.decay = s_parameters.patch.operators[iOp].opEnvD;
+			envParams.attack = patchOp.opEnvA;
+			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
 			envParams.sustain = 1.f-envParams.decay;
-			voice.m_operators[iOp].opEnv.Start(envParams, velocity);
+			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
 		// Set pitch envelope (roughly the same as above)
@@ -326,9 +332,7 @@ namespace SFM
 		for (auto &request : s_voiceReleaseReq)
 		{
 			const unsigned index = request.index;
-
 			SFM_ASSERT(-1 != index);
-
 			DX_Voice &voice = s_DXvoices[index];
 
 			const float velocity = request.velocity;
@@ -497,7 +501,7 @@ namespace SFM
 
 			// FIXME: attach controls
 			patchOp.velSens = 1.f;
-			patchOp.pithEnvAmt = 1.f;
+			patchOp.pitchEnvAmt = 1.f;
 			patchOp.levelScaleBP = 69;
 			patchOp.levelScaleLeft = 0.f;
 			patchOp.levelScaleRight = 0.f;

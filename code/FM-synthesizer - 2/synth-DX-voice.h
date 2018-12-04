@@ -1,10 +1,13 @@
 
 /*
-	Syntherklaas FM - Yamaha DX style voice.
+	Syntherklaas FM - Yamaha DX-style voice.
 
 	Important:
 		- An operator can only be modulated by an operator above it (index)
 		- Feedback can be taken from any level
+
+	This does not fully emulate a DX7 voice but rather tries to adapt what works
+	and what does not overcomplicate matters
 */
 
 #pragma once

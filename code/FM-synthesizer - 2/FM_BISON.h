@@ -6,7 +6,7 @@
 	Second prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
-	Features:
+	Features (list may be incomplete):
 	- 6 programmable operators with envelope and shared tremolo & vibrato LFOs
 	- Master drive & ADSR
 	- Master clean 24dB & MOOG 24dB ladder filters
@@ -18,45 +18,42 @@
 	- Tuneable global delay effect
 	- Yamaha-style level scaling
 
-	Until this feature set works and is reasonably efficient, no other features are to be added.
-	At this point this code is not optimized for speed but there's tons of low hanging fruit.
+	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
 	
 	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
 	bag of language use at the moment.
 
 
 	Third party credits:
-	- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
-	- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
-	- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
+		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
+		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
+		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Things I've figured I should do:
 		- Test untested changes, and implement input for:
-		  + Velocity sensitivity
-		  + Pitch velocity sensitivity
-		  + Envelope release scale
-		  + Prelim. level scaling
+		  + Velocity sensitivity (amplitude/depth)
+		  + Pitch envelope amount
+		  + Envelope release scale (ADSR)
+		  + Prelim. level scaling (check http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
+		- Add an option to sync. any operator osc. to base Hz
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"
-
-	To learn during vacation:
-		- Look for optimizations
-		- I *need* level scaling: https://www.youtube.com/watch?v=0XY2IcwNVnk
-		  + Yes, I do: https://github.com/smbolton/hexter/blob/master/src/dx7_voice.c
 
 	Useful insights:
 		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
 		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled
 
-	Missing for near-DX7/Volca compatibility:
+	Missing (important) features that DX7 and Volca FM have:
 		- Stereo
 		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
 		  are just as good, *but* I need sharper control for attacks!
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release),
 		  and implied S (sustain); I can fix this when going to VST
+		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope (EG),
+		  not pitch env.
 		- I lack algorithms
-	
+
 	Also:
 		- Check parameter ranges
 		- Review operator loop
@@ -64,10 +61,8 @@
 
 	Things that are missing or broken:
 		- "Clean" filter plops when cutoff is pulled shut: why?
-		  Maybe just ask Pieter about using a Biquad?
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
-		- Cherry pick from the first iteration's lists
 */
 
 #pragma once
