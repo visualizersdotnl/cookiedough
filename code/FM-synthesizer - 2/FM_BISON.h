@@ -18,7 +18,7 @@
 	  + Pitch bend
 	  + 24 voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
-	  + Delay effect with feedback
+	  + Configurable delay effect with optional feedback
 	- Multiple established FM algorithms
 
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
@@ -41,6 +41,7 @@
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"
+		- Maybe, *maybe*, introduce that or a better formant filter
 
 	Useful insights:
 		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
