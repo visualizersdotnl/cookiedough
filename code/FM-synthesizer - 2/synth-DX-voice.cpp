@@ -102,7 +102,7 @@ namespace SFM
 		// --------------
 
 		// Store feedback
-		// The DX7 does this in a bit more coarse fashion (see Dexed impl.).
+		// The DX7 does this in a bit more coarse fashion (see Dexed/Hexter impl.).
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;
 

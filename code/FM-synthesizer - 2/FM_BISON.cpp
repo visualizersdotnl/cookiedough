@@ -347,7 +347,8 @@ namespace SFM
 			voice.m_pFilter->Stop(velocity);
 */
 
-			// ^^ Secondary envelopes are not stopped as they have no release.
+			// ^^ Secondary envelopes are not stopped as they have no release
+			//    This will probably change in the future
 
 			Log("Voice released: " + std::to_string(request.index));
 		}

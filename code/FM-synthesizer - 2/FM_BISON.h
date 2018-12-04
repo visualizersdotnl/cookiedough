@@ -7,16 +7,19 @@
 	To be released as VST by Tasty Chips Electronics
 
 	Features (list may be incomplete):
-	- 6 programmable operators with envelope and shared tremolo & vibrato LFOs
-	- Master drive & ADSR
-	- Master clean 24dB & MOOG 24dB ladder filters
-	- Global modulation control & pitch envelope (AD)
-	- Pitch bend
-	- Multiple tried & tested FM algorithms
-	- Paraphonic (24 voices)
-	- Adjustable tone jitter (for analogue warmth)
-	- Tuneable global delay effect
-	- Yamaha-style level scaling
+	- 6 programmable operators with:
+	  + Tremolo & vibrato LFO (both velocity sensitive, vibrato key scaled)
+	  + Yamaha-style level scaling
+	  + Amplitude envelope (velocity sensitive, per operator modulation)
+	- Global:
+	  + Drive
+	  + ADSR
+	  + Clean & MOOG-style ladder filter (24dB)
+	  + Pitch bend
+	  + 24 voices (paraphonic)
+	  + Adjustable tone jitter (for analogue warmth)
+	  + Delay effect with feedback
+	- Multiple established FM algorithms
 
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
 	
@@ -31,11 +34,11 @@
 
 	Things I've figured I should do:
 		- Test untested changes, and implement input for:
-		  + Velocity sensitivity (amplitude/depth)
+		  + Velocity sensitivity (amplitude/depth, operator amplitude env.)
 		  + Pitch envelope amount
 		  + Envelope release scale (ADSR)
 		  + Prelim. level scaling (check http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
-		- Add an option to sync. any operator osc. to base Hz
+		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"
@@ -50,8 +53,8 @@
 		  are just as good, *but* I need sharper control for attacks!
 		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release),
 		  and implied S (sustain); I can fix this when going to VST
-		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope (EG),
-		  not pitch env.
+		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
+		  not pitch env. (always fully responds to velocity)
 		- I lack algorithms
 
 	Also:

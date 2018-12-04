@@ -5,7 +5,7 @@
 	Dry means this does not contain a few global settings on the synthesizer such
 	as LFO type, pitch envelope et cetera. These could quite easily be a part of the
 	patch but I for now decide against it; a patch ideally sounds decent under a variety
-	of global parameters.
+	of global parameters. But, FIXME, this theory is yet to be tested.
 
 	Volca (unofficial) manual: http://afrittemple.com/volca/volca_programming.pdf
 */
@@ -86,7 +86,7 @@ namespace SFM
 				OP.opEnvA = 0.f;
 				OP.opEnvD = 0.f;
 
-				// Fully sensitive
+				// Fully sensitive (amplitude & operator env.)
 				OP.velSens = 1.f;
 
 				// Full pitch env. response
