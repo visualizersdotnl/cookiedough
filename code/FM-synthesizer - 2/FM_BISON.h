@@ -38,7 +38,6 @@
 		  + Pitch envelope amount
 		  + Envelope release scale (ADSR)
 		  + Prelim. level scaling (check http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
-		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"
@@ -55,6 +54,8 @@
 		  and implied S (sustain); I can fix this when going to VST
 		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
 		  not pitch env. (always fully responds to velocity)
+		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
+		- Per operator transpose?
 		- I lack algorithms
 
 	Also:
