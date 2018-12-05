@@ -47,7 +47,9 @@ namespace SFM
 	float WinMidi_GetOperatorVelocitySensitivity();
 	float WinMidi_GetOperatorPitchEnvAmount();
 	float WinMidi_GetOperatorLevelScaleL();
-	float WinMidi_GetOperatorLevelSCaleR();
+	float WinMidi_GetOperatorLevelScaleR();
+
+	unsigned WinMidi_GetOperatorLevelBP(); // [0..127]
 
 	// Current operator to apply new values to (-1 if none)
 	unsigned WinMidi_GetOperator();

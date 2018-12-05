@@ -93,6 +93,9 @@ namespace SFM
 	static float s_opLevelScaleL[kNumOperators]   = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]   = { 0.f };
 
+	// Breakpoints default in the middle
+	static unsigned s_opLevelScaleBP[kNumOperators] = { 69 };
+
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
 	// Button mapping
@@ -352,6 +355,12 @@ namespace SFM
 
 				case NOTE_ON:
 					{
+						if (true == s_opRecv)
+						{
+							// If operator recv. register key as scaling breakpoint
+							s_opLevelScaleBP[g_currentOp] = controlIdx;
+						}
+
 						if (-1 == s_voices[controlIdx])
 							TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
 						else
@@ -496,6 +505,11 @@ namespace SFM
 	float WinMidi_GetOperatorPitchEnvAmount()       { return s_opPitchEnvAmt[g_currentOp];   }
 	float WinMidi_GetOperatorLevelScaleL()          { return s_opLevelScaleL[g_currentOp];   }
 	float WinMidi_GetOperatorLevelSCaleR()          { return s_opLevelScaleR[g_currentOp];   }
+
+	unsigned WinMidi_GetOperatorLevelBP()
+	{
+		return s_opLevelScaleKey[g_currentOp];
+	}
 
 	// Modulation index
 	float WinMidi_GetModulation() 

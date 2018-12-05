@@ -38,9 +38,10 @@
 		  + Pitch env. sensitivity (DONE)
 		  + Level scale L (DONE)
 		  + Level scale R (DONE)
+		  + Level scale BP (DONE)
 		  + These should be set when the operator "record" button is down
 		  + When above button is down, the level scaling breakpoint key can be 
-		    set by pressing it
+		    set by pressing it (DONE)
 
 	Things I've figured I should do:
 		- Test untested changes, and implement input for:
@@ -98,6 +99,6 @@ namespace SFM
 		I'm assuming all TriggerVoice() and ReleaseVoice() calls will be made from the same thread, or at least not concurrently.
 	*/
 
-	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, float frequency, float velocity);
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 }

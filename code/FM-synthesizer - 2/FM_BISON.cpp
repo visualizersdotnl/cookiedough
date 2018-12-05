@@ -507,7 +507,7 @@ namespace SFM
 			patchOp.pitchEnvAmt = WinMidi_GetOperatorPitchEnvAmount();
 
 			// Level scaling parameters
-			patchOp.levelScaleBP = 69; // FIXME
+			patchOp.levelScaleBP = WinMidi_GetOperatorLevelScaleBP();
 			patchOp.levelScaleLeft = WinMidi_GetOperatorLevelScaleL();
 			patchOp.levelScaleRight = WinMidi_GetOperatorLevelScaleR();
 
