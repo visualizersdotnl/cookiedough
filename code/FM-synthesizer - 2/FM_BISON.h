@@ -32,6 +32,16 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
+	Finish up during flight:
+		- Each button under the ADSR faders should allow you to change the current operator's:
+		  + Velocity sensitivity (DONE)
+		  + Pitch env. sensitivity (DONE)
+		  + Level scale L (DONE)
+		  + Level scale R (DONE)
+		  + These should be set when the operator "record" button is down
+		  + When above button is down, the level scaling breakpoint key can be 
+		    set by pressing it
+
 	Things I've figured I should do:
 		- Test untested changes, and implement input for:
 		  + Velocity sensitivity (amplitude/depth, operator amplitude env.)
@@ -57,7 +67,7 @@
 		  not pitch env. (always fully responds to velocity)
 		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
 		- Per operator transpose?
-		- I lack algorithms
+		- I lack algorithms, but that'll be fixed down the line
 
 	Also:
 		- Check parameter ranges

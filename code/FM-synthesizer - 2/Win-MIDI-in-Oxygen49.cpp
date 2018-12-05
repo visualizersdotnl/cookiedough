@@ -59,6 +59,7 @@ namespace SFM
 	const unsigned kPotFilterWet = 95;    // C17
 
 	// Fader mapping
+	// Note: the ADSR faders are shared!
 	const unsigned kFaderA = 20;             // C1
 	const unsigned kFaderD = 21;             // C2
 	const unsigned kFaderS = 71;             // C3
@@ -80,13 +81,17 @@ namespace SFM
 	static float s_filterWet = 0.f;
 
 	// Keep a copy per operator to make the interface a tad more intuitive
-	static bool  s_opFixed[kNumOperators]        = { false };
-	static float s_opFeedbackAmt[kNumOperators]  = { 0.f };
-	static float s_opCoarse[kNumOperators]       = { 0.f };
-	static float s_opFine[kNumOperators]         = { 0.f }; 
-	static float s_opDetune[kNumOperators]       = { 0.f }; 
-	static float s_opAmplitude[kNumOperators]    = { 0.f };
-	static float s_opTremolo[kNumOperators]      = { 0.f };
+	static bool  s_opFixed[kNumOperators]         = { false };
+	static float s_opFeedbackAmt[kNumOperators]   = { 0.f };
+	static float s_opCoarse[kNumOperators]        = { 0.f };
+	static float s_opFine[kNumOperators]          = { 0.f }; 
+	static float s_opDetune[kNumOperators]        = { 0.f }; 
+	static float s_opAmplitude[kNumOperators]     = { 0.f };
+	static float s_opTremolo[kNumOperators]       = { 0.f };
+	static float s_opVelSens[kNumOperators]       = { 0.f };
+	static float s_opPitchEnvAmt[kNumOperators]   = { 0.f };
+	static float s_opLevelScaleL[kNumOperators]   = { 0.f };
+	static float s_opLevelScaleR[kNumOperators]   = { 0.f };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
@@ -294,22 +299,43 @@ namespace SFM
 							s_opEnvD[g_currentOp] = fControlVal;
 							break;
 
-						/* ADSR */
+						/* 
+							ADSR 
+							
+							Or when in operator edit mode (s_opRecv):
+
+							kFaderA    = Velocity sensitivity
+							kFaderB    = Pitch. env. scale
+							kFaderC/D  = Level scale depth & polarity (L+R)
+						*/
 
 						case kFaderA:
-							s_A = fControlVal;
+							if (true == s_opRecv)
+								s_opVelSens[g_currentOp] = fControlVal;			
+							else
+								s_A = fControlVal;
+
 							break;
 
 						case kFaderD:
-							s_D= fControlVal;
+							if (true == s_opRecv)
+								s_opPitchEnvScale[g_currentOp] = fControlVal;
+							else
+								s_D= fControlVal;
 							break;
 
 						case kFaderS:
-							s_S= fControlVal;
+							if (true == s_opRecv)
+								s_opLevelScaleL[g_currentOp] = -1.f + fControlVal*2.f
+							else
+								s_S= fControlVal;
 							break;
 
 						case kFaderR:
-							s_R = fControlVal;
+							if (true == s_opRecv)
+								s_opLevelScaleR[g_currentOp] = -1.f + fControlVal*2.f
+							else
+								s_R = fControlVal;
 							break;
 						}
 					}
@@ -459,13 +485,17 @@ namespace SFM
 	float WinMidi_GetTremolo()     { return s_tremolo;   }
 
 	// Operator control
-	bool  WinMidi_GetOperatorFixed()          { return s_opFixed[g_currentOp];       }
-	float WinMidi_GetOperatorCoarse()         { return s_opCoarse[g_currentOp];      }
-	float WinMidi_GetOperatorFinetune()       { return s_opFine[g_currentOp];        }
-	float WinMidi_GetOperatorDetune()         { return s_opDetune[g_currentOp];      }
-	float WinMidi_GetOperatorAmplitude()      { return s_opAmplitude[g_currentOp];   }
-	float WinMidi_GetOperatorTremolo()        { return s_opTremolo[g_currentOp];     }
-	float WinMidi_GetOperatorFeedbackAmount() { return s_opFeedbackAmt[g_currentOp]; }
+	bool  WinMidi_GetOperatorFixed()                { return s_opFixed[g_currentOp];         }
+	float WinMidi_GetOperatorCoarse()               { return s_opCoarse[g_currentOp];        }
+	float WinMidi_GetOperatorFinetune()             { return s_opFine[g_currentOp];          }
+	float WinMidi_GetOperatorDetune()               { return s_opDetune[g_currentOp];        }
+	float WinMidi_GetOperatorAmplitude()            { return s_opAmplitude[g_currentOp];     }
+	float WinMidi_GetOperatorTremolo()              { return s_opTremolo[g_currentOp];       }
+	float WinMidi_GetOperatorFeedbackAmount()       { return s_opFeedbackAmt[g_currentOp];   }
+	float WinMidi_GetOperatorVelocitySensitivity()  { return s_opVelSens[g_currentOp];       }
+	float WinMidi_GetOperatorPitchEnvAmount()       { return s_opPitchEnvAmt[g_currentOp];   }
+	float WinMidi_GetOperatorLevelScaleL()          { return s_opLevelScaleL[g_currentOp];   }
+	float WinMidi_GetOperatorLevelSCaleR()          { return s_opLevelScaleR[g_currentOp];   }
 
 	// Modulation index
 	float WinMidi_GetModulation() 

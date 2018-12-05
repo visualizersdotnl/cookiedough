@@ -500,12 +500,16 @@ namespace SFM
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();
 			patchOp.vibrato = WinMidi_GetOperatorVibrato();
 
-			// FIXME: attach controls
-			patchOp.velSens = 1.f;
-			patchOp.pitchEnvAmt = 1.f;
-			patchOp.levelScaleBP = 69;
-			patchOp.levelScaleLeft = 0.f;
-			patchOp.levelScaleRight = 0.f;
+			// Velocity sens.
+			patchOp.velSens = WinMidi_GetOperatorVelocitySensitivity();
+
+			// Pitch env. amount
+			patchOp.pitchEnvAmt = WinMidi_GetOperatorPitchEnvAmount();
+
+			// Level scaling parameters
+			patchOp.levelScaleBP = 69; // FIXME
+			patchOp.levelScaleLeft = WinMidi_GetOperatorLevelScaleL();
+			patchOp.levelScaleRight = WinMidi_GetOperatorLevelScaleR();
 
 			// Feedback amount
 			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount()*kMaxOperatorFeedback;

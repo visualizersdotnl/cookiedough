@@ -17,7 +17,7 @@ namespace SFM
 	bool WinMidi_Oxygen49_Start();
 	void WinMidi_Oxygen49_Stop();
 
-	// ** HACK: beatstep also wants to know the current operator, for now **
+	// ** HACK: BeatStep also wants to know the current operator, for now **
 	extern unsigned g_currentOp;
 
 	/*
@@ -44,8 +44,12 @@ namespace SFM
 	float WinMidi_GetOperatorAmplitude();
 	float WinMidi_GetOperatorTremolo();
 	float WinMidi_GetOperatorFeedbackAmount();
+	float WinMidi_GetOperatorVelocitySensitivity();
+	float WinMidi_GetOperatorPitchEnvAmount();
+	float WinMidi_GetOperatorLevelScaleL();
+	float WinMidi_GetOperatorLevelSCaleR();
 
-	// Current operator to set new values to (-1 if none)
+	// Current operator to apply new values to (-1 if none)
 	unsigned WinMidi_GetOperator();
 
 	// Master ADSR

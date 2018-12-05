@@ -43,7 +43,7 @@ namespace SFM
 			float opEnvA;
 			float opEnvD;
 
-			// Velocity sensitivity
+			// Velocity sensitivity (amplitude & envelope)
 			float velSens;
 
 			// Pitch envelope influence
