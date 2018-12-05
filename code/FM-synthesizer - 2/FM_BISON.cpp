@@ -241,7 +241,7 @@ namespace SFM
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 
 			CalcOpFreq(frequency, patch.operators[1]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[1]);
+			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
 
 		/*
 			End of Algorithm

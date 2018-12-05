@@ -49,7 +49,8 @@ namespace SFM
 	float WinMidi_GetOperatorLevelScaleL();
 	float WinMidi_GetOperatorLevelScaleR();
 
-	unsigned WinMidi_GetOperatorLevelBP(); // [0..127]
+	// [0..127] MIDI
+	unsigned WinMidi_GetOperatorLevelScaleBP(); 
 
 	// Current operator to apply new values to (-1 if none)
 	unsigned WinMidi_GetOperator();

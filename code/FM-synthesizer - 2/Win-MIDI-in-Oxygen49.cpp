@@ -322,21 +322,21 @@ namespace SFM
 
 						case kFaderD:
 							if (true == s_opRecv)
-								s_opPitchEnvScale[g_currentOp] = fControlVal;
+								s_opPitchEnvAmt[g_currentOp] = fControlVal;
 							else
 								s_D= fControlVal;
 							break;
 
 						case kFaderS:
 							if (true == s_opRecv)
-								s_opLevelScaleL[g_currentOp] = -1.f + fControlVal*2.f
+								s_opLevelScaleL[g_currentOp] = -1.f + fControlVal*2.f;
 							else
 								s_S= fControlVal;
 							break;
 
 						case kFaderR:
 							if (true == s_opRecv)
-								s_opLevelScaleR[g_currentOp] = -1.f + fControlVal*2.f
+								s_opLevelScaleR[g_currentOp] = -1.f + fControlVal*2.f;
 							else
 								s_R = fControlVal;
 							break;
@@ -504,11 +504,11 @@ namespace SFM
 	float WinMidi_GetOperatorVelocitySensitivity()  { return s_opVelSens[g_currentOp];       }
 	float WinMidi_GetOperatorPitchEnvAmount()       { return s_opPitchEnvAmt[g_currentOp];   }
 	float WinMidi_GetOperatorLevelScaleL()          { return s_opLevelScaleL[g_currentOp];   }
-	float WinMidi_GetOperatorLevelSCaleR()          { return s_opLevelScaleR[g_currentOp];   }
+	float WinMidi_GetOperatorLevelScaleR()          { return s_opLevelScaleR[g_currentOp];   }
 
-	unsigned WinMidi_GetOperatorLevelBP()
+	unsigned WinMidi_GetOperatorLevelScaleBP()
 	{
-		return s_opLevelScaleKey[g_currentOp];
+		return s_opLevelScaleBP[g_currentOp];
 	}
 
 	// Modulation index
