@@ -33,14 +33,14 @@
 		- Parts taken from: https://github.com/smbolton/hexter/blob/master/src/
 		- Good deal of information gotten from: http://afrittemple.com/volca/volca_programming.pdf
 
-	Things I should do:
+	Things I am sure will improve the sound:
 		- Rip Sean Bolton's table that translates amplitudes to modulation depth
+		  See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
+		- Bipolar pitch envelope
 		- Review op. env. AD
 		- Finish level scaling (configure amount of semitones range, non-linear?)
 		- Fix volume issues
 		- Optimize delay line (see impl.)
-		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
-		  "obvious"
 		- Maybe, *maybe*, introduce that or a better formant filter
 
 	Missing (important) features that DX7 and Volca FM have:
@@ -52,8 +52,8 @@
 		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
 		  not pitch env. (always fully responds to velocity)
 		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
-		- Per operator transpose?
 		- I lack algorithms, but that'll be fixed down the line
+		- There are more difference but don't forget you're *not* making a DX7
 
 	Don't forget to:
 		- Check parameter ranges

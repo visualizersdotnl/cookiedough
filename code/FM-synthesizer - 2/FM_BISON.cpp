@@ -234,7 +234,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -263,7 +263,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: DX7 algorithm #5
