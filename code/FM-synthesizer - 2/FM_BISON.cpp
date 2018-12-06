@@ -154,37 +154,39 @@ namespace SFM
 	// Calculate operator amplitude/depth
 	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
-		// Level scaling
-		// This is, for now, a simple linear falloff to either side
-		// FIXME: exponential, DX7-style, ...
-		// FIXME: breakpoint is an actual key here, it works a little different on the DX7
-		//        and this appears to be a workaround but study it again if this does not work
-		//        well enough (wouldn't be the first time)
+		// Level scaling, DX7-style (but a bit more straightforward, no per-3-note grouping et cetera)
+
+		// FIXME: configurable number of octaves
+		// FIXME: exponential
+
 		const unsigned breakpoint = patchOp.levelScaleBP;
-		if (key < breakpoint && breakpoint > 0)
+		const unsigned numSemis = 2*12; // 2 octaves
+		const float step = 1.f/numSemis;
+
+		float levelScale = 0.f;
+		if (key < breakpoint)
 		{
-			const float step = 1.f/breakpoint;
-			const float delta = 1.f-(step*key);
+			const unsigned distance = breakpoint-key;
 
-			// Sign (direction) and depth is all in the scale param.
-			amplitude += patchOp.levelScaleLeft*delta;
+			float delta = 1.f;
+			if (distance < numSemis)
+				delta = distance*step;
 
-			// EXP
-//			amplitude += patchOp.levelScaleLeft * (delta*delta);
+			levelScale = patchOp.levelScaleLeft*delta;
 		}
-		else if (key > breakpoint && breakpoint < 127)
+		else if (key > breakpoint)
 		{
-			const float step = 1.f/(127-breakpoint);
-			const float delta = step*(key-breakpoint);
+			const unsigned distance = key-breakpoint;
 
-			amplitude += patchOp.levelScaleRight*delta;
+			float delta = 1.f;
+			if (distance < numSemis)
+				delta = distance*step;
 
-			// EXP
-//			amplitude += patchOp.levelScaleRight * delta*delta;
+			levelScale = patchOp.levelScaleRight*delta;
 		}
 
-		// FIXME: wouldn't SoftClamp() be a fun idea?
-		amplitude = Clamp(amplitude);
+		// Scale/fade proportionally
+		amplitude = amplitude + amplitude*levelScale;
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
@@ -290,12 +292,12 @@ namespace SFM
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
-		// Set pitch envelope (roughly the same as above)
+		// Set pitch envelope (like above, but slightly different)
 		ADSR::Parameters envParams;
 		envParams.attack = s_parameters.pitchA;
 		envParams.decay = s_parameters.pitchD;
 		envParams.release = 0.f;
-		envParams.sustain = 1.f-envParams.decay;
+		envParams.sustain = 0.f; // Sustain at unaltered pitch
 		voice.m_pitchEnv.Start(envParams, velocity);
 
 		// Start master ADSR
@@ -534,7 +536,7 @@ namespace SFM
 		const float feedback = WinMidi_GetDelayFeedback();
 
 		// FIXME: perhaps create a dedicated LFO class that has nothing to do with tone instead of adding a function to Oscillator?
-		s_delayLFO.PitchBend((feedback+rate)*24.f);
+		s_delayLFO.PitchBendSemis((feedback+rate)*24.f);
 	
 		// Bias LFO
 		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(rate*rate);
@@ -614,7 +616,7 @@ namespace SFM
 					LadderFilter &filter = *voice.m_pFilter;
 				
 					// This should be as close to the sample as possible (FIXME)
-					const float bend = WinMidi_GetPitchBend()*kPitchBendRange;
+					const float bend = powf(2.f, WinMidi_GetPitchBend()*kPitchBendRange);
 					voice.SetPitchBend(bend);
 	
 					float *buffer = s_voiceBuffers[curVoice];

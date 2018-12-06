@@ -359,6 +359,8 @@ namespace SFM
 						{
 							// If operator recv. register key as scaling breakpoint
 							s_opLevelScaleBP[g_currentOp] = controlIdx;
+
+							Log("Set note " + std::to_string(controlIdx) + " as breakpoint for operator " + std::to_string(g_currentOp+1));
 						}
 
 						if (-1 == s_voices[controlIdx])

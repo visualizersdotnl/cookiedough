@@ -66,9 +66,12 @@ namespace SFM
 
 				// Set pitch bend (factoring in pitch env. scale & vibrato)
 				const float pitchEnvScale = opDX.pitchEnvAmt*kPitchEnvRange;
-				const float pitchEnv = powf(2.f, -(pitchEnvScale*0.5f) + pitchEnv*pitchEnvScale);
 
-				float bend = m_pitchBend+pitchEnv;
+				// Pitch can go up and back down
+				// FIXME: bipolar
+				const float envPitch = powf(2.f, pitchEnv*pitchEnvScale);
+
+				float bend = m_pitchBend*envPitch;
 
 				const float opVib = opDX.vibrato;
 				if (opVib != 0.f) // FIXME?
