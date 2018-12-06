@@ -32,23 +32,8 @@
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
-	Finish up during flight:
-		- Each button under the ADSR faders should allow you to change the current operator's:
-		  + Velocity sensitivity (DONE)
-		  + Pitch env. sensitivity (DONE)
-		  + Level scale L (DONE)
-		  + Level scale R (DONE)
-		  + Level scale BP (DONE)
-		  + These should be set when the operator "record" button is down
-		  + When above button is down, the level scaling breakpoint key can be 
-		    set by pressing it (DONE)
-
 	Things I've figured I should do:
-		- Test untested changes, and implement input for:
-		  + Velocity sensitivity (amplitude/depth, operator amplitude env.)
-		  + Pitch envelope amount
-		  + Envelope release scale (ADSR)
-		  + Prelim. level scaling (check http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
+		- Finish level scaling
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"

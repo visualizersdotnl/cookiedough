@@ -5,6 +5,8 @@
 //  EarLevel Engineering: earlevel.com
 //  Copyright 2012 Nigel Redmon
 //
+//  Modified by syntherklaas.org (see header file)
+//
 //  For a complete explanation of the ADSR envelope generator and code,
 //  read the series of articles by the author, starting here:
 //  http://www.earlevel.com/main/2013/06/01/envelope-generators/
@@ -25,10 +27,11 @@
 
 ADSR::ADSR(void) {
     reset();
-    setAttackRate(0);
-    setDecayRate(0);
-    setReleaseRate(0);
-    setSustainLevel(1);
+    setAttackRate(0.f);
+	setAttackLevel(1.f);
+    setDecayRate(0.f);
+    setReleaseRate(0.f);
+    setSustainLevel(1.f);
     setTargetRatioA(0.3f);
     setTargetRatioDR(0.0001f);
 }
@@ -39,7 +42,7 @@ ADSR::~ADSR(void) {
 void ADSR::setAttackRate(float rate) {
     attackRate = rate;
     attackCoef = calcCoef(rate, targetRatioA);
-    attackBase = (1.f + targetRatioA) * (1.f - attackCoef);
+    attackBase = (attackLevel + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setDecayRate(float rate) {
@@ -56,6 +59,12 @@ void ADSR::setReleaseRate(float rate) {
 
 float ADSR::calcCoef(float rate, float targetRatio) {
     return (rate <= 0) ? 0.f : expf(-logf((1.f + targetRatio) / targetRatio) / rate);
+}
+
+void ADSR::setAttackLevel(float level)
+{
+	attackLevel = level;
+    attackBase = (attackLevel + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setSustainLevel(float level) {

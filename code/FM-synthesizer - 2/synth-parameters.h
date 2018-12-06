@@ -65,10 +65,11 @@ namespace SFM
 			vibrato = 0.f;
 
 			// Std. ADSR
-			envParams.attack  = 0.f;
-			envParams.decay   = 0.25f;
-			envParams.release = 0.25f;
-			envParams.sustain = 1.f;
+			envParams.attack       = 0.f;
+			envParams.attackLevel  = 1.f;
+			envParams.decay        = 0.25f;
+			envParams.release      = 0.25f;
+			envParams.sustainLevel = 1.f;
 
 			// 50% jitter
 			noteJitter = 0.5f;

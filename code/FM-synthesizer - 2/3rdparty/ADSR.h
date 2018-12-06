@@ -20,6 +20,7 @@
 // Adapted by syntherklaas.org for FM. BISON / FM. GENERALISSIMO, changes made:
 // - Fixed warnings
 // - Fixed process() to proceed to decay state immediately after attack to eliminate a click
+// - Added attack level (variable instead of 1.0)
 //
 
 #ifndef ADRS_h
@@ -35,6 +36,7 @@ public:
     int getState(void);
 	void gate(int on);
     void setAttackRate(float rate);
+	void setAttackLevel(float level);
     void setDecayRate(float rate);
     void setReleaseRate(float rate);
 	void setSustainLevel(float level);
@@ -55,6 +57,7 @@ protected:
 	int state;
 	float output;
 	float attackRate;
+	float attackLevel;
 	float decayRate;
 	float releaseRate;
 	float attackCoef;
@@ -77,8 +80,8 @@ inline float ADSR::process() {
             break;
         case env_attack:
             output = attackBase + output * attackCoef;
-            if (output >= 1.f) {
-                output = 1.f;
+            if (output >= attackLevel) {
+                output = attackLevel;
                 state = env_decay;
             }
 			else // Immediately go into decay state, eliminating a click when ADS is zero!

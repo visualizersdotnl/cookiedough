@@ -281,23 +281,24 @@ namespace SFM
 			voiceOp.pitchEnvAmt = patchOp.pitchEnvAmt;
 			voiceOp.feedbackAmt = patchOp.feedbackAmt;
 
-			// Mod env.
+			// Operator env.
 			// We always attack to 1.0, then decay works a little different here in that it also decides
 			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
 			ADSR::Parameters envParams;
 			envParams.attack = patchOp.opEnvA;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
-			envParams.sustain = 1.f-envParams.decay;
+			envParams.sustainLevel = 1.f-envParams.decay;
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
 		// Set pitch envelope (like above, but slightly different)
 		ADSR::Parameters envParams;
 		envParams.attack = s_parameters.pitchA;
+		envParams.attackLevel = s_parameters.pitchA;
 		envParams.decay = s_parameters.pitchD;
 		envParams.release = 0.f;
-		envParams.sustain = 0.f; // Sustain at unaltered pitch
+		envParams.sustainLevel = 0.f; // Sustain at unaltered pitch
 		voice.m_pitchEnv.Start(envParams, velocity);
 
 		// Start master ADSR
@@ -432,7 +433,7 @@ namespace SFM
 		s_parameters.envParams.attack  = WinMidi_GetAttack();
 		s_parameters.envParams.decay   = WinMidi_GetDecay();
 		s_parameters.envParams.release = WinMidi_GetRelease();
-		s_parameters.envParams.sustain = WinMidi_GetSustain();
+		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
 		// Modulation depth
 		const float alpha = 1.f/dBToAmplitude(-12.f);
@@ -453,7 +454,7 @@ namespace SFM
 		s_parameters.filterEnvParams.attack = WinMidi_GetFilterA();
 		s_parameters.filterEnvParams.decay = WinMidi_GetFilterD();
 		s_parameters.filterEnvParams.release = 0.f; // Should never be used (no Stop() call)
-		s_parameters.filterEnvParams.sustain = WinMidi_GetFilterS();
+		s_parameters.filterEnvParams.sustainLevel = WinMidi_GetFilterS();
 
 		// Delay
 		s_parameters.delayWet = WinMidi_GetDelayWet();

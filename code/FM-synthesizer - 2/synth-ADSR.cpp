@@ -26,7 +26,7 @@ namespace SFM
 		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
 		const float decay   = floorf(decayScale*parameters.decay*kSampleRate);
 		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. */, floorf(releaseScale*parameters.release*kSampleRate));
-		const float sustain = parameters.sustain;
+		const float sustain = parameters.sustainLevel;
 
 		// Harder touch, less linear
 		const float invVel = 1.f-velocity;
@@ -34,6 +34,7 @@ namespace SFM
 		m_ADSR.setTargetRatioDR(0.1f + invVel);
 
 		m_ADSR.setAttackRate(attack);
+		m_ADSR.setAttackLevel(parameters.attackLevel);
 		m_ADSR.setDecayRate(decay);
 		m_ADSR.setReleaseRate(release);
 		m_ADSR.setSustainLevel(sustain);

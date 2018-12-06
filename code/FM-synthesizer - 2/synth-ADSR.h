@@ -22,9 +22,10 @@ namespace SFM
 		{
 			// [0..1]
 			float attack;
+			float attackLevel;
 			float decay;
 			float release;
-			float sustain;
+			float sustainLevel;
 		};
 
 		::ADSR m_ADSR;
