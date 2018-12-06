@@ -38,4 +38,5 @@ namespace SFM
 	// Pitch env.
 	float WinMidi_GetPitchA();
 	float WinMidi_GetPitchD();
+	float WinMidi_GetPitchL();
 }

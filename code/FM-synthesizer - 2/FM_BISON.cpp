@@ -334,7 +334,7 @@ namespace SFM
 		// Set pitch envelope (like above, but slightly different)
 		ADSR::Parameters envParams;
 		envParams.attack = s_parameters.pitchA;
-		envParams.attackLevel = s_parameters.pitchA;
+		envParams.attackLevel = s_parameters.pitchL;
 		envParams.decay = s_parameters.pitchD;
 		envParams.release = 0.f;
 		envParams.sustainLevel = 0.f; // Sustain at unaltered pitch
@@ -504,6 +504,7 @@ namespace SFM
 		// Pitch env.
 		s_parameters.pitchA = WinMidi_GetPitchA();
 		s_parameters.pitchD = WinMidi_GetPitchD();
+		s_parameters.pitchL = WinMidi_GetPitchL();
 
 		// Update current operator patch
 		const unsigned iOp = WinMidi_GetOperator();

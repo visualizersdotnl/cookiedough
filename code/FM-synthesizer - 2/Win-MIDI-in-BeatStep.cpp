@@ -54,6 +54,7 @@ namespace SFM
 	const unsigned kPotNoteJitter = 17;    // Set 4, R13
 	const unsigned kPotPitchA = 77;        // Set 2, R5
 	const unsigned kPotPitchD = 93;        // Set 2, R6
+	const unsigned kPotPitchL = 73;        // Set 2, R7
 
 	static float s_vibrato = 0.f;
 	static float s_opVibrato[kNumOperators] = { 0.f };
@@ -72,6 +73,7 @@ namespace SFM
 
 	static float s_pitchA = 0.f;
 	static float s_pitchD = 0.f;
+	static float s_pitchL = 0.f;
 	
 	static void WinMidiProc(
 		HMIDI hMidiIn,
@@ -170,6 +172,10 @@ namespace SFM
 
 					case kPotPitchD:
 						s_pitchD = fControlVal;
+						break;
+
+					case kPotPitchL:
+						s_pitchL = fControlVal;
 						break;
 					}
 				}
@@ -299,4 +305,5 @@ namespace SFM
 	// Pitch env.
 	float WinMidi_GetPitchA() { return s_pitchA; }
 	float WinMidi_GetPitchD() { return s_pitchD; }
+	float WinMidi_GetPitchL() { return s_pitchL; }
 }
