@@ -133,20 +133,30 @@ namespace SFM
 	SFM_INLINE float CalcOpFreq(float frequency, const FM_Patch::Operator &patchOp)
 	{
 		const unsigned coarse = patchOp.coarse;
+		const float fine = patchOp.fine;
 
 		if (true == patchOp.fixed)
 		{
 			// Fixed ratio
-			return coarse + patchOp.fine;
+			const float M_LN10 = 2.30258509299404568402f;
+			SFM_ASSERT(coarse < 4);
+			frequency = expf(M_LN10 * float(coarse) + fine);
+			return frequency;
+			
+			// Detune has no effect on fixed ratios (on the DX7).
 		}
 
-		SFM_ASSERT(coarse < g_ratioLUTSize);
+		// Not sure if this is right, took it from Hexter
+		const float detune = patchOp.detune*14.f;
+		frequency += (detune-7.f)/32.f;
 
-		frequency *= g_ratioLUT[coarse];
-		frequency *= patchOp.fine;
+		SFM_ASSERT(coarse < 32);
+		if (0 == coarse)
+			frequency *= 0.5f;
+		else
+			frequency *= coarse;
 
-		// Detune is disabled for now (FIXME)
-//		frequency *= patchOp.detune;
+		frequency *= (1.f+fine);
 
 		return frequency;
 	}
@@ -224,7 +234,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -232,7 +242,7 @@ namespace SFM
 
 		// Operator #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].modulators[0] = -1; // 1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			request.form, 
@@ -240,7 +250,7 @@ namespace SFM
 			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
 
 		// Operator #2
-		voice.m_operators[1].enabled = true;
+//		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 
@@ -253,7 +263,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: DX7 algorithm #5
@@ -290,11 +300,11 @@ namespace SFM
 
 #endif
 
-		// Freq. scale (or key scale if you will)
+		// Freq. scale (or key scale if you will, not to be confused with Yamaha's level scaling)
 		const float freqScale = frequency/g_midiFreqRange;
 
 		// Set tremolo LFO
-		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. irrelevant (FIXME: or is it?)
+		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. ignored
 		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*oscWhiteNoise();
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
 
@@ -475,8 +485,7 @@ namespace SFM
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
 		// Modulation depth
-		const float alpha = 1.f/dBToAmplitude(-12.f);
-		s_parameters.modDepth = WinMidi_GetModulation()*alpha;
+		s_parameters.modDepth = WinMidi_GetModulation();
 
 		// Note jitter
 		s_parameters.noteJitter = WinMidi_GetNoteJitter();
@@ -519,25 +528,23 @@ namespace SFM
 			if (false == fixed)
 			{
 				// Volca-style coarse index
-				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*(g_ratioLUTSize-1));
+				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*31.f);
 
-				// Fine tuning (1 octave like the DX7, ain't that much?)
+				// Fine tuning (1 octave like the DX7)
 				const float fine = WinMidi_GetOperatorFinetune();
-				patchOp.fine = powf(2.f, fine);
+				patchOp.fine = fine;
 			}
 			else
 			{
 				// See synth-patch.h for details
-				const unsigned coarseTab[4] = { 1, 10, 100, 1000 };
-				patchOp.coarse = coarseTab[unsigned(WinMidi_GetOperatorCoarse()*3.f)];
+				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*3.f);
 
 				const float fine = WinMidi_GetOperatorFinetune();
-				patchOp.fine = powf(2.f, fine*kFixedFineScale);
+				patchOp.fine = fine*kFixedFineScale; // Also like the DX7 or Volca FM
 			}
 	
-			// DX7 detune
-			const float semis = -7.f + 14.f*WinMidi_GetOperatorDetune();
-			patchOp.detune = powf(2.f, semis/12.f);
+			// Detune
+			patchOp.detune = WinMidi_GetOperatorDetune();
 
 			// Tremolo & vibrato
 			patchOp.tremolo = WinMidi_GetOperatorTremolo();

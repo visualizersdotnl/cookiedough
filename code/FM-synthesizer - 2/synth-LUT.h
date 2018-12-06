@@ -9,10 +9,6 @@
 
 namespace SFM
 {
-	// Follows the Volca FMs coarse ratio table (an octave down, neutral and 30 semitones up)
-	extern float g_ratioLUT[32];
-	const size_t g_ratioLUTSize = sizeof(g_ratioLUT)/sizeof(float);
-
 	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];
 

@@ -6,7 +6,7 @@
 	Second prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
-	Features (list may be incomplete):
+	Features (list may be incomplete or incorrect at this stage):
 	- 6 programmable operators with:
 	  + Tremolo & vibrato LFO (both velocity sensitive, vibrato key scaled)
 	  + Yamaha-style level scaling
@@ -30,18 +30,18 @@
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
+		- Parts taken from: https://github.com/smbolton/hexter/blob/master/src/
+		- Good deal of information gotten from: http://afrittemple.com/volca/volca_programming.pdf
 
-	Things I've figured I should do:
+	Things I should do:
+		- Rip Sean Bolton's table that translates amplitudes to modulation depth
 		- Review op. env. AD
 		- Finish level scaling (configure amount of semitones range, non-linear?)
+		- Fix volume issues
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"
 		- Maybe, *maybe*, introduce that or a better formant filter
-
-	Useful insights:
-		- Fixed ratio operators are useful for percussive sounds and such, so support them (working on it, almost done!)
-		- The Volca FM sounds very weak when using only 1 operator out of an existing algorithm, so that is how volume is controlled
 
 	Missing (important) features that DX7 and Volca FM have:
 		- Stereo
@@ -55,7 +55,7 @@
 		- Per operator transpose?
 		- I lack algorithms, but that'll be fixed down the line
 
-	Also:
+	Don't forget to:
 		- Check parameter ranges
 		- Review operator loop
 		- FIXMEs

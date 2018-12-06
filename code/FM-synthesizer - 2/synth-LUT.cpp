@@ -8,9 +8,6 @@
 
 namespace SFM
 {
-	// Coarse FM ratios (following the Volca FM design)
-	float g_ratioLUT[32];
-
 	// Sinus
 	alignas(16) float g_sinLUT[kOscLUTSize];
 
@@ -21,24 +18,6 @@ namespace SFM
 
 	void CalculateLUTs()
 	{
-		/*
-			Calculate coarse ratio LUT.
-		*/
-
-		for (unsigned iRatio = 0; iRatio < 32; ++iRatio)
-		{
-			if (0 == iRatio)
-			{
-				// Octave lower
-				g_ratioLUT[iRatio] = 0.5f;
-			}
-			else
-			{
-				// Semitones up
-				g_ratioLUT[iRatio] = powf(2.f, (iRatio-1)/12.f);
-			}
-		}
-
 		/* 
 			Gordon-Smith oscillator (sine wave generator)
 		*/
