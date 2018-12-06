@@ -152,8 +152,10 @@ namespace SFM
 	}
 
 	// Calculate operator amplitude/depth
-	SFM_INLINE float CalcOpAmp(float amplitude, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
+	SFM_INLINE float CalcOpAmp(float baseAmp, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
+		float amplitude = baseAmp*patchOp.amplitude;
+
 		// Level scaling, DX7-style (but a bit more straightforward, no per-3-note grouping et cetera)
 
 		// FIXME: configurable number of octaves
@@ -222,7 +224,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -237,13 +239,50 @@ namespace SFM
 			CalcOpFreq(frequency, patch.operators[0]), 
 			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
 
-		// Operator #1
+		// Operator #2
 		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 
 			CalcOpFreq(frequency, patch.operators[1]), 
 			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 1
+
+		/*
+			Test algorithm: DX7 algorithm #5
+		*/
+
+		for (unsigned int iOp = 0; iOp < 3; ++iOp)
+		{
+			const unsigned carrier = iOp<<1;
+			const unsigned modulator = carrier+1;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].modulators[0] = modulator;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				request.form, 
+				CalcOpFreq(frequency, patch.operators[carrier]), 
+				CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[carrier]));
+
+			// Modulator
+			voice.m_operators[modulator].enabled = true;
+			voice.m_operators[modulator].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(frequency, patch.operators[modulator]), 
+				CalcOpAmp(modDepth, key, velocity, patch.operators[modulator]));
+		}
+
+		// Op. #6 has feedback
+		voice.m_operators[5].feedback = 5;
 
 		/*
 			End of Algorithm

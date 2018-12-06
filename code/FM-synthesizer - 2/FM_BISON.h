@@ -12,11 +12,10 @@
 	  + Yamaha-style level scaling
 	  + Amplitude envelope (velocity sensitive, per operator modulation)
 	- Global:
-	  + Drive
-	  + ADSR
-	  + Clean & MOOG-style ladder filter (24dB)
-	  + Pitch bend
-	  + 24 voices (paraphonic)
+	  + Drive, ADSR, feedback amount, tremolo & vibrato speed
+	  + Pitch bend, global modulation
+	  + Clean & MOOG-style ladder filter (24dB) with envelope
+	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
 	  + Configurable delay effect with optional feedback
 	- Multiple established FM algorithms
@@ -33,7 +32,8 @@
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 
 	Things I've figured I should do:
-		- Finish level scaling
+		- Review op. env. AD
+		- Finish level scaling (configure amount of semitones range, non-linear?)
 		- Optimize delay line (see impl.)
 		- Run the Visual Studio profiler to locate hotspots for optimization instead of going by
 		  "obvious"

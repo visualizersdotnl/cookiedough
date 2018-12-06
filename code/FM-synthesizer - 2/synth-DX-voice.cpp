@@ -15,8 +15,8 @@ namespace SFM
 		// Get tremolo
 		const float tremolo = m_tremolo.Sample(0.f);
 
-		// Get vibrato 
-		const float vibrato = m_vibrato.Sample(0.f);
+		// Get vibrato in octaves
+		const float vibrato = m_vibrato.Sample(0.f)/12.f;
 	
 		// Get pitch env.
 		const float pitchEnv = m_pitchEnv.Sample();
@@ -67,15 +67,13 @@ namespace SFM
 				// Set pitch bend (factoring in pitch env. scale & vibrato)
 				const float pitchEnvScale = opDX.pitchEnvAmt*kPitchEnvRange;
 
-				// Pitch can go up and back down
 				// FIXME: bipolar
 				const float envPitch = powf(2.f, pitchEnv*pitchEnvScale);
 
 				float bend = m_pitchBend*envPitch;
 
 				const float opVib = opDX.vibrato;
-				if (opVib != 0.f) // FIXME?
-					bend *= powf(2.f, vibrato*opVib);
+				bend *= powf(2.f, vibrato*opVib);
 
 				opDX.oscillator.PitchBend(bend);
 

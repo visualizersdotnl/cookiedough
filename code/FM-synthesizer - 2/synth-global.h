@@ -76,7 +76,7 @@ namespace SFM
 	const float kDelayBaseMul = 0.001f;
 	const float kDelayBaseFreq = 0.2f;
 
-	// Vibrato range ([-X..X])
+	// Vibrato range in semitones
 	const float kVibratoRange = 2.f;
 
 	// Max. operator feedback
