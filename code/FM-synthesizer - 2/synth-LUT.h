@@ -9,6 +9,9 @@
 
 namespace SFM
 {
+	// Hexter table(s)
+	extern float g_dx7_voice_lfo_frequency[128];
+
 	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];
 

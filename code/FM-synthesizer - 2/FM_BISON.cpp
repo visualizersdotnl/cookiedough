@@ -167,37 +167,33 @@ namespace SFM
 		float amplitude = baseAmp*patchOp.amplitude;
 
 		// Level scaling, DX7-style (but a bit more straightforward, no per-3-note grouping et cetera)
-
-		// FIXME: configurable number of octaves
-		// FIXME: exponential
+		// FIXME: see FM_BISON.h
 
 		const unsigned breakpoint = patchOp.levelScaleBP;
 		const unsigned numSemis = 2*12; // 2 octaves
 		const float step = 1.f/numSemis;
 
 		float levelScale = 0.f;
+		unsigned distance = 0;
 		if (key < breakpoint)
 		{
-			const unsigned distance = breakpoint-key;
-
-			float delta = 1.f;
-			if (distance < numSemis)
-				delta = distance*step;
-
-			levelScale = patchOp.levelScaleLeft*delta;
+			distance = breakpoint-key;
+			levelScale = patchOp.levelScaleLeft;
 		}
 		else if (key > breakpoint)
 		{
-			const unsigned distance = key-breakpoint;
-
-			float delta = 1.f;
-			if (distance < numSemis)
-				delta = distance*step;
-
-			levelScale = patchOp.levelScaleRight*delta;
+			distance = key-breakpoint;
+			levelScale = patchOp.levelScaleRight;
 		}
 
-		// Scale/fade proportionally
+		float delta = 1.f;
+		if (distance < numSemis)
+			delta = distance*step;
+
+		delta = delta*delta; // EXP
+		levelScale = levelScale*delta;
+
+		// Adjust level
 		amplitude = amplitude + amplitude*levelScale;
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
@@ -225,9 +221,8 @@ namespace SFM
 		FloatAssert(jitter);
 		frequency *= jitter;
 
-		// Whilst it's tempting to use an (inverse) exponential of velocity: don't
-		// do so unless you run into a situation where it makes absolute sense
-		const float velocity    = request.velocity;
+		// It simply sounds better to add some curvature to velocity
+		const float velocity    = Clamp(invsqrf(request.velocity));
 		const float invVelocity = 1.f-velocity;
 		
 		const float modDepth = s_parameters.modDepth;
@@ -304,12 +299,14 @@ namespace SFM
 		const float freqScale = frequency/g_midiFreqRange;
 
 		// Set tremolo LFO
-		const float tremFreq = kAudibleLowHz*s_parameters.tremolo*velocity; // Note Hz. ignored
+		const unsigned tremIdx = unsigned(127.f*s_parameters.tremolo);
+		const float tremFreq = g_dx7_voice_lfo_frequency[tremIdx];
 		const float tremShift = s_parameters.noteJitter*kMaxTremoloJitter*oscWhiteNoise();
-		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f /* Modulated by parameter & envelope */, tremShift);
+		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const float vibFreq = k2PI*s_parameters.vibrato*(velocity+freqScale); // Note Hz. relevant
+		const unsigned vibIdx = unsigned(127.f*s_parameters.vibrato*freqScale); // Vibrato increases across freq. range
+		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
 
@@ -587,7 +584,7 @@ namespace SFM
 		s_delayLFO.PitchBendSemis((feedback+rate)*24.f);
 	
 		// Bias LFO
-		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(rate*rate);
+		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(rate*rate /* This is nonsensical but it "works" */);
 
 		// Take single tap (FIXME?)
 		const float width = s_parameters.delayWidth*kDelayBaseMul;

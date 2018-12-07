@@ -51,7 +51,7 @@ namespace SFM
 	const float kMaxVoiceAmp = 0.110384f; // Stolen from Hexter, supposedly close to the TX nominal voice volume
 
 	// Master drive range
-	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's clamped so it won't go Iron Maiden-crazy; for that, use an overdrive filter
+	const float kDriveHidB = 6.f; // It's clamped so > 0 won't function as overdrive
 	
 	// Size of global (oscillator) LUTs
 	const unsigned kOscLUTSize = 4096;
@@ -70,8 +70,8 @@ namespace SFM
 	const unsigned kMaxNoteJitter = 10;
 
 	// Max. tremolo & vibrato jitter (in unit phase)
-	const float kMaxTremoloJitter = 0.1f*kGoldenRatio;
-	const float kMaxVibratoJitter = 0.2f*kGoldenRatio;
+	const float kMaxTremoloJitter = 0.5f;
+	const float kMaxVibratoJitter = 0.5f;
 
 	// Delay LFO base freq.
 	const float kDelayBaseMul = 0.001f;

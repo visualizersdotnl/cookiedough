@@ -8,7 +8,7 @@
 
 	Features (list may be incomplete or incorrect at this stage):
 	- 6 programmable operators with:
-	  + Tremolo & vibrato LFO (both velocity sensitive, vibrato key scaled)
+	  + Tremolo & vibrato LFO (vibrato key scaled)
 	  + Yamaha-style level scaling
 	  + Amplitude envelope (velocity sensitive, per operator modulation)
 	- Global:
@@ -30,16 +30,20 @@
 		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
 		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
-		- Parts taken from: https://github.com/smbolton/hexter/blob/master/src/
-		- Good deal of information gotten from: http://afrittemple.com/volca/volca_programming.pdf
+		- Some parts and information taken from: https://github.com/smbolton/hexter/blob/master/src/
+		- Good deal of information taken from: http://afrittemple.com/volca/volca_programming.pdf
 
 	Things I am sure will improve the sound:
 		- Evaluate the idea of global LFOs that are *not* synchronized
+		  + Are they any better than randomizing?
 		- Rip Sean Bolton's tables
-		  See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
+		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Bipolar pitch envelope
 		- Review op. env. AD
-		- Finish level scaling (configure amount of semitones range, non-linear?)
+		- Finish level scaling
+		  + Configurable range
+		  + LIN/EXP choice
+		  + More potential depth?
 		- Optimize delay line (see impl.)
 		- Maybe, *maybe*, introduce that or a better formant filter
 
