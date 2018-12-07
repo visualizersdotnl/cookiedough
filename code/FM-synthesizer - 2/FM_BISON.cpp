@@ -242,7 +242,7 @@ namespace SFM
 
 		// Operator #1
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = -1; // 1;
+		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			request.form, 
@@ -250,7 +250,7 @@ namespace SFM
 			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
 
 		// Operator #2
-//		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].enabled = true;
 		voice.m_operators[1].feedback = 1;
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 

@@ -34,12 +34,11 @@
 		- Good deal of information gotten from: http://afrittemple.com/volca/volca_programming.pdf
 
 	Things I am sure will improve the sound:
-		- Rip Sean Bolton's table that translates amplitudes to modulation depth
+		- Rip Sean Bolton's tables
 		  See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Bipolar pitch envelope
 		- Review op. env. AD
 		- Finish level scaling (configure amount of semitones range, non-linear?)
-		- Fix volume issues
 		- Optimize delay line (see impl.)
 		- Maybe, *maybe*, introduce that or a better formant filter
 

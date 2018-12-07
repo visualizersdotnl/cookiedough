@@ -25,6 +25,7 @@ namespace SFM
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
+		unsigned numCarriers = 0;
 		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
 			// Top-down
@@ -92,9 +93,16 @@ namespace SFM
 
 				// If carrier: mix
 				if (true == opDX.isCarrier)
-					mix = SoftClamp(mix + sample);
+				{
+					mix = mix + sample;
+					++numCarriers;
+				}
 			}
 		} 
+
+		// Scale voice by number of carriers
+		SFM_ASSERT(0 != numCarriers);
+		mix /= numCarriers; // Could use multiply & LUT (FIXME)
 
 		// -- SIDENOTE --
 		// There are prettier options to calculate the above and they would be necessary for

@@ -47,7 +47,8 @@ namespace SFM
 	const unsigned kMaxVoices = 24; 
 
 	// Max. voice amplitude 
-	const float kMaxVoiceAmp = 0.66f;
+//	const float kMaxVoiceAmp = 0.66f;
+	const float kMaxVoiceAmp = 0.110384f; // Stolen from Hexter, supposedly close to the TX nominal voice volume
 
 	// Master drive range
 	const float kDriveHidB = 3.f; // >= 0 means overdrive, but it's clamped so it won't go Iron Maiden-crazy; for that, use an overdrive filter
