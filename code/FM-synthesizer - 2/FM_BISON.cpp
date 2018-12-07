@@ -258,10 +258,10 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
-			Test algorithm: DX7 algorithm #5
+			Test algorithm: Volca algorithm #5
 		*/
 
 		for (unsigned int iOp = 0; iOp < 3; ++iOp)
@@ -288,6 +288,40 @@ namespace SFM
 
 		// Op. #6 has feedback
 		voice.m_operators[5].feedback = 5;
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 1
+
+		/*
+			Test algorithm: Volca algorithm #31
+		*/
+
+		for (unsigned int iOp = 0; iOp < 5; ++iOp)
+		{
+			const unsigned carrier = iOp;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				request.form, 
+				CalcOpFreq(frequency, patch.operators[carrier]), 
+				CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[carrier]));
+		}
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[5]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
 
 		/*
 			End of Algorithm
