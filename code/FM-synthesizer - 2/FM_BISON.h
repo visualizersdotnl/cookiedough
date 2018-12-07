@@ -34,6 +34,7 @@
 		- Good deal of information gotten from: http://afrittemple.com/volca/volca_programming.pdf
 
 	Things I am sure will improve the sound:
+		- Evaluate the idea of global LFOs that are *not* synchronized
 		- Rip Sean Bolton's tables
 		  See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Bipolar pitch envelope
