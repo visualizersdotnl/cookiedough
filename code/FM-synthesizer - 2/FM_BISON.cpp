@@ -192,7 +192,7 @@ namespace SFM
 				delta = distance*step;
 
 			levelScale *= delta;
-			amplitude += levelScale;
+			amplitude += amplitude*levelScale;
 		}
 		else if (key > breakpoint)
 		{
@@ -204,7 +204,7 @@ namespace SFM
 				delta = distance*step;
 
 			levelScale *= delta;
-			amplitude += levelScale;
+			amplitude += amplitude*levelScale;
 		}
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
@@ -240,7 +240,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -306,7 +306,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #31
