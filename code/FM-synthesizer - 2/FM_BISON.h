@@ -33,6 +33,7 @@
 		- Vowel filter adapted from a post by alex@smartelectronix.com @ http://www.musicdsp.org
 
 	Things I am sure will improve the sound:
+		- Improve delay LFO frequency, it's beating too much now
 		- Check that vowel filter!
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
