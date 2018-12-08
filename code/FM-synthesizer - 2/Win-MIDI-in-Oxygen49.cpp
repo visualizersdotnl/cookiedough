@@ -9,8 +9,8 @@
 
 	Operator editing is a little ham-fisted, but these are the rules:
 	- Press percussion pad that corresponds with operator.
-	- Set all parameters to what they should be.
 	- Hold red button (C30) to set.
+	- Set all parameters to what they should be.
 
 	FIXME: notes may be outdated
 */

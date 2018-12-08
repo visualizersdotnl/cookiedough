@@ -32,8 +32,10 @@
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
 		- Some parts and information taken from: https://github.com/smbolton/hexter/blob/master/src/
 		- Good deal of information taken from: http://afrittemple.com/volca/volca_programming.pdf
+		- Vowel filter adapted from a post by alex@smartelectronix.com @ http://www.musicdsp.org
 
 	Things I am sure will improve the sound:
+		- Check that vowel filter!
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
 		- Rip Sean Bolton's tables
@@ -45,7 +47,6 @@
 		  + LIN/EXP choice
 		  + More potential depth?
 		- Optimize delay line (see impl.)
-		- Maybe, *maybe*, introduce that or a better formant filter
 
 	Missing (important) features that DX7 and Volca FM have:
 		- Stereo

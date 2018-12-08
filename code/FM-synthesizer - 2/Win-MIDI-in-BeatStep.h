@@ -6,6 +6,7 @@
 #pragma once
 
 #include "synth-oscillator.h"
+#include "synth-vowel-filter.h"
 
 namespace SFM
 {
@@ -39,4 +40,9 @@ namespace SFM
 	float WinMidi_GetPitchA();
 	float WinMidi_GetPitchD();
 	float WinMidi_GetPitchL();
+
+	// Vowel filter
+	float WinMidi_GetVowelWet();
+	float WinMidi_GetVowelBlend();
+	VowelFilter::Vowel WinMidi_GetVowel();
 }

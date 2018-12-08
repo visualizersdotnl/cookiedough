@@ -10,6 +10,7 @@
 // #include "synth-ADSR.h"
 #include "synth-filter.h"
 #include "synth-stateless-oscillators.h"
+#include "synth-vowel-filter.h"
 
 namespace SFM
 {
@@ -56,6 +57,11 @@ namespace SFM
 		float pitchD;
 		float pitchL;
 
+		// Vowel filter
+		float vowelWet;
+		float vowelBlend;
+		VowelFilter::Vowel vowel;
+
 		void SetDefaults()
 		{
 			// Neutral drive
@@ -72,8 +78,8 @@ namespace SFM
 			envParams.release      = 0.25f;
 			envParams.sustainLevel = 1.f;
 
-			// 50% jitter
-			noteJitter = 0.5f;
+			// No jitter
+			noteJitter = 0.f;
 
 			// No modulation
 			modDepth = 0.f;
@@ -103,6 +109,11 @@ namespace SFM
 			pitchA = 0.f;
 			pitchD = 0.f;
 			pitchL = 0.f; // May change when bipolar (FIXME)
+
+			// No vowel filter
+			vowelWet = 0.f;
+			vowelBlend = 0.f;
+			vowel = VowelFilter::kA;
 		}
 	};
 }

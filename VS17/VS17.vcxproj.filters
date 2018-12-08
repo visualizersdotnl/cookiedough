@@ -256,6 +256,9 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.cpp">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-vowel-filter.cpp">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -527,6 +530,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.h">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-vowel-filter.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

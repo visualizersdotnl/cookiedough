@@ -53,6 +53,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-random.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-vowel-filter.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\FM-synthesizer\3rdparty\ADSR.cpp">
@@ -226,6 +227,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-ringbuffer.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-stateless-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-util.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-vowel-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\FM-synthesizer\3rdparty\ADSR.h" />

@@ -22,6 +22,7 @@
 #include "synth-DX-voice.h"
 #include "synth-filter.h"
 #include "synth-delay-line.h"
+#include "synth-vowel-filter.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -86,6 +87,9 @@ namespace SFM
 	// Delay effect
 	static DelayLine s_delayLine;
 	static Oscillator s_delayLFO;
+
+	// Vowel (formant) filters
+	static VowelFilter s_vowelFilters[kMaxVoices];
 	
 	/*
 		Voice API.
@@ -129,7 +133,7 @@ namespace SFM
 		Voice logic.
 	*/
 
-	// Calculate operator frequency
+	// Calculate operator frequency (taken from Volca FM guide & Hexter)
 	SFM_INLINE float CalcOpFreq(float frequency, const FM_Patch::Operator &patchOp)
 	{
 		const unsigned coarse = patchOp.coarse;
@@ -161,6 +165,11 @@ namespace SFM
 		return frequency;
 	}
 
+	SFM_INLINE float LevelScale(float scale, unsigned distance)
+	{
+		return 0.f;
+	}
+
 	// Calculate operator amplitude/depth
 	SFM_INLINE float CalcOpAmp(float baseAmp, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
@@ -173,28 +182,30 @@ namespace SFM
 		const unsigned numSemis = 2*12; // 2 octaves
 		const float step = 1.f/numSemis;
 
-		float levelScale = 0.f;
-		unsigned distance = 0;
 		if (key < breakpoint)
 		{
-			distance = breakpoint-key;
-			levelScale = patchOp.levelScaleLeft;
+			const unsigned distance = breakpoint-key;
+			float levelScale = patchOp.levelScaleLeft;
+
+			float delta = 1.f;
+			if (distance < numSemis)
+				delta = distance*step;
+
+			levelScale *= delta;
+			amplitude += levelScale;
 		}
 		else if (key > breakpoint)
 		{
-			distance = key-breakpoint;
-			levelScale = patchOp.levelScaleRight;
+			const unsigned distance = key-breakpoint;
+			float levelScale = patchOp.levelScaleRight;
+
+			float delta = 1.f;
+			if (distance < numSemis)
+				delta = distance*step;
+
+			levelScale *= delta;
+			amplitude += levelScale;
 		}
-
-		float delta = 1.f;
-		if (distance < numSemis)
-			delta = distance*step;
-
-		delta = delta*delta; // EXP
-		levelScale = levelScale*delta;
-
-		// Adjust level
-		amplitude = amplitude + amplitude*levelScale;
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
@@ -222,7 +233,7 @@ namespace SFM
 		frequency *= jitter;
 
 		// It simply sounds better to add some curvature to velocity
-		const float velocity    = Clamp(invsqrf(request.velocity));
+		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
 		
 		const float modDepth = s_parameters.modDepth;
@@ -339,7 +350,8 @@ namespace SFM
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const unsigned vibIdx = unsigned(127.f*s_parameters.vibrato*freqScale); // Vibrato increases across freq. range
+		const float vibAmt = s_parameters.vibrato*freqScale; // Vibrato increases with frequency
+		const unsigned vibIdx = unsigned(127.f*vibAmt);
 		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
@@ -384,7 +396,7 @@ namespace SFM
 		// Start master ADSR
 		voice.m_ADSR.Start(s_parameters.envParams, velocity);
 
-		// Reset & start filter
+		// Reset & start filters
 		LadderFilter *pFilter;
 		if (0 == s_parameters.filterType)
 			pFilter = s_cleanFilters+iVoice;
@@ -395,6 +407,8 @@ namespace SFM
 		pFilter->Start(s_parameters.filterEnvParams, velocity);
 
 		voice.m_pFilter = pFilter;
+
+		s_vowelFilters[iVoice].Reset();
 		
 		// Enabled, up counter		
 		voice.m_enabled = true;
@@ -546,6 +560,11 @@ namespace SFM
 		s_parameters.pitchD = WinMidi_GetPitchD();
 		s_parameters.pitchL = WinMidi_GetPitchL();
 
+		// Vowel filter
+		s_parameters.vowelWet = WinMidi_GetVowelWet();
+		s_parameters.vowelBlend = WinMidi_GetVowelBlend();
+		s_parameters.vowel = WinMidi_GetVowel();
+
 		// Update current operator patch
 		const unsigned iOp = WinMidi_GetOperator();
 		if (-1 != iOp)
@@ -683,6 +702,10 @@ namespace SFM
 		}
 		else
 		{
+			const float vowelWet = s_parameters.vowelWet;
+			const float vowelBlend = s_parameters.vowelBlend;
+			const VowelFilter::Vowel vowel = s_parameters.vowel;
+
 			// Render dry samples for each voice (feedback)
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -693,6 +716,7 @@ namespace SFM
 				{
 					SFM_ASSERT(nullptr != voice.m_pFilter);
 					LadderFilter &filter = *voice.m_pFilter;
+					VowelFilter &vowelFilter = s_vowelFilters[iVoice];
 				
 					// This should be as close to the sample as possible (FIXME)
 					const float bend = powf(2.f, WinMidi_GetPitchBend()*kPitchBendRange);
@@ -701,7 +725,12 @@ namespace SFM
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
-						/* const */ float sample = voice.Sample(s_parameters);
+						float sample = voice.Sample(s_parameters);
+
+						// Apply vowel filter
+						const float formant = vowelFilter.Apply(sample, vowel, vowelBlend);
+						sample = lerpf<float>(sample, formant, vowelWet);
+
 						buffer[iSample] = sample;
 					}
 

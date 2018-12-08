@@ -55,6 +55,8 @@ namespace SFM
 	const unsigned kPotPitchA = 77;        // Set 2, R5
 	const unsigned kPotPitchD = 93;        // Set 2, R6
 	const unsigned kPotPitchL = 73;        // Set 2, R7
+	const unsigned kPotVowelWet = 71;      // Set 1, R3
+	const unsigned kPotVowelBlend = 76;    // Set 1, R4
 
 	static float s_vibrato = 0.f;
 	static float s_opVibrato[kNumOperators] = { 0.f };
@@ -75,6 +77,18 @@ namespace SFM
 	static float s_pitchD = 0.f;
 	static float s_pitchL = 0.f;
 	
+	static float s_vowelWet = 0.f;
+	static float s_vowelBlend = 0.f;
+
+	// Button mapping
+	const unsigned kButtonVowelA = 44;
+	const unsigned kButtonVowelE = 45;
+	const unsigned kButtonVowelI = 46;
+	const unsigned kButtonVowelO = 47;
+	const unsigned kButtonVowelU = 48;
+
+	static VowelFilter::Vowel s_vowel = VowelFilter::kA;
+
 	static void WinMidiProc(
 		HMIDI hMidiIn,
 		UINT wMsg,
@@ -176,6 +190,36 @@ namespace SFM
 
 					case kPotPitchL:
 						s_pitchL = fControlVal;
+						break;
+
+					/* Vowel filter */
+
+					case kPotVowelWet:
+						s_vowelWet = fControlVal;
+						break;
+
+					case kPotVowelBlend:
+						s_vowelBlend = fControlVal;
+						break;
+
+					case kButtonVowelA:
+						s_vowel = VowelFilter::kA;
+						break;
+
+					case kButtonVowelE:
+						s_vowel = VowelFilter::kE;
+						break;
+
+					case kButtonVowelI:
+						s_vowel = VowelFilter::kI;
+						break;
+
+					case kButtonVowelO:
+						s_vowel = VowelFilter::kO;
+						break;
+
+					case kButtonVowelU:
+						s_vowel = VowelFilter::kU;
 						break;
 					}
 				}
@@ -306,4 +350,13 @@ namespace SFM
 	float WinMidi_GetPitchA() { return s_pitchA; }
 	float WinMidi_GetPitchD() { return s_pitchD; }
 	float WinMidi_GetPitchL() { return s_pitchL; }
+
+	// Vowel filter
+	float WinMidi_GetVowelWet()   { return s_vowelWet;   }
+	float WinMidi_GetVowelBlend() { return s_vowelBlend; } 
+
+	VowelFilter::Vowel WinMidi_GetVowel()
+	{
+		return s_vowel;
+	}
 }

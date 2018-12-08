@@ -68,7 +68,7 @@ namespace SFM
 				Operator &OP = operators[iOp];
 
 				// Note tone
-				OP.coarse = 1;
+				OP.coarse = 0;
 				OP.fine = 0.f;
 				OP.detune = 0.f;
 
@@ -76,7 +76,7 @@ namespace SFM
 				OP.fixed = false;
 
 				// Amplitude/depth
-				OP.amplitude = 1.f;
+				OP.amplitude = 0.f;
 
 				// No tremolo/vibrato
 				OP.tremolo = 0.f;
@@ -86,14 +86,14 @@ namespace SFM
 				OP.opEnvA = 0.f;
 				OP.opEnvD = 0.f;
 
-				// Fully sensitive (amplitude & operator env.)
-				OP.velSens = 1.f;
+				// Insensitive (amplitude & operator env.)
+				OP.velSens = 0.f;
 
-				// Full pitch env. response
-				OP.pitchEnvAmt = 1.f;
+				// No pitch env. response
+				OP.pitchEnvAmt = 0.f;
 
 				// No level scaling
-				OP.levelScaleBP = 69;
+				OP.levelScaleBP = 69; // A4
 				OP.levelScaleLeft = 0.f;
 				OP.levelScaleRight = 0.f;
 
