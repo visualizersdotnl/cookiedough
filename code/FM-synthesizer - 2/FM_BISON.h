@@ -27,18 +27,16 @@
 
 
 	Third party credits:
-		- Transistor ladder filter impl. by Teemu Voipio (KVR forum)
-		- D'Angelo & Valimaki's improved MOOG filter (paper: "An Improved Virtual Analog Model of the Moog Ladder Filter")
-		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and adjusted)
+		- Different lowpass filters: see synth-filter.h
+		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and modified, perhaps I should share)
 		- Some parts and information taken from: https://github.com/smbolton/hexter/blob/master/src/
-		- Good deal of information taken from: http://afrittemple.com/volca/volca_programming.pdf
 		- Vowel filter adapted from a post by alex@smartelectronix.com @ http://www.musicdsp.org
 
 	Things I am sure will improve the sound:
 		- Check that vowel filter!
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
-		- Rip Sean Bolton's tables
+		- Rip (more of) Sean Bolton's tables
 		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Bipolar pitch envelope
 		- Review op. env. AD
@@ -66,7 +64,6 @@
 		- FIXMEs
 
 	Things that are missing or broken:
-		- "Clean" filter plops when cutoff is pulled shut: why?
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 */

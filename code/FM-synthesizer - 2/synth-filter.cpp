@@ -22,48 +22,7 @@ namespace SFM
 	}
 
 	/*
-		Filter (exact source unknown) (http://www.musicdsp.org)
-	*/
-
-	void UnknownFilter:: Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
-	{
-		const float cutoff = 2.f * m_cutoff/kSampleRate;
-		const float resonance = powf(10.f, 0.05f * -m_resonance);
-		const float K = 0.5f*resonance*sinf(kPI*cutoff); // lutsinf(0.5f*cutoff)
-		const float C1 = 0.5f * (1.f-K) / (1.f+K);
-		const float C2 = (0.5f + C1) * cosf(kPI*cutoff); // lutcosf(0.5f*cutoff)
-		const float C3 = (0.5f + C1-C2) * 0.25f;
-		const float mA0 = 2.f*C3;
-		const float mA1 = 2.f*2.f*C3;
-		const float mA2 = 2.f*C3;
-		const float mB1 = 2.f*-C2;
-		const float mB2 = 2.f*C1;
-
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		{
-			const float dry = pSamples[iSample];
-			const float ADSR = SampleEnv(m_ADSR, invert);
-
-			float driven = dry*m_drive;
-
-			float sample = mA0*driven + mA1*m_mX1 + mA2*m_mX2 - mB1*m_mY1 - mB2*m_mY2;
-
-			m_mX2 = m_mX1;
-			m_mX1 = driven;
-			m_mY2 = m_mY1;
-			m_mY1 = sample;
-				
-			sample = fast_tanhf(sample);
-
-			sample = Blend(dry, sample, contour, ADSR);
-			SampleAssert(sample);
-
-			pSamples[iSample] = sample;
-		}
-	}
-
-	/*
-		Improved MOOG filter.
+		Improved MOOG filter (see header)
 	*/
 
 	void ImprovedMOOGFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
@@ -106,7 +65,8 @@ namespace SFM
 		Transistor ladder filter by Teemu Voipio
 		Source: https://www.kvraudio.com/forum/viewtopic.php?t=349859
 
-		I've left most of Teemu's code more or less intact, including variable names and comments.
+		I've left most of Teemu's code more or less intact, including variable names and comments
+		Why? Because I don't fully understand it :-)
 	*/
 
 	// A tanh(x)/x approximation, flatline at very high inputs; might not be safe for very large feedback gains
@@ -168,5 +128,31 @@ namespace SFM
 
 			pSamples[iSample] = sample;
 		}
+	}
+
+	/*
+		Krajeski's MoogVCF implementation 
+	*/
+
+	void KrajeskiFilter::Apply(float *pSamples, unsigned numSamples, float contour, bool invert)
+	{
+		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		{
+			const float dry = pSamples[iSample];
+			const float ADSR = SampleEnv(m_ADSR, invert);
+
+			// Kept mostly as-is (FIXME: unroll?)
+			m_state[0] = fast_tanh(m_drive * (dry - 4 * gRes * (m_state[4] - gComp * dry)));
+			for (int i = 0; i < 4; ++i)
+			{
+				m_state[i+1] = g * (0.3 / 1.3 * m_state[i] + 1 / 1.3 * m_delay[i] - m_state[i + 1]) + m_state[i + 1];
+				m_delay[i] = m_state[i];
+			}
+
+			const float sample = Blend(dry, float(m_state[4]), contour, ADSR);
+			SampleAssert(sample);
+
+			pSamples[iSample] = sample;
+		}	
 	}
 }

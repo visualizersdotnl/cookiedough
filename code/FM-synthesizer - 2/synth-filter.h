@@ -1,6 +1,10 @@
 
 /*
 	Syntherklaas FM -- Master (voice) filters.
+
+	I'm no expert on filters such as these yet, so I took a few from the public domain
+	and adapted them for use; all have their own distinct sound but if you're looking for
+	a clean 24dB filter, the Krajeski MoogVCF implementation works like a charm
 */
 
 #pragma once
@@ -74,47 +78,6 @@ namespace SFM
 
 		virtual void SetCutoff(float value) = 0;
 		virtual void SetResonance(float value) = 0;
-	};
-
-	/*
-		Unknown filter (http://www.musicdsp.org)
-	*/
-
-	class UnknownFilter : public LadderFilter
-	{
-	private:
-		float m_cutoff;
-		float m_resonance;
-
-		float m_mX1, m_mX2, m_mY1, m_mY2;
-
-		virtual void SetCutoff(float value)
-		{
-			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_cutoff = kAudibleLowHz + value *(kAudibleHighHz-kAudibleLowHz); // Specific range for this filter
-		}
-
-		virtual void SetResonance(float value)
-		{
-			SFM_ASSERT(value >= 0.f && value <= 1.f);
-			m_resonance = -25.f + 50.f*value; // -25dB to 25dB
-		}
-	
-	public:
-		virtual void SetLiveParameters(const FilterParameters &parameters)
-		{
-			SetDrive(parameters.drive);	
-			SetCutoff(parameters.cutoff);
-			SetResonance(parameters.resonance);
-		}
-
-		virtual void Reset()
-		{
-			m_mX1 = m_mX2 = m_mY1 = m_mY2 = 0.f;
-		}
-
-		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert);
-
 	};
 
 	/*
@@ -204,4 +167,56 @@ namespace SFM
 
 		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert);
 	};
+
+	/*
+		Krajeski's MoogVCF implementation 
+
+		Sources: 
+		+ http://song-swap.com/MUMT618/aaron/Presentation/demo.html
+		+ https://github.com/ddiakopoulos/MoogLadders/blob/master/src/KrajeskiModel.h
+	*/
+
+	class KrajeskiFilter : public LadderFilter
+	{
+	private:
+		double m_resonance;
+		double m_cutoff;
+
+		double m_state[5];
+		double m_delay[5];
+
+		// Kept as-is:
+		double wc;     // The angular frequency of the cutoff
+		double g;      // A derived parameter for the cutoff frequency
+		double gRes;   // A similar derived parameter for resonance.
+		double gComp;  // Compensation factor
+
+		virtual void SetCutoff(float value)
+		{
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
+			m_cutoff = value*1000.f;
+			wc = 2 * kPI * m_cutoff / kSampleRate;
+			g = 0.9892 * wc - 0.4342 * pow(wc, 2) + 0.1381 * pow(wc, 3) - 0.0202 * pow(wc, 4);
+		}
+
+		virtual void SetResonance(float value)
+		{
+			SFM_ASSERT(value >= 0.f && value <= 1.f);
+			m_resonance = value;
+			gRes = m_resonance * (1.0029 + 0.0526 * wc - 0.926 * pow(wc, 2) + 0.0218 * pow(wc, 3));	
+		}
+
+	public:
+		virtual void Reset()
+		{
+			// FIXME: interesting as parameter?
+			gComp = 1.0;
+
+			memset(m_state, 0, sizeof(m_state));
+			memset(m_delay, 0, sizeof(m_delay));
+		}
+
+		virtual void Apply(float *pSamples, unsigned numSamples, float contour, bool invert);
+	};
 }
+

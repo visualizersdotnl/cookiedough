@@ -81,7 +81,7 @@ namespace SFM
 	static unsigned s_active = 0;
 
 	// Master filters
-	static UnknownFilter s_cleanFilters[kMaxVoices];
+	static KrajeskiFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_MOOGFilters[kMaxVoices];
 
 	// Delay effect
