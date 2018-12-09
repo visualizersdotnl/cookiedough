@@ -100,7 +100,9 @@ namespace SFM
 		SFM_ASSERT(key < 127);
 
 		const float frequency = g_midiToFreqLUT[key];
-		SFM_ASSERT(true == InAudibleSpectrum(frequency));
+
+		// I mean, who the f*ck decides this is necessary in an FM setting?
+//		SFM_ASSERT(true == InAudibleSpectrum(frequency));
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 		
@@ -695,7 +697,7 @@ namespace SFM
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
-				mix = (mix*drive);
+				mix = ultra_tanhf(mix*drive);
 
 				s_ringBuf.Write(mix);
 			}

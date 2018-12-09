@@ -32,6 +32,10 @@
 		- Some parts and information taken from: https://github.com/smbolton/hexter/blob/master/src/
 		- Vowel filter adapted from a post by alex@smartelectronix.com @ http://www.musicdsp.org
 
+	Problems I encountered:
+		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
+		- I feel that adding more of my oscillator types would be helpful
+
 	Things I am sure will improve the sound:
 		- Improve delay LFO frequency, it's beating too much now
 		- Check that vowel filter!
