@@ -380,6 +380,7 @@ namespace SFM
 			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
 			ADSR::Parameters envParams;
 			envParams.attack = patchOp.opEnvA;
+			envParams.attackLevel = 1.f;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
 			envParams.sustainLevel = 1.f-envParams.decay;

@@ -71,6 +71,10 @@
 	Things that are missing or broken:
 		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
+
+	Jan Marguc says:
+		- Try wavetables as modulator
+		- More decay curve sens.
 */
 
 #pragma once

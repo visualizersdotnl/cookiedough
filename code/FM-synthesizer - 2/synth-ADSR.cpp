@@ -1,6 +1,9 @@
 
 /*
 	Syntherklaas FM -- ADSR envelope.
+
+	FIXME: this needs work due to "magic" numbers
+	FIXME: longer release or maybe a sustain pedal interaction?
 */
 
 #include "synth-global.h"
@@ -8,19 +11,26 @@
 
 namespace SFM
 {
+	const float kThreshold = 0.01f;
+	const float kFlatness = 64.f;
+
+	SFM_INLINE float ToRate(float amount, float flatness)
+	{
+		return kThreshold + amount*flatness*kFlatness;
+	}
+
 	void ADSR::Start(const Parameters &parameters, float velocity, float freqScale /* = 0.f */)
 	{
 		m_ADSR.reset();
 
 		SFM_ASSERT(velocity <= 1.f);
 
-		// 50% shorter attack, 25% shorter decay on max. velocity
-		const float attackScale  = 1.f -  0.5f*velocity;
-		const float decayScale   = 1.f - 0.25f*velocity;
+		// 25% shorter attack, 75% shorter decay on max. velocity
+		const float attackScale  = 1.f - 0.25f*velocity;
+		const float decayScale   = 1.f - 0.75f*velocity;
 
-		// Expand release with respect to frequency (i.e. high notes have a shorter release, this makes physical sense)
-		// FIXME: test!
-		const float releaseScale = 1.f + 2.f*(velocity-freqScale);
+		// More velocity or more frequency both mean longer release
+		const float releaseScale = 1.f + 2.f*(freqScale*velocity);
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
@@ -28,10 +38,10 @@ namespace SFM
 		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. */, floorf(releaseScale*parameters.release*kSampleRate));
 		const float sustain = parameters.sustainLevel;
 
-		// Harder touch, less linear
-		const float invVel = 1.f-velocity;
-		m_ADSR.setTargetRatioA(0.1f + invVel);
-		m_ADSR.setTargetRatioDR(0.1f + invVel);
+		// Harder touch, more linear
+		const float velExp = invsqrf(velocity);
+		m_ADSR.setTargetRatioA(ToRate(velocity, velExp));
+		m_ADSR.setTargetRatioDR(ToRate(velocity, velExp));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setAttackLevel(parameters.attackLevel);
@@ -44,10 +54,8 @@ namespace SFM
 
 	void ADSR::Stop(float velocity)
 	{
-		// Harder touch, less linear
-		// Not factoring in frequency here; elongating the release cycle (above) should be sufficient
-		const float invVel = 1.f-velocity;
-		m_ADSR.setTargetRatioDR(0.1f + invVel);
+		// More touch, more linearity
+		m_ADSR.setTargetRatioDR(ToRate(velocity, invsqrf(velocity)));
 
 		// Go into release state.
 		m_ADSR.gate(false);
