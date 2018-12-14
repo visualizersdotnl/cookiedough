@@ -274,6 +274,69 @@ namespace SFM
 #if 0
 
 		/*
+			Test algorithm: Volca algorithm #2
+
+			Used with a brass patch; try to recreate
+		*/
+
+		// Operator #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(frequency, patch.operators[0]), 
+			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
+
+		// Operator #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[1]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
+
+		// Operator #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulators[0] = 3;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(frequency, patch.operators[2]), 
+			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[2]));
+
+		// Operator #4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].modulators[0] = 4;
+		voice.m_operators[3].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[3]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[3]));
+
+		// Operator #5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].modulators[0] = 5;
+		voice.m_operators[4].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[4]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[4]));
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[5]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 0
+
+		/*
 			Test algorithm: Volca algorithm #5
 		*/
 
@@ -608,6 +671,8 @@ namespace SFM
 
 			// Pitch env. amount
 			patchOp.pitchEnvAmt = WinMidi_GetOperatorPitchEnvAmount();
+			if (-1 == WinMidi_GetOperatorPitchEnvDir())
+				patchOp.pitchEnvAmt *= -1.f;
 
 			// Level scaling parameters
 			patchOp.levelScaleBP = WinMidi_GetOperatorLevelScaleBP();

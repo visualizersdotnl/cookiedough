@@ -74,4 +74,7 @@ namespace SFM
 	float WinMidi_GetResonance();
 	float WinMidi_GetFilterWet(); // Also known as 'contour'
 	bool  WinMidi_GetFilterInv(); // Invert envelope
+
+	// Pitch env. direction (-1 or 1)
+	int WinMidi_GetOperatorPitchEnvDir();
 }

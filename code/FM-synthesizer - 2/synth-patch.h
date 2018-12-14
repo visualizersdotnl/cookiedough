@@ -46,7 +46,7 @@ namespace SFM
 			// Velocity sensitivity (amplitude & envelope)
 			float velSens;
 
-			// Pitch envelope influence
+			// Pitch envelope influence (can also be negative to invert envelope)
 			float pitchEnvAmt;
 
 			// Level scaling settings

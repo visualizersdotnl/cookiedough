@@ -37,13 +37,13 @@
 		- I feel that adding more of my oscillator types would be helpful
 
 	Things I am sure will improve the sound:
+		- Use sustain pedal to ignore NOTE_OFF
 		- Improve delay LFO frequency, it's beating too much now
-		- Check that vowel filter!
+		- Check that vowel filter for correctness
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
 		- Rip (more of) Sean Bolton's tables
 		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
-		- Bipolar pitch envelope
 		- Review op. env. AD
 		- Finish level scaling
 		  + Configurable range

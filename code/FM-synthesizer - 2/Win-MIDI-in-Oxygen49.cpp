@@ -80,7 +80,7 @@ namespace SFM
 	static float s_resonance = 0.f;
 	static float s_filterWet = 0.f;
 
-	// Keep a copy per operator to make the interface a tad more intuitive
+	// Keep a copy per operator to make the interface a tad more intuitive ( <-- cough! )
 	static bool  s_opFixed[kNumOperators]         = { false };
 	static float s_opFeedbackAmt[kNumOperators]   = { 0.f };
 	static float s_opCoarse[kNumOperators]        = { 0.f };
@@ -93,17 +93,20 @@ namespace SFM
 	static float s_opLevelScaleL[kNumOperators]   = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]   = { 0.f };
 
+	static int s_opPitchEnvDir[kNumOperators]   = { 1 };
+
 	// Breakpoints default in the middle
 	static unsigned s_opLevelScaleBP[kNumOperators] = { 69 };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
 	// Button mapping
-	const unsigned kButtonOpRecv = 118;      // C30
-	const unsigned kButtonFilterType1 = 103; // C25
-	const unsigned kButtonFilterType2 = 104; // C26
-	const unsigned kButtonFilterInv = 102;   // C24
-	const unsigned kButtonOpFixed = 116;     // C28
+	const unsigned kButtonOpRecv = 118;        // C30
+	const unsigned kButtonFilterType1 = 103;   // C25
+	const unsigned kButtonFilterType2 = 104;   // C26
+	const unsigned kButtonFilterInv = 102;     // C24
+	const unsigned kButtonOpFixed = 116;       // C28
+	const unsigned kButtonOpPitchEnvDir = 113; // C27
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -262,6 +265,10 @@ namespace SFM
 							// Quite handy to keep an eye on this whilst we're in hardware dev. mode
 							Log("Operator " + std::to_string(g_currentOp+1) + " set to ratio mode: " + std::to_string(s_opFixed[g_currentOp]));
 
+							break;
+
+						case kButtonOpPitchEnvDir:
+							if (127 == controlVal) s_opPitchEnvDir[g_currentOp] *= -1;
 							break;
 
 						case kFaderOpFeedbackAmt:
@@ -550,4 +557,7 @@ namespace SFM
 	float WinMidi_GetResonance()  { return s_resonance;  }
 	float WinMidi_GetFilterWet()  { return s_filterWet;  }
 	bool  WinMidi_GetFilterInv()  { return s_filterInv;  }
+
+	// Pitch env. direction
+	int WinMidi_GetOperatorPitchEnvDir() { return s_opPitchEnvDir[g_currentOp]; }
 }
