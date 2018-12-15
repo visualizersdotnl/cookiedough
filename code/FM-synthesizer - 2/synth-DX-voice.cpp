@@ -65,6 +65,9 @@ namespace SFM
 					feedback = m_feedback[index];
 				}
 
+				// Sample operator envelope
+				const float opEnv = opDX.opEnv.Sample();
+
 				// Set pitch bend (factoring in pitch env. scale & vibrato)
 				const float pitchEnvScale = opDX.pitchEnvAmt*kPitchEnvRange;
 
@@ -72,7 +75,7 @@ namespace SFM
 
 				float bend = m_pitchBend*envPitch;
 
-				const float opVib = opDX.vibrato;
+				const float opVib = opEnv*opDX.vibrato; // Modulate vibrato!
 				bend *= powf(2.f, vibrato*opVib);
 
 				opDX.oscillator.PitchBend(bend);
@@ -83,8 +86,7 @@ namespace SFM
 				// Tremolo
 				sample = lerpf<float>(sample, sample*tremolo, opDX.tremolo);
 
-				// Sample operator envelope
-				const float opEnv = opDX.opEnv.Sample();
+				// Final AM
 				sample *= opEnv;
 
 				// Store final sample for modulation and feedback.
