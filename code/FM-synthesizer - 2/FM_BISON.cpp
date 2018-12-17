@@ -237,12 +237,15 @@ namespace SFM
 		// It simply sounds better to add some curvature to velocity
 		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
+
+		// Save copy
+		voice.m_velocity = velocity;
 		
 		const float modDepth = s_parameters.modDepth;
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -334,7 +337,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #5
@@ -592,7 +595,7 @@ namespace SFM
 		// Master ADSR
 		s_parameters.envParams.attack  = WinMidi_GetAttack();
 		s_parameters.envParams.decay   = WinMidi_GetDecay();
-		s_parameters.envParams.release = WinMidi_GetRelease();
+		s_parameters.envParams.release = WinMidi_GetRelease() * 2.f; // Longer release on main ADSR for pads et cetera
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
 		// Modulation depth
@@ -653,7 +656,7 @@ namespace SFM
 			else
 			{
 				// See synth-patch.h for details
-				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*3.f);
+				patchOp.coarse = unsigned(WinMidi_GetOperatorCoarse()*3.f); // Index into 4 steps
 
 				const float fine = WinMidi_GetOperatorFinetune();
 				patchOp.fine = fine*kFixedFineScale; // Also like the DX7 or Volca FM
@@ -671,8 +674,8 @@ namespace SFM
 
 			// Pitch env. amount
 			patchOp.pitchEnvAmt = WinMidi_GetOperatorPitchEnvAmount();
-			if (-1 == WinMidi_GetOperatorPitchEnvDir())
-				patchOp.pitchEnvAmt *= -1.f;
+			if (-1 == WinMidi_GetOperatorPitchEnvInv())
+				patchOp.pitchEnvAmt *= -1.f; // Control direction by inverting the amount
 
 			// Level scaling parameters
 			patchOp.levelScaleBP = WinMidi_GetOperatorLevelScaleBP();
@@ -779,6 +782,11 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
+				const float velocity = voice.m_velocity;
+
+				// I'd like to pack a little velocity punch on the loudest struck notes for the vowel filter, emulating
+				// (or attempting to) Rhodes pickups overdriving a little
+				const float curVowelBlend = kRootHalf*vowelBlend + (1.f-kRootHalf)*vowelBlend;
 				
 				if (true == voice.m_enabled)
 				{
@@ -796,7 +804,7 @@ namespace SFM
 						float sample = voice.Sample(s_parameters);
 
 						// Apply vowel filter
-						const float formant = vowelFilter.Apply(sample, vowel, vowelBlend);
+						const float formant = vowelFilter.Apply(sample, vowel, curVowelBlend);
 						sample = lerpf<float>(sample, formant, vowelWet);
 
 						buffer[iSample] = sample;

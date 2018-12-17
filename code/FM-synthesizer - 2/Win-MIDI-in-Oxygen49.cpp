@@ -558,6 +558,6 @@ namespace SFM
 	float WinMidi_GetFilterWet()  { return s_filterWet;  }
 	bool  WinMidi_GetFilterInv()  { return s_filterInv;  }
 
-	// Pitch env. direction
-	int WinMidi_GetOperatorPitchEnvDir() { return s_opPitchEnvDir[g_currentOp]; }
+	// Pitch env. invert
+	int WinMidi_GetOperatorPitchEnvInv() { return s_opPitchEnvDir[g_currentOp]; }
 }

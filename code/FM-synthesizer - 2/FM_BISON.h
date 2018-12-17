@@ -18,6 +18,7 @@
 	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
 	  + Configurable delay effect with optional feedback
+	  + Per-voice calculated "rough" vowel filter
 	- Multiple established FM algorithms
 
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
@@ -34,12 +35,17 @@
 
 	Problems I encountered:
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
-		- I feel that adding more of my oscillator types would be helpful
+		- I feel that adding more of my oscillator types would be helpful?
 
-	Things I am sure will improve the sound:
+	Working on:
+		- Make vowel shaping amount depend on velocity (for that pickup effect)
+		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
+		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
+		- Voice stealing
+
+	Sound improvements:
 		- Use sustain pedal to ignore NOTE_OFF
 		- Improve delay LFO frequency, it's beating too much now
-		- Check that vowel filter for correctness
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
 		- Rip (more of) Sean Bolton's tables
@@ -50,6 +56,11 @@
 		  + LIN/EXP choice
 		  + More potential depth?
 		- Optimize delay line (see impl.)
+		- Check vowel filter: can I limit the input instead of clamping the output?
+
+	Two of Pieter's ideas:
+		- Take out feedback
+		- And I suggest on top of that: 1 modulator only, not 3
 
 	Missing (important) features that DX7 and Volca FM have:
 		- Stereo
@@ -61,7 +72,7 @@
 		  not pitch env. (always fully responds to velocity)
 		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
 		- I lack algorithms, but that'll be fixed down the line
-		- There are more difference but don't forget you're *not* making a DX7
+		- There are more differences but don't forget you're *not* making a DX7
 
 	Don't forget to:
 		- Check parameter ranges

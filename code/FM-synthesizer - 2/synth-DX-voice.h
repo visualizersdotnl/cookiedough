@@ -24,6 +24,9 @@ namespace SFM
 	public:
 		bool m_enabled;
 
+		// Copy
+		float m_velocity;
+
 		struct Operator
 		{
 			bool enabled;

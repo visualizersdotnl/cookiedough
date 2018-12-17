@@ -108,7 +108,7 @@ namespace SFM
 			// No pitch env.
 			pitchA = 0.f;
 			pitchD = 0.f;
-			pitchL = 0.f; // May change when bipolar (FIXME)
+			pitchL = 0.f;
 
 			// No vowel filter
 			vowelWet = 0.f;
