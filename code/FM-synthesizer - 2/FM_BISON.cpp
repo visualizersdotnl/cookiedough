@@ -622,7 +622,7 @@ namespace SFM
 		*/
 
 		// Spawn new voice(s) if any free voices available
-		while (s_voiceReq.size() > 0 && s_active < kMaxVoices-1)
+		while (s_voiceReq.size() > 0 && s_active < kMaxVoices)
 		{
 			// Pick first free voice
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
