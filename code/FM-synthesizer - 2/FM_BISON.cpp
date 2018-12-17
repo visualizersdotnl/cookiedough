@@ -246,7 +246,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -275,7 +275,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #15
@@ -618,7 +618,7 @@ namespace SFM
 			- First try to grab an existing free voice
 			- No dice? Try releasing voice(s)
 
-			A list of releasing voices (sortable) would be very useful (FIXME)
+			A list of releasing voices (sortable) would be very useful to make this code a bit less amateurish
 		*/
 
 		// Spawn new voice(s) if any free voices available
@@ -673,10 +673,10 @@ namespace SFM
 
 				InstFrontVoice(iRelease);
 
-				Log("Voice triggered (stolen): " + std::to_string(iRelease));
+				Log("Voice triggered (stolen): " + std::to_string(iRelease) + " with output " + std::to_string(lowestOutput));
 			}
 			else
-				break; // Nothing to steal, so bail
+				break; // Nothing to steal at all, so bail
 		}
 
 		// All release requests have been honoured; note triggers that can't be made are discarded
