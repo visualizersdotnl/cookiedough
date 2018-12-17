@@ -612,24 +612,6 @@ namespace SFM
 			}
 		}
 
-		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-		{
-			DX_Voice &voice = s_DXvoices[iVoice];
-			const bool enabled = voice.m_enabled;
-
-			if (true == enabled)
-			{
-				if (true == voice.m_ADSR.IsIdle())
-				{
-					voice.m_enabled = false;
-					--s_active;
-					--s_releasing;
-
-					Log("Voice freed: " + std::to_string(iVoice));
-				}
-			}
-		}
-
 		/*
 			Voice allocation
 

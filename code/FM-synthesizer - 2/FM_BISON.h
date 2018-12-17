@@ -46,7 +46,7 @@
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
 		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
 		- Voice stealing
-		  + Implement theft of releasing voices
+		  + Implement theft of releasing voices in *sorted* order
 		- Amplitude/Depth ratio (see Hexter tab.)
 		- I need a decent way to define algorithms; hardcoding them like I do now is too error prone
 
