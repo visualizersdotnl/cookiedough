@@ -642,23 +642,41 @@ namespace SFM
 		// Alternatively try to steal a releasing voice
 		while (s_voiceReq.size() > 0 && s_releasing > 0)
 		{
+			float lowestOutput = 1.f;
+			unsigned iRelease = -1;
+
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
 				if (true == voice.m_ADSR.IsReleasing())
 				{
-					// Force free
-					voice.m_enabled = false;
-					--s_active;
-					--s_releasing;
-
-					InstFrontVoice(iVoice);
-
-					Log("Voice triggered (stolen): " + std::to_string(iVoice));
-
-					break;
+					// Check output level
+					const float output = voice.m_ADSR.m_ADSR.getOutput();
+					if (lowestOutput >= output)
+					{
+						// Lowest so far (closer to end of cycle)
+						iRelease = iVoice;
+						lowestOutput = output;
+					}
 				}
 			}
+
+			// Got one to steal?
+			if (-1 != iRelease)
+			{
+				DX_Voice &voice = s_DXvoices[iRelease];
+
+				// Force free
+				voice.m_enabled = false;
+				--s_active;
+				--s_releasing;
+
+				InstFrontVoice(iRelease);
+
+				Log("Voice triggered (stolen): " + std::to_string(iRelease));
+			}
+			else
+				break; // Nothing to steal, so bail
 		}
 
 		// All release requests have been honoured; note triggers that can't be made are discarded
@@ -815,10 +833,10 @@ namespace SFM
 		const float feedback = WinMidi_GetDelayFeedback();
 
 		// FIXME: perhaps create a dedicated LFO class that has nothing to do with tone instead of adding a function to Oscillator?
-		s_delayLFO.PitchBendSemis((feedback+rate)*24.f);
+		s_delayLFO.PitchBend(rate);
 	
 		// Bias LFO
-		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(rate*rate /* This is nonsensical but it "works" */);
+		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(0.f);
 
 		// Take single tap (FIXME?)
 		const float width = s_parameters.delayWidth*kDelayBaseMul;
