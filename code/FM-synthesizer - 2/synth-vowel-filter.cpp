@@ -16,10 +16,12 @@ const double kVowelCoeffs[SFM::VowelFilter::kNumVowels][11]=
 	/*
 		from : antiprosynthesis[AT]hotmail[DOT]com
 		comment : The distorting/sharp A vowel can be toned down easy by just changing the first coeff from 8.11044e-06 to 3.11044e-06. Sounds much better that way.
+
+		Commented for now, took out too much volume.
 	*/
 
 	{ 
-		3.11044e-06,
+		8.11044e-06, // 3.11044e-06,
 		8.943665402, -36.83889529, 92.01697887, -154.337906, 181.6233289,
 		-151.8651235, 89.09614114, -35.10298511, 8.388101016,  -0.923313471
 	},

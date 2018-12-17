@@ -144,26 +144,25 @@ namespace SFM
 
 		if (true == patchOp.fixed)
 		{
-			// Fixed ratio
-			const float M_LN10 = 2.30258509299404568402f;
-			SFM_ASSERT(coarse < 4);
-			frequency = expf(M_LN10 * float(coarse) + fine);
-			return frequency;
-			
-			// Detune has no effect on fixed ratios (on the DX7).
+			// Fixed ratio (taken from Volca FM third-party manual)
+			// Detune has no effect on fixed ratio?
+			const float coarseTab[4] = { 1, 10, 100, 1000 };
+			frequency = coarseTab[coarse&3];
+		}
+		else
+		{
+			// Not sure if this is right, took it from Hexter
+			const float detune = patchOp.detune*14.f;
+			frequency += (detune-7.f)/32.f;
+
+			SFM_ASSERT(coarse < 32);
+			if (0 == coarse)
+				frequency *= 0.5f;
+			else
+				frequency *= coarse;
 		}
 
-		// Not sure if this is right, took it from Hexter
-		const float detune = patchOp.detune*14.f;
-		frequency += (detune-7.f)/32.f;
-
-		SFM_ASSERT(coarse < 32);
-		if (0 == coarse)
-			frequency *= 0.5f;
-		else
-			frequency *= coarse;
-
-		frequency *= (1.f+fine);
+		frequency *= 1.f+fine;
 
 		return frequency;
 	}
@@ -942,7 +941,7 @@ namespace SFM
 					filter.SetLiveParameters(s_parameters.filterParams);
 					filter.Apply(buffer, numSamples, s_parameters.filterWet /* AKA 'contour' */, s_parameters.filterInv);
 
-					// Apply ADSR (FIXME: slow?)
+					// Apply ADSR (FIXME: slow)
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						buffer[iSample] *= voice.m_ADSR.Sample();

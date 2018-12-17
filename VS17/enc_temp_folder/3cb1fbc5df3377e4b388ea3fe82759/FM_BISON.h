@@ -41,12 +41,12 @@
 		- Full envelopes everywhere!
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 
-	ATTENZIONE:
+	Two bugs:
+		- Vowel A is too soft
 		- Delay effect fucks with amplitude
 
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
-		  + It works, but:
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
 		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
 		- Voice stealing

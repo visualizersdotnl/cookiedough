@@ -39,9 +39,9 @@ namespace SFM
 		const float sustain = parameters.sustainLevel;
 
 		// Harder touch, more linear
-		const float velExp = invsqrf(velocity);
-		m_ADSR.setTargetRatioA(ToRate(velocity, velExp));
-		m_ADSR.setTargetRatioDR(ToRate(velocity, velExp));
+		const float flatness = velocity*2.f; // FIXME: constant
+		m_ADSR.setTargetRatioA(ToRate(velocity, flatness));
+		m_ADSR.setTargetRatioDR(ToRate(velocity, flatness));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setAttackLevel(parameters.attackLevel);
@@ -55,7 +55,7 @@ namespace SFM
 	void ADSR::Stop(float velocity)
 	{
 		// More touch, more linearity
-		m_ADSR.setTargetRatioDR(ToRate(velocity, invsqrf(velocity)));
+		m_ADSR.setTargetRatioDR(ToRate(velocity, velocity*4.f /* FIXME: constant */));
 
 		// Go into release state.
 		m_ADSR.gate(false);
