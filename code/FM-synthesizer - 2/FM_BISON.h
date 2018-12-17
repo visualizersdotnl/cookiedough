@@ -42,6 +42,7 @@
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
 		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
 		- Voice stealing
+		  + Implement theft of releasing voices
 
 	Sound improvements:
 		- Use sustain pedal to ignore NOTE_OFF

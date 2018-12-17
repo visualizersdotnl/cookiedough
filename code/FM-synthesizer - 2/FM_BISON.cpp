@@ -535,16 +535,27 @@ namespace SFM
 			}
 		}
 
-		// Spawn new voice(s)
+		/*
+			FIXME
+
+			Voice allocation
+
+			- First try to grab an existing free voice
+			- No dice? Try releasing voice(s) (FIXME: implement)
+
+			This needs lists instead of dumb loops!
+		*/
+
+		// Spawn new voice(s) if any free voices available
 		while (s_voiceReq.size() > 0 && s_active < kMaxVoices-1)
 		{
-			// Pick first free voice (FIXME: need proper heuristic in case we're out of voices)
+			// Pick first free voice
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
 				if (false == voice.m_enabled)
 				{
-					const VoiceRequest request = s_voiceReq.front();
+					const VoiceRequest &request = s_voiceReq.front();
 					InitializeDXVoice(request, iVoice);
 					s_voiceReq.pop_front();
 
@@ -555,9 +566,9 @@ namespace SFM
 			}
 		}
 
-		// All release requests have been honoured; as for triggers, they may have to wait
-		// if there's no slot available at this time.
+		// All release requests have been honoured; note triggers that can't be made are discarded
 		s_voiceReleaseReq.clear();
+		s_voiceReq.clear();
 	}
 
 	/*

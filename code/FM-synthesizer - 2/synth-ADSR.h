@@ -47,7 +47,13 @@ namespace SFM
 		{
 			const bool isIdle = m_ADSR.getState() == ::ADSR::env_idle;
 			SFM_ASSERT(false == isIdle || (true == isIdle && 0.f == m_ADSR.getOutput()));
-			return m_ADSR.getState() == ::ADSR::env_idle;
+			return isIdle;
+		}
+
+		bool IsReleasing() /* const */
+		{
+			const bool isReleasing = m_ADSR.getState() == ::ADSR::env_release;
+			return isReleasing;
 		}
 	};
 }
