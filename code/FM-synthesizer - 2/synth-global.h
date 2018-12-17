@@ -44,7 +44,7 @@ namespace SFM
 	const float kNyquist = kSampleRate/2.f;
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 4;
+	const unsigned kMaxVoices = 16;
 
 	// Max. voice amplitude 
 //	const float kMaxVoiceAmp = 0.25f;

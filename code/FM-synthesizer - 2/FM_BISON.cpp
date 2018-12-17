@@ -79,6 +79,7 @@ namespace SFM
 	// Voices
 	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
+	static unsigned s_releasing = 0;
 
 	// Master filters
 	static KrajeskiFilter s_cleanFilters[kMaxVoices];
@@ -111,7 +112,7 @@ namespace SFM
 		request.form = form;
 		request.key = key;
 		request.velocity = velocity;
-		s_voiceReq.push_front(request);
+		s_voiceReq.push_back(request);
 
 		// At this point there is no voice yet
 		if (nullptr != pIndex)
@@ -128,7 +129,7 @@ namespace SFM
 		request.index = index;
 		request.velocity = velocity;
 
-		s_voiceReleaseReq.push_front(request);
+		s_voiceReleaseReq.push_back(request);
 	}
 
 	/*
@@ -245,7 +246,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -267,6 +268,69 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(frequency, patch.operators[1]), 
 			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
+
+		/*
+			End of Algorithm
+		*/
+
+#endif
+
+#if 1
+
+		/*
+			Test algorithm: Volca algorithm #15
+
+			Used with a string patch; try to recreate
+		*/
+
+		// Operator #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(frequency, patch.operators[0]), 
+			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
+
+		// Operator #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[1]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
+
+		// Operator #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulators[0] = 3;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(frequency, patch.operators[2]), 
+			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[2]));
+
+		// Operator #4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].modulators[0] = 4;
+		voice.m_operators[3].modulators[1] = 5;
+		voice.m_operators[3].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[3]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[3]));
+
+		// Operator #5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[4]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[4]));
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(frequency, patch.operators[5]), 
+			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
 
 		/*
 			End of Algorithm
@@ -489,6 +553,13 @@ namespace SFM
 		
 	}
 
+	SFM_INLINE void InstFrontVoice(unsigned iVoice)
+	{
+		const VoiceRequest &request = s_voiceReq.front();
+		InitializeDXVoice(request, iVoice);
+		s_voiceReq.pop_front();
+	}
+
 	// Update voices and handle trigger & release
 	static void UpdateVoices()
 	{
@@ -505,6 +576,9 @@ namespace SFM
 
 			// Stop main ADSR; this will automatically release the voice
 			voice.m_ADSR.Stop(velocity);
+
+			// Additional releasing voice
+			++s_releasing;
 
 /*
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -531,19 +605,38 @@ namespace SFM
 				{
 					voice.m_enabled = false;
 					--s_active;
+					--s_releasing;
+
+					Log("Voice freed: " + std::to_string(iVoice));
+				}
+			}
+		}
+
+		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+		{
+			DX_Voice &voice = s_DXvoices[iVoice];
+			const bool enabled = voice.m_enabled;
+
+			if (true == enabled)
+			{
+				if (true == voice.m_ADSR.IsIdle())
+				{
+					voice.m_enabled = false;
+					--s_active;
+					--s_releasing;
+
+					Log("Voice freed: " + std::to_string(iVoice));
 				}
 			}
 		}
 
 		/*
-			FIXME
-
 			Voice allocation
 
 			- First try to grab an existing free voice
-			- No dice? Try releasing voice(s) (FIXME: implement)
+			- No dice? Try releasing voice(s)
 
-			This needs lists instead of dumb loops!
+			A list of releasing voices (sortable) would be very useful (FIXME)
 		*/
 
 		// Spawn new voice(s) if any free voices available
@@ -555,9 +648,7 @@ namespace SFM
 				DX_Voice &voice = s_DXvoices[iVoice];
 				if (false == voice.m_enabled)
 				{
-					const VoiceRequest &request = s_voiceReq.front();
-					InitializeDXVoice(request, iVoice);
-					s_voiceReq.pop_front();
+					InstFrontVoice(iVoice);
 
 					Log("Voice triggered: " + std::to_string(iVoice));
 
@@ -566,8 +657,34 @@ namespace SFM
 			}
 		}
 
+		// Alternatively try to steal a releasing voice
+		while (s_voiceReq.size() > 0 && s_releasing > 0)
+		{
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			{
+				DX_Voice &voice = s_DXvoices[iVoice];
+				if (true == voice.m_ADSR.IsReleasing())
+				{
+					// Force free
+					voice.m_enabled = false;
+					--s_active;
+					--s_releasing;
+
+					InstFrontVoice(iVoice);
+
+					Log("Voice triggered (stolen): " + std::to_string(iVoice));
+
+					break;
+				}
+			}
+		}
+
 		// All release requests have been honoured; note triggers that can't be made are discarded
 		s_voiceReleaseReq.clear();
+
+		if (false == s_voiceReq.empty())
+			Log("Number of voice requests ignored: " + std::to_string(s_voiceReq.size()));
+
 		s_voiceReq.clear();
 	}
 

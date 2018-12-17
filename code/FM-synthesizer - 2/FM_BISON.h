@@ -37,12 +37,18 @@
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
 		- I feel that adding more of my oscillator types would be helpful?
 
+	VST version must-haves:
+		- Full envelopes everywhere!
+		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
+
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
 		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
 		- Voice stealing
 		  + Implement theft of releasing voices
+		- Amplitude/Depth ratio (see Hexter tab.)
+		- I need a decent way to define algorithms; hardcoding them like I do now is too error prone
 
 	Sound improvements:
 		- Use sustain pedal to ignore NOTE_OFF
