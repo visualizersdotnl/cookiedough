@@ -17,7 +17,7 @@
 	  + Clean & MOOG-style ladder filter (24dB) with envelope
 	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
-	  + Configurable delay effect with optional feedback
+	  + Configurable micro-delay effect with optional feedback
 	  + Per-voice calculated "rough" vowel filter
 	- Multiple established FM algorithms
 
@@ -25,6 +25,8 @@
 	
 	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
 	bag of language use at the moment.
+
+	** 18//12 -- this are not as bleak as they appeared an hour ago! **
 
 
 	Third party credits:
@@ -35,15 +37,15 @@
 
 	Problems I encountered:
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
-		- I feel that adding more of my oscillator types would be helpful?
+		- I feel that adding more of my oscillator types would be helpful
 
 	VST version must-haves:
-		- Rethink the entire approach
+		- Rethink the entire approach (DX voice render especially)
 		- Full envelopes everywhere!
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 
 	ATTENZIONE:
-		- Delay effect: ProcessDelay_1_Tap fucks things up, make things beat even when disabled
+		- Delay effect: ProcessDelay_1_Tap fucks things up, make things beat even when disabled, create chorus once and for all!
 
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
@@ -57,7 +59,6 @@
 
 	Sound improvements:
 		- Use sustain pedal to ignore NOTE_OFF
-		- Improve delay LFO frequency, it's beating too much now
 		- Evaluate the idea of global LFOs that are *not* synchronized
 		  + Are they any better than randomizing?
 		- Rip (more of) Sean Bolton's tables
@@ -65,7 +66,7 @@
 		- Review op. env. AD
 		- Finish level scaling
 		  + Configurable range
-		  + LIN/EXP choice
+		  + LIN/EXP choice (!)
 		  + More potential depth?
 		- Optimize delay line (see impl.)
 		- Check vowel filter: can I limit the input instead of clamping the output?

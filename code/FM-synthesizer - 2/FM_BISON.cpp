@@ -829,7 +829,7 @@ namespace SFM
 		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(0.f);
 
 		// Take single tap
-		const float width = s_parameters.delayWidth*(1.f/kSampleRate); // FIXME: sensible constant
+		const float width = s_parameters.delayWidth*0.01f; /* 100ms */
 		const float tap = width*LFO;
 		const float A = s_delayLine.Read(tap);
 
