@@ -43,9 +43,7 @@
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 
 	ATTENZIONE:
-		- Delay effect
-		- Ask Stijn about beating oscillators and common workarounds
-		  + Don't forget: it's related to frequency (phase, to be exact), not volume
+		- Delay effect: ProcessDelay_1_Tap fucks things up, make things beat even when disabled
 
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
