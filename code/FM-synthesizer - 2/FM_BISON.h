@@ -38,11 +38,12 @@
 		- I feel that adding more of my oscillator types would be helpful?
 
 	VST version must-haves:
+		- Rethink the entire approachs
 		- Full envelopes everywhere!
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 
 	ATTENZIONE:
-		- Delay effect fucks with amplitude
+		- Delay effect
 
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)

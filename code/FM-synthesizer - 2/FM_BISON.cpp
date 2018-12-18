@@ -699,8 +699,6 @@ namespace SFM
 			- Remove all rogue parameter probes, some of which are:
 			  + WinMidi_GetPitchBend()
 			  + WinMidi_GetMasterDrive()
-			  + WinMidi_GetDelayRate()
-			  + WinMidi_GetDelayFeedback()
 
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
@@ -827,28 +825,21 @@ namespace SFM
 
 	SFM_INLINE void ProcessDelay_1_Tap(float &mix)
 	{
-		// FIXME: keep as close to sampling as possible
-		const float rate = WinMidi_GetDelayRate();
-		const float feedback = WinMidi_GetDelayFeedback();
-
-		// FIXME: perhaps create a dedicated LFO class that has nothing to do with tone instead of adding a function to Oscillator?
-		s_delayLFO.PitchBend(rate);
-	
-		// Bias LFO
+		// Get sweep
 		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(0.f);
 
-		// Take single tap (FIXME?)
-		const float width = s_parameters.delayWidth*kDelayBaseMul;
+		// Take single tap
+		const float width = s_parameters.delayWidth*(1.f/kSampleRate); // FIXME: sensible constant
 		const float tap = width*LFO;
 		const float A = s_delayLine.Read(tap);
 
-		// Write
-		s_delayLine.Write(SoftClamp(mix + feedback*A));
+		// Write back
+		s_delayLine.Write(SoftClamp(mix + s_parameters.delayFeedback*A));
 
 		// Mix
-		const float wet = s_parameters.delayWet*kMaxVoiceAmp;
-		mix = SoftClamp(mix + A*wet);
-	}
+		const float wet = s_parameters.delayWet;
+		mix = SoftClamp(mix+A*wet);
+ 	}
 
 	#define ProcessDelay ProcessDelay_1_Tap
 
@@ -877,6 +868,9 @@ namespace SFM
 
 		// Handle voice logic
 		UpdateVoices();
+
+		// Set delay sweep rate
+		s_delayLFO.PitchBend(s_parameters.delayRate);
 
 		const unsigned numVoices = s_active;
 
@@ -1039,7 +1033,7 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 
 	s_delayLine.Reset();
-	s_delayLFO.Initialize(kCosine, kDelayBaseFreq, 1.f);
+	s_delayLFO.Initialize(kSine, 1.f, 1.f);
 
 	// Reset voice deques
 	s_voiceReq.clear();
