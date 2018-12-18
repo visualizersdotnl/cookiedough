@@ -43,6 +43,7 @@
 		- Rethink the entire approach (DX voice render especially)
 		- Full envelopes everywhere!
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
+		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	ATTENZIONE:
 		- Delay effect: ProcessDelay_1_Tap fucks things up, make things beat even when disabled, create chorus once and for all!
