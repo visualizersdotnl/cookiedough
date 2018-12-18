@@ -45,6 +45,7 @@
 	ATTENZIONE:
 		- Delay effect
 		- Ask Stijn about beating oscillators and common workarounds
+		  + Don't forget: it's related to frequency (phase, to be exact), not volume
 
 	Working on:
 		- Make vowel shaping amount depend on velocity (for that pickup effect)

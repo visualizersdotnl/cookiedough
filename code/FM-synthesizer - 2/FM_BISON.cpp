@@ -838,7 +838,8 @@ namespace SFM
 
 		// Mix
 		const float wet = s_parameters.delayWet;
-		mix = SoftClamp(mix+A*wet);
+
+//		mix = SoftClamp(mix+A*wet);
  	}
 
 	#define ProcessDelay ProcessDelay_1_Tap
