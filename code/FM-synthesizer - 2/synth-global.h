@@ -74,10 +74,6 @@ namespace SFM
 	const float kMaxTremoloJitter = 0.5f;
 	const float kMaxVibratoJitter = 0.5f;
 
-	// Delay LFO base freq.
-	const float kDelayBaseMul = 0.001f;
-	const float kDelayBaseFreq = 0.2f;
-
 	// Vibrato range in semitones
 	const float kVibratoRange = 2.f;
 
