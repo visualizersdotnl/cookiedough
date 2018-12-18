@@ -26,9 +26,7 @@
 	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
 	bag of language use at the moment.
 
-	** 18//12 -- this are not as bleak as they appeared an hour ago! **
-
-
+	
 	Third party credits:
 		- Different lowpass filters: see synth-filter.h
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and modified, perhaps I should share)
