@@ -56,7 +56,7 @@
 // - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
 
 // Undef. for (Windows - should work on other platforms too) CRT leak check
-// #define WIN32_CRT_LEAK_CHECK
+#define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // ** this will kill Rocket and module replay and use the FM synth. to feed a stream **

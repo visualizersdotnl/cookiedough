@@ -826,22 +826,23 @@ namespace SFM
 	SFM_INLINE void ProcessDelay_1_Tap(float &mix)
 	{
 		// Get sweep
-		const float LFO = 0.5f + 0.5f*s_delayLFO.Sample(0.f);
+		float LFO = s_delayLFO.Sample(0.f);
+		if (LFO < 0.f) LFO *= -1.f;
 
 		// Take single tap
-		const float width = s_parameters.delayWidth*0.01f; /* 100ms */
-		const float tap = width*LFO;
-		const float A = s_delayLine.Read(tap);
+		const float width = s_parameters.delayWidth;
+		const float tap = width*LFO * 4.f; // FIXME: constant (sweep 4 samples now)
+		const float A = s_delayLine.Read(tap)*kRootHalf;
 
 		// Write back
 		s_delayLine.Write(SoftClamp(mix + s_parameters.delayFeedback*A));
 
 		// Mix
-		const float wet = s_parameters.delayWet;
-
-//		mix = SoftClamp(mix+A*wet);
+		const float wet = A*s_parameters.delayWet;
+		mix = mix + wet;
  	}
 
+	// FIXME
 	#define ProcessDelay ProcessDelay_1_Tap
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
@@ -871,7 +872,9 @@ namespace SFM
 		UpdateVoices();
 
 		// Set delay sweep rate
-		s_delayLFO.PitchBend(s_parameters.delayRate);
+		const float sweepFreq = g_dx7_voice_lfo_frequency[unsigned(s_parameters.delayRate*127.f)];
+		const float sweepBend = powf(2.f, sweepFreq);
+		s_delayLFO.PitchBend(sweepBend);
 
 		const unsigned numVoices = s_active;
 
