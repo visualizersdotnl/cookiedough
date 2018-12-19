@@ -85,6 +85,9 @@ namespace SFM
 
 	// Pitch envelope max. range (in octaves)
 	const float kPitchEnvRange = 4.f;
+
+	// Delay samples @ full spread (FIXME)
+	const float kMaxDelaySamples = 4.f;
 }
 
 #include "synth-LUT.h"
