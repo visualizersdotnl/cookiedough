@@ -88,6 +88,11 @@ namespace SFM
 
 	// Vowel (formant) filters
 	static VowelFilter s_vowelFilters[kMaxVoices];
+
+	// Delay
+	static DelayLine s_delayLine;
+	static Oscillator s_delayLFO_L;
+	static Oscillator s_delayLFO_R;
 	
 	/*
 		Voice API.
@@ -697,6 +702,28 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
+	// FIXME
+	SFM_INLINE void DelayToStereo(float mix) 
+	{
+		s_delayLine.Write(mix);
+
+		const float hundred = kSampleRate/100.f;
+
+		const float tap1 = s_delayLine.Read(hundred);
+		const float tap = tap1;
+
+		const float mixed = lerpf<float>(mix, tap, s_parameters.delayWet);
+		
+		const float sweepL = 0.5f + 0.5f*s_delayLFO_L.Sample(0.f);
+		const float sweepR = 0.5f + 0.5f*s_delayLFO_R.Sample(0.f);
+		
+		const float mixL = lerpf<float>(mix, mixed, sweepL);
+		const float mixR = lerpf<float>(mix, mixed, sweepR);
+
+		s_ringBuf.Write(mixL);
+		s_ringBuf.Write(mixR);
+	}
+
 	// Returns loudest signal (linear amplitude)
 	static float Render(float time)
 	{
@@ -709,17 +736,23 @@ namespace SFM
 		if (true == s_ringBuf.IsFull())
 			return loudest;
 
-		const unsigned available = s_ringBuf.GetAvailable();
+		const unsigned available = s_ringBuf.GetAvailable()/2;
 		if (available > kMinSamplesPerUpdate)
 			return loudest;
 
-		const unsigned numSamples = kRingBufferSize-available;
+		// Amt. of samples (stereo)
+		const unsigned numSamples = (kRingBufferSize>>1)-available;
 
 		// Lock state
 		std::lock_guard<std::mutex> stateLock(s_stateMutex);
 
 		// Handle voice logic
 		UpdateVoices();
+
+		// Bend delay LFOs
+		const float delayBend = powf(2.f, s_parameters.delayRate);
+		s_delayLFO_L.PitchBend(delayBend);
+		s_delayLFO_R.PitchBend(delayBend);
 
 		const unsigned numVoices = s_active;
 
@@ -730,13 +763,8 @@ namespace SFM
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				float mix = 0.f;
-
-				// Drive
-				const float drive = WinMidi_GetMasterDrive();
-				mix = ultra_tanhf(mix*drive);
-
-				s_ringBuf.Write(mix);
+				// Delay to stereo
+				DelayToStereo(0.f);
 			}
 		}
 		else
@@ -808,13 +836,13 @@ namespace SFM
 					mix = mix+sample;
 				}
 
-				// Drive
+				// Apply drive
 				const float drive = WinMidi_GetMasterDrive();
 				mix = ultra_tanhf(mix*drive);
-
-				// Write
 				SampleAssert(mix);
-				s_ringBuf.Write(mix);
+
+				// Delay to stereo
+				DelayToStereo(mix);
 
 				loudest = std::max<float>(loudest, fabsf(mix));
 			}
@@ -835,11 +863,11 @@ using namespace SFM;
 
 static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 {
-	const unsigned numSamplesReq = length/sizeof(float);
+	const unsigned numSamplesReq = length/sizeof(float)/2;
 
 	std::lock_guard<std::mutex> lock(s_ringBufMutex);
 	{
-		const unsigned numSamplesAvail = s_ringBuf.GetAvailable();
+		const unsigned numSamplesAvail = s_ringBuf.GetAvailable()>>1;
 		const unsigned numSamples = std::min<unsigned>(numSamplesAvail, numSamplesReq);
 
 		if (numSamplesAvail < numSamplesReq)
@@ -850,7 +878,11 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 
 		float *pWrite = reinterpret_cast<float*>(pStream);
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		{
+			// FIXME: optimize
 			*pWrite++ = s_ringBuf.Read();
+			*pWrite++ = s_ringBuf.Read();
+		}
 
 		s_sampleOutCount += numSamples;
 	}
@@ -877,6 +909,10 @@ bool Syntherklaas_Create()
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
 
+	s_delayLine.Reset();
+	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f); // 0
+	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.33f); // 120
+	
 	// Reset voice deques
 	s_voiceReq.clear();
 	s_voiceReleaseReq.clear();

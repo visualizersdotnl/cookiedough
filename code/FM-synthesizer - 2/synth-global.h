@@ -29,7 +29,7 @@ namespace SFM
 	const unsigned kSampleRate = 44100;
 
 	// Buffer size
-	const unsigned kRingBufferSize = 1024;
+	const unsigned kRingBufferSize = 1024*2; // Stereo
 	const unsigned kMinSamplesPerUpdate = kRingBufferSize/2;
 
 	// Reasonable audible spectrum
@@ -82,6 +82,9 @@ namespace SFM
 
 	// Pitch envelope max. range (in octaves)
 	const float kPitchEnvRange = 4.f;
+
+	// Base delay LFO frequency
+	const float kBaseDelayFreq = 0.5f;
 }
 
 #include "synth-LUT.h"

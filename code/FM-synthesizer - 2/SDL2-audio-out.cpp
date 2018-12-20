@@ -28,7 +28,7 @@ namespace SFM
 		SDL_AudioSpec audioSpec;
 		audioSpec.freq = kSampleRate;
 		audioSpec.format = AUDIO_F32;
-		audioSpec.channels = 1;
+		audioSpec.channels = 2;
 		audioSpec.samples = kMinSamplesPerUpdate; 
 		audioSpec.callback = (nullptr != callback) ? callback : SDL2_Callback_Sine;
 //		audioSpec.callback = NULL;

@@ -24,8 +24,8 @@ namespace SFM
 	// Delay
 	float WinMidi_GetDelayWet();
 	float WinMidi_GetDelayRate();
-	float WinMidi_GetDelayWidth();
-	float WinMidi_GetDelayFeedback();
+	float WinMidi_GetDelayWidth();    // FIXME: UNUSED
+	float WinMidi_GetDelayFeedback(); // FIXME: UNUSED
 
 	// Filter
 	float WinMidi_GetFilterA();

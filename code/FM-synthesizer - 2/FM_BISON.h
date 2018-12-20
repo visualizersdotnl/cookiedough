@@ -20,6 +20,7 @@
 	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
 	  + Per-voice calculated "rough" vowel filter
+	  + Stereo mix w/delay
 	- Multiple established FM algorithms
 
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
@@ -47,6 +48,7 @@
 
 	Working on:
 		- New delay effect
+		  + Polishing!
 		- Algorithms
 		- Use logarithmic scale for operator volume if carrier, use conversion table (see Hexter) for modulator
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
