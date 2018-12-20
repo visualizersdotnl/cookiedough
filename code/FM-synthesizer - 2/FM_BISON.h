@@ -44,10 +44,10 @@
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
+		- Algorithms: 
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
 		  + It works, but:
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
-		  + Larger (bass range) tines are more susceptible to this than the others, do I want to go that far?
 		- Voice stealing
 		  + Implement theft of releasing voices in *sorted* order (implemented, test!)
 		- Amplitude/Depth ratio (see Hexter tab.)
@@ -55,37 +55,31 @@
 
 	Sound improvements:
 		- Use sustain pedal to ignore NOTE_OFF
-		- Evaluate the idea of global LFOs that are *not* synchronized
-		  + Are they any better than randomizing?
+		- Tweak LFO jitter ranges
 		- Rip (more of) Sean Bolton's tables
 		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
-		- Review op. env. AD
 		- Finish level scaling
 		  + Configurable range
 		  + LIN/EXP choice (!)
 		  + More potential depth?
 		- Optimize delay line (see impl.)
 		- Check vowel filter: can I limit the input instead of clamping the output?
+		- Review envelopes
+		- Review operator loop
 
 	Two of Pieter's ideas:
-		- Take out feedback
+		- Take out feedback and replace it for a triangle or saw oscillator
 		- And I suggest on top of that: 1 modulator only, not 3
 
 	Missing (important) features that DX7 and Volca FM have:
 		- Stereo
-		- My envelopes are different than the ones used by the Volca or DX7, though I'd argue that mine
-		  are just as good, *but* I need sharper control for attacks!
-		- However: I do not have a full envelope per operator, but a simple AD envelope without R (release),
-		  and implied S (sustain); I can fix this when going to VST
+		- My envelopes are different than the ones used by the Volca or DX7 (can be fixed when going to VST)
 		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
 		  not pitch env. (always fully responds to velocity)
 		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
 		- I lack algorithms, but that'll be fixed down the line
-		- There are more differences but don't forget you're *not* making a DX7
 
-	Don't forget to:
-		- Check parameter ranges
-		- Review operator loop
+	Don't forget:
 		- FIXMEs
 
 	Things that are missing or broken:
