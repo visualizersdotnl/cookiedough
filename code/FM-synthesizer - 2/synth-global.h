@@ -74,9 +74,6 @@ namespace SFM
 	const float kMaxTremoloJitter = 0.5f;
 	const float kMaxVibratoJitter = 0.5f;
 
-	// Vibrato range in semitones
-	const float kVibratoRange = 2.f;
-
 	// Max. operator feedback
 	const float kMaxOperatorFeedback = 1.f;
 
@@ -85,9 +82,6 @@ namespace SFM
 
 	// Pitch envelope max. range (in octaves)
 	const float kPitchEnvRange = 4.f;
-
-	// Delay samples @ full spread (FIXME)
-	const float kMaxDelaySamples = 4.f;
 }
 
 #include "synth-LUT.h"

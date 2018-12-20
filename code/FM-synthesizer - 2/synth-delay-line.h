@@ -34,12 +34,9 @@ namespace SFM
 
 		SFM_INLINE float Read(float delay)
 		{
-			SFM_ASSERT(delay >= 0.f && delay <= 1.f);
-			delay *= kDelayLineSize;
-				
+			const int to = m_writeIdx-int(delay);
+			const int from = to-1;
 			const float fraction = fracf(delay);
-			const int from = m_writeIdx-int(delay)-1;
-			const int to = from-1;
 
 			const float A = m_buffer[from % kDelayLineSize];
 			const float B = m_buffer[to   % kDelayLineSize];

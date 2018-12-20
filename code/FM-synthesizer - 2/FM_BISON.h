@@ -13,13 +13,12 @@
 	  + Amplitude/depth envelope (attack, level & decay, velocity sensitive)
 	  + Pitch envelope mo dulation
 	- Global:
-	  + Drive, ADSR, feedback amount, tremolo & vibrato speed
+	  + Drive, ADSR, tremolo & vibrato speed
 	  + Pitch (sweep style) envelope parameters (attack, level & decay)
 	  + Pitch bend
 	  + Clean & MOOG-style ladder filter (24dB) with envelope
 	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
-	  + Configurable micro-delay effect with optional feedback
 	  + Per-voice calculated "rough" vowel filter
 	- Multiple established FM algorithms
 
@@ -47,6 +46,7 @@
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
+		- New delay effect
 		- Algorithms
 		- Use logarithmic scale for operator volume if carrier, use conversion table (see Hexter) for modulator
 		- Make vowel shaping amount depend on velocity (for that pickup effect)

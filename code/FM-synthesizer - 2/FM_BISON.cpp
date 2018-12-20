@@ -86,10 +86,6 @@ namespace SFM
 	static KrajeskiFilter s_cleanFilters[kMaxVoices];
 	static TeemuFilter s_MOOGFilters[kMaxVoices];
 
-	// Delay effect
-	static DelayLine s_delayLine;
-	static Oscillator s_delayLFO;
-
 	// Vowel (formant) filters
 	static VowelFilter s_vowelFilters[kMaxVoices];
 	
@@ -182,7 +178,7 @@ namespace SFM
 		// FIXME: see FM_BISON.h
 
 		const unsigned breakpoint = patchOp.levelScaleBP;
-		const unsigned numSemis = 2*12; // 2 octaves
+		const unsigned numSemis = 2*12; // 2 octaves (FIXME: should be setting)
 		const float step = 1.f/numSemis;
 
 		if (key < breakpoint)
@@ -196,6 +192,7 @@ namespace SFM
 
 			levelScale *= delta;
 			amplitude += amplitude*levelScale;
+			amplitude = saturatef(amplitude);
 		}
 		else if (key > breakpoint)
 		{
@@ -208,6 +205,7 @@ namespace SFM
 
 			levelScale *= delta;
 			amplitude += amplitude*levelScale;
+			amplitude = saturatef(amplitude);
 		}
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
@@ -275,7 +273,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #5
@@ -312,7 +310,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #31
@@ -356,11 +354,11 @@ namespace SFM
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const float vibAmt = s_parameters.vibrato*freqScale; // Vibrato increases with frequency
+		const float vibAmt = std::min<float>(1.f, s_parameters.vibrato+freqScale); // Vibrato increases with frequency
 		const unsigned vibIdx = unsigned(127.f*vibAmt);
 		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
-		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kVibratoRange, vibShift);
+		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, 1.f, vibShift);
 
 		// Set per operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -385,7 +383,7 @@ namespace SFM
 			envParams.attackLevel = patchOp.opEnvL;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
-			envParams.sustainLevel = std::max<float>(0.f, patchOp.opEnvL-envParams.decay);
+			envParams.sustainLevel = 1.f-patchOp.opEnvD;
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
@@ -697,28 +695,6 @@ namespace SFM
 		Render function.
 	*/
 
-	SFM_INLINE void ProcessDelay_1_Tap(float &mix)
-	{
-		// Get sweep
-		float LFO = s_delayLFO.Sample(0.f);
-		if (LFO < 0.f) LFO *= -1.f;
-
-		// Take single tap
-		const float width = s_parameters.delayWidth;
-		const float tap = width*LFO*kMaxDelaySamples;
-		const float A = s_delayLine.Read(tap)*kRootHalf;
-
-		// Write back
-		s_delayLine.Write(SoftClamp(mix + s_parameters.delayFeedback*A));
-
-		// Mix
-		const float wet = A*s_parameters.delayWet;
-		mix = mix + wet;
- 	}
-
-	// FIXME
-	#define ProcessDelay ProcessDelay_1_Tap
-
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
 	// Returns loudest signal (linear amplitude)
@@ -745,11 +721,6 @@ namespace SFM
 		// Handle voice logic
 		UpdateVoices();
 
-		// Set delay sweep rate
-		const float sweepFreq = g_dx7_voice_lfo_frequency[unsigned(s_parameters.delayRate*127.f)];
-		const float sweepBend = powf(2.f, sweepFreq);
-		s_delayLFO.PitchBend(sweepBend);
-
 		const unsigned numVoices = s_active;
 
 		if (0 == numVoices)
@@ -760,8 +731,6 @@ namespace SFM
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
 				float mix = 0.f;
-
-				ProcessDelay(mix);
 
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
@@ -839,8 +808,6 @@ namespace SFM
 					mix = mix+sample;
 				}
 
-				ProcessDelay(mix);
-
 				// Drive
 				const float drive = WinMidi_GetMasterDrive();
 				mix = ultra_tanhf(mix*drive);
@@ -909,9 +876,6 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
-
-	s_delayLine.Reset();
-	s_delayLFO.Initialize(kSine, 1.f, 1.f);
 
 	// Reset voice deques
 	s_voiceReq.clear();

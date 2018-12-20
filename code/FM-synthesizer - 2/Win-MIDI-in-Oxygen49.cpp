@@ -74,7 +74,7 @@ namespace SFM
 	static float s_tremolo = 0.f;
 
 	static float s_opEnvA[kNumOperators] = { 0.f };
-	static float s_opEnvL[kNumOperators] = { 1.f }; // So that by default these controls don't have to be touched
+	static float s_opEnvL[kNumOperators] = { 0.f };
 	static float s_opEnvD[kNumOperators] = { 0.f };
 
 	static float s_cutoff = 0.f;
@@ -94,10 +94,10 @@ namespace SFM
 	static float s_opLevelScaleL[kNumOperators]   = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]   = { 0.f };
 
-	static int s_opPitchEnvDir[kNumOperators]   = { 1 };
+	static int s_opPitchEnvDir[kNumOperators]   = { 0 };
 
 	// Breakpoints default in the middle
-	static unsigned s_opLevelScaleBP[kNumOperators] = { 69 };
+	static unsigned s_opLevelScaleBP[kNumOperators] = { 0 };
 
 	static float s_A = 0.f, s_D = 0.f, s_S = 0.f, s_R = 0.f;
 
@@ -140,7 +140,7 @@ namespace SFM
 	// LFO shape
 	static Waveform s_LFOShape = kSine;
 
-	static unsigned s_voices[127] = { -1 };
+	static unsigned s_voices[127];
 
 	static void WinMidiProc(
 		HMIDI hMidiIn,
