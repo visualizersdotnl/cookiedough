@@ -48,6 +48,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-DX-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-filter.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-DX-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-global.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-log.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-LUT.h" />
@@ -313,6 +315,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
+    <None Include="..\code\FM-synthesizer - 2\theory\FM_Synthesis_of_Real_Instruments.pdf" />
     <None Include="..\code\FM-synthesizer\makefile" />
     <None Include="..\README.md" />
   </ItemGroup>

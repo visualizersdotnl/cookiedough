@@ -10,10 +10,12 @@
 	- 6 programmable operators with:
 	  + Tremolo & vibrato LFO (vibrato key scaled)
 	  + Yamaha-style level scaling
-	  + Amplitude envelope (velocity sensitive, per operator modulation)
+	  + Amplitude/depth envelope (attack, level & decay, velocity sensitive)
+	  + Pitch envelope mo dulation
 	- Global:
 	  + Drive, ADSR, feedback amount, tremolo & vibrato speed
-	  + Pitch bend, global modulation
+	  + Pitch (sweep style) envelope parameters (attack, level & decay)
+	  + Pitch bend
 	  + Clean & MOOG-style ladder filter (24dB) with envelope
 	  + Multiple voices (paraphonic)
 	  + Adjustable tone jitter (for analogue warmth)
@@ -35,7 +37,8 @@
 
 	Problems I encountered:
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
-		- I feel that adding more of my oscillator types would be helpful
+		- I may need more (additive sines) oscillator types
+		- I need to stop second-guessing myself until I had some real feedback
 
 	VST version must-haves:
 		- Rethink the entire approach (DX voice render especially)
@@ -44,7 +47,8 @@
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
-		- Algorithms: 
+		- Algorithms
+		- Use logarithmic scale for operator volume if carrier, use conversion table (see Hexter) for modulator
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
 		  + It works, but:
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
@@ -59,7 +63,7 @@
 		- Rip (more of) Sean Bolton's tables
 		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Finish level scaling
-		  + Configurable range
+		  + Configurable range (in octaves)
 		  + LIN/EXP choice (!)
 		  + More potential depth?
 		- Optimize delay line (see impl.)

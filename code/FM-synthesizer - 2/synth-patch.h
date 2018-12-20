@@ -41,6 +41,7 @@ namespace SFM
 
 			// Amp. envelope
 			float opEnvA;
+			float opEnvL;
 			float opEnvD;
 
 			// Velocity sensitivity (amplitude & envelope)
@@ -84,6 +85,7 @@ namespace SFM
 
 				// Flat amplitude env.
 				OP.opEnvA = 0.f;
+				OP.opEnvL = 1.f;
 				OP.opEnvD = 0.f;
 
 				// Insensitive (amplitude & operator env.)

@@ -61,8 +61,9 @@ namespace SFM
 	float WinMidi_GetSustain();
 	float WinMidi_GetRelease();
 
-	// Operator envelope (attack & decay)
+	// Operator envelope (attack (level) & decay)
 	float WinMidi_GetOperatorEnvA();
+	float WinMidi_GetOperatorEnvL();
 	float WinMidi_GetOperatorEnvD();
 
 	// LFO shape

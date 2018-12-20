@@ -66,7 +66,7 @@ namespace SFM
 	const unsigned kFaderR = 72;             // C4
 	const unsigned kFaderOpTremolo = 25;     // C5
 	const unsigned kFaderTremolo = 73;       // C6
-	const unsigned kFaderOpEnvA = 74;        // C7
+	const unsigned kFaderOpEnvAL = 74;       // C7
 	const unsigned kFaderOpEnvD = 70;        // C8
 	const unsigned kFaderOpFeedbackAmt = 63; // C9
 
@@ -74,6 +74,7 @@ namespace SFM
 	static float s_tremolo = 0.f;
 
 	static float s_opEnvA[kNumOperators] = { 0.f };
+	static float s_opEnvL[kNumOperators] = { 1.f }; // So that by default these controls don't have to be touched
 	static float s_opEnvD[kNumOperators] = { 0.f };
 
 	static float s_cutoff = 0.f;
@@ -107,6 +108,7 @@ namespace SFM
 	const unsigned kButtonFilterInv = 102;     // C24
 	const unsigned kButtonOpFixed = 116;       // C28
 	const unsigned kButtonOpPitchEnvDir = 113; // C27
+	const unsigned kButtonOpEnvSetL = 101;     // C23
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -131,6 +133,9 @@ namespace SFM
 	// Current (receiving) operator
 	/* static */ unsigned g_currentOp = 0;
 	static bool s_opRecv = false;
+
+	// Set op. env. A or L
+	static bool s_setOpEnvL = false;
 
 	// LFO shape
 	static Waveform s_LFOShape = kSine;
@@ -301,12 +306,20 @@ namespace SFM
 
 						/* Operator envelope */
 
-						case kFaderOpEnvA:
-							s_opEnvA[g_currentOp] = fControlVal;
+						case kFaderOpEnvAL:
+							if (false == s_setOpEnvL)
+								s_opEnvA[g_currentOp] = fControlVal;
+							else
+								s_opEnvL[g_currentOp] = fControlVal;
+	
 							break;
 
 						case kFaderOpEnvD:
 							s_opEnvD[g_currentOp] = fControlVal;
+							break;
+
+						case kButtonOpEnvSetL:
+							s_setOpEnvL = (127 == controlVal);
 							break;
 
 						/* 
@@ -546,6 +559,7 @@ namespace SFM
 
 	// Modulation envelope (attack & decay)
 	float WinMidi_GetOperatorEnvA() { return s_opEnvA[g_currentOp]; }
+	float WinMidi_GetOperatorEnvL() { return s_opEnvL[g_currentOp]; }
 	float WinMidi_GetOperatorEnvD() { return s_opEnvD[g_currentOp]; }
 
 	// Operaetor LFO shape

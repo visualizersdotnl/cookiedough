@@ -23,6 +23,7 @@
 #include "synth-filter.h"
 #include "synth-delay-line.h"
 #include "synth-vowel-filter.h"
+#include "synth-FM-algorithms.h"
 
 // Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -274,133 +275,7 @@ namespace SFM
 
 #endif
 
-#if 0
-
-		/*
-			Test algorithm: Volca algorithm #15
-
-			Used with a string patch; try to recreate
-		*/
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			request.form, 
-			CalcOpFreq(frequency, patch.operators[0]), 
-			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[1]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
-
-		// Operator #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(
-			request.form, 
-			CalcOpFreq(frequency, patch.operators[2]), 
-			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[2]));
-
-		// Operator #4
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulators[0] = 4;
-		voice.m_operators[3].modulators[1] = 5;
-		voice.m_operators[3].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[3]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[3]));
-
-		// Operator #5
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[4]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[4]));
-
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[5]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-#if 0
-
-		/*
-			Test algorithm: Volca algorithm #2
-
-			Used with a brass patch; try to recreate
-		*/
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			request.form, 
-			CalcOpFreq(frequency, patch.operators[0]), 
-			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[1]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
-
-		// Operator #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(
-			request.form, 
-			CalcOpFreq(frequency, patch.operators[2]), 
-			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[2]));
-
-		// Operator #4
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulators[0] = 4;
-		voice.m_operators[3].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[3]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[3]));
-
-		// Operator #5
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[4]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[4]));
-
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(frequency, patch.operators[5]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
-
-		/*
-			End of Algorithm
-		*/
-
-#endif
-
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca algorithm #5
@@ -427,7 +302,7 @@ namespace SFM
 				CalcOpFreq(frequency, patch.operators[modulator]), 
 				CalcOpAmp(modDepth, key, velocity, patch.operators[modulator]));
 		}
-
+		 
 		// Op. #6 has feedback
 		voice.m_operators[5].feedback = 5;
 
@@ -437,7 +312,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca algorithm #31
@@ -505,14 +380,12 @@ namespace SFM
 			voiceOp.feedbackAmt = patchOp.feedbackAmt;
 
 			// Operator env.
-			// We always attack to 1.0, then decay works a little different here in that it also decides
-			// what sustain will be. If it's zero we'll stick at 1, if it's 1 we'll eventually hold at zero
 			ADSR::Parameters envParams;
 			envParams.attack = patchOp.opEnvA;
-			envParams.attackLevel = 1.f;
+			envParams.attackLevel = patchOp.opEnvL;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
-			envParams.sustainLevel = 1.f-envParams.decay;
+			envParams.sustainLevel = std::max<float>(0.f, patchOp.opEnvL-envParams.decay);
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
@@ -812,6 +685,7 @@ namespace SFM
 
 			// Envelope
 			patchOp.opEnvA = WinMidi_GetOperatorEnvA();
+			patchOp.opEnvL = WinMidi_GetOperatorEnvL();
 			patchOp.opEnvD = WinMidi_GetOperatorEnvD();
 			
 			// Amp./Index/Depth

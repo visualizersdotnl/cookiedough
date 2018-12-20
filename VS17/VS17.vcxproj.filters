@@ -86,6 +86,9 @@
     <Filter Include="/code\/FM-synthesize %28FM. BISON prototype 1%29\driver">
       <UniqueIdentifier>{5e888a80-26ad-4eb4-a96f-5617578a9825}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/theory">
+      <UniqueIdentifier>{619ead02-3ba6-47f3-a73a-1a8d4e32ee37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -257,6 +260,9 @@
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 2\synth-vowel-filter.cpp">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.cpp">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -534,6 +540,9 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-vowel-filter.h">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
@@ -563,6 +572,9 @@
     <None Include="..\README.md" />
     <None Include="..\code\FM-synthesizer\makefile">
       <Filter>/code\/FM-synthesize %28FM. BISON prototype 1%29</Filter>
+    </None>
+    <None Include="..\code\FM-synthesizer - 2\theory\FM_Synthesis_of_Real_Instruments.pdf">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/theory</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
