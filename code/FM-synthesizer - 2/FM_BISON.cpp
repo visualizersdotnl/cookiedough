@@ -249,7 +249,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 07
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -315,7 +315,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca algorithm #31
@@ -596,7 +596,7 @@ namespace SFM
 		// Master ADSR
 		s_parameters.envParams.attack  = WinMidi_GetAttack();
 		s_parameters.envParams.decay   = WinMidi_GetDecay();
-		s_parameters.envParams.release = WinMidi_GetRelease() * 2.f; // Longer release on main ADSR for pads et cetera
+		s_parameters.envParams.release = WinMidi_GetRelease() * kReleaseStretch;
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
 		// Modulation depth
@@ -720,6 +720,7 @@ namespace SFM
 		const float mixL = lerpf<float>(mix, mixed, sweepL);
 		const float mixR = lerpf<float>(mix, mixed, sweepR);
 
+		// FIXME
 		s_ringBuf.Write(mixL);
 		s_ringBuf.Write(mixR);
 	}
@@ -736,7 +737,7 @@ namespace SFM
 		if (true == s_ringBuf.IsFull())
 			return loudest;
 
-		const unsigned available = s_ringBuf.GetAvailable()/2;
+		const unsigned available = s_ringBuf.GetAvailable()>>1;
 		if (available > kMinSamplesPerUpdate)
 			return loudest;
 
@@ -750,7 +751,7 @@ namespace SFM
 		UpdateVoices();
 
 		// Bend delay LFOs
-		const float delayBend = powf(2.f, s_parameters.delayRate);
+		const float delayBend = powf(2.f, s_parameters.delayRate*kGoldenRatio);
 		s_delayLFO_L.PitchBend(delayBend);
 		s_delayLFO_R.PitchBend(delayBend);
 
@@ -879,7 +880,7 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 		float *pWrite = reinterpret_cast<float*>(pStream);
 		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 		{
-			// FIXME: optimize
+			// FIXME
 			*pWrite++ = s_ringBuf.Read();
 			*pWrite++ = s_ringBuf.Read();
 		}
@@ -910,7 +911,7 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 
 	s_delayLine.Reset();
-	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f); // 0
+	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f);  // 0
 	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.33f); // 120
 	
 	// Reset voice deques

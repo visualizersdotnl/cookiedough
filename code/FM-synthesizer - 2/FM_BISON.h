@@ -80,7 +80,6 @@
 		- And I suggest on top of that: 1 modulator only, not 3
 
 	Missing (important) features that DX7 and Volca FM have:
-		- Stereo
 		- My envelopes are different than the ones used by the Volca or DX7 (can be fixed when going to VST)
 		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
 		  not pitch env. (always fully responds to velocity)

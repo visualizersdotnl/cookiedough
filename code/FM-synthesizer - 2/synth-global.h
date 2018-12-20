@@ -85,6 +85,9 @@ namespace SFM
 
 	// Base delay LFO frequency
 	const float kBaseDelayFreq = 0.5f;
+
+	// Longer release on main ADSR for pads et cetera
+	const float kReleaseStretch = 2.f;
 }
 
 #include "synth-LUT.h"
