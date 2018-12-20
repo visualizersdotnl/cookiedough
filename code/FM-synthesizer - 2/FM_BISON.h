@@ -66,6 +66,8 @@
 		- Check vowel filter: can I limit the input instead of clamping the output?
 		- Review envelopes
 		- Review operator loop
+		- Most oscillator types can be taken out and you'd be left with a sinee, cosine and triangle, which ideally you
+		  read from a table directly, this will make Oscillator a good bit quicker
 
 	Two of Pieter's ideas:
 		- Take out feedback and replace it for a triangle or saw oscillator
