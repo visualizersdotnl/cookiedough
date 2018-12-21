@@ -49,8 +49,6 @@ namespace SFM
 		// Delay parameters
 		float delayWet;
 		float delayRate;
-		float delayWidth;
-		float delayFeedback;
 
 		// Pitch env.
 		float pitchA;
@@ -102,8 +100,6 @@ namespace SFM
 			// No delay
 			delayWet = 0.f;
 			delayRate = 0.f;
-			delayWidth = 0.f;
-			delayFeedback = 0.f;
 
 			// No pitch env.
 			pitchA = 0.f;

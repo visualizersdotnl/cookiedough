@@ -45,8 +45,8 @@ namespace SFM
 	const unsigned kPotOpVibrato = 74;     // Set 1, R2
 	const unsigned kPotDelayWet = 114;     // Set 3, R9
 	const unsigned kPotDelayRate = 18;     // Set 3, R10
-	const unsigned kPotDelayWidth = 19;    // Set 3, R11
-	const unsigned kPotDelayFeedback = 16; // Set 3, R12
+	const unsigned kPotUnused1 = 19;       // Set 3, R11
+	const unsigned kPotUnused2 = 16;       // Set 3, R12
 	const unsigned kPotFilterA = 91;       // Set 4, R14
 	const unsigned kPotFilterD = 79;       // Set 4, R15
 	const unsigned kPotFilterS = 72;       // Set 4, R16
@@ -63,8 +63,6 @@ namespace SFM
 
 	static float s_delayWet = 0.f;
 	static float s_delayRate = 0.f;
-	static float s_delayWidth = 0.f;
-	static float s_delayFeedback = 0.f;
 
 	static float s_filterA = 0.f;
 	static float s_filterD = 0.f;
@@ -141,14 +139,6 @@ namespace SFM
 
 					case kPotDelayRate:
 						s_delayRate = fControlVal;
-						break;
-
-					case kPotDelayWidth:
-						s_delayWidth = fControlVal;
-						break;
-
-					case kPotDelayFeedback:
-						s_delayFeedback = fControlVal;
 						break;
 
 					/* Filter (ADS) */
@@ -334,8 +324,6 @@ namespace SFM
 	// Delay
 	float WinMidi_GetDelayWet()      { return s_delayWet;      }
 	float WinMidi_GetDelayRate()     { return s_delayRate;     }
-	float WinMidi_GetDelayWidth()    { return s_delayWidth;    }
-	float WinMidi_GetDelayFeedback() { return s_delayFeedback; }
 
 	// Filter
 	float WinMidi_GetFilterA()     { return s_filterA; }

@@ -38,40 +38,36 @@
 	Problems I encountered:
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
 		- I may need more (additive sines) oscillator types
-		- I need to stop second-guessing myself until I had some real feedback
+		- I need to stop second-guessing myself until I had some real feedback!
 
 	VST version must-haves:
 		- Rethink the entire approach (DX voice render especially)
-		- Full envelopes everywhere!
+		- Full envelopes everywhere?
 		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
-		- New delay effect
-		  + Polishing!
+		- Finish level scaling (controls are now available)
+		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)
+		  + LIN/EXP choice per side (see buttons)
+		  + More potential depth?
+		- New delay effect needs polishing
 		- Algorithms
-		- Use logarithmic scale for operator volume if carrier, use conversion table (see Hexter) for modulator
+		- Use logarithmic scale for operator amplitude (carriers at least?)
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
 		  + It works, but:
 		  + Should this be configurable? Maybe just under a button as "Rhodey-mode"?
 		- Voice stealing
 		  + Implement theft of releasing voices in *sorted* order (implemented, test!)
-		- Amplitude/Depth ratio (see Hexter tab.)
-		- I need a decent way to define algorithms; hardcoding them like I do now is too error prone
 
 	Sound improvements:
+	    - Optimize ring buffer use
 		- Use sustain pedal to ignore NOTE_OFF
 		- Tweak LFO jitter ranges
 		- Rip (more of) Sean Bolton's tables
 		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
-		- Finish level scaling
-		  + Configurable range (in octaves)
-		  + LIN/EXP choice (!)
-		  + More potential depth?
 		- Optimize delay line (see impl.)
 		- Check vowel filter: can I limit the input instead of clamping the output?
-		- Review envelopes
-		- Review operator loop
 		- Most oscillator types can be taken out and you'd be left with a sinee, cosine and triangle, which ideally you
 		  read from a table directly, this will make Oscillator a good bit quicker
 
@@ -84,18 +80,23 @@
 		- I only allow velocity sensitivity to be tweaked for operator amplitude and envelope ('velSens'),
 		  not pitch env. (always fully responds to velocity)
 		- Maybe look into non-synchronized LFOs & oscillators (now they are all key synchronized)
-		- I lack algorithms, but that'll be fixed down the line
 
 	Don't forget:
 		- FIXMEs
+		- Review all features
+		- DX7 patch converter/importer?
 
 	Things that are missing or broken:
-		- Mod. wheel should respond during note playback
 		- Potmeters crackle; I see no point in fixing this before I go for VST
 
 	Jan Marguc says:
 		- Try wavetables as modulator
 		- More decay curve sens.
+
+	Something I stumbled upon late at night:
+	
+	"The envelopes in the DX7 are quite weird. The decays are fine, but since they're linear envelopes passed through an exponential table, 
+	 the attacks end up naturally being a sort of "reverse exponential" that resembles a time-reversed decay rather than a natural attack (in analog ADSRs this is generally an inverted exponential decay, which sounds much better)."
 */
 
 #pragma once

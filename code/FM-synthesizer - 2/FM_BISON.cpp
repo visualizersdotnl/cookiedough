@@ -249,7 +249,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 07
+#if 1
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -315,7 +315,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #31
@@ -622,8 +622,6 @@ namespace SFM
 		// Delay
 		s_parameters.delayWet = WinMidi_GetDelayWet();
 		s_parameters.delayRate = WinMidi_GetDelayRate();
-		s_parameters.delayWidth = WinMidi_GetDelayWidth();
-		s_parameters.delayFeedback = WinMidi_GetDelayFeedback();
 
 		// Pitch env.
 		s_parameters.pitchA = WinMidi_GetPitchA();
@@ -911,8 +909,8 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 
 	s_delayLine.Reset();
-	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f);  // 0
-	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.33f); // 120
+	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f);   // 0 deg.
+	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.33f); // Approx 120 deg.
 	
 	// Reset voice deques
 	s_voiceReq.clear();
