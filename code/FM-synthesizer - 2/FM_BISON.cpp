@@ -189,7 +189,7 @@ namespace SFM
 		const unsigned numSemis = 2*12; // 2 octaves (FIXME: should be setting)
 		const float step = 1.f/numSemis;
 
-		// FIXME: wrap into function
+		// FIXME: wrap into function (above)
 		if (key < breakpoint)
 		{
 			const unsigned distance = breakpoint-key;
@@ -199,7 +199,7 @@ namespace SFM
 			if (distance < numSemis)
 				delta = distance*step;
 
-			levelScale *= delta;
+			levelScale *= (true == patchOp.levelScaleExpL) ? delta*delta : delta;
 			amplitude += amplitude*levelScale;
 			amplitude = saturatef(amplitude);
 		}
@@ -212,7 +212,7 @@ namespace SFM
 			if (distance < numSemis)
 				delta = distance*step;
 
-			levelScale *= delta;
+			levelScale *= (true == patchOp.levelScaleExpR) ? delta*delta : delta;
 			amplitude += amplitude*levelScale;
 			amplitude = saturatef(amplitude);
 		}
@@ -396,7 +396,7 @@ namespace SFM
 			envParams.attackLevel = patchOp.opEnvL;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
-			envParams.sustainLevel = 1.f-patchOp.opEnvD;
+			envParams.sustainLevel = patchOp.opEnvL-patchOp.opEnvD;
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
@@ -692,17 +692,19 @@ namespace SFM
 				patchOp.pitchEnvAmt *= -1.f; // Control direction by inverting the amount
 
 			// Level scaling parameters
-			patchOp.levelScaleBP = WinMidi_GetOperatorLevelScaleBP();
-			patchOp.levelScaleLeft = WinMidi_GetOperatorLevelScaleL();
+			patchOp.levelScaleBP    = WinMidi_GetOperatorLevelScaleBP();
+			patchOp.levelScaleLeft  = WinMidi_GetOperatorLevelScaleL();
 			patchOp.levelScaleRight = WinMidi_GetOperatorLevelScaleR();
+			patchOp.levelScaleExpL  = WinMidi_GetOperatorLevelScaleExpL();
+			patchOp.levelScaleExpR  = WinMidi_GetOperatorLevelScaleExpR();
 
 			// Feedback amount
 			patchOp.feedbackAmt = WinMidi_GetOperatorFeedbackAmount()*kMaxOperatorFeedback;
 
 			// Envelope
 			patchOp.opEnvA = WinMidi_GetOperatorEnvA();
-			patchOp.opEnvL = WinMidi_GetOperatorEnvL();
 			patchOp.opEnvD = WinMidi_GetOperatorEnvD();
+			patchOp.opEnvL = WinMidi_GetOperatorEnvL();
 			
 			// Amp./Index/Depth
 			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
@@ -733,17 +735,11 @@ namespace SFM
 		
 		const float mixL = lerpf<float>(mix, wet, sweepL);
 		const float mixR = lerpf<float>(mix, wet, sweepR);
-		const float mixM = lerpf<float>(mix, wet, sweepM);
-
-		const float halfLin = dBToAmplitude(-3.f);
-		const float L = mixL*halfLin + mixM*halfLin;
-		const float R = mixR*halfLin + mixM*halfLin;
+		const float mixM = lerpf<float>(mix, wet, sweepM)*kMinus3dB;
 
 		// FIXME: should the mid. LFO also tell us how it blends in?
-
-		// FIXME
-//		s_ringBuf.Write(L);
-//		s_ringBuf.Write(R);
+		const float L = mixL*kMinus3dB + mixM;
+		const float R = mixR*kMinus3dB + mixM;
 
 		s_ringBuf.Write(mixL);
 		s_ringBuf.Write(mixR);
@@ -938,6 +934,8 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 
 	s_delayLine.Reset();
+
+	// 3-phase chorus: L and R at 120 and 240 deg., M at 0 deg.
 	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.33f);
 	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.66f);
 	s_delayLFO_M.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.f);

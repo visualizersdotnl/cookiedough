@@ -93,6 +93,8 @@ namespace SFM
 	static float s_opPitchEnvAmt[kNumOperators]   = { 0.f };
 	static float s_opLevelScaleL[kNumOperators]   = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]   = { 0.f };
+	static bool  s_op_LS_ExpL[kNumOperators]      = { false };
+	static bool  s_op_LS_ExpR[kNumOperators]      = { false };
 
 	static int s_opPitchEnvDir[kNumOperators]   = { 0 };
 
@@ -109,6 +111,10 @@ namespace SFM
 	const unsigned kButtonOpFixed = 116;       // C28
 	const unsigned kButtonOpPitchEnvDir = 113; // C27
 	const unsigned kButtonOpEnvSetL = 101;     // C23
+	const unsigned kButtonOp_LS_LinL = 96;     // C18
+	const unsigned kButtonOp_LS_ExpL = 97;     // C19
+	const unsigned kButtonOp_LS_LinR = 98;     // C20
+	const unsigned kButtonOp_LS_ExpR = 99;     // C21
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
@@ -302,6 +308,22 @@ namespace SFM
 
 						case kFaderOpTremolo:
 							s_opTremolo[g_currentOp] = fControlVal;
+							break;
+
+						case kButtonOp_LS_LinL:
+							if (127 == controlVal) s_op_LS_ExpL[g_currentOp] = false;
+							break;
+
+						case kButtonOp_LS_ExpL:
+							if (127 == controlVal) s_op_LS_ExpL[g_currentOp] = true;
+							break;
+
+						case kButtonOp_LS_LinR:
+							if (127 == controlVal) s_op_LS_ExpR[g_currentOp] = false;
+							break;
+
+						case kButtonOp_LS_ExpR:
+							if (127 == controlVal) s_op_LS_ExpR[g_currentOp] = true;
 							break;
 
 						/* Operator envelope */
@@ -527,6 +549,8 @@ namespace SFM
 	float WinMidi_GetOperatorPitchEnvAmount()       { return s_opPitchEnvAmt[g_currentOp];   }
 	float WinMidi_GetOperatorLevelScaleL()          { return s_opLevelScaleL[g_currentOp];   }
 	float WinMidi_GetOperatorLevelScaleR()          { return s_opLevelScaleR[g_currentOp];   }
+	bool  WinMidi_GetOperatorLevelScaleExpL()       { return s_op_LS_ExpL[g_currentOp];      }
+	bool  WinMidi_GetOperatorLevelScaleExpR()       { return s_op_LS_ExpR[g_currentOp];      }
 
 	unsigned WinMidi_GetOperatorLevelScaleBP()
 	{

@@ -48,6 +48,8 @@ namespace SFM
 	float WinMidi_GetOperatorPitchEnvAmount();
 	float WinMidi_GetOperatorLevelScaleL();
 	float WinMidi_GetOperatorLevelScaleR();
+	bool  WinMidi_GetOperatorLevelScaleExpL();
+	bool  WinMidi_GetOperatorLevelScaleExpR();
 
 	// [0..127] MIDI
 	unsigned WinMidi_GetOperatorLevelScaleBP(); 

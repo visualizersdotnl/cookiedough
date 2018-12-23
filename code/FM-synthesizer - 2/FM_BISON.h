@@ -6,13 +6,25 @@
 	Second prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
+	Features as of 23/12/2018:
+		- 16 voice polyphony (to be upgraded to 64)
+		- 6-operator Yamaha style, including level scaling
+		- Per operator envelope (AD), tremolo, vibrato, pitch (sweep)
+		- Global ADSR
+		- Global 3-phase chorus
+		- Per voice low-pass filter (2 switchable MOOG-style variants) with envelope
+		- Multiple algorithms
+		- Global tone jitter or "life" adjustment for a more natural sound
+		- Basic vowel (formant) filter
+
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
 	
 	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
 	bag of language use at the moment.
 
-
+	----
 	And as of 23/12/2018 I think we're best off keeping this codebase as a reference for the VST.
+	----
 
 	
 	Third party credits:
@@ -35,9 +47,8 @@
 		- Polish new vibrato
 		- Finish level scaling (controls are now available)
 		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)
-		  + LIN/EXP choice per side (see buttons)
 		  + More potential depth?
-		- New delay effect needs polishing
+		- New delay (chorus) effect needs polishing
 		- Algorithms
 		- Use logarithmic scale for operator amplitude (carriers at least?)
 		- Make vowel shaping amount depend on velocity (for that pickup effect)
@@ -50,8 +61,6 @@
 	    - Optimize ring buffer use
 		- Use sustain pedal to ignore NOTE_OFF
 		- Tweak LFO jitter ranges
-		- Rip (more of) Sean Bolton's tables
-		  + See: https://github.com/smbolton/hexter/blob/master/src/dx7_voice_tables.c
 		- Optimize delay line (see impl.)
 		- Check vowel filter: can I limit the input instead of clamping the output?
 		- Most oscillator types can be taken out and you'd be left with a sinee, cosine and triangle, which ideally you

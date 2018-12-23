@@ -50,10 +50,10 @@ namespace SFM
 			// Pitch envelope influence (can also be negative to invert envelope)
 			float pitchEnvAmt;
 
-			// Level scaling settings
-			// FIXME: optimize!
+			// Level scaling settings (FIXME: optimize, stash BP and booleans into single integer)
 			unsigned levelScaleBP; // [0..127] MIDI
 			float levelScaleLeft, levelScaleRight; // [-1..1]
+			bool levelScaleExpL, levelScaleExpR;
  
 			// Feedback amount
 			// This only has effect when operator is used by itself or another in a feedback loop
@@ -94,10 +94,12 @@ namespace SFM
 				// No pitch env. response
 				OP.pitchEnvAmt = 0.f;
 
-				// No level scaling
+				// No (linear) level scaling
 				OP.levelScaleBP = 69; // A4
 				OP.levelScaleLeft = 0.f;
 				OP.levelScaleRight = 0.f;
+				OP.levelScaleExpL = false;
+				OP.levelScaleExpR = false;
 
 				// Zero feedback 
 				OP.feedbackAmt = 0.f;

@@ -47,7 +47,6 @@ namespace SFM
 	const unsigned kMaxVoices = 16;
 
 	// Max. voice amplitude 
-//	const float kMaxVoiceAmp = 0.25f;
 	const float kMaxVoiceAmp = 0.66f;
 //	const float kMaxVoiceAmp = 0.110384f; // Stolen from Hexter, supposedly close to the TX nominal voice volume, though it is *low* (FIXME)
 
@@ -63,6 +62,9 @@ namespace SFM
 
 	// Base note Hz
 	const float kBaseHz = 440.f;
+
+	// To scale lin. amplitude (-3dB = half as loud)
+	const float kMinus3dB = 0.707945764f;
 
 	// Number of FM synthesis operators
 	const unsigned kNumOperators = 6;
