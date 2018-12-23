@@ -218,11 +218,11 @@ namespace SFM
 		}
 
 		// Apply Hexter's DX-style EG-to-modulation table
-		const int tabIndex = 128 + int(amplitude*127.f);
+		const int tabIndex = 128 + int(amplitude*99.f); // Yamaha EG range
 		const float modIndex = g_dx7_voice_eg_ol_to_mod_index_table[tabIndex];
 		amplitude = modIndex;
 
-		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens*patchOp.velSens /* EXP */);
+		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
 
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)

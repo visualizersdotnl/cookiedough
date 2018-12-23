@@ -31,7 +31,8 @@
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
-		- Fix new vibrato
+		- There's range problems, those Hexter tables need to be looked at
+		- Polish new vibrato
 		- Finish level scaling (controls are now available)
 		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)
 		  + LIN/EXP choice per side (see buttons)
