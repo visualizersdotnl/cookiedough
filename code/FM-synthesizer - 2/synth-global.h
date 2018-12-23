@@ -88,6 +88,9 @@ namespace SFM
 
 	// Longer release on main ADSR for pads et cetera
 	const float kReleaseStretch = 2.f;
+
+	// Vibrato depth
+	const float kMaxVibratoDepth = 0.5f;
 }
 
 #include "synth-LUT.h"

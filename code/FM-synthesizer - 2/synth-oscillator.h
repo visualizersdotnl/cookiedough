@@ -13,8 +13,8 @@ namespace SFM
 	{
 	private:
 		/* const */ Waveform m_form;
-		/* const */ float m_frequency;
-		/* const */ float m_amplitude;
+		float m_frequency;
+		float m_amplitude;
 		
 		float m_syncFrequency;
 		float m_syncPeriod;
@@ -69,6 +69,12 @@ namespace SFM
 		void PitchBend(float bend)
 		{
 			m_pitch = CalculatePitch(m_frequency*bend);
+		}
+
+		// Amplitude mod.
+		void SetAmplitude(float amplitude)
+		{
+			m_amplitude = amplitude;
 		}
 
 		Waveform GetWaveform() const  { return m_form;      }

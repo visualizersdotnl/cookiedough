@@ -68,10 +68,8 @@ namespace SFM
 		// Feedback buffer
 		float m_feedback[kNumOperators];
 
-		// Tremolo osc.
+		// LFO
 		Oscillator m_tremolo;
-
-		// Vibrato osc.
 		Oscillator m_vibrato;
 
 		// Global pitch bend
@@ -103,10 +101,8 @@ namespace SFM
 		{
 			ResetOperators();
 
-			// No tremolo
+			// No LFO
 			m_tremolo.Initialize(kSine, 0.f, 1.f);
-
-			// No vibrato
 			m_vibrato.Initialize(kSine, 0.f, 1.f);
 
 			// No pitch bend

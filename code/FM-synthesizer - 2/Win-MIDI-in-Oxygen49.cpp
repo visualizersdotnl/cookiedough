@@ -112,7 +112,7 @@ namespace SFM
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel)
-	static float s_modIndex = 0.f;
+	static float s_modIndex[2] = { 0.f }; // First entry is to be used globally (vibrato), second to program operators (depth)
 
 	// Pitch bend (special message, 14-bit signed, wheel rests in the middle)
 	static float s_pitchBend;
@@ -281,7 +281,7 @@ namespace SFM
 							break;
 
 						case kModIndex:
-							s_modIndex = fControlVal;
+							s_modIndex[s_opRecv] = fControlVal;
 							break;
 
 						case kPotOpCoarse:
@@ -533,10 +533,10 @@ namespace SFM
 		return s_opLevelScaleBP[g_currentOp];
 	}
 
-	// Modulation index
-	float WinMidi_GetModulation() 
+	// Modulation
+	float WinMidi_GetModWheel() 
 	{ 
-		return s_modIndex; 
+		return s_modIndex[s_opRecv];
 	}
 
 	// Pitch bend

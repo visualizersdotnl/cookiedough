@@ -89,10 +89,11 @@ namespace SFM
 	// Vowel (formant) filters
 	static VowelFilter s_vowelFilters[kMaxVoices];
 
-	// Delay
+	// Delay + LFO(s)
 	static DelayLine s_delayLine;
 	static Oscillator s_delayLFO_L;
 	static Oscillator s_delayLFO_R;
+	static Oscillator s_delayLFO_M;
 	
 	/*
 		Voice API.
@@ -148,6 +149,7 @@ namespace SFM
 		{
 			// Fixed ratio (taken from Volca FM third-party manual)
 			// Detune has no effect on fixed ratio?
+			// The Volca seems to disagree (FIXME!)
 			const float coarseTab[4] = { 1, 10, 100, 1000 };
 			frequency = coarseTab[coarse&3];
 		}
@@ -171,11 +173,12 @@ namespace SFM
 
 	SFM_INLINE float LevelScale(float scale, unsigned distance)
 	{
+		// FIXME
 		return 0.f;
 	}
 
 	// Calculate operator amplitude/depth
-	SFM_INLINE float CalcOpAmp(float baseAmp, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
+	SFM_INLINE float CalcOpAmp(float baseAmp, unsigned key, float velocity, const FM_Patch::Operator &patchOp) // "CalcOperatorAmplitude"
 	{
 		float amplitude = baseAmp*patchOp.amplitude;
 
@@ -186,6 +189,7 @@ namespace SFM
 		const unsigned numSemis = 2*12; // 2 octaves (FIXME: should be setting)
 		const float step = 1.f/numSemis;
 
+		// FIXME: wrap into function
 		if (key < breakpoint)
 		{
 			const unsigned distance = breakpoint-key;
@@ -213,7 +217,12 @@ namespace SFM
 			amplitude = saturatef(amplitude);
 		}
 
-		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
+		// Apply Hexter's DX-style EG-to-modulation table
+		const int tabIndex = 128 + int(amplitude*127.f);
+		const float modIndex = g_dx7_voice_eg_ol_to_mod_index_table[tabIndex];
+		amplitude = modIndex;
+
+		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens*patchOp.velSens /* EXP */);
 	}
 
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
@@ -359,11 +368,10 @@ namespace SFM
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const float vibAmt = std::min<float>(1.f, s_parameters.vibrato+freqScale); // Vibrato increases with frequency
-		const unsigned vibIdx = unsigned(127.f*vibAmt);
+		const unsigned vibIdx = 32 + unsigned(freqScale*16.f);
 		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
-		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, 1.f, vibShift);
+		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kMaxVibratoDepth, vibShift);
 
 		// Set per operator
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -573,8 +581,8 @@ namespace SFM
 		FIXME:
 			- Update parameters every N samples (nuggets).
 			- Remove all rogue parameter probes, some of which are:
-			  + WinMidi_GetPitchBend()
 			  + WinMidi_GetMasterDrive()
+			  + ?
 
 		Most tweaking done here on the normalized input parameters should be adapted for the first VST attempt.
 	*/
@@ -586,9 +594,8 @@ namespace SFM
 		// Drive
 		s_parameters.drive = dBToAmplitude(kDriveHidB)*WinMidi_GetMasterDrive();
 
-		// Tremolo & vibrato
+		// Tremolo
 		s_parameters.tremolo = WinMidi_GetTremolo();
-		s_parameters.vibrato = WinMidi_GetVibrato();
 
 		// LFO form
 		s_parameters.LFOform = WinMidi_GetLFOShape();
@@ -599,8 +606,12 @@ namespace SFM
 		s_parameters.envParams.release = WinMidi_GetRelease() * kReleaseStretch;
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
-		// Modulation depth
-		s_parameters.modDepth = WinMidi_GetModulation();
+		// Modulation depth or vibrato
+		const float modWheel = WinMidi_GetModWheel();
+		if (-1 != WinMidi_GetOperator())
+			s_parameters.modDepth = modWheel;
+		else
+			s_parameters.vibrato = modWheel;
 
 		// Note jitter
 		s_parameters.noteJitter = WinMidi_GetNoteJitter();
@@ -632,6 +643,10 @@ namespace SFM
 		s_parameters.vowelWet = WinMidi_GetVowelWet();
 		s_parameters.vowelBlend = WinMidi_GetVowelBlend();
 		s_parameters.vowel = WinMidi_GetVowel();
+
+		// Pitch bend
+		const float bend = WinMidi_GetPitchBend();
+		s_parameters.pitchBend = powf(2.f, bend);
 
 		// Update current operator patch
 		const unsigned iOp = WinMidi_GetOperator();
@@ -700,7 +715,7 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// FIXME
+	// FIXME: optimize
 	SFM_INLINE void DelayToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
@@ -710,15 +725,26 @@ namespace SFM
 		const float tap1 = s_delayLine.Read(hundred);
 		const float tap = tap1;
 
-		const float mixed = lerpf<float>(mix, tap, s_parameters.delayWet);
+		const float wet = lerpf<float>(mix, tap, s_parameters.delayWet);
 		
-		const float sweepL = 0.5f + 0.5f*s_delayLFO_L.Sample(0.f);
-		const float sweepR = 0.5f + 0.5f*s_delayLFO_R.Sample(0.f);
+		const float sweepL = 0.5f + s_delayLFO_L.Sample(0.f);
+		const float sweepR = 0.5f + s_delayLFO_R.Sample(0.f);
+		const float sweepM = 0.5f + s_delayLFO_M.Sample(0.f);
 		
-		const float mixL = lerpf<float>(mix, mixed, sweepL);
-		const float mixR = lerpf<float>(mix, mixed, sweepR);
+		const float mixL = lerpf<float>(mix, wet, sweepL);
+		const float mixR = lerpf<float>(mix, wet, sweepR);
+		const float mixM = lerpf<float>(mix, wet, sweepM);
+
+		const float halfLin = dBToAmplitude(-3.f);
+		const float L = mixL*halfLin + mixM*halfLin;
+		const float R = mixR*halfLin + mixM*halfLin;
+
+		// FIXME: should the mid. LFO also tell us how it blends in?
 
 		// FIXME
+//		s_ringBuf.Write(L);
+//		s_ringBuf.Write(R);
+
 		s_ringBuf.Write(mixL);
 		s_ringBuf.Write(mixR);
 	}
@@ -749,9 +775,10 @@ namespace SFM
 		UpdateVoices();
 
 		// Bend delay LFOs
-		const float delayBend = powf(2.f, s_parameters.delayRate*kGoldenRatio);
+		const float delayBend = powf(2.f, s_parameters.delayRate*kPI);
 		s_delayLFO_L.PitchBend(delayBend);
 		s_delayLFO_R.PitchBend(delayBend);
+		s_delayLFO_M.PitchBend(delayBend);
 
 		const unsigned numVoices = s_active;
 
@@ -789,9 +816,11 @@ namespace SFM
 					LadderFilter &filter = *voice.m_pFilter;
 					VowelFilter &vowelFilter = s_vowelFilters[iVoice];
 				
-					// This should be as close to the sample as possible (FIXME)
-					const float bend = powf(2.f, WinMidi_GetPitchBend()*kPitchBendRange);
+					const float bend = s_parameters.pitchBend;
 					voice.SetPitchBend(bend);
+
+					// Set global vibrato amt.
+					voice.m_vibrato.SetAmplitude(s_parameters.vibrato);
 	
 					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
@@ -909,8 +938,9 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 
 	s_delayLine.Reset();
-	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.f);   // 0 deg.
-	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 1.f, 0.33f); // Approx 120 deg.
+	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.33f);
+	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.66f);
+	s_delayLFO_M.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();

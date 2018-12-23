@@ -12,12 +12,10 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
-		// Get tremolo
+		// Get LFO(s)
 		const float tremolo = m_tremolo.Sample(0.f);
+		const float vibrato = m_vibrato.Sample(0.f);
 
-		// Get vibrato in octaves
-		const float vibrato = m_vibrato.Sample(0.f)/12.f;
-	
 		// Get pitch env.
 		const float pitchEnv = m_pitchEnv.Sample();
 
@@ -70,14 +68,9 @@ namespace SFM
 
 				// Set pitch bend (factoring in pitch env. scale & vibrato)
 				const float pitchEnvScale = opDX.pitchEnvAmt*kPitchEnvRange;
-
 				const float envPitch = powf(2.f, pitchEnv*pitchEnvScale);
-
-				float bend = m_pitchBend*envPitch;
-
-				const float opVib = opEnv*opDX.vibrato; // Modulate vibrato!
-				bend *= powf(2.f, vibrato*opVib);
-
+				const float curVib = powf(2.f, vibrato*opDX.vibrato*opEnv);
+				const float bend = m_pitchBend*envPitch*curVib;
 				opDX.oscillator.PitchBend(bend);
 
 				// Calculate sample

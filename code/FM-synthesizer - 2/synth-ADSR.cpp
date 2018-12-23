@@ -39,9 +39,9 @@ namespace SFM
 		const float sustain = parameters.sustainLevel;
 
 		// Harder touch, more linear
-		const float flatness = velocity*2.f; // FIXME: constant
-		m_ADSR.setTargetRatioA(ToRate(velocity, flatness));
-		m_ADSR.setTargetRatioDR(ToRate(velocity, flatness));
+		const float flatness = velocity*4.f; // FIXME: constant
+		m_ADSR.setTargetRatioA(ToRate(velocity, flatness*attackScale));
+		m_ADSR.setTargetRatioDR(ToRate(velocity, flatness*decayScale /* Can do because it's reset on Stop() */));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setAttackLevel(parameters.attackLevel);

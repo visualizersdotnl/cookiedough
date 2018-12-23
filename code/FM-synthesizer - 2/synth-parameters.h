@@ -20,8 +20,7 @@ namespace SFM
 		// Master drive [0..N]
 		float drive;
 
-		// Vibrato & tremolo [0..1]
-		float vibrato;
+		// Tremolo [0..1]
 		float tremolo;
 
 		// Master ADSR
@@ -60,14 +59,19 @@ namespace SFM
 		float vowelBlend;
 		VowelFilter::Vowel vowel;
 
+		// Pitch bend
+		float pitchBend;
+
+		// Vibrato
+		float vibrato;
+
 		void SetDefaults()
 		{
 			// Neutral drive
 			drive = 1.f;
 
-			// No tremolo/vibrato
+			// No tremolo
 			tremolo = 0.f;
-			vibrato = 0.f;
 
 			// Std. ADSR
 			envParams.attack       = 0.f;
@@ -110,6 +114,12 @@ namespace SFM
 			vowelWet = 0.f;
 			vowelBlend = 0.f;
 			vowel = VowelFilter::kA;
+
+			// Zero bend
+			pitchBend = 1.f; // 1.f == powf(2.f, 0.f)
+
+			// No vibrato
+			vibrato = 0.f;
 		}
 	};
 }

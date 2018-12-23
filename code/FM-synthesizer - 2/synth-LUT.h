@@ -9,8 +9,10 @@
 
 namespace SFM
 {
-	// Hexter table(s)
+	// Hexter table(s) (see synth-Hexter-tables.h)
 	extern float g_dx7_voice_lfo_frequency[128];
+	extern float g_dx7_voice_eg_ol_to_mod_index_table[257];
+	extern float g_dx7_voice_velocity_ol_adjustment[128];
 
 	// Sine wave
 	extern float g_sinLUT[kOscLUTSize];

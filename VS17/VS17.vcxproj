@@ -218,6 +218,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-global.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-Hexter-tables.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-log.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-math.h" />

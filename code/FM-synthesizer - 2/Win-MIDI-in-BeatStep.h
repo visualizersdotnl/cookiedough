@@ -17,8 +17,7 @@ namespace SFM
 		Pull-style values, all normalized [0..1]
 	*/
 
-	// Vibrato & operator vibrato control
-	float WinMidi_GetVibrato();
+	// Operator vibrato control
 	float WinMidi_GetOperatorVibrato();
 
 	// Delay

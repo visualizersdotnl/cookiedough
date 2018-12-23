@@ -543,6 +543,9 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.h">
       <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 2\synth-Hexter-tables.h">
+      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">

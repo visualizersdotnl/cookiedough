@@ -6,39 +6,23 @@
 	Second prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
-	Features (list may be incomplete or incorrect at this stage):
-	- 6 programmable operators with:
-	  + Tremolo & vibrato LFO (vibrato key scaled)
-	  + Yamaha-style level scaling
-	  + Amplitude/depth envelope (attack, level & decay, velocity sensitive)
-	  + Pitch envelope mo dulation
-	- Global:
-	  + Drive, ADSR, tremolo & vibrato speed
-	  + Pitch (sweep style) envelope parameters (attack, level & decay)
-	  + Pitch bend
-	  + Clean & MOOG-style ladder filter (24dB) with envelope
-	  + Multiple voices (paraphonic)
-	  + Adjustable tone jitter (for analogue warmth)
-	  + Per-voice calculated "rough" vowel filter
-	  + Stereo mix w/delay
-	- Multiple established FM algorithms
-
 	Goal: reasonably efficient and not as complicated (to grasp) as the real deal (e.g. FM8, DX7, Volca FM)
 	
 	At first this code was written with a smaller embedded target in mind, so it's a bit of a mixed
 	bag of language use at the moment.
 
+
+	And as of 23/12/2018 I think we're best off keeping this codebase as a reference for the VST.
+
 	
 	Third party credits:
 		- Different lowpass filters: see synth-filter.h
 		- ADSR implementation by Nigel Redmon of earlevel.com (fixed and modified, perhaps I should share)
-		- Some parts and information taken from: https://github.com/smbolton/hexter/blob/master/src/
+		- Some parts and information taken from Sean Bolton's Hexter: https://github.com/smbolton/hexter/blob/master/src/
 		- Vowel filter adapted from a post by alex@smartelectronix.com @ http://www.musicdsp.org
 
 	Problems I encountered:
 		- If I switch octave on the Oxygen, the level scaling breakpoints should move along with it?
-		- I may need more (additive sines) oscillator types
-		- I need to stop second-guessing myself until I had some real feedback!
 
 	VST version must-haves:
 		- Rethink the entire approach (DX voice render especially)
@@ -47,6 +31,7 @@
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
+		- Fix new vibrato
 		- Finish level scaling (controls are now available)
 		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)
 		  + LIN/EXP choice per side (see buttons)
