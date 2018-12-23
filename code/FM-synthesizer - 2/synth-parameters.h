@@ -29,9 +29,6 @@ namespace SFM
 		// Note jitter
 		float noteJitter;
 
-		// Global mod. index
-		float modDepth;
-
 		// LFO type
 		Waveform LFOform;
 
@@ -82,9 +79,6 @@ namespace SFM
 
 			// No jitter
 			noteJitter = 0.f;
-
-			// No modulation
-			modDepth = 0.f;
 
 			// Cosine LFOs
 			LFOform = Waveform::kSine;

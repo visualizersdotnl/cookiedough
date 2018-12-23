@@ -51,7 +51,7 @@ namespace SFM
 //	const float kMaxVoiceAmp = 0.110384f; // Stolen from Hexter, supposedly close to the TX nominal voice volume, though it is *low* (FIXME)
 
 	// Master drive range
-	const float kDriveHidB = 3.f;
+	const float kDriveHidB = 6.f;
 	
 	// Size of global (oscillator) LUTs
 	const unsigned kOscLUTSize = 4096;

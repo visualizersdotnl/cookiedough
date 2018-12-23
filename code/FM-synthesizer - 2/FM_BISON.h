@@ -39,11 +39,10 @@
 	VST version must-haves:
 		- Rethink the entire approach (DX voice render especially)
 		- Full envelopes everywhere?
-		- Use modulation wheel for what it's supposed to be for, not your global "OSC Rate Scale" (see Volca FM sheet)
 		- ** The jitter mode is CRUCIAL to mask beating! **
 
 	Working on:
-		- There's range problems, those Hexter tables need to be looked at
+		- There's range problems, those Hexter tables need to be looked at  <- * IN PROGRESS *
 		- Polish new vibrato
 		- Finish level scaling (controls are now available)
 		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)

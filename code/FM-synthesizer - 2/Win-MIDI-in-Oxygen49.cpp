@@ -86,7 +86,7 @@ namespace SFM
 	static float s_opFeedbackAmt[kNumOperators]   = { 0.f };
 	static float s_opCoarse[kNumOperators]        = { 0.f };
 	static float s_opFine[kNumOperators]          = { 0.f }; 
-	static float s_opDetune[kNumOperators]        = { 0.f }; 
+	static float s_opDetune[kNumOperators]        = { 0.f };
 	static float s_opAmplitude[kNumOperators]     = { 0.f };
 	static float s_opTremolo[kNumOperators]       = { 0.f };
 	static float s_opVelSens[kNumOperators]       = { 0.f };
@@ -117,8 +117,8 @@ namespace SFM
 	const unsigned kButtonOp_LS_ExpR = 99;     // C21
 
 	// Wheel mapping
-	const unsigned kModIndex = 1;  // C32 (MOD wheel)
-	static float s_modIndex[2] = { 0.f }; // First entry is to be used globally (vibrato), second to program operators (depth)
+	const unsigned kModIndex = 1;  // C32 (MOD wheel -> Vibrato)
+	static float s_vibrato = 0.f;
 
 	// Pitch bend (special message, 14-bit signed, wheel rests in the middle)
 	static float s_pitchBend;
@@ -287,7 +287,7 @@ namespace SFM
 							break;
 
 						case kModIndex:
-							s_modIndex[s_opRecv] = fControlVal;
+							s_vibrato = fControlVal;
 							break;
 
 						case kPotOpCoarse:
@@ -558,9 +558,9 @@ namespace SFM
 	}
 
 	// Modulation
-	float WinMidi_GetModWheel() 
+	float WinMidi_GetVibrato() 
 	{ 
-		return s_modIndex[s_opRecv];
+		return s_vibrato;
 	}
 
 	// Pitch bend

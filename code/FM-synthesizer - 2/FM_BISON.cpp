@@ -178,15 +178,15 @@ namespace SFM
 	}
 
 	// Calculate operator amplitude/depth
-	SFM_INLINE float CalcOpAmp(float baseAmp, unsigned key, float velocity, const FM_Patch::Operator &patchOp) // "CalcOperatorAmplitude"
+	SFM_INLINE float CalculateOperatorAmplitude(bool isCarrier, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
-		float amplitude = baseAmp*patchOp.amplitude;
+		float amplitude = (true == isCarrier) ? kMaxVoiceAmp*patchOp.amplitude : patchOp.amplitude;
 
 		// Level scaling, DX7-style (but a bit more straightforward, no per-3-note grouping et cetera)
 		// FIXME: see FM_BISON.h
 
 		const unsigned breakpoint = patchOp.levelScaleBP;
-		const unsigned numSemis = 2*12; // 2 octaves (FIXME: should be setting)
+		const unsigned numSemis = 2*12; // 2 octaves (FIXME)
 		const float step = 1.f/numSemis;
 
 		// FIXME: wrap into function (above)
@@ -201,7 +201,7 @@ namespace SFM
 
 			levelScale *= (true == patchOp.levelScaleExpL) ? delta*delta : delta;
 			amplitude += amplitude*levelScale;
-			amplitude = saturatef(amplitude);
+//			amplitude = saturatef(amplitude);
 		}
 		else if (key > breakpoint)
 		{
@@ -214,16 +214,22 @@ namespace SFM
 
 			levelScale *= (true == patchOp.levelScaleExpR) ? delta*delta : delta;
 			amplitude += amplitude*levelScale;
-			amplitude = saturatef(amplitude);
+//			amplitude = saturatef(amplitude);
 		}
 
-		// Apply Hexter's DX-style EG-to-modulation table
-		const int tabIndex = 128 + int(amplitude*99.f); // Yamaha EG range
-		const float modIndex = g_dx7_voice_eg_ol_to_mod_index_table[tabIndex];
-		amplitude = modIndex;
+		if (false == isCarrier)
+		{
+			// Apply Hexter's DX-style EG-to-modulation table
+			const int tabIndex = 128 + int(amplitude*99.f); // Yamaha EG range
+			const float modIndex = g_dx7_voice_eg_ol_to_mod_index_table[tabIndex];
+			amplitude = modIndex;
+		}
 
 		return lerpf<float>(amplitude, amplitude*velocity, patchOp.velSens);
 	}
+
+	SFM_INLINE float CalcCarAmp(unsigned key, float velocity, const FM_Patch::Operator &patchOp) { return CalculateOperatorAmplitude(true, key, velocity, patchOp); }
+	SFM_INLINE float CalcModAmp(unsigned key, float velocity, const FM_Patch::Operator &patchOp) { return CalculateOperatorAmplitude(false, key, velocity, patchOp); }
 
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
 	{
@@ -253,12 +259,10 @@ namespace SFM
 
 		// Save copy
 		voice.m_velocity = velocity;
-		
-		const float modDepth = s_parameters.modDepth;
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: single carrier & modulator
@@ -271,7 +275,7 @@ namespace SFM
 		voice.m_operators[0].oscillator.Initialize(
 			request.form, 
 			CalcOpFreq(frequency, patch.operators[0]), 
-			CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[0]));
+			CalcCarAmp(key, velocity, patch.operators[0]));
 
 		// Operator #2
 		voice.m_operators[1].enabled = true;
@@ -279,7 +283,7 @@ namespace SFM
 		voice.m_operators[1].oscillator.Initialize(
 			kSine, 
 			CalcOpFreq(frequency, patch.operators[1]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[1]));
+			CalcModAmp(key, velocity, patch.operators[1]));
 
 		/*
 			End of Algorithm
@@ -287,7 +291,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca algorithm #5
@@ -305,14 +309,14 @@ namespace SFM
 			voice.m_operators[carrier].oscillator.Initialize(
 				request.form, 
 				CalcOpFreq(frequency, patch.operators[carrier]), 
-				CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[carrier]));
+				CalcCarAmp(key, velocity, patch.operators[carrier]));
 
 			// Modulator
 			voice.m_operators[modulator].enabled = true;
 			voice.m_operators[modulator].oscillator.Initialize(
 				kSine, 
 				CalcOpFreq(frequency, patch.operators[modulator]), 
-				CalcOpAmp(modDepth, key, velocity, patch.operators[modulator]));
+				CalcModAmp(key, velocity, patch.operators[modulator]));
 		}
 		 
 		// Op. #6 has feedback
@@ -341,7 +345,7 @@ namespace SFM
 			voice.m_operators[carrier].oscillator.Initialize(
 				request.form, 
 				CalcOpFreq(frequency, patch.operators[carrier]), 
-				CalcOpAmp(kMaxVoiceAmp, key, velocity, patch.operators[carrier]));
+				CalcCarAmp(key, velocity, patch.operators[carrier]));
 		}
 
 		// Operator #6
@@ -350,7 +354,7 @@ namespace SFM
 		voice.m_operators[5].oscillator.Initialize(
 			kSine, 
 			CalcOpFreq(frequency, patch.operators[5]), 
-			CalcOpAmp(modDepth, key, velocity, patch.operators[5]));
+			CalcModAmp(key, velocity, patch.operators[5]));
 
 		/*
 			End of Algorithm
@@ -368,7 +372,7 @@ namespace SFM
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const unsigned vibIdx = 32 + unsigned(freqScale*16.f);
+		const unsigned vibIdx = 16 + unsigned(freqScale*8.f);
 		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kMaxVibratoDepth, vibShift);
@@ -606,12 +610,9 @@ namespace SFM
 		s_parameters.envParams.release = WinMidi_GetRelease() * kReleaseStretch;
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
-		// Modulation depth or vibrato
-		const float modWheel = WinMidi_GetModWheel();
-		if (-1 != WinMidi_GetOperator())
-			s_parameters.modDepth = modWheel;
-		else
-			s_parameters.vibrato = modWheel;
+		// Vibrato
+		const float vibrato = WinMidi_GetVibrato();
+		s_parameters.vibrato = vibrato;
 
 		// Note jitter
 		s_parameters.noteJitter = WinMidi_GetNoteJitter();
@@ -706,7 +707,7 @@ namespace SFM
 			patchOp.opEnvD = WinMidi_GetOperatorEnvD();
 			patchOp.opEnvL = WinMidi_GetOperatorEnvL();
 			
-			// Amp./Index/Depth
+			// Amplitude/depth
 			patchOp.amplitude = WinMidi_GetOperatorAmplitude();
 		}
 	}
@@ -717,7 +718,7 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// FIXME: optimize
+	// FIXME: more taps, this is cheating; optimize
 	SFM_INLINE void DelayToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
@@ -741,8 +742,8 @@ namespace SFM
 		const float L = mixL*kMinus3dB + mixM;
 		const float R = mixR*kMinus3dB + mixM;
 
-		s_ringBuf.Write(mixL);
-		s_ringBuf.Write(mixR);
+		s_ringBuf.Write(L);
+		s_ringBuf.Write(R);
 	}
 
 	// Returns loudest signal (linear amplitude)

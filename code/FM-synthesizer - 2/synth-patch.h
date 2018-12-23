@@ -32,7 +32,7 @@ namespace SFM
 			// 1000. FINE adjustment is possible from 1 to 9.772 times."
 			bool fixed;
 			
-			// Linear
+			// Depth/amplitude
 			float amplitude;
 
 			// Tremolo & vibrato

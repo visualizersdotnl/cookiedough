@@ -33,8 +33,8 @@ namespace SFM
 	// Pitch bend
 	float WinMidi_GetPitchBend();
 
-	// Modulation: vibrato or if editing operators: modulation depth
-	float WinMidi_GetModWheel();
+	// Vibrato (mod. wheel)
+	float WinMidi_GetVibrato();
 
 	// Operator control
 	bool  WinMidi_GetOperatorFixed();
