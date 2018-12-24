@@ -43,7 +43,7 @@
 
 	Working on:
 		- There's range problems, those Hexter tables need to be looked at  <- * IN PROGRESS *
-		- Polish new vibrato
+		- Polish new vibrato + Look at wheel linearity or lack of non-linearity rather
 		- Finish level scaling (controls are now available)
 		  + Configurable range per side (in octaves, use 2 unused potentiometers on BeatStep)
 		  + More potential depth?
