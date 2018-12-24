@@ -400,7 +400,7 @@ namespace SFM
 			envParams.attackLevel = patchOp.opEnvL;
 			envParams.decay  = patchOp.opEnvD;
 			envParams.release = 0.f;
-			envParams.sustainLevel = patchOp.opEnvL-patchOp.opEnvD;
+			envParams.sustainLevel = patchOp.opEnvL*(1.f-patchOp.opEnvD);
 			voiceOp.opEnv.Start(envParams, patchVel);
 		}
 
