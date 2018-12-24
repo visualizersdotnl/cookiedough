@@ -115,6 +115,10 @@ namespace SFM
 	const unsigned kButtonOp_LS_ExpL = 97;     // C19
 	const unsigned kButtonOp_LS_LinR = 98;     // C20
 	const unsigned kButtonOp_LS_ExpR = 99;     // C21
+	const unsigned kButtonChorusType = 100;    // C22
+
+	// Chorus type
+	static unsigned s_chorusType = 0;
 
 	// Wheel mapping
 	const unsigned kModIndex = 1;  // C32 (MOD wheel -> Vibrato)
@@ -261,7 +265,13 @@ namespace SFM
 							break;
 
 						case kButtonFilterInv:
-							if (127 == controlVal) s_filterInv = !s_filterInv;
+							if (127 == controlVal) s_filterInv ^= 1;
+							break;
+
+						/* Chorus type */
+
+						case kButtonChorusType:
+							if (127 == controlVal) s_chorusType ^= 1;
 							break;
 
 						/* Operator */
@@ -536,6 +546,9 @@ namespace SFM
 	// Master & Tremolo
 	float WinMidi_GetMasterDrive() { return s_masterDrive; }
 	float WinMidi_GetTremolo()     { return s_tremolo;   }
+
+	// Chorus type
+	unsigned WinMidi_GetChorusType() { return s_chorusType; }
 
 	// Operator control
 	bool  WinMidi_GetOperatorFixed()                { return s_opFixed[g_currentOp];         }

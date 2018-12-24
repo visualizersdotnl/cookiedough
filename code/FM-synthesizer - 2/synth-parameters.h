@@ -32,6 +32,9 @@ namespace SFM
 		// LFO type
 		Waveform LFOform;
 
+		// Chorus type
+		unsigned chorusType;
+
 		// Instr. patch
 		FM_Patch patch;
 
@@ -82,6 +85,9 @@ namespace SFM
 
 			// Cosine LFOs
 			LFOform = Waveform::kSine;
+
+			// Chorus type 1
+			chorusType = 0;
 
 			// Reset patches
 			patch.Reset();

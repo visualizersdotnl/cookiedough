@@ -291,7 +291,7 @@ namespace SFM
 
 #endif
 
-#if 1
+#if 0
 
 		/*
 			Test algorithm: Volca algorithm #5
@@ -328,7 +328,7 @@ namespace SFM
 
 #endif
 
-#if 0
+#if 1
 
 		/*
 			Test algorithm: Volca algorithm #31
@@ -372,7 +372,7 @@ namespace SFM
 		voice.m_tremolo.Initialize(s_parameters.LFOform, tremFreq, 1.f, tremShift);
 
 		// Set vibrato LFO
-		const unsigned vibIdx = 16 + unsigned(freqScale*8.f);
+		const unsigned vibIdx = 4 + unsigned(freqScale*8.f);
 		const float vibFreq = g_dx7_voice_lfo_frequency[vibIdx];
 		const float vibShift = s_parameters.noteJitter*kMaxVibratoJitter*oscWhiteNoise();
 		voice.m_vibrato.Initialize(s_parameters.LFOform, vibFreq, kMaxVibratoDepth, vibShift);
@@ -610,6 +610,10 @@ namespace SFM
 		s_parameters.envParams.release = WinMidi_GetRelease() * kReleaseStretch;
 		s_parameters.envParams.sustainLevel = WinMidi_GetSustain();
 
+		// Chorus type
+		s_parameters.chorusType = WinMidi_GetChorusType();
+		SFM_ASSERT(s_parameters.chorusType <= 1);
+
 		// Vibrato
 		const float vibrato = WinMidi_GetVibrato();
 		s_parameters.vibrato = vibrato;
@@ -718,8 +722,8 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// FIXME: more taps, this is cheating; optimize
-	SFM_INLINE void DelayToStereo(float mix) 
+	// Single tap with MID mix (less pronounced)
+	SFM_INLINE void DelayToStereo_2(float mix) 
 	{
 		s_delayLine.Write(mix);
 
@@ -741,6 +745,34 @@ namespace SFM
 		// FIXME: should the mid. LFO also tell us how it blends in?
 		const float L = mixL*kMinus3dB + mixM;
 		const float R = mixR*kMinus3dB + mixM;
+
+		s_ringBuf.Write(L);
+		s_ringBuf.Write(R);
+	}
+
+	// Single tap, just L/R (sounds like Juno 60 Chorus #1)
+	SFM_INLINE void DelayToStereo_1(float mix) 
+	{
+		s_delayLine.Write(mix);
+
+		const float hundred = kSampleRate/100.f;
+
+		const float tap1 = s_delayLine.Read(hundred);
+		const float tap = tap1;
+
+		const float wet = lerpf<float>(mix, tap, s_parameters.delayWet);
+		
+		const float sweepL = 0.5f + s_delayLFO_L.Sample(0.f);
+		const float sweepR = 0.5f + s_delayLFO_R.Sample(0.f);
+
+		// I'm "ticking" this oscillator to keep it in sync. but should I?
+		const float sweepM = 0.5f + s_delayLFO_M.Sample(0.f);
+		
+		const float mixL = lerpf<float>(mix, wet, sweepL);
+		const float mixR = lerpf<float>(mix, wet, sweepR);
+
+		const float L = mixL;
+		const float R = mixR;
 
 		s_ringBuf.Write(L);
 		s_ringBuf.Write(R);
@@ -786,8 +818,11 @@ namespace SFM
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				// Delay to stereo
-				DelayToStereo(0.f);
+				// Delay to stereo (FIXME: func. ptr. or smth.)
+				if (0 != s_parameters.chorusType)
+					DelayToStereo_2(0.f);
+				else
+					DelayToStereo_1(0.f);
 			}
 		}
 		else
@@ -866,8 +901,11 @@ namespace SFM
 				mix = ultra_tanhf(mix*drive);
 				SampleAssert(mix);
 
-				// Delay to stereo
-				DelayToStereo(mix);
+				// Delay to stereo (FIXME: func. ptr. or smth.)
+				if (0 != s_parameters.chorusType)
+					DelayToStereo_2(mix);
+				else
+					DelayToStereo_1(mix);
 
 				loudest = std::max<float>(loudest, fabsf(mix));
 			}
@@ -937,9 +975,9 @@ bool Syntherklaas_Create()
 	s_delayLine.Reset();
 
 	// 3-phase chorus: L and R at 120 and 240 deg., M at 0 deg.
-	s_delayLFO_L.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.33f);
-	s_delayLFO_R.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.66f);
-	s_delayLFO_M.Initialize(kPolyTriangle, kBaseDelayFreq, 0.5f, 0.f);
+	s_delayLFO_L.Initialize(kDigiTriangle, kBaseDelayFreq, 0.5f, 0.33f);
+	s_delayLFO_R.Initialize(kDigiTriangle, kBaseDelayFreq+0.01f, 0.5f, 0.66f);
+	s_delayLFO_M.Initialize(kSine, kBaseDelayFreq, 0.5f, 0.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();

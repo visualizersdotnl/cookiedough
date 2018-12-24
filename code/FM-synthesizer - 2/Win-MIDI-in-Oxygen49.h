@@ -36,6 +36,9 @@ namespace SFM
 	// Vibrato (mod. wheel)
 	float WinMidi_GetVibrato();
 
+	// Chorus type (0 (separated) or 1 (with MID) for now)
+	unsigned WinMidi_GetChorusType();
+
 	// Operator control
 	bool  WinMidi_GetOperatorFixed();
 	float WinMidi_GetOperatorCoarse();
