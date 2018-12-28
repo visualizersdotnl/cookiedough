@@ -84,7 +84,7 @@ const bool kTestBedForFM = true;
 #include "fx-blitter.h"
 
 // FM synthesizer
-#include "FM-synthesizer/FM_BISON.h"
+#include "FM-synthesizer - 2/FM_BISON.h"
 #include "cspan.h"
 
 // -- display & audio config. --
