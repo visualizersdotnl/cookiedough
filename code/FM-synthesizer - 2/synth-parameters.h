@@ -89,7 +89,7 @@ namespace SFM
 			// Chorus type 1
 			chorusType = 0;
 
-			// Reset patches
+			// Reset patch
 			patch.Reset();
 
 			// Filter off

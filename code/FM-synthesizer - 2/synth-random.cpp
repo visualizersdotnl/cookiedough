@@ -11,8 +11,6 @@
 /* Include 'Tiny Mersenne-Twister' 32-bit right here, since it's the only place we'll be using it. */
 // #include "3rdparty/tinymt/tinymt32.c"
 
-//nclude "../random.h"
-
 namespace SFM
 {
 //	static tinymt32_t s_genState;

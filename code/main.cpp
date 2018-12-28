@@ -84,7 +84,7 @@ const bool kTestBedForFM = true;
 #include "fx-blitter.h"
 
 // FM synthesizer
-#include "FM-synthesizer - 2/FM_BISON.h"
+#include "FM-synthesizer - 3/FM_BISON.h"
 #include "cspan.h"
 
 // -- display & audio config. --
@@ -199,7 +199,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		{
 			/* Test code for FM synth */
 
-			auto *bumper = Image_Load32("../code/FM-synthesizer/artwork/window-filler.png");
+			auto *bumper = Image_Load32("../code/FM-synthesizer - 3/artwork/window-filler.png");
 
 			Display display;
 			if (display.Open(kTitle, 1280, 303, kFullScreen))
@@ -214,26 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						oldTime = newTime;
 						newTime = timer.Get();
 						const float delta = newTime-oldTime;
-					
-						// sloppy VU meter
-						static float prevLoudest = 0.f;
-						float loudest = Syntherklaas_Render(nullptr, newTime, delta*100.f);
-						if (loudest == 0.f) loudest = prevLoudest;
-						prevLoudest = lowpassf(prevLoudest, loudest, 4.f);
-
-						unsigned length = 1+unsigned(loudest*1279.f);
-
-						for (int iY = 3; iY < 15; ++iY)
-							cspan(bumper + 1280*iY, 1, 1280, 1280, 0, 0x7f7f7f);
-
-						for (int iY = 3; iY < 15; ++iY)
-						{
-							if (iY & 1)
-								cspan(bumper + 1280*iY, 1, length, length, 0x007f00, 0xff0000);
-							else
-								cspan(bumper + 1280*iY, 1, length, length, 0xff7f00, 0xff0000);
-						}
-
+						Syntherklaas_Render(nullptr, newTime, delta*100.f);
 						display.Update(bumper);
 					}
 
