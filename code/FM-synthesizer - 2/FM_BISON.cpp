@@ -253,7 +253,6 @@ namespace SFM
 		FloatAssert(jitter);
 		frequency *= jitter;
 
-		// It simply sounds better to add some curvature to velocity
 		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
 

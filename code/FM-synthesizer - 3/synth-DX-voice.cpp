@@ -59,6 +59,10 @@ namespace SFM
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
 
+				// Apply envelope
+				float envelope = voiceOp.envelope.Sample();
+				sample = sample*envelope;
+
 				// Store final sample for modulation and feedback
 				sampled[index] = sample;
 

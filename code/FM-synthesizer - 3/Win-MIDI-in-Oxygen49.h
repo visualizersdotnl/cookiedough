@@ -21,6 +21,13 @@ namespace SFM
 		Pull-style values, all normalized [0..1]
 	*/
 
+	// Operator envelope
+	float WinMidi_GetOpAttack(unsigned iOp);
+	float WinMidi_GetOpDecay(unsigned iOp);
+	float WinMidi_GetOpSustain(unsigned iOp);
+	float WinMidi_GetOpRelease(unsigned iOp);
+
+	// Operator frequency
 	float WinMidi_GetOpCoarse(unsigned iOp);
 	float WinMidi_GetOpFine(unsigned iOp);
 	float WinMidi_GetOpDetune(unsigned iOp);

@@ -168,12 +168,8 @@ namespace SFM
 		const unsigned key = request.key;
 		const float fundamentalFreq = g_MIDIToFreqLUT[key];
 
-		// It simply sounds better to add some curvature to velocity
 		const float velocity    = request.velocity;
 		const float invVelocity = 1.f-velocity;
-
-		// Save copy
-		voice.m_velocity = velocity;
 
 		FM_Patch &patch = s_parameters.patch;
 
@@ -206,14 +202,25 @@ namespace SFM
 
 #endif
 
-		// Set per operator
+		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
+		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
+
+		// Other operator settings
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			const FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 			DX_Voice::Operator &voiceOp = voice.m_operators[iOp];
+			
+			// Amount of velocity
+			const float opVelocity = velocity*patchOp.velSens;
 
-			// Adj. velocity
-			const float patchVel = patchOp.velSens*velocity;
+			// Start envelope
+			ADSR::Parameters envParams;
+			envParams.attack = patchOp.attack;
+			envParams.decay = patchOp.decay;
+			envParams.sustain = patchOp.sustain;
+			envParams.release = patchOp.release;
+			voiceOp.envelope.Start(envParams, opVelocity, freqScale);
 		}
 		
 		// Enabled, up counter		
@@ -226,7 +233,7 @@ namespace SFM
 		
 	}
 
-	SFM_INLINE void InstFrontVoice(unsigned iVoice)
+	SFM_INLINE void InitFrontVoice(unsigned iVoice)
 	{
 		const VoiceRequest &request = s_voiceReq.front();
 		InitializeDXVoice(request, iVoice);
@@ -244,33 +251,26 @@ namespace SFM
 			const unsigned index = request.index;
 			SFM_ASSERT(-1 != index);
 			DX_Voice &voice = s_DXvoices[index];
+			
+			// Release voice
+			const float velocity = request.velocity;
+			voice.Release(velocity);
+			++s_releasing;
 
-			// Release immediately (FIXME)
-			voice.m_enabled = false;
-			--s_active;
-			--s_releasing;
-
-			Log("Voice freed: " + std::to_string(index));
-
-			// Additional releasing voice
-//			const float velocity = request.velocity;
-
-//			++s_releasing;
-
-//			Log("Voice released: " + std::to_string(request.index));
+			Log("Voice released: " + std::to_string(request.index));
 		}
 
-/*
 		// Update active voices
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
 			DX_Voice &voice = s_DXvoices[iVoice];
-			const bool enabled = voice.m_enabled;
 
-			if (true == enabled)
+			if (true == voice.m_enabled)
 			{
-				if (true)
+				// Done releasing?
+				if (true == voice.IsIdle())
 				{
+					// Free
 					voice.m_enabled = false;
 					--s_active;
 					--s_releasing;
@@ -279,7 +279,6 @@ namespace SFM
 				}
 			}
 		}
-*/
 
 		/*
 			Voice allocation
@@ -299,10 +298,8 @@ namespace SFM
 				DX_Voice &voice = s_DXvoices[iVoice];
 				if (false == voice.m_enabled)
 				{
-					InstFrontVoice(iVoice);
-
+					InitFrontVoice(iVoice);
 					Log("Voice triggered: " + std::to_string(iVoice));
-
 					break;
 				}
 			}
@@ -371,6 +368,13 @@ namespace SFM
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 
+			// Envelope
+			patchOp.attack = WinMidi_GetOpAttack(iOp);
+			patchOp.decay = WinMidi_GetOpDecay(iOp);
+			patchOp.sustain = WinMidi_GetOpSustain(iOp);
+			patchOp.release = WinMidi_GetOpRelease(iOp);
+
+			// Frequency
 			if (true)
 			{
 				// Ratio
@@ -440,7 +444,6 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
-				const float velocity = voice.m_velocity;
 				
 				if (true == voice.m_enabled)
 				{

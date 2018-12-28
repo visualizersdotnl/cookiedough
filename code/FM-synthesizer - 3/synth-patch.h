@@ -33,6 +33,12 @@ namespace SFM
 			// Depth/Amplitude
 			float index;
 
+			// ADSR
+			float attack;
+			float decay;
+			float sustain;
+			float release;
+
 			// Velocity sensitivity
 			float velSens;
 		};
@@ -41,23 +47,27 @@ namespace SFM
 
 		void Reset()
 		{
-			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+			for (auto &patchOp : operators)
 			{	
-				Operator &OP = operators[iOp];
-
 				// Note tone (0 == frequency/2)
-				OP.coarse = 1;
-				OP.fine = 0.f;
-				OP.detune = 0.f;
+				patchOp.coarse = 1;
+				patchOp.fine = 0.f;
+				patchOp.detune = 0.f;
 
 				// Ratio
-				OP.fixed = false;
+				patchOp.fixed = false;
 
 				// Depth/Amplitude
-				OP.index = 1.f;
+				patchOp.index = 1.f;
+
+				// No envelope
+				patchOp.attack = 0.f;
+				patchOp.decay = 0.f;
+				patchOp.sustain = 1.f;
+				patchOp.release = 0.f;
 
 				// Not velocity sensitive
-				OP.velSens = 0.f;
+				patchOp.velSens = 0.f;
 			}
 		}
 	};

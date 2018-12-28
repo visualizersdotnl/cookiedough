@@ -11,6 +11,7 @@
 
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
+#include "synth-ADSR.h"
 
 namespace SFM
 {
@@ -20,13 +21,13 @@ namespace SFM
 	public:
 		bool m_enabled;
 
-		// Copy
-		float m_velocity;
-
 		struct Operator
 		{
 			bool enabled;
 			Oscillator oscillator;
+
+			// Envelope
+			ADSR envelope;
 
 			// Indices: -1 means none; modulators must be higher up
 			unsigned modulators[3], feedback;
@@ -41,6 +42,7 @@ namespace SFM
 			{
 				enabled = false;
 				oscillator = Oscillator();
+				envelope.Reset();
 				modulators[0] = modulators[1] = modulators[2] = -1;
 				feedback = -1;
 				feedbackAmt = 0.f;
@@ -66,13 +68,38 @@ namespace SFM
 			}
 		}
 
-		// Full reset
+		// Full reset (almost never necessary)
 		void Reset()
 		{
 			ResetOperators();
 
 			// Disable
 			m_enabled = false;
+		}
+
+		// On voice release (stops operator envelopes)
+		void Release(float velocity)
+		{
+			for (auto &voiceOp : m_operators)
+			{
+				if (true == voiceOp.enabled)
+					voiceOp.envelope.Stop(velocity);
+			}
+		}
+
+		bool IsIdle() /* const */
+		{
+			// Only true if all carrier envelopes are idle
+			for (auto &voiceOp : m_operators)
+			{
+				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
+				{
+					if (false == voiceOp.envelope.IsIdle())
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		float Sample(const Parameters &parameters);

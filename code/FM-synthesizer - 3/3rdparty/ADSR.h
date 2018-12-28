@@ -1,15 +1,16 @@
+
+//
+// Adapted by syntherklaas.org for FM. BISON, changes made:
+// - Fixed warnings
+// - Fixed process() to proceed to decay state immediately after attack to eliminate a click
+//
+
 //
 //  ADSR.h
 //
 //  Created by Nigel Redmon on 12/18/12.
 //  EarLevel Engineering: earlevel.com
 //  Copyright 2012 Nigel Redmon
-//
-//
-// Adapted by syntherklaas.org for FM. BISON, changes made:
-// - Fixed warnings
-// - Fixed process() to proceed to decay state immediately after attack to eliminate a click
-// - Added attack level (variable instead of 1.0)
 //
 //  For a complete explanation of the ADSR envelope generator and code,
 //  read the series of articles by the author, starting here:
@@ -22,9 +23,7 @@
 //  You may modify and use this source code to create binary code for your own purposes, free or commercial.
 //
 
-#ifndef ADRS_h
-#define ADRS_h
-
+#pragma once
 
 class ADSR {
 public:
@@ -35,7 +34,6 @@ public:
     int getState(void);
 	void gate(int on);
     void setAttackRate(float rate);
-	void setAttackLevel(float level);
     void setDecayRate(float rate);
     void setReleaseRate(float rate);
 	void setSustainLevel(float level);
@@ -56,7 +54,6 @@ protected:
 	int state;
 	float output;
 	float attackRate;
-	float attackLevel;
 	float decayRate;
 	float releaseRate;
 	float attackCoef;
@@ -79,11 +76,11 @@ inline float ADSR::process() {
             break;
         case env_attack:
             output = attackBase + output * attackCoef;
-            if (output >= attackLevel) {
-                output = attackLevel;
+            if (output >= 1.f) {
+                output = 1.f;
                 state = env_decay;
             }
-			else // Immediately go into decay state, eliminating a click when ADS is zero!
+			else // Immediately go into decay state
 				break;
         case env_decay:
 			output = decayBase + output * decayCoef;
@@ -128,5 +125,3 @@ inline void ADSR::reset() {
 inline float ADSR::getOutput() {
 	return output;
 }
-
-#endif

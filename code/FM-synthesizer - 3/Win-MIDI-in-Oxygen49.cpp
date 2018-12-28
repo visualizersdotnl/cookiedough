@@ -49,15 +49,22 @@ namespace SFM
 
 	// Fader indices
 	const unsigned kFaderAttack       = 74;
-	const unsigned kFaderDecay        = 61;
+	const unsigned kFaderDecay        = 71;
 	const unsigned kFaderSustain      = 91;
 	const unsigned kFaderRelease      = 93;
-	const unsigned kFaderAttackLevel  = 73;
-	const unsigned kFaderReleaseLevel = 72;
+	const unsigned kFaderUnused1      = 73;
+	const unsigned kFaderUnused2      = 72;
 	const unsigned kFaderCoarse       = 5;
 	const unsigned kFaderFine         = 84;
 	const unsigned kFaderDetune       = 7;
 
+	// Operator envelope
+	static float s_opAttack[kNumOperators]  = { 0.f };
+	static float s_opDecay[kNumOperators]   = { 0.f };
+	static float s_opSustain[kNumOperators] = { 0.f };
+	static float s_opRelease[kNumOperators] = { 0.f };
+
+	// Operator frequency
 	static float s_opCoarse[kNumOperators] = { 0.f };
 	static float s_opFine[kNumOperators]   = { 0.f }; 
 	static float s_opDetune[kNumOperators] = { 0.f };
@@ -136,6 +143,26 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						/* Operator envelope */
+
+						case kFaderAttack:
+							s_opAttack[g_currentOp] = fControlVal;
+							break;
+
+						case kFaderDecay:
+							s_opDecay[g_currentOp] = fControlVal;
+							break;
+
+						case kFaderSustain:
+							s_opSustain[g_currentOp] = fControlVal;
+							break;
+
+						case kFaderRelease:
+							s_opRelease[g_currentOp] = fControlVal;
+							break;
+
+						/* Operator frequency */
+
 						case kFaderCoarse:
 							s_opCoarse[g_currentOp] = fControlVal;
 							break;
@@ -292,6 +319,13 @@ namespace SFM
 		Pull-style controls
 	*/
 
+	// Operator envelope
+	float WinMidi_GetOpAttack(unsigned iOp)       { return s_opAttack[iOp];  }
+	float WinMidi_GetOpDecay(unsigned iOp)        { return s_opDecay[iOp];   }
+	float WinMidi_GetOpSustain(unsigned iOp)      { return s_opSustain[iOp]; }
+	float WinMidi_GetOpRelease(unsigned iOp)      { return s_opRelease[iOp]; }
+
+	// Operator frequency
 	float WinMidi_GetOpCoarse(unsigned iOp) { return s_opCoarse[iOp]; }
 	float WinMidi_GetOpFine(unsigned iOp)   { return s_opFine[iOp];   }
 	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp]; }
