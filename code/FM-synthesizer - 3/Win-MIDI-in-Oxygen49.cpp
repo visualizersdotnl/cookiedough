@@ -34,6 +34,10 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam1(unsigned parameter) { return (parameter>>8)  & 0x7f; }
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
+	/*
+		Mapping for the Oxy-49's Patch #01
+	*/
+
 	// Pad channel indices
 	const unsigned kPad1 = 36;
 	const unsigned kPad2 = 38;
@@ -85,9 +89,8 @@ namespace SFM
 	static float s_opVelSens[kNumOperators]  = { 0.f };
 	static float s_opFeedback[kNumOperators] = { 0.f };
 
-	/*
-		Mapping for the Oxy-49's Patch #01
-	*/
+	// Pitch bend
+	static float s_pitchBend = 0.f;
 
 	static unsigned s_voices[127];
 
@@ -225,7 +228,8 @@ namespace SFM
 				case PITCH_BEND:
 					{
 						const unsigned bend = (controlVal<<7)|controlIdx;
-//						Log("Pitch bend: " + std::to_string(s_pitchBend));
+						s_pitchBend = (float(bend)/8192.f) - 1.f;
+						Log("Pitch bend: " + std::to_string(s_pitchBend));
 						break;
 					}
 
@@ -383,4 +387,9 @@ namespace SFM
 	// Feedback
 	float WinMidi_GetFeedback(unsigned iOp) {
 		return s_opFeedback[iOp]; }
+
+	// Pitch bend
+	float WinMidi_GetPitchBend() {
+		return s_pitchBend;
+	}
 }

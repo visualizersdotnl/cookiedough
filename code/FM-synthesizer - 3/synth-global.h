@@ -62,6 +62,9 @@ namespace SFM
 
 	// To divide lin. amplitude by 2 (-3dB = half as loud)
 	const float kMinus3dB = 0.707945764f;
+
+	// Pitch bend range (in octaves)
+	const float kPitchBendRange = 1.f;
 }
 
 #include "synth-LUT.h"

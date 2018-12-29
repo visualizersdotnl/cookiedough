@@ -43,4 +43,7 @@ namespace SFM
 
 	// Feedback
 	float WinMidi_GetFeedback(unsigned iOp);
+
+	// Pitch bend
+	float WinMidi_GetPitchBend();
 }

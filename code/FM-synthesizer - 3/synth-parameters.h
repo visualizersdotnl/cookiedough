@@ -15,10 +15,16 @@ namespace SFM
 		// Dry instr. patch
 		FM_Patch patch;
 
+		// Pitch bend
+		float pitchBend;
+
 		void SetDefaults()
 		{
 			// Reset patch
 			patch.Reset();
+
+			// No bend
+			pitchBend = 0.f;
 		}
 	};
 }

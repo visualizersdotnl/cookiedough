@@ -24,9 +24,10 @@
 		- Chorus sounds good in 1 particular setup, go old school and offer ON/OFF?
 
 	Priority:
-		- Level scaling
-		- Figure out the DX7's modulation wheel and implement it
-		- Figure out proper pitch envelope strategy
+		- 1. Level scaling
+		- 2/3. Figure out the DX7's modulation wheel and implement it
+		- 2/3. Figure out proper pitch envelope strategy
+		- 4. Patch save & load
 
 	Missing top-level features:
 		- Filters

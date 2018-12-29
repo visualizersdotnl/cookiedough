@@ -442,6 +442,9 @@ namespace SFM
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
+		// Pitch bend
+		s_parameters.pitchBend = WinMidi_GetPitchBend()*kPitchBendRange;
+
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
@@ -561,6 +564,7 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
+				voice.SetPitchBend(s_parameters.pitchBend);
 				
 				if (true == voice.m_enabled)
 				{
