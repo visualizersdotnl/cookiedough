@@ -443,7 +443,7 @@ namespace SFM
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
 		// Pitch bend
-		s_parameters.pitchBend = WinMidi_GetPitchBend()*kPitchBendRange;
+		s_parameters.pitchBend = powf(2.f, WinMidi_GetPitchBend()*kPitchBendRange);
 
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
@@ -516,9 +516,6 @@ namespace SFM
 		// Mix L+R with MID
 		const float L = mixL + mixM;
 		const float R = mixR + mixM;
-	
-//		const float L = mixL;
-//		const float R = mixR;
 
 		s_ringBuf.Write(L);
 		s_ringBuf.Write(R);

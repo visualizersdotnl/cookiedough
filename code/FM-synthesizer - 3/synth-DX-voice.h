@@ -90,14 +90,10 @@ namespace SFM
 		// Apply pitch bend
 		void SetPitchBend(float bend)
 		{
-			bend = powf(2.f, bend);
-
 			for (auto &voiceOp : m_operators)
 			{
 				if (true == voiceOp.enabled)
-				{
 					voiceOp.oscillator.PitchBend(bend);
-				}
 			}
 		}
 
