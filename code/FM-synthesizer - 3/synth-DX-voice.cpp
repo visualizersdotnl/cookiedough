@@ -13,6 +13,8 @@ namespace SFM
 		SFM_ASSERT(true == m_enabled);
 
 		// Process all operators top-down
+		// This is a simple, readable loop which needs to be optimized later on (FIXME)
+
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
@@ -56,11 +58,13 @@ namespace SFM
 					feedback = m_feedback[index];
 				}
 
+				// Sample envelope
+				const float envelope = voiceOp.envelope.Sample();
+
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
 
 				// Apply envelope
-				float envelope = voiceOp.envelope.Sample();
 				sample = sample*envelope;
 
 				// Store final sample for modulation and feedback

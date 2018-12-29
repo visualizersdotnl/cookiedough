@@ -20,6 +20,7 @@
 #include "synth-math.h"
 #include "synth-LUT.h"
 #include "synth-DX-voice.h"
+#include "synth-delay-line.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -78,6 +79,12 @@ namespace SFM
 	static unsigned s_active = 0;
 	static unsigned s_releasing = 0;
 	
+	// Chorus delay line + LFOs
+	static DelayLine s_delayLine;
+	static Oscillator s_delayLFO_L;
+	static Oscillator s_delayLFO_R;
+	static Oscillator s_delayLFO_M;
+
 	/*
 		Voice API.
 	*/
@@ -124,9 +131,8 @@ namespace SFM
 		float frequency;
 		if (true == patchOp.fixed)
 		{
-			// Fixed ratio (taken from Volca FM third-party manual)
-			const float coarseTab[4] = { 1, 10, 100, 1000 };
-			frequency = coarseTab[coarse&3];
+			// 1, 10, 100, 100
+			frequency = float(coarse);
 		}
 		else
 		{
@@ -154,7 +160,11 @@ namespace SFM
 	// Calculate operator depth/amplitude
 	SFM_INLINE float CalcOpIndex(bool isCarrier, unsigned key, float velocity, const FM_Patch::Operator &patchOp)
 	{
-		return patchOp.index;
+		float output = patchOp.output;
+
+		// FIXME: apply level scaling
+
+		return lerpf<float>(output, output*velocity, patchOp.velSens);
 	}
 
 	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
@@ -173,8 +183,7 @@ namespace SFM
 
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
-
+#if 0
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -199,7 +208,74 @@ namespace SFM
 		/*
 			End of Algorithm
 		*/
+#endif
 
+#if 0
+		/*
+			Test algorithm: Volca/DX7 algorithm #5
+		*/
+
+		for (unsigned int iOp = 0; iOp < 3; ++iOp)
+		{
+			const unsigned carrier = iOp<<1;
+			const unsigned modulator = carrier+1;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].modulators[0] = modulator;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				request.form, 
+				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
+
+			// Modulator
+			voice.m_operators[modulator].enabled = true;
+			voice.m_operators[modulator].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[modulator]), 
+				CalcOpIndex(false, key, velocity, patch.operators[modulator]));
+		}
+		 
+		// Op. #6 has feedback
+		voice.m_operators[5].feedback = 5;
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+
+#if 1
+		/*
+			Test algorithm: Volca/DX7 algorithm #31
+		*/
+
+		for (unsigned int iOp = 0; iOp < 5; ++iOp)
+		{
+			const unsigned carrier = iOp;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				request.form, 
+				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
+		}
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].feedback = 5;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+			CalcOpIndex(false, key, velocity, patch.operators[5]));
+
+		/*
+			End of Algorithm
+		*/
 #endif
 
 		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
@@ -210,6 +286,9 @@ namespace SFM
 		{
 			const FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 			DX_Voice::Operator &voiceOp = voice.m_operators[iOp];
+
+			// Feedback amount
+			voiceOp.feedbackAmt = patchOp.feedback;
 			
 			// Amount of velocity
 			const float opVelocity = velocity*patchOp.velSens;
@@ -220,6 +299,7 @@ namespace SFM
 			envParams.decay = patchOp.decay;
 			envParams.sustain = patchOp.sustain;
 			envParams.release = patchOp.release;
+			envParams.attackLevel = patchOp.attackLevel;
 			voiceOp.envelope.Start(envParams, opVelocity, freqScale);
 		}
 		
@@ -233,7 +313,7 @@ namespace SFM
 		
 	}
 
-	SFM_INLINE void InitFrontVoice(unsigned iVoice)
+	SFM_INLINE void InitializeFrontVoice(unsigned iVoice)
 	{
 		const VoiceRequest &request = s_voiceReq.front();
 		InitializeDXVoice(request, iVoice);
@@ -298,15 +378,14 @@ namespace SFM
 				DX_Voice &voice = s_DXvoices[iVoice];
 				if (false == voice.m_enabled)
 				{
-					InitFrontVoice(iVoice);
+					InitializeFrontVoice(iVoice);
 					Log("Voice triggered: " + std::to_string(iVoice));
 					break;
 				}
 			}
 		}
 
-/*
-		// Alternatively try to steal a releasing voice
+		// Alternatively try to steal a quiet voice
 		while (s_voiceReq.size() > 0 && s_releasing > 0)
 		{
 			float lowestOutput = 1.f;
@@ -315,13 +394,13 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
-				if (true == voice.m_ADSR.IsReleasing())
+				if (true == voice.m_enabled)
 				{
 					// Check output level
-					const float output = voice.m_ADSR.m_ADSR.getOutput();
+					const float output = voice.SummedOutput();
 					if (lowestOutput >= output)
 					{
-						// Lowest so far (closer to end of cycle)
+						// Lowest so far
 						iRelease = iVoice;
 						lowestOutput = output;
 					}
@@ -338,14 +417,13 @@ namespace SFM
 				--s_active;
 				--s_releasing;
 
-				InstFrontVoice(iRelease);
+				InitializeFrontVoice(iRelease);
 
 				Log("Voice triggered (stolen): " + std::to_string(iRelease) + " with output " + std::to_string(lowestOutput));
 			}
 			else
 				break; // Nothing to steal at all, so bail
 		}
-*/
 
 		// All release requests have been honoured; note triggers that can't be made are discarded
 		s_voiceReleaseReq.clear();
@@ -368,14 +446,24 @@ namespace SFM
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
 
+			// Output level + Velocity sensitivity
+			patchOp.output = WinMidi_GetOpOutput(iOp);
+			patchOp.velSens = WinMidi_GetOpVelSens(iOp);
+
+			// Feedback amount
+			patchOp.feedback = WinMidi_GetFeedback(iOp);
+
 			// Envelope
 			patchOp.attack = WinMidi_GetOpAttack(iOp);
 			patchOp.decay = WinMidi_GetOpDecay(iOp);
 			patchOp.sustain = WinMidi_GetOpSustain(iOp);
-			patchOp.release = WinMidi_GetOpRelease(iOp);
+			patchOp.release = WinMidi_GetOpRelease(iOp)*kReleaseMul;
+			patchOp.attackLevel = WinMidi_GetOpAttackLevel(iOp);
 
 			// Frequency
-			if (true)
+			const bool fixed = WinMidi_GetOpFixed(iOp);
+			patchOp.fixed = fixed;
+			if (false == fixed)
 			{
 				// Ratio
 				patchOp.coarse = unsigned(WinMidi_GetOpCoarse(iOp)*31.f);
@@ -384,7 +472,11 @@ namespace SFM
 			else
 			{
 				// Fixed
-				// FIXME
+				// Source: http://afrittemple.com/volca/volca_programming.pdf
+				const unsigned table[] = { 1, 10, 100, 1000 };
+				const unsigned index = unsigned(WinMidi_GetOpCoarse(iOp)*3.f);
+				patchOp.coarse = table[index];
+				patchOp.fine = WinMidi_GetOpFine(iOp)*kFixedFineScale;
 			}
 
 			patchOp.detune = WinMidi_GetOpDetune(iOp);
@@ -397,11 +489,36 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// Delay/Chorus (FIXME)
-	SFM_INLINE void DelayToStereo(float mix) 
+	// Chorus to stereo mix.
+	// This is a *very* basic implementation, but the effect is quite grand.
+	// FIXME: optimize
+	SFM_INLINE void ChorusToStereo(float mix) 
 	{
-		s_ringBuf.Write(mix);
-		s_ringBuf.Write(mix);
+		s_delayLine.Write(mix);
+
+		// Read approx. 100th of a second back
+		const float hundred = kSampleRate/100.f;
+		const float tap = s_delayLine.Read(hundred);
+
+		// Read 3 sweep LFOs (each separated by 120 degrees)
+		const float sweepL = 0.5f + s_delayLFO_L.Sample(0.f);
+		const float sweepR = 0.5f + s_delayLFO_R.Sample(0.f);
+		const float sweepM = 0.5f + s_delayLFO_M.Sample(0.f);
+
+		// Blend dry and wet according to sweep LFOs
+		const float mixL = lerpf<float>(mix, tap, sweepL);
+		const float mixR = lerpf<float>(mix, tap, sweepR);
+		const float mixM = lerpf<float>(mix, tap, sweepM);
+
+		// Mix L+R with MID
+		const float L = mixL + mixM;
+		const float R = mixR + mixM;
+	
+//		const float L = mixL;
+//		const float R = mixR;
+
+		s_ringBuf.Write(L);
+		s_ringBuf.Write(R);
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -434,7 +551,7 @@ namespace SFM
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				DelayToStereo(0.f);
+				ChorusToStereo(0.f);
 			}
 		}
 		else
@@ -473,8 +590,8 @@ namespace SFM
 					mix = mix+sample;
 				}
 
-				// Apply Chorus/Delay
-				DelayToStereo(mix);
+				// Apply chorus and mix stereo output to ring buffer
+				ChorusToStereo(mix);
 			}
 		}
 
@@ -504,12 +621,7 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 		}
 
 		float *pWrite = reinterpret_cast<float*>(pStream);
-		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-		{
-			// FIXME
-			*pWrite++ = s_ringBuf.Read();
-			*pWrite++ = s_ringBuf.Read();
-		}
+		s_ringBuf.Flush(pWrite, numSamples<<1);
 
 		s_sampleOutCount += numSamples;
 	}
@@ -534,6 +646,11 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
+
+	// 3-phase chorus: L and R at 120 and 240 deg., M at 0 deg.
+	s_delayLFO_L.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB /* Used to mix! */, (1.f/3.f)*1.f);
+	s_delayLFO_R.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB, (1.f/3.f)*2.f);
+	s_delayLFO_M.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB, 0.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();

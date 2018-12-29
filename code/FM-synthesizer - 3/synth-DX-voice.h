@@ -102,6 +102,21 @@ namespace SFM
 			return true;
 		}
 
+		// Used by voice stealing
+		float SummedOutput() /* const */
+		{
+			float summed = 0.f;
+			for (auto &voiceOp : m_operators)
+			{
+				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
+				{
+					summed += voiceOp.envelope.Get();
+				}
+			}
+
+			return summed;
+		}
+
 		float Sample(const Parameters &parameters);
 	};
 }

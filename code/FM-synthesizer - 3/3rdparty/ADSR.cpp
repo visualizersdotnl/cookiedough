@@ -24,59 +24,64 @@
 
 
 ADSR::ADSR(void) {
-    reset();
-    setAttackRate(0);
-    setDecayRate(0);
-    setReleaseRate(0);
-    setSustainLevel(1);
-    setTargetRatioA(0.3f);
-    setTargetRatioDR(0.0001f);
+	reset();
+	setAttackRate(0.f);
+	setDecayRate(0.f);
+	setReleaseRate(0.f);
+	setAttackLevel(1.f);
+	setSustainLevel(1.f);
+	setTargetRatioA(0.3f);
+	setTargetRatioDR(0.0001f);
 }
 
 ADSR::~ADSR(void) {
 }
 
 void ADSR::setAttackRate(float rate) {
-    attackRate = rate;
-    attackCoef = calcCoef(rate, targetRatioA);
-    attackBase = (1.f + targetRatioA) * (1.f - attackCoef);
+	attackRate = rate;
+	attackCoef = calcCoef(rate, targetRatioA);
+	attackBase = (attackLevel + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setDecayRate(float rate) {
-    decayRate = rate;
-    decayCoef = calcCoef(rate, targetRatioDR);
-    decayBase = (sustainLevel - targetRatioDR) * (1.f - decayCoef);
+	decayRate = rate;
+	decayCoef = calcCoef(rate, targetRatioDR);
+	decayBase = (fabsf(attackLevel-sustainLevel) - targetRatioDR) * (1.f - decayCoef);
 }
 
 void ADSR::setReleaseRate(float rate) {
-    releaseRate = rate;
-    releaseCoef = calcCoef(rate, targetRatioDR);
-    releaseBase = -targetRatioDR * (1.f - releaseCoef);
+	releaseRate = rate;
+	releaseCoef = calcCoef(rate, targetRatioDR);
+	releaseBase = -targetRatioDR * (1.f - releaseCoef);
 }
 
 float ADSR::calcCoef(float rate, float targetRatio) {
-    return (rate <= 0) ? 0.f : expf(-logf((1.f + targetRatio) / targetRatio) / rate);
+	return (rate <= 0.f) ? 0.f : expf(-logf((1.f + targetRatio) / targetRatio) / rate);
+}
+
+void ADSR::setAttackLevel(float level) {
+	attackLevel = level;
 }
 
 void ADSR::setSustainLevel(float level) {
-    sustainLevel = level;
-    decayBase = (sustainLevel - targetRatioDR) * (1.f - decayCoef);
+	sustainLevel = level;
+	decayBase = (sustainLevel - targetRatioDR) * (1.f - decayCoef);
 }
 
 void ADSR::setTargetRatioA(float targetRatio) {
-    if (targetRatio < 0.000000001f)
-        targetRatio = 0.000000001f;  // -180 dB
-    targetRatioA = targetRatio;
-    attackCoef = calcCoef(attackRate, targetRatioA);
-    attackBase = (1.f + targetRatioA) * (1.f - attackCoef);
+	if (targetRatio < 0.000000001f)
+		targetRatio = 0.000000001f;  // -180 dB
+	targetRatioA = targetRatio;
+	attackCoef = calcCoef(attackRate, targetRatioA);
+	attackBase = (1.f + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setTargetRatioDR(float targetRatio) {
-    if (targetRatio < 0.000000001f)
-        targetRatio = 0.000000001f;  // -180 dB
-    targetRatioDR = targetRatio;
-    decayCoef = calcCoef(decayRate, targetRatioDR);
-    releaseCoef = calcCoef(releaseRate, targetRatioDR);
-    decayBase = (sustainLevel - targetRatioDR) * (1.f - decayCoef);
-    releaseBase = -targetRatioDR * (1.f - releaseCoef);
+	if (targetRatio < 0.000000001f)
+		targetRatio = 0.000000001f;  // -180 dB
+	targetRatioDR = targetRatio;
+	decayCoef = calcCoef(decayRate, targetRatioDR);
+	releaseCoef = calcCoef(releaseRate, targetRatioDR);
+	decayBase = (fabsf(attackLevel-sustainLevel) - targetRatioDR) * (1.f - decayCoef);
+	releaseBase = -targetRatioDR * (1.f - releaseCoef);
 }

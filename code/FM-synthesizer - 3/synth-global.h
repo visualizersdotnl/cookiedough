@@ -38,18 +38,11 @@ namespace SFM
 	const float kAudibleLowHz = 20.f;
 	const float kAudibleHighHz = 22000.f;
 
-	// LFO ranges
-	const float kMaxSubLFO = kAudibleLowHz;
-	const float kMaxSonicLFO = kAudibleHighHz;	
-
 	// Nyquist frequency
 	const float kNyquist = kSampleRate/2.f;
 
 	// Max. number of voices
-	const unsigned kMaxVoices = 16;
-
-	// Max. voice amplitude 
-	const float kMaxVoiceAmp = 0.66f;
+	const unsigned kMaxVoices = 24;
 	
 	// Size of global (oscillator) LUTs
 	const unsigned kOscLUTSize = 4096;
@@ -60,6 +53,15 @@ namespace SFM
 
 	// Number of FM synthesis operators (can't just change this!)
 	const unsigned kNumOperators = 6;
+
+	// Long release range enables bass drums, pads et cetera
+	const float kReleaseMul = 1.f;
+
+	// Base Hz for chorus oscillators
+	const float kBaseChorusFreq = 0.5f;
+
+	// To divide lin. amplitude by 2 (-3dB = half as loud)
+	const float kMinus3dB = 0.707945764f;
 }
 
 #include "synth-LUT.h"

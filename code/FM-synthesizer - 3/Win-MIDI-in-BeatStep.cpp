@@ -36,6 +36,9 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam1(unsigned parameter) { return (parameter>>8)  & 0x7f; }
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
+	// Rotary indices
+	const unsigned kPotUnused1 = 10;
+
 	/*
 		Mapping for the BeatStep
 	*/
@@ -73,10 +76,8 @@ namespace SFM
 				if (0 == channel)
 				{
 //					switch (controlIdx)
-//					{
-//					default:
-//						break;
-//					}
+					{
+					}
 				}
 
 				return;

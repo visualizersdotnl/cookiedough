@@ -47,27 +47,43 @@ namespace SFM
 	// Current operator
 	unsigned g_currentOp = 0;
 
+	// Button indices
+	const unsigned kButtonFixedRatio = 104;
+
+	static bool s_opFixedRatio[kNumOperators] = { false };
+
 	// Fader indices
-	const unsigned kFaderAttack       = 74;
-	const unsigned kFaderDecay        = 71;
-	const unsigned kFaderSustain      = 91;
-	const unsigned kFaderRelease      = 93;
-	const unsigned kFaderUnused1      = 73;
-	const unsigned kFaderUnused2      = 72;
-	const unsigned kFaderCoarse       = 5;
-	const unsigned kFaderFine         = 84;
-	const unsigned kFaderDetune       = 7;
+	const unsigned kFaderAttack       = 20;
+	const unsigned kFaderDecay        = 21;
+	const unsigned kFaderSustain      = 71;
+	const unsigned kFaderRelease      = 72;
+	const unsigned kFaderAttackLevel  = 25;
+	const unsigned kFaderUnused2      = 73;
+	const unsigned kFaderCoarse       = 74;
+	const unsigned kFaderFine         = 70;
+	const unsigned kFaderDetune       = 63;
 
 	// Operator envelope
-	static float s_opAttack[kNumOperators]  = { 0.f };
-	static float s_opDecay[kNumOperators]   = { 0.f };
-	static float s_opSustain[kNumOperators] = { 0.f };
-	static float s_opRelease[kNumOperators] = { 0.f };
+	static float s_opAttack[kNumOperators]      = { 0.f };
+	static float s_opDecay[kNumOperators]       = { 0.f };
+	static float s_opSustain[kNumOperators]     = { 0.f };
+	static float s_opRelease[kNumOperators]     = { 0.f };
+	static float s_opAttackLevel[kNumOperators] = { 0.f };
 
 	// Operator frequency
 	static float s_opCoarse[kNumOperators] = { 0.f };
 	static float s_opFine[kNumOperators]   = { 0.f }; 
 	static float s_opDetune[kNumOperators] = { 0.f };
+
+	// Rotary indices
+	const unsigned kPotOutput = 22;
+	const unsigned kPotVelSens = 23;
+	const unsigned kPotFeedback = 61;
+
+	// Various operator parameters
+	static float s_opOutput[kNumOperators]   = { 0.f };
+	static float s_opVelSens[kNumOperators]  = { 0.f };
+	static float s_opFeedback[kNumOperators] = { 0.f };
 
 	/*
 		Mapping for the Oxy-49's Patch #01
@@ -143,6 +159,22 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						/* Feedback */
+
+						case kPotFeedback:
+							s_opFeedback[g_currentOp] = fControlVal;
+							break;
+
+						/* Output level + Velocity sensitivity */
+
+						case kPotOutput:
+							s_opOutput[g_currentOp] = fControlVal;
+							break;
+
+						case kPotVelSens:
+							s_opVelSens[g_currentOp] = fControlVal;
+							break;
+
 						/* Operator envelope */
 
 						case kFaderAttack:
@@ -161,7 +193,15 @@ namespace SFM
 							s_opRelease[g_currentOp] = fControlVal;
 							break;
 
+						case kFaderAttackLevel:
+							s_opAttackLevel[g_currentOp] = fControlVal;
+							break;
+
 						/* Operator frequency */
+
+						case kButtonFixedRatio:
+							if (127 == controlVal) s_opFixedRatio[g_currentOp] ^= 1;
+							break;
 
 						case kFaderCoarse:
 							s_opCoarse[g_currentOp] = fControlVal;
@@ -324,9 +364,23 @@ namespace SFM
 	float WinMidi_GetOpDecay(unsigned iOp)        { return s_opDecay[iOp];   }
 	float WinMidi_GetOpSustain(unsigned iOp)      { return s_opSustain[iOp]; }
 	float WinMidi_GetOpRelease(unsigned iOp)      { return s_opRelease[iOp]; }
+	float WinMidi_GetOpAttackLevel(unsigned iOp)  { return s_opAttackLevel[iOp]; }
 
 	// Operator frequency
-	float WinMidi_GetOpCoarse(unsigned iOp) { return s_opCoarse[iOp]; }
-	float WinMidi_GetOpFine(unsigned iOp)   { return s_opFine[iOp];   }
-	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp]; }
+	bool  WinMidi_GetOpFixed(unsigned iOp)  { return s_opFixedRatio[iOp]; }
+	float WinMidi_GetOpCoarse(unsigned iOp) { return s_opCoarse[iOp];     }
+	float WinMidi_GetOpFine(unsigned iOp)   { return s_opFine[iOp];       }
+	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp];     }
+
+	// Output level
+	float WinMidi_GetOpOutput(unsigned iOp) {
+		return s_opOutput[iOp]; }
+
+	// Velocity sensitivity
+	float WinMidi_GetOpVelSens(unsigned iOp) {
+		return s_opVelSens[iOp]; }
+
+	// Feedback
+	float WinMidi_GetFeedback(unsigned iOp) {
+		return s_opFeedback[iOp]; }
 }

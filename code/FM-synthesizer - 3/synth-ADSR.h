@@ -25,9 +25,8 @@ namespace SFM
 			float decay;
 			float sustain;
 			float release;
+			float attackLevel;
 		};
-
-		::ADSR m_ADSR;
 
 		void Start(const Parameters &parameters, float velocity, float freqScale = 0.f);
 		void Stop(float velocity /* Aftertouch */);
@@ -42,6 +41,11 @@ namespace SFM
 			return m_ADSR.process();
 		}
 
+		float Get() /* const */
+		{
+			return m_ADSR.getOutput();
+		}
+
 		bool IsIdle() /* const */
 		{
 			const bool isIdle = m_ADSR.getState() == ::ADSR::env_idle;
@@ -54,5 +58,8 @@ namespace SFM
 			const bool isReleasing = m_ADSR.getState() == ::ADSR::env_release;
 			return isReleasing;
 		}
+
+	private:
+		::ADSR m_ADSR;
 	};
 }

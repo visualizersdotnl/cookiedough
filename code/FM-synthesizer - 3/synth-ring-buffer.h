@@ -7,8 +7,6 @@
 
 #include "synth-global.h"
 
-#include <atomic>
-
 namespace SFM
 {
 	class RingBuffer
@@ -32,8 +30,17 @@ namespace SFM
 		{
 			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun
 			const float value = m_buffer[m_readIdx & (kRingBufferSize-1)];
-			m_readIdx = ++m_readIdx;
+			++m_readIdx;
 			return value;
+		}
+
+		void Flush(float *pDest, unsigned numElements)
+		{
+			SFM_ASSERT(numElements <= kRingBufferSize);
+			
+			// FIXME
+			for (unsigned iElem = 0; iElem < numElements; ++iElem)
+				*pDest++ = Read();
 		}
 
 		unsigned GetAvailable() const

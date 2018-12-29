@@ -222,6 +222,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h" />

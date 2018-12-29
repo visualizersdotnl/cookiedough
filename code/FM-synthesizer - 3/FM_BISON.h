@@ -11,6 +11,29 @@
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
 		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
 		- ...
+
+	Core goals:
+		- DX7-like core FM
+		- Subtractive synthesis on top
+
+	Look at later (TM):
+		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
+		- Extra depth for modulators
+
+	Discuss with Pieter:
+		- Chorus sounds good in 1 particular setup, go old school and offer ON/OFF?
+
+	Priority:
+		- Level scaling
+		- Figure out the DX7's modulation wheel and implement it
+		- Figure out proper pitch envelope strategy
+
+	Missing top-level features:
+		- Filters
+		- Vowel filter
+		- Jitter
+
+	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.
 */
 
 #pragma once

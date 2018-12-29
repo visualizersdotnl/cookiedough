@@ -29,18 +29,22 @@ namespace SFM
 			// "If Osc Mode is set to FIXED FREQ (HZ), COARSE adjustment is possible in four steps--1, 10, 100 and
 			//  1000. FINE adjustment is possible from 1 to 9.772 times."
 			bool fixed;
-			
-			// Depth/Amplitude
-			float index;
+
+			// Output level
+			float output;
 
 			// ADSR
 			float attack;
 			float decay;
 			float sustain;
 			float release;
+			float attackLevel;
 
 			// Velocity sensitivity
 			float velSens;
+
+			// Feedback amount
+			float feedback;
 		};
 	
 		Operator operators[kNumOperators];
@@ -57,17 +61,21 @@ namespace SFM
 				// Ratio
 				patchOp.fixed = false;
 
-				// Depth/Amplitude
-				patchOp.index = 1.f;
+				// Output level
+				patchOp.output = 1.f;
 
 				// No envelope
 				patchOp.attack = 0.f;
 				patchOp.decay = 0.f;
 				patchOp.sustain = 1.f;
 				patchOp.release = 0.f;
+				patchOp.attackLevel = 1.f;
 
 				// Not velocity sensitive
 				patchOp.velSens = 0.f;
+
+				// No feedback
+				patchOp.feedback = 0.f;
 			}
 		}
 	};

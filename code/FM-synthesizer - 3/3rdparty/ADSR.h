@@ -30,25 +30,26 @@ public:
 	ADSR(void);
 	~ADSR(void);
 	float process(void);
-    float getOutput(void);
-    int getState(void);
+	float getOutput(void);
+	int getState(void);
 	void gate(int on);
-    void setAttackRate(float rate);
-    void setDecayRate(float rate);
-    void setReleaseRate(float rate);
+	void setAttackRate(float rate);
+	void setDecayRate(float rate);
+	void setReleaseRate(float rate);
+	void setAttackLevel(float level);
 	void setSustainLevel(float level);
-    void setTargetRatioA(float targetRatio);
-    void setTargetRatioDR(float targetRatio);
-    void reset(void);
+	void setTargetRatioA(float targetRatio);
+	void setTargetRatioDR(float targetRatio);
+	void reset(void);
 
-    enum envState {
-        env_idle = 0,
-        env_attack,
-        env_decay,
-        env_sustain,
-        env_release,
+	enum envState {
+		env_idle = 0,
+		env_attack,
+		env_decay,
+		env_sustain,
+		env_release,
 		env_cooldown
-    };
+	};
 
 protected:
 	int state;
@@ -59,44 +60,45 @@ protected:
 	float attackCoef;
 	float decayCoef;
 	float releaseCoef;
+	float attackLevel;
 	float sustainLevel;
-    float targetRatioA;
-    float targetRatioDR;
-    float attackBase;
-    float decayBase;
-    float releaseBase;
+	float targetRatioA;
+	float targetRatioDR;
+	float attackBase;
+	float decayBase;
+	float releaseBase;
  
-    float calcCoef(float rate, float targetRatio);
+	float calcCoef(float rate, float targetRatio);
 };
 
 inline float ADSR::process() {
 	switch (state) {
-        case env_idle:
+		case env_idle:
 			output = 0.f;
-            break;
-        case env_attack:
-            output = attackBase + output * attackCoef;
-            if (output >= 1.f) {
-                output = 1.f;
-                state = env_decay;
-            }
+			break;
+		case env_attack:
+			output = attackBase + output * attackCoef;
+			if (output >= attackLevel) {
+				output = attackLevel;
+				state = env_decay;
+			}
 			else // Immediately go into decay state
 				break;
-        case env_decay:
+		case env_decay:
 			output = decayBase + output * decayCoef;
 			if (output <= sustainLevel) {
 				output = sustainLevel;
 				state = env_sustain;
 			}
-            break;
-        case env_sustain:
-            break;
-        case env_release:
-            output = releaseBase + output * releaseCoef;
-            if (output <= 0.f) {
-                output = 0.f;
-                state = env_cooldown;
-            }
+			break;
+		case env_sustain:
+			break;
+		case env_release:
+			output = releaseBase + output * releaseCoef;
+			if (output <= 0.f) {
+				output = 0.f;
+				state = env_cooldown;
+			}
 			break;
 		case env_cooldown:
 			output = 0.f;
@@ -110,16 +112,16 @@ inline void ADSR::gate(int gate) {
 	if (gate)
 		state = env_attack;
 	else if (state != env_idle)
-        state = env_release;
+		state = env_release;
 }
 
 inline int ADSR::getState() {
-    return state;
+	return state;
 }
 
 inline void ADSR::reset() {
-    state = env_idle;
-    output = 0.f;
+	state = env_idle;
+	output = 0.f;
 }
 
 inline float ADSR::getOutput() {
