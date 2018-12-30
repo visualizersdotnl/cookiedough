@@ -305,10 +305,10 @@ namespace SFM
 #endif
 
 		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
-//		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
+		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
 
 		// Initialize LFO
-		const float phaseJitter = liveliness*oscWhiteNoise(); // FIXME: might be too much
+		const float phaseJitter = kMaxLFOJitter*liveliness*oscWhiteNoise(); // FIXME: might be too much
 		voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f, phaseJitter);
 
 		// Other operator settings

@@ -32,9 +32,10 @@
 		- Patch save & load
 
 	Missing top-level features:
+		- Jitter
+		  + Partially implemented
 		- Filters
 		- Vowel filter
-		- Jitter
 
 	Golden rule:
 		- Basic FM right first, party tricks second

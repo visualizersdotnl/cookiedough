@@ -68,6 +68,9 @@ namespace SFM
 
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;
+
+	// MAx. LFO jitter (in unit phase); tied to 'liveliness'
+	const float kMaxLFOJitter = kGoldenRatio*0.01f;
 }
 
 #include "synth-LUT.h"
