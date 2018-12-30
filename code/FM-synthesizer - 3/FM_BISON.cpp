@@ -177,10 +177,8 @@ namespace SFM
 		
 		const unsigned key = request.key;
 		const float fundamentalFreq = g_MIDIToFreqLUT[key];
-
-		const float velocity    = request.velocity;
-		const float invVelocity = 1.f-velocity;
-
+		const float velocity = request.velocity;
+		
 		FM_Patch &patch = s_parameters.patch;
 
 #if 0
@@ -210,7 +208,7 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Volca/DX7 algorithm #5
 		*/
@@ -245,8 +243,7 @@ namespace SFM
 		*/
 #endif
 
-
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #31
 		*/
@@ -394,7 +391,7 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
-				if (true == voice.m_enabled)
+				if (true == voice.m_enabled /* FIXME: check if it's releasing */)
 				{
 					// Check output level
 					const float output = voice.SummedOutput();

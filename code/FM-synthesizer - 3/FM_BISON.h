@@ -18,21 +18,25 @@
 
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
+		  + Am I making a mistake by limiting to seconds in my envelopes?
 		- Extra depth for modulators
 
 	Discuss with Pieter:
 		- Chorus sounds good in 1 particular setup, go old school and offer ON/OFF?
 
 	Priority:
-		- 1. Level scaling
-		- 2/3. Figure out the DX7's modulation wheel and implement it
-		- 2/3. Figure out proper pitch envelope strategy
-		- 4. Patch save & load
+		- Level scaling
+		- LFO (behind wheel), sensitivity per operator for amplitude (tremolo) and pitch (vibrato), key sync.?
+		- Figure out proper pitch envelope strategy
+		- Patch save & load
 
 	Missing top-level features:
 		- Filters
 		- Vowel filter
 		- Jitter
+
+	Golden rule:
+		- Basic FM right first, party tricks second
 
 	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.
 */
