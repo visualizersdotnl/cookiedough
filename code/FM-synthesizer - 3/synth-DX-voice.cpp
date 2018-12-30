@@ -63,6 +63,7 @@ namespace SFM
 
 				// Sample envelope
 				const float envelope = voiceOp.envelope.Sample();
+				SampleAssert(envelope);
 
 				// Apply LFO vibrato
 				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
@@ -76,6 +77,8 @@ namespace SFM
 				
 				// Apply envelope
 				sample = sample*envelope;
+
+				SampleAssert(sample);
 
 				// Store final sample for modulation and feedback
 				sampled[index] = sample;
