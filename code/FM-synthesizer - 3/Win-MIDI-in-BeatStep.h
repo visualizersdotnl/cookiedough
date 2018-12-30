@@ -15,4 +15,7 @@ namespace SFM
 	/*
 		Pull-style values, all normalized [0..1]
 	*/
+
+	// Liveliness
+	float WinMidi_GetLiveliness();
 }

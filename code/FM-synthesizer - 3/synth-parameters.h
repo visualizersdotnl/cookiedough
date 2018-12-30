@@ -26,6 +26,9 @@ namespace SFM
 		// LFO speed
 		float LFOSpeed;
 
+		// Liveliness
+		float liveliness;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -37,6 +40,9 @@ namespace SFM
 			// No modulation
 			modulation = 0.f;
 			LFOSpeed = 0.f;
+
+			// 100% straight
+			liveliness = 0.f;
 		}
 	};
 }

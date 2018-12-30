@@ -65,6 +65,9 @@ namespace SFM
 
 	// Pitch bend range (in octaves)
 	const float kPitchBendRange = 1.f;
+
+	// Max. note jitter (in cents); tied to 'liveliness'
+	const unsigned kMaxNoteJitter = 8;
 }
 
 #include "synth-LUT.h"

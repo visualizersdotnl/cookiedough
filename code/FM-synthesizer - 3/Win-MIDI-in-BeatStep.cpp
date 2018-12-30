@@ -37,7 +37,10 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
 	// Rotary indices
-	const unsigned kPotUnused1 = 10;
+	const unsigned kPotLiveliness = 114;
+
+	// Liveliness
+	static float s_liveliness = 0.f;
 
 	/*
 		Mapping for the BeatStep
@@ -75,8 +78,11 @@ namespace SFM
 
 				if (0 == channel)
 				{
-//					switch (controlIdx)
+					switch (controlIdx)
 					{
+					case kPotLiveliness:
+						s_liveliness = fControlVal;
+						break;
 					}
 				}
 
@@ -182,4 +188,8 @@ namespace SFM
 	/*
 		Pull-style controls
 	*/
+
+	// Liveliness
+	float WinMidi_GetLiveliness() {
+		return s_liveliness; }
 }

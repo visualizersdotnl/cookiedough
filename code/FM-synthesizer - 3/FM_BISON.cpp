@@ -200,8 +200,13 @@ namespace SFM
 //		voice.Reset();
 		
 		const unsigned key = request.key;
-		const float fundamentalFreq = g_MIDIToFreqLUT[key];
+		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];
 		const float velocity = request.velocity;
+
+		const float liveliness = s_parameters.liveliness;
+		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
+		if (0 != noteJitter)
+			fundamentalFreq *= powf(2.f, (noteJitter*0.01f)/12.f);
 		
 		FM_Patch &patch = s_parameters.patch;
 
@@ -300,10 +305,11 @@ namespace SFM
 #endif
 
 		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
-		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
+//		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
 
 		// Initialize LFO
-		voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f /* FIXME: add jitter here! */);
+		const float phaseJitter = liveliness*oscWhiteNoise(); // FIXME: might be too much
+		voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f, phaseJitter);
 
 		// Other operator settings
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -478,6 +484,9 @@ namespace SFM
 
 		// LFO speed
 		s_parameters.LFOSpeed = WinMidi_GetLFOSpeed();
+
+		// Liveliness
+		s_parameters.liveliness = WinMidi_GetLiveliness();
 
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
