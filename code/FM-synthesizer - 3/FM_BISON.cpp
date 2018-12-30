@@ -185,7 +185,7 @@ namespace SFM
 			delta = distance*levelStep;
 
 		scale *= delta;
-		output = Clamp(output - output*scale);
+		output -= output*scale;
 
 		// Return velocity scaled output
 		return lerpf<float>(output, output*velocity, patchOp.velSens);
