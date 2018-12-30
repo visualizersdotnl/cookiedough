@@ -57,15 +57,15 @@ namespace SFM
 	static bool s_opFixedRatio[kNumOperators] = { false };
 
 	// Fader indices
-	const unsigned kFaderAttack       = 20;
-	const unsigned kFaderDecay        = 21;
-	const unsigned kFaderSustain      = 71;
-	const unsigned kFaderRelease      = 72;
-	const unsigned kFaderAttackLevel  = 25;
-	const unsigned kFaderUnused2      = 73;
-	const unsigned kFaderCoarse       = 74;
-	const unsigned kFaderFine         = 70;
-	const unsigned kFaderDetune       = 63;
+	const unsigned kFaderAttack          = 20;
+	const unsigned kFaderDecay           = 21;
+	const unsigned kFaderSustain         = 71;
+	const unsigned kFaderRelease         = 72;
+	const unsigned kFaderAttackLevel     = 25;
+	const unsigned kFaderLevelScaleRange = 73;
+	const unsigned kFaderCoarse          = 74;
+	const unsigned kFaderFine            = 70;
+	const unsigned kFaderDetune          = 63;
 
 	// Operator envelope
 	static float s_opAttack[kNumOperators]      = { 0.f };
@@ -85,7 +85,9 @@ namespace SFM
 	const unsigned kPotFeedback = 61;
 	const unsigned kPotAmpMod = 26;
 	const unsigned kPotPitchMod = 27;
-	const unsigned kPotLFOSpeed = 95;
+	const unsigned kPotLFOSpeed = 24;
+	const unsigned kPotLevelScaleL = 62;
+	const unsigned kPotLevelScaleR = 95;
 
 	// Modulation wheel
 	const unsigned kModWheel = 1;
@@ -96,6 +98,11 @@ namespace SFM
 	static float s_opOutput[kNumOperators]   = { 0.f };
 	static float s_opVelSens[kNumOperators]  = { 0.f };
 	static float s_opFeedback[kNumOperators] = { 0.f };
+	
+	// Operator level scaling
+	static float s_opLevelScaleRange[kNumOperators] = { 0.f };
+	static float s_opLevelScaleL[kNumOperators]     = { 0.f };
+	static float s_opLevelScaleR[kNumOperators]     = { 0.f };
 
 	// LFO speed
 	static float s_LFOSpeed = 0.f;
@@ -176,6 +183,20 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						/*  Operator level scaling */
+
+						case kFaderLevelScaleRange:
+							s_opLevelScaleRange[g_currentOp] = fControlVal;
+							break;
+
+						case kPotLevelScaleL:
+							s_opLevelScaleL[g_currentOp] = fControlVal;
+							break;
+
+						case kPotLevelScaleR:
+							s_opLevelScaleR[g_currentOp] = fControlVal;
+							break;
+
 						/* Operator LFO influence */
 
 						case kPotAmpMod:
@@ -411,6 +432,11 @@ namespace SFM
 	float WinMidi_GetOpCoarse(unsigned iOp) { return s_opCoarse[iOp];     }
 	float WinMidi_GetOpFine(unsigned iOp)   { return s_opFine[iOp];       }
 	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp];     }
+
+	// Operator level scaling
+	float WinMidi_GetOpLevelScaleRange(unsigned iOp) { return s_opLevelScaleRange[iOp]; }
+	float WinMidi_GetOpLevelScaleL(unsigned iOp)     { return s_opLevelScaleL[iOp];     }
+	float WinMidi_GetOpLevelScaleR(unsigned iOp)     { return s_opLevelScaleR[iOp];     }
 
 	// Operator LFO influence
 	float WinMidi_GetOpAmpMod(unsigned iOp)   { return s_opAmpMod[iOp];   }

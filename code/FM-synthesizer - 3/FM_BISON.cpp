@@ -162,8 +162,32 @@ namespace SFM
 	{
 		float output = patchOp.output;
 
-		// FIXME: apply level scaling
+		// Apply level scaling
+		const unsigned breakpoint = patchOp.levelScaleBP;
+		const unsigned numSemis = patchOp.levelScaleRange;
+		const float levelStep = 1.f/numSemis;
 
+		unsigned distance;
+		float scale;
+		if (key < breakpoint)
+		{
+			distance = breakpoint-key;
+			scale = patchOp.levelScaleL;
+		}
+		else
+		{
+			distance = key-breakpoint;
+			scale = patchOp.levelScaleR;
+		}
+
+		float delta = 1.f;
+		if (distance < numSemis)
+			delta = distance*levelStep;
+
+		scale *= delta;
+		output = Clamp(output - output*scale);
+
+		// Return velocity scaled output
 		return lerpf<float>(output, output*velocity, patchOp.velSens);
 	}
 
@@ -476,6 +500,12 @@ namespace SFM
 			patchOp.sustain = WinMidi_GetOpSustain(iOp);
 			patchOp.release = WinMidi_GetOpRelease(iOp)*kReleaseMul;
 			patchOp.attackLevel = WinMidi_GetOpAttackLevel(iOp);
+
+			// Level scaling
+			patchOp.levelScaleBP = 69; // A4 (FIXME)
+			patchOp.levelScaleRange = unsigned(WinMidi_GetOpLevelScaleRange(iOp)*127.f);
+			patchOp.levelScaleL = WinMidi_GetOpLevelScaleL(iOp);
+			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
 
 			// Frequency
 			const bool fixed = WinMidi_GetOpFixed(iOp);

@@ -26,6 +26,8 @@
 
 	Priority:
 		- Level scaling
+		  + Primitive implementation is done: breakpoint, subtractive/linear, amount L/R, range in semitones
+		    This may well be what's needed apart from exponential (maybe!) until I see a point in going additive
 		- Figure out proper pitch envelope strategy
 		- Patch save & load
 

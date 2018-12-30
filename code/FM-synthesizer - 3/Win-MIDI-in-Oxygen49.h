@@ -35,6 +35,11 @@ namespace SFM
 	float WinMidi_GetOpFine(unsigned iOp);
 	float WinMidi_GetOpDetune(unsigned iOp);
 
+	// Operator level scaling
+	float WinMidi_GetOpLevelScaleRange(unsigned iOp);
+	float WinMidi_GetOpLevelScaleL(unsigned iOp);
+	float WinMidi_GetOpLevelScaleR(unsigned iOp);
+
 	// Operator LFO influence
 	float WinMidi_GetOpAmpMod(unsigned iOp);
 	float WinMidi_GetOpPitchMod(unsigned iOp);

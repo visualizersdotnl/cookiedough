@@ -49,6 +49,11 @@ namespace SFM
 			// LFO influence
 			float ampMod;
 			float pitchMod;
+
+			// Level scaling (DX7-style, simplified)
+			unsigned levelScaleBP;
+			unsigned levelScaleRange; // [0..127]
+			float levelScaleL, levelScaleR;
 		};
 	
 		Operator operators[kNumOperators];
@@ -84,6 +89,12 @@ namespace SFM
 				// No LFO influence
 				patchOp.ampMod = 0.f;
 				patchOp.pitchMod = 0.f;
+
+				// No level scaling
+				patchOp.levelScaleBP = 69; // A4
+				patchOp.levelScaleRange = 24; // 2 octaves
+				patchOp.levelScaleL = 0.f;
+				patchOp.levelScaleR = 0.f;
 			}
 		}
 	};
