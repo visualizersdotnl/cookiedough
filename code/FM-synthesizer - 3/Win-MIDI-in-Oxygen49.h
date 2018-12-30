@@ -35,15 +35,25 @@ namespace SFM
 	float WinMidi_GetOpFine(unsigned iOp);
 	float WinMidi_GetOpDetune(unsigned iOp);
 
-	// Output level
+	// Operator LFO influence
+	float WinMidi_GetOpAmpMod(unsigned iOp);
+	float WinMidi_GetOpPitchMod(unsigned iOp);
+
+	// Operator output level
 	float WinMidi_GetOpOutput(unsigned iOp);
 
-	// Velocity sensitivity
+	// Operator velocity sensitivity
 	float WinMidi_GetOpVelSens(unsigned iOp);
 
-	// Feedback
-	float WinMidi_GetFeedback(unsigned iOp);
+	// Operator feedback
+	float WinMidi_GetOpFeedback(unsigned iOp);
 
 	// Pitch bend
 	float WinMidi_GetPitchBend();
+
+	// Modulation
+	float WinMidi_GetModulation();
+
+	// LFO speed
+	float WinMidi_GetLFOSpeed();
 }

@@ -11,6 +11,7 @@ namespace SFM
 {
 	// See impl.
 	extern float g_DX7_EG_to_OL[257];
+	extern float g_DX7_LFO_speed[128];
 
 	// Sine wave (Gordon-Smith)
 	extern float g_sinLUT[kOscLUTSize];

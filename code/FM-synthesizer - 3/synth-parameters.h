@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Parameter state.
+
+	I intend to keep all state [0..1] floating point for easy VST integration.
 */
 
 #pragma once
@@ -18,6 +20,12 @@ namespace SFM
 		// Pitch bend
 		float pitchBend;
 
+		// Modulation
+		float modulation;
+
+		// LFO speed
+		float LFOSpeed;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -25,6 +33,10 @@ namespace SFM
 
 			// No bend
 			pitchBend = 0.f;
+
+			// No modulation
+			modulation = 0.f;
+			LFOSpeed = 0.f;
 		}
 	};
 }

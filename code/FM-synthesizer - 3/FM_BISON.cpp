@@ -278,6 +278,9 @@ namespace SFM
 		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
 		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
 
+		// Initialize LFO
+		voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f /* FIXME: add jitter here! */);
+
 		// Other operator settings
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
@@ -286,6 +289,10 @@ namespace SFM
 
 			// Feedback amount
 			voiceOp.feedbackAmt = patchOp.feedback;
+
+			// LFO influence
+			voiceOp.ampMod = patchOp.ampMod;
+			voiceOp.pitchMod = patchOp.pitchMod;
 			
 			// Amount of velocity
 			const float opVelocity = velocity*patchOp.velSens;
@@ -426,7 +433,7 @@ namespace SFM
 		s_voiceReleaseReq.clear();
 
 		if (false == s_voiceReq.empty())
-			Log("Number of voice requests ignored: " + std::to_string(s_voiceReq.size()));
+			Log("Voice requests ignored: " + std::to_string(s_voiceReq.size()));
 
 		s_voiceReq.clear();
 	}
@@ -442,6 +449,12 @@ namespace SFM
 		// Pitch bend
 		s_parameters.pitchBend = powf(2.f, WinMidi_GetPitchBend()*kPitchBendRange);
 
+		// Modulation
+		s_parameters.modulation = WinMidi_GetModulation();
+
+		// LFO speed
+		s_parameters.LFOSpeed = WinMidi_GetLFOSpeed();
+
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
@@ -450,8 +463,12 @@ namespace SFM
 			patchOp.output = WinMidi_GetOpOutput(iOp);
 			patchOp.velSens = WinMidi_GetOpVelSens(iOp);
 
+			// LFO influence
+			patchOp.ampMod = WinMidi_GetOpAmpMod(iOp);
+			patchOp.pitchMod = WinMidi_GetOpPitchMod(iOp);
+
 			// Feedback amount
-			patchOp.feedback = WinMidi_GetFeedback(iOp);
+			patchOp.feedback = WinMidi_GetOpFeedback(iOp);
 
 			// Envelope
 			patchOp.attack = WinMidi_GetOpAttack(iOp);
@@ -541,6 +558,9 @@ namespace SFM
 		// Update voice logic
 		UpdateVoices();
 
+		// Grab LFO speed from DX7 table
+		const float LFOBend = g_DX7_LFO_speed[unsigned(s_parameters.LFOSpeed*127.f)];
+	
 		const unsigned numVoices = s_active;
 
 		if (0 == numVoices)
@@ -558,7 +578,12 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				DX_Voice &voice = s_DXvoices[iVoice];
+
+				// Apply pitch bends
 				voice.SetPitchBend(s_parameters.pitchBend);
+				
+				// Bend LFO to current speed
+				voice.m_LFO.PitchBend(LFOBend);
 				
 				if (true == voice.m_enabled)
 				{

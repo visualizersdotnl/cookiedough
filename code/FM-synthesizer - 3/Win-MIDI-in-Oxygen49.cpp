@@ -83,14 +83,28 @@ namespace SFM
 	const unsigned kPotOutput = 22;
 	const unsigned kPotVelSens = 23;
 	const unsigned kPotFeedback = 61;
+	const unsigned kPotAmpMod = 26;
+	const unsigned kPotPitchMod = 27;
+	const unsigned kPotLFOSpeed = 95;
+
+	// Modulation wheel
+	const unsigned kModWheel = 1;
 
 	// Various operator parameters
+	static float s_opAmpMod[kNumOperators]   = { 0.f };
+	static float s_opPitchMod[kNumOperators] = { 0.f };
 	static float s_opOutput[kNumOperators]   = { 0.f };
 	static float s_opVelSens[kNumOperators]  = { 0.f };
 	static float s_opFeedback[kNumOperators] = { 0.f };
 
+	// LFO speed
+	static float s_LFOSpeed = 0.f;
+
 	// Pitch bend
 	static float s_pitchBend = 0.f;
+
+	// Modulation
+	static float s_modulation = 0.f;
 
 	static unsigned s_voices[127];
 
@@ -162,6 +176,22 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
+						/* Operator LFO influence */
+
+						case kPotAmpMod:
+							s_opAmpMod[g_currentOp] = fControlVal;
+							break;
+
+						case kPotPitchMod:
+							s_opPitchMod[g_currentOp] = fControlVal;
+							break;
+
+						/* LFO speed */
+
+						case kPotLFOSpeed:
+							s_LFOSpeed = fControlVal;
+							break;
+
 						/* Feedback */
 
 						case kPotFeedback:
@@ -219,6 +249,12 @@ namespace SFM
 							break;
 
 						default:
+							break;
+
+						/* Modulation */
+						
+						case kModWheel:
+							s_modulation = fControlVal;
 							break;
 						}
 					}
@@ -376,20 +412,34 @@ namespace SFM
 	float WinMidi_GetOpFine(unsigned iOp)   { return s_opFine[iOp];       }
 	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp];     }
 
-	// Output level
+	// Operator LFO influence
+	float WinMidi_GetOpAmpMod(unsigned iOp)   { return s_opAmpMod[iOp];   }
+	float WinMidi_GetOpPitchMod(unsigned iOp) { return s_opPitchMod[iOp]; }
+
+	// Operator output level
 	float WinMidi_GetOpOutput(unsigned iOp) {
 		return s_opOutput[iOp]; }
 
-	// Velocity sensitivity
+	// Operator velocity sensitivity
 	float WinMidi_GetOpVelSens(unsigned iOp) {
 		return s_opVelSens[iOp]; }
 
-	// Feedback
-	float WinMidi_GetFeedback(unsigned iOp) {
+	// Operator feedback
+	float WinMidi_GetOpFeedback(unsigned iOp) {
 		return s_opFeedback[iOp]; }
 
 	// Pitch bend
 	float WinMidi_GetPitchBend() {
 		return s_pitchBend;
+	}
+
+	// Modulation
+	float WinMidi_GetModulation() {
+		return s_modulation;
+	}
+
+	// LFO speed
+	float WinMidi_GetLFOSpeed() {
+		return s_LFOSpeed;
 	}
 }

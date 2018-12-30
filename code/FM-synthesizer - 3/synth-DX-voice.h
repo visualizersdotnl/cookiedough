@@ -35,6 +35,10 @@ namespace SFM
 			// Feedback amount
 			float feedbackAmt;
 
+			// LFO influence
+			float ampMod;
+			float pitchMod;
+
 			// Is carrier (output)
 			bool isCarrier;
 
@@ -46,12 +50,17 @@ namespace SFM
 				modulators[0] = modulators[1] = modulators[2] = -1;
 				feedback = -1;
 				feedbackAmt = 0.f;
+				ampMod = 0.f;
+				pitchMod = 0.f;
 				isCarrier = false;
 			}
 		} m_operators[kNumOperators];
 
 		// Feedback buffer
 		float m_feedback[kNumOperators];
+
+		// LFO
+		Oscillator m_LFO;
 	
 		DX_Voice() 
 		{ 

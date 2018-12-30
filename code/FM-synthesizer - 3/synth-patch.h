@@ -45,6 +45,10 @@ namespace SFM
 
 			// Feedback amount
 			float feedback;
+
+			// LFO influence
+			float ampMod;
+			float pitchMod;
 		};
 	
 		Operator operators[kNumOperators];
@@ -76,6 +80,10 @@ namespace SFM
 
 				// No feedback
 				patchOp.feedback = 0.f;
+
+				// No LFO influence
+				patchOp.ampMod = 0.f;
+				patchOp.pitchMod = 0.f;
 			}
 		}
 	};

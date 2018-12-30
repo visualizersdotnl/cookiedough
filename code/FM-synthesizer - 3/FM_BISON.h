@@ -19,14 +19,13 @@
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes?
-		- Extra depth for modulators
+		- Modulation depth(s)
 
 	Discuss with Pieter:
 		- Chorus sounds good in 1 particular setup, go old school and offer ON/OFF?
 
 	Priority:
 		- Level scaling
-		- LFO (behind wheel), sensitivity per operator for amplitude (tremolo) and pitch (vibrato), key sync.?
 		- Figure out proper pitch envelope strategy
 		- Patch save & load
 

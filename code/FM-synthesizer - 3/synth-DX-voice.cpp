@@ -12,6 +12,9 @@ namespace SFM
 	{
 		SFM_ASSERT(true == m_enabled);
 
+		// Sample LFO
+		const float LFO = m_LFO.Sample(0.f);
+
 		// Process all operators top-down
 		// This is a simple, readable loop which needs to be optimized later on (FIXME)
 
@@ -61,19 +64,26 @@ namespace SFM
 				// Sample envelope
 				const float envelope = voiceOp.envelope.Sample();
 
+				// Apply LFO vibrato
+				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
+
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
 
+				// Apply LFO tremolo
+				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
+				sample = lerpf<float>(sample, sample*tremolo, parameters.modulation);
+				
 				// Apply envelope
 				sample = sample*envelope;
 
 				// Store final sample for modulation and feedback
 				sampled[index] = sample;
 
-				// If carrier: mix
+				// If carrier: apply tremolo & mix
 				if (true == voiceOp.isCarrier)
 				{
-					mix = mix + sample;
+					mix = mix+sample;
 					++numCarriers;
 				}
 			}

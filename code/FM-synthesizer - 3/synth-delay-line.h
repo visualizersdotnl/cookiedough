@@ -38,7 +38,7 @@ namespace SFM
 			const int from = to-1;
 			const float fraction = fracf(delay);
 			
-			// FIXME: modulos
+			// FIXME: eradicate modulos
 			const float A = m_buffer[from % kDelayLineSize];
 			const float B = m_buffer[to   % kDelayLineSize];
 			const float value = lerpf<float>(A, B, fraction);
