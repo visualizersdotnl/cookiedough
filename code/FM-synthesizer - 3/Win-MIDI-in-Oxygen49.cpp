@@ -53,8 +53,10 @@ namespace SFM
 
 	// Button indices
 	const unsigned kButtonFixedRatio = 104;
+	const unsigned kButtonLevelScaleSetBP = 118;
 
 	static bool s_opFixedRatio[kNumOperators] = { false };
+	static bool s_opLevelScaleSetBP = false;
 
 	// Fader indices
 	const unsigned kFaderAttack          = 20;
@@ -100,6 +102,7 @@ namespace SFM
 	static float s_opFeedback[kNumOperators] = { 0.f };
 	
 	// Operator level scaling
+	static unsigned s_opLevelScaleBP[kNumOperators] = { 0 };
 	static float s_opLevelScaleRange[kNumOperators] = { 0.f };
 	static float s_opLevelScaleL[kNumOperators]     = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]     = { 0.f };
@@ -197,6 +200,10 @@ namespace SFM
 							s_opLevelScaleR[g_currentOp] = fControlVal;
 							break;
 
+						case kButtonLevelScaleSetBP:
+							s_opLevelScaleSetBP = 127 == controlVal;
+							break;
+
 						/* Operator LFO influence */
 
 						case kPotAmpMod:
@@ -292,6 +299,12 @@ namespace SFM
 
 				case NOTE_ON:
 					{
+						if (true == s_opLevelScaleSetBP)
+						{
+							s_opLevelScaleBP[g_currentOp] = controlIdx;
+							Log("Set note " + std::to_string(controlIdx) + " as LS breakpoint for op. #" + std::to_string(g_currentOp+1));
+						}
+
 						if (-1 == s_voices[controlIdx])
 							TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
 						else
@@ -434,6 +447,7 @@ namespace SFM
 	float WinMidi_GetOpDetune(unsigned iOp) { return s_opDetune[iOp];     }
 
 	// Operator level scaling
+	unsigned WinMidi_GetOpLevelScaleBP(unsigned iOp) { return s_opLevelScaleBP[iOp];    }
 	float WinMidi_GetOpLevelScaleRange(unsigned iOp) { return s_opLevelScaleRange[iOp]; }
 	float WinMidi_GetOpLevelScaleL(unsigned iOp)     { return s_opLevelScaleL[iOp];     }
 	float WinMidi_GetOpLevelScaleR(unsigned iOp)     { return s_opLevelScaleR[iOp];     }

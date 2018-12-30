@@ -36,6 +36,7 @@ namespace SFM
 	float WinMidi_GetOpDetune(unsigned iOp);
 
 	// Operator level scaling
+	unsigned WinMidi_GetOpLevelScaleBP(unsigned iOp);
 	float WinMidi_GetOpLevelScaleRange(unsigned iOp);
 	float WinMidi_GetOpLevelScaleL(unsigned iOp);
 	float WinMidi_GetOpLevelScaleR(unsigned iOp);

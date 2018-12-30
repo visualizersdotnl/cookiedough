@@ -162,7 +162,7 @@ namespace SFM
 	{
 		float output = patchOp.output;
 
-		// Apply level scaling
+		// Apply level scaling (subtractive/linear)
 		const unsigned breakpoint = patchOp.levelScaleBP;
 		const unsigned numSemis = patchOp.levelScaleRange;
 		const float levelStep = 1.f/numSemis;
@@ -205,7 +205,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -232,7 +232,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #5
 		*/
@@ -502,7 +502,7 @@ namespace SFM
 			patchOp.attackLevel = WinMidi_GetOpAttackLevel(iOp);
 
 			// Level scaling
-			patchOp.levelScaleBP = 69; // A4 (FIXME)
+			patchOp.levelScaleBP = WinMidi_GetOpLevelScaleBP(iOp);
 			patchOp.levelScaleRange = unsigned(WinMidi_GetOpLevelScaleRange(iOp)*127.f);
 			patchOp.levelScaleL = WinMidi_GetOpLevelScaleL(iOp);
 			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
