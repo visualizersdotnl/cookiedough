@@ -79,11 +79,8 @@ namespace SFM
 	static unsigned s_active = 0;
 	static unsigned s_releasing = 0;
 	
-	// Chorus delay line + LFOs
+	// Chorus
 	static DelayLine s_delayLine;
-	static Oscillator s_delayLFO_L;
-	static Oscillator s_delayLFO_R;
-	static Oscillator s_delayLFO_M;
 
 	/*
 		Voice API.
@@ -99,10 +96,6 @@ namespace SFM
 		request.key = key;
 		request.velocity = velocity;
 		s_voiceReq.push_back(request);
-
-		// At this point no voice is allocated yet, but I might want to set it to a magic value so it won't retrigger (FIXME)
-		if (nullptr != pIndex)
-			*pIndex = -1;
 	}
 
 	void ReleaseVoice(unsigned index, float velocity)
@@ -545,33 +538,12 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// Chorus to stereo mix.
-	// This is a *very* basic implementation, but the effect is quite grand.
-	// FIXME: optimize
+	// FIXME
 	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
-
-		// Read approx. 100th of a second back
-		const float hundred = kSampleRate/100.f;
-		const float tap = s_delayLine.Read(hundred);
-
-		// Read 3 sweep LFOs (each separated by 120 degrees)
-		const float sweepL = 0.5f + s_delayLFO_L.Sample(0.f);
-		const float sweepR = 0.5f + s_delayLFO_R.Sample(0.f);
-		const float sweepM = 0.5f + s_delayLFO_M.Sample(0.f);
-
-		// Blend dry and wet according to sweep LFOs
-		const float mixL = lerpf<float>(mix, tap, sweepL);
-		const float mixR = lerpf<float>(mix, tap, sweepR);
-		const float mixM = lerpf<float>(mix, tap, sweepM);
-
-		// Mix L+R with MID
-		const float L = mixL + mixM;
-		const float R = mixR + mixM;
-
-		s_ringBuf.Write(L);
-		s_ringBuf.Write(R);
+		s_ringBuf.Write(mix);
+		s_ringBuf.Write(mix);
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -708,11 +680,6 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
-
-	// 3-phase chorus: L and R at 120 and 240 deg., M at 0 deg.
-	s_delayLFO_L.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB /* Used to mix! */, (1.f/3.f)*1.f);
-	s_delayLFO_R.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB, (1.f/3.f)*2.f);
-	s_delayLFO_M.Initialize(kDigiTriangle, kBaseChorusFreq, kMinus3dB, 0.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();

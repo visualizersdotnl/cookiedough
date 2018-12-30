@@ -13,6 +13,7 @@
 		- ...
 
 	Core goals:
+		- Nail that fucking chorus!
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
@@ -39,6 +40,10 @@
 
 	Golden rule:
 		- Basic FM right first, party tricks second
+
+	Issues:
+		- Chorus should take multiple taps to avoid beating at certain frequencies
+		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 
 	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.
 */

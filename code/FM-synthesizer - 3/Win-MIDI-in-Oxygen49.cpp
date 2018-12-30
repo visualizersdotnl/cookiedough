@@ -299,19 +299,26 @@ namespace SFM
 
 				case NOTE_ON:
 					{
-						if (true == s_opLevelScaleSetBP)
+						if (0 != controlVal)
 						{
-							s_opLevelScaleBP[g_currentOp] = controlIdx;
-							Log("Set note " + std::to_string(controlIdx) + " as LS breakpoint for op. #" + std::to_string(g_currentOp+1));
+							if (true == s_opLevelScaleSetBP)
+							{
+								s_opLevelScaleBP[g_currentOp] = controlIdx;
+								Log("Set note " + std::to_string(controlIdx) + " as LS breakpoint for op. #" + std::to_string(g_currentOp+1));
+							}
+
+							if (-1 == s_voices[controlIdx])
+							{
+								TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
+								Log("NOTE_ON " + std::to_string(controlIdx) + ", Velocity: " + std::to_string(fControlVal));
+							}
+							else
+								Log("NOTE_ON could not be triggered due to latency.");
+
+							return;
 						}
-
-						if (-1 == s_voices[controlIdx])
-							TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
-						else
-							// Only happens when CPU-bound past the limit
-							Log("NOTE_ON could not be triggered due to latency.");
-
-						break;
+						
+						// According to the standard a zero velocity NOTE_ON is to be treated as NOTE_OFF
 					}
 
 				case NOTE_OFF:
@@ -319,7 +326,9 @@ namespace SFM
 						const unsigned iVoice = s_voices[controlIdx];
 						if (-1 != iVoice)
 						{
-							ReleaseVoice(iVoice, controlVal/127.f);
+							Log("NOTE_OFF " + std::to_string(controlIdx) + ", Aftertouch: " + std::to_string(fControlVal));
+
+							ReleaseVoice(iVoice, fControlVal);
 							s_voices[controlIdx] = -1;
 						}
 
