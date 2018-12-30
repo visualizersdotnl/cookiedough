@@ -13,17 +13,14 @@
 		- ...
 
 	Core goals:
-		- Nail that fucking chorus!
 		- DX7-like core FM
+		- Chorus needs to be *proper*
 		- Subtractive synthesis on top
 
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes?
 		- Modulation depth(s)
-
-	Discuss with Pieter:
-		- Chorus sounds good in 1 particular setup, go old school and offer ON/OFF?
 
 	Priority:
 		- Level scaling

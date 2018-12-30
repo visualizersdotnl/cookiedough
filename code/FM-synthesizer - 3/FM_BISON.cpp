@@ -79,8 +79,9 @@ namespace SFM
 	static unsigned s_active = 0;
 	static unsigned s_releasing = 0;
 	
-	// Chorus
-	static DelayLine s_delayLine;
+	// Chorus/Delay
+	static DelayLine s_delayLine(kSampleRate);
+	static Oscillator s_delaySweepL, s_delaySweepR;
 
 	/*
 		Voice API.
@@ -538,12 +539,26 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// FIXME
+	// FIXME: this is not a real chorus effect but a cheap hack, I'll have to allocate some time to do
+	//        a real proper one
 	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
-		s_ringBuf.Write(mix);
-		s_ringBuf.Write(mix);
+
+		const float delay = kSampleRate*0.001f;
+		const float tap = s_delayLine.Read(delay);
+
+		const float sweepL = 0.5f+s_delaySweepL.Sample(0.f);
+		const float sweepR = 0.5f+s_delaySweepR.Sample(0.f);
+		const float mixL = lerpf<float>(mix, tap, sweepL)*kMinus3dB;
+		const float mixR = lerpf<float>(mix, tap, sweepR)*kMinus3dB;
+
+		mix *= kMinus3dB;
+		float L = mixL+mix;
+		float R = mixR+mix;
+
+		s_ringBuf.Write(mixL);
+		s_ringBuf.Write(mixR);
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -680,6 +695,9 @@ bool Syntherklaas_Create()
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
+
+	s_delaySweepL.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, 0.f);
+	s_delaySweepR.Initialize(kSine, kBaseChorusFreq, 0.5f, (1.f/360.f)*120.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();
