@@ -21,6 +21,7 @@
 #include "synth-LUT.h"
 #include "synth-DX-voice.h"
 #include "synth-delay-line.h"
+#include "synth-one-pole.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -79,9 +80,10 @@ namespace SFM
 	static unsigned s_active = 0;
 	static unsigned s_releasing = 0;
 	
-	// Chorus/Delay
+	// Stereo chorus
 	static DelayLine s_delayLine(kSampleRate);
 	static Oscillator s_delaySweepL, s_delaySweepR, s_delaySweepM;
+	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
 
 	/*
 		Voice API.
@@ -539,27 +541,32 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// FIXME: this is not a real chorus effect but a hack, I'll have to allocate some time to do a real proper one
+	// Cheap chorus attempt (WIP/FIXME)
 	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
 
-		const float delay = kSampleRate*0.001f;
-		const float tap = s_delayLine.Read(delay);
+		const float sweepL = s_delaySweepL.Sample(0.f);
+		const float sweepR = s_delaySweepR.Sample(0.f);
 
-		const float sweepL = 0.5f+s_delaySweepL.Sample(0.f);
-		const float sweepR = 0.5f+s_delaySweepR.Sample(0.f);
-		const float sweepM = 0.5f+s_delaySweepM.Sample(0.f);
+		// Sweep around one 100th of a second
+		const float delayCtr = kSampleRate*0.01f;
+		const float range = kSampleRate*0.0025f;
 
-		const float mixL = lerpf<float>(mix, tap, sweepL)*kMinus3dB;
-		const float mixR = lerpf<float>(mix, tap, sweepR)*kMinus3dB;
-		const float mixM = lerpf<float>(mix, tap, sweepM)*kMinus3dB;
+		// Sweep L/R taps
+		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL)); // *kMinus3dB;
+		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR)); // *kMinus3dB;
+		
+		// Mix (FIXME)
+//		const float mixM = mix*kMinus3dB;
+//		const float L = mixM+tapL;
+//		const float R = mixM+tapR;
 
-		float L = mixL+mixM;
-		float R = mixR+mixM;
-
-		s_ringBuf.Write(mixL);
-		s_ringBuf.Write(mixR);
+		// Write
+//		s_ringBuf.Write(L);
+//		s_ringBuf.Write(R);
+		s_ringBuf.Write(tapL);
+		s_ringBuf.Write(tapR);
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -697,9 +704,14 @@ bool Syntherklaas_Create()
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
 
+	// 3-phase sweep
 	s_delaySweepL.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, 0.f);
-	s_delaySweepR.Initialize(kSine, kBaseChorusFreq, 0.5f, (1.f/360.f)*120.f);
-	s_delaySweepM.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, (1.f/360.f)*240.f);
+	s_delaySweepR.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, 0.5f);
+
+	// Sweep LPFs (FIXME: tweak value)
+	const float sweepCut = 0.01f;
+	s_sweepLPF1.SetCutoff(sweepCut);
+	s_sweepLPF2.SetCutoff(sweepCut); 
 	
 	// Reset voice deques
 	s_voiceReq.clear();

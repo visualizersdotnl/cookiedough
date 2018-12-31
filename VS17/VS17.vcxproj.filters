@@ -510,6 +510,9 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
