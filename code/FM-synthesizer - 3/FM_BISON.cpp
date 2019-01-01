@@ -488,6 +488,9 @@ namespace SFM
 		// Liveliness
 		s_parameters.liveliness = WinMidi_GetLiveliness();
 
+		// Distortion (store as threshold)
+		s_parameters.distortion = 1.f - (0.99f*WinMidi_GetDistortion());
+
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
@@ -545,7 +548,22 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// Cheap chorus attempt (WIP/FIXME)
+	// Digital distortion
+	// This can and should probably be done in a more elaborate way (FIXME)
+	SFM_INLINE float Distort(float mix, float threshold)
+	{
+		if (mix >= 0.f)
+			mix = std::min(mix, threshold);
+		else
+			mix = std::max(mix, -threshold);
+
+		SFM_ASSERT(threshold != 0.f);
+		mix /= threshold;
+
+		return mix;
+	}
+
+	// Cheap chorus attempt + Mix to stereo (FIXME: speed, sound)
 	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
@@ -654,8 +672,7 @@ namespace SFM
 				}
 
 				// Apply distortion
-//				const float distorted = s_vowelFilter.Apply(mix, VowelFilter::kA, 0.5f);
-//				mix = lerpf(mix, distorted, 0.5f);
+				mix = Distort(mix, s_parameters.distortion);
 
 				// Apply chorus and mix stereo output to ring buffer
 				ChorusToStereo(mix);

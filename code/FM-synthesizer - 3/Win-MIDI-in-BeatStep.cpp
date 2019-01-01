@@ -38,9 +38,13 @@ namespace SFM
 
 	// Rotary indices
 	const unsigned kPotLiveliness = 114;
+	const unsigned kPotDistortion = 10;
 
 	// Liveliness
 	static float s_liveliness = 0.f;
+
+	// Distortion
+	static float s_distortion = 0.f;
 
 	/*
 		Mapping for the BeatStep
@@ -82,6 +86,10 @@ namespace SFM
 					{
 					case kPotLiveliness:
 						s_liveliness = fControlVal;
+						break;
+
+					case kPotDistortion:
+						s_distortion = fControlVal;
 						break;
 					}
 				}
@@ -192,4 +200,8 @@ namespace SFM
 	// Liveliness
 	float WinMidi_GetLiveliness() {
 		return s_liveliness; }
+
+	// Distortion
+	float WinMidi_GetDistortion() {
+		return s_distortion; }
 }

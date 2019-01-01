@@ -15,12 +15,12 @@
 	Core goals:
 		- DX7-like core FM
 		- Subtractive synthesis on top
-		- Chorus needs to be *proper*
 
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
-		  + Am I making a mistake by limiting to seconds in my envelopes?
+		  + Am I making a mistake by limiting to seconds in my envelopes? Think so!
 		- Modulation & feedback depth(s)
+		- Enhance chorus & distortion (or maybe remove the latter)
 
 	Priority:
 		- Figure out proper pitch envelope strategy
@@ -32,14 +32,14 @@
 	Missing top-level features:
 		- Jitter
 		  + Partially implemented
-		- Filters
-		- Vowel filter
+		- Filters (LPF, vowel)
+		- A unison mode?
 
-	Golden rule:
+	Golden rules:
 		- Basic FM right first, party tricks second
+		- Optimization is possible nearly everywhere; do not do any before the instrument is nearly done
 
 	Issues:
-		- Chorus should take multiple taps to avoid beating at certain frequencies
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 
 	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.
