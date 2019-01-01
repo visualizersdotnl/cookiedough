@@ -14,19 +14,19 @@
 
 	Core goals:
 		- DX7-like core FM
-		- Chorus needs to be *proper*
 		- Subtractive synthesis on top
+		- Chorus needs to be *proper*
 
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes?
-		- Modulation depth(s)
+		- Modulation & feedback depth(s)
 
 	Priority:
+		- Figure out proper pitch envelope strategy
 		- Level scaling
 		  + Primitive implementation is done: breakpoint, subtractive/linear, amount L/R, range in semitones
 		    This may well be what's needed apart from exponential (maybe!) until I see a point in going additive
-		- Figure out proper pitch envelope strategy
 		- Patch save & load
 
 	Missing top-level features:

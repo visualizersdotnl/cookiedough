@@ -244,6 +244,9 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-vowel-filter.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -511,6 +514,9 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-vowel-filter.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>

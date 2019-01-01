@@ -22,6 +22,7 @@
 #include "synth-DX-voice.h"
 #include "synth-delay-line.h"
 #include "synth-one-pole.h"
+#include "synth-vowel-filter.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -79,6 +80,9 @@ namespace SFM
 	static DX_Voice s_DXvoices[kMaxVoices];
 	static unsigned s_active = 0;
 	static unsigned s_releasing = 0;
+
+	// Vowel filter
+	static VowelFilter s_vowelFilter;
 	
 	// Stereo chorus
 	static DelayLine s_delayLine(kSampleRate);
@@ -554,9 +558,9 @@ namespace SFM
 		const float vibrato = modulate;
 
 		const float sweepL = s_delaySweepL.Sample(vibrato);
-		const float sweepR = s_delaySweepR.Sample(vibrato);
+		const float sweepR = s_delaySweepR.Sample(-vibrato);
 
-		// Sweep around one 100th of a second
+		// Sweep around one centre point
 		const float delayCtr = kSampleRate*0.02f;
 		const float range = kSampleRate*0.0025f;
 
@@ -648,6 +652,10 @@ namespace SFM
 
 					mix = mix+sample;
 				}
+
+				// Apply distortion
+//				const float distorted = s_vowelFilter.Apply(mix, VowelFilter::kA, 0.5f);
+//				mix = lerpf(mix, distorted, 0.5f);
 
 				// Apply chorus and mix stereo output to ring buffer
 				ChorusToStereo(mix);
