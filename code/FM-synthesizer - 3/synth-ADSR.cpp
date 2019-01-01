@@ -37,6 +37,8 @@ namespace SFM
 
 	void ADSR::Stop(float velocity)
 	{
+		// FIXME: use velocity?
+
 		// Go into release state.
 		m_ADSR.gate(false);
 	}
