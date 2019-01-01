@@ -84,7 +84,7 @@ namespace SFM
 	// Vowel filter
 	static VowelFilter s_vowelFilter;
 	
-	// Stereo chorus
+	// Delay-based stereo spread effect
 	static DelayLine s_delayLine(kSampleRate);
 	static Oscillator s_delaySweepL, s_delaySweepR, s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
@@ -563,8 +563,8 @@ namespace SFM
 		return mix;
 	}
 
-	// Cheap chorus attempt + Mix to stereo (FIXME: speed, sound)
-	SFM_INLINE void ChorusToStereo(float mix) 
+	// This is a poor man's chorus intended to create a wider (stereo) mix
+	SFM_INLINE void StereoMix(float mix) 
 	{
 		s_delayLine.Write(mix);
 
@@ -572,9 +572,11 @@ namespace SFM
 //		s_ringBuf.Write(mix);
 //		return;
 
+		// Vibrate the sweep LFOs
 		const float modulate = s_delaySweepMod.Sample(0.f);
 		const float vibrato = modulate;
-
+		
+		// Sample sweep LFOs
 		const float sweepL = s_delaySweepL.Sample(vibrato);
 		const float sweepR = s_delaySweepR.Sample(-vibrato);
 
@@ -582,7 +584,7 @@ namespace SFM
 		const float delayCtr = kSampleRate*0.02f;
 		const float range = kSampleRate*0.0025f;
 
-		// Sweep L/R taps
+		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
 		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL));
 		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
 		
@@ -626,7 +628,7 @@ namespace SFM
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				ChorusToStereo(0.f);
+				StereoMix(0.f);
 			}
 		}
 		else
@@ -672,10 +674,10 @@ namespace SFM
 				}
 
 				// Apply distortion
-				mix = Distort(mix, s_parameters.distortion);
+//				mix = Distort(mix, s_parameters.distortion);
 
-				// Apply chorus and mix stereo output to ring buffer
-				ChorusToStereo(mix);
+				// Mix stereo output to ring buffer
+				StereoMix(mix);
 			}
 		}
 
@@ -731,13 +733,13 @@ bool Syntherklaas_Create()
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
 
-	// Sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
-	s_delaySweepL.Initialize(kDigiTriangle, 0.5f, 0.5f, 0.f);
-	s_delaySweepR.Initialize(kDigiTriangle, 0.5f, 0.5f, 0.5f);
-	s_delaySweepMod.Initialize(kCosine, 0.05f, 1.f, 0.4321f);
+	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
+	s_delaySweepL.Initialize(kSine, 0.5f, 0.5f, 0.f);
+	s_delaySweepR.Initialize(kSine, 0.5f, 0.5f, 0.25f);
+	s_delaySweepMod.Initialize(kDigiTriangle, 0.05f, 1.f, 0.4321f);
 
-	// Sweep LPFs (FIXME: tweak value)
-	const float sweepCut = 0.005f;
+	// Delay: sweep LPFs (FIXME: tweak value)
+	const float sweepCut = 0.001f;
 	s_sweepLPF1.SetCutoff(sweepCut);
 	s_sweepLPF2.SetCutoff(sweepCut); 
 	

@@ -20,7 +20,7 @@
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes? Think so!
 		- Modulation & feedback depth(s)
-		- Enhance chorus & distortion (or maybe remove the latter)
+		- Enhance fake chorus & distortion (or maybe remove the latter)
 
 	Priority:
 		- Figure out proper pitch envelope strategy
@@ -36,7 +36,7 @@
 		- A unison mode?
 
 	Golden rules:
-		- Basic FM right first, party tricks second
+		- Basic FM right first, party tricks second: consider going full VST when basic FM works right
 		- Optimization is possible nearly everywhere; do not do any before the instrument is nearly done
 
 	Issues:
