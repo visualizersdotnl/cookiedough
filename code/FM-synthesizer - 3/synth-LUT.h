@@ -6,6 +6,7 @@
 #pragma once
 
 #include "synth-global.h"
+#include "synth-util.h"
 
 namespace SFM
 {
@@ -21,7 +22,13 @@ namespace SFM
 	//	A full period is kLUTSize, so multiply before calling
 	SFM_INLINE float SampleLUT(const float *LUT, float index)
 	{
-		return LUT[unsigned(index) & kOscLUTAnd];
+		const float fraction = fracf(index);
+		const unsigned from = unsigned(index);
+		const unsigned to = from+1;
+		const float A = LUT[from&kOscLUTAnd];
+		const float B = LUT[to&kOscLUTAnd];
+		const float value = lerpf<float>(A, B, fraction);
+		return value;
 	}
 
 	SFM_INLINE float lutsinf(float index) { return SampleLUT(g_sinLUT, index*kOscLUTSize);   }

@@ -34,7 +34,7 @@ namespace SFM
 			++m_writeIdx;
 		}
 
-		// FIXME: get rid of modulo?
+		// FIXME: get rid of modulo
 		SFM_INLINE float Read(float delay)
 		{
 			const int from = m_writeIdx-int(delay);

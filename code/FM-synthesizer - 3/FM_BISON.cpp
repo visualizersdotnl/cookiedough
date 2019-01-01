@@ -82,7 +82,7 @@ namespace SFM
 	
 	// Stereo chorus
 	static DelayLine s_delayLine(kSampleRate);
-	static Oscillator s_delaySweepL, s_delaySweepR, s_delaySweepM;
+	static Oscillator s_delaySweepL, s_delaySweepR, s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
 
 	/*
@@ -546,28 +546,30 @@ namespace SFM
 	{
 		s_delayLine.Write(mix);
 
-		const float sweepL = s_delaySweepL.Sample(0.f);
-		const float sweepR = s_delaySweepR.Sample(0.f);
+//		s_ringBuf.Write(mix);
+//		s_ringBuf.Write(mix);
+//		return;
+
+		const float modulate = s_delaySweepMod.Sample(0.f);
+		const float vibrato = modulate;
+
+		const float sweepL = s_delaySweepL.Sample(vibrato);
+		const float sweepR = s_delaySweepR.Sample(vibrato);
 
 		// Sweep around one 100th of a second
-		const float delayCtr = kSampleRate*0.01f;
+		const float delayCtr = kSampleRate*0.02f;
 		const float range = kSampleRate*0.0025f;
 
 		// Sweep L/R taps
-		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL)); // *kMinus3dB;
-		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR)); // *kMinus3dB;
+		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL));
+		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
 		
-		// Mix (FIXME)
-//		const float mixM = mix*kMinus3dB;
-//		const float L = mixM+tapL;
-//		const float R = mixM+tapR;
-
 		// Write
-//		s_ringBuf.Write(L);
-//		s_ringBuf.Write(R);
 		s_ringBuf.Write(tapL);
 		s_ringBuf.Write(tapR);
 	}
+
+
 
 	// Returns loudest signal (linear amplitude)
 	static void Render(float time)
@@ -704,12 +706,13 @@ bool Syntherklaas_Create()
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		s_DXvoices[iVoice].Reset();
 
-	// 3-phase sweep
-	s_delaySweepL.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, 0.f);
-	s_delaySweepR.Initialize(kDigiTriangle, kBaseChorusFreq, 0.5f, 0.5f);
+	// Sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
+	s_delaySweepL.Initialize(kDigiTriangle, 0.5f, 0.5f, 0.f);
+	s_delaySweepR.Initialize(kDigiTriangle, 0.5f, 0.5f, 0.5f);
+	s_delaySweepMod.Initialize(kCosine, 0.05f, 1.f, 0.4321f);
 
 	// Sweep LPFs (FIXME: tweak value)
-	const float sweepCut = 0.01f;
+	const float sweepCut = 0.005f;
 	s_sweepLPF1.SetCutoff(sweepCut);
 	s_sweepLPF2.SetCutoff(sweepCut); 
 	

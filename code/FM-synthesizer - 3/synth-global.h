@@ -55,10 +55,7 @@ namespace SFM
 	const unsigned kNumOperators = 6;
 
 	// Long release range enables bass drums, pads et cetera
-	const float kReleaseMul = 1.f;
-
-	// Base Hz for chorus oscillators
-	const float kBaseChorusFreq = 0.5f;
+	const float kReleaseMul = kGoldenRatio;
 
 	// To divide lin. amplitude by 2 (-3dB = half as loud)
 	const float kMinus3dB = 0.707945764f;
