@@ -87,7 +87,7 @@ namespace SFM
 	const unsigned kPotFeedback = 61;
 	const unsigned kPotAmpMod = 26;
 	const unsigned kPotPitchMod = 27;
-	const unsigned kPotLFOSpeed = 24;
+	const unsigned kPotDistortion = 24;
 	const unsigned kPotLevelScaleL = 62;
 	const unsigned kPotLevelScaleR = 95;
 
@@ -107,8 +107,8 @@ namespace SFM
 	static float s_opLevelScaleL[kNumOperators]     = { 0.f };
 	static float s_opLevelScaleR[kNumOperators]     = { 0.f };
 
-	// LFO speed
-	static float s_LFOSpeed = 0.f;
+	// Operator distortion
+	static float s_opDistortion[kNumOperators] = { 0.f };
 
 	// Pitch bend
 	static float s_pitchBend = 0.f;
@@ -214,10 +214,10 @@ namespace SFM
 							s_opPitchMod[g_currentOp] = fControlVal;
 							break;
 
-						/* LFO speed */
+						/* Operator distortion */
 
-						case kPotLFOSpeed:
-							s_LFOSpeed = fControlVal;
+						case kPotDistortion:
+							s_opDistortion[g_currentOp] = fControlVal;
 							break;
 
 						/* Feedback */
@@ -487,8 +487,7 @@ namespace SFM
 		return s_modulation;
 	}
 
-	// LFO speed
-	float WinMidi_GetLFOSpeed() {
-		return s_LFOSpeed;
-	}
+	// Operator distortion
+	float WinMidi_GetOpDistortion(unsigned iOp) {
+		return s_opDistortion[iOp]; }
 }

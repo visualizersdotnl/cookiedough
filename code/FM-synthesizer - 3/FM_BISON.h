@@ -19,7 +19,6 @@
 	Look at later (TM):
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes? Think so!
-		- Modulation & feedback depth(s)
 		- Enhance fake chorus & distortion (or maybe remove the latter)
 
 	Priority:
@@ -33,13 +32,14 @@
 		- Jitter
 		  + Partially implemented
 		- Filters (LPF, vowel)
-		- A unison mode?
+		- Unison mode?
 
 	Golden rules:
 		- Basic FM right first, party tricks second: consider going full VST when basic FM works right
 		- Optimization is possible nearly everywhere; do not do any before the instrument is nearly done
 
 	Issues:
+		- Feedback depth(s)
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 
 	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.

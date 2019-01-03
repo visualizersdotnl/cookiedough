@@ -19,6 +19,6 @@ namespace SFM
 	// Liveliness
 	float WinMidi_GetLiveliness();
 
-	// Distortion
-	float WinMidi_GetDistortion();
+	// LFO speed
+	float WinMidi_GetLFOSpeed();
 }

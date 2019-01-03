@@ -60,6 +60,6 @@ namespace SFM
 	// Modulation
 	float WinMidi_GetModulation();
 
-	// LFO speed
-	float WinMidi_GetLFOSpeed();
+	// Operator distortion
+	float WinMidi_GetOpDistortion(unsigned iOp);
 }

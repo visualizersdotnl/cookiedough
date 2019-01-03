@@ -39,6 +39,9 @@ namespace SFM
 			float ampMod;
 			float pitchMod;
 
+			// Distortion
+			float distortion;
+
 			// Is carrier (output)
 			bool isCarrier;
 
@@ -52,6 +55,7 @@ namespace SFM
 				feedbackAmt = 0.f;
 				ampMod = 0.f;
 				pitchMod = 0.f;
+				distortion = 0.f;
 				isCarrier = false;
 			}
 		} m_operators[kNumOperators];
@@ -96,12 +100,12 @@ namespace SFM
 			}
 		}
 		
-		// Apply pitch bend
+		// Apply pitch bend (to carriers)
 		void SetPitchBend(float bend)
 		{
 			for (auto &voiceOp : m_operators)
 			{
-				if (true == voiceOp.enabled)
+				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
 					voiceOp.oscillator.PitchBend(bend);
 			}
 		}

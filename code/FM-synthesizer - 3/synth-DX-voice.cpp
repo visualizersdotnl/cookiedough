@@ -8,6 +8,14 @@
 
 namespace SFM
 {
+	// Source: http://www.musicdsp.org
+	SFM_INLINE float Distort(float sample, float amount /* [-1..1] */)
+	{
+		const float k = 2.f*amount/(1.f-amount);
+		sample = (1.f+k)*sample / (1.f+k*fabsf(sample));
+		return sample;
+	}
+
 	float DX_Voice::Sample(const Parameters &parameters)
 	{
 		SFM_ASSERT(true == m_enabled);
@@ -70,6 +78,9 @@ namespace SFM
 
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
+
+				// Apply distortion
+				sample = Distort(sample, 0.99f*voiceOp.distortion);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);

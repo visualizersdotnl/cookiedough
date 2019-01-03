@@ -50,6 +50,9 @@ namespace SFM
 			float ampMod;
 			float pitchMod;
 
+			// Distortion
+			float distortion;
+
 			// Level scaling (DX7-style, simplified)
 			unsigned levelScaleBP;
 			unsigned levelScaleRange; // [0..127]
@@ -89,6 +92,9 @@ namespace SFM
 				// No LFO influence
 				patchOp.ampMod = 0.f;
 				patchOp.pitchMod = 0.f;
+
+				// No distortion
+				patchOp.distortion = 0.f;
 
 				// No level scaling
 				patchOp.levelScaleBP = 69; // A4

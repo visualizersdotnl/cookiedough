@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Simple vowel (formant) filter.
+	Syntherklaas FM -- Simple vowel (formant shaper) filter.
 
 	Code adapted from a post by alex@smartelectronix.com (public domain, http://www.musicdsp.org)
 */

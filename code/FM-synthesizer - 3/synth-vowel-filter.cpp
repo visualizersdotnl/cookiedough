@@ -1,11 +1,11 @@
 
 /*
-	Syntherklaas FM -- Simple vowel (formant) filter.
+	Syntherklaas FM -- Simple vowel (formant shaper) filter.
 
 	This is a rather condensed/cheap way of implementing a formant shaper (which usually consists of
 	bandpassing multiple formants more carefully) but very effective; and that is what it is: an effect.
 
-	I've mainly used it to achieve certain degrees of distortion.
+	Mainly used to achieve certain degrees of distortion.
 */
 
 // #include "synth-global.h"

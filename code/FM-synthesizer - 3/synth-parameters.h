@@ -29,9 +29,6 @@ namespace SFM
 		// Liveliness
 		float liveliness;
 
-		// Distortion
-		float distortion;
-
 		void SetDefaults()
 		{
 			// Reset patch
@@ -46,9 +43,6 @@ namespace SFM
 
 			// 100% straight
 			liveliness = 0.f;
-
-			// No distortion
-			distortion = 0.f;
 		}
 	};
 }
