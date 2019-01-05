@@ -86,6 +86,9 @@ namespace SFM
 	static Oscillator s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
 
+	// Running LFO (used for no key sync.)
+	static Oscillator s_globalLFO;
+
 	/*
 		Voice API.
 	*/
@@ -320,8 +323,14 @@ namespace SFM
 		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
 
 		// Initialize LFO
-		const float phaseJitter = kMaxLFOJitter*liveliness*oscWhiteNoise(); // FIXME: might be too much
-		voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f, phaseJitter);
+		if (true == s_parameters.LFOSync)
+		{
+			const float phaseJitter = kMaxLFOJitter*liveliness*oscWhiteNoise(); // FIXME: might be too much
+			voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f, phaseJitter);
+		}
+		else
+			// Copy running LFO
+			voice.m_LFO = s_globalLFO;
 
 		// Other operator settings
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -503,6 +512,9 @@ namespace SFM
 		// Liveliness
 		s_parameters.liveliness = WinMidi_GetLiveliness();
 
+		// LFO key sync.
+		s_parameters.LFOSync = WinMidi_GetLFOSync();
+
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
@@ -633,6 +645,7 @@ namespace SFM
 
 		// Grab LFO speed from DX7 table
 		const float LFOBend = g_DX7_LFO_speed[unsigned(s_parameters.LFOSpeed*127.f)];
+		s_globalLFO.PitchBend(LFOBend);
 	
 		const unsigned numVoices = s_active;
 
@@ -752,6 +765,9 @@ bool Syntherklaas_Create()
 	const float sweepCut = 0.001f;
 	s_sweepLPF1.SetCutoff(sweepCut);
 	s_sweepLPF2.SetCutoff(sweepCut); 
+
+	// Start global LFO
+	s_globalLFO.Initialize(kDigiTriangle, g_DX7_LFO_speed[0], 1.f);
 	
 	// Reset voice deques
 	s_voiceReq.clear();

@@ -12,7 +12,7 @@ namespace SFM
 	SFM_INLINE float SoftDistort(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*12.f;
+		amount = 1.f + amount*16.f;
 		const float distorted = atanf(sample*amount)/k2PI;
 		return distorted;
 	}

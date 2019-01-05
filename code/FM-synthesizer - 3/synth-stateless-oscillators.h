@@ -68,7 +68,7 @@ namespace SFM
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		return 2.f*(asinf(oscSine(phase))*(1.f/kPI));
+		return 2.f*(asinf(lutsinf(phase))*(1.f/kPI));
 	}
 
 	SFM_INLINE float oscDigiPulse(float phase, float duty)

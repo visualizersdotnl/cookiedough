@@ -8,7 +8,7 @@
 #pragma once
 
 #include "synth-global.h"
-#include "synth-patch.h"
+#include "synth-dry-patch.h"
 
 namespace SFM
 {
@@ -29,6 +29,9 @@ namespace SFM
 		// Liveliness
 		float liveliness;
 
+		// LFO key sync.
+		bool LFOSync;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -40,6 +43,9 @@ namespace SFM
 			// No modulation
 			modulation = 0.f;
 			LFOSpeed = 0.f;
+
+			// Sync.
+			LFOSync = true;
 
 			// 100% straight
 			liveliness = 0.f;

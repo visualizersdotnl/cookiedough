@@ -40,11 +40,17 @@ namespace SFM
 	const unsigned kPotLiveliness = 114;
 	const unsigned kPotLFOSpeed = 7; // The big knob
 
+	// Button indices
+	const unsigned kButtonLFOSync = 36;
+
 	// Liveliness
 	static float s_liveliness = 0.f;
 
 	// LFO speed
 	static float s_LFOSpeed = 0.f;
+
+	// LFO key sync.
+	static bool s_LFOSync = true;
 
 	/*
 		Mapping for the BeatStep
@@ -90,6 +96,10 @@ namespace SFM
 
 					case kPotLFOSpeed:
 						s_LFOSpeed = fControlVal;
+						break;
+
+					case kButtonLFOSync:
+						if (127 == controlVal) s_LFOSync ^= 1;
 						break;
 					}
 				}
@@ -204,5 +214,10 @@ namespace SFM
 	// LFO speed
 	float WinMidi_GetLFOSpeed() {
 		return s_LFOSpeed;
+	}
+
+	// LFO key sync.
+	bool WinMidi_GetLFOSync() {
+		return s_LFOSync;
 	}
 }

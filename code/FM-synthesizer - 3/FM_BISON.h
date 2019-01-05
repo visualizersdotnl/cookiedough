@@ -10,7 +10,7 @@
 		- Bits and pieces taken from Hexter by Sean Bolton (https://github.com/smbolton/hexter)
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
 		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
-		- ...
+		- Vowel shaper by alex@smartelectronix.com via http://www.musicdsp.org 
 
 	Core goals:
 		- DX7-like core FM
@@ -20,6 +20,11 @@
 		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
 		  + Am I making a mistake by limiting to seconds in my envelopes? Think so!
 		- Enhance fake chorus & distortion (or maybe remove the latter)
+
+	Optimizations:
+		- Use tables for all oscillators
+		- Eliminate branches and needless oscillators
+		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
 		- Figure out proper pitch envelope strategy

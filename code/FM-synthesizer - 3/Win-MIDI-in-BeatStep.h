@@ -21,4 +21,7 @@ namespace SFM
 
 	// LFO speed
 	float WinMidi_GetLFOSpeed();
+
+	// LFO key sync.
+	bool WinMidi_GetLFOSync();
 }
