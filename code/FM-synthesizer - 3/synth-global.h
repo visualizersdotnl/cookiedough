@@ -66,8 +66,11 @@ namespace SFM
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;
 
-	// MAx. LFO jitter (in unit phase); tied to 'liveliness'
+	// Max. LFO jitter (in unit phase); tied to 'liveliness'
 	const float kMaxLFOJitter = kGoldenRatio*0.01f;
+
+	// Max. voice amplitude (linear, think I read somewhere that Impulse Tracker uses this value)
+	const float kMaxVoiceAmp = 0.66f;
 }
 
 #include "synth-LUT.h"

@@ -93,7 +93,7 @@ namespace SFM
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
-		
+
 		VoiceRequest request;
 		request.pIndex = pIndex;
 		request.form = form;
@@ -195,6 +195,9 @@ namespace SFM
 			const float table = g_DX7_EG_to_OL[index];
 			output = table;
 		}
+		else
+			// Scale to max. amplitude
+			output *= kMaxVoiceAmp;
 
 		// Return velocity scaled output
 		return lerpf<float>(output, output*velocity, patchOp.velSens);

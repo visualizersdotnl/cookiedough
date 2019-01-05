@@ -8,12 +8,13 @@
 
 namespace SFM
 {
-	// Source: http://www.musicdsp.org
-	SFM_INLINE float Distort(float sample, float amount /* [-1..1] */)
+	// Distortion (soft)
+	SFM_INLINE float SoftDistort(float sample, float amount)
 	{
-		const float k = 2.f*amount/(1.f-amount);
-		sample = (1.f+k)*sample / (1.f+k*fabsf(sample));
-		return sample;
+		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
+		amount = 1.f + amount*12.f;
+		const float distorted = atanf(sample*amount)/k2PI;
+		return distorted;
 	}
 
 	float DX_Voice::Sample(const Parameters &parameters)
@@ -79,15 +80,15 @@ namespace SFM
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
 
-				// Apply distortion
-				sample = Distort(sample, 0.99f*voiceOp.distortion);
-
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
 				sample = lerpf<float>(sample, sample*tremolo, parameters.modulation);
 				
 				// Apply envelope
 				sample = sample*envelope;
+
+				// Apply distortion
+				sample = SoftDistort(sample, voiceOp.distortion);
 
 				SampleAssert(sample);
 
