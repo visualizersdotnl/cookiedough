@@ -36,12 +36,20 @@ namespace SFM
 	SFM_INLINE unsigned MsgParam1(unsigned parameter) { return (parameter>>8)  & 0x7f; }
 	SFM_INLINE unsigned MsgParam2(unsigned parameter) { return (parameter>>16) & 0x7f; }
 
+	// Current operator (Win-MIDI-in-Oxygen49.cpp)
+	extern unsigned g_currentOp;
+
 	// Rotary indices
 	const unsigned kPotLiveliness = 114;
 	const unsigned kPotLFOSpeed = 7; // The big knob
 
+	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
+	const unsigned kPotOpEnvRateMul = 72;
+	const unsigned kPotOpEnvRateScale = 75;
+
 	// Button indices
 	const unsigned kButtonLFOSync = 36;
+	const unsigned kButtonChorus = 44;
 
 	// Liveliness
 	static float s_liveliness = 0.f;
@@ -51,6 +59,13 @@ namespace SFM
 
 	// LFO key sync.
 	static bool s_LFOSync = true;
+
+	// Chorus switch
+	static bool s_chorus = false;
+
+	// Operator env. rate
+	static float s_opEnvRateMul[kNumOperators];
+	static float s_opEnvRateScale[kNumOperators] = { 0.f };
 
 	/*
 		Mapping for the BeatStep
@@ -90,6 +105,8 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
+					// Global controls
+
 					case kPotLiveliness:
 						s_liveliness = fControlVal;
 						break;
@@ -100,6 +117,20 @@ namespace SFM
 
 					case kButtonLFOSync:
 						if (127 == controlVal) s_LFOSync ^= 1;
+						break;
+
+					case kButtonChorus:
+						if (127 == controlVal) s_chorus ^= 1;
+						break;
+
+					// Operator envelope rate multiplier
+					case kPotOpEnvRateMul:
+						s_opEnvRateMul[g_currentOp] = 0.100f + (9.9f*fControlVal); // [0.1..10.0]
+						break;
+
+					// Operator envelope rate scaling
+					case kPotOpEnvRateScale:
+						s_opEnvRateScale[g_currentOp] = fControlVal;
 						break;
 					}
 				}
@@ -177,6 +208,10 @@ namespace SFM
 						const auto startRes = midiInStart(s_hMidiIn);
 						if (MMSYSERR_NOERROR == startRes)
 						{
+							// Exception: initialize all to 1.0
+							for (int iOp = 0; iOp < kNumOperators; ++iOp)
+								s_opEnvRateMul[iOp] = 1.f;
+
 							return true;
 						}
 					}
@@ -220,4 +255,13 @@ namespace SFM
 	bool WinMidi_GetLFOSync() {
 		return s_LFOSync;
 	}
+
+	// Chorus switch
+	bool WinMidi_ChorusEnabled() {
+		return s_chorus;
+	}
+
+	// Operator env. rate 
+	float WinMidi_GetOpEnvRateMul(unsigned iOp)    { return s_opEnvRateMul[iOp];   }
+	float WinMidi_GetOpEnvRateScale(unsigned iOp)  { return s_opEnvRateScale[iOp]; }
 }

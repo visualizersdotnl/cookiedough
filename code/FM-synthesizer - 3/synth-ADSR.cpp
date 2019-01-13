@@ -8,23 +8,23 @@
 
 namespace SFM
 {
-	void ADSR::Start(const Parameters &parameters, float velocity, float freqScale /* = 0.f */)
+	void ADSR::Start(const Parameters &parameters, float velocity, float baseScale)
 	{
 		m_ADSR.reset();
 
 		SFM_ASSERT(velocity <= 1.f);
 
 		// 25% shorter attack, 75% shorter decay on max. velocity
-		const float attackScale  = 1.f - 0.25f*velocity;
-		const float decayScale   = 1.f - 0.75f*velocity;
+		const float attackScale  = baseScale - 0.25f*velocity*baseScale;
+		const float decayScale   = baseScale - 0.75f*velocity*baseScale;
 
-		// More velocity or more frequency both mean longer release
-		const float releaseScale = 1.f+freqScale+velocity;
+		// Scale along with note velocity 
+		const float releaseScale = baseScale * (1.f+velocity);
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
 		const float decay   = floorf(decayScale*parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. */, floorf(releaseScale*parameters.release*kSampleRate));
+		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. avoids click */, floorf(releaseScale*parameters.release*kSampleRate));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
@@ -37,7 +37,7 @@ namespace SFM
 
 	void ADSR::Stop(float velocity)
 	{
-		// FIXME: use velocity?
+		// FIXME: interpret high velocity (aftertouch) as a way to shorten the release phase?
 
 		// Go into release state.
 		m_ADSR.gate(false);

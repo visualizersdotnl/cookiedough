@@ -11,26 +11,30 @@
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
 		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
 		- Vowel shaper by alex@smartelectronix.com via http://www.musicdsp.org 
+		- JSON++ (https://github.com/hjiang/jsonxx)
 
 	Core goals:
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
 	Look at later (TM):
-		- Rate scaling (basically means speeding up (parts of) the operator ADSR)
-		  + Am I making a mistake by limiting to seconds in my envelopes? Think so!
-		- Enhance fake chorus & distortion (or maybe remove the latter)
+		- Level scaling
+		  + Primitive implementation: breakpoint, subtractive/linear, amount L/R, range in semitones
+		    This may well be what's needed apart from exponential (maybe!) until I see a point in going additive
+		- Key rate scaling
+		  + Primitive implementation: need to define key range to sensibly map linear or non-linear response
+		- Enhance chorus
 
 	Optimizations:
 		- Use tables for all oscillators
 		- Eliminate branches and needless oscillators
+		  + A lot of branches can be eliminated by using mask values, which in turns opens us up
+		    to possible SIMD optimization
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
+		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
-		- Level scaling
-		  + Primitive implementation is done: breakpoint, subtractive/linear, amount L/R, range in semitones
-		    This may well be what's needed apart from exponential (maybe!) until I see a point in going additive
 		- Patch save & load
 
 	Missing top-level features:
@@ -38,6 +42,7 @@
 		  + Partially implemented
 		- Filters (LPF, vowel)
 		- Unison mode?
+		  + I'd suggest perhaps per 4 voices (limiting the polyphony)
 
 	Golden rules:
 		- Basic FM right first, party tricks second: consider going full VST when basic FM works right

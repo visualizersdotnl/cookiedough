@@ -28,7 +28,7 @@ namespace SFM
 			float attackLevel;
 		};
 
-		void Start(const Parameters &parameters, float velocity, float freqScale = 0.f);
+		void Start(const Parameters &parameters, float velocity, float baseScale /* In seconds */);
 		void Stop(float velocity /* Aftertouch */);
 
 		void Reset()

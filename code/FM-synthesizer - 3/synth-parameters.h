@@ -32,6 +32,9 @@ namespace SFM
 		// LFO key sync.
 		bool LFOSync;
 
+		// Chorus 
+		bool chorus;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -49,6 +52,9 @@ namespace SFM
 
 			// 100% straight
 			liveliness = 0.f;
+
+			// No chorus
+			chorus = false;
 		}
 	};
 }

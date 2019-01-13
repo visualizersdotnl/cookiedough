@@ -12,7 +12,7 @@ namespace SFM
 	SFM_INLINE float SoftDistort(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*16.f;
+		amount = 1.f + amount*32.f;
 		const float distorted = atanf(sample*amount)/k2PI;
 		return distorted;
 	}
@@ -30,7 +30,7 @@ namespace SFM
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
-		unsigned numCarriers = 0;
+//		unsigned numCarriers = 0;
 		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
 			// Top-down
@@ -87,8 +87,8 @@ namespace SFM
 				// Apply envelope
 				sample = sample*envelope;
 
-				// Apply distortion
-				sample = SoftDistort(sample, voiceOp.distortion);
+				// Apply distortion (scaled by envelope)
+				sample = SoftDistort(sample, voiceOp.distortion*envelope);
 
 				SampleAssert(sample);
 
@@ -99,14 +99,14 @@ namespace SFM
 				if (true == voiceOp.isCarrier)
 				{
 					mix = mix+sample;
-					++numCarriers;
+//					++numCarriers;
 				}
 			}
 		} 
 
 		// Scale voice by number of carriers
-		SFM_ASSERT(0 != numCarriers);
-		mix /= numCarriers;
+//		SFM_ASSERT(0 != numCarriers);
+//		mix /= numCarriers;
 
 		// Store feedback
 		// Actual DX7 is rougher (bit shift) (see Dexed/Hexter impl.).

@@ -254,6 +254,65 @@ namespace SFM
 
 #if 0
 		/*
+			Test algorithm: Volca/DX7 algorithm #2
+		*/
+
+		// Operator #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
+			CalcOpIndex(true, key, velocity, patch.operators[0]));
+
+		// Operator #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+			CalcOpIndex(false, key, velocity, patch.operators[1]));
+
+		// Operator #3
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].modulators[0] = 3;
+		voice.m_operators[2].isCarrier = true;
+		voice.m_operators[2].oscillator.Initialize(
+			request.form, 
+			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+			CalcOpIndex(true, key, velocity, patch.operators[2]));
+
+		// Operator #4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].modulators[0] = 4;
+		voice.m_operators[3].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
+			CalcOpIndex(false, key, velocity, patch.operators[3]));
+
+		// Operator #5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].modulators[0] = 5;
+		voice.m_operators[4].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
+			CalcOpIndex(false, key, velocity, patch.operators[4]));
+
+		// Operator #6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+			CalcOpIndex(false, key, velocity, patch.operators[5]));
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+#if 0
+		/*
 			Test algorithm: Volca/DX7 algorithm #5
 		*/
 
@@ -319,17 +378,14 @@ namespace SFM
 		*/
 #endif
 
-		// Key (frequency) scaling (not to be confused with Yamaha's level scaling)
-		const float freqScale = fundamentalFreq/g_MIDIFreqRange;
-
 		// Initialize LFO
 		if (true == s_parameters.LFOSync)
 		{
 			const float phaseJitter = kMaxLFOJitter*liveliness*oscWhiteNoise(); // FIXME: might be too much
-			voice.m_LFO.Initialize(kDigiTriangle, 1.f, 1.f, phaseJitter);
+			voice.m_LFO.Initialize(kDigiTriangle, g_DX7_LFO_speed[0], 1.f, phaseJitter);
 		}
 		else
-			// Copy running LFO
+			// Copy free running LFO
 			voice.m_LFO = s_globalLFO;
 
 		// Other operator settings
@@ -351,14 +407,21 @@ namespace SFM
 			// Amount of velocity
 			const float opVelocity = velocity*patchOp.velSens;
 
-			// Start envelope
+			// Set up & start envelope
 			ADSR::Parameters envParams;
 			envParams.attack = patchOp.attack;
 			envParams.decay = patchOp.decay;
 			envParams.sustain = patchOp.sustain;
 			envParams.release = patchOp.release;
 			envParams.attackLevel = patchOp.attackLevel;
-			voiceOp.envelope.Start(envParams, opVelocity, freqScale);
+			
+			// The multiplier is between 0.1 and 10.0 (nicked from Arturia) and rate scaling can *double*
+			// that value at the highest available frequency (note) when fully applied
+			// This is not exactly like a DX7 does it, but I am not interested in emulating all legacy logic!
+			float envScale = patchOp.envRateMul;
+			envScale += envScale * patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
+
+			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}
 		
 		// Enabled, up counter		
@@ -515,6 +578,10 @@ namespace SFM
 		// LFO key sync.
 		s_parameters.LFOSync = WinMidi_GetLFOSync();
 
+		// Chorus
+		s_parameters.chorus = WinMidi_ChorusEnabled();
+
+		// Set operators
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
@@ -542,6 +609,10 @@ namespace SFM
 			patchOp.levelScaleRange = unsigned(WinMidi_GetOpLevelScaleRange(iOp)*127.f);
 			patchOp.levelScaleL = WinMidi_GetOpLevelScaleL(iOp);
 			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
+
+			// Envelope rate
+			patchOp.envRateMul = WinMidi_GetOpEnvRateMul(iOp);
+			patchOp.envRateScale = WinMidi_GetOpEnvRateScale(iOp);
 
 			// Distortion
 			patchOp.distortion = WinMidi_GetOpDistortion(iOp);
@@ -587,7 +658,7 @@ namespace SFM
 		On using 3 taps modulated 120 degrees apart: https://www.soundonsound.com/techniques/more-creative-synthesis-delays
 	*/
 		
-	SFM_INLINE void StereoMix(float mix) 
+	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
 
@@ -654,7 +725,13 @@ namespace SFM
 			// Render silence (we still have to run the effects)
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				StereoMix(0.f);
+				if (true == s_parameters.chorus)
+					ChorusToStereo(0.f);
+				else
+				{
+					s_ringBuf.Write(0.f);
+					s_ringBuf.Write(0.f);
+				}
 			}
 		}
 		else
@@ -678,6 +755,8 @@ namespace SFM
 					{
 						float sample = voice.Sample(s_parameters);
 
+						// FIXME: insert per-voice FX processing
+
 						buffer[iSample] = sample;
 					}
 
@@ -690,6 +769,10 @@ namespace SFM
 			{
 				const unsigned sampleCount = s_sampleCount+iSample;
 
+				// Tick global LFO so it advances along with each sample rendered
+				// This isn't too pretty but I think I'll solve it by providing a simplified LFO object instead of an Oscillator (FIXME)
+				s_globalLFO.Sample(0.f);
+
 				float mix = 0.f;
 				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
 				{
@@ -699,8 +782,14 @@ namespace SFM
 					mix = mix+sample;
 				}
 
-				// Mix stereo output to ring buffer
-				StereoMix(mix);
+				// Stereo output to ring buffer
+				if (true == s_parameters.chorus)
+					ChorusToStereo(mix);
+				else
+				{
+					s_ringBuf.Write(mix);
+					s_ringBuf.Write(mix);
+				}
 			}
 		}
 

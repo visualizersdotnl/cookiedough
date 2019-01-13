@@ -57,6 +57,13 @@ namespace SFM
 			unsigned levelScaleBP;
 			unsigned levelScaleRange; // [0..127]
 			float levelScaleL, levelScaleR;
+
+			// Envelope rate multiplier
+			// Range taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
+			float envRateMul; // [0.100-10.0]
+
+			// Envelope keyboard rate scaling
+			float envRateScale;
 		};
 	
 		Operator operators[kNumOperators];
@@ -101,6 +108,12 @@ namespace SFM
 				patchOp.levelScaleRange = 24; // 2 octaves
 				patchOp.levelScaleL = 0.f;
 				patchOp.levelScaleR = 0.f;
+
+				// Env. rate multiplier
+				patchOp.envRateMul = 1.f;
+
+				// No envelope keyboard scaling
+				patchOp.envRateScale = 0.f;
 			}
 		}
 	};

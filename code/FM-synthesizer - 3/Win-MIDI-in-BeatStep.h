@@ -24,4 +24,11 @@ namespace SFM
 
 	// LFO key sync.
 	bool WinMidi_GetLFOSync();
+
+	// Chorus switch
+	bool WinMidi_ChorusEnabled();
+
+	// Operator env. rate 
+	float WinMidi_GetOpEnvRateMul(unsigned iOp);
+	float WinMidi_GetOpEnvRateScale(unsigned iOp);
 }
