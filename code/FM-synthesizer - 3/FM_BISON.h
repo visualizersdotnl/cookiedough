@@ -18,12 +18,11 @@
 		- Subtractive synthesis on top
 
 	Look at later (TM):
-		- Level scaling
-		  + Primitive implementation: breakpoint, subtractive/linear, amount L/R, range in semitones
-		    This may well be what's needed apart from exponential (maybe!) until I see a point in going additive
 		- Key rate scaling
 		  + Primitive implementation: need to define key range to sensibly map linear or non-linear response
 		- Enhance chorus
+		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
+		  to end users
 
 	Optimizations:
 		- Use tables for all oscillators

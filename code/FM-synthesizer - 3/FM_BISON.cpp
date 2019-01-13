@@ -165,25 +165,32 @@ namespace SFM
 		// Apply level scaling (subtractive & linear)
 		const unsigned breakpoint = patchOp.levelScaleBP;
 		const unsigned numSemis = patchOp.levelScaleRange;
-		const float levelStep = 1.f/numSemis;
-
-		unsigned distance;
-		float scale;
-		if (key < breakpoint)
+		if (0 != numSemis)
 		{
-			distance = breakpoint-key;
-			scale = patchOp.levelScaleL;
-		}
-		else
-		{
-			distance = key-breakpoint;
-			scale = patchOp.levelScaleR;
-		}
+			const float levelStep = 1.f/numSemis;
 
-		distance = std::min<unsigned>(numSemis, distance);
-		scale *= 1.f-(distance*levelStep);
-		output = output*scale;
-		SFM_ASSERT(output >= 0.f && output <= 1.f);
+			unsigned distance;
+			float amount;
+			if (key < breakpoint)
+			{
+				distance = breakpoint-key;
+				amount = patchOp.levelScaleL;
+			}
+			else
+			{
+				distance = key-breakpoint;
+				amount = patchOp.levelScaleR;
+			}
+
+			// Apply linear scale over selected range
+			distance = std::min<unsigned>(numSemis, distance);
+			const float scale = 1.f-(distance*levelStep);
+			
+			// Apply as needed
+			output = lerpf<float>(output, output*scale, amount);
+
+			SFM_ASSERT(output >= 0.f && output <= 1.f);
+		}
 
 		if (true == isCarrier)
 			// Scale to max. amplitude
@@ -593,7 +600,7 @@ namespace SFM
 
 			// Level scaling
 			patchOp.levelScaleBP = WinMidi_GetOpLevelScaleBP(iOp);
-			patchOp.levelScaleRange = unsigned(1.f+WinMidi_GetOpLevelScaleRange(iOp)*126.f); // FIXME: range?
+			patchOp.levelScaleRange = unsigned(WinMidi_GetOpLevelScaleRange(iOp)*127.f); // FIXME: range?
 			patchOp.levelScaleL = WinMidi_GetOpLevelScaleL(iOp);
 			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
 
