@@ -60,8 +60,8 @@ namespace SFM
 	// To divide lin. amplitude by 2 (-3dB = half as loud)
 	const float kMinus3dB = 0.707945764f;
 
-	// Pitch bend range (in octaves)
-	const float kPitchBendRange = 1.f;
+	// Pitch bend range (in semitones)
+	const float kPitchBendRange = 2.f;
 
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;

@@ -58,7 +58,7 @@ namespace SFM
 	static float s_LFOSpeed = 0.f;
 
 	// LFO key sync.
-	static bool s_LFOSync = true;
+	static bool s_LFOSync = false;
 
 	// Chorus switch
 	static bool s_chorus = false;

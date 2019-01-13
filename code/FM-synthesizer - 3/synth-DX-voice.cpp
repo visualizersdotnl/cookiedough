@@ -87,8 +87,8 @@ namespace SFM
 				// Apply envelope
 				sample = sample*envelope;
 
-				// Apply distortion (scaled by envelope)
-				sample = SoftDistort(sample, voiceOp.distortion*envelope);
+				// Apply distortion
+				sample = SoftDistort(sample, voiceOp.distortion);
 
 				SampleAssert(sample);
 
