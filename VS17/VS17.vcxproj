@@ -220,6 +220,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp" />
     <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\SDL2-audio-out.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h" />

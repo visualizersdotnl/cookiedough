@@ -19,7 +19,7 @@ namespace SFM
 
 	float DX_Voice::Sample(const Parameters &parameters)
 	{
-		SFM_ASSERT(true == m_enabled);
+		SFM_ASSERT(kIdle != m_state);
 
 		// Sample LFO
 		const float LFO = m_LFO.Sample(0.f);

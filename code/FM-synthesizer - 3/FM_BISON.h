@@ -12,6 +12,7 @@
 		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
 		- Vowel shaper by alex@smartelectronix.com via http://www.musicdsp.org 
 		- JSON++ (https://github.com/hjiang/jsonxx)
+		- SvfLinearTrapOptimised2.hpp by FAC (https://github.com/FredAntonCorvest/Common-DSP)
 
 	Core goals:
 		- DX7-like core FM
@@ -23,6 +24,7 @@
 		- Enhance chorus
 		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
 		  to end users
+		- Take some time to read up on how the main filter works
 
 	Optimizations:
 		- Use tables for all oscillators
@@ -32,6 +34,7 @@
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
+		- Working on integrating filter!
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Patch save & load

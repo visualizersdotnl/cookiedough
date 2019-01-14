@@ -47,6 +47,9 @@ namespace SFM
 	const unsigned kPotOpEnvRateMul = 72;
 	const unsigned kPotOpEnvRateScale = 75;
 
+	const unsigned kPotFilterCutoff = 17;
+	const unsigned kPotFilterResonance = 91;
+
 	// Button indices
 	const unsigned kButtonLFOSync = 36;
 	const unsigned kButtonChorus = 44;
@@ -66,6 +69,10 @@ namespace SFM
 	// Operator env. rate
 	static float s_opEnvRateMul[kNumOperators];
 	static float s_opEnvRateScale[kNumOperators] = { 0.f };
+
+	// Filter parameters
+	static float s_cutoff = 1.f;
+	static float s_resonance = 0.f;
 
 	/*
 		Mapping for the BeatStep
@@ -105,7 +112,7 @@ namespace SFM
 				{
 					switch (controlIdx)
 					{
-					// Global controls
+					// Global controls (misc.)
 
 					case kPotLiveliness:
 						s_liveliness = fControlVal;
@@ -121,6 +128,16 @@ namespace SFM
 
 					case kButtonChorus:
 						if (127 == controlVal) s_chorus ^= 1;
+						break;
+
+					// Filter parameters
+
+					case kPotFilterCutoff:
+						s_cutoff = fControlVal;
+						break;
+
+					case kPotFilterResonance:
+						s_resonance = fControlVal;
 						break;
 
 					// Operator envelope rate multiplier
@@ -264,4 +281,8 @@ namespace SFM
 	// Operator env. rate 
 	float WinMidi_GetOpEnvRateMul(unsigned iOp)    { return s_opEnvRateMul[iOp];   }
 	float WinMidi_GetOpEnvRateScale(unsigned iOp)  { return s_opEnvRateScale[iOp]; }
+
+	// Filter parameters
+	float WinMidi_GetFilterCutoff()     { return s_cutoff;    }
+	float WinMidi_GetFilterResonance()  { return s_resonance; }
 }

@@ -35,6 +35,10 @@ namespace SFM
 		// Chorus 
 		bool chorus;
 
+		// Filter parameters
+		float cutoff;
+		float resonance;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -55,6 +59,10 @@ namespace SFM
 
 			// No chorus
 			chorus = false;
+
+			// Little to no filtering
+			cutoff = 1.f;
+			resonance = 0.f;
 		}
 	};
 }

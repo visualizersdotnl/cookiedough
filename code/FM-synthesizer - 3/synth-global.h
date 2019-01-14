@@ -71,6 +71,9 @@ namespace SFM
 
 	// Max. voice amplitude (linear)
 	const float kMaxVoiceAmp = 1.f;
+
+	// Max. filter resonance range (must be <= 39.f)
+	const float kFilterMaxResonance = 4.f;
 }
 
 #include "synth-LUT.h"

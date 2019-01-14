@@ -19,7 +19,14 @@ namespace SFM
 	class DX_Voice
 	{
 	public:
-		bool m_enabled;
+		enum State
+		{
+			kIdle,
+			kEnabled,
+			kReleasing
+		};
+
+		State m_state;
 
 		struct Operator
 		{
@@ -87,7 +94,7 @@ namespace SFM
 			ResetOperators();
 
 			// Disable
-			m_enabled = false;
+			m_state = kIdle;
 		}
 
 		// On voice release (stops operator envelopes)
@@ -98,6 +105,8 @@ namespace SFM
 				if (true == voiceOp.enabled)
 					voiceOp.envelope.Stop(velocity);
 			}
+
+			m_state = kReleasing;
 		}
 		
 		// Apply pitch bend (to carriers)
@@ -110,7 +119,12 @@ namespace SFM
 			}
 		}
 
-		bool IsIdle() /* const */
+		bool IsActive() /* const */
+		{
+			return kIdle != m_state;		
+		}
+
+		bool IsDone() /* const */
 		{
 			// Only true if all carrier envelopes are idle
 			for (auto &voiceOp : m_operators)
@@ -125,7 +139,6 @@ namespace SFM
 			return true;
 		}
 
-		// Used by voice stealing
 		float SummedOutput() /* const */
 		{
 			float summed = 0.f;

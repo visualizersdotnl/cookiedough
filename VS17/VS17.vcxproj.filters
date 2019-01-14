@@ -519,6 +519,9 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
