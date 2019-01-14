@@ -74,6 +74,9 @@ namespace SFM
 
 	// Max. filter resonance range (must be <= 39.f)
 	const float kFilterMaxResonance = 4.f;
+
+	// Working cutoff for rotary MIDI controls (use with LPF)
+	const float kControlCutoff = 0.001f;
 }
 
 #include "synth-LUT.h"

@@ -854,20 +854,19 @@ bool Syntherklaas_Create()
 		s_DXvoices[iVoice].Reset();
 	}
 
-	// Initialize main filter
-//	s_filter.setGain(3.0);
-	s_cutoffLPF.SetCutoff(0.1f);
-	s_resoLPF.SetCutoff(0.1f);
+	// Initialize main filter & it's control filters
+	s_filter.setGain(3.0); // Not used by many filter types
+	s_cutoffLPF.SetCutoff(kControlCutoff);
+	s_resoLPF.SetCutoff(kControlCutoff);
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
 	s_delaySweepL.Initialize(kSine, 0.5f, 0.5f, 0.f);
 	s_delaySweepR.Initialize(kSine, 0.5f, 0.5f, 0.33f);
 	s_delaySweepMod.Initialize(kDigiTriangle, 0.05f, 1.f, 0.4321f);
 
-	// Delay: sweep LPFs (FIXME: tweak value)
-	const float sweepCut = 0.001f;
-	s_sweepLPF1.SetCutoff(sweepCut);
-	s_sweepLPF2.SetCutoff(sweepCut); 
+	// Delay: sweep LPFs
+	s_sweepLPF1.SetCutoff(kControlCutoff);
+	s_sweepLPF2.SetCutoff(kControlCutoff); 
 
 	// Start global LFO
 	s_globalLFO.Initialize(kDigiTriangle, g_DX7_LFO_speed[0], 1.f);

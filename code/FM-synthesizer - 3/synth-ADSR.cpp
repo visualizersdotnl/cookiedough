@@ -22,9 +22,9 @@ namespace SFM
 		const float releaseScale = baseScale * (1.f+velocity);
 		
 		// Attack & release have a minimum to prevent clicking
-		const float attack  = floorf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = floorf(decayScale*parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. avoids click */, floorf(releaseScale*parameters.release*kSampleRate));
+		const float attack  = ceilf(attackScale*parameters.attack*kSampleRate);
+		const float decay   = ceilf(decayScale*parameters.decay*kSampleRate);
+		const float release = std::max<float>(kSampleRate/1000.f /* 1ms min. avoids click */, ceilf(releaseScale*parameters.release*kSampleRate));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
