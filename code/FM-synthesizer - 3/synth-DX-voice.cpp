@@ -30,7 +30,7 @@ namespace SFM
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
-//		unsigned numCarriers = 0;
+		unsigned numCarriers = 0;
 		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
 			// Top-down
@@ -99,17 +99,17 @@ namespace SFM
 				if (true == voiceOp.isCarrier)
 				{
 					mix = mix+sample;
-//					++numCarriers;
+					++numCarriers;
 				}
 			}
 		} 
 
 		// Scale voice by number of carriers
-//		SFM_ASSERT(0 != numCarriers);
-//		mix /= numCarriers;
+		SFM_ASSERT(0 != numCarriers);
+		mix /= numCarriers;
 
 		// Store feedback
-		// Actual DX7 is rougher (bit shift) (see Dexed/Hexter impl.).
+		// FIXME: this doesn't really do much in this form and *might* be unnecessary
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;
 

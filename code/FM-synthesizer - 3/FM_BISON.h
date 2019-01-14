@@ -10,7 +10,6 @@
 		- Bits and pieces taken from Hexter by Sean Bolton (https://github.com/smbolton/hexter)
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
 		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
-		- Vowel shaper by alex@smartelectronix.com via http://www.musicdsp.org 
 		- JSON++ (https://github.com/hjiang/jsonxx)
 		- SvfLinearTrapOptimised2.hpp by FAC (https://github.com/FredAntonCorvest/Common-DSP)
 
@@ -35,6 +34,8 @@
 
 	Priority:
 		- Working on integrating filter!
+		  + Execute per voice
+		  + I may need to use an envelope to shape it
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Patch save & load
@@ -42,7 +43,6 @@
 	Missing top-level features:
 		- Jitter
 		  + Partially implemented
-		- Filters (LPF, vowel)
 		- Unison mode?
 		  + I'd suggest perhaps per 4 voices (limiting the polyphony)
 

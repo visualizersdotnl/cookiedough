@@ -142,7 +142,6 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-MIDI.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-vowel-filter.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
@@ -240,7 +239,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-util.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-vowel-filter.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
