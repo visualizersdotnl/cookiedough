@@ -42,13 +42,14 @@ namespace SFM
 	// Rotary indices
 	const unsigned kPotLiveliness = 114;
 	const unsigned kPotLFOSpeed = 7; // The big knob
+	const unsigned kPotFilterCutoff = 17;
+	const unsigned kPotFilterResonance = 91;
+	const unsigned kPotPickupDist = 77;
+	const unsigned kPotPickAsym = 93;
 
 	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
 	const unsigned kPotOpEnvRateMul = 72;
 	const unsigned kPotOpEnvRateScale = 75;
-
-	const unsigned kPotFilterCutoff = 17;
-	const unsigned kPotFilterResonance = 91;
 
 	// Button indices
 	const unsigned kButtonLFOSync = 36;
@@ -73,6 +74,10 @@ namespace SFM
 	// Filter parameters
 	static float s_cutoff = 1.f;
 	static float s_resonance = 0.f;
+
+	// Pickup parameters
+	static float s_pickupDist = 1.f;
+	static float s_pickupAsym = 1.f;
 
 	/*
 		Mapping for the BeatStep
@@ -128,6 +133,16 @@ namespace SFM
 
 					case kButtonChorus:
 						if (127 == controlVal) s_chorus ^= 1;
+						break;
+
+					// Pickup parameters
+
+					case kPotPickupDist:
+						s_pickupDist = fControlVal;
+						break;
+
+					case kPotPickAsym:
+						s_pickupAsym = fControlVal;
 						break;
 
 					// Filter parameters
@@ -285,4 +300,8 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff()     { return s_cutoff;    }
 	float WinMidi_GetFilterResonance()  { return s_resonance; }
+
+	// Pickup parameters
+	float WinMidi_GetPickupDist() { return s_pickupDist; }
+	float WinMidi_GetPickupAsym() { return s_pickupAsym; }
 }

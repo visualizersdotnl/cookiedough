@@ -104,9 +104,24 @@ namespace SFM
 			}
 		} 
 
-		// Scale voice by number of carriers
-		SFM_ASSERT(0 != numCarriers);
-		mix /= numCarriers;
+		if (false == m_pickupMode)
+		{
+			// Scale voice by number of carriers
+			SFM_ASSERT(0 != numCarriers);
+			mix /= numCarriers;
+		}
+		else
+		{
+			// Check if algorithm adheres to pickup mode constraints
+			SFM_ASSERT(1 == numCarriers);
+			SFM_ASSERT(true == m_operators[0].isCarrier);
+
+			// FIXME: very, very early attempt, but it does sort of work as advertised
+			const float pickupDist = parameters.pickupDist;
+			const float pickupAsym = parameters.pickupAsym;
+			const float shaper = 1.f/(parameters.pickupDist+powf(mix+pickupAsym, 3.f));
+			mix *= shaper;
+		}
 
 		// Store feedback
 		// FIXME: this doesn't really do much in this form and *might* be unnecessary

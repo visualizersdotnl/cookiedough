@@ -39,6 +39,10 @@ namespace SFM
 		float cutoff;
 		float resonance;
 
+		// Pickup parameters
+		float pickupDist;
+		float pickupAsym;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -63,6 +67,10 @@ namespace SFM
 			// Little to no filtering
 			cutoff = 1.f;
 			resonance = 0.f;
+
+			// Pickup parameters
+			pickupDist = 1.f;
+			pickupAsym = 1.f;
 		}
 	};
 }

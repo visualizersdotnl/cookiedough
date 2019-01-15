@@ -210,8 +210,7 @@ namespace SFM
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
 		DX_Voice &voice = s_DXvoices[iVoice];
-		voice.ResetOperators(); // FIXME: might not even be necessary
-//		voice.Reset();
+		voice.Reset();
 		
 		const unsigned key = request.key;
 		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];
@@ -245,6 +244,39 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
 			CalcOpIndex(false, key, velocity, patch.operators[1]));
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+#if 1
+		/*
+			Test algorithm: Rhodes
+		*/
+
+		// Operator #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(
+			request.form, 
+			0.f, // Wave shaper
+			CalcOpIndex(true, key, velocity, patch.operators[0]));
+
+		// Operator #2-#6
+		for (unsigned iOp = 1; iOp < 6; ++iOp)
+		{	
+			voice.m_operators[iOp].enabled = true;
+			voice.m_operators[iOp].modulators[0] = std::min<unsigned>(iOp+1, kNumOperators-1);
+			voice.m_operators[iOp].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[iOp]), 
+				CalcOpIndex(false, key, velocity, patch.operators[iOp]));
+		}
+
+		// First operator (carrier) is pickup waveshaper
+		voice.m_pickupMode = true;
 
 		/*
 			End of Algorithm
@@ -310,7 +342,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #5
 		*/
@@ -580,6 +612,10 @@ namespace SFM
 		// Filter parameters
 		s_parameters.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.resonance = WinMidi_GetFilterResonance();
+
+		// Pickup parameters
+		s_parameters.pickupDist = WinMidi_GetPickupDist();
+		s_parameters.pickupAsym = WinMidi_GetPickupAsym();
 
 		// Set operators
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)

@@ -33,9 +33,12 @@
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
-		- Working on integrating filter!
-		  + Execute per voice
-		  + I may need to use an envelope to shape it
+		- Finish 'pickup' mode
+		  + Parameter range
+		  + Good reason to also look at the integration of different algorithms; and call ones with a zero-frequency collection carrier "wave shaper"
+		- Working on integrating filter
+		  + Execute per voice?
+		  + I may need to use an envelope to shape it?
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Patch save & load

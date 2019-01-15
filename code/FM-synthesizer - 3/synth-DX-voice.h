@@ -72,6 +72,9 @@ namespace SFM
 
 		// LFO
 		Oscillator m_LFO;
+
+		// Pickup mode (FIXME)
+		bool m_pickupMode;
 	
 		DX_Voice() 
 		{ 
@@ -95,6 +98,9 @@ namespace SFM
 
 			// Disable
 			m_state = kIdle;
+
+			// FIXME
+			m_pickupMode = false;
 		}
 
 		// On voice release (stops operator envelopes)
