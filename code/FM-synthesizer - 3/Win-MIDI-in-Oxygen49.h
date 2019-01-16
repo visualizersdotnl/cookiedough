@@ -22,6 +22,9 @@ namespace SFM
 		Pull-style values, all normalized [0..1]
 	*/
 
+	// Test (debug only)
+	bool WinMidi_GetTest();
+
 	// Operator envelope
 	float WinMidi_GetOpAttack(unsigned iOp);
 	float WinMidi_GetOpDecay(unsigned iOp);

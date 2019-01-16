@@ -66,10 +66,10 @@ namespace SFM
 
 			// Little to no filtering
 			cutoff = 1.f;
-			resonance = 0.f;
+			resonance = 1.f;
 
 			// Pickup parameters
-			pickupDist = 1.f;
+			pickupDist = 0.5f;
 			pickupAsym = 1.f;
 		}
 	};

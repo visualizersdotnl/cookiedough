@@ -61,7 +61,7 @@ namespace SFM
 	const float kMinus3dB = 0.707945764f;
 
 	// Pitch bend range (in semitones)
-	const float kPitchBendRange = 2.f;
+	const float kPitchBendRange = 6.f;
 
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;

@@ -120,7 +120,7 @@ namespace SFM
 		{
 			for (auto &voiceOp : m_operators)
 			{
-				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
+				if (true == voiceOp.enabled)
 					voiceOp.oscillator.PitchBend(bend);
 			}
 		}

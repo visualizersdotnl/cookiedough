@@ -6,6 +6,10 @@
 #include "synth-global.h"
 #include "synth-DX-voice.h"
 
+// FIXME: temp.
+#include "Win-MIDI-in-Oxygen49.h"
+#include "synth-pickup-model.h"
+
 namespace SFM
 {
 	// Distortion (soft)
@@ -113,14 +117,16 @@ namespace SFM
 		else
 		{
 			// Check if algorithm adheres to pickup mode constraints
+			// For now that means operator #1 is a wave shaper *only*
 			SFM_ASSERT(1 == numCarriers);
 			SFM_ASSERT(true == m_operators[0].isCarrier);
+			SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 
-			// FIXME: very, very early attempt, but it does sort of work as advertised
-			const float pickupDist = parameters.pickupDist;
-			const float pickupAsym = parameters.pickupAsym;
-			const float shaper = 1.f/(parameters.pickupDist+powf(mix+pickupAsym, 3.f));
-			mix *= shaper;
+			// FIXME
+			if (false == WinMidi_GetTest())
+			{
+				mix *= fPickup(mix, parameters.pickupDist, parameters.pickupAsym);
+			}
 		}
 
 		// Store feedback

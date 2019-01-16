@@ -32,7 +32,7 @@
 		    to possible SIMD optimization
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
-	Priority:
+	Priority: 
 		- Finish 'pickup' mode
 		  + Parameter range
 		  + Good reason to also look at the integration of different algorithms; and call ones with a zero-frequency collection carrier "wave shaper"
@@ -48,6 +48,11 @@
 		  + Partially implemented
 		- Unison mode?
 		  + I'd suggest perhaps per 4 voices (limiting the polyphony)
+
+	A few good tips for better liveliness and Rhodes:
+		- https://www.youtube.com/watch?v=72WoueTI354
+		- http://recherche.ircam.fr/anasyn/falaize/applis/rhodes/
+		- http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_79.pdf
 
 	Golden rules:
 		- Basic FM right first, party tricks second: consider going full VST when basic FM works right

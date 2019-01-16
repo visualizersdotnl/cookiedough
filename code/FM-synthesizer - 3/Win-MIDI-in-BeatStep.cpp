@@ -73,10 +73,10 @@ namespace SFM
 
 	// Filter parameters
 	static float s_cutoff = 1.f;
-	static float s_resonance = 0.f;
+	static float s_resonance = 1.f;
 
 	// Pickup parameters
-	static float s_pickupDist = 1.f;
+	static float s_pickupDist = 0.5f;
 	static float s_pickupAsym = 1.f;
 
 	/*

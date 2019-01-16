@@ -214,7 +214,7 @@ namespace SFM
 		
 		const unsigned key = request.key;
 		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];
-		const float velocity = request.velocity;
+		const float velocity = powf(request.velocity, 3.f); // Raise velocity (source: Jan Marguc)
 
 		const float liveliness = s_parameters.liveliness;
 		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
@@ -252,31 +252,42 @@ namespace SFM
 
 #if 1
 		/*
-			Test algorithm: Rhodes
+			Test algorithm: Rhodes (pickup mode)
+
+			FIXME: WIP
 		*/
 
-		// Operator #1
+		// First operator (carrier) is pickup wave shaper
+		voice.m_pickupMode = true;
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].modulators[1] = 3;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
-			request.form, 
-			0.f, // Wave shaper
+			kSine,
+			0.f, // Carrier is a wave shaper
 			CalcOpIndex(true, key, velocity, patch.operators[0]));
 
-		// Operator #2-#6
-		for (unsigned iOp = 1; iOp < 6; ++iOp)
-		{	
-			voice.m_operators[iOp].enabled = true;
-			voice.m_operators[iOp].modulators[0] = std::min<unsigned>(iOp+1, kNumOperators-1);
-			voice.m_operators[iOp].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[iOp]), 
-				CalcOpIndex(false, key, velocity, patch.operators[iOp]));
-		}
+		// C <- 2 <- 3
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].modulators[0] = 2;
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+			CalcOpIndex(false, key, velocity, patch.operators[1]));
+		
+		voice.m_operators[2].enabled = true;
+		voice.m_operators[2].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+			CalcOpIndex(false, key, velocity, patch.operators[2]));
 
-		// First operator (carrier) is pickup waveshaper
-		voice.m_pickupMode = true;
+		// C <- 4
+		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
+			CalcOpIndex(false, key, velocity, patch.operators[3]));
 
 		/*
 			End of Algorithm
@@ -819,7 +830,7 @@ namespace SFM
 					const float sample = s_voiceBuffers[iVoice][iSample];
 					SampleAssert(sample);
 
-					mix = Clamp(mix+sample);
+					mix = mix+sample;
 				}
 
 				// Apply filter
@@ -886,14 +897,12 @@ bool Syntherklaas_Create()
 
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-	{
 		s_DXvoices[iVoice].Reset();
-	}
 
 	// Initialize main filter & it's control filters
 	s_filter.setGain(3.0); // Not used by many filter types
-	s_cutoffLPF.SetCutoff(kControlCutoff);
-	s_resoLPF.SetCutoff(kControlCutoff);
+	s_cutoffLPF.SetCutoff(kControlCutoff/2.f);
+	s_resoLPF.SetCutoff(kControlCutoff/2.f);
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
 	s_delaySweepL.Initialize(kSine, 0.5f, 0.5f, 0.f);

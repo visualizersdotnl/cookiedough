@@ -54,9 +54,11 @@ namespace SFM
 	// Button indices
 	const unsigned kButtonFixedRatio = 104;
 	const unsigned kButtonLevelScaleSetBP = 118;
+	const unsigned kButtonTest = 113;
 
 	static bool s_opFixedRatio[kNumOperators] = { false };
 	static bool s_opLevelScaleSetBP = false;
+	static bool s_test = false;
 
 	// Fader indices
 	const unsigned kFaderAttack          = 20;
@@ -186,7 +188,13 @@ namespace SFM
 					{
 						switch (controlIdx)
 						{
-						/*  Operator level scaling */
+						/* Test */
+
+						case kButtonTest:
+							if (127 == controlVal) s_test ^= 1;
+							break;
+
+						/* Operator level scaling */
 
 						case kFaderLevelScaleRange:
 							s_opLevelScaleRange[g_currentOp] = fControlVal;
@@ -441,6 +449,10 @@ namespace SFM
 	/*
 		Pull-style controls
 	*/
+
+	// Test (debug only)
+	bool WinMidi_GetTest() {
+		return s_test; }
 
 	// Operator envelope
 	float WinMidi_GetOpAttack(unsigned iOp)       { return s_opAttack[iOp];  }
