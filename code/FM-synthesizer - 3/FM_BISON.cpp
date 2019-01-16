@@ -901,8 +901,8 @@ bool Syntherklaas_Create()
 
 	// Initialize main filter & it's control filters
 	s_filter.setGain(3.0); // Not used by many filter types
-	s_cutoffLPF.SetCutoff(kControlCutoff/2.f);
-	s_resoLPF.SetCutoff(kControlCutoff/2.f);
+	s_cutoffLPF.SetCutoff(kControlCutoff*2.f);
+	s_resoLPF.SetCutoff(kControlCutoff*2.f);
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
 	s_delaySweepL.Initialize(kSine, 0.5f, 0.5f, 0.f);
