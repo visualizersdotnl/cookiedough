@@ -76,7 +76,11 @@ namespace SFM
 	const float kFilterMaxResonance = 4.f;
 
 	// Working cutoff for rotary MIDI controls (use with LPF)
-	const float kControlCutoff = 0.001f;
+	const float kControlCutoff = 0.01f;
+	const float kControlCutoffS = 0.001f;
+
+	// Chorus rate (1.f is proven to be good)
+	const float kChorusRate = 2.f;
 }
 
 #include "synth-LUT.h"

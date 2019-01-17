@@ -901,17 +901,17 @@ bool Syntherklaas_Create()
 
 	// Initialize main filter & it's control filters
 	s_filter.setGain(3.0); // Not used by many filter types
-	s_cutoffLPF.SetCutoff(kControlCutoff*2.f);
-	s_resoLPF.SetCutoff(kControlCutoff*2.f);
+	s_cutoffLPF.SetCutoff(kControlCutoff);
+	s_resoLPF.SetCutoff(kControlCutoff);
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
-	s_delaySweepL.Initialize(kSine, 0.5f, 0.5f, 0.f);
-	s_delaySweepR.Initialize(kSine, 0.5f, 0.5f, 0.33f);
-	s_delaySweepMod.Initialize(kDigiTriangle, 0.05f, 1.f, 0.4321f);
+	s_delaySweepL.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.f);
+	s_delaySweepR.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.33f);
+	s_delaySweepMod.Initialize(kDigiTriangle, 0.05f*kChorusRate, 1.f, 0.4321f);
 
 	// Delay: sweep LPFs
-	s_sweepLPF1.SetCutoff(kControlCutoff);
-	s_sweepLPF2.SetCutoff(kControlCutoff); 
+	s_sweepLPF1.SetCutoff(kControlCutoffS);
+	s_sweepLPF2.SetCutoff(kControlCutoffS); 
 
 	// Start global LFO
 	s_globalLFO.Initialize(kDigiTriangle, g_DX7_LFO_speed[0], 1.f);
