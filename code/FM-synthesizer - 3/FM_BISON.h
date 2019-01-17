@@ -20,9 +20,9 @@
 	Look at later (TM):
 		- Key rate scaling
 		  + Primitive implementation: need to define key range to sensibly map linear or non-linear response
-		- Enhance chorus
 		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
 		  to end users
+		- Enhance chorus
 		- Take some time to read up on how the main filter works
 
 	Optimizations:
@@ -34,10 +34,11 @@
 
 	Priority: 
 		- Finish 'pickup' mode
-		  + Parameter range
+		  + Define workable user arameter range
 		  + Good reason to also look at the integration of different algorithms; and call ones with a zero-frequency collection carrier "wave shaper"
 		- Working on integrating filter
-		  + Execute per voice?
+		  + Envelope (at least on attack)
+		  + Execute per voice
 		  + I may need to use an envelope to shape it?
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
