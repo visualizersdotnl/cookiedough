@@ -6,6 +6,8 @@
 	Third prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
+	Code is *very* verbose and not optimized at all; still in R&D stage
+
 	Third party credits (not necessarily 100% complete):
 		- Bits and pieces taken from Hexter by Sean Bolton (https://github.com/smbolton/hexter)
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
@@ -23,6 +25,7 @@
 		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
 		  to end users
 		- Enhance chorus
+		- Revisit string pluck
 		- Take some time to read up on how the main filter works
 
 	Optimizations:
@@ -34,7 +37,7 @@
 
 	Priority: 
 		- Finish 'pickup' mode
-		  + Define workable user arameter range
+		  + Define workable user parameter range
 		  + Good reason to also look at the integration of different algorithms; and call ones with a zero-frequency collection carrier "wave shaper"
 		- Working on integrating filter
 		  + Envelope (at least on attack)
@@ -57,7 +60,6 @@
 
 	Golden rules:
 		- Basic FM right first, party tricks second: consider going full VST when basic FM works right
-		- Optimization is possible nearly everywhere; do not do any before the instrument is nearly done
 
 	Issues:
 		- Feedback depth(s)

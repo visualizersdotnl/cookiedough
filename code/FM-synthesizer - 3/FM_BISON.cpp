@@ -21,7 +21,7 @@
 #include "synth-ring-buffer.h"
 #include "synth-math.h"
 #include "synth-LUT.h"
-#include "synth-DX-voice.h"
+#include "synth-voice.h"
 #include "synth-delay-line.h"
 #include "synth-one-pole.h"
 
@@ -78,7 +78,7 @@ namespace SFM
 	static Parameters s_parameters;
 
 	// Voices
-	static DX_Voice s_DXvoices[kMaxVoices];
+	static Voice s_voices[kMaxVoices];
 	static unsigned s_active = 0;
 
 	// Filter
@@ -209,7 +209,7 @@ namespace SFM
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
-		DX_Voice &voice = s_DXvoices[iVoice];
+		Voice &voice = s_voices[iVoice];
 		voice.Reset();
 		
 		const unsigned key = request.key;
@@ -250,7 +250,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Rhodes (pickup mode)
 
@@ -258,10 +258,11 @@ namespace SFM
 		*/
 
 		// First operator (carrier) is pickup wave shaper
-		voice.m_pickupMode = true;
+		voice.m_mode = Voice::kPickup;
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].modulators[1] = 3;
+		voice.m_operators[0].modulators[2] = 4;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			kSine,
@@ -288,6 +289,45 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
 			CalcOpIndex(false, key, velocity, patch.operators[3]));
+
+		// C <- 5
+		voice.m_operators[4].enabled = true;
+		voice.m_operators[4].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
+			CalcOpIndex(false, key, velocity, patch.operators[4]));
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+#if 1
+		/*
+			Test algorithm: Plucked
+
+			FIXME: ditched (for now)
+		*/
+
+		voice.m_mode = Voice::kPluck;
+		voice.m_pluck = Pluck(fundamentalFreq);
+
+		// Operator #1
+		voice.m_operators[0].enabled = true;
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].isCarrier = true;
+		voice.m_operators[0].oscillator.Initialize(
+			kSine,
+			0.f, // CalcOpFreq(fundamentalFreq, patch.operators[0]),
+			CalcOpIndex(true, key, velocity, patch.operators[0]));
+
+		// Operator #2
+		voice.m_operators[1].enabled = true;
+		voice.m_operators[1].feedback = 1;
+		voice.m_operators[1].oscillator.Initialize(
+			kSine, 
+			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+			CalcOpIndex(false, key, velocity, patch.operators[1]));
 
 		/*
 			End of Algorithm
@@ -434,7 +474,7 @@ namespace SFM
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			const FM_Patch::Operator &patchOp = s_parameters.patch.operators[iOp];
-			DX_Voice::Operator &voiceOp = voice.m_operators[iOp];
+			Voice::Operator &voiceOp = voice.m_operators[iOp];
 
 			// Feedback amount
 			voiceOp.feedbackAmt = patchOp.feedback;
@@ -467,7 +507,7 @@ namespace SFM
 		}
 
 		// Enabled, up counter		
-		voice.m_state = DX_Voice::kEnabled;
+		voice.m_state = Voice::kEnabled;
 		++s_active;
 
 		// Store index if wanted
@@ -494,7 +534,7 @@ namespace SFM
 		{
 			const unsigned index = request.index;
 			SFM_ASSERT(-1 != index);
-			DX_Voice &voice = s_DXvoices[index];
+			Voice &voice = s_voices[index];
 			
 			// Release voice
 			const float velocity = request.velocity;
@@ -506,14 +546,14 @@ namespace SFM
 		// Update active voices
 		for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 		{
-			DX_Voice &voice = s_DXvoices[iVoice];
+			Voice &voice = s_voices[iVoice];
 
 			if (true == voice.IsActive())
 			{
 				if (true == voice.IsDone())
 				{
 					// Free
-					voice.m_state = DX_Voice::kIdle;
+					voice.m_state = Voice::kIdle;
 					--s_active;
 
 					Log("Voice freed: " + std::to_string(iVoice));
@@ -536,8 +576,8 @@ namespace SFM
 			// Pick first free voice
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				DX_Voice &voice = s_DXvoices[iVoice];
-				if (DX_Voice::kIdle == voice.m_state)
+				Voice &voice = s_voices[iVoice];
+				if (Voice::kIdle == voice.m_state)
 				{
 					InitializeFrontVoice(iVoice);
 					Log("Voice triggered: " + std::to_string(iVoice));
@@ -554,8 +594,8 @@ namespace SFM
 
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				DX_Voice &voice = s_DXvoices[iVoice];
-				if (DX_Voice::kReleasing == voice.m_state)
+				Voice &voice = s_voices[iVoice];
+				if (Voice::kReleasing == voice.m_state)
 				{
 					// Check output level
 					const float output = voice.SummedOutput();
@@ -571,10 +611,10 @@ namespace SFM
 			// Got one to steal?
 			if (-1 != iRelease)
 			{
-				DX_Voice &voice = s_DXvoices[iRelease];
+				Voice &voice = s_voices[iRelease];
 
 				// Force free
-				voice.m_state = DX_Voice::kIdle;
+				voice.m_state = Voice::kIdle;
 				--s_active;
 
 				InitializeFrontVoice(iRelease);
@@ -794,7 +834,7 @@ namespace SFM
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
-				DX_Voice &voice = s_DXvoices[iVoice];
+				Voice &voice = s_voices[iVoice];
 
 				// Apply pitch bend
 				voice.SetPitchBend(s_parameters.pitchBend);
@@ -897,7 +937,7 @@ bool Syntherklaas_Create()
 
 	// Reset runtime state
 	for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
-		s_DXvoices[iVoice].Reset();
+		s_voices[iVoice].Reset();
 
 	// Initialize main filter & it's control filters
 	s_filter.setGain(3.0); // Not used by many filter types

@@ -47,8 +47,7 @@ namespace SFM
 		}
 
 	private:
-		const size_t m_size;
-
+		/* const */ size_t m_size;
 		unsigned m_writeIdx;
 
 		alignas(16) float m_buffer[kMaxDelayLineSize];

@@ -1,14 +1,11 @@
 
 /*
-	Syntherklaas FM - Yamaha DX-style voice.
+	Syntherklaas FM - Voice.
 */
 
 #include "synth-global.h"
-#include "synth-DX-voice.h"
-
-// FIXME: temp.
-#include "Win-MIDI-in-Oxygen49.h"
-#include "synth-pickup-model.h"
+#include "synth-voice.h"
+#include "synth-pickup-distortion.h"
 
 namespace SFM
 {
@@ -21,7 +18,7 @@ namespace SFM
 		return distorted;
 	}
 
-	float DX_Voice::Sample(const Parameters &parameters)
+	float Voice::Sample(const Parameters &parameters)
 	{
 		SFM_ASSERT(kIdle != m_state);
 
@@ -108,25 +105,38 @@ namespace SFM
 			}
 		} 
 
-		if (false == m_pickupMode)
+		switch (m_mode)
 		{
+		case kFM:
 			// Scale voice by number of carriers
 			SFM_ASSERT(0 != numCarriers);
 			mix /= numCarriers;
-		}
-		else
-		{
-			// Check if algorithm adheres to pickup mode constraints
-			// For now that means operator #1 is a wave shaper *only*
-			SFM_ASSERT(1 == numCarriers);
-			SFM_ASSERT(true == m_operators[0].isCarrier);
-			SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+			break;
 
-			// FIXME
-			if (false == WinMidi_GetTest())
+		case kPickup:
 			{
+				// Check if algorithm adheres to mode constraints
+				// For now that means operator #1 is a wave shaper *only*
+				SFM_ASSERT(1 == numCarriers);
+				SFM_ASSERT(true == m_operators[0].isCarrier);
+				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+
 				mix *= fPickup(mix, parameters.pickupDist, parameters.pickupAsym);
 			}
+
+		case kPluck:
+			{
+				// Check if algorithm adheres to mode constraints
+				// For now that means operator #1 is a wave shaper *only*
+				SFM_ASSERT(1 == numCarriers);
+				SFM_ASSERT(true == m_operators[0].isCarrier);
+				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+
+				const float pluck = m_pluck.Sample();
+				mix *= pluck;
+			}
+
+			break;
 		}
 
 		// Store feedback

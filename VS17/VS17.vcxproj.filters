@@ -220,9 +220,6 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-DX-voice.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
@@ -242,6 +239,12 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-pluck.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,9 +462,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX-voice.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
@@ -516,7 +516,13 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pickup-model.h">
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pickup-distortion.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>

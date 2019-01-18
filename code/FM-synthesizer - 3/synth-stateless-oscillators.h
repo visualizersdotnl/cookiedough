@@ -42,7 +42,6 @@ namespace SFM
 
 		/* Noise */
 		kWhiteNoise,
-		kPinkNoise
 	};
 
 	/*
@@ -223,28 +222,5 @@ namespace SFM
 	{
 		return -1.f + mt_randf()*2.f;
 	}
-
-	// Paul Kellet's approximation to pink noise; basically just a filter resulting in a "softer" spectral distribution
-	// Taken from: http://www.firstpr.com.au/dsp/pink-noise/
-	SFM_INLINE float oscPinkNoise(float phase)
-	{
-		const float white = oscWhiteNoise();
-
-		static float b0 = 0.f, b1 = 0.f, b2 = 0.f, b3 = 0.f, b4 = 0.f, b5 = 0.f, b6 = 0.f;
-		static float pink = kGoldenRatio/2.f;
-
-		b0 = 0.99886f*b0 + white*0.0555179f;
-		b1 = 0.99332f*b1 + white*0.0750759f; 
-		b2 = 0.96900f*b2 + white*0.1538520f; 
-		b3 = 0.86650f*b3 + white*0.3104856f; 
-		b4 = 0.55000f*b4 + white*0.5329522f; 
-		b5 = -0.7616f*b5 - white*0.0168980f; 
-
-		pink = b0+b1+b2+b3+b4+b5+b6 + white*0.5362f;
-
-		b6 = white*0.115926f;
-		
-		return Clamp(pink);
-   }
 }
 

@@ -81,10 +81,6 @@ namespace SFM
 			case kWhiteNoise:
 				signal = oscWhiteNoise();
 				break;
-
-			case kPinkNoise:
-				signal = oscPinkNoise(modulated);
-				break;
 		}
 
 		signal *= m_amplitude;

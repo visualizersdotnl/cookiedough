@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM - Yamaha DX-style voice.
+	Syntherklaas FM - Voice (largely inspired by Yamaha DX7).
 
 	Important:
 		- An operator can only be modulated by an operator above it (as in index value)
@@ -12,11 +12,12 @@
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
+#include "synth-pluck.h"
 
 namespace SFM
 {
 	// Initialized manually
-	class DX_Voice
+	class Voice
 	{
 	public:
 		enum State
@@ -24,9 +25,19 @@ namespace SFM
 			kIdle,
 			kEnabled,
 			kReleasing
-		};
+		} m_state;
 
-		State m_state;
+		enum Mode
+		{
+			// Fully flexible pure FM
+			kFM,
+
+			// First operator is treated as the *only* carrier and acts as an accumulator at 0Hz
+			kPickup,
+
+			// FIXME
+			kPluck
+		} m_mode;
 
 		struct Operator
 		{
@@ -73,10 +84,10 @@ namespace SFM
 		// LFO
 		Oscillator m_LFO;
 
-		// Pickup mode (FIXME)
-		bool m_pickupMode;
-	
-		DX_Voice() 
+		// FIXME
+		Pluck m_pluck;
+
+		Voice()
 		{ 
 			Reset();	
 		}
@@ -99,8 +110,8 @@ namespace SFM
 			// Disable
 			m_state = kIdle;
 
-			// FIXME
-			m_pickupMode = false;
+			// Default mode
+			m_mode = kFM;
 		}
 
 		// On voice release (stops operator envelopes)
