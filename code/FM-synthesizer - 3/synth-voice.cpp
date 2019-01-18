@@ -124,18 +124,6 @@ namespace SFM
 				mix *= fPickup(mix, parameters.pickupDist, parameters.pickupAsym);
 			}
 
-		case kPluck:
-			{
-				// Check if algorithm adheres to mode constraints
-				// For now that means operator #1 is a wave shaper *only*
-				SFM_ASSERT(1 == numCarriers);
-				SFM_ASSERT(true == m_operators[0].isCarrier);
-				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
-
-				const float pluck = m_pluck.Sample();
-				mix *= pluck;
-			}
-
 			break;
 		}
 

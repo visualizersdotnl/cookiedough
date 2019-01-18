@@ -2,7 +2,7 @@
 /*
 	Syntherklaas FM -- Karplus-Strong pluck.
 
-	FIXME: unfinished, ditched
+	FIXME: *very* much a prototype
 */
 
 #pragma once
@@ -30,13 +30,10 @@ namespace SFM
 			// FIXME: precalculate larger table and pick random offset
 			LowpassFilter filter;
 			filter.SetCutoff(0.1f);
-//			const float step = 1.f/m_numSamples;
-//			float phase = 0.f; // oscWhiteNoise();
 			for (unsigned iSample = 0; iSample < m_numSamples; ++iSample)
 			{
-				const float sample = filter.Apply(oscWhiteNoise()); // filter.Apply(oscPolyPulse(phase, frequency, 0.1f));
+				const float sample = filter.Apply(oscWhiteNoise());
 				m_buffer[iSample] = sample;
-//				phase += step;
 			}
 		}
 
@@ -44,7 +41,7 @@ namespace SFM
 		{
 			const float sample = m_buffer[m_index];
 			const size_t next = (m_index+1) % m_buffer.size();
-			const float lowpassed = 0.5f*(sample+m_buffer[next])*0.996f;
+			const float lowpassed = 0.5f*(sample+m_buffer[next])*0.996f; // FIXME: variable!
 			m_buffer[m_index] = lowpassed;
 			m_index = next;
 			return sample;
@@ -53,7 +50,7 @@ namespace SFM
 	private:
 		/* const */ size_t m_numSamples;
 
-		std::vector<float> m_buffer;
+		std::vector<float> m_buffer; // FIXME: use delay line
 		size_t m_index;
 	};
 }

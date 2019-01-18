@@ -32,11 +32,9 @@ namespace SFM
 			// Fully flexible pure FM
 			kFM,
 
-			// First operator is treated as the *only* carrier and acts as an accumulator at 0Hz
-			kPickup,
-
-			// FIXME
-			kPluck
+			// First operator is treated as the *only* carrier and acts as an accumulator at 0Hz, and is
+			// then distorted to imitate a magnetic pickup
+			kPickup
 		} m_mode;
 
 		struct Operator
@@ -83,9 +81,6 @@ namespace SFM
 
 		// LFO
 		Oscillator m_LFO;
-
-		// FIXME
-		Pluck m_pluck;
 
 		Voice()
 		{ 

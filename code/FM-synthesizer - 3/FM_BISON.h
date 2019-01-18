@@ -25,27 +25,26 @@
 		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
 		  to end users
 		- Enhance chorus
-		- Revisit string pluck
 		- Take some time to read up on how the main filter works
 
 	Optimizations:
 		- Use tables for all oscillators
 		- Eliminate branches and needless oscillators
 		  + A lot of branches can be eliminated by using mask values, which in turns opens us up
-		    to possible SIMD optimization
+		    to possible SIMD optimization (read up on this, even though you know SIMD inside and out)
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority: 
-		- Finish 'pickup' mode
-		  + Define workable user parameter range
-		  + Good reason to also look at the integration of different algorithms; and call ones with a zero-frequency collection carrier "wave shaper"
+		- Patch save & load
+		- Implement plucking as a wave shaper, identical to how you handle the ADSR envelope
+		  + If this works well think about doing the same for pickup distortion?
+		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		- Working on integrating filter
 		  + Envelope (at least on attack)
-		  + Execute per voice
+		  + Execute per voice?
 		  + I may need to use an envelope to shape it?
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
-		- Patch save & load
 
 	Missing top-level features:
 		- Jitter

@@ -250,11 +250,9 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
-			Test algorithm: Rhodes (pickup mode)
-
-			FIXME: WIP
+			Test algorithm: Electric piano (WIP, to be a special feature)
 		*/
 
 		// First operator (carrier) is pickup wave shaper
@@ -296,38 +294,6 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
 			CalcOpIndex(false, key, velocity, patch.operators[4]));
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 1
-		/*
-			Test algorithm: Plucked
-
-			FIXME: ditched (for now)
-		*/
-
-		voice.m_mode = Voice::kPluck;
-		voice.m_pluck = Pluck(fundamentalFreq);
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			kSine,
-			0.f, // CalcOpFreq(fundamentalFreq, patch.operators[0]),
-			CalcOpIndex(true, key, velocity, patch.operators[0]));
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-			CalcOpIndex(false, key, velocity, patch.operators[1]));
 
 		/*
 			End of Algorithm
