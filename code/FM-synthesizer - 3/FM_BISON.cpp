@@ -14,8 +14,6 @@
 
 #include "FM_BISON.h"
 
-#include "3rdparty/SvfLinearTrapOptimised2.hpp"
-
 #include "synth-midi.h"
 #include "synth-parameters.h"
 #include "synth-ring-buffer.h"
@@ -81,8 +79,7 @@ namespace SFM
 	static Voice s_voices[kMaxVoices];
 	static unsigned s_active = 0;
 
-	// Filter
-	static SvfLinearTrapOptimised2 s_filter;
+	// Parameter filters
 	static LowpassFilter s_cutoffLPF, s_resoLPF;
 	
 	// Chorus-to-stereo effect
@@ -223,7 +220,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -231,6 +228,7 @@ namespace SFM
 		// Operator #1
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].feedback = 0;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			request.form, 
@@ -250,7 +248,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Electric piano (WIP, to be a special feature)
 		*/
@@ -359,7 +357,7 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Volca/DX7 algorithm #5
 		*/
@@ -394,7 +392,7 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Volca/DX7 algorithm #31
 		*/
@@ -471,6 +469,9 @@ namespace SFM
 
 			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}
+
+		// Reset filter
+		voice.m_LPF.resetState();
 
 		// Enabled, up counter		
 		voice.m_state = Voice::kEnabled;
@@ -771,20 +772,15 @@ namespace SFM
 		const float lowestC = 16.35f;
 		const float cutoff = lowestC + s_cutoffLPF.Apply(s_parameters.cutoff)*(kNyquist-lowestC);
 		const float Q = 0.025f + s_resoLPF.Apply(s_parameters.resonance)*kFilterMaxResonance; // [0.025..40.0]
-		s_filter.updateCoefficients(cutoff, Q, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
 	
 		const unsigned numVoices = s_active;
 
 		if (0 == numVoices)
 		{
-			// Render silence (we still have to run *some* effects)
+			// Render silence
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				float mix = 0.f;
-
-				// Apply filter
-				mix = (float) s_filter.tick(mix);
-
+				const float mix = 0.f;
 				if (true == s_parameters.chorus)
 					ChorusToStereo(mix);
 				else
@@ -801,6 +797,9 @@ namespace SFM
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
 				Voice &voice = s_voices[iVoice];
+
+				// Update filter coefficients
+				voice.m_LPF.updateCoefficients(cutoff, Q, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
 
 				// Apply pitch bend
 				voice.SetPitchBend(s_parameters.pitchBend);
@@ -838,9 +837,6 @@ namespace SFM
 
 					mix = mix+sample;
 				}
-
-				// Apply filter
-				mix = (float) s_filter.tick(mix);
 
 				// Stereo output to ring buffer
 				if (true == s_parameters.chorus)
@@ -906,7 +902,6 @@ bool Syntherklaas_Create()
 		s_voices[iVoice].Reset();
 
 	// Initialize main filter & it's control filters
-	s_filter.setGain(3.0); // Not used by many filter types
 	s_cutoffLPF.SetCutoff(kControlCutoff);
 	s_resoLPF.SetCutoff(kControlCutoff);
 

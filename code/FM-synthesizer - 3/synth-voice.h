@@ -9,10 +9,12 @@
 
 #pragma once
 
+#include "3rdparty/SvfLinearTrapOptimised2.hpp"
+
+#include "synth-global.h"
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
-#include "synth-pluck.h"
 
 namespace SFM
 {
@@ -82,6 +84,9 @@ namespace SFM
 		// LFO
 		Oscillator m_LFO;
 
+		// Filter
+		SvfLinearTrapOptimised2 m_LPF;
+
 		Voice()
 		{ 
 			Reset();	
@@ -107,6 +112,9 @@ namespace SFM
 
 			// Default mode
 			m_mode = kFM;
+
+			// Reset filter
+			m_LPF.resetState();
 		}
 
 		// On voice release (stops operator envelopes)

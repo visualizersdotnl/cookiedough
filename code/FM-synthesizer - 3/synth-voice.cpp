@@ -9,12 +9,12 @@
 
 namespace SFM
 {
-	// Distortion (soft)
-	SFM_INLINE float SoftDistort(float sample, float amount)
+	// Ovedrive distortion
+	SFM_INLINE float Overdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*32.f;
-		const float distorted = atanf(sample*amount)/k2PI;
+		amount = 1.f + amount*23.f;
+		const float distorted = atanf(sample*amount)*(2.f/kPI);
 		return distorted;
 	}
 
@@ -31,6 +31,7 @@ namespace SFM
 		float sampled[kNumOperators];
 
 		float mix = 0.f;
+		float linAmp = 0.f;
 		unsigned numCarriers = 0;
 		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
@@ -79,7 +80,7 @@ namespace SFM
 				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
 
 				// Calculate sample
-				float sample = voiceOp.oscillator.Sample(modulation) + feedback;
+				float sample = voiceOp.oscillator.Sample(modulation + feedback);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
@@ -88,8 +89,10 @@ namespace SFM
 				// Apply envelope
 				sample = sample*envelope;
 
-				// Apply distortion
-				sample = SoftDistort(sample, voiceOp.distortion);
+				// Apply distortion without losing amplitude
+				const float distAmt = voiceOp.distortion;
+				const float overdrive = Overdrive(sample, distAmt);
+				sample = lerpf<float>(sample, overdrive, distAmt);
 
 				SampleAssert(sample);
 
@@ -99,18 +102,21 @@ namespace SFM
 				// If carrier: apply tremolo & mix
 				if (true == voiceOp.isCarrier)
 				{
-					mix = mix+sample;
+					linAmp += envelope;
+					mix += sample;
 					++numCarriers;
 				}
 			}
 		} 
 
+		float filterAmt;
 		switch (m_mode)
 		{
 		case kFM:
 			// Scale voice by number of carriers
 			SFM_ASSERT(0 != numCarriers);
 			mix /= numCarriers;
+			filterAmt = 1.f;
 			break;
 
 		case kPickup:
@@ -122,15 +128,24 @@ namespace SFM
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 
 				mix *= fPickup(mix, parameters.pickupDist, parameters.pickupAsym);
+				filterAmt = linAmp;
 			}
 
 			break;
 		}
 
-		// Store feedback
-		// FIXME: this doesn't really do much in this form and *might* be unnecessary
+		// Store feedback (https://www.reddit.com/r/FMsynthesis/comments/85jfrb/dx7_feedback_implementation/)
 	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			m_feedback[iOp] = sampled[iOp]*m_operators[iOp].feedbackAmt;
+		{
+			const float sample = sampled[iOp] * m_operators[iOp].feedbackAmt;
+			const float previous = m_feedback[iOp];
+			const float feedback = 0.25f*(previous+sample); // This limits it all nicely
+			m_feedback[iOp] = feedback;
+		}
+
+		// Apply filter
+		const float filtered = float(m_LPF.tick(mix));
+		mix = lerpf<float>(mix, filtered, filterAmt);
 
 		SampleAssert(mix);
 

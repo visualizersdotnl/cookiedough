@@ -41,6 +41,7 @@ namespace SFM
 			return m_ADSR.process();
 		}
 
+		// Use to get value without sampling
 		float Get() /* const */
 		{
 			return m_ADSR.getOutput();

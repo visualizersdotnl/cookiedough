@@ -34,15 +34,11 @@
 		    to possible SIMD optimization (read up on this, even though you know SIMD inside and out)
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
-	Priority: 
+	Priority:
 		- Patch save & load
 		- Implement plucking as a wave shaper, identical to how you handle the ADSR envelope
 		  + If this works well think about doing the same for pickup distortion?
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
-		- Working on integrating filter
-		  + Envelope (at least on attack)
-		  + Execute per voice?
-		  + I may need to use an envelope to shape it?
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 
