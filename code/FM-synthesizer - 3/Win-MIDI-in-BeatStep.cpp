@@ -76,7 +76,7 @@ namespace SFM
 	static float s_resonance = 1.f;
 
 	// Pickup distortion
-	static float s_pickupAmt = 0.f;
+	static float s_pickupAmt = 1.f; // Set to full at startup!
 
 	/*
 		Mapping for the BeatStep
