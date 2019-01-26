@@ -27,7 +27,10 @@
 		- Enhance chorus
 		  + Current chorus does sound good to me!
 		- Take some time to read up on how the main filter works
-		- Per operator waveform (see FM-X engine)
+		- Per operator waveform (see FM-X engine):
+		  + Skirt
+		  + Variations of sine plus some saw-ish forms
+		  + But am I not covering most of this with my overdrive parameter?
 
 	Optimizations:
 		- Use tables for all oscillators
@@ -36,12 +39,14 @@
 		    to possible SIMD optimization (read up on this, even though you know SIMD inside and out)
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
-	Priority:
+	Priority plus:
 		- Move algorithms to dedicated file
 		- Patch save & load
+		- Try a parameter to flatten or invert the attack curve of the ADSR?
+
+	Priority:
 		- Try completely different instrument
 		  + Brass with algorithm #2 works well!
-		- Try a parameter to flatten or invert the attack curve of the ADSR?
 		- VST!
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend knob implemented, but not really necessary
