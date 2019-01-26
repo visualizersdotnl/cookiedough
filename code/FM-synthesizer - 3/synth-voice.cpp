@@ -5,12 +5,22 @@
 
 #include "synth-global.h"
 #include "synth-voice.h"
-#include "synth-pickup-distortion.h"
 
 namespace SFM
 {
+	// FIXME: these numbers are of no particular significance (yet)
+	const float kDefPickupDist = 0.314f*2.f; // 1.1f;
+	const float kDefPickupAsym = 0.314f; // 0.3f;
+
+	// Pickup distortion
+	SFM_INLINE float fPickup(float signal, float distance, float asymmetry)
+	{
+		SampleAssert(signal);
+		const float z = signal+asymmetry;
+		return 1.f/(distance + z*z*z);
+	}
 	// Ovedrive distortion
-	SFM_INLINE float Overdrive(float sample, float amount)
+	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
 		amount = 1.f + amount*31.f;
@@ -91,7 +101,7 @@ namespace SFM
 
 				// Apply distortion without losing amplitude
 				const float distAmt = voiceOp.distortion;
-				const float overdrive = Overdrive(sample, distAmt);
+				const float overdrive = fOverdrive(sample, distAmt);
 				sample = lerpf<float>(sample, overdrive, distAmt);
 
 				SampleAssert(sample);

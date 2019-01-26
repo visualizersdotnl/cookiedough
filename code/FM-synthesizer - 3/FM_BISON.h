@@ -25,6 +25,7 @@
 		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
 		  to end users
 		- Enhance chorus
+		  + Current chorus does sound good to me!
 		- Take some time to read up on how the main filter works
 		- Per operator waveform (see FM-X engine)
 
@@ -36,12 +37,14 @@
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
-		- Try completely different instrument (brass works well!)
-		- Try a parameter to flatten the attack curve of the ADSR
 		- Move algorithms to dedicated file
 		- Patch save & load
+		- Try completely different instrument
+		  + Brass with algorithm #2 works well!
+		- Try a parameter to flatten or invert the attack curve of the ADSR?
 		- VST!
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
+		  + Blend knob implemented, but not really necessary
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf

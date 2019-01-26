@@ -86,6 +86,9 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
       <UniqueIdentifier>{65839441-5856-403b-b648-81aaa9e933f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!">
+      <UniqueIdentifier>{e9039ae1-9b3b-4a81-973e-a4520bbc9c0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -519,17 +522,14 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pickup-distortion.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

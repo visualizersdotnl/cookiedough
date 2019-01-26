@@ -9,7 +9,6 @@
 
 #include "synth-global.h"
 #include "synth-dry-patch.h"
-#include "synth-pickup-distortion.h"
 
 namespace SFM
 {

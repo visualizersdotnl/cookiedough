@@ -11,7 +11,6 @@
 
 #include "synth-midi.h"
 #include "FM_BISON.h"
-#include "synth-pickup-distortion.h"
 
 #include "Win-MIDI-in-Oxygen49.h"
 

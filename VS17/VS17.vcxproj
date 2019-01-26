@@ -238,7 +238,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-oscillator.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-parameters.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pickup-distortion.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h" />

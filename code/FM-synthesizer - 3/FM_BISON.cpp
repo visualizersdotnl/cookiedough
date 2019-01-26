@@ -248,7 +248,7 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
@@ -357,7 +357,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
 		*/
