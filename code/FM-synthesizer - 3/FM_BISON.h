@@ -27,11 +27,15 @@
 		- Enhance chorus
 		  + Current chorus does sound good to me!
 		- Take some time to read up on how the main filter works
-		- Per operator waveform (see FM-X engine):
-		  + Skirt
-		  + Variations of sine plus some saw-ish forms
-		  + But am I not covering most of this with my overdrive parameter?
 
+	FM-X:
+		- Per operator waveform:
+		  + Pick a few useful varieties
+		  + Skirt and "Res" are basically just a LPF on the waveform, cut down to 8 discrete steps
+		    + Calculate tables for discrete levels between sine and form for all levels so interpolation works?
+		  + But am I not covering most of this with my overdrive parameter?
+		  + Awesome: https://www.youtube.com/watch?v=YWvSglv3iEA
+	
 	Optimizations:
 		- Use tables for all oscillators
 		- Eliminate branches and needless oscillators
@@ -60,7 +64,7 @@
 		- Unison mode?
 		  + I'd suggest perhaps per 4 voices (limiting the polyphony)
 
-	A few good tips for better liveliness and Rhodes:
+	A few good tips for better liveliness and Rhodes: 
 		- https://www.youtube.com/watch?v=72WoueTI354
 		- http://recherche.ircam.fr/anasyn/falaize/applis/rhodes/
 		- http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_79.pdf
