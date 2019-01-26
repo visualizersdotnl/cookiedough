@@ -30,8 +30,13 @@ ADSR::ADSR(void) {
 	setReleaseRate(0.f);
 	setAttackLevel(1.f);
 	setSustainLevel(1.f);
-	setTargetRatioA(0.3f);
-	setTargetRatioDR(0.0001f);
+
+//	setTargetRatioA(0.3f);
+//	setTargetRatioDR(0.0001f);
+
+	// Little steeper!
+	setTargetRatioA(0.6f);
+	setTargetRatioDR(0.0003f);
 }
 
 ADSR::~ADSR(void) {
@@ -61,6 +66,7 @@ float ADSR::calcCoef(float rate, float targetRatio) {
 
 void ADSR::setAttackLevel(float level) {
 	attackLevel = level;
+	attackBase = (attackLevel + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setSustainLevel(float level) {

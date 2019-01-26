@@ -46,7 +46,7 @@ namespace SFM
 			// Feedback amount
 			float feedback;
 
-			// LFO influence
+			// LFO influence (on the DX7 this is global)
 			float ampMod;
 			float pitchMod;
 

@@ -9,6 +9,7 @@
 
 #include "synth-global.h"
 #include "synth-dry-patch.h"
+#include "synth-pickup-distortion.h"
 
 namespace SFM
 {
@@ -39,9 +40,8 @@ namespace SFM
 		float cutoff;
 		float resonance;
 
-		// Pickup parameters
-		float pickupDist;
-		float pickupAsym;
+		// Pickup amount (for certain algorithm(s) only)
+		float pickupAmt;
 
 		void SetDefaults()
 		{
@@ -68,9 +68,8 @@ namespace SFM
 			cutoff = 1.f;
 			resonance = 1.f;
 
-			// Pickup parameters
-			pickupDist = 0.5f;
-			pickupAsym = 1.f;
+			// No pickup distortion
+			pickupAmt = 0.f;
 		}
 	};
 }

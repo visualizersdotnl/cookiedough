@@ -146,7 +146,7 @@ namespace SFM
 			frequency += (detune-7.f)/32.f;
 
 			// Coarse adjustment
-			SFM_ASSERT(coarse < 32);
+			SFM_ASSERT(coarse <= 32);
 			if (0 == coarse)
 				frequency *= 0.5f;
 			else
@@ -220,7 +220,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -250,15 +250,15 @@ namespace SFM
 
 #if 0
 		/*
-			Test algorithm: Electric piano (WIP, to be a special feature)
+			Test algorithm: Electric piano (Wurlitzer style)
 		*/
 
-		// First operator (carrier) is pickup wave shaper
+		// Is this useful at all?
 		voice.m_mode = Voice::kPickup;
+
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].modulators[1] = 3;
-		voice.m_operators[0].modulators[2] = 4;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			kSine,
@@ -279,14 +279,14 @@ namespace SFM
 			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
 			CalcOpIndex(false, key, velocity, patch.operators[2]));
 
-		// C <- 4
+		// C <- 4 <- 5
 		voice.m_operators[3].enabled = true;
+		voice.m_operators[3].modulators[0] = 4;
 		voice.m_operators[3].oscillator.Initialize(
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
 			CalcOpIndex(false, key, velocity, patch.operators[3]));
 
-		// C <- 5
 		voice.m_operators[4].enabled = true;
 		voice.m_operators[4].oscillator.Initialize(
 			kSine, 
@@ -359,7 +359,7 @@ namespace SFM
 
 #if 1
 		/*
-			Test algorithm: Volca/DX7 algorithm #5
+			Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
 		*/
 
 		for (unsigned int iOp = 0; iOp < 3; ++iOp)
@@ -392,7 +392,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #31
 		*/
@@ -461,11 +461,11 @@ namespace SFM
 			envParams.release = patchOp.release;
 			envParams.attackLevel = patchOp.attackLevel;
 			
-			// The multiplier is between 0.1 and 10.0 (nicked from Arturia) and rate scaling can *double*
+			// The multiplier is between 0.1 and 10.0 (nicked from Arturia DX7-V's manual) and rate scaling can *double*
 			// that value at the highest available frequency (note) when fully applied
 			// This is not exactly like a DX7 does it, but I am not interested in emulating all legacy logic!
-			float envScale = patchOp.envRateMul;
-			envScale += envScale * patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
+			const float rateScale = 0.1f + 9.9f*patchOp.envRateMul;
+			const float envScale = rateScale +  rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
 
 			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}
@@ -631,9 +631,8 @@ namespace SFM
 		s_parameters.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
-		// Pickup parameters
-		s_parameters.pickupDist = WinMidi_GetPickupDist();
-		s_parameters.pickupAsym = WinMidi_GetPickupAsym();
+		// Pickup distortion
+		s_parameters.pickupAmt = WinMidi_GetPickupAmt();
 
 		// Set operators
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -665,7 +664,8 @@ namespace SFM
 			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
 
 			// Envelope rate
-			patchOp.envRateMul = WinMidi_GetOpEnvRateMul(iOp);
+			const float envRateMul = WinMidi_GetOpEnvRateMul(iOp);
+			patchOp.envRateMul = envRateMul;
 			patchOp.envRateScale = WinMidi_GetOpEnvRateScale(iOp);
 
 			// Distortion
@@ -677,7 +677,7 @@ namespace SFM
 			if (false == fixed)
 			{
 				// Ratio
-				patchOp.coarse = unsigned(WinMidi_GetOpCoarse(iOp)*31.f);
+				patchOp.coarse = unsigned(WinMidi_GetOpCoarse(iOp)*32.f);
 				patchOp.fine   = WinMidi_GetOpFine(iOp); // 1 octave (I believe the DX7 goes *close* to 1 octave)
 			}
 			else

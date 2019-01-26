@@ -26,6 +26,7 @@
 		  to end users
 		- Enhance chorus
 		- Take some time to read up on how the main filter works
+		- Per operator waveform (see FM-X engine)
 
 	Optimizations:
 		- Use tables for all oscillators
@@ -35,12 +36,15 @@
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Priority:
+		- Try completely different instrument (brass works well!)
+		- Try a parameter to flatten the attack curve of the ADSR
+		- Move algorithms to dedicated file
 		- Patch save & load
-		- Implement plucking as a wave shaper, identical to how you handle the ADSR envelope
-		  + If this works well think about doing the same for pickup distortion?
+		- VST!
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
+		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:
 		- Jitter
@@ -55,9 +59,9 @@
 
 	Golden rules:
 		- Basic FM right first, party tricks second: consider going full VST when basic FM works right
+		- Don't chase the DX7: you'll be spending hours emulating algorithms based on past restrictions (reading doesn't hurt, though)
 
 	Issues:
-		- Feedback depth(s)
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 
 	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.

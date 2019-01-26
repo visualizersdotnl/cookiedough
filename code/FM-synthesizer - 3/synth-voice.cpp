@@ -13,7 +13,7 @@ namespace SFM
 	SFM_INLINE float Overdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*23.f;
+		amount = 1.f + amount*31.f;
 		const float distorted = atanf(sample*amount)*(2.f/kPI);
 		return distorted;
 	}
@@ -127,7 +127,8 @@ namespace SFM
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 
-				mix *= fPickup(mix, parameters.pickupDist, parameters.pickupAsym);
+				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
+				mix = lerpf<float>(mix, mix*pickup, parameters.pickupAmt);
 				filterAmt = linAmp;
 			}
 
@@ -147,7 +148,7 @@ namespace SFM
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
-		SampleAssert(mix);
+//		SampleAssert(mix);
 
 		return mix;
 	}

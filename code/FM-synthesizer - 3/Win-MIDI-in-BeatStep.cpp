@@ -11,6 +11,7 @@
 
 #include "synth-midi.h"
 #include "FM_BISON.h"
+#include "synth-pickup-distortion.h"
 
 #include "Win-MIDI-in-Oxygen49.h"
 
@@ -44,8 +45,8 @@ namespace SFM
 	const unsigned kPotLFOSpeed = 7; // The big knob
 	const unsigned kPotFilterCutoff = 17;
 	const unsigned kPotFilterResonance = 91;
-	const unsigned kPotPickupDist = 77;
-	const unsigned kPotPickAsym = 93;
+	const unsigned kPotPickupAmt = 77;
+//	const unsigned kPotUnused = 93;
 
 	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
 	const unsigned kPotOpEnvRateMul = 72;
@@ -75,9 +76,8 @@ namespace SFM
 	static float s_cutoff = 1.f;
 	static float s_resonance = 1.f;
 
-	// Pickup parameters
-	static float s_pickupDist = 0.5f;
-	static float s_pickupAsym = 1.f;
+	// Pickup distortion
+	static float s_pickupAmt = 0.f;
 
 	/*
 		Mapping for the BeatStep
@@ -135,14 +135,9 @@ namespace SFM
 						if (127 == controlVal) s_chorus ^= 1;
 						break;
 
-					// Pickup parameters
-
-					case kPotPickupDist:
-						s_pickupDist = fControlVal;
-						break;
-
-					case kPotPickAsym:
-						s_pickupAsym = fControlVal;
+					// Pickup distortion
+					case kPotPickupAmt:
+						s_pickupAmt = fControlVal;
 						break;
 
 					// Filter parameters
@@ -157,7 +152,7 @@ namespace SFM
 
 					// Operator envelope rate multiplier
 					case kPotOpEnvRateMul:
-						s_opEnvRateMul[g_currentOp] = 0.100f + (9.9f*fControlVal); // [0.1..10.0]
+						s_opEnvRateMul[g_currentOp] = fControlVal;
 						break;
 
 					// Operator envelope rate scaling
@@ -301,7 +296,6 @@ namespace SFM
 	float WinMidi_GetFilterCutoff()     { return s_cutoff;    }
 	float WinMidi_GetFilterResonance()  { return s_resonance; }
 
-	// Pickup parameters
-	float WinMidi_GetPickupDist() { return s_pickupDist; }
-	float WinMidi_GetPickupAsym() { return s_pickupAsym; }
+	// Pickup distortion
+	float WinMidi_GetPickupAmt() { return s_pickupAmt; }
 }

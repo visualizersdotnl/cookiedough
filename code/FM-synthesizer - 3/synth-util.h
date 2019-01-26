@@ -40,12 +40,6 @@ namespace SFM
 		return value != 0 && !(value & (value - 1));
 	}
 
-	// Soft clamp
-	SFM_INLINE float SoftClamp(float sample)
-	{
-		return fast_tanhf(sample);
-	}
-
 	// Hard clamp
 	SFM_INLINE float Clamp(float sample)
 	{
