@@ -358,7 +358,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
 		*/
@@ -442,7 +442,7 @@ namespace SFM
 				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
 		}
-
+		
 		// Operator #6 has feedback on itself
 		voice.m_operators[5].feedback = 5;
 
@@ -453,7 +453,7 @@ namespace SFM
 
 #if 1
 		/*
-			Test algorithm: feedback festival (idea: create a super saw)
+			Test algorithm: feedback festival (idea: super saw)
 		*/
 
 		for (unsigned int iOp = 0; iOp < 6; ++iOp)
@@ -469,6 +469,11 @@ namespace SFM
 				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
 		}
+		
+		// Odd operators modulate even ones
+		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[2].modulators[0] = 3;
+		voice.m_operators[4].modulators[0] = 5;
 
 		/*
 			End of Algorithm

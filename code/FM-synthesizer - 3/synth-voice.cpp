@@ -37,13 +37,14 @@ namespace SFM
 		const float LFO = m_LFO.Sample(0.f);
 
 		// Process all operators top-down
-		// This is a simple, readable loop which needs to be optimized later on (FIXME)
+		// This is a simple readable loop for R&D purposes, needs to be optimized later on (FIXME)
 
-		float sampled[kNumOperators];
+		float opSample[kNumOperators]; // Fully processed samples
+		float mix = 0.f;               // Carrier mix
+		float linAmp = 0.f;            // Linear amplitude
 
-		float mix = 0.f;
-		float linAmp = 0.f;
 		unsigned numCarriers = 0;
+
 		for (int iOp = kNumOperators-1; iOp >= 0; --iOp)
 		{
 			// Top-down
@@ -66,7 +67,7 @@ namespace SFM
 						SFM_ASSERT(true == m_operators[iModulator].enabled);
 
 						// Get sample
-						modulation += sampled[iModulator];
+						modulation += opSample[iModulator];
 					}
 				}
 
@@ -93,9 +94,6 @@ namespace SFM
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation + feedback);
 
-				// Store sample in feedback loop (leaky integration)
-				m_feedbackBuf[iOp] = (0.998f*0.25f)*(m_feedbackBuf[iOp]+sample);
-
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
 				sample = lerpf<float>(sample, sample*tremolo, parameters.modulation);
@@ -110,8 +108,8 @@ namespace SFM
 
 				SampleAssert(sample);
 
-				// Store final sample for modulation and feedback
-				sampled[index] = sample;
+				// Store final sample for modulation
+				opSample[index] = sample;
 
 				// If carrier: apply tremolo & mix
 				if (true == voiceOp.isCarrier)
@@ -123,14 +121,24 @@ namespace SFM
 			}
 		} 
 
+		// Process feedback (not checking if operator is enabled, costs more)
+		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+		{
+			// Divide sum by 4 and throw away a little bit (signal must slowly fade)
+			m_feedbackBuf[iOp] = (0.998f*0.25f)*(m_feedbackBuf[iOp]+opSample[iOp]); 
+		}
+
 		float filterAmt;
 		switch (m_mode)
 		{
 		case kFM:
-			// Scale voice by number of carriers
+			// Normalize
 			SFM_ASSERT(0 != numCarriers);
 			mix /= numCarriers;
+
+			// Filter amount
 			filterAmt = 1.f;
+
 			break;
 
 		case kPickup:
@@ -139,10 +147,13 @@ namespace SFM
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 //				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
-
+				
+				// Apply (cheap) distortion
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
 				mix = lerpf<float>(mix, mix*pickup, parameters.pickupAmt);
-				filterAmt = linAmp;
+
+				// Filter amount
+				filterAmt = powf(linAmp, 3.f);
 			}
 
 			break;
