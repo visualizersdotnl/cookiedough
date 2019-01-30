@@ -19,22 +19,18 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Look at later (TM):
-		- Key rate scaling
-		  + Primitive implementation: need to define key range to sensibly map linear or non-linear response
-		- Level scaling is subtractive and linear only, though this seems to do the job just fine and is less confusing
-		  to end users
-		- Enhance chorus
-		  + Current chorus does sound good to me!
-		- Take some time to read up on how the main filter works
+	Look at later (when in VST phase):
+		- Better key scaling implementation (configurable range)
+		- Additive level scaling
+		- Enhanced chorus
+		- Filter
 
 	FM-X:
-		- Per operator waveform:
-		  + Pick a few useful varieties
-		  + Skirt and "Res" are basically just a LPF on the waveform, cut down to 8 discrete steps
-		    + Calculate tables for discrete levels between sine and form for all levels so interpolation works?
-		  + But am I not covering most of this with my overdrive parameter?
-		  + Awesome: https://www.youtube.com/watch?v=YWvSglv3iEA
+		- Will need per operator waveforms (look at FM-X)
+		- Need 'Skirt' and 'Res' (basically a resonant lowpass) per operator
+		  This can be cut down to 8 discrete steps and thus be precalculated (on set, at least) in LUTs
+		- I am covering part of this with my overdrive parameter
+		- Information: https://www.youtube.com/watch?v=YWvSglv3iEA
 	
 	Optimizations:
 		- Use tables for all oscillators
@@ -43,17 +39,16 @@
 		    to possible SIMD optimization (read up on this, even though you know SIMD inside and out)
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
-	Priority plus:
+	Plumbing:
+		- Try a parameter to flatten or invert the attack curve of the ADSR?
 		- Move algorithms to dedicated file
 		- Patch save & load
-		- Try a parameter to flatten or invert the attack curve of the ADSR?
 
 	Priority:
-		- Try completely different instrument
-		  + Brass with algorithm #2 works well!
-		- VST!
+		- Try completely different instruments
+		- Migrate to VST!
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
-		  + Blend knob implemented, but not really necessary
+		  + Blend knob implemented, but I feel it's not realy necessary
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf

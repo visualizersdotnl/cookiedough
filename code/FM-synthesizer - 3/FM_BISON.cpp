@@ -248,7 +248,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
@@ -262,7 +262,7 @@ namespace SFM
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			kSine,
-			0.f, // Carrier is a wave shaper
+			fundamentalFreq, // Pure carrier
 			CalcOpIndex(true, key, velocity, patch.operators[0]));
 
 		// C <- 2 <- 3
@@ -357,7 +357,7 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
 		*/
@@ -736,7 +736,6 @@ namespace SFM
 		// Write
 //		s_ringBuf.Write(tapM + (tapL-tapM));
 //		s_ringBuf.Write(tapM + (tapR-tapM));
-
 		s_ringBuf.Write(tapL);
 		s_ringBuf.Write(tapR);
 	}

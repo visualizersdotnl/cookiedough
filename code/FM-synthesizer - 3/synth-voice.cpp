@@ -135,7 +135,7 @@ namespace SFM
 				// For now that means operator #1 is a wave shaper *only*
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
-				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+//				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
 				mix = lerpf<float>(mix, mix*pickup, parameters.pickupAmt);
@@ -158,7 +158,7 @@ namespace SFM
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
-//		SampleAssert(mix);
+		SampleAssert(mix);
 
 		return mix;
 	}
