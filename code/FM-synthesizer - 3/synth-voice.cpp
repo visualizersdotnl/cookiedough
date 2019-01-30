@@ -10,7 +10,7 @@ namespace SFM
 {
 	// FIXME: these numbers are of no particular significance (yet)
 	const float kDefPickupDist = 0.314f*2.f; // 1.1f;
-	const float kDefPickupAsym = 0.314f; // 0.3f;
+	const float kDefPickupAsym = 0.314f;     // 0.3f;
 
 	// Pickup distortion
 	SFM_INLINE float fPickup(float signal, float distance, float asymmetry)
@@ -19,12 +19,13 @@ namespace SFM
 		const float z = signal+asymmetry;
 		return 1.f/(distance + z*z*z);
 	}
+
 	// Ovedrive distortion
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
 		amount = 1.f + amount*31.f;
-		const float distorted = atanf(sample*amount)*(2.f/kPI);
+		const float distorted = atanf(sample*amount)*(2.f/kPI); // FIXME: LUT
 		return distorted;
 	}
 
@@ -79,7 +80,7 @@ namespace SFM
 					SFM_ASSERT(iFeedback < kNumOperators);
 					SFM_ASSERT(true == m_operators[iFeedback].enabled);
 
-					feedback = m_feedback[index];
+					feedback = m_feedbackBuf[iFeedback]*voiceOp.feedbackAmt;
 				}
 
 				// Sample envelope
@@ -91,6 +92,9 @@ namespace SFM
 
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation + feedback);
+
+				// Store sample in feedback loop
+				m_feedbackBuf[iOp] = (0.998f*0.25f)*(m_feedbackBuf[iOp]+sample);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
@@ -132,7 +136,6 @@ namespace SFM
 		case kPickup:
 			{
 				// Check if algorithm adheres to mode constraints
-				// For now that means operator #1 is a wave shaper *only*
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 //				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
@@ -143,15 +146,6 @@ namespace SFM
 			}
 
 			break;
-		}
-
-		// Store feedback (https://www.reddit.com/r/FMsynthesis/comments/85jfrb/dx7_feedback_implementation/)
-	 	for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-		{
-			const float sample = sampled[iOp] * m_operators[iOp].feedbackAmt;
-			const float previous = m_feedback[iOp];
-			const float feedback = 0.25f*(previous+sample); // This limits it all nicely
-			m_feedback[iOp] = feedback;
 		}
 
 		// Apply filter

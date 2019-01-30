@@ -57,8 +57,7 @@ namespace SFM
 	struct VoiceRequest
 	{
 		unsigned *pIndex;
-		Waveform form;
-		unsigned key; // [0..127] MIDI
+		unsigned key; // [0..127] (MIDI)
 		float velocity;
 	};
 
@@ -95,13 +94,15 @@ namespace SFM
 		Voice API.
 	*/
 
-	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity)
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, unsigned key, float velocity)
 	{
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
+		SFM_ASSERT(key <= 127);
+		SFM_ASSERT(velocity >= 0.f && velocity <= 1.f);
+
 		VoiceRequest request;
 		request.pIndex = pIndex;
-		request.form = form;
 		request.key = key;
 		request.velocity = velocity;
 		s_voiceReq.push_back(request);
@@ -231,7 +232,7 @@ namespace SFM
 		voice.m_operators[0].feedback = 0;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
-			request.form, 
+			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
 			CalcOpIndex(true, key, velocity, patch.operators[0]));
 
@@ -308,7 +309,7 @@ namespace SFM
 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
-			request.form, 
+			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
 			CalcOpIndex(true, key, velocity, patch.operators[0]));
 
@@ -325,7 +326,7 @@ namespace SFM
 		voice.m_operators[2].modulators[0] = 3;
 		voice.m_operators[2].isCarrier = true;
 		voice.m_operators[2].oscillator.Initialize(
-			request.form, 
+			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
 			CalcOpIndex(true, key, velocity, patch.operators[2]));
 
@@ -372,7 +373,7 @@ namespace SFM
 			voice.m_operators[carrier].modulators[0] = modulator;
 			voice.m_operators[carrier].isCarrier = true;
 			voice.m_operators[carrier].oscillator.Initialize(
-				request.form, 
+				kSine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
 
@@ -406,7 +407,7 @@ namespace SFM
 			voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
 			voice.m_operators[carrier].isCarrier = true;
 			voice.m_operators[carrier].oscillator.Initialize(
-				request.form, 
+				kSine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
 		}
@@ -418,6 +419,56 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
 			CalcOpIndex(false, key, velocity, patch.operators[5]));
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+#if 0
+		/*
+			Test algorithm: Volca/DX7 algorithm #32
+		*/
+
+		for (unsigned int iOp = 0; iOp < 6; ++iOp)
+		{
+			const unsigned carrier = iOp;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
+		}
+
+		// Operator #6 has feedback on itself
+		voice.m_operators[5].feedback = 5;
+
+		/*
+			End of Algorithm
+		*/
+#endif
+
+#if 1
+		/*
+			Test algorithm: feedback festival (idea: create a super saw)
+		*/
+
+		for (unsigned int iOp = 0; iOp < 6; ++iOp)
+		{
+			const unsigned carrier = iOp;
+
+			// Carrier
+			voice.m_operators[carrier].enabled = true;
+			voice.m_operators[carrier].feedback = carrier;
+			voice.m_operators[carrier].isCarrier = true;
+			voice.m_operators[carrier].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+				CalcOpIndex(true, key, velocity, patch.operators[carrier]));
+		}
 
 		/*
 			End of Algorithm
@@ -465,7 +516,7 @@ namespace SFM
 			// that value at the highest available frequency (note) when fully applied
 			// This is not exactly like a DX7 does it, but I am not interested in emulating all legacy logic!
 			const float rateScale = 0.1f + 9.9f*patchOp.envRateMul;
-			const float envScale = rateScale +  rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
+			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
 
 			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}
@@ -678,7 +729,7 @@ namespace SFM
 			{
 				// Ratio
 				patchOp.coarse = unsigned(WinMidi_GetOpCoarse(iOp)*32.f);
-				patchOp.fine   = WinMidi_GetOpFine(iOp); // 1 octave (I believe the DX7 goes *close* to 1 octave)
+				patchOp.fine   = WinMidi_GetOpFine(iOp); // 1 octave (the DX7 goes *close* to 1 octave, 1.99)
 			}
 			else
 			{

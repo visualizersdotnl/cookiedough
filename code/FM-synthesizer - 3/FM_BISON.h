@@ -20,13 +20,14 @@
 		- Subtractive synthesis on top
 
 	Look at later (when in VST phase):
+		- Feedback is now reversed (sine -> reverse saw)
 		- Better key scaling implementation (configurable range)
 		- Additive level scaling
 		- Enhanced chorus
 		- Filter
 
 	FM-X:
-		- Will need per operator waveforms (look at FM-X)
+		- Will need per operator waveforms (look at FM-X + the TX81Z)
 		- Need 'Skirt' and 'Res' (basically a resonant lowpass) per operator
 		  This can be cut down to 8 discrete steps and thus be precalculated (on set, at least) in LUTs
 		- I am covering part of this with my overdrive parameter
@@ -49,15 +50,14 @@
 		- Migrate to VST!
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend knob implemented, but I feel it's not realy necessary
+		- DADSR? (or: add delay prior to attack)
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:
-		- Jitter
-		  + Partially implemented
-		- Unison mode?
-		  + I'd suggest perhaps per 4 voices (limiting the polyphony)
+		- Jitter is only partially implemented
+		- Unison mode, portamento (monophonic) perhaps
 
 	A few good tips for better liveliness and Rhodes: 
 		- https://www.youtube.com/watch?v=72WoueTI354
@@ -90,6 +90,6 @@ namespace SFM
 		I'm assuming all TriggerVoice() and ReleaseVoice() calls will be made from the same thread, or at least not concurrently.
 	*/
 
-	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, Waveform form, unsigned key, float velocity);
+	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, unsigned key, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouchs */);
 }

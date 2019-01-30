@@ -50,7 +50,8 @@ namespace SFM
 			// Indices: -1 means none; modulators must be higher up
 			unsigned modulators[3], feedback;
 
-			// Feedback amount
+			// Feedback
+			// See: https://www.reddit.com/r/FMsynthesis/comments/85jfrb/dx7_feedback_implementation/
 			float feedbackAmt;
 
 			// LFO influence
@@ -79,7 +80,7 @@ namespace SFM
 		} m_operators[kNumOperators];
 
 		// Feedback buffer
-		float m_feedback[kNumOperators];
+		float m_feedbackBuf[kNumOperators];
 
 		// LFO
 		Oscillator m_LFO;
@@ -98,7 +99,7 @@ namespace SFM
 			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 			{
 				m_operators[iOp].Reset();
-				m_feedback[iOp] = 0.f;
+				m_feedbackBuf[iOp] = 0.f;
 			}
 		}
 

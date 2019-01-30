@@ -317,7 +317,7 @@ namespace SFM
 
 							if (-1 == s_voices[controlIdx])
 							{
-								TriggerVoice(s_voices+controlIdx, Waveform::kSine, controlIdx, fControlVal);
+								TriggerVoice(s_voices+controlIdx, controlIdx, fControlVal);
 								Log("NOTE_ON " + std::to_string(controlIdx) + ", Velocity: " + std::to_string(fControlVal));
 							}
 							else
