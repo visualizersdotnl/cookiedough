@@ -48,6 +48,7 @@
 	Priority:
 		- Try completely different instruments
 		- Migrate to VST!
+		  + Also allows for a better estimate which parameters need range adjustment
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend knob implemented, but I feel it's not realy necessary
 		- DADSR? (or: add delay prior to attack)

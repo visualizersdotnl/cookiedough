@@ -93,7 +93,7 @@ namespace SFM
 				// Calculate sample
 				float sample = voiceOp.oscillator.Sample(modulation + feedback);
 
-				// Store sample in feedback loop
+				// Store sample in feedback loop (leaky integration)
 				m_feedbackBuf[iOp] = (0.998f*0.25f)*(m_feedbackBuf[iOp]+sample);
 
 				// Apply LFO tremolo
