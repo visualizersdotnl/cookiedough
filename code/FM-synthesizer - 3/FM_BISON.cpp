@@ -254,11 +254,13 @@ namespace SFM
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
 
-		// Is this useful at all?
+		// Select extra distortion 
 		voice.m_mode = Voice::kPickup;
 
+		// Which means that only operator #1 can be carrier
 		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
+		voice.m_operators[0].feedback = 0;
+ 		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].modulators[1] = 3;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
@@ -521,7 +523,7 @@ namespace SFM
 			// that value at the highest available frequency (note) when fully applied
 			// This is not exactly like a DX7 does it, but I am not interested in emulating all legacy logic!
 			const float rateScale = 0.1f + 9.9f*patchOp.envRateMul;
-			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: either offer or *get* a workable range!
+			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: offer a range
 
 			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}

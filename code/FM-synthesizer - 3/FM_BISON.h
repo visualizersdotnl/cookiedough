@@ -26,6 +26,9 @@
 		- Enhanced chorus
 		- Filter
 
+	Super/Hyper saw:
+		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
+
 	FM-X:
 		- Will need per operator waveforms (look at FM-X + the TX81Z)
 		- Need 'Skirt' and 'Res' (basically a resonant lowpass) per operator
