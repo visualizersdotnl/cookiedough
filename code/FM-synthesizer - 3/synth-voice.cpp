@@ -125,7 +125,7 @@ namespace SFM
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			// Divide sum by 4 and throw away a little bit (signal must slowly fade)
-			m_feedbackBuf[iOp] = (0.998f*0.25f)*(m_feedbackBuf[iOp]+opSample[iOp]); 
+			m_feedbackBuf[iOp] = (kLeakyFactor*0.25f)*(m_feedbackBuf[iOp]+opSample[iOp]); 
 		}
 
 		float filterAmt;

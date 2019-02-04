@@ -81,6 +81,9 @@ namespace SFM
 
 	// Chorus rate (1.f is proven to be good)
 	const float kChorusRate = 2.f;
+
+	// Leaky integration factor
+	const float kLeakyFactor = 0.995f;
 }
 
 #include "synth-LUT.h"

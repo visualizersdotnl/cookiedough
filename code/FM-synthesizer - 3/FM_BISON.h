@@ -19,42 +19,42 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Look at later (when in VST phase):
-		- Feedback is now reversed (sine -> reverse saw)
-		- Better key scaling implementation (configurable range)
-		- Additive level scaling
-		- Enhanced chorus
-		- Filter
+	Look at later (in VST phase):
+		- Better (default) key scaling implementation (configurable range, on octaves or keys?)
+		- Additive & non-linear level scaling (default is now subtractive/linear)
+		- Enhance chorus
+		- Optimize filter
 
-	Super/Hyper saw:
+	For super/hyper saw:
 		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
 
-	FM-X:
-		- Will need per operator waveforms (look at FM-X + the TX81Z)
-		- Need 'Skirt' and 'Res' (basically a resonant lowpass) per operator
-		  This can be cut down to 8 discrete steps and thus be precalculated (on set, at least) in LUTs
-		- I am covering part of this with my overdrive parameter
-		- Information: https://www.youtube.com/watch?v=YWvSglv3iEA
+	For FM-X support:
+		- More core waveforms (look at FM-X or TX81Z(?) documentation)
+		- 'Skirt' and 'Res' (basically a resonant lowpass) per operator
+		  This can be cut down to 8 discrete steps and thus be precalculated at some point
+		- I am covering part of this b ehaviour with my overdrive parameter
+		- More information: https://www.youtube.com/watch?v=YWvSglv3iEA
 	
 	Optimizations:
-		- Use tables for all oscillators
-		- Eliminate branches and needless oscillators
-		  + A lot of branches can be eliminated by using mask values, which in turns opens us up
-		    to possible SIMD optimization (read up on this, even though you know SIMD inside and out)
+		- Tables for all oscillators
+		- Eliminate branches and needless logic
+		  + A lot of branches can be eliminated through use of mask values, which in turn opens us up
+		    to SIMD optimizations
+		 + Go for 8 operators?
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Plumbing:
-		- Try a parameter to flatten or invert the attack curve of the ADSR?
+		- Make envelope a 'DADSR'
+		- Try a parameter to flatten or invert the attack curve of the ADSR
 		- Move algorithms to dedicated file
 		- Patch save & load
 
 	Priority:
-		- Try completely different instruments
-		- Migrate to VST!
-		  + Also allows for a better estimate which parameters need range adjustment
+		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
+		- Migrate to VST
+		  + Allows to better estimate which paramaters need range adjustment
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
-		  + Blend knob implemented, but I feel it's not realy necessary
-		- DADSR? (or: add delay prior to attack)
+		  + Blend parameter implemented, but I feel it's not realy necessary
 		- Figure out how to interpret aftertouch in ADSR
 		- Figure out proper pitch envelope strategy
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
