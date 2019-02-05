@@ -65,4 +65,13 @@ namespace SFM
 
 	// Operator distortion
 	float WinMidi_GetOpDistortion(unsigned iOp);
+
+	// Pitch envelope
+	float WinMidi_GetPitchEnvAttack();
+	float WinMidi_GetPitchEnvDecay();
+	float WinMidi_GetPitchEnvSustain();
+	float WinMidi_GetPitchEnvRelease();
+	float WinMidi_GetPitchEnvLevel();
+	bool WinMidi_GetPitchEnvPolarity();
+	float WinMidi_GetPitchEnvBias();
 }

@@ -36,6 +36,23 @@ namespace SFM
 		// Sample LFO
 		const float LFO = m_LFO.Sample(0.f);
 
+		// Sample pitch envelope, and...
+		float pitchEnv = m_pitchEnv.Sample();
+		{
+			// - Invert if necessary
+			if (true == m_pitchEnvInvert) 
+				pitchEnv = 1.f-pitchEnv;
+
+			// - Bias it
+			SFM_ASSERT(m_pitchEnv >= 0.f && m_pitchEnv <= 1.f);
+			pitchEnv -= m_pitchEnvBias;
+
+			// - Range 2 octave [-1..+1]
+			pitchEnv = powf(2.f, pitchEnv);
+
+			// All of this: FIXME
+		}
+
 		// Process all operators top-down
 		// This is a simple readable loop for R&D purposes, needs to be optimized later on (FIXME)
 
@@ -92,6 +109,7 @@ namespace SFM
 				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
 
 				// Calculate sample
+				voiceOp.oscillator.PitchBend(pitchEnv);
 				float sample = voiceOp.oscillator.Sample(modulation + feedback);
 
 				// Apply LFO tremolo

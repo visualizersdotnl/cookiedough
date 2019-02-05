@@ -85,6 +85,11 @@ namespace SFM
 		// LFO
 		Oscillator m_LFO;
 
+		// Pitch envelope
+		ADSR m_pitchEnv;
+		bool m_pitchEnvInvert;
+		float m_pitchEnvBias;
+
 		// Filter
 		SvfLinearTrapOptimised2 m_LPF;
 
@@ -113,6 +118,14 @@ namespace SFM
 
 			// Default mode
 			m_mode = kFM;
+
+			// LFO
+			m_LFO = Oscillator();
+
+			// Pitch env.
+			m_pitchEnv.Reset();
+			m_pitchEnvInvert = false;
+			m_pitchEnvBias = 0.f;
 
 			// Reset filter
 			m_LPF.resetState();

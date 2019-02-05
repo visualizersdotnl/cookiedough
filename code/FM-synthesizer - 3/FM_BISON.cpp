@@ -221,7 +221,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 
-#if 0
+#if 1
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -256,16 +256,17 @@ namespace SFM
 
 		// Select extra distortion 
 		voice.m_mode = Voice::kPickup;
-
-		// Which means that only operator #1 can be carrier
+		
+		// Carrier (pure)
 		voice.m_operators[0].enabled = true;
 		voice.m_operators[0].feedback = 0;
  		voice.m_operators[0].modulators[0] = 1;
 		voice.m_operators[0].modulators[1] = 3;
+		voice.m_operators[0].modulators[2] = 5;
 		voice.m_operators[0].isCarrier = true;
 		voice.m_operators[0].oscillator.Initialize(
 			kSine,
-			fundamentalFreq, // Pure carrier
+			0.f,
 			CalcOpIndex(true, key, velocity, patch.operators[0]));
 
 		// C <- 2 <- 3
@@ -295,6 +296,13 @@ namespace SFM
 			kSine, 
 			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
 			CalcOpIndex(false, key, velocity, patch.operators[4]));
+
+		// C <- 6
+		voice.m_operators[5].enabled = true;
+		voice.m_operators[5].oscillator.Initialize(
+			kSine,
+			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+			CalcOpIndex(false, key, velocity, patch.operators[5]));
 
 		/*
 			End of Algorithm
@@ -453,7 +461,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if	0
 		/*
 			Test algorithm: feedback festival (idea: super saw)
 		*/
@@ -531,6 +539,18 @@ namespace SFM
 		// Reset filter
 		voice.m_LPF.resetState();
 
+		// Set pitch envelope
+		voice.m_pitchEnvInvert = patch.pitchEnvInvert;
+		voice.m_pitchEnvBias = patch.pitchEnvBias;
+
+		ADSR::Parameters envParams;
+		envParams.attack  = patch.pitchEnvAttack;
+		envParams.decay   = patch.pitchEnvDecay;
+		envParams.sustain = patch.pitchEnvSustain;
+		envParams.release = patch.pitchEnvRelease;
+		envParams.attackLevel = patch.pitchEnvLevel;
+		voice.m_pitchEnv.Start(envParams, 1.f, 1.f); // No velocity response or scaling
+
 		// Enabled, up counter		
 		voice.m_state = Voice::kEnabled;
 		++s_active;
@@ -541,7 +561,7 @@ namespace SFM
 		
 	}
 
-	SFM_INLINE void InitializeFrontVoice(unsigned iVoice)
+	SFM_INLINE void InitializeFrontmostVoice(unsigned iVoice)
 	{
 		const VoiceRequest &request = s_voiceReq.front();
 		InitializeDXVoice(request, iVoice);
@@ -604,7 +624,7 @@ namespace SFM
 				Voice &voice = s_voices[iVoice];
 				if (Voice::kIdle == voice.m_state)
 				{
-					InitializeFrontVoice(iVoice);
+					InitializeFrontmostVoice(iVoice);
 					Log("Voice triggered: " + std::to_string(iVoice));
 					break;
 				}
@@ -642,7 +662,7 @@ namespace SFM
 				voice.m_state = Voice::kIdle;
 				--s_active;
 
-				InitializeFrontVoice(iRelease);
+				InitializeFrontmostVoice(iRelease);
 
 				Log("Voice triggered (stolen): " + std::to_string(iRelease) + " with output " + std::to_string(lowestOutput));
 			}
@@ -691,6 +711,14 @@ namespace SFM
 
 		// Pickup distortion
 		s_parameters.pickupAmt = WinMidi_GetPickupAmt();
+
+		// Pitch envelope
+		s_parameters.patch.pitchEnvAttack = WinMidi_GetPitchEnvAttack();
+		s_parameters.patch.pitchEnvDecay = WinMidi_GetPitchEnvDecay();
+		s_parameters.patch.pitchEnvSustain = WinMidi_GetPitchEnvSustain();
+		s_parameters.patch.pitchEnvRelease = WinMidi_GetPitchEnvRelease();
+		s_parameters.patch.pitchEnvBias = WinMidi_GetPitchEnvBias();
+		s_parameters.patch.pitchEnvInvert = WinMidi_GetPitchEnvPolarity();
 
 		// Set operators
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
@@ -791,11 +819,14 @@ namespace SFM
 		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
 //		const float tapM = s_delayLine.Read(delayCtr);
 		
+		const float tapM = mix;
+		
 		// Write
-//		s_ringBuf.Write(tapM + (tapL-tapM));
-//		s_ringBuf.Write(tapM + (tapR-tapM));
-		s_ringBuf.Write(tapL);
-		s_ringBuf.Write(tapR);
+		s_ringBuf.Write(tapM + (tapL-tapM));
+		s_ringBuf.Write(tapM + (tapR-tapM));
+
+//		s_ringBuf.Write(tapL);
+//		s_ringBuf.Write(tapR);
 	}
 
 	// Returns loudest signal (linear amplitude)

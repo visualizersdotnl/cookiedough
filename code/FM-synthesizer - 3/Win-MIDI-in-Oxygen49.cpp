@@ -55,10 +55,12 @@ namespace SFM
 	const unsigned kButtonFixedRatio = 104;
 	const unsigned kButtonLevelScaleSetBP = 118;
 	const unsigned kButtonTest = 113;
+	const unsigned kButtonSetPitchEnv = 96;
 
 	static bool s_opFixedRatio[kNumOperators] = { false };
 	static bool s_opLevelScaleSetBP = false;
 	static bool s_test = false;
+	static bool s_pitchEnvSet = false;
 
 	// Fader indices
 	const unsigned kFaderAttack          = 20;
@@ -117,6 +119,15 @@ namespace SFM
 
 	// Modulation
 	static float s_modulation = 0.f;
+
+	// Pitch envelope
+	static float s_pitchEnvA = 0.f;
+	static float s_pitchEnvD = 0.f;
+	static float s_pitchEnvS = 0.f;
+	static float s_pitchEnvR = 0.f;
+	static float s_pitchEnvLevel = 1.f;
+	static bool  s_pitchEnvPolarity = false;
+	static float s_pitchEnvBias = 0.f;
 
 	static unsigned s_voices[127];
 
@@ -194,10 +205,21 @@ namespace SFM
 							if (127 == controlVal) s_test ^= 1;
 							break;
 
+						/* Pitch envelope button */
+
+						case kButtonSetPitchEnv:
+							s_pitchEnvSet = 127 == controlVal;
+							break;
+
 						/* Operator level scaling */
 
 						case kFaderLevelScaleRange:
-							s_opLevelScaleRange[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opLevelScaleRange[g_currentOp] = fControlVal;
+							else
+								// Pitch envelope bias
+								s_pitchEnvBias = fControlVal;
+
 							break;
 
 						case kPotLevelScaleL:
@@ -247,23 +269,38 @@ namespace SFM
 						/* Operator envelope */
 
 						case kFaderAttack:
-							s_opAttack[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opAttack[g_currentOp] = fControlVal;
+							else
+								s_pitchEnvA = fControlVal;
 							break;
 
 						case kFaderDecay:
-							s_opDecay[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opDecay[g_currentOp] = fControlVal;
+							else
+								s_pitchEnvD = fControlVal;
 							break;
 
 						case kFaderSustain:
-							s_opSustain[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opSustain[g_currentOp] = fControlVal;
+							else
+								s_pitchEnvS = fControlVal;
 							break;
 
 						case kFaderRelease:
-							s_opRelease[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opRelease[g_currentOp] = fControlVal;
+							else
+								s_pitchEnvR = fControlVal;
 							break;
 
 						case kFaderAttackLevel:
-							s_opAttackLevel[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opAttackLevel[g_currentOp] = fControlVal;
+							else
+								s_pitchEnvLevel = fControlVal;
 							break;
 
 						/* Operator frequency */
@@ -273,7 +310,12 @@ namespace SFM
 							break;
 
 						case kFaderCoarse:
-							s_opCoarse[g_currentOp] = fControlVal;
+							if (false == s_pitchEnvSet)
+								s_opCoarse[g_currentOp] = fControlVal;
+							else
+								// Pitch envelope polarity
+								s_pitchEnvPolarity = controlVal > 63;
+
 							break;
 
 						case kFaderFine:
@@ -502,4 +544,13 @@ namespace SFM
 	// Operator distortion
 	float WinMidi_GetOpDistortion(unsigned iOp) {
 		return s_opDistortion[iOp]; }
+
+	// Pitch envelope
+	float WinMidi_GetPitchEnvAttack()   { return s_pitchEnvA; }
+	float WinMidi_GetPitchEnvDecay()    { return s_pitchEnvD; }
+	float WinMidi_GetPitchEnvSustain()  { return s_pitchEnvS; }
+	float WinMidi_GetPitchEnvRelease()  { return s_pitchEnvR; }
+	float WinMidi_GetPitchEnvLevel()    { return s_pitchEnvLevel;    }
+	bool WinMidi_GetPitchEnvPolarity()  { return s_pitchEnvPolarity; }
+	float WinMidi_GetPitchEnvBias()     { return s_pitchEnvBias;     }
 }

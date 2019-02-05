@@ -20,6 +20,7 @@
 		- Subtractive synthesis on top
 
 	Look at later (in VST phase):
+		- Filter envelope?
 		- Better (default) key scaling implementation (configurable range, on octaves or keys?)
 		- Additive & non-linear level scaling (default is now subtractive/linear)
 		- Enhance chorus
@@ -50,13 +51,15 @@
 		- Patch save & load
 
 	Priority:
+	    - Pitch envelope: refine
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- Migrate to VST
 		  + Allows to better estimate which paramaters need range adjustment
+		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
+		    in a VST harness
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend parameter implemented, but I feel it's not realy necessary
 		- Figure out how to interpret aftertouch in ADSR
-		- Figure out proper pitch envelope strategy
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:

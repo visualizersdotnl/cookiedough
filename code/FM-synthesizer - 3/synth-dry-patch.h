@@ -60,7 +60,7 @@ namespace SFM
 
 			// Envelope rate multiplier
 			// Range taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
-			float envRateMul; // [0.100-10.0]
+			float envRateMul; // [0.100..10.0]
 
 			// Envelope keyboard rate scaling
 			float envRateScale;
@@ -68,8 +68,25 @@ namespace SFM
 	
 		Operator operators[kNumOperators];
 
+		// Shared pitch envelope
+		bool pitchEnvInvert;   // If true invert samples (1-value).
+		float pitchEnvBias;    // 0.0 = completely positive ([0..1.0]), 1.0 = completely negative ([0..-1.0]).
+		float pitchEnvAttack;
+		float pitchEnvDecay;
+		float pitchEnvSustain;
+		float pitchEnvRelease;
+		float pitchEnvLevel;
+
 		void Reset()
 		{
+			// No pitch envelope
+			pitchEnvInvert = false;
+			pitchEnvBias = 0.f;
+			pitchEnvAttack = 0.f;
+			pitchEnvDecay = 0.f;
+			pitchEnvRelease = 0.f;
+			pitchEnvLevel = 1.f;
+
 			for (auto &patchOp : operators)
 			{	
 				// Note tone (0 == frequency/2)
