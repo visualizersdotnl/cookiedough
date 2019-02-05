@@ -221,7 +221,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 
-#if 1
+#if 0
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -461,7 +461,7 @@ namespace SFM
 		*/
 #endif
 
-#if	0
+#if	1
 		/*
 			Test algorithm: feedback festival (idea: super saw)
 		*/
@@ -717,6 +717,7 @@ namespace SFM
 		s_parameters.patch.pitchEnvDecay = WinMidi_GetPitchEnvDecay();
 		s_parameters.patch.pitchEnvSustain = WinMidi_GetPitchEnvSustain();
 		s_parameters.patch.pitchEnvRelease = WinMidi_GetPitchEnvRelease();
+		s_parameters.patch.pitchEnvLevel = WinMidi_GetPitchEnvLevel();
 		s_parameters.patch.pitchEnvBias = WinMidi_GetPitchEnvBias();
 		s_parameters.patch.pitchEnvInvert = WinMidi_GetPitchEnvPolarity();
 
@@ -888,9 +889,6 @@ namespace SFM
 
 				// Update filter coefficients
 				voice.m_LPF.updateCoefficients(cutoff, Q, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
-
-				// Apply pitch bend
-				voice.SetPitchBend(s_parameters.pitchBend);
 				
 				// Bend LFO to current speed
 				voice.m_LFO.PitchBend(LFOBend);

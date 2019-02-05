@@ -107,9 +107,11 @@ namespace SFM
 
 				// Apply LFO vibrato
 				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
+				
+				// Apply pitch
+				voiceOp.oscillator.PitchBend(parameters.pitchBend*pitchEnv);
 
 				// Calculate sample
-				voiceOp.oscillator.PitchBend(pitchEnv);
 				float sample = voiceOp.oscillator.Sample(modulation + feedback);
 
 				// Apply LFO tremolo

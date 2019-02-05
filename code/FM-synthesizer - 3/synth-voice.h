@@ -142,16 +142,6 @@ namespace SFM
 
 			m_state = kReleasing;
 		}
-		
-		// Apply pitch bend (to carriers)
-		void SetPitchBend(float bend)
-		{
-			for (auto &voiceOp : m_operators)
-			{
-				if (true == voiceOp.enabled)
-					voiceOp.oscillator.PitchBend(bend);
-			}
-		}
 
 		bool IsActive() /* const */
 		{
