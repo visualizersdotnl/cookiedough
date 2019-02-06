@@ -44,7 +44,7 @@ namespace SFM
 				pitchEnv = 1.f-pitchEnv;
 
 			// - Bias it
-			SFM_ASSERT(m_pitchEnv >= 0.f && m_pitchEnv <= 1.f);
+			SFM_ASSERT(m_pitchEnvBias >= 0.f && m_pitchEnvBias <= 1.f);
 			pitchEnv -= m_pitchEnvBias;
 
 			// - Range 2 octave [-1..+1]
@@ -106,13 +106,14 @@ namespace SFM
 				SampleAssert(envelope);
 
 				// Apply LFO vibrato
-				modulation += LFO*parameters.modulation*voiceOp.pitchMod;
+				float vibrato = parameters.pitchBend*pitchEnv;
+				vibrato *= powf(2.f, LFO*parameters.modulation*voiceOp.pitchMod);
 				
-				// Apply pitch
-				voiceOp.oscillator.PitchBend(parameters.pitchBend*pitchEnv);
+				// Adjust oscillator pitch
+				voiceOp.oscillator.PitchBend(vibrato);
 
 				// Calculate sample
-				float sample = voiceOp.oscillator.Sample(modulation + feedback);
+				float sample = voiceOp.oscillator.Sample(modulation+feedback);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);

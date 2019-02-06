@@ -72,6 +72,13 @@ namespace SFM
 			m_pitch = CalculatePitch(m_frequency*bend);
 		}
 
+		// Pitch set
+		void SetPitch(float frequency)
+		{
+			m_pitch = CalculatePitch(frequency);
+			m_frequency = frequency;
+		}
+
 		// Amplitude mod.
 		void SetAmplitude(float amplitude)
 		{

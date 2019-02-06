@@ -51,7 +51,7 @@
 		- Patch save & load
 
 	Priority:
-	    - Pitch envelope: refine (is it applied to all operators on the DX-series or just carrier?)
+	    - Pitch envelope: refine, add time stretch!
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- Migrate to VST
 		  + Allows to better estimate which paramaters need range adjustment
