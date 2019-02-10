@@ -40,7 +40,7 @@
 		- Tables for all oscillators
 		- Eliminate branches and needless logic
 		  + A lot of branches can be eliminated through use of mask values, which in turn opens us up
-		    to SIMD optimizations
+		    to SIMD optimizations (big one, plan it on paper)
 		 + Go for 8 operators?
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
@@ -57,6 +57,7 @@
 		  + Allows to better estimate which paramaters need range adjustment
 		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
 		    in a VST harness
+		  + Consider Yamaha EG-style envelopes
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend parameter implemented, but I feel it's not realy necessary
 		- Figure out how to interpret aftertouch in ADSR
