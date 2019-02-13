@@ -37,6 +37,10 @@ namespace SFM
 		m_ADSR.setAttackLevel(parameters.attackLevel);
 		m_ADSR.setSustainLevel(parameters.sustain);
 
+		// FIXME: try to prove that a more linear envelope helps creating te DX E. PIANO sound
+		m_ADSR.setTargetRatioA(100.f);
+		m_ADSR.setTargetRatioDR(100.f);
+
 		m_ADSR.gate(true);
 	}
 
