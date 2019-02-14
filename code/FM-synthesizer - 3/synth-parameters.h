@@ -39,9 +39,6 @@ namespace SFM
 		float cutoff;
 		float resonance;
 
-		// Pickup amount (for certain algorithm(s) only)
-		float pickupAmt;
-
 		void SetDefaults()
 		{
 			// Reset patch
@@ -66,9 +63,6 @@ namespace SFM
 			// Little to no filtering
 			cutoff = 1.f;
 			resonance = 1.f;
-
-			// No pickup distortion
-			pickupAmt = 0.f;
 		}
 	};
 }

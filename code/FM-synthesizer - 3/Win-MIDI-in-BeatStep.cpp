@@ -44,8 +44,7 @@ namespace SFM
 	const unsigned kPotLFOSpeed = 7; // The big knob
 	const unsigned kPotFilterCutoff = 17;
 	const unsigned kPotFilterResonance = 91;
-	const unsigned kPotPickupAmt = 77;
-//	const unsigned kPotUnused = 93;
+	const unsigned kPotUnused1 = 77;
 
 	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
 	const unsigned kPotOpEnvRateMul = 72;
@@ -74,9 +73,6 @@ namespace SFM
 	// Filter parameters
 	static float s_cutoff = 1.f;
 	static float s_resonance = 1.f;
-
-	// Pickup distortion
-	static float s_pickupAmt = 1.f; // Set to full at startup!
 
 	/*
 		Mapping for the BeatStep
@@ -133,10 +129,9 @@ namespace SFM
 					case kButtonChorus:
 						if (127 == controlVal) s_chorus ^= 1;
 						break;
-
-					// Pickup distortion
-					case kPotPickupAmt:
-						s_pickupAmt = fControlVal;
+					
+					// Unused
+					case kPotUnused1:
 						break;
 
 					// Filter parameters
@@ -294,7 +289,4 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff()     { return s_cutoff;    }
 	float WinMidi_GetFilterResonance()  { return s_resonance; }
-
-	// Pickup distortion
-	float WinMidi_GetPickupAmt() { return s_pickupAmt; }
 }

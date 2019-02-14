@@ -34,7 +34,7 @@ namespace SFM
 			// Fully flexible pure FM
 			kFM,
 
-			// First operator is treated as the *only* carrier and acts as an accumulator at 0Hz, and is
+			// First operator is treated as the *only* carrier and acts as an accumulator at zero Hz, and is
 			// then distorted to imitate a magnetic pickup
 			kPickup
 		} m_mode;

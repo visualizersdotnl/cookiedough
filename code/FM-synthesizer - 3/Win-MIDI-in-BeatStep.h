@@ -35,7 +35,4 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
-
-	// Pickup distortion
-	float WinMidi_GetPickupAmt();
 }

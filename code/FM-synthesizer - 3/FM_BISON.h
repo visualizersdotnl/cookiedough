@@ -19,14 +19,15 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Look at later (in VST phase):
-		- Filter envelope?
+	Look at in VST phase:
+		- Filter envelope
 		- Better (default) key scaling implementation (configurable range, on octaves or keys?)
 		- Additive & non-linear level scaling (default is now subtractive/linear)
-		- Enhance chorus
 		- Optimize filter
+		- Enhance chorus (though it's pretty fine as-is)
+		- Machine learning for patches (this would be so awesome to have)
 
-	For super/hyper saw:
+	For a better super/hyper saw:
 		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
 
 	For FM-X support:
@@ -46,11 +47,11 @@
 
 	Plumbing:
 		- Make envelope a 'DADSR'
-		- Try a parameter to flatten or invert the attack curve of the ADSR
 		- Move algorithms to dedicated file
 		- Patch save & load
 
 	Priority:
+		- Implement parameter to flatten the ADSR
 	    - Pitch envelope: refine, add time stretch!
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- Migrate to VST

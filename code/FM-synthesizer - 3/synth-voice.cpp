@@ -171,7 +171,7 @@ namespace SFM
 				
 				// Apply (cheap) distortion
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
-				mix = lerpf<float>(mix, mix*pickup, parameters.pickupAmt);
+				mix *= pickup;
 
 				// Filter amount
 				filterAmt = powf(linAmp, 3.f);
