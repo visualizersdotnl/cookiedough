@@ -59,7 +59,7 @@ namespace SFM
 			float levelScaleL, levelScaleR;
 
 			// Envelope rate multiplier
-			// Range taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
+			// Range (as in seconds) taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
 			float envRateMul; // [0.100..10.0]
 
 			// Envelope keyboard rate scaling

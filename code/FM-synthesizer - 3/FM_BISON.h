@@ -19,18 +19,19 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Look at in VST phase:
+	Look at in VST phase: 
+		- Different LFO waveforms
 		- Filter envelope
 		- Better (default) key scaling implementation (configurable range, on octaves or keys?)
-		- Additive & non-linear level scaling (default is now subtractive/linear)
-		- Optimize filter
-		- Enhance chorus (though it's pretty fine as-is)
-		- Machine learning for patches (this would be so awesome to have)
+		- (OPTIONAL) Additive & non-linear level scaling (default is now subtractive/linear)
+		- (OPTIONAL) Optimize filter
+		- (OPTIONAL) Enhance chorus (though it's pretty fine as-is)
+		- (OPTIONAL) Machine learning for patches (this would be so awesome to have)
 
-	For a better super/hyper saw:
+	(OPTIONAL) For a better super/hyper saw:
 		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
 
-	For FM-X support:
+	(OPTIONAL) For FM-X support:
 		- More core waveforms (look at FM-X or TX81Z(?) documentation)
 		- 'Skirt' and 'Res' (basically a resonant lowpass) per operator
 		  This can be cut down to 8 discrete steps and thus be precalculated at some point
@@ -42,18 +43,22 @@
 		- Eliminate branches and needless logic
 		  + A lot of branches can be eliminated through use of mask values, which in turn opens us up
 		    to SIMD optimizations (big one, plan it on paper)
-		 + Go for 8 operators?
+		  + (OPTIONAL) Go for 8 operators?
 		- Profile and solve hotspots (lots of floating point function calls, to name one)
 
 	Plumbing:
-		- Make envelope a 'DADSR'
+		- (OPTIONAL) Make envelope a 'DADSR'
 		- Move algorithms to dedicated file
 		- Patch save & load
 
-	Priority:
+	Priority plus:
 		- Implement parameter to flatten the ADSR
-	    - Pitch envelope: refine, add time stretch!
+		- Figure out how to interpret aftertouch in ADSR
+		- Distortion offset parameter only? The asym. one!
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
+
+	Priority:
+	    - Pitch envelope: refine, add time stretch!
 		- Migrate to VST
 		  + Allows to better estimate which paramaters need range adjustment
 		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
@@ -61,7 +66,6 @@
 		  + Consider Yamaha EG-style envelopes
 		- Finish 'pickup' mode (at the very least specify a safe parameter range)
 		  + Blend parameter implemented, but I feel it's not realy necessary
-		- Figure out how to interpret aftertouch in ADSR
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:
@@ -80,7 +84,7 @@
 	Issues:
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 
-	Keep yellow & blue on the Oxygen 49, the subtractive part on the BeatStep.
+	Keep yellow & blue on the Oxygen 49, the subtractive part, mostly, on the BeatStep.
 */
 
 #pragma once
@@ -100,5 +104,5 @@ namespace SFM
 	*/
 
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, unsigned key, float velocity);
-	void ReleaseVoice(unsigned index, float velocity /* Aftertouchs */);
+	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 }

@@ -7,3 +7,7 @@
 
 #include "synth-global.h"
 
+namespace SFM
+{
+	
+}

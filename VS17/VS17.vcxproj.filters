@@ -253,6 +253,9 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-pluck.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">

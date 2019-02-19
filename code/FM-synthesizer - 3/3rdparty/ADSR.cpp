@@ -30,13 +30,8 @@ ADSR::ADSR(void) {
 	setReleaseRate(0.f);
 	setAttackLevel(1.f);
 	setSustainLevel(1.f);
-
-//	setTargetRatioA(0.3f);
-//	setTargetRatioDR(0.0001f);
-
-	// Little steeper!
-	setTargetRatioA(0.6f);
-	setTargetRatioDR(0.0003f);
+	setTargetRatioA(0.3f);
+	setTargetRatioDR(0.0001f);
 }
 
 ADSR::~ADSR(void) {

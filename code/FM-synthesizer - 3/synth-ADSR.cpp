@@ -37,6 +37,12 @@ namespace SFM
 		m_ADSR.setAttackLevel(parameters.attackLevel);
 		m_ADSR.setSustainLevel(parameters.sustain);
 
+		const float linearity = 1.f;
+		const float defRatioA = 0.3f;
+		const float defRatioDR = 0.0001f;
+		const float ratioA = lerpf(defRatioA, defRatioA*1000.f, linearity);
+		const float ratioDR = lerpf(defRatioDR, defRatioDR*1000.f, linearity);
+
 		// FIXME: try to prove that a more linear envelope helps creating te DX E. PIANO sound
 		m_ADSR.setTargetRatioA(100.f);
 		m_ADSR.setTargetRatioDR(100.f);

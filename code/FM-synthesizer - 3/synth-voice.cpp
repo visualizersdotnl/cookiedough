@@ -9,8 +9,8 @@
 namespace SFM
 {
 	// FIXME: these numbers are of no particular significance (yet)
-	const float kDefPickupDist = 0.314f*2.f; // 1.1f;
-	const float kDefPickupAsym = 0.314f;     // 0.3f;
+	const float kDefPickupDist = 1.f;  // 0.314f*2.f; // 1.1f;
+	const float kDefPickupAsym = 0.3f; // 0.314f;     // 0.3f;
 
 	// Pickup distortion
 	SFM_INLINE float fPickup(float signal, float distance, float asymmetry)

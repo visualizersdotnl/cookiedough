@@ -136,6 +136,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\SDL2-audio-out.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-pluck.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp" />
