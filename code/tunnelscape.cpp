@@ -13,6 +13,10 @@
 #include "polar.h"
 #include "boxblur.h"
 #include "voxel-shared.h"
+#include "rocket.h"
+
+// Sync.
+SyncTrack trackStarsDirX, trackStarsDirY;
 
 static uint8_t *s_pHeightMap = NULL;
 static uint32_t *s_pColorMap = NULL;
@@ -97,16 +101,19 @@ static void tscape(uint32_t *pDest, float time)
 	float mapX = 0.f; 
 	const float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
 
+	const float syncDirX = Rocket::getf(trackStarsDirX);
+	const float syncDirY = Rocket::getf(trackStarsDirY);
+
+	const float fromY = 512.f + syncDirY*time*214.f;
+
+	const int dX = ftofp24(0.5f);
+	const int dY = ftofp24(1.f);
+
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
-		const float fromX = mapX + time*66.f;
-		const float fromY = 512.f + time*214.f;
+		const float fromX = mapX  + syncDirX*time*66.f;
 
-		float dX, dY;
-		dX = 0.5f;
-		dY = 1.f; // FIXME: parametrize
-
-		tscape_ray(pDest, ftofp24(fromX), ftofp24(fromY), ftofp24(dX), ftofp24(dY));
+		tscape_ray(pDest, ftofp24(fromX), ftofp24(fromY), dX, dY);
 		pDest += kTargetResX;
 
 		mapX += mapStepX;
@@ -133,6 +140,9 @@ bool Tunnelscape_Create()
 	// unpack fog gradient pixels
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
+
+	trackStarsDirX = Rocket::AddTrack("starsTunnelDirX");
+	trackStarsDirY = Rocket::AddTrack("starsTunnelDirY");
 
 	return true;
 }

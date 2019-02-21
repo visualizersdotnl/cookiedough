@@ -21,6 +21,7 @@
 #include "shadertoy.h"
 
 SyncTrack trackEffectTest;
+SyncTrack trackFadeToBlack, trackFadeToWhite;
 
 bool Demo_Create()
 {
@@ -36,6 +37,8 @@ bool Demo_Create()
 	fxInit &= Shadertoy_Create();
 
 	trackEffectTest = Rocket::AddTrack("effectTest");
+	trackFadeToBlack = Rocket::AddTrack("fadeToBlack");
+	trackFadeToWhite = Rocket::AddTrack("fadeToWhite");
 
 	return fxInit;
 }
@@ -59,8 +62,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 	Rocket::Boost();
 
+	// FIXME: not always necessary
 	memset32(pDest, 0, kOutputSize);
 
+	// render effect
 	int effect = Rocket::geti(trackEffectTest);
 	switch (effect)
 	{
@@ -111,6 +116,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		default:
 			FxBlitter_DrawTestPattern(pDest);
 	}
+
+	// post processing
+	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
+	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
+
+	if (fadeToWhite > 0.f)
+		Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
+
+	if (fadeToBlack > 0.f)
+		Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
 
 	return;
 }

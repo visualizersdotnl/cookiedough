@@ -11,7 +11,7 @@
 const int kRowsPerOrder = 64;
 
 // MP3/OGG
-const float kRowRate = (128.f /* BPM */ /60.f)*16.f /* RPB */;
+const float kRowRate = (128.f /* BPM */ /60.f)*24.f /* RPB */;
 
 static HMUSIC s_hMusic = NULL;
 
@@ -142,7 +142,7 @@ void Audio_Rocket_SetRow(void *, int row)
 //	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
 
 	VIZ_ASSERT(s_hMusic != NULL);
-	const float secPos = row*kRowRate;
+	const float secPos = row/kRowRate;
 	const QWORD newChanPos = BASS_ChannelSeconds2Bytes(s_hMusic, secPos);
 	BASS_ChannelSetPosition(s_hMusic, newChanPos, BASS_POS_BYTE);
 }

@@ -102,8 +102,10 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 colMulA(0.1f, 0.15f, 0.3f);
-	const Vector3 colMulB(0.05f, 0.05f, 0.1f);
+	const Vector3 colMulA(0.1f, 0.3f, 0.6f);
+	const Vector3 colMulB(0.05f, 0.1f, 0.2f);
+
+	const float t = time*0.77f;
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -118,7 +120,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 //				auto& UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
 				auto& UV = Shadertoy::ToUV_FxMap(iX+iColor+10, iY+20, 2.f);
 
-				const int cosIndex = tocosindex(time*0.314f*0.5f);
+				const int cosIndex = tocosindex(t*0.314f*0.5f);
 				const float dirCos = lutcosf(cosIndex);
 				const float dirSin = lutsinf(cosIndex);
 
@@ -130,7 +132,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				Vector3 origin = direction;
 				for (int step = 0; step < 34; ++step)
 				{
-					float march = fPlasma(origin, time);
+					float march = fPlasma(origin, t);
 					if (fabsf(march) < 0.001f)
 						break;
 
@@ -139,7 +141,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					origin.z += direction.z*march;
 				}
 				
-				Vector3 color = colMulA*fPlasma(origin+direction, time) + colMulB*fPlasma(origin*0.5f, time); 
+				Vector3 color = colMulA*fPlasma(origin+direction, t) + colMulB*fPlasma(origin*0.5f, t); 
 				color *= 8.f - origin.x*0.5f;
 
 				colors[iColor] = color;

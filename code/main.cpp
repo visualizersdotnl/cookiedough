@@ -13,7 +13,7 @@
 	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
 */
 
-// codename: cookiedough (2009-2018)
+// codename: cookiedough (2009-2019)
 // property of visualizers.nl (http://www.visualizers.nl)
 
 // 32-bit build DISCONTINUED (as of August 2018), because:
@@ -60,8 +60,8 @@
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
-// const bool kTestBedForFM = false;
-const bool kTestBedForFM = true;
+const bool kTestBedForFM = false;
+// const bool kTestBedForFM = true;
 
 // Undef. for < 60FPS warning
 #define FPS_WARNING
@@ -95,7 +95,8 @@ const bool kFullScreen = false;
 
 // const char *kModule = "assets/moby_-_eliminator-tribute.mod";
 // const char *kModule = "assets/theduel.mod";
-const char *kModule = "assets/knulla-kuk.mod";
+// const char *kModule = "assets/knulla-kuk.mod";
+const char *kOGG = "assets/keito_-_hoochie_cooch.ogg";
 
 // when you're working on anything else than synchronization
 const bool kSilent = false;
@@ -227,7 +228,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		{
 			if (Demo_Create())
 			{
-				if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
+				if (Audio_Create(-1, kOGG, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
+//				if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 				{
 					Display display;
 					if (display.Open(kTitle, kResX, kResY, kFullScreen))
