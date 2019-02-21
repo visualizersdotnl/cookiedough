@@ -26,9 +26,9 @@ namespace SFM
 		const float releaseScale = baseScale * (1.f+velocity);
 		
 		// Attack & release have a minimum to prevent clicking
-		const float attack  = ceilf(attackScale*parameters.attack*kSampleRate);
-		const float decay   = ceilf(decayScale*parameters.decay*kSampleRate);
-		const float release = std::max<float>(kSampleRate*0.001f /* 1ms min. */, ceilf(releaseScale*parameters.release*kSampleRate));
+		const float attack  = std::max<float>(kSampleRate*0.001f /* 1ms min. */, floorf(attackScale*parameters.attack*kSampleRate));
+		const float decay   = floorf(decayScale*parameters.decay*kSampleRate);
+		const float release = std::max<float>(kSampleRate*0.001f /* 1ms min. */, floorf(releaseScale*parameters.release*kSampleRate));
 
 		m_ADSR.setAttackRate(attack);
 		m_ADSR.setDecayRate(decay);
@@ -37,15 +37,14 @@ namespace SFM
 		m_ADSR.setAttackLevel(parameters.attackLevel);
 		m_ADSR.setSustainLevel(parameters.sustain);
 
-		const float linearity = 1.f;
+		const float linearity = 1.f; // FIXME: parameter
 		const float defRatioA = 0.3f;
 		const float defRatioDR = 0.0001f;
-		const float ratioA = lerpf(defRatioA, defRatioA*1000.f, linearity);
-		const float ratioDR = lerpf(defRatioDR, defRatioDR*1000.f, linearity);
+		const float ratioA = lerpf(defRatioA, 100.f, linearity);
+		const float ratioDR = lerpf(defRatioDR, 100.f, linearity);
 
-		// FIXME: try to prove that a more linear envelope helps creating te DX E. PIANO sound
-		m_ADSR.setTargetRatioA(100.f);
-		m_ADSR.setTargetRatioDR(100.f);
+		m_ADSR.setTargetRatioA(ratioA);
+		m_ADSR.setTargetRatioDR(ratioDR);
 
 		m_ADSR.gate(true);
 	}

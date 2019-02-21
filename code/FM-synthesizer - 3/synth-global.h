@@ -66,9 +66,6 @@ namespace SFM
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;
 
-	// Max. LFO jitter (in unit phase); tied to 'liveliness'
-	const float kMaxLFOJitter = kGoldenRatio*0.01f;
-
 	// Max. voice amplitude (linear)
 	const float kMaxVoiceAmp = 1.f;
 
@@ -84,6 +81,16 @@ namespace SFM
 
 	// Leaky integration factor
 	const float kLeakyFactor = 0.995f;
+
+	// Default main filter settings
+	const float kDefFilterCutoff = 1.f;
+	const float kDefFilterResonance = 1.f;
+
+	// Envelope rate multiplier range
+	// Range (as in seconds) taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
+	// FIXME: temporarily scaled down to accomodate 7-bit MIDI rotary
+	const float kEnvMulMin = 0.5f;  // 0.1f;
+	const float kEnvMulRange = 4.f; // 10.f-kEnvMulMin;
 }
 
 #include "synth-LUT.h"

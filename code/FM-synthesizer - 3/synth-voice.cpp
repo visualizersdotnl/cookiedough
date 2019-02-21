@@ -173,7 +173,7 @@ namespace SFM
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
 				mix *= pickup;
 
-				// Filter amount
+				// Filter amount (this looks a little weird and alters the behaviour of the LPF controls, but actually gives nice results)
 				filterAmt = powf(linAmp, 3.f);
 			}
 

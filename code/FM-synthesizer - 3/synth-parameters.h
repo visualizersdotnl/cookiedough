@@ -61,8 +61,8 @@ namespace SFM
 			chorus = false;
 
 			// Little to no filtering
-			cutoff = 1.f;
-			resonance = 1.f;
+			cutoff = kDefFilterCutoff;
+			resonance = kDefFilterResonance;
 		}
 	};
 }

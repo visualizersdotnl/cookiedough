@@ -10,8 +10,10 @@
 //        must be a power of 2
 const int kRowsPerOrder = 64;
 
+// MP3/OGG
+const float kRowRate = (128.f /* BPM */ /60.f)*16.f /* RPB */;
+
 static HMUSIC s_hMusic = NULL;
-static HSTREAM s_hStream = NULL;
 
 static BASS_INFO s_bassInf;
 
@@ -47,6 +49,7 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 
 	BASS_GetInfo(&s_bassInf);
 
+	/*
 	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, kMusicFlagsMisc, 0);
 	if (NULL == s_hMusic)
 	{
@@ -69,6 +72,31 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 
 	// maximum precision
 	BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_MUSIC_PSCALER, 256); 
+	*/
+
+	const DWORD streamFlags = BASS_SAMPLE_FX | BASS_MP3_SETPOS | BASS_STREAM_PRESCAN | ( (0 == iDevice) ? BASS_STREAM_DECODE : 0 );
+	s_hMusic = BASS_StreamCreateFile(FALSE, musicPath.c_str(), 0, 0, streamFlags /* BASS_UNICODE */);
+	if (s_hMusic == NULL)
+	{
+		switch (BASS_ErrorGetCode())
+		{
+		case BASS_ERROR_INIT:
+		case BASS_ERROR_NOTAVAIL:
+		case BASS_ERROR_ILLPARAM:
+		case BASS_ERROR_NO3D:
+		case BASS_ERROR_FILEFORM:
+		case BASS_ERROR_CODEC:
+		case BASS_ERROR_FORMAT:
+		case BASS_ERROR_SPEAKER:
+		case BASS_ERROR_MEM:
+			VIZ_ASSERT(0);
+
+		case BASS_ERROR_FILEOPEN:
+		case BASS_ERROR_UNKNOWN:			
+			SetLastError("Can not load MP3/OGG: " + musicPath);
+			return false;
+		}
+	}
 
 	if (silent)
 		BASS_ChannelSetAttribute(s_hMusic, BASS_ATTRIB_VOL, 0.f);
@@ -85,12 +113,12 @@ void Audio_Update() {}
 
 void Audio_Start_Stream(unsigned bufLenMS)
 {
-	BASS_ChannelPlay(s_hStream, TRUE);
+	BASS_ChannelPlay(s_hMusic, TRUE);
 }
 
 bool Audio_Check_Stream()
 {
-	const DWORD result = BASS_ChannelIsActive(s_hStream);
+	const DWORD result = BASS_ChannelIsActive(s_hMusic);
 	if (BASS_ACTIVE_STALLED == result)
 	{
 		VIZ_ASSERT(false);
@@ -110,8 +138,13 @@ void Audio_Rocket_Pause(void *, int mustPause)
 
 void Audio_Rocket_SetRow(void *, int row)
 {
-	const int order = row/kRowsPerOrder;
-	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
+//	const int order = row/kRowsPerOrder;
+//	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
+
+	VIZ_ASSERT(s_hMusic != NULL);
+	const float secPos = row*kRowRate;
+	const QWORD newChanPos = BASS_ChannelSeconds2Bytes(s_hMusic, secPos);
+	BASS_ChannelSetPosition(s_hMusic, newChanPos, BASS_POS_BYTE);
 }
 
 int Audio_Rocket_IsPlaying(void *)
@@ -121,14 +154,19 @@ int Audio_Rocket_IsPlaying(void *)
 
 double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
 {
-	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
-	const DWORD order = LOWORD(fullPos);
-	const DWORD row = HIWORD(fullPos)>>8;
-	const DWORD rowPart = HIWORD(fullPos)&255;
+//	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
+//	const DWORD order = LOWORD(fullPos);
+//	const DWORD row = HIWORD(fullPos)>>8;
+//	const DWORD rowPart = HIWORD(fullPos)&255;
 
-	modOrder = order;
-	modRow = row;
-	modRowAlpha = rowPart/256.f;
+//	modOrder = order;
+//	modRow = row;
+//	modRowAlpha = rowPart/256.f;
 
-	return modRowAlpha+(order*kRowsPerOrder + row);
+//	return modRowAlpha+(order*kRowsPerOrder + row);
+
+	VIZ_ASSERT(s_hMusic != NULL);
+	const QWORD chanPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_BYTE);
+	const double secPos = BASS_ChannelBytes2Seconds(s_hMusic, chanPos);
+	return (float) secPos*kRowRate;
 }

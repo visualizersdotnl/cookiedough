@@ -11,7 +11,7 @@ namespace SFM
 {
 	float Oscillator::Sample(float modulation, float duty /* = 0.5f */)
 	{	
-		if (m_phase >= m_syncPeriod)
+		if (m_phase > m_syncPeriod)
 		{
 			m_phase -= m_syncPeriod;
 			++m_cycles;

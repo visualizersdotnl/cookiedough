@@ -13,6 +13,7 @@
 namespace SFM
 {
 	// Max. amount of fine tuning for fixed ratio operators (source: Volca FM)
+	// FIXME: move to global header?
 	const float kFixedFineScale = 9.772f;
 
 	struct FM_Patch
@@ -59,8 +60,7 @@ namespace SFM
 			float levelScaleL, levelScaleR;
 
 			// Envelope rate multiplier
-			// Range (as in seconds) taken from Arturia DX7-V (http://downloads.arturia.com/products/dx7-v/manual/dx7-v_Manual_1_0_EN.pdf)
-			float envRateMul; // [0.100..10.0]
+			float envRateMul; // [kEnvMulMin..kEnvMulMin+kEnvMulRange] (synth-global.h)
 
 			// Envelope keyboard rate scaling
 			float envRateScale;
