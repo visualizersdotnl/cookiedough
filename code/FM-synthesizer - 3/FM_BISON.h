@@ -52,6 +52,7 @@
 		- Patch save & load
 
 	Priority plus:
+		- Top-end distortion for piano (HPF, S&H, blend)
 		- Implement parameter to flatten the ADSR
 		- Figure out how to interpret aftertouch in ADSR
 		- Distortion offset parameter only? The asym. one!
