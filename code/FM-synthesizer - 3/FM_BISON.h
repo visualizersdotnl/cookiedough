@@ -39,7 +39,7 @@
 		- More information: https://www.youtube.com/watch?v=YWvSglv3iEA
 	
 	Optimizations:
-		- Tables for all oscillators
+		- Tables for all oscillators, also look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
 		- Eliminate branches and needless logic
 		  + A lot of branches can be eliminated through use of mask values, which in turn opens us up
 		    to SIMD optimizations (big one, plan it on paper)
@@ -52,10 +52,9 @@
 		- Patch save & load
 
 	Priority plus:
-		- Top-end distortion for piano (HPF, S&H, blend)
+		- (PRIO) Top-end distortion for piano (grit)
 		- Implement parameter to flatten the ADSR
 		- Figure out how to interpret aftertouch in ADSR
-		- Distortion offset parameter only? The asym. one!
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 
 	Priority:
@@ -65,8 +64,7 @@
 		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
 		    in a VST harness
 		  + Consider Yamaha EG-style envelopes
-		- Finish 'pickup' mode (at the very least specify a safe parameter range)
-		  + Blend parameter implemented, but I feel it's not realy necessary
+		- Finish 'pickup' mode
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:

@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- One pole filters, useful for basic oscillator or signal filtering.
+	Syntherklaas FM -- One pole filters, useful for very crude filtering (inputs, oscillator et cetera).
 */
 
 #pragma once
@@ -79,7 +79,7 @@ namespace SFM
 	SFM_INLINE float Apply(float input)
 	{
 		m_feedback = input*m_gain + m_feedback*m_cutoff;
-		m_feedback *= 0.995f;
+		m_feedback *= kLeakyFactor;
 		return m_feedback;
 	}
 

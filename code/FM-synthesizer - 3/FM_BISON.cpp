@@ -216,15 +216,19 @@ namespace SFM
 
 		Voice &voice = s_voices[iVoice];
 		voice.Reset();
-		
+
 		const unsigned key = request.key;
 		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];  
 		const float velocity = powf(request.velocity, 3.f); // Raise velocity (source: Jan Marguc)
-
+		
 		const float liveliness = s_parameters.liveliness;
 		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
 		if (0 != noteJitter)
 			fundamentalFreq *= powf(2.f, (noteJitter*0.01f)/12.f);
+
+		// Reset grit (FIXME: move)
+		voice.m_velocity = request.velocity; // Use linear velocity here!
+		voice.m_grit.Reset(fundamentalFreq);
 		
 		FM_Patch &patch = s_parameters.patch;
 	

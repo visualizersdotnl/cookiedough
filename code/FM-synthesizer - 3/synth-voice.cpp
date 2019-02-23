@@ -20,7 +20,7 @@ namespace SFM
 		return 1.f/(distance + z*z*z);
 	}
 
-	// Ovedrive distortion
+	// Ovedrive distortion (sigmoid)
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
@@ -167,11 +167,12 @@ namespace SFM
 				// Check if algorithm adheres to mode constraints
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
-//				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 				
-				// Apply (cheap) distortion
+				// Apply distortion
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
 				mix *= pickup;
+				mix = m_grit.Apply(mix, m_velocity);
 
 				// Filter amount (this looks a little weird and alters the behaviour of the LPF controls, but actually gives nice results)
 				filterAmt = powf(linAmp, 3.f);

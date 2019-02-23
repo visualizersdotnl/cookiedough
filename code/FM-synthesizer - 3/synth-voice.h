@@ -15,6 +15,7 @@
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
+#include "synth-grit.h"
 
 namespace SFM
 {
@@ -22,6 +23,9 @@ namespace SFM
 	class Voice
 	{
 	public:
+		// Initial velocity
+		float m_velocity;
+
 		enum State
 		{
 			kIdle,
@@ -90,14 +94,13 @@ namespace SFM
 		bool m_pitchEnvInvert;
 		float m_pitchEnvBias;
 
-		// Filter
+		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
 
-		Voice()
-		{ 
-			Reset();	
-		}
+		// Grit processor (for pickup mode)
+		Grit m_grit;
 
+	private:
 		void ResetOperators()
 		{
 			// NULL operators
@@ -108,7 +111,8 @@ namespace SFM
 			}
 		}
 
-		// Full reset (almost never necessary)
+	public:
+		// Full reset
 		void Reset()
 		{
 			ResetOperators();

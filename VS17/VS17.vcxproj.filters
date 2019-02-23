@@ -256,6 +256,9 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-grit.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -532,6 +535,9 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-grit.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
     </ClInclude>
   </ItemGroup>
