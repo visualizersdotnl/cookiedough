@@ -158,11 +158,13 @@ namespace SFM
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 				
+				// FIXME: do sequentially!
+
 				// Apply cheap distortion
 				const float pickup = fPickup(mix);
 				mix *= pickup;
 
-				// Apply grit (FIXME: gritWet)
+				// Apply grit
 				const float grit = m_grit.Sample(mix, parameters.gritDrive);
 				mix = mix + grit*parameters.gritWet;
 
@@ -176,7 +178,7 @@ namespace SFM
 			break;
 		}
 
-		// Apply filter
+		// Apply filter (FIXME: do sequentially)
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
