@@ -19,40 +19,42 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Look at in VST phase: 
+	In VST phase:
 		- Different LFO waveforms
-		- Filter envelope
-		- Better (default) key scaling implementation (configurable range, on octaves or keys?)
-		- (OPTIONAL) Additive & non-linear level scaling (default is now subtractive/linear)
-		- (OPTIONAL) Optimize filter
-		- (OPTIONAL) Enhance chorus (though it's pretty fine as-is)
-		- (OPTIONAL) Machine learning for patches (this would be so awesome to have)
+		- Envelope on main filter
+		- Make envelope a 'DADSR' to add an initial delay
+		- Better key scaling implementation (configurable range)
+		- Add additive & non-linear level scaling (default is now subtractive & linear)
+		- Optimize fillter
+		- Enhance chorus
+		- Machine learning for patches?
 
-	(OPTIONAL) For a better super/hyper saw:
+	(OPTIONAL) Concerning a super and/or hyper saw:
 		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
 
 	(OPTIONAL) For FM-X support:
-		- More core waveforms (look at FM-X or TX81Z(?) documentation)
-		- 'Skirt' and 'Res' (basically a resonant lowpass) per operator
-		  This can be cut down to 8 discrete steps and thus be precalculated at some point
-		- I am covering part of this b ehaviour with my overdrive parameter
-		- More information: https://www.youtube.com/watch?v=YWvSglv3iEA
+		- Add it's other core waveforms
+		- Implement 'Skirt' and 'Res' (basically a resonant lowpass); these can be cut to 8 discrete steps!
+		- Demo: https://www.youtube.com/watch?v=YWvSglv3iEA
 	
-	Optimizations:
-		- Tables for all oscillators, also look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
-		- Eliminate branches and needless logic
-		  + A lot of branches can be eliminated through use of mask values, which in turn opens us up
-		    to SIMD optimizations (big one, plan it on paper)
-		  + (OPTIONAL) Go for 8 operators?
-		- Profile and solve hotspots (lots of floating point function calls, to name one)
+	Optimization:
+		- All oscillators become tables, oscillator & LFO logic may be split
+		- Eliminate experince floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
+		- Elimnate branches & needless logic
+		  + A lot can be eliminated through the use of masks
+		  + SIMD + 8 operators?
+		- Use the damn profiler!
 
 	Plumbing:
-		- (OPTIONAL) Make envelope a 'DADSR'
 		- Move algorithms to dedicated file
 		- Patch save & load
 
 	Priority plus:
-		- (PRIO) Top-end distortion for piano (grit)
+		- Create interface on FM_BISON that is being called by the MIDI driver(s) instead of the other way around
+		- Immediately after: implement instrument serializer; for now it can just store and load to/from a single file!
+		- The SVF filter goes out of bounds? I suppose this because I cast to float in the end!
+		- Finish top-end distortion (idea: use velocity or some close derivative to drive a pre-filter)
+		- My delay line is clunky; I could use smaller ones at the cost of some precision (look at WaveSabre)
 		- Implement parameter to flatten the ADSR
 		- Figure out how to interpret aftertouch in ADSR
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
@@ -82,8 +84,6 @@
 
 	Issues:
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
-
-	Keep yellow & blue on the Oxygen 49, the subtractive part, mostly, on the BeatStep.
 */
 
 #pragma once

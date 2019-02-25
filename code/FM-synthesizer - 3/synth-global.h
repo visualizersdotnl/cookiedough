@@ -91,6 +91,9 @@ namespace SFM
 	// FIXME: temporarily scaled down to accomodate 7-bit MIDI rotary
 	const float kEnvMulMin = 0.5f;  // 0.1f;
 	const float kEnvMulRange = 4.f; // 10.f-kEnvMulMin;
+
+	// Global grit effect drive max.
+	const float kMaxGritDrive = 3.f;
 }
 
 #include "synth-LUT.h"

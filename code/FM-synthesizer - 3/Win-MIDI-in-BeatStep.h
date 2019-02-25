@@ -35,4 +35,8 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
+
+	// Grit parameter(s)
+	float WinMidi_GetGritDrive();
+	float WinMidi_GetGritWet();
 }

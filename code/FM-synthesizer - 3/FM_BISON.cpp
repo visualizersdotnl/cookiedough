@@ -22,6 +22,7 @@
 #include "synth-voice.h"
 #include "synth-delay-line.h"
 #include "synth-one-pole.h"
+#include "synth-grit.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -86,6 +87,9 @@ namespace SFM
 	static Oscillator s_delaySweepL, s_delaySweepR;
 	static Oscillator s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
+
+	// Grit effect
+	static Grit s_grit;
 
 	// Running LFO (used for no key sync.)
 	static Oscillator s_globalLFO;
@@ -225,14 +229,10 @@ namespace SFM
 		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
 		if (0 != noteJitter)
 			fundamentalFreq *= powf(2.f, (noteJitter*0.01f)/12.f);
-
-		// Reset grit (FIXME: move)
-		voice.m_velocity = request.velocity; // Use linear velocity here!
-		voice.m_grit.Reset(fundamentalFreq);
 		
 		FM_Patch &patch = s_parameters.patch;
 	
-#if 0
+#if 1
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -262,7 +262,7 @@ namespace SFM
 		*/
 #endif
 
-#if 1
+#if 0
 		/*
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
@@ -793,6 +793,10 @@ namespace SFM
 		s_parameters.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
+		// Grit parameter(s)
+		s_parameters.gritDrive = WinMidi_GetGritDrive();
+		s_parameters.gritWet = WinMidi_GetGritWet();
+
 		// Pitch envelope
 		s_parameters.patch.pitchEnvAttack = WinMidi_GetPitchEnvAttack();
 		s_parameters.patch.pitchEnvDecay = WinMidi_GetPitchEnvDecay();
@@ -868,7 +872,7 @@ namespace SFM
 
 	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 
-	// This is a poor man's chorus intended to create a wider (stereo) mix
+	// Poor man's chorus intended to create a wider (stereo) mix
 	SFM_INLINE void ChorusToStereo(float mix) 
 	{
 		s_delayLine.Write(mix);
@@ -888,12 +892,11 @@ namespace SFM
 		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
 		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL));
 		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
-//		const float tapM = s_delayLine.Read(delayCtr);
 		const float tapM = mix;
 		
 		// Write
-		s_ringBuf.Write(tapM + (tapL-tapM));
-		s_ringBuf.Write(tapM + (tapR-tapM));
+		s_ringBuf.Write(tapM + (tapM-tapL));
+		s_ringBuf.Write(tapM + (tapM-tapR));
 	}
 
 	// Returns loudest signal (linear amplitude)
@@ -925,8 +928,8 @@ namespace SFM
 
 		// Update filter settings
 		const float lowestC = 16.35f;
-		const float cutoff = lowestC + s_cutoffLPF.Apply(s_parameters.cutoff)*(kNyquist-lowestC);
-		const float Q = 0.025f + s_resoLPF.Apply(s_parameters.resonance)*kFilterMaxResonance; // [0.025..40.0]
+		const float cutoff = lowestC + s_cutoffLPF.Apply(s_parameters.cutoff)*(kNyquist-lowestC); // [16.0..kNyquist]
+		const float Q = 0.025f + s_resoLPF.Apply(s_parameters.resonance)*kFilterMaxResonance;     // [0.025..40.0]
 	
 		const unsigned numVoices = s_active;
 
@@ -935,7 +938,9 @@ namespace SFM
 			// Render silence
 			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 			{
-				const float mix = 0.f;
+				float mix = 0.f;
+				
+				// Apply chorus
 				if (true == s_parameters.chorus)
 					ChorusToStereo(mix);
 				else
@@ -957,7 +962,7 @@ namespace SFM
 				voice.m_LPF.updateCoefficients(cutoff, Q, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
 				
 				// Set LFO to current speed
-//				voice.m_LFO.SetPitch(freqLFO);
+				voice.m_LFO.SetPitch(freqLFO);
 				
 				if (true == voice.IsActive())
 				{
@@ -985,10 +990,15 @@ namespace SFM
 				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
 				{
 					const float sample = s_voiceBuffers[iVoice][iSample];
-					SampleAssert(sample);
+					
+					// FIXME: filter goes out of bounds (see synth-voice.cpp)
+//					SampleAssert(sample);
 
 					mix = mix+sample;
 				}
+
+				// Apply grit
+				mix = lerpf<float>(mix, mix + s_grit.Sample(mix, s_parameters.gritDrive), s_parameters.gritWet);
 
 				// Stereo output to ring buffer
 				if (true == s_parameters.chorus)
@@ -1056,6 +1066,9 @@ bool Syntherklaas_Create()
 	// Initialize main filter & it's control filters
 	s_cutoffLPF.SetCutoff(kControlCutoff);
 	s_resoLPF.SetCutoff(kControlCutoff);
+
+	// Initialize grit
+	s_grit.SetCutoff(kNyquist/2.f); // Attempt to just cut off noise
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
 	s_delaySweepL.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.f);

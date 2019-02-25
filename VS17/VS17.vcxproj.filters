@@ -41,27 +41,6 @@
     <Filter Include="/code\util-lib">
       <UniqueIdentifier>{0bffe2b1-c187-4cbe-b90b-9c653656c0a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29">
-      <UniqueIdentifier>{7e5e832d-0cbe-46b0-bab5-39a62e9f2809}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty">
-      <UniqueIdentifier>{f909dae9-3c59-4761-a2e0-6167f260240e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\/tinymt">
-      <UniqueIdentifier>{c5b54271-9a44-45a4-b47a-63b982b70a71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core">
-      <UniqueIdentifier>{b8ae1d7e-dc15-44a4-b718-e8e144c867aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver">
-      <UniqueIdentifier>{4527025b-d7a6-4e4f-9059-24bb24df6050}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29">
-      <UniqueIdentifier>{ad326aa5-d0fc-4de0-a89f-6e31e7b7dae5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/theory">
-      <UniqueIdentifier>{619ead02-3ba6-47f3-a73a-1a8d4e32ee37}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29">
       <UniqueIdentifier>{b41def22-827e-41f0-9790-54affb83efb4}</UniqueIdentifier>
     </Filter>
@@ -86,7 +65,7 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
       <UniqueIdentifier>{65839441-5856-403b-b648-81aaa9e933f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing">
       <UniqueIdentifier>{e9039ae1-9b3b-4a81-973e-a4520bbc9c0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -169,51 +148,6 @@
     <ClCompile Include="..\code\fx-blitter.cpp">
       <Filter>/code\filters &amp; blitters</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\FM_BISON.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-ADSR.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-DX-voice.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-log.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-LUT.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-midi.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-oscillator.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-random.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\SDL2-audio-out.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-filter.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-vowel-filter.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.cpp">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\SDL2-audio-out.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
     </ClCompile>
@@ -254,10 +188,10 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-grit.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -387,81 +321,6 @@
     <ClInclude Include="..\code\random.h">
       <Filter>/code\util-lib</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\FM_BISON.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-ADSR.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-DX-voice.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-error.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-global.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-log.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-LUT.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-math.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-midi.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-oscillator.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-parameters.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-random.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-ringbuffer.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-stateless-oscillators.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-util.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\SDL2-audio-out.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-Oxygen49.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-patch.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\3rdparty\ADSR.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/3rdparty\earlevel.com ADSR %28modified%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-filter.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-delay-line.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\Win-MIDI-in-BeatStep.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\driver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-vowel-filter.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-FM-algorithms.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 2\synth-Hexter-tables.h">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\SDL2-audio-out.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
     </ClInclude>
@@ -535,10 +394,10 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-grit.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -567,9 +426,6 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
-    <None Include="..\code\FM-synthesizer - 2\theory\FM_Synthesis_of_Real_Instruments.pdf">
-      <Filter>/code\/FM-synthesizer-2 %28FM. BISON, 2nd iteration%29\/theory</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\to do.txt" />

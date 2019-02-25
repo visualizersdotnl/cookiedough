@@ -10,30 +10,33 @@
 
 #include "synth-global.h"
 #include "3rdparty/SvfLinearTrapOptimised2.hpp"
-// #include "synth-oscillator.h"
 
 namespace SFM
 {
 	class Grit
 	{
 	public:
-		void Reset(float frequency)
+		Grit() { Reset(); }
+
+		void Reset()
 		{
 			m_filter.resetState();
-			SetCutoff(std::max<float>(16.f, frequency*0.1f));
+			SetCutoff(kNyquist/2.f); // Attempt to just cut off n oise
+
+			m_phase = 0.f;
+			m_hold = 0.f;
 		}
 	
-	private:
-		void SetCutoff(float cutoff)
-		{
-			m_filter.updateCoefficients(cutoff, 1.5f, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
-		}
+		void SetCutoff(float cutoff);
 
 	public:
-		float Apply(float sample, float factor);
+		float Sample(float sample, float drive);
 
 	private:
 		 SvfLinearTrapOptimised2 m_filter;
+
+		 float m_phase;
+		 float m_hold;
 	};
 
 	

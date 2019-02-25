@@ -168,14 +168,16 @@ namespace SFM
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+
+				// Shape amplitude a bit
+				const float powAmp = powf(linAmp, 3.f);
 				
-				// Apply distortion
+				// Apply cheap distortion
 				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
 				mix *= pickup;
-				mix = m_grit.Apply(mix, m_velocity);
 
-				// Filter amount (this looks a little weird and alters the behaviour of the LPF controls, but actually gives nice results)
-				filterAmt = powf(linAmp, 3.f);
+				// Use shaped amplitude (alters the filter's controls, might be hairy from a user POV)
+				filterAmt = powAmp;
 			}
 
 			break;
@@ -185,7 +187,7 @@ namespace SFM
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
-		SampleAssert(mix);
+//		SampleAssert(mix);
 
 		return mix;
 	}
