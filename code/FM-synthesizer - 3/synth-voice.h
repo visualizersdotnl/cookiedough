@@ -94,8 +94,8 @@ namespace SFM
 		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
 
-		// Wurlitzer filter(s)
-		float m_linVel; // Linear note velocity
+		// For Wurlitzer mode
+		float m_expVel;
 		WurlyGrit m_grit;
 
 	private:
@@ -131,6 +131,8 @@ namespace SFM
 
 			// Reset filter
 			m_LPF.resetState();
+
+			// Skipped: Wurlitzer stuff
 		}
 
 		// On voice release (stops operator envelopes)

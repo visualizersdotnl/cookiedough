@@ -44,7 +44,7 @@ namespace SFM
 	const unsigned kPotLFOSpeed = 7; // The big knob
 	const unsigned kPotFilterCutoff = 17;
 	const unsigned kPotFilterResonance = 91;
-	const unsigned kPotGritDrive = 79;
+	const unsigned kPotGritHorz = 79;
 	const unsigned kPotGritWet = 93;
 
 	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
@@ -76,7 +76,7 @@ namespace SFM
 	static float s_resonance = 1.f;
 
 	// Grit parameter(s)
-	static float s_gritDrive = 0.f;
+	static float s_gritHorz = 0.f;
 	static float s_gritWet = 0.f;
 
 	/*
@@ -137,8 +137,8 @@ namespace SFM
 					
 					// Grit
 
-					case kPotGritDrive:
-						s_gritDrive = fControlVal;
+					case kPotGritHorz:
+						s_gritHorz = fControlVal;
 						break;
 
 					case kPotGritWet:
@@ -302,6 +302,7 @@ namespace SFM
 	float WinMidi_GetFilterResonance()  { return s_resonance; }
 
 	// Grit parameter(s)
-	float WinMidi_GetGritDrive() { return s_gritDrive; }
-	float WinMidi_GetGritWet()   { return s_gritWet;   }
+	float WinMidi_GetGritHorz()  { return s_gritHorz; }
+	float WinMidi_GetGritVert()  { return s_gritHorz; }
+	float WinMidi_GetGritWet()   { return s_gritWet;  }
 }

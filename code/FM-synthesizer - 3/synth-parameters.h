@@ -40,8 +40,9 @@ namespace SFM
 		float resonance;
 
 		// Grit parameter(s)
-		float gritDrive;
 		float gritWet;
+		float gritHorz;
+		float gritVert;
 
 		void SetDefaults()
 		{
@@ -69,8 +70,9 @@ namespace SFM
 			resonance = kDefFilterResonance;
 
 			// No grit
-			gritDrive = 0.f;
 			gritWet = 0.f;
+			gritHorz = 0.f;
+			gritVert = 0.f;
 		}
 	};
 }

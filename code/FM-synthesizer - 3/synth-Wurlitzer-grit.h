@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM: distortion for Wurlitzer mode.
+
+	IDEA: use Karplus-Strong pluck to steer grit influence!
 */
 
 #pragma once
@@ -25,21 +27,37 @@ namespace SFM
 	class WurlyGrit
 	{
 	public:
-		WurlyGrit() { Reset(); }
+		WurlyGrit() { Reset(0.5f, 0.5f, kNyquist); }
 
-		void Reset(float cutoff = 1.f)
+		void Reset(float horizontal, float vertical, float cutoffHz)
 		{
 			m_filter.resetState();
-			SetCutoff(cutoff);
+			SetCutoff(cutoffHz);
+
+			// FIXME
+			horizontal = 0.1f + 0.8f*horizontal;
+			vertical   = 0.1f + 0.8f*vertical;
+
+			m_step = 1.f / powf(2.f, (1.f-vertical)*15.f + 1.f);
+			m_frequency = powf(1.f-horizontal, 2.f);
+
+			m_phase = 0.f;
+			m_hold = 0.f;
 		}
 	
-		void SetCutoff(float cutoff);
+		void SetCutoff(float cutoffHz);
 
 	public:
-		float Sample(float sample, float drive);
+		float Sample(float sample);
 
 	private:
 		 SvfLinearTrapOptimised2 m_filter;
+		
+		float m_step;
+		float m_frequency;
+
+		float m_phase;
+		float m_hold;
 	};
 
 	

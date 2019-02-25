@@ -8,35 +8,26 @@
 
 namespace SFM
 {
-	void WurlyGrit::SetCutoff(float cutoff)
+	void WurlyGrit::SetCutoff(float cutoffHz)
 	{
-		SFM_ASSERT(cutoff >= 0.f && cutoff <= 1.f);
-		const float lowC = 16.3f;
-		const float cutoffHz = lowC + (kNyquist-lowC)*cutoff;
+//		SFM_ASSERT(cutoff >= 0.f && cutoff <= 1.f);
+//		const float lowC = 16.3f;
+//		const float cutoffHz = lowC + (kNyquist-lowC)*cutoff;
+		SFM_ASSERT(cutoffHz >= 16.f && cutoffHz <= kNyquist);
 
-		// FIXME: analyze best filter
-		m_filter.updateCoefficients(cutoff, 4.f /* FIXME: random */, SvfLinearTrapOptimised2::HIGH_SHELF_FILTER, kSampleRate);
+		// FIXME: pick best filter
+		m_filter.updateCoefficients(cutoffHz, 33.f /* FIXME: random? */, SvfLinearTrapOptimised2::HIGH_SHELF_FILTER, kSampleRate);
 	}
 
-	SFM_INLINE float BitCrush(float sample, unsigned mask)
+	float WurlyGrit::Sample(float sample)
 	{
-		int integer = int(sample*65536.f);
-		integer &= ~mask;
-		return float(integer)/65536.f;
-	}
+		m_phase += m_frequency;
+		if (m_phase >= 1.f)
+		{
+			m_phase -= 1.f;
+			m_hold = floorf(sample/m_step + .5f)*m_step;
+		}
 
-	float WurlyGrit::Sample(float sample, float drive)
-	{
-		SFM_ASSERT(drive >= 0.f && drive <= 1.f);
-
-		const float driven = sample;
-
-		// FIXME: replace for S&H
-		const float crushedHi = BitCrush(driven, 4096-1);
-		const float crushedLo = BitCrush(driven, 8192-1);
-		const float crushed = lerpf<float>(crushedHi, crushedLo, drive);
-
-		const float filtered = (float) m_filter.tick(crushed);
-		return filtered;
+		return (float) m_filter.tick(m_hold);
 	}
 }

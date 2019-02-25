@@ -267,8 +267,8 @@ namespace SFM
 		voice.m_mode = Voice::kWurlitzer;
 
 		// Reset Wurlitzer grit filter
-		voice.m_linVel = request.velocity;
-		voice.m_grit.Reset(velocity /* Use as grit filter cutoff (FIXME) */);
+		voice.m_expVel = velocity;
+		voice.m_grit.Reset(s_parameters.gritHorz, s_parameters.gritVert, fundamentalFreq*0.5f);
 		
 		// Carrier (pure)
 		voice.m_operators[0].enabled = true;
@@ -794,7 +794,8 @@ namespace SFM
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
 		// Grit parameter(s)
-		s_parameters.gritDrive = WinMidi_GetGritDrive();
+		s_parameters.gritHorz = WinMidi_GetGritHorz();
+		s_parameters.gritVert = WinMidi_GetGritVert();
 		s_parameters.gritWet = WinMidi_GetGritWet();
 
 		// Pitch envelope

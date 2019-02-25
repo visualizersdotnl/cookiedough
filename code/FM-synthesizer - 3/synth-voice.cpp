@@ -158,15 +158,13 @@ namespace SFM
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
 				
-				// FIXME: do sequentially!
-
 				// Apply cheap distortion
 				const float pickup = fPickup(mix);
 				mix *= pickup;
 
-				// Apply grit
-				const float grit = m_grit.Sample(mix, parameters.gritDrive);
-				mix = mix + grit*parameters.gritWet;
+				// Apply grit (FIXME)
+				const float grit = m_grit.Sample(mix);
+				mix = lerpf<float>(mix, grit, parameters.gritWet*m_expVel);
 
 				// Shape amplitude a bit
 				const float powAmp = powf(linAmp, 3.f);
