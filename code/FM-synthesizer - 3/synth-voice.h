@@ -15,6 +15,7 @@
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
+#include "synth-Wurlitzer-grit.h"
 
 namespace SFM
 {
@@ -36,7 +37,7 @@ namespace SFM
 
 			// First operator is treated as the *only* carrier and acts as an accumulator at zero Hz, and is
 			// then distorted to imitate a magnetic pickup
-			kPickup
+			kWurlitzer
 		} m_mode;
 
 		struct Operator
@@ -92,6 +93,10 @@ namespace SFM
 
 		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
+
+		// Wurlitzer filter(s)
+		float m_linVel; // Linear note velocity
+		WurlyGrit m_grit;
 
 	private:
 		void ResetOperators()

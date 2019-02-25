@@ -22,7 +22,6 @@
 #include "synth-voice.h"
 #include "synth-delay-line.h"
 #include "synth-one-pole.h"
-#include "synth-grit.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -87,9 +86,6 @@ namespace SFM
 	static Oscillator s_delaySweepL, s_delaySweepR;
 	static Oscillator s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
-
-	// Grit effect
-	static Grit s_grit;
 
 	// Running LFO (used for no key sync.)
 	static Oscillator s_globalLFO;
@@ -214,7 +210,7 @@ namespace SFM
 		return random*0.25f*liveliness; // 90 deg. max.
 	}
 
-	static void InitializeDXVoice(const VoiceRequest &request, unsigned iVoice)
+	static void InitializeVoice(const VoiceRequest &request, unsigned iVoice)
 	{
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
@@ -232,7 +228,7 @@ namespace SFM
 		
 		FM_Patch &patch = s_parameters.patch;
 	
-#if 1
+#if 0
 		/*
 			Test algorithm: single carrier & modulator
 		*/
@@ -262,13 +258,17 @@ namespace SFM
 		*/
 #endif
 
-#if 0
+#if 1
 		/*
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
 
-		// Select extra distortion 
-		voice.m_mode = Voice::kPickup;
+		// Select Wurlitzer mode
+		voice.m_mode = Voice::kWurlitzer;
+
+		// Reset Wurlitzer grit filter
+		voice.m_linVel = request.velocity;
+		voice.m_grit.Reset(velocity /* Use as grit filter cutoff (FIXME) */);
 		
 		// Carrier (pure)
 		voice.m_operators[0].enabled = true;
@@ -648,7 +648,7 @@ namespace SFM
 	SFM_INLINE void InitializeFrontmostVoice(unsigned iVoice)
 	{
 		const VoiceRequest &request = s_voiceReq.front();
-		InitializeDXVoice(request, iVoice);
+		InitializeVoice(request, iVoice);
 
 		s_voiceReq.pop_front();
 	}
@@ -997,9 +997,6 @@ namespace SFM
 					mix = mix+sample;
 				}
 
-				// Apply grit
-				mix = lerpf<float>(mix, mix + s_grit.Sample(mix, s_parameters.gritDrive), s_parameters.gritWet);
-
 				// Stereo output to ring buffer
 				if (true == s_parameters.chorus)
 					ChorusToStereo(mix);
@@ -1066,9 +1063,6 @@ bool Syntherklaas_Create()
 	// Initialize main filter & it's control filters
 	s_cutoffLPF.SetCutoff(kControlCutoff);
 	s_resoLPF.SetCutoff(kControlCutoff);
-
-	// Initialize grit
-	s_grit.SetCutoff(kNyquist/2.f); // Attempt to just cut off noise
 
 	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
 	s_delaySweepL.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.f);

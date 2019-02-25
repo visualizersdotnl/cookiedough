@@ -20,6 +20,7 @@
 		- Subtractive synthesis on top
 
 	In VST phase:
+	    - Pitch envelope: refine, add time stretch!
 		- Different LFO waveforms
 		- Envelope on main filter
 		- Make envelope a 'DADSR' to add an initial delay
@@ -41,6 +42,7 @@
 		- All oscillators become tables, oscillator & LFO logic may be split
 		- Eliminate experince floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
 		- Elimnate branches & needless logic
+		  + Filters can be processed sequentially *after* basic voice logic
 		  + A lot can be eliminated through the use of masks
 		  + SIMD + 8 operators?
 		- Use the damn profiler!
@@ -50,23 +52,23 @@
 		- Patch save & load
 
 	Priority plus:
+		- Finish Wurlitzer grit 
+		  + Filter
+		  + S&H
 		- Create interface on FM_BISON that is being called by the MIDI driver(s) instead of the other way around
+		  + Beware of domains here (dB, time et cetera)
 		- Immediately after: implement instrument serializer; for now it can just store and load to/from a single file!
 		- The SVF filter goes out of bounds? I suppose this because I cast to float in the end!
-		- Finish top-end distortion (idea: use velocity or some close derivative to drive a pre-filter)
 		- My delay line is clunky; I could use smaller ones at the cost of some precision (look at WaveSabre)
 		- Implement parameter to flatten the ADSR
 		- Figure out how to interpret aftertouch in ADSR
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 
 	Priority:
-	    - Pitch envelope: refine, add time stretch!
 		- Migrate to VST
 		  + Allows to better estimate which paramaters need range adjustment
 		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
 		    in a VST harness
-		  + Consider Yamaha EG-style envelopes
-		- Finish 'pickup' mode
 		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
 
 	Missing top-level features:

@@ -8,19 +8,7 @@
 
 namespace SFM
 {
-	// FIXME: these numbers are of no particular significance (yet)
-	const float kDefPickupDist = 1.f;  // 0.314f*2.f; // 1.1f;
-	const float kDefPickupAsym = 0.3f; // 0.314f;     // 0.3f;
-
-	// Pickup distortion
-	SFM_INLINE float fPickup(float signal, float distance, float asymmetry)
-	{
-		SampleAssert(signal);
-		const float z = signal+asymmetry;
-		return 1.f/(distance + z*z*z);
-	}
-
-	// Ovedrive distortion (sigmoid)
+	// Operator ovedrive distortion (sigmoid)
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
@@ -156,25 +144,30 @@ namespace SFM
 			// Normalize
 			SFM_ASSERT(0 != numCarriers);
 			mix /= numCarriers;
+			linAmp /= numCarriers;
 
 			// Filter amount
 			filterAmt = 1.f;
 
 			break;
 
-		case kPickup:
+		case kWurlitzer:
 			{
 				// Check if algorithm adheres to mode constraints
 				SFM_ASSERT(1 == numCarriers);
 				SFM_ASSERT(true == m_operators[0].isCarrier);
 				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
+				
+				// Apply cheap distortion
+				const float pickup = fPickup(mix);
+				mix *= pickup;
+
+				// Apply grit (FIXME: gritWet)
+				const float grit = m_grit.Sample(mix, parameters.gritDrive);
+				mix = mix + grit*parameters.gritWet;
 
 				// Shape amplitude a bit
 				const float powAmp = powf(linAmp, 3.f);
-				
-				// Apply cheap distortion
-				const float pickup = fPickup(mix, kDefPickupDist, kDefPickupAsym);
-				mix *= pickup;
 
 				// Use shaped amplitude (alters the filter's controls, might be hairy from a user POV)
 				filterAmt = powAmp;

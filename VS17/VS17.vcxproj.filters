@@ -65,7 +65,7 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
       <UniqueIdentifier>{65839441-5856-403b-b648-81aaa9e933f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP">
       <UniqueIdentifier>{e9039ae1-9b3b-4a81-973e-a4520bbc9c0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -188,10 +188,10 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-grit.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-Wurlitzer-grit.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,10 +394,10 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-grit.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implementing</Filter>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-Wurlitzer-grit.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
