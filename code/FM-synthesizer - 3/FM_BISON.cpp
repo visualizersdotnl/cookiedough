@@ -241,7 +241,7 @@ namespace SFM
 			kDX7_32,
 			kSuperSaw,
 			kDX7_17
-		} static algorithm = kDualOp;
+		} static algorithm = kWurlitzer;
 
 		if (kDualOp == algorithm)
 		{

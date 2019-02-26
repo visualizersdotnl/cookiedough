@@ -21,9 +21,13 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
+	Doing now:
+		- Try basic VST with Juce
+
 	To do (in no particular order):
-		- Pitch envelope needs time stretch like the others do
 		- Migrate to VST
+		- Bitcrushing per operator
+		- Pitch envelope needs time stretch like the others do
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
 		- Optimize fillter
