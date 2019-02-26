@@ -22,9 +22,7 @@
 		- Subtractive synthesis on top
 
 	To do (in no particular order):
-		- Move synth-util.h and synth-math.h into synth.helper.h
 		- Pitch envelope needs time stretch like the others do
-		- Add initial delay to envelopes (DADSR)
 		- Migrate to VST
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
@@ -43,6 +41,9 @@
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- FIXMEs
 
+	To do in VST phase:
+		- Add initial delay to envelopes (DADSR)
+ 
 	Issues:
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
 */

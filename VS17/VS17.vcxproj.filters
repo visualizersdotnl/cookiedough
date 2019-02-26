@@ -181,9 +181,6 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClCompile>
@@ -363,9 +360,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-util.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
     </ClInclude>
@@ -373,9 +367,6 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h">
@@ -387,14 +378,17 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -423,6 +417,9 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
+    <None Include="..\code\FM-synthesizer - 3\theory\FM_Synthesis_of_Real_Instruments.pdf">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/theory</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\to do.txt" />

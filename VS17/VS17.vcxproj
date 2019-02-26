@@ -48,7 +48,6 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-LUT.cpp" />
@@ -113,7 +112,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h" />
@@ -122,14 +120,14 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-MIDI.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-oscillator.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-parameters.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-util.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
@@ -189,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
+    <None Include="..\code\FM-synthesizer - 3\theory\FM_Synthesis_of_Real_Instruments.pdf" />
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>

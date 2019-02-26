@@ -85,7 +85,7 @@ namespace SFM
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*31.f;
+		amount = 1.f + amount*15.f;
 		const float distorted = atanf(sample*amount)*(2.f/kPI); // FIXME: LUT
 		return distorted;
 	}
@@ -164,7 +164,6 @@ namespace SFM
 
 				// Sample envelope
 				const float envelope = voiceOp.envelope.Sample();
-				SampleAssert(envelope);
 
 				// Apply LFO vibrato
 				float vibrato = parameters.pitchBend*pitchEnv;
@@ -220,8 +219,8 @@ namespace SFM
 		if (true == m_wurlyMode)
 		{
 			// Apply cheap distortion
-			const float asym = mix+0.3f;
-			const float shaper = 1.f / (1.1f + asym*asym*asym);
+			const float mixAsym = mix+0.3f;
+			const float shaper = 1.f/(1.1f + mixAsym*mixAsym*mixAsym);
 			mix *= shaper;
 
 			// Shape amplitude and use it as filter amount (maybe a bit hairy from user POV)
@@ -233,7 +232,7 @@ namespace SFM
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
-//		SampleAssert(mix);
+		SampleAssert(mix);
 
 		return mix;
 	}

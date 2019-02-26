@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM -- Misc. small utility functions
+	Syntherklaas FM -- Misc. helper functions
 */
 
 #pragma once

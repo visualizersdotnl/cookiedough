@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "synth-global.h"
-
 namespace SFM
 {
 	const float kPI = 3.1415926535897932384626433832795f;

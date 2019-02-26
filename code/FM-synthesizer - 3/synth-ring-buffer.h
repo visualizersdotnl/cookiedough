@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "synth-global.h"
-
 namespace SFM
 {
 	class RingBuffer

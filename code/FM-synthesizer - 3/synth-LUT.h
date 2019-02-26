@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "synth-util.h"
-
 namespace SFM
 {
 	// See impl.

@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "synth-global.h"
 #include "synth-random.h"
 
 namespace SFM

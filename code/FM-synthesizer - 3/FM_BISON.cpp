@@ -20,7 +20,7 @@
 #include "synth-LUT.h"
 #include "synth-voice.h"
 #include "synth-delay-line.h"
-#include "synth-one-pole.h"
+#include "synth-one-pole-filters.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -230,353 +230,345 @@ namespace SFM
 
 		// Get dry FM patch		
 		FM_Patch &patch = s_parameters.patch;
-	
-#if 0
-		/*
-			Test algorithm: single carrier & modulator
-		*/
 
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].feedback = 0;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
-			CalcOpIndex(true, key, velocity, patch.operators[0]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-			CalcOpIndex(false, key, velocity, patch.operators[1]),
-			CalcPhaseJitter(liveliness));
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 1
-		/*
-			Test algorithm: Electric piano (Wurlitzer style)
-		*/
-
-		// Apply Wurlitzer effect
-		voice.m_wurlyMode = true;
-		
-		// Carrier (pure)
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].feedback = 0;
- 		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].modulators[1] = 3;
-		voice.m_operators[0].modulators[2] = 5;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			kSine,
-			0.f,
-			CalcOpIndex(true, key, velocity, patch.operators[0]));
-
-		// C <- 2 <- 3
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].modulators[0] = 2;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-			CalcOpIndex(false, key, velocity, patch.operators[1]),
-			CalcPhaseJitter(liveliness));
-		
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
-			CalcOpIndex(false, key, velocity, patch.operators[2]),
-			CalcPhaseJitter(liveliness));
-
-		// C <- 4 <- 5
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulators[0] = 4;
-		voice.m_operators[3].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
-			CalcOpIndex(false, key, velocity, patch.operators[3]),
-			CalcPhaseJitter(liveliness));
-
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
-			CalcOpIndex(false, key, velocity, patch.operators[4]),
-			CalcPhaseJitter(liveliness));
-
-		// C <- 6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine,
-			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
-			CalcOpIndex(false, key, velocity, patch.operators[5]),
-			CalcPhaseJitter(liveliness));
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 0
-		/*
-			Test algorithm: Volca/DX7 algorithm #2
-		*/
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
-			CalcOpIndex(true, key, velocity, patch.operators[0]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-			CalcOpIndex(false, key, velocity, patch.operators[1]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #3
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[2].isCarrier = true;
-		voice.m_operators[2].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
-			CalcOpIndex(true, key, velocity, patch.operators[2]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #4
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].modulators[0] = 4;
-		voice.m_operators[3].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
-			CalcOpIndex(false, key, velocity, patch.operators[3]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #5
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
-			CalcOpIndex(false, key, velocity, patch.operators[4]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
-			CalcOpIndex(false, key, velocity, patch.operators[5]),
-			CalcPhaseJitter(liveliness));
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 0
-		/*
-			Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
-		*/
-
-		for (unsigned int iOp = 0; iOp < 3; ++iOp)
+		enum Algo
 		{
-			const unsigned carrier = iOp<<1;
-			const unsigned modulator = carrier+1;
+			kDualOp,
+			kWurlitzer,
+			kDX7_2,
+			kDX7_5,
+			kDX7_31,
+			kDX7_32,
+			kSuperSaw,
+			kDX7_17
+		} static algorithm = kSuperSaw;
 
-			// Carrier
-			voice.m_operators[carrier].enabled = true;
-			voice.m_operators[carrier].modulators[0] = modulator;
-			voice.m_operators[carrier].isCarrier = true;
-			voice.m_operators[carrier].oscillator.Initialize(
+		if (kDualOp == algorithm)
+		{
+			/*
+				Test algorithm: single carrier & modulator
+			*/
+
+			// Operator #1
+			voice.m_operators[0].enabled = true;
+			voice.m_operators[0].modulators[0] = 1;
+			voice.m_operators[0].feedback = 0;
+			voice.m_operators[0].isCarrier = true;
+			voice.m_operators[0].oscillator.Initialize(
 				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
-				CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
+				CalcOpIndex(true, key, velocity, patch.operators[0]),
 				CalcPhaseJitter(liveliness));
 
-			// Modulator
-			voice.m_operators[modulator].enabled = true;
-			voice.m_operators[modulator].oscillator.Initialize(
+			// Operator #2
+			voice.m_operators[1].enabled = true;
+			voice.m_operators[1].feedback = 1;
+			voice.m_operators[1].oscillator.Initialize(
 				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[modulator]), 
-				CalcOpIndex(false, key, velocity, patch.operators[modulator]),
+				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+				CalcOpIndex(false, key, velocity, patch.operators[1]),
 				CalcPhaseJitter(liveliness));
 		}
+
+		if (kWurlitzer == algorithm)
+		{
+			/*
+				Test algorithm: Electric piano (Wurlitzer style)
+			*/
+
+			// Apply Wurlitzer effect
+			voice.m_wurlyMode = true;
+		
+			// Carrier (pure)
+			voice.m_operators[0].enabled = true;
+			voice.m_operators[0].feedback = 0;
+ 			voice.m_operators[0].modulators[0] = 1;
+			voice.m_operators[0].modulators[1] = 3;
+			voice.m_operators[0].modulators[2] = 5;
+			voice.m_operators[0].isCarrier = true;
+			voice.m_operators[0].oscillator.Initialize(
+				kSine,
+				0.f,
+				CalcOpIndex(true, key, velocity, patch.operators[0]));
+
+			// C <- 2 <- 3
+			voice.m_operators[1].enabled = true;
+			voice.m_operators[1].modulators[0] = 2;
+			voice.m_operators[1].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+				CalcOpIndex(false, key, velocity, patch.operators[1]),
+				CalcPhaseJitter(liveliness));
+		
+			voice.m_operators[2].enabled = true;
+			voice.m_operators[2].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+				CalcOpIndex(false, key, velocity, patch.operators[2]),
+				CalcPhaseJitter(liveliness));
+
+			// C <- 4 <- 5
+			voice.m_operators[3].enabled = true;
+			voice.m_operators[3].modulators[0] = 4;
+			voice.m_operators[3].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
+				CalcOpIndex(false, key, velocity, patch.operators[3]),
+				CalcPhaseJitter(liveliness));
+
+			voice.m_operators[4].enabled = true;
+			voice.m_operators[4].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
+				CalcOpIndex(false, key, velocity, patch.operators[4]),
+				CalcPhaseJitter(liveliness));
+
+			// C <- 6
+			voice.m_operators[5].enabled = true;
+			voice.m_operators[5].oscillator.Initialize(
+				kSine,
+				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+				CalcOpIndex(false, key, velocity, patch.operators[5]),
+				CalcPhaseJitter(liveliness));
+		}
+
+		if (kDX7_2 == algorithm)
+		{
+			/*
+				Test algorithm: Volca/DX7 algorithm #2
+			*/
+
+			// Operator #1
+			voice.m_operators[0].enabled = true;
+			voice.m_operators[0].modulators[0] = 1;
+			voice.m_operators[0].isCarrier = true;
+			voice.m_operators[0].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
+				CalcOpIndex(true, key, velocity, patch.operators[0]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #2
+			voice.m_operators[1].enabled = true;
+			voice.m_operators[1].feedback = 1;
+			voice.m_operators[1].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+				CalcOpIndex(false, key, velocity, patch.operators[1]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #3
+			voice.m_operators[2].enabled = true;
+			voice.m_operators[2].modulators[0] = 3;
+			voice.m_operators[2].isCarrier = true;
+			voice.m_operators[2].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+				CalcOpIndex(true, key, velocity, patch.operators[2]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #4
+			voice.m_operators[3].enabled = true;
+			voice.m_operators[3].modulators[0] = 4;
+			voice.m_operators[3].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
+				CalcOpIndex(false, key, velocity, patch.operators[3]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #5
+			voice.m_operators[4].enabled = true;
+			voice.m_operators[4].modulators[0] = 5;
+			voice.m_operators[4].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
+				CalcOpIndex(false, key, velocity, patch.operators[4]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #6
+			voice.m_operators[5].enabled = true;
+			voice.m_operators[5].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+				CalcOpIndex(false, key, velocity, patch.operators[5]),
+				CalcPhaseJitter(liveliness));
+		}
+
+		if (kDX7_5 == algorithm)
+		{
+			/*
+				Test algorithm: Volca/DX7 algorithm #5 (used for E. Piano)
+			*/
+
+			for (unsigned int iOp = 0; iOp < 3; ++iOp)
+			{
+				const unsigned carrier = iOp<<1;
+				const unsigned modulator = carrier+1;
+
+				// Carrier
+				voice.m_operators[carrier].enabled = true;
+				voice.m_operators[carrier].modulators[0] = modulator;
+				voice.m_operators[carrier].isCarrier = true;
+				voice.m_operators[carrier].oscillator.Initialize(
+					kSine, 
+					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+					CalcPhaseJitter(liveliness));
+
+				// Modulator
+				voice.m_operators[modulator].enabled = true;
+				voice.m_operators[modulator].oscillator.Initialize(
+					kSine, 
+					CalcOpFreq(fundamentalFreq, patch.operators[modulator]), 
+					CalcOpIndex(false, key, velocity, patch.operators[modulator]),
+					CalcPhaseJitter(liveliness));
+			}
 		 
-		// Op. #6 has feedback
-		voice.m_operators[5].feedback = 5;
+			// Op. #6 has feedback
+			voice.m_operators[5].feedback = 5;
+		}
 
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 0
-		/*
-			Test algorithm: Volca/DX7 algorithm #31
-		*/
-
-		for (unsigned int iOp = 0; iOp < 5; ++iOp)
+		if (kDX7_31 == algorithm)
 		{
-			const unsigned carrier = iOp;
+			/*
+				Test algorithm: Volca/DX7 algorithm #31
+			*/
 
-			// Carrier
-			voice.m_operators[carrier].enabled = true;
-			voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
-			voice.m_operators[carrier].isCarrier = true;
-			voice.m_operators[carrier].oscillator.Initialize(
+			for (unsigned int iOp = 0; iOp < 5; ++iOp)
+			{
+				const unsigned carrier = iOp;
+
+				// Carrier
+				voice.m_operators[carrier].enabled = true;
+				voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
+				voice.m_operators[carrier].isCarrier = true;
+				voice.m_operators[carrier].oscillator.Initialize(
+					kSine, 
+					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+					CalcPhaseJitter(liveliness));
+			}
+
+			// Operator #6
+			voice.m_operators[5].enabled = true;
+			voice.m_operators[5].feedback = 5;
+			voice.m_operators[5].oscillator.Initialize(
 				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
-				CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
 		}
 
-		// Operator #6
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].feedback = 5;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
-			CalcOpIndex(false, key, velocity, patch.operators[5]),
-			CalcPhaseJitter(liveliness));
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 0
-		/*
-			Test algorithm: Volca/DX7 algorithm #32
-		*/
-
-		for (unsigned int iOp = 0; iOp < 6; ++iOp)
+		if (kDX7_32 == algorithm)
 		{
-			const unsigned carrier = iOp;
+			/*
+				Test algorithm: Volca/DX7 algorithm #32
+			*/
 
-			// Carrier
-			voice.m_operators[carrier].enabled = true;
-			voice.m_operators[carrier].isCarrier = true;
-			voice.m_operators[carrier].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
-				CalcOpIndex(true, key, velocity, patch.operators[carrier]),
-				CalcPhaseJitter(liveliness));
-		}
+			for (unsigned int iOp = 0; iOp < 6; ++iOp)
+			{
+				const unsigned carrier = iOp;
+
+				// Carrier
+				voice.m_operators[carrier].enabled = true;
+				voice.m_operators[carrier].isCarrier = true;
+				voice.m_operators[carrier].oscillator.Initialize(
+					kSine, 
+					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+					CalcPhaseJitter(liveliness));
+			}
 		
-		// Operator #6 has feedback on itself
-		voice.m_operators[5].feedback = 5;
+			// Operator #6 has feedback on itself
+			voice.m_operators[5].feedback = 5;
+		}
 
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if	0
-		/*
-			Test algorithm: feedback festival (use to create a super saw)
-		*/
-
-		for (unsigned int iOp = 0; iOp < 6; ++iOp)
+		if (kSuperSaw == algorithm)
 		{
-			const unsigned carrier = iOp;
+			/*
+				Test algorithm: feedback festival (use to create a super saw)
+			*/
 
-			// Carrier
-			voice.m_operators[carrier].enabled = true;
-			voice.m_operators[carrier].feedback = carrier;
-			voice.m_operators[carrier].isCarrier = true;
-			voice.m_operators[carrier].oscillator.Initialize(
+			for (unsigned int iOp = 0; iOp < 6; ++iOp)
+			{
+				const unsigned carrier = iOp;
+
+				// Carrier
+				voice.m_operators[carrier].enabled = true;
+				voice.m_operators[carrier].feedback = carrier;
+				voice.m_operators[carrier].isCarrier = true;
+				voice.m_operators[carrier].oscillator.Initialize(
+					kSine, 
+					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
+					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+					CalcPhaseJitter(liveliness));
+			}
+		
+			// Odd operators modulate even ones
+			voice.m_operators[0].modulators[0] = 1;
+			voice.m_operators[2].modulators[0] = 3;
+			voice.m_operators[4].modulators[0] = 5;
+		}
+	
+		if (kDX7_17 == algorithm)
+		{
+			/*
+				Volca/DX algorithm #17
+			*/
+
+			// Operator #1
+			voice.m_operators[0].enabled = true;
+			voice.m_operators[0].modulators[0] = 1;
+			voice.m_operators[0].modulators[1] = 2;
+			voice.m_operators[0].modulators[2] = 4;
+			voice.m_operators[0].isCarrier = true;
+			voice.m_operators[0].oscillator.Initialize(
 				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
-				CalcOpIndex(true, key, velocity, patch.operators[carrier]),
+				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
+				CalcOpIndex(true, key, velocity, patch.operators[0]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator C <- #2
+			voice.m_operators[1].enabled = true;
+			voice.m_operators[1].feedback = 1;
+			voice.m_operators[1].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+				CalcOpIndex(false, key, velocity, patch.operators[1]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator C <- #3 <- #4
+			voice.m_operators[2].enabled = true;
+			voice.m_operators[2].modulators[0] = 3;
+			voice.m_operators[2].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+				CalcOpIndex(false, key, velocity, patch.operators[2]),
+				CalcPhaseJitter(liveliness));
+
+			voice.m_operators[3].enabled = true;
+			voice.m_operators[3].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
+				CalcOpIndex(false, key, velocity, patch.operators[3]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator C <- #5 <- #6
+			voice.m_operators[4].enabled = true;
+			voice.m_operators[4].modulators[0] = 5;
+			voice.m_operators[4].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
+				CalcOpIndex(false, key, velocity, patch.operators[4]),
+				CalcPhaseJitter(liveliness));
+
+			voice.m_operators[5].enabled = true;
+			voice.m_operators[5].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
+				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
 		}
-		
-		// Odd operators modulate even ones
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[4].modulators[0] = 5;
-
-		/*
-			End of Algorithm
-		*/
-#endif
-
-#if 0
-		/*
-			Volca/DX algorithm #17
-		*/
-
-		// Operator #1
-		voice.m_operators[0].enabled = true;
-		voice.m_operators[0].modulators[0] = 1;
-		voice.m_operators[0].modulators[1] = 2;
-		voice.m_operators[0].modulators[2] = 4;
-		voice.m_operators[0].isCarrier = true;
-		voice.m_operators[0].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[0]), 
-			CalcOpIndex(true, key, velocity, patch.operators[0]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator C <- #2
-		voice.m_operators[1].enabled = true;
-		voice.m_operators[1].feedback = 1;
-		voice.m_operators[1].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-			CalcOpIndex(false, key, velocity, patch.operators[1]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator C <- #3 <- #4
-		voice.m_operators[2].enabled = true;
-		voice.m_operators[2].modulators[0] = 3;
-		voice.m_operators[2].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[2]), 
-			CalcOpIndex(false, key, velocity, patch.operators[2]),
-			CalcPhaseJitter(liveliness));
-
-		voice.m_operators[3].enabled = true;
-		voice.m_operators[3].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[3]), 
-			CalcOpIndex(false, key, velocity, patch.operators[3]),
-			CalcPhaseJitter(liveliness));
-
-		// Operator C <- #5 <- #6
-		voice.m_operators[4].enabled = true;
-		voice.m_operators[4].modulators[0] = 5;
-		voice.m_operators[4].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[4]), 
-			CalcOpIndex(false, key, velocity, patch.operators[4]),
-			CalcPhaseJitter(liveliness));
-
-		voice.m_operators[5].enabled = true;
-		voice.m_operators[5].oscillator.Initialize(
-			kSine, 
-			CalcOpFreq(fundamentalFreq, patch.operators[5]), 
-			CalcOpIndex(false, key, velocity, patch.operators[5]),
-			CalcPhaseJitter(liveliness));
-#endif
 
 		// Initialize LFO
 		const float phaseAdj = (true == s_parameters.LFOSync) 

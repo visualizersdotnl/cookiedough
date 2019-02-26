@@ -17,13 +17,12 @@ namespace SFM
 		SFM_ASSERT(velocity <= 1.f);
 
 		// 25% shorter attack @ max. velocity
-		const float attackScale  = baseScale - 0.25f*velocity*baseScale;
-
 		// 25% longer decay @ max. velocity
+		// 25% longer release @ max. velocity.
+		// FIXME: I'm not sure if this is a great idea
+		const float attackScale  = baseScale - 0.25f*velocity*baseScale;
 		const float decayScale   = baseScale + 0.25f*velocity*baseScale;
-
-		// Scale along with note velocity 
-		const float releaseScale = baseScale * (1.f+velocity);
+		const float releaseScale = baseScale + 0.25f*velocity*baseScale;
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = std::max<float>(kSampleRate*0.001f /* 1ms min. */, floorf(attackScale*parameters.attack*kSampleRate));
@@ -40,8 +39,8 @@ namespace SFM
 		const float linearity = 1.f; // FIXME: parameter
 		const float defRatioA = 0.3f;
 		const float defRatioDR = 0.0001f;
-		const float ratioA = lerpf(defRatioA, 100.f, linearity);
-		const float ratioDR = lerpf(defRatioDR, 100.f, linearity);
+		const float ratioA = lerpf(defRatioA, defRatioA*100.f, linearity);
+		const float ratioDR = lerpf(defRatioDR, defRatioDR*100.f, linearity);
 
 		m_ADSR.setTargetRatioA(ratioA);
 		m_ADSR.setTargetRatioDR(ratioDR);

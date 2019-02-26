@@ -99,4 +99,4 @@ namespace SFM
 }
 
 #include "synth-LUT.h"
-#include "synth-util.h"
+#include "synth-helper.h"
