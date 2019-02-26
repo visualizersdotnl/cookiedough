@@ -185,6 +185,7 @@ namespace SFM
 
 		const float square = oscPolyPulse(phase, frequency, 0.5f);
 
+		// Ugh... (FIXME)
 		float triangle;
 		if (phase < 0.25f)
 			triangle = square*phase;
@@ -223,4 +224,3 @@ namespace SFM
 		return -1.f + mt_randf()*2.f;
 	}
 }
-

@@ -9,7 +9,6 @@
 // C++11
 #include <mutex>
 #include <shared_mutex>
-#include <atomic>
 #include <deque>
 
 #include "FM_BISON.h"
@@ -215,8 +214,11 @@ namespace SFM
 		SFM_ASSERT(false == s_stateMutex.try_lock());
 
 		Voice &voice = s_voices[iVoice];
+
+		// Reset voice (FIXME: minimize?)
 		voice.Reset();
 
+		// Calculate fundamental
 		const unsigned key = request.key;
 		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];  
 		const float velocity = powf(request.velocity, 3.f); // Raise velocity (source: Jan Marguc)
@@ -225,7 +227,8 @@ namespace SFM
 		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
 		if (0 != noteJitter)
 			fundamentalFreq *= powf(2.f, (noteJitter*0.01f)/12.f);
-		
+
+		// Get dry FM patch		
 		FM_Patch &patch = s_parameters.patch;
 	
 #if 0
@@ -263,12 +266,8 @@ namespace SFM
 			Test algorithm: Electric piano (Wurlitzer style)
 		*/
 
-		// Select Wurlitzer mode
-		voice.m_mode = Voice::kWurlitzer;
-
-		// Reset Wurlitzer grit filter
-		voice.m_expVel = velocity;
-		voice.m_grit.Reset(s_parameters.gritHorz, s_parameters.gritVert, fundamentalFreq*0.5f);
+		// Apply Wurlitzer effect
+		voice.m_wurlyMode = true;
 		
 		// Carrier (pure)
 		voice.m_operators[0].enabled = true;
@@ -580,7 +579,10 @@ namespace SFM
 #endif
 
 		// Initialize LFO
-		const float phaseAdj = (true == s_parameters.LFOSync) ? 0.f : s_globalLFO.GetPhase();
+		const float phaseAdj = (true == s_parameters.LFOSync) 
+			? 0.f // Synchronized 
+			: s_globalLFO.GetPhase(); // Free running
+
 		const float phaseJitter = CalcPhaseJitter(liveliness);
 		voice.m_LFO.Initialize(kDigiTriangle, s_globalLFO.GetFrequency(), 1.f, phaseAdj+phaseJitter);
 
@@ -613,9 +615,8 @@ namespace SFM
 			
 			// The multiplier is between 0.1 and 10.0 (nicked from Arturia DX7-V's manual) and rate scaling can *double*
 			// that value at the highest available frequency (note) when fully applied
-			// This is not exactly like a DX7 does it, but I am not interested in emulating all legacy logic!
 			const float rateScale = kEnvMulMin + kEnvMulRange*patchOp.envRateMul;
-			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: offer a range!
+			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: range parameter!
 
 			voiceOp.envelope.Start(envParams, opVelocity, envScale);
 		}
@@ -794,8 +795,6 @@ namespace SFM
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
 		// Grit parameter(s)
-		s_parameters.gritHorz = WinMidi_GetGritHorz();
-		s_parameters.gritVert = WinMidi_GetGritVert();
 		s_parameters.gritWet = WinMidi_GetGritWet();
 
 		// Pitch envelope

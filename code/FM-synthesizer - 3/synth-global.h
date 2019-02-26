@@ -2,10 +2,12 @@
 /*
 	Syntherklaas FM -- Global includes, constants & utility functions.
 
-	Possible dependencies on Bevacqua:
+	Dependencies on demo system:
 		- Host 
 		- Std3DMath
 		- Macros
+
+	Include *first* on top of any source file!
 */
 
 #pragma once

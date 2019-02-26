@@ -3,6 +3,8 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
+	** 26/02/2019: project ditched, going VST **
+
 	Third prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
 
@@ -51,10 +53,11 @@
 		- Move algorithms to dedicated file
 		- Patch save & load
 
+	Today's task:
+		- Move chorus mix to it's own file
+		- Execute LPF in loop
+
 	Priority plus:
-		- Finish Wurlitzer grit 
-		  + Filter
-		  + S&H
 		- Create interface on FM_BISON that is being called by the MIDI driver(s) instead of the other way around
 		  + Beware of domains here (dB, time et cetera)
 		- Immediately after: implement instrument serializer; for now it can just store and load to/from a single file!

@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "synth-global.h"
 #include "synth-stateless-oscillators.h"
 
 namespace SFM

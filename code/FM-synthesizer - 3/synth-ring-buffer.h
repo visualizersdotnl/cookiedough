@@ -20,13 +20,13 @@ namespace SFM
 			memset(m_buffer, 0, kRingBufferSize*sizeof(float));
 		}
 
-		void Write(float value)
+		SFM_INLINE void Write(float value)
 		{
 			m_buffer[m_writeIdx & (kRingBufferSize-1)] = value;
 			m_writeIdx = ++m_writeIdx;
 		}
 
-		float Read()
+		SFM_INLINE float Read()
 		{
 			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun
 			const float value = m_buffer[m_readIdx & (kRingBufferSize-1)];

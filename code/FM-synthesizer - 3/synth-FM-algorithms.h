@@ -1,6 +1,6 @@
 
 /*
-	Syntherklaas FM: FM algorithms
+	Syntherklaas FM: FM algorithms.
 */
 
 #pragma once

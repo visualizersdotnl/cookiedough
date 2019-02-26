@@ -14,18 +14,9 @@ namespace SFM
 	class DelayLine
 	{
 	public:
-		DelayLine(size_t size) :
-			m_size(size)
-,			m_writeIdx(0)
-		{
-			SFM_ASSERT(size <= kMaxDelayLineSize);
-			Reset();
-		}
+		DelayLine(size_t size);
 
-		void Reset()
-		{
-			memset(m_buffer, 0, m_size*sizeof(float));
-		}
+		void Reset();
 
 		SFM_INLINE void Write(float sample)
 		{

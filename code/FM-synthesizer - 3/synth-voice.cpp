@@ -8,6 +8,79 @@
 
 namespace SFM
 {
+	void Voice::ResetOperators()
+	{
+		// NULL operators
+		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
+		{
+			m_operators[iOp].Reset();
+			m_feedbackBuf[iOp] = 0.f;
+		}
+	}
+
+	// Full reset
+	void Voice::Reset()
+	{
+		ResetOperators();
+
+		// Disable
+		m_state = kIdle;
+
+		// LFO
+		m_LFO = Oscillator();
+
+		// Pitch env.
+		m_pitchEnv.Reset();
+		m_pitchEnvInvert = false;
+		m_pitchEnvBias = 0.f;
+
+		// Reset filter
+		m_LPF.resetState();
+
+		// Disable Wurlitzer mode
+		m_wurlyMode = false;
+	}
+
+	void Voice::Release(float velocity)
+	{
+		for (auto &voiceOp : m_operators)
+		{
+			if (true == voiceOp.enabled)
+				voiceOp.envelope.Stop(velocity);
+		}
+
+		m_state = kReleasing;
+	}
+
+	bool Voice::IsDone() /* const */
+	{
+		// Only true if all carrier envelopes are idle
+		for (auto &voiceOp : m_operators)
+		{
+			if (true == voiceOp.enabled && true == voiceOp.isCarrier)
+			{
+				if (false == voiceOp.envelope.IsIdle())
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	float Voice::SummedOutput() /* const */
+	{
+		float summed = 0.f;
+		for (auto &voiceOp : m_operators)
+		{
+			if (true == voiceOp.enabled && true == voiceOp.isCarrier)
+			{
+				summed += voiceOp.envelope.Get();
+			}
+		}
+
+		return summed;
+	}
+
 	// Operator ovedrive distortion (sigmoid)
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
@@ -120,7 +193,7 @@ namespace SFM
 				// Store final sample for modulation
 				opSample[index] = sample;
 
-				// If carrier: apply tremolo & mix
+				// If carrier: mix
 				if (true == voiceOp.isCarrier)
 				{
 					linAmp += envelope;
@@ -137,46 +210,26 @@ namespace SFM
 			m_feedbackBuf[iOp] = (kLeakyFactor*0.25f)*(m_feedbackBuf[iOp]+opSample[iOp]); 
 		}
 
-		float filterAmt;
-		switch (m_mode)
+		// Normalize
+		SFM_ASSERT(0 != numCarriers);
+		mix /= numCarriers;
+		linAmp /= numCarriers;
+		float filterAmt = 1.f;
+
+		// Apply Wurlitzer effect
+		if (true == m_wurlyMode)
 		{
-		case kFM:
-			// Normalize
-			SFM_ASSERT(0 != numCarriers);
-			mix /= numCarriers;
-			linAmp /= numCarriers;
+			// Apply cheap distortion
+			const float asym = mix+0.3f;
+			const float shaper = 1.f / (1.1f + asym*asym*asym);
+			mix *= shaper;
 
-			// Filter amount
-			filterAmt = 1.f;
-
-			break;
-
-		case kWurlitzer:
-			{
-				// Check if algorithm adheres to mode constraints
-				SFM_ASSERT(1 == numCarriers);
-				SFM_ASSERT(true == m_operators[0].isCarrier);
-				SFM_ASSERT(0.f == m_operators[0].oscillator.GetFrequency());
-				
-				// Apply cheap distortion
-				const float pickup = fPickup(mix);
-				mix *= pickup;
-
-				// Apply grit (FIXME)
-				const float grit = m_grit.Sample(mix);
-				mix = lerpf<float>(mix, grit, parameters.gritWet*m_expVel);
-
-				// Shape amplitude a bit
-				const float powAmp = powf(linAmp, 3.f);
-
-				// Use shaped amplitude (alters the filter's controls, might be hairy from a user POV)
-				filterAmt = powAmp;
-			}
-
-			break;
+			// Shape amplitude and use it as filter amount (maybe a bit hairy from user POV)
+			const float powAmp = powf(linAmp, 3.f);
+			filterAmt = powAmp;
 		}
 
-		// Apply filter (FIXME: do sequentially)
+		// Apply filter
 		const float filtered = float(m_LPF.tick(mix));
 		mix = lerpf<float>(mix, filtered, filterAmt);
 

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "synth-global.h"
 #include "synth-dry-patch.h"
 
 namespace SFM
@@ -41,8 +40,6 @@ namespace SFM
 
 		// Grit parameter(s)
 		float gritWet;
-		float gritHorz;
-		float gritVert;
 
 		void SetDefaults()
 		{
@@ -71,8 +68,6 @@ namespace SFM
 
 			// No grit
 			gritWet = 0.f;
-			gritHorz = 0.f;
-			gritVert = 0.f;
 		}
 	};
 }

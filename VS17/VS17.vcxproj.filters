@@ -62,9 +62,6 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core">
       <UniqueIdentifier>{26100c27-c0d5-4f9c-9742-384462b393b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
-      <UniqueIdentifier>{65839441-5856-403b-b648-81aaa9e933f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP">
       <UniqueIdentifier>{e9039ae1-9b3b-4a81-973e-a4520bbc9c0c}</UniqueIdentifier>
     </Filter>
@@ -184,14 +181,14 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-pluck.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-Wurlitzer-grit.cpp">
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -390,13 +387,13 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-FM-algorithms.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-Wurlitzer-grit.h">
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
     </ClInclude>
   </ItemGroup>

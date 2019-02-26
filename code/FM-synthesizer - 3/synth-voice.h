@@ -15,11 +15,10 @@
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
-#include "synth-Wurlitzer-grit.h"
 
 namespace SFM
 {
-	// Initialized manually
+	// Initialize externally
 	class Voice
 	{
 	public:
@@ -29,16 +28,6 @@ namespace SFM
 			kEnabled,
 			kReleasing
 		} m_state;
-
-		enum Mode
-		{
-			// Fully flexible pure FM
-			kFM,
-
-			// First operator is treated as the *only* carrier and acts as an accumulator at zero Hz, and is
-			// then distorted to imitate a magnetic pickup
-			kWurlitzer
-		} m_mode;
 
 		struct Operator
 		{
@@ -94,92 +83,22 @@ namespace SFM
 		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
 
-		// For Wurlitzer mode
-		float m_expVel;
-		WurlyGrit m_grit;
+		// Wurlitzer distortion effect
+		bool m_wurlyMode;
 
 	private:
-		void ResetOperators()
-		{
-			// NULL operators
-			for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
-			{
-				m_operators[iOp].Reset();
-				m_feedbackBuf[iOp] = 0.f;
-			}
-		}
+		void ResetOperators();
 
 	public:
-		// Full reset
-		void Reset()
-		{
-			ResetOperators();
-
-			// Disable
-			m_state = kIdle;
-
-			// Default mode
-			m_mode = kFM;
-
-			// LFO
-			m_LFO = Oscillator();
-
-			// Pitch env.
-			m_pitchEnv.Reset();
-			m_pitchEnvInvert = false;
-			m_pitchEnvBias = 0.f;
-
-			// Reset filter
-			m_LPF.resetState();
-
-			// Skipped: Wurlitzer stuff
-		}
-
-		// On voice release (stops operator envelopes)
-		void Release(float velocity)
-		{
-			for (auto &voiceOp : m_operators)
-			{
-				if (true == voiceOp.enabled)
-					voiceOp.envelope.Stop(velocity);
-			}
-
-			m_state = kReleasing;
-		}
-
 		bool IsActive() /* const */
 		{
 			return kIdle != m_state;		
 		}
 
-		bool IsDone() /* const */
-		{
-			// Only true if all carrier envelopes are idle
-			for (auto &voiceOp : m_operators)
-			{
-				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
-				{
-					if (false == voiceOp.envelope.IsIdle())
-						return false;
-				}
-			}
-
-			return true;
-		}
-
-		float SummedOutput() /* const */
-		{
-			float summed = 0.f;
-			for (auto &voiceOp : m_operators)
-			{
-				if (true == voiceOp.enabled && true == voiceOp.isCarrier)
-				{
-					summed += voiceOp.envelope.Get();
-				}
-			}
-
-			return summed;
-		}
+		void Reset();
+		void Release(float velocity); // On voice release (stops operator envelopes)
+		bool IsDone(); /* const */
+		float SummedOutput(); /* const */
 
 		float Sample(const Parameters &parameters);
 	};

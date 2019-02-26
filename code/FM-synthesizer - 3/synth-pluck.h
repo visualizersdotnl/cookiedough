@@ -28,11 +28,9 @@ namespace SFM
 			m_buffer.resize(m_numSamples);
 			
 			// FIXME: precalculate larger table and pick random offset
-//			LowpassFilter filter;
-//			filter.SetCutoff(0.1f);
 			for (unsigned iSample = 0; iSample < m_numSamples; ++iSample)
 			{
-				const float sample = oscWhiteNoise(); // filter.Apply(oscWhiteNoise());
+				const float sample = oscWhiteNoise();
 				m_buffer[iSample] = sample;
 			}
 		}
@@ -41,7 +39,7 @@ namespace SFM
 		{
 			const float sample = m_buffer[m_index];
 			const size_t next = (m_index+1) % m_buffer.size();
-			const float lowpassed = 0.5f*(sample+m_buffer[next])*0.996f; // FIXME: variable!
+			const float lowpassed = 0.5f*(sample+m_buffer[next])*kLeakyFactor;
 			m_buffer[m_index] = lowpassed;
 			m_index = next;
 			return sample;
