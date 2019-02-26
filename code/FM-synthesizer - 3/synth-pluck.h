@@ -1,16 +1,12 @@
 
 /*
 	Syntherklaas FM -- Karplus-Strong pluck.
-
-	FIXME: *very* much a prototype
 */
 
 #pragma once
 
 #include "synth-global.h"
 #include "synth-stateless-oscillators.h"
-#include "synth-one-pole.h"
-// #include "synth-delay-line.h"
 
 namespace SFM
 {

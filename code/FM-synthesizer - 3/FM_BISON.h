@@ -21,71 +21,27 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	In VST phase:
-	    - Pitch envelope: refine, add time stretch!
-		- Different LFO waveforms
-		- Envelope on main filter
-		- Make envelope a 'DADSR' to add an initial delay
+	To do (in no particular order):
+		- Move synth-util.h and synth-math.h into synth.helper.h
+		- Pitch envelope needs time stretch like the others do
+		- Add initial delay to envelopes (DADSR)
+		- Migrate to VST
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
 		- Optimize fillter
-		- Enhance chorus
-		- Machine learning for patches?
-
-	(OPTIONAL) Concerning a super and/or hyper saw:
-		- Read: https://www.nada.kth.se/utbildning/grukth/exjobb/rapportlistor/2010/rapporter10/szabo_adam_10131.pdf
-
-	(OPTIONAL) For FM-X support:
-		- Add it's other core waveforms
-		- Implement 'Skirt' and 'Res' (basically a resonant lowpass); these can be cut to 8 discrete steps!
-		- Demo: https://www.youtube.com/watch?v=YWvSglv3iEA
-	
-	Optimization:
-		- All oscillators become tables, oscillator & LFO logic may be split
-		- Eliminate experince floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
-		- Elimnate branches & needless logic
-		  + Filters can be processed sequentially *after* basic voice logic
-		  + A lot can be eliminated through the use of masks
-		  + SIMD + 8 operators?
-		- Use the damn profiler!
-
-	Plumbing:
-		- Move algorithms to dedicated file
-		- Patch save & load
-
-	Today's task:
-		- Move chorus mix to it's own file
-		- Execute LPF in loop
-
-	Priority plus:
-		- Create interface on FM_BISON that is being called by the MIDI driver(s) instead of the other way around
+		- Use smaller delay line(s) with chorus
+		- Let all oscillators use table and simplify oscillator ogic (split normal & LFO?)
+		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
+		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler)
+		- Move algorithms (however crude) to a dedicated file
+		- Patch save & load (can be to and from a single file for starters)
+		- Create interface on FM_BISON that is called by the MIDI driver(s) insteaed of the other way around
 		  + Beware of domains here (dB, time et cetera)
-		- Immediately after: implement instrument serializer; for now it can just store and load to/from a single file!
-		- The SVF filter goes out of bounds? I suppose this because I cast to float in the end!
-		- My delay line is clunky; I could use smaller ones at the cost of some precision (look at WaveSabre)
-		- Implement parameter to flatten the ADSR
-		- Figure out how to interpret aftertouch in ADSR
+		- Is the SVF filter stable and if not is it becauase if cast back to float?
+		- My delay line is clunky and does not resize
+		- Implement blend between flat and curvy ADSR
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
-
-	Priority:
-		- Migrate to VST
-		  + Allows to better estimate which paramaters need range adjustment
-		  + Right now I'm setting the patch according to MIDI values, but that should not be done that way
-		    in a VST harness
-		- Look at recent FIXMEs, rethink your life, read http://people.ece.cornell.edu/land/courses/ece4760/Math/GCC644/FM_synth/Chowning.pdf
-
-	Missing top-level features:
-		- Jitter is only partially implemented
-		- Unison mode, portamento (monophonic) perhaps
-
-	A few good tips for better liveliness and Rhodes: 
-		- https://www.youtube.com/watch?v=72WoueTI354
-		- http://recherche.ircam.fr/anasyn/falaize/applis/rhodes/
-		- http://www.dafx17.eca.ed.ac.uk/papers/DAFx17_paper_79.pdf
-
-	Golden rules:
-		- Basic FM right first, party tricks second: consider going full VST when basic FM works right
-		- Don't chase the DX7: you'll be spending hours emulating algorithms based on past restrictions (reading doesn't hurt, though)
+		- FIXMEs
 
 	Issues:
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into

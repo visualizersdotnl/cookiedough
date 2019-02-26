@@ -18,7 +18,7 @@
 
 namespace SFM
 {
-	// Initialize externally
+	// Initialize externally/manually
 	class Voice
 	{
 	public:
