@@ -42,7 +42,7 @@
 		- FIXMEs
 
 	Optimizations:
-		- Profile!
+		- Profile (28/02: doesn't show anything alarming yet, maybe use OMP?)
 		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
 		- Optimize fillter
 		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler),
