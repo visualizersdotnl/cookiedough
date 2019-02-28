@@ -10,20 +10,32 @@
 
 namespace SFM
 {
-	void ADSR::Start(const Parameters &parameters, float velocity, float baseScale)
+	void ADSR::Start(const Parameters &parameters, float velocity, float baseScale, float linearity)
 	{
 		m_ADSR.reset();
 
-		SFM_ASSERT(velocity <= 1.f);
+		// Bounds check
+		SFM_ASSERT(velocity >= 0.f && velocity <= 1.f);
+		SFM_ASSERT(baseScale >= 0.f);
+		SFM_ASSERT(linearity >= 0.f && linearity <= 1.f);
 
-		// 25% shorter attack @ max. velocity
-		const float attackScale  = baseScale - 0.25f*velocity*baseScale;
+		// Stretch response between Nigel's sensible analog-style defaults and something way more linear
+		const float defRatioA = 0.3f;
+		const float defRatioDR = 0.0001f;
+		const float ratioA = defRatioA + linearity*10.f;
+		const float ratioDR = defRatioDR + linearity*10.f;
 
-		// 25% longer decay @ max. velocity
-		const float decayScale   = baseScale + 0.25f*velocity*baseScale;
+		m_ADSR.setTargetRatioA(ratioA);
+		m_ADSR.setTargetRatioDR(ratioDR);
 
-		// Scale along with note velocity 
-		const float releaseScale = baseScale * (1.f+velocity);
+		// The following is purely based on instruments like guitar or piano, so *maybe* I should do away with it? (FIXME)
+		// - 30% shorter attack @ max. velocity
+		// - 30% longer decay @ max. velocity
+		// - 30% longer release @ max. velocity
+		const float stretch      = 0.3f*velocity*baseScale;
+		const float attackScale  = baseScale-stretch;
+		const float decayScale   = baseScale+stretch;
+		const float releaseScale = baseScale+stretch;
 		
 		// Attack & release have a minimum to prevent clicking
 		const float attack  = std::max<float>(kSampleRate*0.001f /* 1ms min. */, floorf(attackScale*parameters.attack*kSampleRate));
@@ -36,15 +48,6 @@ namespace SFM
 
 		m_ADSR.setAttackLevel(parameters.attackLevel);
 		m_ADSR.setSustainLevel(parameters.sustain);
-
-		const float linearity = 1.f; // FIXME: parameter
-		const float defRatioA = 0.3f;
-		const float defRatioDR = 0.0001f;
-		const float ratioA = lerpf(defRatioA, defRatioA+100.f, linearity);
-		const float ratioDR = lerpf(defRatioDR, defRatioDR+100.f, linearity);
-
-		m_ADSR.setTargetRatioA(ratioA);
-		m_ADSR.setTargetRatioDR(ratioDR);
 
 		m_ADSR.gate(true);
 	}

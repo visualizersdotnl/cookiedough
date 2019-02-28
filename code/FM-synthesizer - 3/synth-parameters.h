@@ -38,9 +38,6 @@ namespace SFM
 		float cutoff;
 		float resonance;
 
-		// Grit parameter(s)
-		float gritWet;
-
 		void SetDefaults()
 		{
 			// Reset patch
@@ -65,9 +62,6 @@ namespace SFM
 			// Little to no filtering
 			cutoff = kDefFilterCutoff;
 			resonance = kDefFilterResonance;
-
-			// No grit
-			gritWet = 0.f;
 		}
 	};
 }

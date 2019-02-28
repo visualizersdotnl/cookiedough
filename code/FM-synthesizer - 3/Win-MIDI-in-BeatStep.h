@@ -28,14 +28,12 @@ namespace SFM
 	// Chorus switch
 	bool WinMidi_ChorusEnabled();
 
-	// Operator env. rate 
+	// Operator env. rate & linearity
 	float WinMidi_GetOpEnvRateMul(unsigned iOp);
 	float WinMidi_GetOpEnvRateScale(unsigned iOp);
+	float WinMidi_GetOpEnvLinearity(unsigned iOp);
 
 	// Filter parameters
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
-
-	// Grit parameter(s)
-	float WinMidi_GetGritWet();
 }

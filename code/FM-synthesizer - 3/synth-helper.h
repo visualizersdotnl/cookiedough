@@ -28,6 +28,11 @@ namespace SFM
 	SFM_INLINE float AmplitudeTodB(float amplitude) { return 20.f * log10f(amplitude); }
 	SFM_INLINE float dBToAmplitude(float dB)        { return powf(10.f, dB/20.f);      }
 
+	// Note to frequency (base A4)
+	SFM_INLINE float NoteToFreq(unsigned note) {
+		return 440.f * powf(2.f, (note - 69.f) / 12.f);
+	}
+
 	// Is frequency audible?
 	inline bool InAudibleSpectrum(float frequency)
 	{

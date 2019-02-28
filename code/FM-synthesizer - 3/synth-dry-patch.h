@@ -64,6 +64,9 @@ namespace SFM
 
 			// Envelope keyboard rate scaling
 			float envRateScale;
+
+			// Envelope linearity
+			float envLinearity;
 		};
 	
 		Operator operators[kNumOperators];
@@ -131,6 +134,9 @@ namespace SFM
 
 				// No envelope keyboard scaling
 				patchOp.envRateScale = 0.f;
+
+				// Non-linear envelope
+				patchOp.envLinearity = 0.f;
 			}
 		}
 	};

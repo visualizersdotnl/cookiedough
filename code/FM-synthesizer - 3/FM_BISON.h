@@ -3,7 +3,7 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	** 26/02/2019: project ditched, going VST **
+	** 26/02/2019: project ditched, going VST, need better performance **
 
 	Third prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
@@ -22,26 +22,27 @@
 		- Subtractive synthesis on top
 
 	Doing now:
-		- Try basic VST with Juce
+		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
+		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
+		- Research feedback glitch in supersaw algorithm
 
-	To do (in no particular order):
+	To do (in no particular order): 
+		- Use Karplus-Strong to waveguide high pass bitcrush in Wurlitzer mode
+		- OPL 2-operator mode
+		- Use smaller delay line(s) with chorus
 		- Migrate to VST
 		- Bitcrushing per operator
 		- Pitch envelope needs time stretch like the others do
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
 		- Optimize fillter
-		- Use smaller delay line(s) with chorus
-		- Let all oscillators use table and simplify oscillator ogic (split normal & LFO?)
-		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
+		- Let all oscillators use table and simplify oscillator logic (split normal & LFO?)
 		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler)
 		- Move algorithms (however crude) to a dedicated file
 		- Patch save & load (can be to and from a single file for starters)
 		- Create interface on FM_BISON that is called by the MIDI driver(s) insteaed of the other way around
 		  + Beware of domains here (dB, time et cetera)
-		- Is the SVF filter stable and if not is it becauase if cast back to float?
-		- My delay line is clunky and does not resize
-		- Implement blend between flat and curvy ADSR
+		- Is the SVF filter stable and if not is it becauase I cast back to float?
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- FIXMEs
 
@@ -71,3 +72,4 @@ namespace SFM
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, unsigned key, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
 }
+ 

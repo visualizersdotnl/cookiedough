@@ -241,7 +241,7 @@ namespace SFM
 			kDX7_32,
 			kSuperSaw,
 			kDX7_17
-		} static algorithm = kWurlitzer;
+		} static algorithm = kSuperSaw;
 
 		if (kDualOp == algorithm)
 		{
@@ -337,6 +337,9 @@ namespace SFM
 			/*
 				Test algorithm: Volca/DX7 algorithm #2
 			*/
+
+			// Apply Wurlitzer effect (FIXME)
+			voice.m_wurlyMode = true;
 
 			// Operator #1
 			voice.m_operators[0].enabled = true;
@@ -610,7 +613,7 @@ namespace SFM
 			const float rateScale = kEnvMulMin + kEnvMulRange*patchOp.envRateMul;
 			const float envScale = rateScale + rateScale*patchOp.envRateScale*(request.key/127.f); // FIXME: range parameter!
 
-			voiceOp.envelope.Start(envParams, opVelocity, envScale);
+			voiceOp.envelope.Start(envParams, opVelocity, envScale, patchOp.envLinearity);
 		}
 
 		// Reset filter
@@ -626,7 +629,7 @@ namespace SFM
 		envParams.sustain = patch.pitchEnvSustain;
 		envParams.release = patch.pitchEnvRelease;
 		envParams.attackLevel = patch.pitchEnvLevel;
-		voice.m_pitchEnv.Start(envParams, 0.f, 1.f); // No velocity response (FIXME: scale attack level?)
+		voice.m_pitchEnv.Start(envParams, 0.f, 1.f, 1.f); // No velocity response, fixed rate (FIXME), linear curve
 		
 		// Enabled, up counter		
 		voice.m_state = Voice::kEnabled;
@@ -786,9 +789,6 @@ namespace SFM
 		s_parameters.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
-		// Grit parameter(s)
-		s_parameters.gritWet = WinMidi_GetGritWet();
-
 		// Pitch envelope
 		s_parameters.patch.pitchEnvAttack = WinMidi_GetPitchEnvAttack();
 		s_parameters.patch.pitchEnvDecay = WinMidi_GetPitchEnvDecay();
@@ -827,10 +827,11 @@ namespace SFM
 			patchOp.levelScaleL = WinMidi_GetOpLevelScaleL(iOp);
 			patchOp.levelScaleR = WinMidi_GetOpLevelScaleR(iOp);
 
-			// Envelope rate
+			// Envelope rate & linearity
 			const float envRateMul = WinMidi_GetOpEnvRateMul(iOp);
 			patchOp.envRateMul = envRateMul;
 			patchOp.envRateScale = WinMidi_GetOpEnvRateScale(iOp);
+			patchOp.envLinearity = WinMidi_GetOpEnvLinearity(iOp);
 
 			// Distortion
 			patchOp.distortion = WinMidi_GetOpDistortion(iOp);
