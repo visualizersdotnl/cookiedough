@@ -5,7 +5,7 @@
 	These functions all accept any value where [0..1] is the length of one period.
 	This costs a few cycles extra here and there which can be avoided if need be; this is however very flexible.
 
-	However the real optimization opportunities here are making a wavetable for all oscillators and/or going full SIMD.
+	For performance I suggest precalculating tables using these functions.
 */
 
 #pragma once

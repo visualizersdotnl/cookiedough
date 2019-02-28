@@ -3,7 +3,7 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	** 26/02/2019: project ditched, going VST, need better performance **
+	** 26/02/2019: project semi-ditched, going VST, need better performance **
 
 	Third prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
@@ -13,7 +13,6 @@
 	Third party credits (not necessarily 100% complete):
 		- Bits and pieces taken from Hexter by Sean Bolton (https://github.com/smbolton/hexter)
 		- ADSR (modified), original by Nigel Redmon (earlevel.com)
-		- Pink noise function by Paul Kellet (http://www.firstpr.com.au/dsp/pink-noise/)
 		- JSON++ (https://github.com/hjiang/jsonxx)
 		- SvfLinearTrapOptimised2.hpp by FAC (https://github.com/FredAntonCorvest/Common-DSP)
 
@@ -22,29 +21,32 @@
 		- Subtractive synthesis on top
 
 	Doing now:
-		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
-		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
 		- Research feedback glitch in supersaw algorithm
-
-	To do (in no particular order): 
-		- Use Karplus-Strong to waveguide high pass bitcrush in Wurlitzer mode
-		- OPL 2-operator mode
-		- Use smaller delay line(s) with chorus
-		- Migrate to VST
-		- Bitcrushing per operator
-		- Pitch envelope needs time stretch like the others do
-		- Better key scaling implementation (configurable range)
-		- Add additive & non-linear level scaling (default is now subtractive & linear)
-		- Optimize fillter
-		- Let all oscillators use table and simplify oscillator logic (split normal & LFO?)
-		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler)
-		- Move algorithms (however crude) to a dedicated file
-		- Patch save & load (can be to and from a single file for starters)
+		- OPL 2-operator mode: feed forward?
 		- Create interface on FM_BISON that is called by the MIDI driver(s) insteaed of the other way around
 		  + Beware of domains here (dB, time et cetera)
-		- Is the SVF filter stable and if not is it becauase I cast back to float?
+		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
+
+	To do (in no particular order): 
+		- Use Karplus-Strong to guide grit in Wurlitzer mode
+		- Use smaller delay line(s) with chorus
+		- Migrate to VST
+		- Pitch envelope needs time stretch
+		- Better key scaling implementation (configurable range)
+		- Add additive & non-linear level scaling (default is now subtractive & linear)
+		- Let all oscillators use table and simplify oscillator logic (split cosine & LFO?)
+		- Move algorithms (however crude) to a dedicated file
+		- Patch save & load (can be to and from a single file for starters)
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
+		- SVF filter goes out of bounds every now and then
 		- FIXMEs
+
+	Optimizations:
+		- Profile!
+		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
+		- Optimize fillter
+		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler),
+		  there's no doubt it will complicate code and make it harder to modify and/or add features
 
 	To do in VST phase:
 		- Add initial delay to envelopes (DADSR)

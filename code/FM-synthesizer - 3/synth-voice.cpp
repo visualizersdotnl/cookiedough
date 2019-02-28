@@ -108,7 +108,7 @@ namespace SFM
 			SFM_ASSERT(m_pitchEnvBias >= 0.f && m_pitchEnvBias <= 1.f);
 			pitchEnv -= m_pitchEnvBias;
 
-			// - Range 2 octave [-1..+1]
+			// - Range 2 octaves [-1..+1]
 			pitchEnv = powf(2.f, pitchEnv);
 
 			// All of this: FIXME
@@ -165,15 +165,15 @@ namespace SFM
 				// Sample envelope
 				const float envelope = voiceOp.envelope.Sample();
 
-				// Apply LFO vibrato
+				// Apply LFO vibrato to envelope pitch
 				float vibrato = parameters.pitchBend*pitchEnv;
 				vibrato *= powf(2.f, LFO*parameters.modulation*voiceOp.pitchMod);
 				
-				// Adjust oscillator pitch
+				// Bend oscillator pitch accordingly
 				voiceOp.oscillator.PitchBend(vibrato);
 
 				// Calculate sample
-				float sample = voiceOp.oscillator.Sample(modulation+feedback);
+				float sample = voiceOp.oscillator.Sample(modulation-feedback);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
@@ -196,7 +196,8 @@ namespace SFM
 				if (true == voiceOp.isCarrier)
 				{
 					linAmp += envelope;
-					mix += sample;
+					mix    += sample;
+
 					++numCarriers;
 				}
 			}
@@ -211,11 +212,11 @@ namespace SFM
 
 		// Normalize
 		SFM_ASSERT(0 != numCarriers);
-		mix /= numCarriers;
+		mix    /= numCarriers;
 		linAmp /= numCarriers;
+
 		float filterAmt = 1.f;
 
-		// Apply Wurlitzer effect
 		if (true == m_wurlyMode)
 		{
 			// Apply cheap distortion
@@ -229,7 +230,12 @@ namespace SFM
 		}
 
 		// Apply filter
-		const float filtered = float(m_LPF.tick(mix));
+		float filtered = float(m_LPF.tick(mix));
+		
+		// FIXME: The filter has a problem in that it'll go every so slightly out of bounds
+		//        Either that or it's the conversion to single precision
+		filtered = Clamp(filtered);
+
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
 		SampleAssert(mix);

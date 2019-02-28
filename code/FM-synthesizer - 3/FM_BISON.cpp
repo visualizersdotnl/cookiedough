@@ -233,7 +233,7 @@ namespace SFM
 
 		enum Algo
 		{
-			kDualOp,
+			kOPL2,
 			kWurlitzer,
 			kDX7_2,
 			kDX7_5,
@@ -241,9 +241,9 @@ namespace SFM
 			kDX7_32,
 			kSuperSaw,
 			kDX7_17
-		} static algorithm = kSuperSaw;
+		} static algorithm = kOPL2;
 
-		if (kDualOp == algorithm)
+		if (kOPL2 == algorithm)
 		{
 			/*
 				Test algorithm: single carrier & modulator
@@ -255,7 +255,7 @@ namespace SFM
 			voice.m_operators[0].feedback = 0;
 			voice.m_operators[0].isCarrier = true;
 			voice.m_operators[0].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
 				CalcOpIndex(true, key, velocity, patch.operators[0]),
 				CalcPhaseJitter(liveliness));
@@ -264,7 +264,7 @@ namespace SFM
 			voice.m_operators[1].enabled = true;
 			voice.m_operators[1].feedback = 1;
 			voice.m_operators[1].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
 				CalcOpIndex(false, key, velocity, patch.operators[1]),
 				CalcPhaseJitter(liveliness));
@@ -287,7 +287,7 @@ namespace SFM
 			voice.m_operators[0].modulators[2] = 5;
 			voice.m_operators[0].isCarrier = true;
 			voice.m_operators[0].oscillator.Initialize(
-				kSine,
+				kCosine,
 				0.f,
 				CalcOpIndex(true, key, velocity, patch.operators[0]));
 
@@ -295,14 +295,14 @@ namespace SFM
 			voice.m_operators[1].enabled = true;
 			voice.m_operators[1].modulators[0] = 2;
 			voice.m_operators[1].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
 				CalcOpIndex(false, key, velocity, patch.operators[1]),
 				CalcPhaseJitter(liveliness));
 		
 			voice.m_operators[2].enabled = true;
 			voice.m_operators[2].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
 				CalcOpIndex(false, key, velocity, patch.operators[2]),
 				CalcPhaseJitter(liveliness));
@@ -311,14 +311,14 @@ namespace SFM
 			voice.m_operators[3].enabled = true;
 			voice.m_operators[3].modulators[0] = 4;
 			voice.m_operators[3].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
 				CalcOpIndex(false, key, velocity, patch.operators[3]),
 				CalcPhaseJitter(liveliness));
 
 			voice.m_operators[4].enabled = true;
 			voice.m_operators[4].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
 				CalcOpIndex(false, key, velocity, patch.operators[4]),
 				CalcPhaseJitter(liveliness));
@@ -326,7 +326,7 @@ namespace SFM
 			// C <- 6
 			voice.m_operators[5].enabled = true;
 			voice.m_operators[5].oscillator.Initialize(
-				kSine,
+				kCosine,
 				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
 				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
@@ -346,7 +346,7 @@ namespace SFM
 			voice.m_operators[0].modulators[0] = 1;
 			voice.m_operators[0].isCarrier = true;
 			voice.m_operators[0].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
 				CalcOpIndex(true, key, velocity, patch.operators[0]),
 				CalcPhaseJitter(liveliness));
@@ -355,7 +355,7 @@ namespace SFM
 			voice.m_operators[1].enabled = true;
 			voice.m_operators[1].feedback = 1;
 			voice.m_operators[1].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
 				CalcOpIndex(false, key, velocity, patch.operators[1]),
 				CalcPhaseJitter(liveliness));
@@ -365,7 +365,7 @@ namespace SFM
 			voice.m_operators[2].modulators[0] = 3;
 			voice.m_operators[2].isCarrier = true;
 			voice.m_operators[2].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
 				CalcOpIndex(true, key, velocity, patch.operators[2]),
 				CalcPhaseJitter(liveliness));
@@ -374,7 +374,7 @@ namespace SFM
 			voice.m_operators[3].enabled = true;
 			voice.m_operators[3].modulators[0] = 4;
 			voice.m_operators[3].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
 				CalcOpIndex(false, key, velocity, patch.operators[3]),
 				CalcPhaseJitter(liveliness));
@@ -383,7 +383,7 @@ namespace SFM
 			voice.m_operators[4].enabled = true;
 			voice.m_operators[4].modulators[0] = 5;
 			voice.m_operators[4].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
 				CalcOpIndex(false, key, velocity, patch.operators[4]),
 				CalcPhaseJitter(liveliness));
@@ -391,7 +391,7 @@ namespace SFM
 			// Operator #6
 			voice.m_operators[5].enabled = true;
 			voice.m_operators[5].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
 				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
@@ -413,7 +413,7 @@ namespace SFM
 				voice.m_operators[carrier].modulators[0] = modulator;
 				voice.m_operators[carrier].isCarrier = true;
 				voice.m_operators[carrier].oscillator.Initialize(
-					kSine, 
+					kCosine, 
 					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
 					CalcPhaseJitter(liveliness));
@@ -421,7 +421,7 @@ namespace SFM
 				// Modulator
 				voice.m_operators[modulator].enabled = true;
 				voice.m_operators[modulator].oscillator.Initialize(
-					kSine, 
+					kCosine, 
 					CalcOpFreq(fundamentalFreq, patch.operators[modulator]), 
 					CalcOpIndex(false, key, velocity, patch.operators[modulator]),
 					CalcPhaseJitter(liveliness));
@@ -446,7 +446,7 @@ namespace SFM
 				voice.m_operators[carrier].modulators[0] = (4 == iOp) ? 5 : -1;
 				voice.m_operators[carrier].isCarrier = true;
 				voice.m_operators[carrier].oscillator.Initialize(
-					kSine, 
+					kCosine, 
 					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
 					CalcPhaseJitter(liveliness));
@@ -456,7 +456,7 @@ namespace SFM
 			voice.m_operators[5].enabled = true;
 			voice.m_operators[5].feedback = 5;
 			voice.m_operators[5].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
 				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
@@ -476,7 +476,7 @@ namespace SFM
 				voice.m_operators[carrier].enabled = true;
 				voice.m_operators[carrier].isCarrier = true;
 				voice.m_operators[carrier].oscillator.Initialize(
-					kSine, 
+					kCosine, 
 					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
 					CalcPhaseJitter(liveliness));
@@ -501,7 +501,7 @@ namespace SFM
 				voice.m_operators[carrier].feedback = carrier;
 				voice.m_operators[carrier].isCarrier = true;
 				voice.m_operators[carrier].oscillator.Initialize(
-					kSine, 
+					kCosine, 
 					CalcOpFreq(fundamentalFreq, patch.operators[carrier]), 
 					CalcOpIndex(true, key, velocity, patch.operators[carrier]),
 					CalcPhaseJitter(liveliness));
@@ -526,7 +526,7 @@ namespace SFM
 			voice.m_operators[0].modulators[2] = 4;
 			voice.m_operators[0].isCarrier = true;
 			voice.m_operators[0].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
 				CalcOpIndex(true, key, velocity, patch.operators[0]),
 				CalcPhaseJitter(liveliness));
@@ -535,7 +535,7 @@ namespace SFM
 			voice.m_operators[1].enabled = true;
 			voice.m_operators[1].feedback = 1;
 			voice.m_operators[1].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
 				CalcOpIndex(false, key, velocity, patch.operators[1]),
 				CalcPhaseJitter(liveliness));
@@ -544,14 +544,14 @@ namespace SFM
 			voice.m_operators[2].enabled = true;
 			voice.m_operators[2].modulators[0] = 3;
 			voice.m_operators[2].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
 				CalcOpIndex(false, key, velocity, patch.operators[2]),
 				CalcPhaseJitter(liveliness));
 
 			voice.m_operators[3].enabled = true;
 			voice.m_operators[3].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
 				CalcOpIndex(false, key, velocity, patch.operators[3]),
 				CalcPhaseJitter(liveliness));
@@ -560,14 +560,14 @@ namespace SFM
 			voice.m_operators[4].enabled = true;
 			voice.m_operators[4].modulators[0] = 5;
 			voice.m_operators[4].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
 				CalcOpIndex(false, key, velocity, patch.operators[4]),
 				CalcPhaseJitter(liveliness));
 
 			voice.m_operators[5].enabled = true;
 			voice.m_operators[5].oscillator.Initialize(
-				kSine, 
+				kCosine, 
 				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
 				CalcOpIndex(false, key, velocity, patch.operators[5]),
 				CalcPhaseJitter(liveliness));
@@ -863,7 +863,8 @@ namespace SFM
 		Render function.
 	*/
 
-	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
+//	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
+	alignas(16) static float s_mixBuffer[kRingBufferSize];
 
 	// Poor man's chorus intended to create a wider (stereo) mix
 	SFM_INLINE void ChorusToStereo(float mix) 
@@ -945,7 +946,10 @@ namespace SFM
 		}
 		else
 		{
-			// Render dry samples for each voice (feedback)
+			// Erase mix buffer
+			memset(s_mixBuffer, 0, kRingBufferSize*sizeof(float));
+
+			// Render voices
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
 			{
@@ -959,11 +963,12 @@ namespace SFM
 				
 				if (true == voice.IsActive())
 				{
-					float *buffer = s_voiceBuffers[curVoice];
+//					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const float sample = voice.Sample(s_parameters);
-						buffer[iSample] = sample;
+	//					buffer[iSample] = sample;
+						s_mixBuffer[iSample] += sample;
 					}
 
 					++curVoice; // Do *not* use to index anything other than the temporary buffers
@@ -979,16 +984,14 @@ namespace SFM
 				// This isn't too pretty but I think I'll solve it by providing a simplified LFO object instead of an Oscillator (FIXME)
 				s_globalLFO.Sample(0.f);
 
-				float mix = 0.f;
-				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
-				{
-					const float sample = s_voiceBuffers[iVoice][iSample];
-					
-					// FIXME: filter goes out of bounds (see synth-voice.cpp)
-//					SampleAssert(sample);
+//				float mix = 0.f;
+//				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
+//				{
+//					const float sample = s_voiceBuffers[iVoice][iSample];
+//					mix = mix+sample;
+//				}
 
-					mix = mix+sample;
-				}
+				const float mix = s_mixBuffer[iSample];
 
 				// Stereo output to ring buffer
 				if (true == s_parameters.chorus)
