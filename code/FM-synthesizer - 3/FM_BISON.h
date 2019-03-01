@@ -3,7 +3,7 @@
 /*
 	'FM. BISON' by syntherklaas.org, a subsidiary of visualizers.nl
 
-	** 26/02/2019: project semi-ditched, going VST, need better performance **
+	** 26/02/2019: wanted to ditch but didn't, going VST, need better performance **
 
 	Third prototype of FM synthesizer
 	To be released as VST by Tasty Chips Electronics
@@ -20,7 +20,7 @@
 		- DX7-like core FM
 		- Subtractive synthesis on top
 
-	Doing now:
+	Doing now: 
 		- Research feedback glitch in supersaw algorithm
 		- OPL 2-operator mode: feed forward?
 		- Create interface on FM_BISON that is called by the MIDI driver(s) insteaed of the other way around
@@ -30,7 +30,7 @@
 	To do (in no particular order): 
 		- Use Karplus-Strong to guide grit in Wurlitzer mode
 		- Use smaller delay line(s) with chorus
-		- Migrate to VST
+		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)

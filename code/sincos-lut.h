@@ -2,8 +2,7 @@
 // cookiedough -- LUT sinus/cosinus
 
 /*
-	FIXME:
-	- you'd get slightly better results by blending 2 samples
+	FIXME: use FastCos() like the FM synthesizer does!
 */
 
 #pragma once
@@ -26,5 +25,9 @@ VIZ_INLINE int tocosindex(float angle)
 	return (int) angle;
 }
 
-VIZ_INLINE float lutcosf(float angle) { return lutcosf(tocosindex(angle)); }
+VIZ_INLINE float lutcosf(float angle) {
+	VIZ_ASSERT(0); // see FIXME!
+	return lutcosf(tocosindex(angle)); 
+}
+
 VIZ_INLINE float lutsinf(float angle) { return lutsinf(tocosindex(angle)); }

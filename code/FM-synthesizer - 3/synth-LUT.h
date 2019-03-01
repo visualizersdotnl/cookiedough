@@ -1,6 +1,8 @@
 
 /*
 	Syntherklaas FM -- Global lookup tables.
+
+	FIXME: (Co)sine currently unused, remove?
 */
 
 #pragma once
@@ -27,6 +29,7 @@ namespace SFM
 		return value;
 	}
 
+	// Period [0..1]
 	SFM_INLINE float lutsinf(float index) { return SampleLUT(g_sinLUT, index*kOscLUTSize); }
 	SFM_INLINE float lutcosf(float index) { return lutsinf(index + 0.25f); }
 }

@@ -60,8 +60,8 @@
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
-const bool kTestBedForFM = false;
-// const bool kTestBedForFM = true;
+// const bool kTestBedForFM = false;
+const bool kTestBedForFM = true;
 
 // Undef. for < 60FPS warning
 #define FPS_WARNING

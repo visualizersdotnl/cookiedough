@@ -39,24 +39,25 @@ ADSR::~ADSR(void) {
 
 void ADSR::setAttackRate(float rate) {
 	attackRate = rate;
-	attackCoef = calcCoef(rate, targetRatioA);
+	attackCoef = calcCoef(1.f, rate, targetRatioA);
 	attackBase = (attackLevel + targetRatioA) * (1.f - attackCoef);
 }
 
 void ADSR::setDecayRate(float rate) {
 	decayRate = rate;
-	decayCoef = calcCoef(rate, targetRatioDR);
+	decayCoef = calcCoef(1.f, rate, targetRatioDR);
 	decayBase = (fabsf(attackLevel-sustainLevel) - targetRatioDR) * (1.f - decayCoef);
 }
 
 void ADSR::setReleaseRate(float rate) {
 	releaseRate = rate;
-	releaseCoef = calcCoef(rate, targetRatioDR);
+	releaseCoef = calcCoef(1.f, rate, targetRatioDR);
 	releaseBase = -targetRatioDR * (1.f - releaseCoef);
 }
 
-float ADSR::calcCoef(float rate, float targetRatio) {
-	return (rate <= 0.f) ? 0.f : expf(-logf((1.f + targetRatio) / targetRatio) / rate);
+// FIXME: distance could be removed, see discussion here: http://www.earlevel.com/main/2013/06/03/envelope-generators-adsr-code/
+float ADSR::calcCoef(float distance, float rate, float targetRatio) {
+	return (rate <= 0.f) ? 0.f : expf(-logf((distance+targetRatio) / targetRatio) / rate);
 }
 
 void ADSR::setAttackLevel(float level) {
@@ -73,7 +74,7 @@ void ADSR::setTargetRatioA(float targetRatio) {
 	if (targetRatio < 0.000000001f)
 		targetRatio = 0.000000001f;  // -180 dB
 	targetRatioA = targetRatio;
-	attackCoef = calcCoef(attackRate, targetRatioA);
+	attackCoef = calcCoef(1.f, attackRate, targetRatioA);
 	attackBase = (1.f + targetRatioA) * (1.f - attackCoef);
 }
 
@@ -81,8 +82,8 @@ void ADSR::setTargetRatioDR(float targetRatio) {
 	if (targetRatio < 0.000000001f)
 		targetRatio = 0.000000001f;  // -180 dB
 	targetRatioDR = targetRatio;
-	decayCoef = calcCoef(decayRate, targetRatioDR);
-	releaseCoef = calcCoef(releaseRate, targetRatioDR);
+	decayCoef = calcCoef(1.f, decayRate, targetRatioDR);
+	releaseCoef = calcCoef(1.f, releaseRate, targetRatioDR);
 	decayBase = (fabsf(attackLevel-sustainLevel) - targetRatioDR) * (1.f - decayCoef);
 	releaseBase = -targetRatioDR * (1.f - releaseCoef);
 }

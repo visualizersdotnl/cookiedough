@@ -48,6 +48,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-LUT.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-fast-cosine.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h" />

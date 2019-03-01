@@ -11,6 +11,7 @@
 #pragma once
 
 #include "synth-random.h"
+#include "synth-fast-cosine.h"
 
 namespace SFM
 {
@@ -47,8 +48,8 @@ namespace SFM
 		Sinus oscillator.
 	*/
 
-	SFM_INLINE float oscSine(float phase) { return lutsinf(phase); }
-	SFM_INLINE float oscCos(float phase)  { return lutcosf(phase); }
+	SFM_INLINE float oscSine(float phase) { return FastSin(phase); } // lutsinf(phase); }
+	SFM_INLINE float oscCos(float phase)  { return FastCos(phase); } // lutcosf(phase); }
 
 	/*
 		Digital sawtooth, square & triangle (alias at audible frequencies).
@@ -61,12 +62,12 @@ namespace SFM
 
 	SFM_INLINE float oscDigiSquare(float phase)
 	{
-		return lutsinf(phase) > 0.f ? 1.f : -1.f;
+		return FastSin(phase) > 0.f ? 1.f : -1.f;
 	}
 
 	SFM_INLINE float oscDigiTriangle(float phase)
 	{
-		return 2.f*(asinf(lutsinf(phase))*(1.f/kPI));
+		return 2.f*(asinf(FastSin(phase))*(1.f/kPI));
 	}
 
 	SFM_INLINE float oscDigiPulse(float phase, float duty)
@@ -96,7 +97,7 @@ namespace SFM
 		float signal = 0.f, accPhase = phase;
 		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; ++iHarmonic)
 		{
-			signal += lutsinf(accPhase)/(1.f+iHarmonic);
+			signal += FastSin(accPhase)/(1.f+iHarmonic);
 			accPhase += phase;
 		}
 
@@ -110,7 +111,7 @@ namespace SFM
 		float signal = 0.f, accPhase = phase;
 		for (unsigned iHarmonic = 0; iHarmonic < numHarmonics; iHarmonic += 2)
 		{
-			signal += lutsinf(accPhase)/(1.f+iHarmonic);
+			signal += FastSin(accPhase)/(1.f+iHarmonic);
 			accPhase += 2.f*phase;
 		}
 

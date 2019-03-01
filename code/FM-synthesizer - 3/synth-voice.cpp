@@ -173,7 +173,7 @@ namespace SFM
 				voiceOp.oscillator.PitchBend(vibrato);
 
 				// Calculate sample
-				float sample = voiceOp.oscillator.Sample(modulation-feedback);
+				float sample = voiceOp.oscillator.Sample(modulation+feedback);
 
 				// Apply LFO tremolo
 				const float tremolo = lerpf<float>(1.f, LFO, voiceOp.ampMod);
@@ -212,8 +212,9 @@ namespace SFM
 
 		// Normalize
 		SFM_ASSERT(0 != numCarriers);
-		mix    /= numCarriers;
-		linAmp /= numCarriers;
+		const float invC = 1.f/numCarriers;
+		mix    *= invC;
+		linAmp *= invC;
 
 		float filterAmt = 1.f;
 
@@ -221,7 +222,7 @@ namespace SFM
 		{
 			// Apply cheap distortion
 			const float mixAsym = mix+0.3f;
-			const float shaper = 1.f/(1.1f + mixAsym*mixAsym*mixAsym);
+			const float shaper = 1.f/(1.f + mixAsym*mixAsym*mixAsym);
 			mix *= shaper;
 
 			// Shape amplitude and use it as filter amount (maybe a bit hairy from user POV)
@@ -234,11 +235,11 @@ namespace SFM
 		
 		// FIXME: The filter has a problem in that it'll go every so slightly out of bounds
 		//        Either that or it's the conversion to single precision
-		filtered = Clamp(filtered);
+//		filtered = Clamp(filtered);
 
 		mix = lerpf<float>(mix, filtered, filterAmt);
 
-		SampleAssert(mix);
+//		SampleAssert(mix);
 
 		return mix;
 	}

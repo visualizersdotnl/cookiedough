@@ -3,6 +3,7 @@
 // Adapted by syntherklaas.org for FM. BISON, changes made:
 // - Fixed warnings
 // - Fixed process() to proceed to decay state immediately after attack to eliminate a click
+// - Added attack level
 //
 
 //
@@ -68,7 +69,7 @@ protected:
 	float decayBase;
 	float releaseBase;
  
-	float calcCoef(float rate, float targetRatio);
+	float calcCoef(float distance, float rate, float targetRatio);
 };
 
 inline float ADSR::process() {
