@@ -4,7 +4,6 @@
 
 	// FIXME:
 	// - Use sine and cosine directly, bypass oscillator.
-	// - Evaluate mix.
 	// - Evaluate algorithm.
 */
 
@@ -47,7 +46,6 @@ namespace SFM
 		auto size = m_delayLine.size();
 		delay = size*delay;
 		spread = size*spread;
-
 	
 		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
 		const float tapL = m_delayLine.Read(delay + spread*m_sweepLPF1.Apply(sweepL));

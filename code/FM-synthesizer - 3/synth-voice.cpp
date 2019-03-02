@@ -208,6 +208,11 @@ namespace SFM
 		SFM_ASSERT(0 != numCarriers);
 		mix /= numCarriers;
 
+		// Cheap shaper that helps a little if you're looking for amplifier distortion
+		const float asymMix = mix+0.3f;
+		const float asymDistMix = mix * 1.f/(1.f + asymMix*asymMix*asymMix);
+		mix = lerpf<float>(mix, asymDistMix, parameters.asymDistort);
+
 		// Apply filter
 		const float filtered = float(m_LPF.tick(mix));
 		SampleAssert(filtered);

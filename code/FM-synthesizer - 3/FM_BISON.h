@@ -26,13 +26,13 @@
 		  + Beware of domains here (dB, time et cetera)
 		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
 
-	To do (in no particular order): 
+	To do (in no particular order):
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
-		- Let all oscillators use table and simplify oscillator logic (split cosine & LFO?)
+		- Simplify oscillator logic in various places 
 		- Move algorithms (however crude) to a dedicated file
 		- Patch save & load (can be to and from a single file for starters)
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF

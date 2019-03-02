@@ -38,6 +38,9 @@ namespace SFM
 		float cutoff;
 		float resonance;
 
+		// Asym. distortion (per voice, cheap amplifier distortion)
+		float asymDistort;
+
 		void SetDefaults()
 		{
 			// Reset patch
@@ -62,6 +65,9 @@ namespace SFM
 			// Little to no filtering
 			cutoff = kDefFilterCutoff;
 			resonance = kDefFilterResonance;
+
+			// No asym. distortion
+			asymDistort = 0.f;
 		}
 	};
 }

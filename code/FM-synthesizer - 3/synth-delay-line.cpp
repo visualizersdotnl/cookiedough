@@ -12,7 +12,6 @@ namespace SFM
 {
 	DelayLine::DelayLine(size_t size) :
 		m_size(size)
-,		m_factor(kSampleRate/float(size))
 ,		m_writeIdx(0)
 	{
 		SFM_ASSERT(size <= kSampleRate);

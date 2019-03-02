@@ -36,4 +36,7 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff();
 	float WinMidi_GetFilterResonance();
+
+	// Asym. distortion
+	float WinMidi_GetAsymDistort();
 }

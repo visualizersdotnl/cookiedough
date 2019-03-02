@@ -235,7 +235,7 @@ namespace SFM
 			kSuperSaw,
 			kDX7_17
 		} static algorithm = kOPL2;
-
+		
 		if (kOPL2 == algorithm)
 		{
 			/*
@@ -717,6 +717,9 @@ namespace SFM
 		s_parameters.cutoff = WinMidi_GetFilterCutoff();
 		s_parameters.resonance = WinMidi_GetFilterResonance();
 
+		// Asym. distortion
+		s_parameters.asymDistort = WinMidi_GetAsymDistort();
+
 		// Pitch envelope
 		s_parameters.patch.pitchEnvAttack = WinMidi_GetPitchEnvAttack();
 		s_parameters.patch.pitchEnvDecay = WinMidi_GetPitchEnvDecay();
@@ -775,7 +778,7 @@ namespace SFM
 			}
 			else
 			{
-				// Fixed
+				// Fixed (FIXME: move calculation?)
 				// Source: http://afrittemple.com/volca/volca_programming.pdf
 				const unsigned table[] = { 1, 10, 100, 1000 };
 				const unsigned index = unsigned(WinMidi_GetOpCoarse(iOp)*3.f);

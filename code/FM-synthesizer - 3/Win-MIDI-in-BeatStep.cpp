@@ -44,6 +44,7 @@ namespace SFM
 	const unsigned kPotLFOSpeed = 7; // The big knob
 	const unsigned kPotFilterCutoff = 17;
 	const unsigned kPotFilterResonance = 91;
+	const unsigned kPotAsymDistort = 71;
 
 	// Would've liked these on the Oxygen 49, but I'm out of controls :-)
 	const unsigned kPotOpEnvRateMul = 72;
@@ -74,6 +75,9 @@ namespace SFM
 	// Filter parameters
 	static float s_cutoff = 1.f;
 	static float s_resonance = 1.f;
+
+	// Asym. distortion
+	static float s_asymDistort = 0.f;
 
 	/*
 		Mapping for the BeatStep
@@ -139,6 +143,11 @@ namespace SFM
 
 					case kPotFilterResonance:
 						s_resonance = fControlVal;
+						break;
+
+					// Asym. distortion
+					case kPotAsymDistort:
+						s_asymDistort = fControlVal;
 						break;
 
 					// Operator envelope rate multiplier
@@ -293,4 +302,9 @@ namespace SFM
 	// Filter parameters
 	float WinMidi_GetFilterCutoff()     { return s_cutoff;    }
 	float WinMidi_GetFilterResonance()  { return s_resonance; }
+
+	// Asym. distortion
+	float WinMidi_GetAsymDistort() {
+		return s_asymDistort;
+	}
 }

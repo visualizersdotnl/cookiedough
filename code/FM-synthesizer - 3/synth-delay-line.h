@@ -24,8 +24,6 @@ namespace SFM
 		// Delay is specified in samples relative to kSampleRate
 		SFM_INLINE float Read(float delay)
 		{
-//			delay *= m_factor;
-
 			const size_t from = (m_writeIdx-int(delay)) % m_size;
 			const size_t to   = (from > 0) ? from-1 : m_size-1;
 			const float fraction = fracf(delay);
@@ -38,8 +36,7 @@ namespace SFM
 		size_t size() const { return m_size; }
 
 	private:
-		/* const */ size_t m_size;
-		/* const */ float m_factor;
+		const size_t m_size;
 		unsigned m_writeIdx;
 
 		alignas(16) float m_buffer[kSampleRate];
