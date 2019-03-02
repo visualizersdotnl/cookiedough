@@ -793,7 +793,6 @@ namespace SFM
 		Render function.
 	*/
 
-//	alignas(16) static float s_voiceBuffers[kMaxVoices][kRingBufferSize];
 	alignas(16) static float s_mixBuffer[kRingBufferSize];
 
 	// Poor man's chorus intended to create a wider (stereo) mix
