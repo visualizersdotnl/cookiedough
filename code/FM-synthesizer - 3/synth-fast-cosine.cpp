@@ -2,9 +2,7 @@
 /*
 	Syntherklaas FM: fast (co)sine.
 
-	Taken from Logicoma's WaveSabre, provided by Erik 'Kusma' Faye-Lund.
-
-	FIXME: clean up!
+	** Taken from Logicoma's WaveSabre, provided by Erik 'Kusma' Faye-Lund. **
 */
 
 #pragma once
@@ -12,6 +10,8 @@
 #include "synth-global.h"
 
 /*
+	This is used in WaveSabre but seeing as I build for 64-bit I can't use it as-is now.
+
 static __declspec(naked) double __vectorcall fpuCos(double x)
 {
 	__asm
@@ -38,7 +38,7 @@ namespace SFM
 
 	static double s_fastCosTab[kFastCosTabSize+1];
 
-	void InitializeFastCos()
+	void InitializeFastCosine()
 	{
 		for (unsigned i = 0; i < kFastCosTabSize+1; ++i)
 		{
@@ -47,13 +47,13 @@ namespace SFM
 		}
 	}
 
-	float FastCos(double x)
+	float fastcosf(double x)
 	{
-		x = fabs(x); // cosine is symmetrical around 0, let's get rid of negative values
+		// Cosine is symmetrical around 0, let's get rid of negative values
+		x = fabs(x); 
 
-		// normalize range from 0..2PI to 1..2
-//		const auto phaseScale = 1.0/k2PI;
-		auto phase = 1.0 + x; // * phaseScale;
+		// Convert [0..1] to [1..2]
+		auto phase = 1.0+x;
 
 		auto phaseAsInt = *reinterpret_cast<unsigned long long *>(&phase);
 		int exponent = (phaseAsInt >> 52) - 1023;
@@ -67,9 +67,9 @@ namespace SFM
 		int fract = significand & fractMask;
 
 		auto left = s_fastCosTab[index];
-		auto right = s_fastCosTab[index + 1];
+		auto right = s_fastCosTab[index+1];
 
-		auto fractMix = fract * (1.0 / fractScale);
-		return float(left + (right - left) * fractMix);
+		auto fractMix = fract*(1.0/fractScale);
+		return float(left + (right-left) * fractMix);
 	}
 };

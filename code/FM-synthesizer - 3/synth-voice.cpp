@@ -36,9 +36,6 @@ namespace SFM
 
 		// Reset filter
 		m_LPF.resetState();
-
-		// Disable Wurlitzer mode
-		m_wurlyMode = false;
 	}
 
 	void Voice::Release(float velocity)
@@ -85,7 +82,7 @@ namespace SFM
 	SFM_INLINE float fOverdrive(float sample, float amount)
 	{
 		SFM_ASSERT(amount >= 0.f && amount <= 1.f);
-		amount = 1.f + amount*15.f;
+		amount = 1.f + amount*31.f;
 		const float distorted = atanf(sample*amount)*(2.f/kPI); // FIXME: LUT
 		return distorted;
 	}
@@ -119,7 +116,6 @@ namespace SFM
 
 		float opSample[kNumOperators]; // Fully processed samples
 		float mix = 0.f;               // Carrier mix
-		float linAmp = 0.f;            // Linear amplitude
 
 		unsigned numCarriers = 0;
 
@@ -195,9 +191,7 @@ namespace SFM
 				// If carrier: mix
 				if (true == voiceOp.isCarrier)
 				{
-					linAmp += envelope;
-					mix    += sample;
-
+					mix += sample;
 					++numCarriers;
 				}
 			}
@@ -212,35 +206,12 @@ namespace SFM
 
 		// Normalize
 		SFM_ASSERT(0 != numCarriers);
-		const float invC = 1.f/numCarriers;
-		mix    *= invC;
-		linAmp *= invC;
-
-		float filterAmt = 1.f;
-
-		if (true == m_wurlyMode)
-		{
-			// Apply cheap distortion
-			const float mixAsym = mix+0.3f;
-			const float shaper = 1.f/(1.f + mixAsym*mixAsym*mixAsym);
-			mix *= shaper;
-
-			// Shape amplitude and use it as filter amount (maybe a bit hairy from user POV)
-			const float powAmp = powf(linAmp, 3.f);
-			filterAmt = powAmp;
-		}
+		mix /= numCarriers;
 
 		// Apply filter
-		float filtered = float(m_LPF.tick(mix));
-		
-		// FIXME: The filter has a problem in that it'll go every so slightly out of bounds
-		//        Either that or it's the conversion to single precision
-//		filtered = Clamp(filtered);
+		const float filtered = float(m_LPF.tick(mix));
+		SampleAssert(filtered);
 
-		mix = lerpf<float>(mix, filtered, filterAmt);
-
-//		SampleAssert(mix);
-
-		return mix;
+		return filtered;
 	}
 }

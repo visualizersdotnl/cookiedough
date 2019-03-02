@@ -21,14 +21,14 @@
 		- Subtractive synthesis on top
 
 	Doing now: 
-		- Research feedback glitch in supersaw algorithm
-		- OPL 2-operator mode: feed forward?
+		- OPL 2-operator mode: research feed forward
 		- Create interface on FM_BISON that is called by the MIDI driver(s) insteaed of the other way around
 		  + Beware of domains here (dB, time et cetera)
 		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
 
 	To do (in no particular order): 
-		- Use Karplus-Strong to guide grit in Wurlitzer mode
+		- Tube amplifier post effect (formalize effect interface)
+		- Delay post effect
 		- Use smaller delay line(s) with chorus
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch

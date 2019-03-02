@@ -15,6 +15,7 @@
 #include "synth-oscillator.h"
 #include "synth-parameters.h"
 #include "synth-ADSR.h"
+#include "synth-pluck-shaper.h"
 
 namespace SFM
 {
@@ -82,9 +83,6 @@ namespace SFM
 
 		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
-
-		// Wurlitzer distortion effect
-		bool m_wurlyMode;
 
 	private:
 		void ResetOperators();

@@ -46,10 +46,6 @@ namespace SFM
 	// Max. number of voices
 	const unsigned kMaxVoices = 16;
 	
-	// Size of global (oscillator) LUTs
-	const unsigned kOscLUTSize = 4096;
-	const unsigned kOscLUTAnd = kOscLUTSize-1;
-
 	// Base note Hz
 	const float kBaseHz = 440.f;
 
@@ -68,18 +64,15 @@ namespace SFM
 	// Max. note jitter (in cents); tied to 'liveliness'
 	const unsigned kMaxNoteJitter = 8;
 
-	// Max. voice amplitude (linear)
-	const float kMaxVoiceAmp = 1.f;
-
 	// Max. filter resonance range (must be <= 39.f)
 	const float kFilterMaxResonance = 4.f;
 
-	// Working cutoff for rotary MIDI controls (use with LPF)
+	// Working cutoff for rotary MIDI controls (use with simple LPF)
 	const float kControlCutoff = 0.01f;
 	const float kControlCutoffS = 0.001f;
 
 	// Chorus rate (1.f is proven to be good)
-	const float kChorusRate = 2.f;
+	const float kChorusRate = 1.33f;
 
 	// Leaky integration factor
 	const float kLeakyFactor = 0.995f;
@@ -98,5 +91,6 @@ namespace SFM
 	const float kMaxGritDrive = 3.f;
 }
 
-#include "synth-LUT.h"
+#include "synth-random.h"
+#include "synth-fast-cosine.h"
 #include "synth-helper.h"

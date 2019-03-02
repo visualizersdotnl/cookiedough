@@ -17,11 +17,10 @@
 #include "synth-parameters.h"
 #include "synth-ring-buffer.h"
 #include "synth-math.h"
-#include "synth-LUT.h"
 #include "synth-voice.h"
 #include "synth-delay-line.h"
 #include "synth-one-pole-filters.h"
-#include "synth-fast-cosine.h"
+#include "synth-DX7-LUT.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -195,10 +194,6 @@ namespace SFM
 			SFM_ASSERT(output >= 0.f && output <= 1.f);
 		}
 
-		if (true == isCarrier)
-			// Scale to max. amplitude
-			output *= kMaxVoiceAmp;
-
 		// Return velocity scaled output
 		return lerpf<float>(output, output*velocity, patchOp.velSens);
 	}
@@ -235,14 +230,13 @@ namespace SFM
 		enum Algo
 		{
 			kOPL2,
-			kWurlitzer,
 			kDX7_2,
 			kDX7_5,
 			kDX7_31,
 			kDX7_32,
 			kSuperSaw,
 			kDX7_17
-		} static algorithm = kSuperSaw;
+		} static algorithm = kDX7_5;
 
 		if (kOPL2 == algorithm)
 		{
@@ -271,76 +265,11 @@ namespace SFM
 				CalcPhaseJitter(liveliness));
 		}
 
-		if (kWurlitzer == algorithm)
-		{
-			/*
-				Test algorithm: Electric piano (Wurlitzer style)
-			*/
-
-			// Apply Wurlitzer effect
-			voice.m_wurlyMode = true;
-		
-			// Carrier (pure)
-			voice.m_operators[0].enabled = true;
-			voice.m_operators[0].feedback = 0;
- 			voice.m_operators[0].modulators[0] = 1;
-			voice.m_operators[0].modulators[1] = 3;
-			voice.m_operators[0].modulators[2] = 5;
-			voice.m_operators[0].isCarrier = true;
-			voice.m_operators[0].oscillator.Initialize(
-				kSine,
-				0.f,
-				CalcOpIndex(true, key, velocity, patch.operators[0]));
-
-			// C <- 2 <- 3
-			voice.m_operators[1].enabled = true;
-			voice.m_operators[1].modulators[0] = 2;
-			voice.m_operators[1].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
-				CalcOpIndex(false, key, velocity, patch.operators[1]),
-				CalcPhaseJitter(liveliness));
-		
-			voice.m_operators[2].enabled = true;
-			voice.m_operators[2].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
-				CalcOpIndex(false, key, velocity, patch.operators[2]),
-				CalcPhaseJitter(liveliness));
-
-			// C <- 4 <- 5
-			voice.m_operators[3].enabled = true;
-			voice.m_operators[3].modulators[0] = 4;
-			voice.m_operators[3].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[3]), 
-				CalcOpIndex(false, key, velocity, patch.operators[3]),
-				CalcPhaseJitter(liveliness));
-
-			voice.m_operators[4].enabled = true;
-			voice.m_operators[4].oscillator.Initialize(
-				kSine, 
-				CalcOpFreq(fundamentalFreq, patch.operators[4]), 
-				CalcOpIndex(false, key, velocity, patch.operators[4]),
-				CalcPhaseJitter(liveliness));
-
-			// C <- 6
-			voice.m_operators[5].enabled = true;
-			voice.m_operators[5].oscillator.Initialize(
-				kSine,
-				CalcOpFreq(fundamentalFreq, patch.operators[5]), 
-				CalcOpIndex(false, key, velocity, patch.operators[5]),
-				CalcPhaseJitter(liveliness));
-		}
-
 		if (kDX7_2 == algorithm)
 		{
 			/*
 				Test algorithm: Volca/DX7 algorithm #2
 			*/
-
-			// Apply Wurlitzer effect (FIXME)
-			voice.m_wurlyMode = true;
 
 			// Operator #1
 			voice.m_operators[0].enabled = true;
@@ -964,11 +893,9 @@ namespace SFM
 				
 				if (true == voice.IsActive())
 				{
-//					float *buffer = s_voiceBuffers[curVoice];
 					for (unsigned iSample = 0; iSample < numSamples; ++iSample)
 					{
 						const float sample = voice.Sample(s_parameters);
-	//					buffer[iSample] = sample;
 						s_mixBuffer[iSample] += sample;
 					}
 
@@ -982,15 +909,8 @@ namespace SFM
 				const unsigned sampleCount = s_sampleCount+iSample;
 
 				// Tick global LFO so it advances along with each sample rendered
-				// This isn't too pretty but I think I'll solve it by providing a simplified LFO object instead of an Oscillator (FIXME)
+				// FIXME: advance by adding numSamples*pitch
 				s_globalLFO.Sample(0.f);
-
-//				float mix = 0.f;
-//				for (unsigned iVoice = 0; iVoice < numVoices; ++iVoice)
-//				{
-//					const float sample = s_voiceBuffers[iVoice][iSample];
-//					mix = mix+sample;
-//				}
 
 				const float mix = s_mixBuffer[iSample];
 
@@ -1041,11 +961,22 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 	Global (de-)initialization.
 */
 
+// #include <xmmintrin.h>
+
+static unsigned s_mxcsrRestore = 0;
+
 bool Syntherklaas_Create()
 {
-	// Calc. all tables
-	CalculateLUTs();
-	InitializeFastCos();
+	s_mxcsrRestore = _mm_getcsr();
+
+	// Set SSE FTZ and DAZ flags (https://www.cita.utoronto.ca/~merz/intel_c10b/main_cls/mergedProjects/fpops_cls/common/fpops_set_ftz_daz.htm)
+	// Basically we're treating all DEN as zero
+	_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+	_MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+
+	// Calculate LUTs
+	CalculateMIDIToFrequencyLUT();
+	InitializeFastCosine();
 
 	// Reset sample count
 	s_sampleCount = 0;
@@ -1091,6 +1022,9 @@ void Syntherklaas_Destroy()
 
 	WinMidi_Oxygen49_Stop();
 	WinMidi_BeatStep_Stop();
+	
+	// Restore SSE flags
+	_mm_setcsr(s_mxcsrRestore);
 }
 
 /*

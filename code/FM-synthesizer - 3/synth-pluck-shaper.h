@@ -1,12 +1,15 @@
 
 /*
-	Syntherklaas FM -- Karplus-Strong pluck.
+	Syntherklaas FM -- Karplus-Strong-ish pluck used to guide distortion.
+
+	Currently not in use!
 */
 
 #pragma once
 
 #include "synth-global.h"
 #include "synth-stateless-oscillators.h"
+#include "synth-one-pole-filters.h"
 
 namespace SFM
 {
@@ -23,19 +26,22 @@ namespace SFM
 
 			m_buffer.resize(m_numSamples);
 			
-			// FIXME: precalculate larger table and pick random offset
+			// FIXME: use LUT
+			float noise;
 			for (unsigned iSample = 0; iSample < m_numSamples; ++iSample)
 			{
-				const float sample = oscWhiteNoise();
-				m_buffer[iSample] = sample;
+				if (0 == (iSample & 15)) noise = oscWhiteNoise();
+				m_buffer[iSample] = noise;
 			}
+
+			m_filter.SetCutoff(0.02f); // FIXME: parameter?
 		}
 
 		SFM_INLINE float Sample()
 		{
-			const float sample = m_buffer[m_index];
+			const float sample = m_buffer[m_index]; 
 			const size_t next = (m_index+1) % m_buffer.size();
-			const float lowpassed = 0.5f*(sample+m_buffer[next])*kLeakyFactor;
+			const float lowpassed = m_filter.Apply(m_buffer[next]);
 			m_buffer[m_index] = lowpassed;
 			m_index = next;
 			return sample;
@@ -44,7 +50,9 @@ namespace SFM
 	private:
 		/* const */ size_t m_numSamples;
 
-		std::vector<float> m_buffer; // FIXME: use delay line
+		std::vector<float> m_buffer;
 		size_t m_index;
+
+		LowpassFilter m_filter;
 	};
 }

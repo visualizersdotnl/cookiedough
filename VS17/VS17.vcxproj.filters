@@ -62,7 +62,13 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core">
       <UniqueIdentifier>{26100c27-c0d5-4f9c-9742-384462b393b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global">
+      <UniqueIdentifier>{178573bf-553d-45df-9983-673e22033ec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
+      <UniqueIdentifier>{9e8e45f3-b46e-4fe2-944f-5bd3f2cba31d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!">
       <UniqueIdentifier>{e9039ae1-9b3b-4a81-973e-a4520bbc9c0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -157,19 +163,10 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-LUT.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-MIDI.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-oscillator.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.cpp">
@@ -182,13 +179,22 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp">
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -330,21 +336,6 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-log.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-LUT.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-MIDI.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
@@ -352,9 +343,6 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-parameters.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h">
@@ -382,19 +370,37 @@
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\WIP</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\implement!</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h">
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-fast-cosine.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-log.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck-shaper.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

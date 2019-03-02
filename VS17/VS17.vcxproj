@@ -51,7 +51,7 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-LUT.cpp" />
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-MIDI.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-oscillator.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp" />
@@ -114,12 +114,12 @@
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-fast-cosine.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck-shaper.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-log.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-LUT.h" />
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-MIDI.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h" />
