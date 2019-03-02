@@ -72,7 +72,11 @@ namespace SFM
 	const float kControlCutoffS = 0.001f;
 
 	// Chorus rate (1.f is proven to be good)
-	const float kChorusRate = 1.33f;
+	const float kChorusRate = 0.5f;
+
+	// Chorus delay & spread (FIXME: remove in VST phase)
+	const float kChorusDelay = 0.3f;
+	const float kChorusSpread = 0.025f;
 
 	// Leaky integration factor
 	const float kLeakyFactor = 0.995f;
@@ -86,9 +90,6 @@ namespace SFM
 	// FIXME: temporarily scaled down to accomodate 7-bit MIDI rotary
 	const float kEnvMulMin = 0.5f;  // 0.1f;
 	const float kEnvMulRange = 4.f; // 10.f-kEnvMulMin;
-
-	// Global grit effect drive max.
-	const float kMaxGritDrive = 3.f;
 }
 
 #include "synth-random.h"

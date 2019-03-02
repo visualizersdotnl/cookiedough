@@ -21,6 +21,7 @@
 #include "synth-delay-line.h"
 #include "synth-one-pole-filters.h"
 #include "synth-DX7-LUT.h"
+#include "synth-chorus-mix.h"
 
 // Driver: Win32 MIDI input (M-AUDIO Oxygen 49 & Arturia BeatStep)
 #include "Win-MIDI-in-Oxygen49.h"
@@ -80,11 +81,8 @@ namespace SFM
 	// Parameter filters
 	static LowpassFilter s_cutoffLPF, s_resoLPF;
 	
-	// Chorus-to-stereo effect
-	static DelayLine s_delayLine(kSampleRate/10);
-	static Oscillator s_delaySweepL, s_delaySweepR;
-	static Oscillator s_delaySweepMod;
-	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
+	// Chorus-to-stereo mix (effect)
+	static Chorus s_chorusMix(kChorusRate);
 
 	// Running LFO (used for no key sync.)
 	static Oscillator s_globalLFO;
@@ -236,7 +234,7 @@ namespace SFM
 			kDX7_32,
 			kSuperSaw,
 			kDX7_17
-		} static algorithm = kDX7_5;
+		} static algorithm = kOPL2;
 
 		if (kOPL2 == algorithm)
 		{
@@ -795,36 +793,6 @@ namespace SFM
 
 	alignas(16) static float s_mixBuffer[kRingBufferSize];
 
-	// Poor man's chorus intended to create a wider (stereo) mix
-	SFM_INLINE void ChorusToStereo(float mix) 
-	{
-		s_delayLine.Write(mix);
-
-		// Modulate sweep LFOs
-		const float sweepMod = s_delaySweepMod.Sample(0.f);
-		
-		// Sample sweep LFOs
-		const float sweepL = s_delaySweepL.Sample(sweepMod);
-		const float sweepR = s_delaySweepR.Sample(-sweepMod);
-
-		// Sweep around one centre point
-		const size_t lineSize = s_delayLine.size();
-		const float delayCtr = lineSize*0.03f; 
-		const float range = lineSize*0.0025f;
-	
-		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
-		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL));
-		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
-
-		// And the current sample
-		const float tapM = mix;
-		
-		// Write mix
-		s_ringBuf.Write(tapM + (tapM-tapL));
-		s_ringBuf.Write(tapM + (tapM-tapR));
-	}
-
-	// Returns loudest signal (linear amplitude)
 	static void Render(float time)
 	{
 		// Lock ring buffer
@@ -858,28 +826,11 @@ namespace SFM
 	
 		const unsigned numVoices = s_active;
 
-		if (0 == numVoices)
-		{
-			// Render silence
-			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
-			{
-				float mix = 0.f;
-				
-				// Apply chorus
-				if (true == s_parameters.chorus)
-					ChorusToStereo(mix);
-				else
-				{
-					s_ringBuf.Write(mix);
-					s_ringBuf.Write(mix);
-				}
-			}
-		}
-		else
-		{
-			// Erase mix buffer
-			memset(s_mixBuffer, 0, kRingBufferSize*sizeof(float));
+		// Erase mix buffer
+		memset(s_mixBuffer, 0, kRingBufferSize*sizeof(float));
 
+		if (0 != numVoices)
+		{
 			// Render voices
 			unsigned curVoice = 0;
 			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
@@ -888,9 +839,6 @@ namespace SFM
 
 				// Update filter coefficients
 				voice.m_LPF.updateCoefficients(cutoff, Q, SvfLinearTrapOptimised2::LOW_PASS_FILTER, kSampleRate);
-				
-				// Set LFO to current speed
-//				voice.m_LFO.SetPitch(freqLFO);
 				
 				if (true == voice.IsActive())
 				{
@@ -903,26 +851,24 @@ namespace SFM
 					++curVoice; // Do *not* use to index anything other than the temporary buffers
 				}
 			}
+		}
 
-			// Mix & store voices
-			for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		// Post mix
+		for (unsigned iSample = 0; iSample < numSamples; ++iSample)
+		{
+			// Tick global LFO so it advances along with each sample rendered
+			// FIXME: advance by adding numSamples*pitch
+			s_globalLFO.Sample(0.f);
+
+			const float mix = s_mixBuffer[iSample];
+
+			// Stereo output to ring buffer
+			if (true == s_parameters.chorus)
+				s_chorusMix.Apply(mix, kChorusDelay, kChorusSpread, s_ringBuf);
+			else
 			{
-				const unsigned sampleCount = s_sampleCount+iSample;
-
-				// Tick global LFO so it advances along with each sample rendered
-				// FIXME: advance by adding numSamples*pitch
-				s_globalLFO.Sample(0.f);
-
-				const float mix = s_mixBuffer[iSample];
-
-				// Stereo output to ring buffer
-				if (true == s_parameters.chorus)
-					ChorusToStereo(mix);
-				else
-				{
-					s_ringBuf.Write(mix);
-					s_ringBuf.Write(mix);
-				}
+				s_ringBuf.Write(mix);
+				s_ringBuf.Write(mix);
 			}
 		}
 
@@ -962,8 +908,6 @@ static void SDL2_Callback(void *pData, uint8_t *pStream, int length)
 	Global (de-)initialization.
 */
 
-// #include <xmmintrin.h>
-
 static unsigned s_mxcsrRestore = 0;
 
 bool Syntherklaas_Create()
@@ -993,15 +937,6 @@ bool Syntherklaas_Create()
 	// Initialize main filter & it's control filters
 	s_cutoffLPF.SetCutoff(kControlCutoff);
 	s_resoLPF.SetCutoff(kControlCutoff);
-
-	// Delay: sweep oscillators (the few arbitrary values make little sense to move to synth-global.h, IMO)
-	s_delaySweepL.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.f);
-	s_delaySweepR.Initialize(kSine, 0.5f*kChorusRate, 0.5f, 0.33f);
-	s_delaySweepMod.Initialize(kDigiTriangle, 0.05f*kChorusRate, 1.f, 0.4321f);
-
-	// Delay: sweep LPFs
-	s_sweepLPF1.SetCutoff(kControlCutoffS);
-	s_sweepLPF2.SetCutoff(kControlCutoffS); 
 
 	// Start global LFO
 	s_globalLFO.Initialize(kDigiTriangle, g_DX7_LFO_speed[0], 1.f);

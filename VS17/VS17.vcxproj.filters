@@ -190,6 +190,9 @@
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -392,6 +395,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck-shaper.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
