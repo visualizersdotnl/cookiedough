@@ -23,17 +23,18 @@ namespace SFM
 			++m_writeIdx;
 		}
 
-		// FIXME: get rid of modulo
 		SFM_INLINE float Read(float delay)
 		{
-			const int from = m_writeIdx-int(delay);
-			const int to = from-1;
+			const size_t from = (m_writeIdx-int(delay)) % m_size;
+			const size_t to   = (from > 0) ? from-1 : m_size-1;
 			const float fraction = fracf(delay);
-			const float A = m_buffer[from % m_size];
-			const float B = m_buffer[to   % m_size];
+			const float A = m_buffer[from];
+			const float B = m_buffer[to];
 			const float value = lerpf<float>(A, B, fraction);
 			return value;
 		}
+
+		size_t size() const { return m_size; }
 
 	private:
 		/* const */ size_t m_size;

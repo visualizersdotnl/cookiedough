@@ -29,7 +29,7 @@
 	To do (in no particular order): 
 		- Tube amplifier post effect (formalize effect interface)
 		- Delay post effect
-		- Use smaller delay line(s) with chorus
+		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
 		- Better key scaling implementation (configurable range)

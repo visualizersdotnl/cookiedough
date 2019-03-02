@@ -81,7 +81,7 @@ namespace SFM
 	static LowpassFilter s_cutoffLPF, s_resoLPF;
 	
 	// Chorus-to-stereo effect
-	static DelayLine s_delayLine(kSampleRate);
+	static DelayLine s_delayLine(kSampleRate/10);
 	static Oscillator s_delaySweepL, s_delaySweepR;
 	static Oscillator s_delaySweepMod;
 	static LowpassFilter s_sweepLPF1, s_sweepLPF2;
@@ -800,24 +800,26 @@ namespace SFM
 	{
 		s_delayLine.Write(mix);
 
-		// Vibrate the sweep LFOs
-		const float modulate = s_delaySweepMod.Sample(0.f);
-		const float vibrato = modulate;
+		// Modulate sweep LFOs
+		const float sweepMod = s_delaySweepMod.Sample(0.f);
 		
 		// Sample sweep LFOs
-		const float sweepL = s_delaySweepL.Sample(vibrato);
-		const float sweepR = s_delaySweepR.Sample(-vibrato);
+		const float sweepL = s_delaySweepL.Sample(sweepMod);
+		const float sweepR = s_delaySweepR.Sample(-sweepMod);
 
 		// Sweep around one centre point
-		const float delayCtr = kSampleRate*0.03f;
-		const float range = kSampleRate*0.0025f;
-
+		const size_t lineSize = s_delayLine.size();
+		const float delayCtr = lineSize*0.03f; 
+		const float range = lineSize*0.0025f;
+	
 		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
 		const float tapL = s_delayLine.Read(delayCtr + range*s_sweepLPF1.Apply(sweepL));
 		const float tapR = s_delayLine.Read(delayCtr + range*s_sweepLPF2.Apply(sweepR));
+
+		// And the current sample
 		const float tapM = mix;
 		
-		// Write
+		// Write mix
 		s_ringBuf.Write(tapM + (tapM-tapL));
 		s_ringBuf.Write(tapM + (tapM-tapR));
 	}
