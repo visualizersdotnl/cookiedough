@@ -35,10 +35,13 @@ namespace SFM
 		void Flush(float *pDest, unsigned numElements)
 		{
 			SFM_ASSERT(numElements <= kRingBufferSize);
-			
-			// FIXME
-			for (unsigned iElem = 0; iElem < numElements; ++iElem)
-				*pDest++ = Read();
+			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun
+			const unsigned range = m_readIdx+numElements;
+			const unsigned head = range & (kRingBufferSize-1);
+			const unsigned tail = numElements-head;
+			memcpy(pDest, m_buffer+m_readIdx, head*sizeof(float));
+			memcpy(pDest+head, m_buffer, tail*sizeof(float));
+			m_readIdx = range;
 		}
 
 		unsigned GetAvailable() const
