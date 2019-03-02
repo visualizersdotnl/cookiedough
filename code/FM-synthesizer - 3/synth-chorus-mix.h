@@ -24,8 +24,7 @@ namespace SFM
 
 		void SetRate(float rate)
 		{
-			m_sweepL.SetPitch(rate);
-			m_sweepR.SetPitch(rate);
+			m_sweepPitch = rate/kSampleRate;
 			m_sweepMod.SetPitch(0.1f*rate);
 		}
 
@@ -33,7 +32,7 @@ namespace SFM
 
 	private:
 		DelayLine m_delayLine;
-		Oscillator m_sweepL, m_sweepR;
+		float m_sweepPhase, m_sweepPitch;
 		Oscillator m_sweepMod;
 		LowpassFilter m_sweepLPF1, m_sweepLPF2;
 	};

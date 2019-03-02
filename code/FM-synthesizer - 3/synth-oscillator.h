@@ -22,8 +22,6 @@ namespace SFM
 		float m_pitch;
 		float m_phase;
 
-		unsigned m_cycles;
-
 	public:
 		// Default oscillator will yield 1.0
 		Oscillator()
@@ -42,7 +40,6 @@ namespace SFM
 			// No sync.
 			SyncTo(frequency);
 
-			m_cycles = 0;
 			m_phase = phaseShift;
 		}
 
@@ -89,7 +86,6 @@ namespace SFM
 		float GetPitch() const        { return m_pitch;     }
 		float GetPhase() const        { return m_phase;     }
 		float GetPeriodLength() const { return 1.f;         }
-		unsigned GetCycle() const     { return m_cycles;    }
 
 		float Sample(float modulation, float duty = 0.5f);
 	};

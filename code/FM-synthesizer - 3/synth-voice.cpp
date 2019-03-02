@@ -215,7 +215,7 @@ namespace SFM
 
 		// Apply filter
 		const float filtered = float(m_LPF.tick(mix));
-		SampleAssert(filtered);
+//		SampleAssert(filtered);
 
 		return filtered;
 	}

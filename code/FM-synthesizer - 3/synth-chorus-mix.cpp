@@ -16,17 +16,17 @@ namespace SFM
 {
 	Chorus::Chorus(float rate) :
 		m_delayLine(kSampleRate/10)
+,		m_sweepPhase(0.f)
 	{
 		SFM_ASSERT(rate > 0.f);
 
-		// Set up sweep according to rate and some well tested values
-		m_sweepL.Initialize(kSine, rate, 0.5f, 0.f);
-		m_sweepR.Initialize(kSine, rate, 0.5f, 0.33f);
-		m_sweepMod.Initialize(kSine, 0.1f*rate, 1.f);
+		// Set up sweep
+		SetRate(rate);
+		m_sweepMod.Initialize(kDigiTriangle, 0.1f*rate, 1.f); // A bit of linearity sounds better
 
 		// Simple low pass avoids sampling artifacts
 		m_sweepLPF1.SetCutoff(0.001f);
-		m_sweepLPF2.SetCutoff(0.001f); 
+		m_sweepLPF2.SetCutoff(0.001f);
 	}
 
 	void Chorus::Apply(float sample, float delay, float spread, float wet, RingBuffer &destBuf)
@@ -35,12 +35,17 @@ namespace SFM
 
 		m_delayLine.Write(sample);
 
-		// Modulate sweep LFOs
+		// Sample sweep modulate LFO
 		const float sweepMod = m_sweepMod.Sample(0.f);
 		
 		// Sample sweep LFOs
-		const float sweepL = m_sweepL.Sample( sweepMod);
-		const float sweepR = m_sweepR.Sample(-sweepMod);
+		if (m_sweepPhase >= 1.f)
+			m_sweepPhase -= 1.f;
+
+		const float sweepL = fastsinf(m_sweepPhase+sweepMod);
+		const float sweepR = fastsinf(m_sweepPhase+0.33f-sweepMod);
+
+		m_sweepPhase += m_sweepPitch;
 
 		// 2 sweeping taps
 		auto size = m_delayLine.size();
