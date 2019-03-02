@@ -7,8 +7,6 @@
 
 namespace SFM
 {
-	const size_t kMaxDelayLineSize = kSampleRate;
-	
 	class DelayLine
 	{
 	public:
@@ -23,8 +21,11 @@ namespace SFM
 			++m_writeIdx;
 		}
 
+		// Delay is specified in samples relative to kSampleRate
 		SFM_INLINE float Read(float delay)
 		{
+//			delay *= m_factor;
+
 			const size_t from = (m_writeIdx-int(delay)) % m_size;
 			const size_t to   = (from > 0) ? from-1 : m_size-1;
 			const float fraction = fracf(delay);
@@ -38,8 +39,9 @@ namespace SFM
 
 	private:
 		/* const */ size_t m_size;
+		/* const */ float m_factor;
 		unsigned m_writeIdx;
 
-		alignas(16) float m_buffer[kMaxDelayLineSize];
+		alignas(16) float m_buffer[kSampleRate];
 	};
 }

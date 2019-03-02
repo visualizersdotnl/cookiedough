@@ -27,8 +27,6 @@
 		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
 
 	To do (in no particular order): 
-		- Tube amplifier post effect (formalize effect interface)
-		- Delay post effect
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch

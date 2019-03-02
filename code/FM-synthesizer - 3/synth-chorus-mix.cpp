@@ -1,6 +1,11 @@
 
 /*
 	Syntherklaas FM: chorus effect that mixes monaural signal to stereo output.
+
+	// FIXME:
+	// - Use sine and cosine directly, bypass oscillator.
+	// - Evaluate mix.
+	// - Evaluate algorithm.
 */
 
 #pragma once
@@ -18,15 +23,17 @@ namespace SFM
 		// Set up sweep according to rate and some well tested values
 		m_sweepL.Initialize(kSine, rate, 0.5f, 0.f);
 		m_sweepR.Initialize(kSine, rate, 0.5f, 0.33f);
-		m_sweepMod.Initialize(kDigiTriangle, 0.1f*rate, 1.f, 0.4321f);
+		m_sweepMod.Initialize(kSine, 0.1f*rate, 1.f);
 
 		// Simple low pass avoids sampling artifacts
 		m_sweepLPF1.SetCutoff(0.001f);
 		m_sweepLPF2.SetCutoff(0.001f); 
 	}
 
-	void Chorus::Apply(float sample, float delay, float spread, RingBuffer &destBuf)
+	void Chorus::Apply(float sample, float delay, float spread, float wet, RingBuffer &destBuf)
 	{
+		SFM_ASSERT(delay > 0.f && spread < delay);
+
 		m_delayLine.Write(sample);
 
 		// Modulate sweep LFOs
@@ -36,21 +43,21 @@ namespace SFM
 		const float sweepL = m_sweepL.Sample( sweepMod);
 		const float sweepR = m_sweepR.Sample(-sweepMod);
 
-		// Sweep around one centre point
-		SFM_ASSERT(delay > 0.f && spread < delay);
-		const size_t lineSize = m_delayLine.size();
-		const float delayCtr = lineSize*delay; 
-		const float range = lineSize*spread;
+		// 2 sweeping taps
+		auto size = m_delayLine.size();
+		delay = size*delay;
+		spread = size*spread;
+
 	
 		// Take sweeped L/R taps (lowpassed to circumvent artifacts)
-		const float tapL = m_delayLine.Read(delayCtr + range*m_sweepLPF1.Apply(sweepL));
-		const float tapR = m_delayLine.Read(delayCtr + range*m_sweepLPF2.Apply(sweepR));
+		const float tapL = m_delayLine.Read(delay + spread*m_sweepLPF1.Apply(sweepL));
+		const float tapR = m_delayLine.Read(delay + spread*m_sweepLPF2.Apply(sweepR));
 
 		// And the current sample
 		const float tapM = sample;
 		
 		// Write mix
-		destBuf.Write(tapM + (tapM-tapL));
-		destBuf.Write(tapM + (tapM-tapR));
+		destBuf.Write(lerpf<float>(tapM, tapL, wet));
+		destBuf.Write(lerpf<float>(tapM, tapR, wet));
 	}
 }

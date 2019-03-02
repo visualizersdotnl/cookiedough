@@ -863,13 +863,8 @@ namespace SFM
 			const float mix = s_mixBuffer[iSample];
 
 			// Stereo output to ring buffer
-			if (true == s_parameters.chorus)
-				s_chorusMix.Apply(mix, kChorusDelay, kChorusSpread, s_ringBuf);
-			else
-			{
-				s_ringBuf.Write(mix);
-				s_ringBuf.Write(mix);
-			}
+			float wet = (s_parameters.chorus) ? 1.f : 0.f;
+			s_chorusMix.Apply(mix, kChorusDelay, kChorusSpread, wet, s_ringBuf);
 		}
 
 		s_sampleCount += numSamples;

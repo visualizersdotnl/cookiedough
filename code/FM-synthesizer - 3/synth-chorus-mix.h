@@ -20,9 +20,7 @@ namespace SFM
 	public:
 		Chorus(float rate);
 
-		// For delay and spread 1.f is one 10th of a sample
-		// Good default parameters are 0.3f and 0.025f
-		void Apply(float sample, float delay, float spread, RingBuffer &destBuf);
+		void Apply(float sample, float delay, float spread, float wet, RingBuffer &destBuf);
 
 		void SetRate(float rate)
 		{
