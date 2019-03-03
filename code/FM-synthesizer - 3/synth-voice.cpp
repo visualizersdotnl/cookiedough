@@ -105,10 +105,8 @@ namespace SFM
 			SFM_ASSERT(m_pitchEnvBias >= 0.f && m_pitchEnvBias <= 1.f);
 			pitchEnv -= m_pitchEnvBias;
 
-			// - Range 2 octaves [-1..+1]
-			pitchEnv = powf(2.f, pitchEnv);
-
-			// All of this: FIXME
+			// - Range 4 octaves [-2..+2]
+			pitchEnv = powf(2.f, pitchEnv*2.f);
 		}
 
 		// Process all operators top-down
@@ -201,22 +199,24 @@ namespace SFM
 		for (unsigned iOp = 0; iOp < kNumOperators; ++iOp)
 		{
 			// Divide sum by 4 and throw away a little bit (signal must slowly fade)
-			m_feedbackBuf[iOp] = (kLeakyFactor*0.25f)*(m_feedbackBuf[iOp]+opSample[iOp]); 
+			m_feedbackBuf[iOp] = kLeakyFactor*0.25f*(m_feedbackBuf[iOp]+opSample[iOp]);
 		}
 
 		// Normalize
-		SFM_ASSERT(0 != numCarriers);
-		mix /= numCarriers;
+		// This means that I tolerate a bogus algorithm (no carriers), that's up to the user
+		if (numCarriers > 1)
+			mix /= numCarriers;
 
-		// Cheap shaper that helps a little if you're looking for amplifier distortion
-		const float asymMix = mix+0.3f;
-		const float asymDistMix = mix * 1.f/(1.f + asymMix*asymMix*asymMix);
+		// Shaper adds some harmonics on top (shape becomes a tad more boxy)
+		// Since it's a hack of sorts I don't want to parametrize it any further
+		const float asymMix = mix+0.314f;
+		const float asymDistMix = mix * 1.f/(1.1f + asymMix*asymMix*asymMix);
 		mix = lerpf<float>(mix, asymDistMix, parameters.asymDistort);
 
 		// Apply filter
 		const float filtered = float(m_LPF.tick(mix));
 //		SampleAssert(filtered);
 
-		return filtered;
+		return lerpf<float>(mix, filtered, m_velocity);
 	}
 }

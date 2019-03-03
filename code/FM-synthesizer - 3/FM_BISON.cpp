@@ -251,7 +251,10 @@ namespace SFM
 		// Calculate fundamental
 		const unsigned key = request.key;
 		/* const */ float fundamentalFreq = g_MIDIToFreqLUT[key];  
-		const float velocity = powf(request.velocity, 3.f); // Raise velocity (source: Jan Marguc)
+		const float velocity = powf(request.velocity, 2.f); // Raise velocity (source: Jan Marguc, though he advises power of 3)
+
+		// Store linear velocity
+		voice.m_velocity = request.velocity;
 		
 		const float liveliness = s_parameters.liveliness;
 		const int noteJitter = int(ceilf(oscWhiteNoise() * liveliness*kMaxNoteJitter)); // In cents
@@ -263,15 +266,48 @@ namespace SFM
 
 		enum Algo
 		{
+			kParallel2,
+			kSuperSaw,
+
 			kOPL2,
 			kDX7_2,
 			kDX7_5,
 			kDX7_31,
 			kDX7_32,
-			kSuperSaw,
 			kDX7_17
-		} static algorithm = kOPL2;
+		} static algorithm = kDX7_5;
 		
+		if (kParallel2 == algorithm)
+		{
+			// Operator #1
+			voice.m_operators[0].enabled = true;
+			voice.m_operators[0].modulators[0] = 2;
+			voice.m_operators[0].isCarrier = true;
+			voice.m_operators[0].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[0]), 
+				CalcOpIndex(true, key, velocity, patch.operators[0]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #2
+			voice.m_operators[1].enabled = true;
+			voice.m_operators[1].modulators[0] = 2;
+			voice.m_operators[1].isCarrier = true;
+			voice.m_operators[1].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[1]), 
+				CalcOpIndex(true, key, velocity, patch.operators[1]),
+				CalcPhaseJitter(liveliness));
+
+			// Operator #3
+			voice.m_operators[2].enabled = true;
+			voice.m_operators[2].oscillator.Initialize(
+				kSine, 
+				CalcOpFreq(fundamentalFreq, patch.operators[2]), 
+				CalcOpIndex(false, key, velocity, patch.operators[2]),
+				CalcPhaseJitter(liveliness));
+		}
+
 		if (kOPL2 == algorithm)
 		{
 			/*

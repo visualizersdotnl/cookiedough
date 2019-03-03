@@ -68,6 +68,9 @@
     <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
       <UniqueIdentifier>{9e8e45f3-b46e-4fe2-944f-5bd3f2cba31d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx">
+      <UniqueIdentifier>{991b1f3d-2499-468e-b01c-04532b10420b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -192,6 +195,9 @@
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.cc">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
       <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.h">
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

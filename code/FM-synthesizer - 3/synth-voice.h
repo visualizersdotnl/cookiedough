@@ -85,6 +85,9 @@ namespace SFM
 		// Main filter
 		SvfLinearTrapOptimised2 m_LPF;
 
+		// Linear velocity
+		float m_velocity;
+
 	private:
 		void ResetOperators();
 

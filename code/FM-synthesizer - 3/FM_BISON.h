@@ -26,15 +26,21 @@
 		  + Beware of domains here (dB, time et cetera)
 		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
 
+	My bad day, 03/03:
+		- Now raising velocity to 2, better?
+		- Sustain
+		  + Bugs (chews up all voices, check in debug build et voila)
+		  + Support more than just 1-bit pedals?
+
 	To do (in no particular order):
-		- Sustain: support more than just 1-bit pedals
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
 		- Simplify oscillator logic in various places
-		- Move algorithms (however crude) to a dedicated file
+		- Move existing algorithms (however crude) to a dedicated file (see design notes)
+		- Create default initialization of algorithm (including sensible default envelopes)
 		- Patch save & load (can be to and from a single file for starters)
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
 		- SVF filter goes out of bounds every now and then
@@ -46,9 +52,6 @@
 		- Optimize filter
 		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler),
 		  there's no doubt it will complicate code and make it harder to modify and/or add features
-
-	To do in VST phase:
-		- Add initial delay to envelopes (DADSR)
  
 	Issues:
 		- Oxygen 49 MIDI driver hangs notes every now and then; not really worth looking into
