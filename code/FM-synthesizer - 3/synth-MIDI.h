@@ -18,6 +18,7 @@ namespace SFM
 		/* Channels */
 		CHANNEL_PERCUSSION = 0x9,
 		/* Channel messages */
+		SUSTAIN = 0x40,
 		NOTE_OFF = 0x80,
 		NOTE_ON = 0x90,
 		KEY_PRESSURE = 0xa0,

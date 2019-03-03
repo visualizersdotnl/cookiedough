@@ -27,12 +27,13 @@
 		- Compile WaveSabre and evaluate if that's a good platform for you to continue your work
 
 	To do (in no particular order):
+		- Sustain: support more than just 1-bit pedals
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
 		- Better key scaling implementation (configurable range)
 		- Add additive & non-linear level scaling (default is now subtractive & linear)
-		- Simplify oscillator logic in various places 
+		- Simplify oscillator logic in various places
 		- Move algorithms (however crude) to a dedicated file
 		- Patch save & load (can be to and from a single file for starters)
 		- Try a different form of voice allocation so that a voice can be reused before NOTE_OFF
@@ -42,7 +43,7 @@
 	Optimizations:
 		- Profile (28/02: doesn't show anything alarming yet, maybe use OMP?)
 		- Eliminate expensive floating point functions, look at: https://github.com/logicomacorp/WaveSabre/blob/master/WaveSabreCore/src/Helpers.cpp
-		- Optimize fillter
+		- Optimize filter
 		- Evaluate use of SIMD, but only after a fierce optimization pass (profiler),
 		  there's no doubt it will complicate code and make it harder to modify and/or add features
 
@@ -71,5 +72,8 @@ namespace SFM
 
 	void TriggerVoice(unsigned *pIndex /* Will receive index to use with ReleaseVoice() */, unsigned key, float velocity);
 	void ReleaseVoice(unsigned index, float velocity /* Aftertouch */);
+
+	// Sustain all voices that have not yet received a NOTE_OFF message.
+	void Sustain(bool state);
 }
  

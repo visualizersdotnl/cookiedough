@@ -5,7 +5,7 @@
 	These functions all accept any value where [0..1] is the length of one period.
 	This costs a few cycles extra here and there which can be avoided if need be; this is however very flexible.
 
-	For performance I suggest precalculating tables using these functions.
+	For performance I suggest precalculating tables using these functions or going for optimized trigonometry functions.
 */
 
 #pragma once

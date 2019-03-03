@@ -27,6 +27,7 @@ namespace SFM
 		{
 			kIdle,
 			kEnabled,
+			kSustaining,
 			kReleasing
 		} m_state;
 

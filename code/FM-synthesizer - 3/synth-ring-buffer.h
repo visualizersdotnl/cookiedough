@@ -35,7 +35,7 @@ namespace SFM
 		void Flush(float *pDest, unsigned numElements)
 		{
 			SFM_ASSERT(numElements <= kRingBufferSize);
-			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun
+//			SFM_ASSERT(m_readIdx < m_writeIdx); // Underrun (FIXME: kept happening too much in debug builds)
 			const unsigned range = m_readIdx+numElements;
 			const unsigned head = range & (kRingBufferSize-1);
 			const unsigned tail = numElements-head;

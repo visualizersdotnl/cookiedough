@@ -318,6 +318,13 @@ namespace SFM
 							s_opDetune[g_currentOp] = fControlVal;
 							break;
 
+						case SUSTAIN:
+							{
+								// In case of sustain, this should sustain all active voices and nullify any NOTE_OFF events.
+								Sustain(127 == controlVal);
+							}
+							break;
+
 						default:
 							break;
 
@@ -349,13 +356,15 @@ namespace SFM
 								Log("Set note " + std::to_string(controlIdx) + " as LS breakpoint for op. #" + std::to_string(g_currentOp+1));
 							}
 
-							if (-1 == s_voices[controlIdx])
+							auto currentIdx = s_voices[controlIdx];
+							if (-1 != currentIdx)
 							{
-								TriggerVoice(s_voices+controlIdx, controlIdx, fControlVal);
-								Log("NOTE_ON " + std::to_string(controlIdx) + ", Velocity: " + std::to_string(fControlVal));
+								// Newer NOTE_ON takes precedence
+								ReleaseVoice(currentIdx, 0.f);
 							}
-							else
-								Log("NOTE_ON could not be triggered due to latency.");
+
+							TriggerVoice(s_voices+controlIdx, controlIdx, fControlVal);
+							Log("NOTE_ON " + std::to_string(controlIdx) + ", Velocity: " + std::to_string(fControlVal));
 
 							return;
 						}

@@ -20,31 +20,8 @@ namespace SFM
 		float signal;
 		switch (m_form)
 		{
-			/* Straight digital */
-	
-			case kDigiSaw:
-				signal = oscDigiSaw(modulated);
-				break;
-
-			case kDigiSquare:
-				signal = oscDigiSquare(modulated);
-				break;
-
 			case kDigiTriangle:
 				signal = oscDigiTriangle(modulated);
-				break;
-
-			case kDigiPulse:
-				signal = oscDigiPulse(modulated, duty);
-				break;
-
-			/* BLIT forms (not supported, performance issue) */
-			case kSoftSaw:
-			case kSoftSquare:
-			default:
-				signal = oscWhiteNoise();
-				Log("Oscillator: unsupported waveform");
-				SFM_ASSERT(false);
 				break;
 
 			case kSine:
@@ -54,29 +31,12 @@ namespace SFM
 			case kCosine:
 				signal = oscCos(modulated);
 				break;
-
-			/* PolyBLEP forms */
-				
-			case kPolyPulse:
-				signal = oscPolyPulse(modulated, m_frequency, duty);
-				break;
-
-			case kPolySaw:
-				signal = oscPolySaw(modulated, m_frequency);
-				break;
-
-			case kPolySquare:
-				signal = oscPolySquare(modulated, m_frequency);
-				break;
-
-			case kPolyTriangle:
-				signal = oscPolyTriangle(modulated, m_frequency);
-				break;
-
-			/* Noise */
-
-			case kWhiteNoise:
+			
+			// Lots of unused oscillators :)
+			default:
 				signal = oscWhiteNoise();
+				Log("Oscillator: unsupported waveform");
+				SFM_ASSERT(false);
 				break;
 		}
 

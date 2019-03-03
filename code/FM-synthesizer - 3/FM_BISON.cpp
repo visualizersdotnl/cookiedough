@@ -111,6 +111,10 @@ namespace SFM
 
 		std::lock_guard<std::mutex> lock(s_stateMutex);
 
+		// A sustaining voice will ignore NOTE_OFF.
+		if (Voice::kSustaining == s_voices[index].m_state)
+			return;
+
 		VoiceReleaseRequest request; 
 		request.index = index;
 		request.velocity = velocity;
@@ -118,8 +122,40 @@ namespace SFM
 		s_voiceReleaseReq.push_back(request);
 	}
 
+	void Sustain(bool state)
+	{
+		std::lock_guard<std::mutex> lock(s_stateMutex);
+
+		if (true == state)
+		{
+			// Set all active, non-releasing voices to kSustaining (they'll ignore NOTE_OFF)
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			{
+				Voice &voice = s_voices[iVoice];
+				if (Voice::kEnabled == voice.m_state)
+				{
+					voice.m_state = Voice::kSustaining;
+					Log("Voice sustained: " + std::to_string(iVoice));
+				}
+			}
+		}
+		else
+		{
+			// Release all sustaining voices
+			for (unsigned iVoice = 0; iVoice < kMaxVoices; ++iVoice)
+			{
+				Voice &voice = s_voices[iVoice];
+				if (Voice::kSustaining == voice.m_state)
+				{
+					voice.Release(1.f /* FIXME: support more than just 1-bit sustain pedals */);
+					Log("Sustained voice released: " + std::to_string(iVoice));
+				}
+			}
+		}
+	}
+
 	/*
-		Voice logic.
+		Voice setup.
 	*/
 
 	// Calculate operator frequency
