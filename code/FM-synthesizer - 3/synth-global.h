@@ -71,10 +71,8 @@ namespace SFM
 	const float kControlCutoff = 0.01f;
 	const float kControlCutoffS = 0.001f;
 
-	// Chorus rate (1.f is proven to be good)
-	const float kChorusRate = 1.f;
-
-	// Chorus delay & spread (FIXME: remove in VST phase)
+	// Chorus parameters (FIXME: remove in VST phase)
+	const float kChorusRate = 0.5f;
 	const float kChorusDelay = 0.3f;
 	const float kChorusSpread = 0.025f;
 

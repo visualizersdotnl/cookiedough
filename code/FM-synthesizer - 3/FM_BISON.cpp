@@ -268,14 +268,14 @@ namespace SFM
 		{
 			kParallel2,
 			kSuperSaw,
-
 			kOPL2,
+
 			kDX7_2,
 			kDX7_5,
 			kDX7_31,
 			kDX7_32,
 			kDX7_17
-		} static algorithm = kDX7_5;
+		} static algorithm = kParallel2;
 		
 		if (kParallel2 == algorithm)
 		{

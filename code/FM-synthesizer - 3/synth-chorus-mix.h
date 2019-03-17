@@ -24,11 +24,11 @@ namespace SFM
 
 		void SetRate(float rate)
 		{
-			m_sweepPitch = rate/kSampleRate;
+			m_sweepPitch = CalculatePitch(rate);
 			m_sweepMod.SetPitch(0.1f*rate);
 		}
 
-		// FIXME: use set functions for delay and spread too?
+		// FIXME: use set functions for other parameters too?
 
 	private:
 		DelayLine m_delayLine;

@@ -2,9 +2,7 @@
 /*
 	Syntherklaas FM: chorus effect that mixes monaural signal to stereo output.
 
-	// FIXME:
-	// - Use sine and cosine directly, bypass oscillator.
-	// - Evaluate algorithm.
+	FIXME: this chorus is a tad peculiar, I might want to go more traditional
 */
 
 #pragma once
@@ -42,8 +40,8 @@ namespace SFM
 		if (m_sweepPhase >= 1.f)
 			m_sweepPhase -= 1.f;
 
-		const float sweepL = fastsinf(m_sweepPhase+sweepMod);
-		const float sweepR = fastsinf(m_sweepPhase+0.33f-sweepMod);
+		const float sweepL = 0.5f*fastsinf(m_sweepPhase+sweepMod);
+		const float sweepR = 0.5f*fastsinf((m_sweepPhase+0.33f)-sweepMod);
 
 		m_sweepPhase += m_sweepPitch;
 

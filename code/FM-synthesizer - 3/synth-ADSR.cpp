@@ -20,7 +20,7 @@ namespace SFM
 		SFM_ASSERT(linearity >= 0.f && linearity <= 1.f);
 
 		// Stretch response between Nigel's sensible analog-style defaults and something way more linear
-		const float defRatioA = 0.3f;
+		const float defRatioA = 0.15f; // Little less, I want sharper attacks
 		const float defRatioDR = 0.0001f;
 		const float ratioA = defRatioA + linearity*10.f;
 		const float ratioDR = defRatioDR + linearity*10.f;

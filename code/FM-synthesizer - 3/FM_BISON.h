@@ -31,8 +31,11 @@
 		- Sustain
 		  + Bugs (chews up all voices, check in debug build et voila)
 		  + Support more than just 1-bit pedals?
+		- Chorus goes out of tune too much, review it once more
 
 	To do (in no particular order):
+		- Kusma's suggestions: see phone (but basically reintroduce voice buffers)
+		- Wahwah!
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
 		- Pitch envelope needs time stretch
