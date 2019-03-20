@@ -6,7 +6,10 @@
 	** 26/02/2019: wanted to ditch but didn't, going VST, need better performance **
 
 	Third prototype of FM synthesizer
-	To be released as VST by Tasty Chips Electronics
+
+	To be released as VST by Tasty Chips Electronics:
+	- Official as of 18/03/2019
+	- JUCE, moved to own repository (20/03/2019)
 
 	Code is *very* verbose and not optimized at all; still in R&D stage
 
@@ -34,7 +37,7 @@
 		- Chorus goes out of tune too much, review it once more
 
 	To do (in no particular order):
-		- Kusma's suggestions: see phone (but basically reintroduce voice buffers)
+		- Kusma's suggestions: bigger ring buffer, keep intermediate chunks small! 
 		- Wahwah!
 		- Figure out simple calculation to use power of 2 size delay lines
 		- Migrate to VST (WaveSabre?)
