@@ -56,7 +56,8 @@ namespace SFM
 
 		// And the current sample
 		const float tapM = sample;
-		
+		 
+
 		// Write mix
 		destBuf.Write(lerpf<float>(tapM, tapL, wet));
 		destBuf.Write(lerpf<float>(tapM, tapR, wet));

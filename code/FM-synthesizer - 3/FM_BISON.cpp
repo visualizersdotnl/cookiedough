@@ -991,7 +991,7 @@ bool Syntherklaas_Create()
 
 	// Calculate LUTs
 	CalculateMIDIToFrequencyLUT();
-	InitializeFastCosine();
+	SFM::InitializeFastCosine();
 
 	// Reset sample count
 	s_sampleCount = 0;

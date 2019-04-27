@@ -1,10 +1,6 @@
 
 // cookiedough -- LUT sinus/cosinus
 
-/*
-	FIXME: use FastCos() like the FM synthesizer does!
-*/
-
 #pragma once
 
 const size_t kCosTabSize = 4096*2;
@@ -26,7 +22,6 @@ VIZ_INLINE int tocosindex(float angle)
 }
 
 VIZ_INLINE float lutcosf(float angle) {
-	VIZ_ASSERT(0); // see FIXME!
 	return lutcosf(tocosindex(angle)); 
 }
 

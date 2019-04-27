@@ -42,6 +42,7 @@
     <ClCompile Include="..\code\audio.cpp" />
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
+    <ClCompile Include="..\code\fast-cosine.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.cpp" />
     <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.cc" />
     <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="..\code\bilinear.h" />
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
+    <ClInclude Include="..\code\fast-cosine.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.h" />
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp" />

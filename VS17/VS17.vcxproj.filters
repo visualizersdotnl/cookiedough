@@ -41,35 +41,35 @@
     <Filter Include="/code\util-lib">
       <UniqueIdentifier>{0bffe2b1-c187-4cbe-b90b-9c653656c0a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29">
       <UniqueIdentifier>{b41def22-827e-41f0-9790-54affb83efb4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty">
       <UniqueIdentifier>{44b5cde8-0a58-4c20-80b2-5e785e1eceb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\ADSR %28earlevel.com%29">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\ADSR %28earlevel.com%29">
       <UniqueIdentifier>{728dae43-2c45-4929-bc72-ba420300da39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/tinymt">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\/tinymt">
       <UniqueIdentifier>{8e2e8a65-6b20-4190-acc6-f79d265b6a74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/theory">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\/jsonxx">
+      <UniqueIdentifier>{991b1f3d-2499-468e-b01c-04532b10420b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/theory">
       <UniqueIdentifier>{892f19df-b01c-482a-830b-d1e42894ccf5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers">
       <UniqueIdentifier>{03095908-e9f5-4f4e-b530-997c1cf9a9e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core">
       <UniqueIdentifier>{26100c27-c0d5-4f9c-9742-384462b393b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global">
       <UniqueIdentifier>{178573bf-553d-45df-9983-673e22033ec4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused">
+    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\unused">
       <UniqueIdentifier>{9e8e45f3-b46e-4fe2-944f-5bd3f2cba31d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx">
-      <UniqueIdentifier>{991b1f3d-2499-468e-b01c-04532b10420b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -152,52 +152,55 @@
       <Filter>/code\filters &amp; blitters</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\SDL2-audio-out.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-MIDI.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-oscillator.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClCompile>
     <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.cc">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\/jsonxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\code\fast-cosine.cpp">
+      <Filter>/code\util-lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,85 +331,88 @@
       <Filter>/code\util-lib</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\SDL2-audio-out.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\drivers</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-MIDI.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-oscillator.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-parameters.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\ADSR %28earlevel.com%29</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-fast-cosine.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-log.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\global</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\global</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck-shaper.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core\unused</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core\unused</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\core</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\core</Filter>
     </ClInclude>
     <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.h">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/3rdparty\/jsonxx</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/3rdparty\/jsonxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\fast-cosine.h">
+      <Filter>/code\util-lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -436,7 +442,7 @@
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
     <None Include="..\code\FM-synthesizer - 3\theory\FM_Synthesis_of_Real_Instruments.pdf">
-      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration%29\/theory</Filter>
+      <Filter>/code\/FM-synthesizer-3 %28FM. BISON, 3rd iteration, deprecated%29\/theory</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

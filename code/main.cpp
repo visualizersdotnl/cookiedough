@@ -60,8 +60,8 @@
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
-// const bool kTestBedForFM = false;
-const bool kTestBedForFM = true;
+const bool kTestBedForFM = false;
+// const bool kTestBedForFM = true;
 
 // Undef. for < 60FPS warning
 #define FPS_WARNING
@@ -85,7 +85,6 @@ const bool kTestBedForFM = true;
 
 // FM synthesizer
 #include "FM-synthesizer - 3/FM_BISON.h"
-#include "cspan.h"
 
 // -- display & audio config. --
 
@@ -175,6 +174,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// calculate cosine LUT
 	CalculateCosLUT();
+
+	// initialize fast (co)sine
+	InitializeFastCosine();
 
 	// set simplest rounding mode, since we do a fair bit of ftol()
 	if (false == kTestBedForFM)

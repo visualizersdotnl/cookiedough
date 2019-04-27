@@ -261,14 +261,13 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid
 //
 // FIXME:
-// - move fog closer, alter shape (lower frequency)
 // - more animation, better colors
 //
 
 // cosine blob tunnel
 VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 {	
-	const float grid = lutcosf(position.x*1.14f)+lutcosf(position.y*0.314f)+lutcosf(position.z)+lutcosf(position.y*kGoldenRatio)*0.628f;
+	const float grid = fastcosf(position.x)+fastcosf(position.y/kAspect)+fastcosf(position.z);
 	return grid;
 }
 
@@ -286,7 +285,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 	const float lauraPitch = Rocket::getf(trackLauraPitch);
 	const float lauraRoll = Rocket::getf(trackLauraRoll);
 
-	Vector3 fogColor(0.8f, 0.9f, 0.1f);
+	Vector3 fogColor(0.7f, 0.8f, 0.1f);
 	fogColor *= 0.4314f;
 
 	const Vector3 origin(fLauraPath(lauraZ), lauraZ);
@@ -300,7 +299,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 4.f); // FIXME: possible parameter
 
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				
@@ -323,18 +322,31 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					total += march*0.7314f;
 				}
 
-				float nOffs = 0.15f;
+				float nOffs = 0.015f;
 				Vector3 normal(
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vNorm3(normal);
 
-				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.35f;
-				const float specular = powf(std::max(0.f, normal*direction), 16.f);
-				const float yMod = 0.5f + 0.5f*lutcosf(hit.y*48.f);
+				// this lighting code is mostly for Shader GP training purposes
+//				const Vector3 P(hit);
+//				const Vector3 lightPos(0.f, 0.f, -0.66f);
+//				const Vector3 lightDir = (lightPos-P).Normalized();
+//				const float diffuse = std::max<float>(0.f, normal*lightDir);
+
+//				const Vector3 V = (direction-P).Normalized();
+//				const Vector3 H = (lightDir+V).Normalized();
+//				const float specular = powf(std::max<float>(normal*H, 0.f), 32.f);
+
+				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.65f;
+				const float fresnel = powf(std::max(0.f, normal*direction), 8.f); // important one!
+	
+				const float yMod = 0.5f + 0.5f*fastsinf(hit.y*24.f); // use other function than sine
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, specular*yMod, distance, 0.0214f, 2.22f, _mm_set1_ps(1.f), fogColor);
+				
+				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
+//				colors[iColor] = Shadertoy::CompLighting(diffuse/total /* This works? */, specular+fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
