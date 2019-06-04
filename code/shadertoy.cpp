@@ -261,7 +261,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // Aura for Laura cosine grid
 //
 // FIXME:
-// - more animation, better colors
+// - make it look like competition shader
 //
 
 // cosine blob tunnel
@@ -322,7 +322,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					total += march*0.7314f;
 				}
 
-				float nOffs = 0.01f;
+				float nOffs = 0.1f;
 				Vector3 normal(
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
@@ -330,9 +330,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				Shadertoy::vNorm3(normal);
 
 				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.65f;
-				const float fresnel = powf(std::max(0.f, normal*direction), 8.f); // important one!
+				const float fresnel = powf(std::max(0.f, normal*direction), 24.f); // important one!
 	
-				const float yMod = 0.5f + 0.5f*fastsinf(hit.y*24.f); // use other function than sine
+				const float yMod = 0.5f + 0.5f*fastsinf(hit.y*24.f + normal.y*24.f); // use other function than sine
 				const float distance = hit.z-origin.z;
 				
 				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
