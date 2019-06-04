@@ -322,22 +322,12 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					total += march*0.7314f;
 				}
 
-				float nOffs = 0.015f;
+				float nOffs = 0.01f;
 				Vector3 normal(
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vNorm3(normal);
-
-				// this lighting code is mostly for Shader GP training purposes
-//				const Vector3 P(hit);
-//				const Vector3 lightPos(0.f, 0.f, -0.66f);
-//				const Vector3 lightDir = (lightPos-P).Normalized();
-//				const float diffuse = std::max<float>(0.f, normal*lightDir);
-
-//				const Vector3 V = (direction-P).Normalized();
-//				const Vector3 H = (lightDir+V).Normalized();
-//				const float specular = powf(std::max<float>(normal*H, 0.f), 32.f);
 
 				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.65f;
 				const float fresnel = powf(std::max(0.f, normal*direction), 8.f); // important one!
@@ -346,7 +336,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				const float distance = hit.z-origin.z;
 				
 				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
-//				colors[iColor] = Shadertoy::CompLighting(diffuse/total /* This works? */, specular+fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
