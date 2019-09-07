@@ -43,22 +43,6 @@
     <ClCompile Include="..\code\ball.cpp" />
     <ClCompile Include="..\code\boxblur.cpp" />
     <ClCompile Include="..\code\fast-cosine.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.cc" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\FM_BISON.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\SDL2-audio-out.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-ADSR.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-chorus-mix.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-delay-line.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-fast-cosine.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-voice.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-log.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-MIDI.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-oscillator.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\synth-random.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.cpp" />
-    <ClCompile Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.cpp" />
     <ClCompile Include="..\code\fx-blitter.cpp">
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</OpenMPSupport>
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OpenMPSupport>
@@ -109,33 +93,6 @@
     <ClInclude Include="..\code\bit-tricks.h" />
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\fast-cosine.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\ADSR.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\jsonxx\jsonxx.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\3rdparty\SvfLinearTrapOptimised2.hpp" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\FM_BISON.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\SDL2-audio-out.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-ADSR.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-chorus-mix.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-delay-line.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-fast-cosine.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-pluck-shaper.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-voice.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-error.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-global.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-log.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-DX7-LUT.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-math.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-MIDI.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-one-pole-filters.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-oscillator.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-parameters.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-dry-patch.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-random.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-ring-buffer.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-stateless-oscillators.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\synth-helper.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-BeatStep.h" />
-    <ClInclude Include="..\code\FM-synthesizer - 3\Win-MIDI-in-Oxygen49.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
@@ -193,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
-    <None Include="..\code\FM-synthesizer - 3\theory\FM_Synthesis_of_Real_Instruments.pdf" />
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>

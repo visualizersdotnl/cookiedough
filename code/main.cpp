@@ -83,9 +83,6 @@ const bool kTestBedForFM = false;
 #include "polar.h"
 #include "fx-blitter.h"
 
-// FM synthesizer
-#include "FM-synthesizer - 3/FM_BISON.h"
-
 // -- display & audio config. --
 
 const char *kTitle = "cocktails at Kurt Bevacqua's";
@@ -198,76 +195,42 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	if (utilInit && RunTests() /* just always run the functional tests, never want to run if they fail */)
 	{
-		if (true == kTestBedForFM)
+		if (Demo_Create())
 		{
-			/* Test code for FM synth */
-
-			auto *bumper = Image_Load32("../code/FM-synthesizer - 3/artwork/window-filler.png");
-
-			Display display;
-			if (display.Open(kTitle, 1280, 303, kFullScreen))
+			if (Audio_Create(-1, kOGG, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
+//			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
-				if (Syntherklaas_Create())
+				Display display;
+				if (display.Open(kTitle, kResX, kResY, kFullScreen))
 				{
+					// frame buffer
+					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
+					memset32(pDest, 0, kOutputSize);
+
 					Timer timer;
 
-					float oldTime = 0.f, newTime = 0.f;
+					size_t numFrames = 0;
+					float oldTime = 0.f, newTime = 0.f, totTime = 0.f;
 					while (true == HandleEvents())
 					{
 						oldTime = newTime;
 						newTime = timer.Get();
 						const float delta = newTime-oldTime;
-						Syntherklaas_Render(nullptr, newTime, delta*100.f);
-						display.Update(bumper);
+						Demo_Draw(pDest, newTime, delta*100.f);
+						display.Update(pDest);
+
+						totTime += delta;
+						++numFrames;
 					}
 
-					// bypass message box
-					avgFPS = 60.f;
+					avgFPS = numFrames/totTime;
+
+					freeAligned(pDest);
 				}
-			}
-		}
-		else
-		{
-			if (Demo_Create())
-			{
-				if (Audio_Create(-1, kOGG, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
-//				if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
-				{
-					Display display;
-					if (display.Open(kTitle, kResX, kResY, kFullScreen))
-					{
-						// frame buffer
-						uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
-						memset32(pDest, 0, kOutputSize);
 
-						Timer timer;
-
-						size_t numFrames = 0;
-						float oldTime = 0.f, newTime = 0.f, totTime = 0.f;
-						while (true == HandleEvents())
-						{
-							oldTime = newTime;
-							newTime = timer.Get();
-							const float delta = newTime-oldTime;
-							Demo_Draw(pDest, newTime, delta*100.f);
-							display.Update(pDest);
-
-							totTime += delta;
-							++numFrames;
-						}
-
-						avgFPS = numFrames/totTime;
-
-						freeAligned(pDest);
-					}
-
-				}
 			}
 		}
 	}
-
-	if (true == kTestBedForFM)
-		Syntherklaas_Destroy();
 
 	Gamepad_Destroy();
 
