@@ -3,7 +3,7 @@
 This is a little testbed I set up to experiment with some retro (demoscene) graphics effects, back in 2007-2009.
 It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
-Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer.
+Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer, but I deleted all traces of that!
 
 It's built using Visual Studio 2017.
 It should be fairly easy to port to another x86/x64 platform; I do use SSE (up to 4.1) extensively though.
