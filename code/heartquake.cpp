@@ -1,5 +1,5 @@
 
-// cookiedough -- Heartquake-style water
+// cookiedough -- Heartquake-style water (see https://github.com/visualizersdotnl/heartquake-water-explained)
 
 #include "main.h"
 // #include "heartquake.h"

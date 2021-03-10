@@ -1,5 +1,5 @@
 
-// cookiedough -- Heartquake-style water
+// cookiedough -- Heartquake-style water (see https://github.com/visualizersdotnl/heartquake-water-explained)
 
 #ifndef _HEARTQUAKE_H_
 #define _HEARTQUAKE_H_
