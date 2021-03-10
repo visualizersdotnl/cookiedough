@@ -362,7 +362,7 @@ static Vector4 fSpike_global;
 VIZ_INLINE float fSpikey1(const Vector3 &position) 
 {
 	constexpr float scale = kGoldenRatio*0.1f;
-    const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
+	const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
@@ -439,7 +439,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 VIZ_INLINE float fSpikey2(const Vector3 &position) 
 {
 	constexpr float scale = kGoldenRatio*0.1f;
-    const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
+	const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
 
