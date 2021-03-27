@@ -1,7 +1,7 @@
 
 // Interlaces clips of the Snatch intro back to PNG files :)
 
-// The ffmpeg-based conversion donein SGP_Q1_Prep is manual.
+// The ffmpeg-based conversion done in SGP_Q1_Prep is manual.
 // The whole bunch is converted to DDS with a command line utility (conv.bat).
 
 // ideas: 
