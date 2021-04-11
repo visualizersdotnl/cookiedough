@@ -29,6 +29,7 @@
 // - SDL 2.0.8
 // - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
 // - sse_mathfun.h by Julien Pommier
+// - sse-intrincs-test by Alfred Klomp
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -82,6 +83,7 @@ const bool kTestBedForFM = false;
 // filters & blitters
 #include "polar.h"
 #include "fx-blitter.h"
+#include "satori-lumablur.h"
 
 // -- display & audio config. --
 
@@ -185,6 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Shared_Create();
 	utilInit &= Polar_Create();
 	utilInit &= FxBlitter_Create();
+	utilInit &= SatoriLumaBlur_Create();
 
 	Gamepad_Create();
 	initialize_random_generator();
@@ -241,6 +244,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	Shared_Destroy();
 	Polar_Destroy();
 	FxBlitter_Destroy();
+	SatoriLumaBlur_Destroy();
 
 	SDL_Quit();
 

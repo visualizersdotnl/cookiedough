@@ -124,6 +124,9 @@
     <ClCompile Include="..\code\fast-cosine.cpp">
       <Filter>/code\util-lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\satori-lumablur.cpp">
+      <Filter>/code\filters &amp; blitters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -254,6 +257,9 @@
     </ClInclude>
     <ClInclude Include="..\code\fast-cosine.h">
       <Filter>/code\util-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\satori-lumablur.h">
+      <Filter>/code\filters &amp; blitters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

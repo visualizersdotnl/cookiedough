@@ -11,6 +11,7 @@
 #include "boxblur.h"
 #include "polar.h"
 #include "fx-blitter.h"
+#include "satori-lumablur.h"
 
 // effects
 #include "ball.h"
