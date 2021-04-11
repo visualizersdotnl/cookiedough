@@ -29,7 +29,7 @@
 // - SDL 2.0.8
 // - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
 // - sse_mathfun.h by Julien Pommier
-// - sse-intrincs-test by Alfred Klomp
+// - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
