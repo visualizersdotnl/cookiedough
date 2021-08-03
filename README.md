@@ -10,6 +10,7 @@ It should be fairly easy to port to another x86/x64 platform; I do use SSE (up t
 
 - 25/07/2018: got it running, back in production.
 - Use one of the supplied Rocket editors (Kusma's or Emoon's).
+- Set your startup directory to '/target'.
 
 Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
 Check /code/main.cpp for a list of third party libraries used.
