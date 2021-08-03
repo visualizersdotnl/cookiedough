@@ -30,8 +30,8 @@ Thumbs.db
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+# x64/
+target/x64/
 bld/
 [Bb]in/
 [Oo]bj/ 
