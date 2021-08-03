@@ -9,6 +9,7 @@
 #include <string.h>  // memcpy()
 #include <math.h>    // sinf(), cosf(), et cetera
 #include <algorithm> // std::min, std::max
+#include <cmath>     // std::truncf(), et cetera
 
 // Firstly to align Vector3/Vector4, and enable SIMD on some of these primitives.
 #include <xmmintrin.h>
