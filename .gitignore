@@ -31,7 +31,9 @@ Thumbs.db
 [Rr]elease/
 [Rr]eleases/
 # x64/
-target/x64/
+target/x64/*.exe
+target/x64/*.iobj
+target/x64/*.ipdb
 bld/
 [Bb]in/
 [Oo]bj/ 
