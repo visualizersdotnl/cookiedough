@@ -26,10 +26,10 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
-const float kMapViewLenScale = 0.314f;
+const float kMapViewLenScale = 0.314f*0.5f;
 const int kMapViewHeight = 40;
 const int kMapTilt = 190;
-const int kMapScale = 320;
+const int kMapScale = 500;
 
 // adjust to map resolution
 static constexpr unsigned kMapSize = 1024;
@@ -163,7 +163,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
 		constexpr float rayY = kMapSize*kMapViewLenScale;
-		const float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
+		const float rayX = 0.25f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify
 		float rotRayX = rayX, rotRayY = rayY;
@@ -188,10 +188,8 @@ bool Landscape_Create()
 //	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
-//	s_pHeightMap = Image_Load8("assets/scape/maps/D20.png");
-//	s_pColorMap = Image_Load32("assets/scape/maps/C20w.png");
 	s_pHeightMap = Image_Load8("assets/scape/maps/D19.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C19W.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C19w.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
