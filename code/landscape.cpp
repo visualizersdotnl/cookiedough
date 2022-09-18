@@ -27,14 +27,14 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize, document)
 const float kMapViewLenScale = 0.314f;
-const int kMapViewHeight = 20;
-const int kMapTilt = 160;
-const int kMapScale = 220;
+const int kMapViewHeight = 40;
+const int kMapTilt = 190;
+const int kMapScale = 320;
 
 // adjust to map resolution
-const unsigned kMapSize = 1024;
+static constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
-const unsigned kMapShift = 10;
+constexpr unsigned kMapShift = 10;
 
 // max. depth
 const unsigned int kRayLength = 512;
@@ -121,14 +121,15 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		tilt -= tiltStep;
 	s_mapTilt = kMapTilt + int(tilt);
 
-	// calc. view angle + it's sine & cosine	
+	// calc. view angle + it's sine & cosine (FIXME)
 	static float viewAngle = 0.f;
-	const float maxAng = kPI;
-	const float angStep = std::min(delta*0.01f, 1.f);
-	if (viewAngle < maxAng)
-		viewAngle += angStep*pad.lShoulder;
-	if (viewAngle > -maxAng)
-		viewAngle -= angStep*pad.rShoulder;
+	constexpr float maxAng = kPI*2.f;
+	float viewMul = 1.f/kAspect;
+	viewMul *= delta*0.01f;
+//	if (viewAngle < maxAng)
+		viewAngle += viewMul*pad.lShoulder;
+//	if (viewAngle > -maxAng)
+		viewAngle -= viewMul*pad.rShoulder;
 
 	const float viewCos = cosf(viewAngle);
 	const float viewSin = sinf(viewAngle);
@@ -161,8 +162,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		float rayY = kMapSize*kMapViewLenScale;
-		float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
+		constexpr float rayY = kMapSize*kMapViewLenScale;
+		const float rayX = 0.75f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify
 		float rotRayX = rayX, rotRayY = rayY;
@@ -184,13 +185,15 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 bool Landscape_Create()
 {
-	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
+//	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D21.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C23W.png");
+//	s_pHeightMap = Image_Load8("assets/scape/maps/D20.png");
+//	s_pColorMap = Image_Load32("assets/scape/maps/C20w.png");
+	s_pHeightMap = Image_Load8("assets/scape/maps/D19.png");
+	s_pColorMap = Image_Load32("assets/scape/maps/C19W.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
-	if (nullptr == s_pHeightMap || nullptr == s_pColorMap|| nullptr == s_pHUD)
+	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
 
 	// load fog gradient (8-bit LUT)
@@ -216,6 +219,6 @@ void Landscape_Draw(uint32_t *pDest, float time, float delta)
 	vscape(pDest, time, delta);
 
 	// overlay HUD
-	Add32(pDest, s_pHUD, kResX*kResY);
+	// Add32(pDest, s_pHUD, kResX*kResY);
 }
 

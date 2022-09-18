@@ -25,7 +25,7 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 	#else
-		#define VIZ_INLINE inline
+		#define VIZ_INLINE static inline // this is sort of sneaky since you should be *aware* that these functions should, generally, be static, plus, it won't work inside a class def. but for this project that's not a problem
 	#endif
 #endif
 

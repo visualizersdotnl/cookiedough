@@ -31,16 +31,16 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 9;
 
 // max. depth
-const unsigned int kRayLength = 384;
+const unsigned int kRayLength = 512;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kBallRadius = 610.f;
+const float kBallRadius = 910.f;
 
 // scale applied to each beam sample
-const uint8_t kBeamMul = 3;
+const uint8_t kBeamMul = 9;
 
 static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {

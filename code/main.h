@@ -30,8 +30,8 @@
 #include "../3rdparty/aspectratios.h"
 
 // output resolution
-constexpr size_t kResX = 800;
-constexpr size_t kResY = 600;
+constexpr size_t kResX = 1920;
+constexpr size_t kResY = 1080;
 constexpr size_t kHalfResX = kResX/2;
 constexpr size_t kHalfResY = kResY/2;
 constexpr size_t kOutputSize = kResX*kResY;

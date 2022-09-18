@@ -262,18 +262,24 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 //
 // FIXME:
 // - make it look like competition shader
+// - optimize
 //
 
 // cosine blob tunnel
 VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 {	
-	const float grid = fastcosf(position.x)+fastcosf(position.y/kAspect)+fastcosf(position.z);
+	const float grid = fastcosf(position.x)+fastcosf(position.y)+fastcosf(position.z);
+ 
+	//const Vector3 cosPos(fastcosf(position.x), fastcosf(position.y), fastcosf(position.z));
+ 	//const Vector3 sinSwizzled(fastsinf(position.z), fastsinf(position.x), fastsinf(position.y));
+	//const float grid = cosPos*sinSwizzled + 1.f;
+
 	return grid;
 }
 
-VIZ_INLINE const Vector2 fLauraPath(float Z)
+VIZ_INLINE const Vector3 fLauraPath(float Z)
 {
-	return { lutcosf(Z*0.33f)*0.314f, lutsinf(-Z*0.44f)*0.314f };
+	return { 0.5f*fastsinf(Z*3.33f), 0.624f*fastcosf(Z*0.33f), Z*4.f };
 }
 
 static void RenderLauraMap_2x2(uint32_t *pDest, float time)
@@ -288,7 +294,10 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 	Vector3 fogColor(0.7f, 0.8f, 0.1f);
 	fogColor *= 0.4314f;
 
-	const Vector3 origin(fLauraPath(lauraZ), lauraZ);
+	const Vector3 origin = Vector3(fLauraPath(lauraZ));
+
+	const float zebraCos1 = lutcosf(time*0.3f);
+	const float zebraCos2 = lutcosf(time*0.414f);
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -299,7 +308,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 4.f); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 24.f*(1920.f/1080.f)); // FIXME: possible parameter
 
 				Vector3 direction(UV.x, UV.y, 1.f); 
 				
@@ -307,19 +316,15 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				Shadertoy::rotY(lauraYaw,   direction.x, direction.z);
 				Shadertoy::rotX(lauraPitch, direction.y, direction.z);
 				Shadertoy::rotZ(lauraRoll,  direction.x, direction.y);
-				
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
-
 				float march, total = 0.f;
-				for (int iStep = 0; iStep < 48; ++iStep)
+				for (int iStep = 0; iStep < 32; ++iStep)
 				{
-					hit.x = origin.x + direction.x*total;
-					hit.y = origin.y + direction.y*total;
-					hit.z = origin.z + direction.z*total;
+					hit = origin + direction*total;
 					march = fAuraForLaura(hit);
-					total += march*0.7314f;
+					total += march*0.43f;
 				}
 
 				float nOffs = 0.1f;
@@ -329,13 +334,24 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vNorm3(normal);
 
-				const float diffuse = normal.y*0.12f + normal.x*0.12f + normal.z*0.65f;
-				const float fresnel = powf(std::max(0.f, normal*direction), 24.f); // important one!
-	
-				const float yMod = 0.5f + 0.5f*fastsinf(hit.y*24.f + normal.y*24.f); // use other function than sine
-				const float distance = hit.z-origin.z;
+				const Vector3 lightPos = Vector3(direction.x+origin.x, direction.y+origin.y, -origin.z);
+				const Vector3 lightDir = Vector3(lightPos-hit).Normalized();
+				//float diffuse = std::max(0.f, normal*lightDir); // normal*Vector3(0.f, 0.f, 1.f); // normal.y * 0.12f + normal.x * 0.12f + normal.z * 0.65f;
+				float diffuse = normal.y * 0.42f + normal.x * 0.12f + normal.z * 0.65f;
+				const float fresnel = powf(std::max(0.4f, normal*direction), 64.f); // important one!
 				
-				colors[iColor] = Shadertoy::CompLighting(diffuse*yMod, fresnel, distance, 0.03f, 1.88f, _mm_set1_ps(1.f), fogColor);
+				// zebra! ish...
+				Vector3 zebraHit = hit + Vector3(zebraCos1); // FIXME: scalar addition would work too? check library
+				Shadertoy::vNorm3(zebraHit);
+				float yMod = 0.5f + 0.5f*lutsinf(zebraHit.y*4.f + zebraHit.x*22.f + zebraHit.y+zebraCos2);
+				diffuse *= yMod;
+//				yMod *= kPI*2.f; yMod *= yMod;
+//				diffuse += yMod;
+
+				const float distance = hit.z-origin.z;
+
+
+				colors[iColor] = Shadertoy::CompLighting(diffuse, fresnel, distance, .05f, 1.f, _mm_set1_ps(1.f), fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
