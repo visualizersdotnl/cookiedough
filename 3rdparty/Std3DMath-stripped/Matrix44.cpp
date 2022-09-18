@@ -315,8 +315,8 @@ const Matrix44 Matrix44::GeneralInverse() const
 	pInv[ 7] =  pSrc[0] * pSrc[ 6] * pSrc[11] - pSrc[0] * pSrc[ 7] * pSrc[10] - pSrc[4] * pSrc[2] * pSrc[11] + pSrc[4] * pSrc[3] * pSrc[10] + pSrc[ 8] * pSrc[2] * pSrc[ 7] - pSrc[ 8] * pSrc[3] * pSrc[ 6];
 	pInv[11] = -pSrc[0] * pSrc[ 5] * pSrc[11] + pSrc[0] * pSrc[ 7] * pSrc[ 9] + pSrc[4] * pSrc[1] * pSrc[11] - pSrc[4] * pSrc[3] * pSrc[ 9] - pSrc[ 8] * pSrc[1] * pSrc[ 7] + pSrc[ 8] * pSrc[3] * pSrc[ 5];
 	pInv[15] =  pSrc[0] * pSrc[ 5] * pSrc[10] - pSrc[0] * pSrc[ 6] * pSrc[ 9] - pSrc[4] * pSrc[1] * pSrc[10] + pSrc[4] * pSrc[2] * pSrc[ 9] + pSrc[ 8] * pSrc[1] * pSrc[ 6] - pSrc[ 8] * pSrc[2] * pSrc[ 5];
-	 
-    float determinant = pSrc[0]*pInv[0] + pSrc[1]*pInv[4] + pSrc[2]*pInv[8] + pSrc[3]*pInv[12];
+	
+	float determinant = pSrc[0]*pInv[0] + pSrc[1]*pInv[4] + pSrc[2]*pInv[8] + pSrc[3]*pInv[12];
  	if (0.f == determinant)
  	{
  		// FIXME: assert?
