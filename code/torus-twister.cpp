@@ -27,7 +27,7 @@ const unsigned int kRayLength = 256;
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kCylRadius = 250.f;
+const float kCylRadius = 440.f;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {

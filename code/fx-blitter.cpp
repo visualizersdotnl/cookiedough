@@ -26,7 +26,7 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, (kFxMapResY-1)>>2)
 	for (int iY = 0; iY < kFxMapResY-1; ++iY)
 	{
 		for (int iX = 0; iX < kFxMapResX-1; ++iX)
@@ -80,7 +80,7 @@ void Fx_Blit_2x2_Dithered(uint32_t* pDest, uint32_t* pSrc)
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, (kFxMapResY-1)>>2)
 	for (int iY = 0; iY < kFxMapResY-1; ++iY)
 	{
 		for (int iX = 0; iX < kFxMapResX-1; ++iX)

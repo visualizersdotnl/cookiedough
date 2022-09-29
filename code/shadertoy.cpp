@@ -107,7 +107,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 	const float t = time*0.77f;
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -189,7 +189,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 	float roll = Rocket::getf(trackNautilusRoll);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -292,14 +292,20 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 	const float lauraRoll = Rocket::getf(trackLauraRoll);
 
 	Vector3 fogColor(0.7f, 0.8f, 0.1f);
-	fogColor *= 0.4314f;
+	fogColor *= 0.1f;
 
 	const Vector3 origin = Vector3(fLauraPath(lauraZ));
 
 	const float zebraCos1 = lutcosf(time*0.3f);
 	const float zebraCos2 = lutcosf(time*0.414f);
 
-	#pragma omp parallel for schedule(static)
+	// FIXME: parametrize (or at least a blend between sets)
+	const Vector3 colorization(
+		.1f-lutcosf(time/3.f)/(19.f*0.5f), 
+		.1f, 
+		.1f+lutcosf(time/14.f)/4.f);
+
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -308,9 +314,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 24.f*(1920.f/1080.f)); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 12.f*(1920.f/1080.f)); // FIXME: possible parameter
 
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				Vector3 direction(UV.x, UV.y, 0.314f); 
 				
 				// FIXME: use 3x3 matrix?
 				Shadertoy::rotY(lauraYaw,   direction.x, direction.z);
@@ -325,6 +331,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					hit = origin + direction*total;
 					march = fAuraForLaura(hit);
 					total += march*0.43f;
+
+					if (fabsf(march) < 0.001f)
+						break;
 				}
 
 				float nOffs = 0.1f;
@@ -332,26 +341,37 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 					march-fAuraForLaura(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fAuraForLaura(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
-				const Vector3 lightPos = Vector3(direction.x+origin.x, direction.y+origin.y, -origin.z);
-				const Vector3 lightDir = Vector3(lightPos-hit).Normalized();
-				//float diffuse = std::max(0.f, normal*lightDir); // normal*Vector3(0.f, 0.f, 1.f); // normal.y * 0.12f + normal.x * 0.12f + normal.z * 0.65f;
-				float diffuse = normal.y * 0.42f + normal.x * 0.12f + normal.z * 0.65f;
-				const float fresnel = powf(std::max(0.4f, normal*direction), 64.f); // important one!
+				// const Vector3 lightPos = Vector3(direction.x+origin.x, direction.y+origin.y, -origin.z);
+				// Vector3 lightDir = Vector3(lightPos - hit);
+				// Shadertoy::vFastNorm3(lightDir);
+				// float diffuse = std::max(0.f, normal*lightDir); // normal*Vector3(0.f, 0.f, 1.f); // normal.y * 0.12f + normal.x * 0.12f + normal.z * 0.65f;
+				// float diffuse = normal.y * 0.42f + normal.x * 0.12f + normal.z * 0.65f;
+				// const float fresnel = powf(std::max(0.f, normal*lightDir), 16.f); // important one!
 				
+				// I will leave the calculations here as made by Michiel (Nautilus):
+
+				float diffuse = normal.z*0.1f;
+				float specular = powf(std::max(0.f, normal*direction), 16.f);
+
 				// zebra! ish...
 				Vector3 zebraHit = hit + Vector3(zebraCos1); // FIXME: scalar addition would work too? check library
-				Shadertoy::vNorm3(zebraHit);
+				Shadertoy::vFastNorm3(zebraHit);
 				float yMod = 0.5f + 0.5f*lutsinf(zebraHit.y*4.f + zebraHit.x*22.f + zebraHit.y+zebraCos2);
-				diffuse *= yMod;
+				diffuse += yMod*0.1f;
 //				yMod *= kPI*2.f; yMod *= yMod;
 //				diffuse += yMod;
 
-				const float distance = hit.z-origin.z;
+				Vector3 color(diffuse);
+				color = colorization*(diffuse+total + specular);
+				color += specular*0.314f;
 
+				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
 
-				colors[iColor] = Shadertoy::CompLighting(diffuse, fresnel, distance, .05f, 1.f, _mm_set1_ps(1.f), fogColor);
+//				const float distance = hit.z-origin.z;
+
+//				colors[iColor] = Shadertoy::CompLighting(diffuse, fresnel, distance, .05f, 1.f, colorization, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
