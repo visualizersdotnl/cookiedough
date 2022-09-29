@@ -84,6 +84,13 @@ void Shadertoy_Destroy()
 {
 }
 
+VIZ_INLINE Vector3 Michiel_Kleuren(float time) {
+	return Vector3(
+		.1f-lutcosf(time/3.f)/(19.f*0.5f), 
+		.1f, 
+		.1f+lutcosf(time/14.f)/4.f);
+}
+
 //
 // Plasma (see https://www.shadertoy.com/view/ldSfzm)
 //
@@ -279,7 +286,7 @@ VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 
 VIZ_INLINE const Vector3 fLauraPath(float Z)
 {
-	return { 0.5f*fastsinf(Z*3.33f), 0.624f*fastcosf(Z*0.33f), Z*4.f };
+	return { 0.5f*fastsinf(Z*3.33f), 0.624f*fastcosf(Z*0.53f), Z*4.f };
 }
 
 static void RenderLauraMap_2x2(uint32_t *pDest, float time)
@@ -299,11 +306,14 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 	const float zebraCos1 = lutcosf(time*0.3f);
 	const float zebraCos2 = lutcosf(time*0.414f);
 
+/*
 	// FIXME: parametrize (or at least a blend between sets)
 	const Vector3 colorization(
 		.1f-lutcosf(time/3.f)/(19.f*0.5f), 
 		.1f, 
 		.1f+lutcosf(time/14.f)/4.f);
+*/
+	Vector3 colorization = Michiel_Kleuren(time);
 
 	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -314,9 +324,9 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 12.f*(1920.f/1080.f)); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 64.f*(1920.f/1080.f)); // FIXME: possible parameter
 
-				Vector3 direction(UV.x, UV.y, 0.314f); 
+				Vector3 direction(UV.x, UV.y, 2.314f); 
 				
 				// FIXME: use 3x3 matrix?
 				Shadertoy::rotY(lauraYaw,   direction.x, direction.z);
@@ -359,7 +369,7 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				Vector3 zebraHit = hit + Vector3(zebraCos1); // FIXME: scalar addition would work too? check library
 				Shadertoy::vFastNorm3(zebraHit);
 				float yMod = 0.5f + 0.5f*lutsinf(zebraHit.y*4.f + zebraHit.x*22.f + zebraHit.y+zebraCos2);
-				diffuse += yMod*0.1f;
+				diffuse *= yMod;
 //				yMod *= kPI*2.f; yMod *= yMod;
 //				diffuse += yMod;
 
@@ -406,18 +416,20 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 fogColor(0.f);
+	const Vector3 fogColor(1.f);
 
 	const float speed = Rocket::getf(trackSpikeSpeed);
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 
-	const __m128 diffColor = Shadertoy::Desaturate(Vector3(148.f/256.f, 24.f/256.f, 248.f/256.f), desaturation);
+	/* const */ Vector3 colorization = Michiel_Kleuren(time);
+	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
+
 
 	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -458,7 +470,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					march-fSpikey1(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
 				const float diffuse = normal.z*1.f;
 				const float specular = powf(std::max(0.f, normal*direction), specPow);
@@ -490,9 +502,11 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 
+	Vector3 colorization = Michiel_Kleuren(time);
+
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -533,13 +547,13 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
 				const float diffuse = normal.z*0.8f + normal.y*0.2f;
-				const float specular = powf(std::max(0.f, normal*direction), specPow);
+				const float specular = powf(std::max(0.25f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
-				__m128 diffColor = Shadertoy::Desaturate(Shadertoy::CosPalSimplest(distance, 1.f, Vector3(0.3f, 0.3f, 0.75f), 0.5314f), desaturation);
-				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.0833f, 1.214f, diffColor, fogColor);
+				__m128 diffColor = Shadertoy::Desaturate(colorization, desaturation); // Shadertoy::CosPalSimplest(distance, 1.f, Vector3(0.3f, 0.3f, 0.75f), 0.5314f), desaturation);
+				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.133f, 1.214f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -558,7 +572,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -594,17 +608,17 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 					total += march*(0.1f*kGoldenRatio);
 				}
 
-				float nOffs = 0.1f;
+				float nOffs = 0.01f;
 				Vector3 normal(
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
 				const float distance = hit.z-origin.z;
 				const float specular = warmup*powf(std::max(0.f, normal*direction), specPow);
 
-				__m128 fogged = Shadertoy::ApplyFog(distance, _mm_set1_ps(specular), _mm_setzero_ps(), 0.0733f);
+				__m128 fogged = Shadertoy::ApplyFog(distance, _mm_set1_ps(specular), _mm_setzero_ps(), 0.0433f);
 				colors[iColor] = fogged;
 			}
 
@@ -790,7 +804,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const Vector3 origin = fSinPath(time*speed);
 	const Vector3 light = Vector3(origin.x, origin.y, origin.z+0.f);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -821,19 +835,19 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 					total += march*0.814f;
 				}
 
-				float nOffs = 0.1f;
+				float nOffs = 0.05f;
 				Vector3 normal(
 					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y, hit.z+nOffs)));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
-				Vector3 lightDir = hit-light;
-				Shadertoy::vFastNorm3(lightDir);
+//				Vector3 lightDir = hit-light;
+//				Shadertoy::vFastNorm3(lightDir);
 
-				float diffuse = normal*lightDir;
-//				float diffuse = normal.z*1.f;
-				float specular = std::max(0.f, normal*direction);
+//				float diffuse = normal*lightDir;
+				float diffuse = normal.z*0.7f + 0.3f*normal.y;
+				float specular = std::max(0.1f, normal*direction);
 
 				// const float shadow = fSinShadow(hit, normal, 14);
 				diffuse = 0.2f + 0.8f*diffuse; //  + 0.3f*shadow;
