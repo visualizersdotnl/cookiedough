@@ -737,10 +737,13 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 // It's glitchy, it's grainy, but with the right parameters and colors might be useful for a short show. 
 //
 
+#include "q3-rsqrt.h"
+
 VIZ_INLINE const Vector3 fSinPath(float time)
 {
-	const float sine = lutsinf(time * 0.314f);
-	const float cosine = lutcosf(time * 0.314f);
+	const float timeMod = time*0.314f;
+	const float sine = lutsinf(timeMod);
+	const float cosine = lutcosf(timeMod);
 	return { sine*2.f*kGoldenRatio - cosine*1.5f, cosine*3.14f + sine*kGoldenRatio, time };
 }
 
@@ -749,11 +752,12 @@ VIZ_INLINE float fSinMap(const Vector3 &point)
 {
 	float pZ = point.z;
 
-	// FIXME: this is costly, fake it?
-	auto& path = fSinPath(pZ);
-
-	float pX = point.x-path.x;
-	float pY = point.y-path.y;
+	const float zMod = pZ*0.314f;
+	const int cosIndex = tocosindex(zMod);
+	const float pathCosine = lutcosf(cosIndex);
+	const float pathSine = lutcosf(cosIndex+kCosTabSinPhase)*kGoldenRatio;
+	float pX = point.x-(pathSine*2.f - pathCosine*1.5f);
+	float pY = point.y-(pathCosine*3.14f + pathSine);
 
 	float aX = pX*0.315f*1.25f + lutsinf(pZ*(0.814f*1.25f));
 	float aY = pY*0.315f*1.25f + lutsinf(pX*(0.814f*1.25f));
@@ -801,13 +805,15 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const Vector3 origin = fSinPath(time*speed);
 //	const Vector3 light = Vector3(origin.x, origin.y, origin.z+0.f);
 
-	#pragma omp parallel for schedule(dynamic, 1)
+//	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
-		const int yIndex = iY*kFxMapResX;
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
+			const int yIndex = iY*kFxMapResX;
 			__m128 colors[4];
+
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
@@ -818,21 +824,21 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 				Vector3 hit;
 
-				float march, total = 0.f;
-				for (int iStep = 0; iStep < 32; ++iStep)
+				float march = 1.f, total = 0.f;
+				for (int iStep = 0; march > 0.025f && iStep < 32; ++iStep)
 				{
-					hit.x = origin.x + direction.x*total;
-					hit.y = origin.y + direction.y*total;
-					hit.z = origin.z + direction.z*total;
+					hit.vSSE = _mm_add_ps(origin.vSSE, (direction*total).vSSE);
+
+//					hit.x = origin.x + direction.x*total;
+//					hit.y = origin.y + direction.y*total;
+//					hit.z = origin.z + direction.z*total;
 
 					march = fSinMap(hit);
-					if (march < 0.001f)
-						break;
 	
 					total += march*0.814f;
 				}
 
-				float nOffs = 0.05f;
+				constexpr float nOffs = 0.05f;
 				Vector3 normal(
 					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),
@@ -844,7 +850,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 //				float diffuse = normal*lightDir;
 				float diffuse = normal.z*0.7f + 0.3f*normal.y;
-				float specular = std::max(0.1f, normal*direction);
+				float specular = normal*direction; // std::max(0.1f, normal*direction);
 
 				// const float shadow = fSinShadow(hit, normal, 14);
 				diffuse = 0.2f + 0.8f*diffuse; //  + 0.3f*shadow;

@@ -26,13 +26,13 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
-const float kMapViewLenScale = 0.314f*0.5f;
-const int kMapViewHeight = 40;
-const int kMapTilt = 190;
-const int kMapScale = 500;
+constexpr float kMapViewLenScale = 0.314f*0.5f;
+constexpr int kMapViewHeight = 40;
+constexpr int kMapTilt = 190;
+constexpr int kMapScale = 500;
 
 // adjust to map resolution
-static constexpr unsigned kMapSize = 1024;
+constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 constexpr unsigned kMapShift = 10;
 
@@ -160,7 +160,9 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	const int fpX1 = ftofp24(X1);
 	const int fpY1 = ftofp24(Y1);
 
-	const float rayY = kMapSize*kMapViewLenScale;
+	constexpr float rayY = kMapSize*kMapViewLenScale;
+
+	#pragma omp parallel for schedule(static, 1)
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
 		const float rayX = 0.25f*(iRay - kResX*0.5f); // FIXME: parameter?
