@@ -123,7 +123,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 	// calc. view angle + it's sine & cosine (FIXME)
 	static float viewAngle = 0.f;
-	constexpr float maxAng = kPI*2.f;
+//	constexpr float maxAng = kPI*2.f;
 	float viewMul = 1.f/kAspect;
 	viewMul *= delta*0.01f;
 //	if (viewAngle < maxAng)

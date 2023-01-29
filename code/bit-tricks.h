@@ -37,10 +37,12 @@ VIZ_INLINE size_t RoundPow2_64(size_t value)
 
 #endif
 
-#pragma warning(disable:4146) // unary minus operator applied, result still unsigned (IsZero())
+#if defined(_WIN32) // FIXME: should check for MSVC, really
+	#pragma warning(disable:4146) // unary minus operator applied, result still unsigned (IsZero())
+#endif
 
 // Thank you Bit Twiddling Hacks.
-VIZ_INLINE unsigned IsNotZero(unsigned value) { return ((value | (~value + 1)) >> 31) & 1; }
+VIZ_INLINE unsigned IsNotZero(unsigned value) { return ((value | (~value + 1)) >> 31); }
 VIZ_INLINE unsigned IsZero(unsigned value) { return 1 + (value >> 31) - (-value >> 31); }
 
 #endif // _BIT_TRICKS_H_

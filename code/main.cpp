@@ -66,10 +66,6 @@
 #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
-// ** this will kill Rocket and module replay and use the FM synth. to feed a stream **
-const bool kTestBedForFM = false;
-// const bool kTestBedForFM = true;
-
 // Undef. for < 60FPS warning
 #define FPS_WARNING
 
@@ -168,8 +164,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		_CrtSetBreakAlloc(WIN32_CRT_BREAK_ALLOC);
 #endif
 
-//	const auto audioFlag = (true == kTestBedForFM) ? SDL_INIT_AUDIO : 0;
-//	if (0 != SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER | audioFlag))
 	if (0 != SDL_Init(SDL_INIT_EVERYTHING))
 	{
 #if defined(_WIN32)
@@ -198,8 +192,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 #if defined(FOR_INTEL)
 	// set simplest rounding mode, since we do a fair bit of ftol()
-	if (false == kTestBedForFM)
-		_controlfp(_MCW_RC, _RC_CHOP);
+	_controlfp(_MCW_RC, _RC_CHOP);
 #endif
 
 	bool utilInit = true;

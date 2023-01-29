@@ -802,7 +802,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const __m128 fogColor = _mm_set1_ps(1.f);
 
 	const Vector3 origin = fSinPath(time*speed);
-	const Vector3 light = Vector3(origin.x, origin.y, origin.z+0.f);
+//	const Vector3 light = Vector3(origin.x, origin.y, origin.z+0.f);
 
 	#pragma omp parallel for schedule(dynamic, 1)
 	for (int iY = 0; iY < kFxMapResY; ++iY)

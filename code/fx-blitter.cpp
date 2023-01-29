@@ -86,7 +86,7 @@ void Fx_Blit_2x2_Dithered(uint32_t* pDest, uint32_t* pSrc)
 		for (int iX = 0; iX < kFxMapResX-1; ++iX)
 		{
 			const unsigned iA = iY*kFxMapResX + iX;
-			const unsigned iB = iA+1;
+//			const unsigned iB = iA+1;
 			const unsigned iC = iA+kFxMapResX;
 			const unsigned iD = iC+1;
 
@@ -106,7 +106,7 @@ void Fx_Blit_2x2_Dithered(uint32_t* pDest, uint32_t* pSrc)
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
 
-			int iPixel = 0; // for (int iPixel = 0; iPixel < 2; ++iPixel)
+//			for (int iPixel = 0; iPixel < 2; ++iPixel)
 			{
 				__m128i step = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(fromY1, fromY0), 16), divisor);
 				__m128i color = fromY0;
