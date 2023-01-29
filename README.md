@@ -8,7 +8,7 @@ Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer, but I 
 It's built using Visual Studio 2017, or rather, last tested with Visual Studio 2019.
 
 There is a CMake script (in '/code') to build for OSX, please read top of 'main.cpp' to get your dependencies right.
-Then simply navigate to 'target/OSX' (might have to create it), type 'cmake ../../code', then 'make' and off you go.
+Then navigate to '/target/OSX' and the rest should be clear.
 
 - 29/01/2023: OSX version runs!
 - 25/07/2018: got it running, back in production.
