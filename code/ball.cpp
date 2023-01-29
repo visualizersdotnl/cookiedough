@@ -153,17 +153,19 @@ static void vball(uint32_t *pDest, float time)
 	const int fromY = ftofp24(256.f*cosf(time*0.25f) + 256.f);
 
 	// FOV (full circle)
-	const float fovAngle = kPI*2.f;
-	const float delta = fovAngle/kTargetResY;
-	float curAngle = 0.f;
+	constexpr float fovAngle = kPI*2.f;
+	constexpr float delta = fovAngle/kTargetResY;
+//	float curAngle = 0.f;
 
 	// cast rays
+	#pragma omp parallel for schedule(static, 1)
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
+		float curAngle = iRay*delta;
 		float dX, dY;
 		voxel::calc_fandeltas(curAngle, dX, dY);
 		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
-		curAngle += delta;
+//		curAngle += delta;
 	}
 }
 
