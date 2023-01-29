@@ -34,7 +34,8 @@ Thumbs.db
 target/x64/*.exe
 target/x64/*.iobj
 target/x64/*.ipdb
-target/osx
+target/osx/Debug
+target/osx/Release
 bld/
 [Bb]in/
 [Oo]bj/ 

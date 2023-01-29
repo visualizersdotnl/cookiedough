@@ -9,7 +9,7 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
-	#define VIZ_ASSERT(condition) if (!(condition)) __debugbreak() // FIXME: OSX
+	#define VIZ_ASSERT(condition) if (!(condition)) DEBUG_TRAP
 #else
 	#define VIZ_ASSERT(condition)
 #endif

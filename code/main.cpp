@@ -62,7 +62,7 @@
 // - module playback flags in audio.cpp
 // - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
 
-// Undef. for (Windows - should work on other platforms too) CRT leak check
+// Undef. for Windows CRT leak check
 #define WIN32_CRT_LEAK_CHECK
 #define WIN32_CRT_BREAK_ALLOC -1
 
@@ -79,6 +79,7 @@ const bool kTestBedForFM = false;
 
 #if defined(_WIN32)
 	#include <windows.h>
+	#include <crtdbg.h>
 #endif
 
 #include <float.h>
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 #endif
 {
-#if defined(_DEBUG) && defined(WIN32_CRT_LEAK_CHECK)
+#if defined(_WIN32) && defined(_DEBUG) && defined(WIN32_CRT_LEAK_CHECK)
 	// Dump leak report at any possible exit.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | 
 	_CRTDBG_LEAK_CHECK_DF);

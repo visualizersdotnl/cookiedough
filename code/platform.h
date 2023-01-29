@@ -4,6 +4,7 @@
 #if defined(_WIN32)
 
 	#define FOR_INTEL
+	#define DEBUG_TRAP __debugbreak();
 
 #elif __GNUC__
 
@@ -13,6 +14,9 @@
 	#else // Most likely x64
 		#define FOR_INTEL
 	#endif
+	
+	#include <signal.h>
+	#define DEBUG_TRAP raise(SIGTRAP);
 
 #endif
 
@@ -23,3 +27,4 @@
 	#include <emmintrin.h> // 2, 3
 	#include <smmintrin.h> // 4
 #endif
+
