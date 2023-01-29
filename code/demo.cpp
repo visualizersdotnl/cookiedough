@@ -114,6 +114,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Sinuses_Draw(pDest, timer, delta);
 			break;
 
+		case 12:
+			Heartquake_Draw(pDest, timer, delta);
+			break;
+
 		default:
 			FxBlitter_DrawTestPattern(pDest);
 	}

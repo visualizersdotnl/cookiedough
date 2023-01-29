@@ -11,6 +11,8 @@
 	constexpr size_t kCacheLine = 128; // for Apple Silicon (M-series)
 #endif
 
+constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
+
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
 	#define VIZ_ASSERT(condition) if (!(condition)) DEBUG_TRAP
