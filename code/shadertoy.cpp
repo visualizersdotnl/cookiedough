@@ -196,12 +196,13 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 	float roll = Rocket::getf(trackNautilusRoll);
 
-	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(static, 1) collapse(2)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
-		const int yIndex = iY*kFxMapResX;
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
+			const int yIndex = iY*kFxMapResX;
+
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
@@ -214,17 +215,13 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				Vector3 hit;
 
 				float total = 0.01f;
-				float march;
-				for (int iStep = 0; iStep < 64; ++iStep)
+				float march = 1.f;
+				for (int iStep = 0; fabsf(march)> 0.01f && iStep < 64; ++iStep)
 				{
 					hit.x = direction.x*total;
 					hit.y = direction.y*total;
 					hit.z = direction.z*total;
 					march = fNautilus(hit, time);
-
-					// branch gives good speed gain
-					if (fabsf(march) < 0.001f)
-						break;
 
 					total += march*0.628f;
 				}
@@ -234,7 +231,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x+nOffs, hit.y, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y+nOffs, hit.z), time),
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
-				Shadertoy::vNorm3(normal);
+				Shadertoy::vFastNorm3(normal);
 
 				// I will leave the calculations here as made by Michiel:
 
