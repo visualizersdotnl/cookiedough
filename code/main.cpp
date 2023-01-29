@@ -98,7 +98,7 @@
 
 const char *kTitle = "cocktails at Kurt Bevacqua's";
 
-const bool kFullScreen = false;
+const bool kFullScreen = true;
 
 // const char *kModule = "assets/moby_-_eliminator-tribute.mod";
 // const char *kModule = "assets/theduel.mod";

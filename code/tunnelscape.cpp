@@ -98,8 +98,8 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 // - maps: 1024x1024
 static void tscape(uint32_t *pDest, float time)
 {
-	float mapX = 0.f; 
-	const float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
+//	float mapX = 0.f; 
+	constexpr float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
 
 	const float syncDirX = Rocket::getf(trackStarsDirX);
 	const float syncDirY = Rocket::getf(trackStarsDirY);
@@ -109,14 +109,16 @@ static void tscape(uint32_t *pDest, float time)
 	const int dX = ftofp24(0.5f);
 	const int dY = ftofp24(1.f);
 
+	#pragma omp parallel for schedule(dynamic, 1)
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
+		const float mapX = iRay*mapStepX;
 		const float fromX = mapX  + syncDirX*time*66.f;
 
-		tscape_ray(pDest, ftofp24(fromX), ftofp24(fromY), dX, dY);
-		pDest += kTargetResX;
+		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), ftofp24(fromY), dX, dY);
 
-		mapX += mapStepX;
+//		pDest += kTargetResX;
+//		mapX += mapStepX;
 	}
 
 	return;
