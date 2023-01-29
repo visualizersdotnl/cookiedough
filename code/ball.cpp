@@ -159,7 +159,7 @@ static void vball(uint32_t *pDest, float time)
 
 	// cast rays
 	#pragma omp parallel for schedule(static, 1)
-	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
+	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		float curAngle = iRay*delta;
 		float dX, dY;
