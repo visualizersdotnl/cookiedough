@@ -5,9 +5,10 @@ It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en
 
 Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer, but I deleted (almost?) all traces of that!
 
-It's built using Visual Studio 2017.
-It should be fairly easy to port to another x86/x64 platform; I do use SSE (up to 4.1) extensively though.
+It's built using Visual Studio 2017, or rather, last tested with Visual Studio 2019.
+There is aCMake script (in '/code') to build for OSX, please read top of 'main.cpp' to get your dependencies right.
 
+- 29/01/2023: OSX version runs!
 - 25/07/2018: got it running, back in production.
 - Use one of the supplied Rocket editors (Kusma's or Emoon's).
 - Set your startup directory to '/target'.
