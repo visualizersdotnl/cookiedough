@@ -9,23 +9,24 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
-	#define VIZ_ASSERT(condition) if (!(condition)) __debugbreak()
+	#define VIZ_ASSERT(condition) if (!(condition)) __debugbreak() // FIXME: OSX
 #else
 	#define VIZ_ASSERT(condition)
 #endif
 
 // Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
+// FIXME: what is up with the use of 'static' here? that should be specified by the function decl.!
 #ifdef  _WIN32
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 	#else
 		#define VIZ_INLINE __forceinline
 	#endif
-#else // elif defined(__GNUC__)
+#elif defined(__GNUC__)
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 	#else
-		#define VIZ_INLINE static inline // this is sort of sneaky since you should be *aware* that these functions should, generally, be static, plus, it won't work inside a class def. but for this project that's not a problem
+		#define VIZ_INLINE __inline 
 	#endif
 #endif
 
@@ -43,7 +44,7 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*
 // - align addresses to 8 byte boundary
 
-#if _WIN64
+#if _WIN64 || !defined(FOR_INTEL)
 
 	// memcpy() has been optimized: http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx
 	#define memcpy_fast memcpy

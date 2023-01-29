@@ -1,8 +1,11 @@
 
 #pragma once
 
-// Hack for 'cookiedough' (FIXME: MSVC doesn't quite listen to even this one!)
-#define S3D_INLINE __forceinline
+#ifdef _WIN32
+	#define S3D_INLINE __forceinline
+#else
+	#define S3D_INLINE __inline
+#endif
 
 // CRT & STL:
 #include <assert.h>
@@ -11,5 +14,7 @@
 #include <algorithm> // std::min, std::max
 #include <cmath>     // std::truncf(), et cetera
 
-// Firstly to align Vector3/Vector4, and enable SIMD on some of these primitives.
-#include <xmmintrin.h>
+#if defined(_WIN32) // No Win32? Try SSE2NEON for ex.
+	// Firstly to align Vector3/Vector4, and enable SIMD on some of these primitives.
+	#include <xmmintrin.h>
+#endif

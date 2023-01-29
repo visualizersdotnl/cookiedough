@@ -160,9 +160,9 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	const int fpX1 = ftofp24(X1);
 	const int fpY1 = ftofp24(Y1);
 
+	const float rayY = kMapSize*kMapViewLenScale;
 	for (unsigned int iRay = 0; iRay < kResX; ++iRay)
 	{
-		constexpr float rayY = kMapSize*kMapViewLenScale;
 		const float rayX = 0.25f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify

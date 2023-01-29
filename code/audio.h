@@ -4,7 +4,12 @@
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
 
-#include "../3rdparty/bass24-stripped/c/bass.h"
+#if !defined(_WIN32)
+	#define HWND void*
+	#include "../3rdparty/bass24-osx/bass.h"
+#else
+	#include "../3rdparty/bass24-stripped/c/bass.h"
+#endif
 
 // 'iDevice' - valid device index or -1 for system default
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent);

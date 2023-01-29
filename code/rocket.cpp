@@ -7,7 +7,6 @@
 
 #include "main.h"
 #include "rocket.h"
-#include <Windows.h> // for audio.h
 #include "audio.h"
 
 const char *kHost = "localhost";

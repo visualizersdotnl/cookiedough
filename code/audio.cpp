@@ -1,10 +1,13 @@
 
 // cookiedough -- audio: module replay (with BASS)
 
-#include <Windows.h>
 #include "main.h"
 // #include "../3rdparty/bass24-stripped/c/bass.h"
 #include "audio.h"
+
+#if defined(_WIN32)
+	#include <Windows.h>
+#endif
 
 // FIXME: adjust per module (order also known as pattern)
 //        must be a power of 2

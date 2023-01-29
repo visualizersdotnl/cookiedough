@@ -16,6 +16,11 @@
 // codename: cookiedough (2009-2019)
 // property of visualizers.nl (http://www.visualizers.nl)
 
+// OSX build introduces
+// - look for '// FIXME: OSX' for specific things to fix
+// - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
+// - uses CMake (only for OSX!)
+
 // 32-bit build DISCONTINUED (as of August 2018), because:
 // - OpenMP not working properly
 // - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
@@ -30,6 +35,7 @@
 // - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
 // - sse_mathfun.h by Julien Pommier
 // - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
+// - sse2neon by ? (FIXME)
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -68,7 +74,13 @@ const bool kTestBedForFM = false;
 #define FPS_WARNING
 
 #include "main.h" // always include first!
-#include <windows.h>
+
+#include <filesystem>
+
+#if defined(_WIN32)
+	#include <windows.h>
+#endif
+
 #include <float.h>
 #include "../3rdparty/SDL2-2.0.8/include/SDL.h"
 
@@ -133,11 +145,13 @@ static bool HandleEvents()
 	return true;
 }
 
-// Delete after beating Zden in Bratislava.
 // #include "../shaderGP-detour/snatchtiler.h"
 
-// int SDL_main(int argc, char *argv[])
+#if !defined(_WIN32)
+int main(int argc, char *argv[])
+#else
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
+#endif
 {
 #if defined(_DEBUG) && defined(WIN32_CRT_LEAK_CHECK)
 	// Dump leak report at any possible exit.
@@ -157,15 +171,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 //	if (0 != SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER | audioFlag))
 	if (0 != SDL_Init(SDL_INIT_EVERYTHING))
 	{
+#if defined(_WIN32)
 		MessageBox(NULL, SDL_GetError(), "Can't initialize SDL!", MB_OK | MB_ICONEXCLAMATION);
+#else
+		printf("Can't initialize SDL: %s", SDL_GetError());
+#endif
 		return 1;
 	}
 
 	// change path to target root
-	SetCurrentDirectoryA("../");
+    std::filesystem::current_path("../");
 
 	// check for SSE 4.1
-	if (false == SDL_HasSSE41())
+	if (false == SDL_HasSSE41() && false == SDL_HasNEON())
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);
 		return 1;
@@ -177,10 +195,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// initialize fast (co)sine
 	InitializeFastCosine();
 
+#if defined(FOR_INTEL)
 	// set simplest rounding mode, since we do a fair bit of ftol()
 	if (false == kTestBedForFM)
 		_controlfp(_MCW_RC, _RC_CHOP);
-		
+#endif
+
 	bool utilInit = true;
 
 	utilInit &= Image_Create();
@@ -200,7 +220,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	{
 		if (Demo_Create())
 		{
-			if (Audio_Create(-1, kOGG, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
+			HWND audioHWND = nullptr;
+
+#if defined(_WIN32)
+			audioHWND = GetForegroundWindow();
+#endif
+
+			if (Audio_Create(-1, kOGG, audioHWND, kSilent)) // FIXME: or is this just fine?
 //			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;
@@ -264,7 +290,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	char fpsString[256];
 	sprintf(fpsString, "\n *** Rough avg. FPS: %f ***\n", avgFPS);
+
+#if defined(_WIN32)
 	OutputDebugString(fpsString);
+#else
+	printf(fpsString);
+#endif
+
 #endif
 
 	return 0;

@@ -29,7 +29,10 @@
   (this is the zlib license)
 */
 
-#include <xmmintrin.h>
+/* WARNING: modification to *not* include header if not FOR_INTEL (custom) */
+#ifdef FOR_INTEL
+  #include <xmmintrin.h>
+#endif
 
 /* yes I know, the top of this file is quite ugly */
 
@@ -44,8 +47,11 @@
 /* __m128 is ugly to write */
 typedef __m128 v4sf;  // vector of 4 float (sse1)
 
+/* WARNING: modification to *not* include header if not FOR_INTEL (custom) */
 #ifdef USE_SSE2
-# include <emmintrin.h>
+  #ifdef FOR_INTEL
+  # include <emmintrin.h>
+  #endif
 typedef __m128i v4si; // vector of 4 int (sse2)
 #else
 typedef __m64 v2si;   // vector of 2 int (mmx)

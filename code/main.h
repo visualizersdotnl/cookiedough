@@ -4,9 +4,13 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-// ignore:
-#pragma warning(disable:4530)   // unwind semantics missing
-#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
+#include "platform.h"
+
+#if defined(_WIN32)
+	// ignore:
+	#pragma warning(disable:4530)   // unwind semantics missing
+	#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
+#endif
 
 // CRT & STL
 #include <stdint.h>
@@ -17,12 +21,6 @@
 #include <algorithm>
 #include <thread>
 
-// SSE intrinsics
-#include <intrin.h>
-#include <xmmintrin.h> // 1
-#include <emmintrin.h> // 2, 3
-#include <smmintrin.h> // 4
-
 // OpenMP
 #include <omp.h>
 
@@ -30,8 +28,8 @@
 #include "../3rdparty/aspectratios.h"
 
 // output resolution
-constexpr size_t kResX = 1920;
-constexpr size_t kResY = 1080;
+constexpr size_t kResX = 1280;
+constexpr size_t kResY = 720;
 constexpr size_t kHalfResX = kResX/2;
 constexpr size_t kHalfResY = kResY/2;
 constexpr size_t kOutputSize = kResX*kResY;
