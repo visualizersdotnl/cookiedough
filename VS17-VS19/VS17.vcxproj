@@ -79,6 +79,7 @@
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\sync.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\track.h" />
+    <ClInclude Include="..\3rdparty\sse2neon-stripped\sse2neon.h" />
     <ClInclude Include="..\3rdparty\sse_mathfun.h" />
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Dependencies.h" />
     <ClInclude Include="..\3rdparty\Std3DMath-stripped\Math.h" />
