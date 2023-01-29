@@ -4,12 +4,13 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
+
 #include "platform.h"
 
 #if defined(_WIN32)
 	// ignore:
 	#pragma warning(disable:4530)   // unwind semantics missing
-	#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
 #endif
 
 // CRT & STL

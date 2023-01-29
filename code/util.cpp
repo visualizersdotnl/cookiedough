@@ -4,7 +4,7 @@
 #include "main.h"
 // #include "util.h"
 
-#if !_WIN64 && FOR_INTEL
+#if !_WIN64 && defined(FOR_INTEL)
 
 // memcpy_fast()
 // - approx. twice faster than it's CRT counterpart on a 2009 netbook with 1.66GHz Intel Atom CPU
