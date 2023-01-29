@@ -196,7 +196,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 	float roll = Rocket::getf(trackNautilusRoll);
 
-	#pragma omp parallel for schedule(static, 1) collapse(2)
+	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
