@@ -284,17 +284,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	if (avgFPS < 59.f)
 	{
 		char fpsString[256];
-		sprintf(fpsString, "You're dropping below (roughly) sixty boy, avg. FPS: %f", avgFPS);
+		snprintf(fpsString, 256, "You're dropping below (roughly) sixty boy, avg. FPS: %f", avgFPS);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, kTitle, fpsString, nullptr);
 	}
 
 	char fpsString[256];
-	sprintf(fpsString, "\n *** Rough avg. FPS: %f ***\n", avgFPS);
+	snprintf(fpsString, 256, "\n *** Rough avg. FPS: %f ***\n", avgFPS);
 
 #if defined(_WIN32)
 	OutputDebugString(fpsString);
 #else
-	printf(fpsString);
+	printf("%s", fpsString);
 #endif
 
 #endif

@@ -16,7 +16,7 @@ const int kRowsPerOrder = 64;
 // MP3/OGG
 const float kRowRate = (128.f /* BPM */ /60.f)*24.f /* RPB */;
 
-static HMUSIC s_hMusic = NULL;
+static HMUSIC s_hMusic = 0;
 
 static BASS_INFO s_bassInf;
 
@@ -79,7 +79,7 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 
 	const DWORD streamFlags = BASS_SAMPLE_FX | BASS_MP3_SETPOS | BASS_STREAM_PRESCAN | ( (0 == iDevice) ? BASS_STREAM_DECODE : 0 );
 	s_hMusic = BASS_StreamCreateFile(FALSE, musicPath.c_str(), 0, 0, streamFlags /* BASS_UNICODE */);
-	if (s_hMusic == NULL)
+	if (s_hMusic == 0)
 	{
 		switch (BASS_ErrorGetCode())
 		{

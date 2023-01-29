@@ -44,7 +44,7 @@ constexpr float kGoldenRatio = 1.61803398875f;
 // Has poor distribution due to rand() being 16-bit, so don't use it when proper distribution counts.
 static inline float randf(float range)
 {
-	return range*((float) rand() / RAND_MAX);
+	return range*((float) rand() / float(RAND_MAX));
 }
 
 // Single precision compare.
