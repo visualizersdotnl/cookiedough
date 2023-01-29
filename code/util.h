@@ -5,7 +5,11 @@
 #define _UTIL_H_
 
 // size of cache line
-constexpr size_t kCacheLine = sizeof(size_t)<<3;
+#if defined(FOR_INTEL)
+	constexpr size_t kCacheLine = sizeof(size_t)<<3;
+#elif defined(FOR_ARM)
+	constexpr size_t kCacheLine = 128; // for Apple Silicon (M-series)
+#endif
 
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
@@ -15,18 +19,18 @@ constexpr size_t kCacheLine = sizeof(size_t)<<3;
 #endif
 
 // Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
-// FIXME: what is up with the use of 'static' here? that should be specified by the function decl.!
+// FIXME: what is up with the use of 'static' here? that should be specified by the function decl., this way it won't hold up well for class members (potentially)
 #ifdef  _WIN32
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 	#else
-		#define VIZ_INLINE __forceinline
+		#define VIZ_INLINE static __forceinline
 	#endif
 #elif defined(__GNUC__)
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 	#else
-		#define VIZ_INLINE __inline 
+		#define VIZ_INLINE static __inline 
 	#endif
 #endif
 
