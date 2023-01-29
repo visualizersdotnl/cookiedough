@@ -8,8 +8,7 @@ Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer, but I 
 It's built using Visual Studio 2017, or rather, last tested with Visual Studio 2019.
 
 There is a CMake script (in '/code') to build for OSX, please read top of 'main.cpp' to get your dependencies right.
-Then navigate to '/target/OSX', run 'gen-builds.sh', use make to build either; run the resulting executable from '/target/OSX',
-so: 'cd ..' -> './Release/cookiedough' for example. OSX/CMake support is a bit tedious now, I know, working on it!
+Then navigate to '/target/OSX', run 'gen-builds.sh', use make to build either and run them from their respective directories.
 
 - 29/01/2023: OSX version runs!
 - 25/07/2018: got it running, back in production.

@@ -17,10 +17,11 @@ file(GLOB ROCKET_SOURCEFILES ../3rdparty/rocket-stripped/lib/*.c)
 
 add_executable(cookiedough ${CKD_SOURCEFILES} ${ROCKET_SOURCEFILES})
 
-target_compile_definitions(cookiedough PRIVATE
+target_compile_definitions(cookiedough PUBLIC
+	CMAKE_BUILD=1 
     $<$<CONFIG:Debug>:
         _DEBUG=1
     >
 )
 
-target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L../../../3rdparty/bass24-osx/arm64 -rpath ../../3rdparty/bass24-osx/arm64 -lBASS -lSDL2 -lIL -fopenmp=libomp)
+target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L../../../3rdparty/bass24-osx/arm64 -rpath ../../../3rdparty/bass24-osx/arm64 -lBASS -lSDL2 -lIL -fopenmp=libomp)

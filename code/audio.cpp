@@ -9,9 +9,8 @@
 	#include <Windows.h>
 #endif
 
-// FIXME: adjust per module (order also known as pattern)
-//        must be a power of 2
-const int kRowsPerOrder = 64;
+// FIXME: adjust per module (order also known as pattern); must be a power of 2
+// const int kRowsPerOrder = 64;
 
 // MP3/OGG
 const float kRowRate = (128.f /* BPM */ /60.f)*24.f /* RPB */;
@@ -20,13 +19,16 @@ static HMUSIC s_hMusic = 0;
 
 static BASS_INFO s_bassInf;
 
-const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
-const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
+// const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
+// const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
 
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent)
 {
 	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
+
+#if defined(_WIN32)
 	VIZ_ASSERT(hWnd != NULL);
+#endif
 
 	// BASS device IDs:
 	//  0 = No sound (causes functionality to be limited, so -1 is the better pick).

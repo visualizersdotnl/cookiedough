@@ -175,7 +175,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	}
 
 	// change path to target root
+#if !defined(CMAKE_BUILD)	
     std::filesystem::current_path("../");
+#else
+    // CMake executable builds (Debug, Release, ...) lie one dir. deeper (if you follow the instructions, that is)
+    // FIXME: I probably want to do something about this for shipping builds!
+    std::filesystem::current_path("../../");
+#endif
 
 	// check for SSE 4.1
 	if (false == SDL_HasSSE41() && false == SDL_HasNEON())
@@ -281,6 +287,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		snprintf(fpsString, 256, "You're dropping below (roughly) sixty boy, avg. FPS: %f", avgFPS);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, kTitle, fpsString, nullptr);
 	}
+#endif
 
 	char fpsString[256];
 	snprintf(fpsString, 256, "\n *** Rough avg. FPS: %f ***\n", avgFPS);
@@ -291,7 +298,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	printf("%s", fpsString);
 #endif
 
-#endif
 
 	return 0;
 }
