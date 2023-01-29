@@ -737,10 +737,13 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 // It's glitchy, it's grainy, but with the right parameters and colors might be useful for a short show. 
 //
 
+#include "q3-rsqrt.h"
+
 VIZ_INLINE const Vector3 fSinPath(float time)
 {
-	const float sine = lutsinf(time * 0.314f);
-	const float cosine = lutcosf(time * 0.314f);
+	const float timeMod = time*0.314f;
+	const float sine = lutsinf(timeMod);
+	const float cosine = lutcosf(timeMod);
 	return { sine*2.f*kGoldenRatio - cosine*1.5f, cosine*3.14f + sine*kGoldenRatio, time };
 }
 
@@ -749,11 +752,12 @@ VIZ_INLINE float fSinMap(const Vector3 &point)
 {
 	float pZ = point.z;
 
-	// FIXME: this is costly, fake it?
-	auto& path = fSinPath(pZ);
-
-	float pX = point.x-path.x;
-	float pY = point.y-path.y;
+	const float zMod = pZ*0.314f;
+	const int cosIndex = tocosindex(zMod);
+	const float pathCosine = lutcosf(cosIndex);
+	const float pathSine = lutcosf(cosIndex+kCosTabSinPhase)*kGoldenRatio;
+	float pX = point.x-(pathSine*2.f - pathCosine*1.5f);
+	float pY = point.y-(pathCosine*3.14f + pathSine);
 
 	float aX = pX*0.315f*1.25f + lutsinf(pZ*(0.814f*1.25f));
 	float aY = pY*0.315f*1.25f + lutsinf(pX*(0.814f*1.25f));
