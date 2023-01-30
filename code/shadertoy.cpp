@@ -94,6 +94,8 @@ VIZ_INLINE Vector3 Michiel_Kleuren(float time) {
 //
 // Plasma (see https://www.shadertoy.com/view/ldSfzm)
 //
+// Not a very interesting effect but if someone tweaks it it might be watchable for a couple of seconds.
+//
 
 VIZ_INLINE float fPlasma(const Vector3 &point, float time)
 {
@@ -168,6 +170,8 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 
 //
 // Nautilus Redux by Michiel v/d Berg
+// 
+// Definitely a keeper. He was OK with that.
 //
 
 static Vector3 fNautilus_global;
@@ -274,9 +278,9 @@ VIZ_INLINE float fAuraForLaura(const Vector3 &position)
 {	
 	const float grid = fastcosf(position.x)+fastcosf(position.y)+fastcosf(position.z);
  
-	//const Vector3 cosPos(fastcosf(position.x), fastcosf(position.y), fastcosf(position.z));
- 	//const Vector3 sinSwizzled(fastsinf(position.z), fastsinf(position.x), fastsinf(position.y));
-	//const float grid = cosPos*sinSwizzled + 1.f;
+//	const Vector3 cosPos(fastcosf(position.x), fastcosf(position.y), fastcosf(position.z));
+// 	const Vector3 sinSwizzled(fastsinf(position.z), fastsinf(position.x), fastsinf(position.y));
+//	const float grid = cosPos*sinSwizzled + 1.f;
 
 	return grid;
 }
@@ -357,8 +361,6 @@ static void RenderLauraMap_2x2(uint32_t *pDest, float time)
 				// float diffuse = normal.y * 0.42f + normal.x * 0.12f + normal.z * 0.65f;
 				// const float fresnel = powf(std::max(0.f, normal*lightDir), 16.f); // important one!
 				
-				// I will leave the calculations here as made by Michiel (Nautilus):
-
 				float diffuse = normal.z*0.1f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
@@ -423,10 +425,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	/* const */ Vector3 colorization = Michiel_Kleuren(time);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
 
-
 	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
 
-	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -446,11 +447,12 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				float march, total = 0.f; 
 				int iStep;
-				for (iStep = 0; iStep < 33; ++iStep)
+				for (iStep = 0; iStep < 32; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
+
 					march = fSpikey1(hit);
 
 					// enable if not screen-filling, otherwise it just costs a lot of cycles
@@ -462,17 +464,17 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					total += march*0.14f;
 				}
 
-				float nOffs = 0.15f;
+				constexpr float nOffs = 0.15f;
 				Vector3 normal(
 					march-fSpikey1(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-				const float diffuse = normal.z*1.f;
+				const float diffuse = normal.z;
 				const float specular = powf(std::max(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
-				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.0333f, 1.71f, diffColor, fogColor);
+				colors[iColor] = Shadertoy::CompLighting(diffuse, specular, distance, 0.314f, 1.628f, diffColor, fogColor);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -629,11 +631,13 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 {
 	if (close)
 	{
+		// render close-up
 		RenderSpikeyMap_2x2_Close(g_pFxMap, time);
-		Fx_Blit_2x2_Dithered(pDest, g_pFxMap);
+		Fx_Blit_2x2(pDest, g_pFxMap);
 	}
 	else
 	{
+		// render ball
 		const float warmup = Rocket::getf(trackDistSpikeWarmup);
 		const bool specularOnly = 0.f != warmup;
 		
@@ -648,7 +652,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name "warmup")
 			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap, time, 1.f+warmup);
 			HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, warmup*0.001f*kGoldenRatio);
-			Fx_Blit_2x2_Dithered(pDest, g_pFxMap);
+			Fx_Blit_2x2(pDest, g_pFxMap);
 		}
 	}
 
@@ -771,6 +775,7 @@ VIZ_INLINE float fSinMap(const Vector3 &point)
 	return (length - 1.025f)*1.33f;
 }
 
+/*
 VIZ_INLINE float fSinShadow(Vector3 position, const Vector3 &direction, unsigned maxSteps)
 {
 	float result = 1.f;
@@ -790,6 +795,7 @@ VIZ_INLINE float fSinShadow(Vector3 position, const Vector3 &direction, unsigned
 
 	return result;
 }
+*/
 
 static void RenderSinMap_2x2(uint32_t *pDest, float time)
 {
@@ -870,7 +876,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 void Sinuses_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderSinMap_2x2(g_pFxMap, time);
-	Fx_Blit_2x2_Dithered(pDest, g_pFxMap);
+	Fx_Blit_2x2(pDest, g_pFxMap);
 }
 
 
