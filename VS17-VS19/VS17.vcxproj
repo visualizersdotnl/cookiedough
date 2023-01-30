@@ -61,7 +61,6 @@
     <ClCompile Include="..\code\demo.cpp" />
     <ClCompile Include="..\code\display.cpp" />
     <ClCompile Include="..\code\gamepad.cpp" />
-    <ClCompile Include="..\code\heartquake.cpp" />
     <ClCompile Include="..\code\image.cpp" />
     <ClCompile Include="..\code\landscape.cpp" />
     <ClCompile Include="..\code\main.cpp" />
@@ -105,7 +104,6 @@
     <ClInclude Include="..\code\demo.h" />
     <ClInclude Include="..\code\display.h" />
     <ClInclude Include="..\code\gamepad.h" />
-    <ClInclude Include="..\code\heartquake.h" />
     <ClInclude Include="..\code\image.h" />
     <ClInclude Include="..\code\landscape.h" />
     <ClInclude Include="..\code\main.h" />

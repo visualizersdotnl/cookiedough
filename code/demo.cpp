@@ -17,7 +17,6 @@
 #include "ball.h"
 #include "landscape.h"
 #include "torus-twister.h"
-#include "heartquake.h"
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
@@ -33,7 +32,6 @@ bool Demo_Create()
 	fxInit &= Twister_Create();
 	fxInit &= Landscape_Create();
 	fxInit &= Ball_Create();
-	fxInit &= Heartquake_Create();
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
@@ -51,7 +49,6 @@ void Demo_Destroy()
 	Twister_Destroy();
 	Landscape_Destroy();
 	Ball_Destroy();
-	Heartquake_Destroy();
 	Tunnelscape_Destroy();
 	Shadertoy_Destroy();
 }
@@ -112,10 +109,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 11:
 			Sinuses_Draw(pDest, timer, delta);
-			break;
-
-		case 12:
-			Heartquake_Draw(pDest, timer, delta);
 			break;
 
 		default:

@@ -110,7 +110,7 @@ static void tscape(uint32_t *pDest, float time)
 	const int dY = ftofp24(1.f);
 
 	#pragma omp parallel for schedule(dynamic, 1)
-	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
+	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
 		const float fromX = mapX  + syncDirX*time*66.f;

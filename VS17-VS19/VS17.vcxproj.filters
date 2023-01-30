@@ -29,9 +29,6 @@
     <Filter Include="/code\effects">
       <UniqueIdentifier>{ed58cfc0-fd7e-4539-86ce-0b14b40282c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="/code\effects\not implemented">
-      <UniqueIdentifier>{56eb657b-a43a-4ac4-8f1c-cf7e0c2a85ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="/code\filters &amp; blitters">
       <UniqueIdentifier>{08039b36-fc7e-4617-8488-5a01ce1efc3e}</UniqueIdentifier>
     </Filter>
@@ -84,9 +81,6 @@
     </ClCompile>
     <ClCompile Include="..\code\shadertoy.cpp">
       <Filter>/code\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\code\heartquake.cpp">
-      <Filter>/code\effects\not implemented</Filter>
     </ClCompile>
     <ClCompile Include="..\code\sincos-lut.cpp">
       <Filter>/code\util-lib</Filter>
@@ -245,9 +239,6 @@
     </ClInclude>
     <ClInclude Include="..\code\timer.h">
       <Filter>/code</Filter>
-    </ClInclude>
-    <ClInclude Include="..\code\heartquake.h">
-      <Filter>/code\effects\not implemented</Filter>
     </ClInclude>
     <ClInclude Include="..\code\tests.h">
       <Filter>/code</Filter>
