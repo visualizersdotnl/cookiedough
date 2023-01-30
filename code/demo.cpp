@@ -91,23 +91,19 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Nautilus_Draw(pDest, timer, delta);
 			break;
 
-		case 7:	
-			Laura_Draw(pDest, timer, delta);
-			break;
-
-		case 8:			
+		case 7:			
 			Spikey_Draw(pDest, timer, delta, true);
 			break;
 
-		case 9:
+		case 8:
 			Spikey_Draw(pDest, timer, delta, false);
 			break;
 
-		case 10:
+		case 9:
 			Tunnel_Draw(pDest, timer, delta);
 			break;
 
-		case 11:
+		case 10:
 			Sinuses_Draw(pDest, timer, delta);
 			break;
 
