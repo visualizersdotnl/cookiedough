@@ -75,14 +75,18 @@ namespace Shadertoy
 	// use this instead of Normalize()/Normalized() on Vector3
 	VIZ_INLINE void vFastNorm3(Vector3 &vector)
 	{
-		vector *= Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		const float oneOverLen = Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		vector.x *= oneOverLen;
+		vector.y *= oneOverLen;
+		vector.z *= oneOverLen;
 	}
 
 	// because Normalize() contains a branch (as of 05/08/2018) and multiplying with a scalar won't inline properly
 	// solid reasons, no? ;)
+	// 30/01/2023: yes, but then also apply it to vFastNorm3()!
 	VIZ_INLINE void vNorm3(Vector3 &vector)
 	{
-		float oneOverLen = 1.f/vector.Length();
+		const float oneOverLen = 1.f/vector.Length();
 		vector.x *= oneOverLen;
 		vector.y *= oneOverLen;
 		vector.z *= oneOverLen;
@@ -162,13 +166,21 @@ namespace Shadertoy
 		return sqrtf(bX*bX + bY*bY + bZ*bZ);
 	}
 
-	// -- lighting & colorization (mostly takes __m128 and doesn't go back, the rest: FIXME!) --
+	// -- lighting & colorization (mostly SIMD) --
 
 	// SIMD color gamma-adjust-and-write (** also influences alpha, but that should not be a problem if you're not using it, or if it's 1.0 **)
 	VIZ_INLINE __m128 GammaAdj(__m128 color, float gamma = kGoldenRatio)
 	{
 		// formula: raised = exp(exponent*log(value))
 		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color)));
+	}
+
+	// Michiel's palette
+	VIZ_INLINE Vector3 MichielPal(float time) {
+		return Vector3(
+			.1f-lutcosf(time/3.f)/(19.f*0.5f), 
+			.1f, 
+			.1f+lutcosf(time/14.f)/4.f);
 	}
 
 	// IQ's palette function
@@ -208,10 +220,10 @@ namespace Shadertoy
 	}
 
 	// exponential fog
-	VIZ_INLINE __m128 ApplyFog(float distance, __m128 color, __m128 fogColor, float scale = 0.004f)
+	VIZ_INLINE float ExpFog(float distance, float scale = 0.004f)
 	{
-		const float fog = 1.f-(expf(-scale*distance*distance));
-		return Shadertoy::vLerp4(color, fogColor, fog);
+		const float fog = 1.f-(expf(-scale*distance*distance*distance));
+		return fog;
 	}
 
 	// cheap desaturation (amount [0..1])
@@ -222,21 +234,11 @@ namespace Shadertoy
 		return vLerp4(color, luma, amount);
 	}
 
-	// most basic lighting
-	VIZ_INLINE __m128 CompLighting(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
+	// specular calc. (traditional)
+	VIZ_INLINE float Specular(const Vector3 &origin, const Vector3 &position, const Vector3 &normal, const Vector3 &lightDir, float power)
 	{
-		__m128 color = _mm_mul_ps(diffColor, _mm_set1_ps(diffuse));
-		color = _mm_add_ps(color, _mm_mul_ps(diffColor, _mm_set1_ps(specular)));
-		__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, fogginess);
-		return Shadertoy::GammaAdj(fogged, gamma);
-	}
-
-	// with monochromatic specular
-	VIZ_INLINE __m128 CompLighting_MonoSpec(float diffuse, float specular, float distance, float fogginess, float gamma, __m128 diffColor, __m128 fogColor)
-	{
-		__m128 color = _mm_mul_ps(diffColor, _mm_set1_ps(diffuse));
-		color = _mm_add_ps(color, _mm_mul_ps(Desaturate(color, 1.f), _mm_set1_ps(specular)));
-		__m128 fogged = Shadertoy::ApplyFog(distance, color, fogColor, fogginess);
-		return Shadertoy::GammaAdj(fogged, gamma);
+		const Vector3 V = (origin-position).Normalized();
+		const Vector3 H = (lightDir+V).Normalized();
+		return powf(std::max<float>(0.f, normal*H), power);
 	}
 } 

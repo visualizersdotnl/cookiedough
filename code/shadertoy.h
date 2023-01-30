@@ -12,6 +12,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close = true);
 
 // need work:
 void Sinuses_Draw(uint32_t *pDest, float time, float delta);
+void Laura_Draw(uint32_t *pDest, float time, float delta);
 
 // not great and/or need work:
 void Plasma_Draw(uint32_t *pDest, float time, float delta);
