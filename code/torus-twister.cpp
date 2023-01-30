@@ -75,22 +75,20 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 // - maps: 512x512
 static void vtwister(uint32_t *pDest, float time)
 {
-	float mapY = 0.f; 
-	const float mapStepY = 512.f/kTargetResY; // tile (for blit)
+	constexpr float mapStepY = 512.f/kTargetResY; // tile (for blit)
 
+	#pragma omp parallel for schedule(static)
 	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float shearAngle = (float) iRay * (2.f*kPI / kTargetResY);
 
+		const float mapY = iRay*mapStepY;
 		const int fromX = ftofp24(256.f + 140.f*sinf(time*1.1f + shearAngle));
 		const int fromY = ftofp24(mapY + time*25.f);
 
-		const size_t xOffs = kTargetResX>>1;
+		const size_t xOffs = iRay*kTargetResX + (kTargetResX>>1);
 		vtwister_ray(pDest+xOffs, fromX, fromY,  256);
 		vtwister_ray(pDest+(xOffs-1), fromX, fromY, -256);
-
-		pDest += kTargetResX;
-		mapY += mapStepY;
 	}
 }
 

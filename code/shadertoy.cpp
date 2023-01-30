@@ -831,20 +831,18 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 				Vector3 hit;
 
 				float march = 1.f, total = 0.f;
-				for (int iStep = 0; march > 0.025f && iStep < 32; ++iStep)
+				for (int iStep = 0; march > 0.01f && iStep < 32; ++iStep)
 				{
-					hit.vSSE = _mm_add_ps(origin.vSSE, (direction*total).vSSE);
-
-//					hit.x = origin.x + direction.x*total;
-//					hit.y = origin.y + direction.y*total;
-//					hit.z = origin.z + direction.z*total;
+					hit.x = origin.x + direction.x*total;
+					hit.y = origin.y + direction.y*total;
+					hit.z = origin.z + direction.z*total;
 
 					march = fSinMap(hit);
 	
 					total += march*0.814f;
 				}
 
-				constexpr float nOffs = 0.05f;
+				constexpr float nOffs = 0.1f;
 				Vector3 normal(
 					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),

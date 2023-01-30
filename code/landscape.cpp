@@ -162,7 +162,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 	constexpr float rayY = kMapSize*kMapViewLenScale;
 
-	#pragma omp parallel for schedule(static, 1)
+	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kResX; ++iRay)
 	{
 		const float rayX = 0.25f*(iRay - kResX*0.5f); // FIXME: parameter?
