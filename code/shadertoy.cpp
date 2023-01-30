@@ -33,6 +33,7 @@ SyncTrack trackLauraYaw, trackLauraPitch, trackLauraRoll;
 
 // Nautilus sync.:
 SyncTrack trackNautilusRoll;
+SyncTrack trackNautilusHorzBlur;
 
 // Spike (close) sync.:
 SyncTrack trackSpikeSpeed;
@@ -60,6 +61,7 @@ bool Shadertoy_Create()
 
 	// Nautilus:
 	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
+	trackNautilusHorzBlur = Rocket::AddTrack("nautilusHorzBlur");
 
 	// Spikes:
 	trackSpikeSpeed = Rocket::AddTrack("cSpikeSpeed");
@@ -258,11 +260,12 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderNautilusMap_2x2(g_pFxMap, time);
+
+	const float horzBlur = Rocket::getf(trackNautilusHorzBlur);
+	if (horzBlur > 0.f)
+		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, horzBlur);
+
 	Fx_Blit_2x2(pDest, g_pFxMap);
-	
-	// FIXME: this looks amazing if timed!
-	// HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, fabsf(0.1314f*sin(time)));
-	
 }
 
 //
