@@ -27,14 +27,15 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-const int kMapViewHeight = 110;
-const int kMapTilt = 140;
-const int kMapScale = 220;
+constexpr float kMapViewLenScale = 0.314*0.628f;
+constexpr int kMapViewHeight = 110;
+constexpr int kMapTilt = 140;
+constexpr int kMapScale = 120;
 
 // adjust to map resolution (1024x1024)
-const unsigned kMapSize = 1024;
+constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
-const unsigned kMapShift = 10;
+constexpr unsigned kMapShift = 10;
 
 // max. depth
 const unsigned int kRayLength = 512; // 256 -- used for fog table!
@@ -65,14 +66,16 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 //		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep>>1]);
 //		color = _mm_srli_epi16(color, 8);
 
-		// apply fog (additive, no clamp: can overflow)
-		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
+		// apply fog (additive/subtractive, no clamp: can overflow)
+//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
+		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
 
 		// FIXME: now this is just a little convoluted :)
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 8;
-		height /= iStep+1; // FIXME
+		height /= kMapViewLenScale; // FIXME: no idea why this works, but it does
+		height /= iStep+1;          //
 		height *= kMapScale;
 		height >>= 8;
 		height += kMapTilt;
@@ -155,7 +158,7 @@ void Tunnelscape_Destroy()
 
 void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 {
-	memset32(g_renderTarget, s_pFogGradient[255], kTargetResX*kTargetResY);
+	memset32(g_renderTarget, s_pFogGradient[0], kTargetResX*kTargetResY);
 	tscape(g_renderTarget, time);
 
 	// radial blur

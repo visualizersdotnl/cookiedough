@@ -84,7 +84,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		int height = 255-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 16;
-		height /= fpFishMul*(iStep+1); // FIXME
+		height /= fpFishMul*(iStep+1);
 		height *= kMapScale;
 		height >>= 8;
 		height += s_mapTilt;
