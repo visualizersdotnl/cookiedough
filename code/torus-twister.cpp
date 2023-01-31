@@ -78,7 +78,7 @@ static void vtwister(uint32_t *pDest, float time)
 	constexpr float mapStepY = 512.f/kTargetResY; // tile (for blit)
 
 	#pragma omp parallel for schedule(static)
-	for (unsigned int iRay = 0; iRay < kTargetResY; ++iRay)
+	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float shearAngle = (float) iRay * (2.f*kPI / kTargetResY);
 
