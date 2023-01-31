@@ -791,6 +791,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 					fLaura(Vector3(hit.x, hit.y, hit.z+nOffs))-march);
 				Shadertoy::vFastNorm3(normal);
 				*/
+
 				const Vector3 normal = LauraNormal(march, hit);
 
 				const Vector3 lightPos = origin - direction;
@@ -811,7 +812,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 //					2.73f);
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.0021f)),
+					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.0011f)),
 					2.73f);
 			}
 
