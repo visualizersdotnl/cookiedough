@@ -10,7 +10,10 @@ extern __m128i g_gradientUnp[256];
 extern uint32_t *g_renderTarget;
 
 // Nytrik's Mexico logo
-extern uint32_t *g_NytrikMexico;
+extern uint32_t *g_pNytrikMexico;
+
+// Alien's things for TPB-02 Xbox
+extern uint32_t *g_pXboxLogoTPB;
 
 // render target resolution (let us agree to keep it's aspect ratio identical to the output resolution)
 constexpr size_t kTargetResX = kResX;

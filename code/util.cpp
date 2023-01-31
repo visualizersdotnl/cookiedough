@@ -188,7 +188,7 @@ void BlitSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigne
 {
 	const __m128i zero = _mm_setzero_si128();
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		// FIXME: if getting rid of OMP, move these out of the loop and just increment them
@@ -211,7 +211,7 @@ void BlitAdd32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigne
 {
 	const __m128i zero = _mm_setzero_si128();
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		// FIXME: if getting rid of OMP, move these out of the loop and just increment them

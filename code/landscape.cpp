@@ -217,7 +217,7 @@ void Landscape_Draw(uint32_t *pDest, float time, float delta)
 	vscape(pDest, time, delta);
 
 	// overlay HUD
-	static_assert(kResY == 720 && kResX >= 960);
+	static_assert(kResX == 1280 && kResY == 720);
 	BlitAdd32(pDest + (kResX-960)/2, s_pHUD, kResX, 960, 720);
 }
 

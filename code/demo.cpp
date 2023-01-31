@@ -108,12 +108,19 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 11:
-			Laura_Draw(pDest, timer, delta);
+			{
+				Laura_Draw(pDest, timer, delta);
+
+				static_assert(kResX == 1280 && kResY == 720);
+				const auto yOffs = ((kResY-243)/2) + 250;
+				const auto xOffs = 44; // ((kResX-263)/2) - 300;
+				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+			}
 			break;
 
 		case 12:
 			memset32(pDest, 0xffffff, kResX*kResY);
-			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_NytrikMexico, kResX, 800, 600);
+			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 			break;
 
 		default:
