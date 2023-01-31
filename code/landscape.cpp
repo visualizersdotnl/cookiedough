@@ -187,12 +187,10 @@ static void vscape(uint32_t *pDest, float time, float delta)
 
 bool Landscape_Create()
 {
-//	VIZ_ASSERT(kResX == 800 && kResY == 600); // for HUD
-
 	// load maps
 	s_pHeightMap = Image_Load8("assets/scape/maps/D19.png");
 	s_pColorMap = Image_Load32("assets/scape/maps/C19w.png");
-	s_pHUD = Image_Load32("assets/scape/aircraft_hud.jpg");
+	s_pHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
 
@@ -219,6 +217,7 @@ void Landscape_Draw(uint32_t *pDest, float time, float delta)
 	vscape(pDest, time, delta);
 
 	// overlay HUD
-	// Add32(pDest, s_pHUD, kResX*kResY);
+	static_assert(kResY == 720 && kResX >= 960);
+	BlitAdd32(pDest + (kResX-960)/2, s_pHUD, kResX, 960, 720);
 }
 

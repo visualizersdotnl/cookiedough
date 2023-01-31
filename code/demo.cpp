@@ -111,6 +111,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Laura_Draw(pDest, timer, delta);
 			break;
 
+		case 12:
+			memset32(pDest, 0xffffff, kResX*kResY);
+			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_NytrikMexico, kResX, 800, 600);
+			break;
+
 		default:
 			FxBlitter_DrawTestPattern(pDest);
 	}

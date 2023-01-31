@@ -62,6 +62,7 @@ void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes);
 
 #endif
 
+// only use for clearing (larger) buffers et cetera since it doesn't affect write cache (streaming stores)
 VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 {
 	// must be a multiple of 16 bytes -- use memset() for general purpose
@@ -82,6 +83,13 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 
 // blend 32-bit color buffers using the source buffer's alpha
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+
+// blit 32-bit color buffer using the source buffer's alpha
+// use this to composite graphics on top of effects for ex.
+void BlitSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes);
+
+// same as above except it's simply additive
+void BlitAdd32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes);
 
 // fade 32-bit color buffer
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);
@@ -118,7 +126,7 @@ VIZ_INLINE uint32_t v2cISSE32(__m128i color) { return _mm_cvtsi128_si32(_mm_pack
 // mix 2 unpacked 32-bit pixels by alpha
 VIZ_INLINE __m128i MixPixels32(__m128i A, __m128i B, float alpha)
 {
-	const uint32_t iAlpha =  uint32_t(alpha*255.f)*0x01010101;
+	const uint32_t iAlpha =  uint32_t(alpha*255.f)*0x01010101; // FIXME: expensive (float-to-long)
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(iAlpha), zero);
 	const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(B, A));

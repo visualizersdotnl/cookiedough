@@ -13,29 +13,26 @@
 	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
 */
 
-// codename: cookiedough (2009-2019)
-// property of visualizers.nl (http://www.visualizers.nl)
+// codename: cookiedough (2009-2023)
+// property of njdewit technologies & visualizers.nl (http://www.visualizers.nl)
 
-// OSX build introduces
-// - look for '// FIXME: OSX' for specific things to fix
+// OSX build:
 // - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
 // - uses CMake (only for OSX!)
 
 // 32-bit build DISCONTINUED (as of August 2018), because:
-// - OpenMP not working properly
-// - _mm_cvtsi128_si64() not supported on x86 (map-blitter.cpp)
-// - other potential SSE 4.1 / 64-bit instruction use
-// - probably too slow for what I'm doing anyway
+// - it's 2023 by now!
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
 // - Developer's Image Library (DevIL)
 // - BASS audio library by Ian Luck
-// - SDL 2.0.8
+// - SDL 2.x
 // - Tiny Mersenne-Twister by Mutsuo Saito & Makoto Matsumoto
 // - sse_mathfun.h by Julien Pommier
 // - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
-// - sse2neon by ? (FIXME)
+// - sse2neon by a whole bunch of people (see sse2neon.h)
+// - OpenMP
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
