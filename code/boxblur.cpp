@@ -4,6 +4,8 @@
 // this code was written in 2007 at Javeline, a former employer of mine
 // has been cleaned up considerably, but it does contain a slight weight bias flaw (commented)
 
+// 01/02/2023: it's also quite suboptimal in many places, but I don't really see a need to optimize it (yet)
+
 #include "main.h"
 // #include "boxblur.h"
 
@@ -44,8 +46,6 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(xRes <= kResX);
-
 	// calculate actual kernel span
 	const unsigned int kernelSpan = (unsigned int) (strength * (float) xRes);
 	if (kernelSpan == 0) 
@@ -82,9 +82,12 @@ void HorizontalBoxBlur32(
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
 	// ready, set, blur!
-	const uint32_t *pSrcLine = pSrc;
-	for (unsigned int iY = 0; iY < yRes; ++iY)
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < yRes; ++iY)
 	{
+		auto destIndex = iY*xRes;
+		const uint32_t *pSrcLine = pSrc + destIndex;
+
 		unsigned int addPos = 0;
 		unsigned int subPos = 0;
 		
@@ -102,7 +105,7 @@ void HorizontalBoxBlur32(
 		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
 		{
 			Add(accumulator, addRemainder, pSrcLine[addPos++], remainderShift);
-			*pDest++ = Div(accumulator, edgeDivs[iX]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX]);
 		}
 		
 		// main pass
@@ -110,7 +113,7 @@ void HorizontalBoxBlur32(
 		{
 			Add(accumulator, addRemainder, pSrcLine[addPos++], remainderShift);
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			*pDest++ = Div(accumulator, fullDiv);
+			pDest[destIndex++] = Div(accumulator, fullDiv);
 		}
 		
 		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
@@ -121,9 +124,109 @@ void HorizontalBoxBlur32(
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			*pDest++ = Div(accumulator, edgeDivs[iX-1]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
+		}
+	}
+}
+
+// straight copy of HorizontalBoxBlur32() (FIXME: optimize)
+void VerticalBoxBlur32(
+	uint32_t *pDest,
+	const uint32_t *pSrc,
+	unsigned int xRes,
+	unsigned int yRes,
+	float strength)
+{
+	// calculate actual kernel span
+	const unsigned int kernelSpan = (unsigned int) (strength * (float) yRes);
+	if (kernelSpan == 0) 
+	{
+		return;
+	}
+	else 
+	{
+		VIZ_ASSERT(kernelSpan <= yRes);
+	}
+
+	// derive edge details (even-sized kernels have subpixel edges)
+	const bool subEdges = (kernelSpan & 1) == 0;
+	const unsigned int edgeSpan = kernelSpan >> 1;
+	const unsigned int remainderShift = 1 + (!subEdges*7);
+	const unsigned int kernelMedian = edgeSpan + !subEdges;
+
+	// calculate divisors for edge passes
+	static __m128i edgeDivs[kResY];
+	VIZ_ASSERT(kernelMedian < kResY);
+	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3); // see note below!
+	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
+	{
+		edgeDivs[iDiv] = _mm_set1_epi16(WeightToDiv(curWeight));
+		curWeight += 16;
+	}
+
+	// note:
+	// the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
+	// until then the edge divisors account for it, it shouldn't really have visible consequence
+
+	// full pass length & divisor
+	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
+	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
+
+	// ready, set, blur!
+	#pragma omp parallel for schedule(static)
+	for (int iX = 0; iX < xRes; ++iX)
+	{
+		const uint32_t *pSrcLine = pSrc + iX;
+		uint32_t *pDestLine = pDest + iX;
+
+		unsigned int addPos = 0;
+		unsigned int subPos = 0;
+
+		__m128i accumulator  = _mm_setzero_si128();
+		__m128i addRemainder = _mm_setzero_si128();
+		__m128i subRemainder = _mm_setzero_si128();
+		
+		// pre-read: bring accumulator op to edge weight
+		for (unsigned int iY = 0; iY < edgeSpan; ++iY)
+		{
+			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
+			addPos += xRes;
 		}
 
-		pSrcLine += xRes;
+		// pre-pass: up to full weight
+		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
+		{
+			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
+			*pDestLine = Div(accumulator, edgeDivs[iX]);
+
+			addPos += xRes;
+			pDestLine += xRes;
+		}
+		
+		// main pass
+		for (unsigned int iX = 0; iX < fullPassLen; ++iX)
+		{
+			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
+			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
+			*pDestLine = Div(accumulator, fullDiv);
+
+			addPos += xRes;
+			subPos += xRes;
+			pDestLine += xRes;
+		}
+		
+		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
+		if (subEdges)
+			accumulator = _mm_adds_epu16(accumulator, addRemainder);
+		
+		// post-pass: back to median weight
+		for (unsigned int iX = edgeSpan; iX > 0; --iX)
+		{
+			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
+			*pDestLine = Div(accumulator, edgeDivs[iX-1]);
+
+			subPos += xRes;
+			pDestLine += xRes;
+		}
 	}
 }

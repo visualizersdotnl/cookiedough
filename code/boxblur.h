@@ -11,4 +11,11 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength);
 
+void VerticalBoxBlur32(
+	uint32_t *pDest,
+	const uint32_t *pSrc,
+	unsigned int xRes,
+	unsigned int yRes,
+	float strength);
+
 #endif // _BOX_BLUR_H_

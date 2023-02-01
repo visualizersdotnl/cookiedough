@@ -35,7 +35,7 @@ SyncTrack trackLauraHue;
 
 // Nautilus sync.:
 SyncTrack trackNautilusRoll;
-SyncTrack trackNautilusHorzBlur;
+SyncTrack trackNautilusBlur;
 SyncTrack trackNautilusHue;
 
 // Spike (close) sync.:
@@ -66,7 +66,7 @@ bool Shadertoy_Create()
 
 	// Nautilus:
 	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
-	trackNautilusHorzBlur = Rocket::AddTrack("nautilusHorzBlur");
+	trackNautilusBlur = Rocket::AddTrack("nautilusBlur");
 	trackNautilusHue = Rocket::AddTrack("nautilusHue");
 
 	// Spikes:
@@ -267,9 +267,12 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderNautilusMap_2x2(g_pFxMap, time);
 
-	const float horzBlur = Rocket::getf(trackNautilusHorzBlur);
-	if (horzBlur > 0.f)
-		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, horzBlur);
+	const float blur = Rocket::getf(trackNautilusBlur)*0.001f;
+	if (blur > 0.f)
+	{
+		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+		VerticalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+	}
 
 	Fx_Blit_2x2(pDest, g_pFxMap);
 }
