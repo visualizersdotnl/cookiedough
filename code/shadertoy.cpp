@@ -118,10 +118,11 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 	const float t = time*0.77f;
 
-	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
 			__m128 colors[4];
@@ -203,12 +204,14 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 		.1f, 
 		.1f+lutcosf(hue/14.f)/8.f);
 
-	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
+		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
-			const int yIndex = iY*kFxMapResX;
+			const int destIndex = (yIndex+iX)>>2;
 
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
@@ -252,8 +255,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
 			}
 
-			const int index = (yIndex+iX)>>2;
-			pDest128[index] = Shadertoy::ToPixel4(colors);
+			pDest128[destIndex] = Shadertoy::ToPixel4(colors);
 		}
 	}
 }
@@ -308,13 +310,13 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
 
-	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
+		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
-			const int yIndex = iY*kFxMapResX;
-
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
@@ -377,10 +379,11 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
-	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
 			__m128 colors[4];
@@ -440,10 +443,11 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
-	#pragma omp parallel for schedule(dynamic, 1)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
 			__m128 colors[4];
@@ -546,6 +550,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
 			__m128 colors[4];
@@ -652,12 +657,13 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 	const Vector3 origin = fSinPath(time*speed);
 
-	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
+	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
+		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
-			const int yIndex = iY*kFxMapResX;
 			__m128 colors[4];
 
 			for (int iColor = 0; iColor < 4; ++iColor)
@@ -756,13 +762,13 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 
 	Vector3 origin(0.f, 0.f, lauraSpeed*time);
 
-	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
+	#pragma omp parallel for schedule(dynamic) 
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
+		const int yIndex = iY*kFxMapResX;
+
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
-			const int yIndex = iY*kFxMapResX;
-
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
@@ -832,7 +838,6 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderLaura_2x2(g_pFxMap, time);
 	Fx_Blit_2x2(pDest, g_pFxMap);
-
 }
 
 
