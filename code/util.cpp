@@ -268,9 +268,9 @@ void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
-		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*pDest), zero);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
 		const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
 		const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
-		*pDest++ = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
 	}
 }

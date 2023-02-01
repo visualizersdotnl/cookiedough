@@ -4,18 +4,20 @@
 #include "main.h"
 #include "fx-blitter.h"
 
-uint32_t *g_pFxMap = nullptr;
+uint32_t *g_pFxMap[2] = { nullptr };
 
 bool FxBlitter_Create()
 {
-	g_pFxMap = static_cast<uint32_t*>(mallocAligned(kFxMapBytes, kCacheLine));
+	g_pFxMap[0] = static_cast<uint32_t*>(mallocAligned(kFxMapBytes, kAlignTo));
+	g_pFxMap[1] = static_cast<uint32_t*>(mallocAligned(kFxMapBytes, kAlignTo));
 
 	return true;
 }
 
 void FxBlitter_Destroy()
 {
-	freeAligned(g_pFxMap);
+	freeAligned(g_pFxMap[0]);
+	freeAligned(g_pFxMap[1]);
 }
 
 // 2x2 blit (2 pixels per SSE write
@@ -89,9 +91,9 @@ void FxBlitter_DrawTestPattern(uint32_t* pDest)
 				color = (iX&1) ? -1 : 0;
 			}
 
-			g_pFxMap[iY*kFxMapResX + iX] = color;
+			g_pFxMap[0][iY*kFxMapResX + iX] = color;
 		}
 	}
 
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }

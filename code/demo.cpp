@@ -55,13 +55,10 @@ void Demo_Destroy()
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
-	// for this production (FIXME)
-	// VIZ_ASSERT(kResX == 800 && kResY == 600);
+	// for this production:
+	VIZ_ASSERT(kResX == 1280 && kResY == 720);
 
 	Rocket::Boost();
-
-	// FIXME: not always necessary
-	memset32(pDest, 0, kOutputSize);
 
 	// render effect
 	int effect = Rocket::geti(trackEffectTest);

@@ -50,7 +50,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
-		// advance!
+		// advance! (FIXME: is this the correct direction?)
 		curX += dX;
 		curY += dY;
 
@@ -70,7 +70,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
 		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
 
-		// FIXME: now this is just a little convoluted :)
+		// FIXME
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 8;

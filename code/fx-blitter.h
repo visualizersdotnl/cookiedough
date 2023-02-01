@@ -19,7 +19,8 @@ constexpr size_t kFxMapResY = kResY/kFxMapDiv;
 constexpr size_t kFxMapSize = kFxMapResX*kFxMapResY;
 constexpr size_t kFxMapBytes = kFxMapSize*sizeof(uint32_t);
 
-extern uint32_t *g_pFxMap;
+// useful to have 2 of these for stuff like a blur pass that likes a separate dest. buffer
+extern uint32_t *g_pFxMap[2];
 
 bool FxBlitter_Create();
 void FxBlitter_Destroy();

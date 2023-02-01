@@ -12,19 +12,27 @@
 #include "main.h"
 // #include "boxblur.h"
 
+static uint32_t *s_pTempBuf = nullptr;
+
 bool BoxBlur_Create()
 {
+	s_pTempBuf = static_cast<uint32_t *>(mallocAligned(kOutputSize, kAlignTo));
+
 	return true;
 }
 
-void BoxBlur_Destroy() {}
+void BoxBlur_Destroy() 
+{
+	freeAligned(s_pTempBuf);
+	s_pTempBuf = nullptr;
+}
 
 // -- helper functions --
 
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
-	return (65535*256 / weight) >> 4;
+	return ((65535*256) / weight) >> 4;
 }
 
 // add pixel to accumulator
@@ -60,8 +68,10 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
+	VIZ_ASSERT(pDest != pSrc);
+
 	// calculate actual kernel span
-	const float fKernelSpan = strength*(xRes-1);
+	const float fKernelSpan = strength*(xRes>>1);
 	const unsigned kernelSpan = unsigned(fKernelSpan);
 	if (0 == kernelSpan)
 		return;
@@ -69,22 +79,18 @@ void HorizontalBoxBlur32(
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
 	const unsigned int edgeSpan = kernelSpan >> 1;
-	const unsigned int remainderShift = 1 + (!subEdges*7);
+	const unsigned int remainderShift = 1 + ((!subEdges)*7);
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
 	static __m128i edgeDivs[kResX];
 	VIZ_ASSERT(kernelMedian < kResX);
-	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3); // see note below!
+	const unsigned int startWeight = (kernelMedian << 4) + (subEdges<<3); // FIXME: 0.5 weight bias during pre-pass
 	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
 	{
 		edgeDivs[iDiv] = _mm_set1_epi16(WeightToDiv(curWeight));
 		curWeight += 16;
 	}
-
-	// FIXME:
-	// - the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
-	// - what did I mean by this: "until then the edge divisors account for it, it shouldn't really have visible consequence"
 
 	// full pass length & divisor
 	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
@@ -124,16 +130,16 @@ void HorizontalBoxBlur32(
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
 			pDest[destIndex++] = Div(accumulator, fullDiv);
 		}
-		
+
 		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
 		if (subEdges)
 			accumulator = _mm_adds_epu16(accumulator, addRemainder);
 		
 		// post-pass: back to median weight
-		for (unsigned int iX = edgeSpan; iX > 0; --iX)
+		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
 		{
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[kernelMedian-iX-1]);
 		}
 	}
 }
@@ -145,6 +151,8 @@ void HorizontalBoxBlur32(
 //   of the modern Intel and Apple M1/M2 cache line
 // - but the level 1 cache on an average Ryzen is 64KB and at least 128KB on the Apple M, so, if the buffers aren't all that huge 
 //   (which they are not), even in HD, 1920 pixels is 7,5KB per line; so for now, based on this, I won't optimize this
+// - on a 486SX or so in the past you'd get into trouble as it had only 8KB which fit just enough for 256, but then you had more in L1 and
+//   that generally ruined the party; by now memory is just so much faster and cache in abudance...
 // - oh, and it's threaded to boot
 
 void VerticalBoxBlur32(
@@ -154,8 +162,10 @@ void VerticalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
+	VIZ_ASSERT(pDest != pSrc);
+
 	// calculate actual kernel span
-	const float fKernelSpan = strength*(yRes-1);
+	const float fKernelSpan = strength*(yRes>>1);
 	const unsigned kernelSpan = unsigned(fKernelSpan);
 	if (0 == kernelSpan)
 		return;
@@ -163,22 +173,18 @@ void VerticalBoxBlur32(
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
 	const unsigned int edgeSpan = kernelSpan >> 1;
-	const unsigned int remainderShift = 1 + (!subEdges*7);
+	const unsigned int remainderShift = 1 + ((!subEdges)*7);
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
 	static __m128i edgeDivs[kResY];
 	VIZ_ASSERT(kernelMedian < kResY);
-	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3); // see note below!
+	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3);
 	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
 	{
 		edgeDivs[iDiv] = _mm_set1_epi16(WeightToDiv(curWeight));
 		curWeight += 16;
 	}
-
-	// FIXME:
-	// - the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
-	// - what did I mean by this: "until then the edge divisors account for it, it shouldn't really have visible consequence"
 
 	// full pass length & divisor
 	const unsigned int fullPassLen = yRes - (kernelMedian+edgeSpan);
@@ -214,7 +220,7 @@ void VerticalBoxBlur32(
 		}
 		
 		// main pass
-		for (unsigned int iX = 0; iX < fullPassLen; ++iX)
+		for (unsigned int iY = 0; iY < fullPassLen; ++iY)
 		{
 			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
 			addPos += xRes;
@@ -231,18 +237,19 @@ void VerticalBoxBlur32(
 			accumulator = _mm_adds_epu16(accumulator, addRemainder);
 		
 		// post-pass: back to median weight
-		for (unsigned int iX = edgeSpan; iX > 0; --iX)
+		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
 		{
+
 			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
 			subPos += xRes;
 
-			pDest[destIndex] = Div(accumulator, edgeDivs[iX-1]);
+			pDest[destIndex] = Div(accumulator, edgeDivs[kernelMedian-iY-1]);
 			destIndex += xRes;
 		}
 	}
 }
 
-// -- <Alucard> ... --
+// -- "<Alucard> ..."" --
 
 void CombiBoxBlur32(
 	uint32_t *pDest,
@@ -251,6 +258,8 @@ void CombiBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
-	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
+	VIZ_ASSERT(xRes <= kResX && yRes <= kResY); // otherwise temporary buffer will be too small
+
+	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
+	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
 }
