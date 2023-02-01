@@ -9,7 +9,7 @@ void BoxBlur_Destroy();
 
 // use [1..100] and multiply it by this value to feed as 'strength'
 // this way you can conveniently define no blur as zero in Rocket and use [1..100] to define strength a bit more intuitively
-constexpr float kBoxBlurScale = 0.005f;
+constexpr float kBoxBlurScale = 0.01f;
 
 void HorizontalBoxBlur32(
 	uint32_t *pDest,

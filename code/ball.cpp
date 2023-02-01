@@ -248,12 +248,13 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, false);
 
-	// horiz. blur (optional)
+	// blur (optional)
 	float blur = Rocket::getf(trackBallBlur);
 	if (blur >= 1.f && blur <= 100.f)
 	{
 		blur *= kBoxBlurScale;
-		HorizontalBoxBlur32(pDest, pDest, kResX, kResY, blur);
+		memcpy(g_renderTarget, pDest, kOutputBytes);
+		HorizontalBoxBlur32(pDest, g_renderTarget, kResX, kResY, blur);
 	}
 
 #if 0

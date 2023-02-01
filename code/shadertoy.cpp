@@ -168,8 +168,8 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 void Plasma_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderPlasmaMap(g_pFxMap, time);
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	RenderPlasmaMap(g_pFxMap[0], time);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
 
 //
@@ -265,16 +265,17 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderNautilusMap_2x2(g_pFxMap, time);
+	RenderNautilusMap_2x2(g_pFxMap[0], time);
 
 	float blur = Rocket::getf(trackNautilusBlur);
 	if (blur >= 1.f && blur <= 100.f)
 	{
 		blur *= kBoxBlurScale;
-		CombiBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+		CombiBoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, blur);
+		Fx_Blit_2x2(pDest, g_pFxMap[1]);
 	}
-
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	else
+		Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
 
 //
@@ -505,8 +506,8 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 	if (close)
 	{
 		// render close-up
-		RenderSpikeyMap_2x2_Close(g_pFxMap, time);
-		Fx_Blit_2x2(pDest, g_pFxMap);
+		RenderSpikeyMap_2x2_Close(g_pFxMap[0], time);
+		Fx_Blit_2x2(pDest, g_pFxMap[0]);
 	}
 	else
 	{
@@ -517,15 +518,15 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		if (!specularOnly)
 		{
 			// render as normal
-			RenderSpikeyMap_2x2_Distant(g_pFxMap, time);
-			Fx_Blit_2x2(pDest, g_pFxMap);
+			RenderSpikeyMap_2x2_Distant(g_pFxMap[0], time);
+			Fx_Blit_2x2(pDest, g_pFxMap[0]);
 		}
 		else
 		{
 			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name "warmup")
-			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap, time, 1.f+warmup);
-//			HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, warmup*0.005f*kGoldenRatio);
-			Fx_Blit_2x2(g_renderTarget, g_pFxMap);
+			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap[0], time, 1.f+warmup);
+			HorizontalBoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, warmup*0.005f*kGoldenRatio);
+			Fx_Blit_2x2(g_renderTarget, g_pFxMap[0]);
 			HorizontalBoxBlur32(pDest, g_renderTarget, kResX, kResY, warmup*0.005f*kGoldenRatio);
 		}
 	}
@@ -605,8 +606,8 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 
 void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderTunnelMap_2x2(g_pFxMap, time);
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	RenderTunnelMap_2x2(g_pFxMap[0], time);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
 
 //
@@ -722,8 +723,8 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 void Sinuses_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderSinMap_2x2(g_pFxMap, time);
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	RenderSinMap_2x2(g_pFxMap[0], time);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
 
 //
@@ -842,8 +843,8 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 
 void Laura_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderLaura_2x2(g_pFxMap, time);
-	Fx_Blit_2x2(pDest, g_pFxMap);
+	RenderLaura_2x2(g_pFxMap[0], time);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
 
 
