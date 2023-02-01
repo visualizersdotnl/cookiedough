@@ -43,7 +43,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
 		// advance!
-		curX += dX;
+		curX -= dX; // same flip as in ball.cpp
 
 		// prepare UVs
 		unsigned int U0, V0, U1, V1, fracU, fracV;

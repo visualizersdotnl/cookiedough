@@ -50,7 +50,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
-		// advance!
+		// advance! (FIXME: is this the correct direction?)
 		curX += dX;
 		curY += dY;
 
@@ -63,14 +63,14 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		 __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep>>1]);
-//		color = _mm_srli_epi16(color, 8);
+		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep>>1]);
+		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep>>1]);
-		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
+//		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
 
-		// FIXME: now this is just a little convoluted :)
+		// FIXME
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 8;

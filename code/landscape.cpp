@@ -1,11 +1,6 @@
 
 // cookiedough -- voxel landscape
 
-/*
-	- more fixed point (+ LUT)
-	- procedural fog LUT
-*/
-
 #include "main.h"
 // #include "landscape.h"
 #include "image.h"
@@ -61,7 +56,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 	
 	for (unsigned int iStep = 0; iStep < kRayLength; ++iStep)
 	{
-		// advance!
+		// advance! (FIXME: in this case I think the direction is sort of irrelevant)
 		curX += dX;
 		curY += dY;
 
@@ -81,6 +76,7 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
 		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
 
+		// FIXME
 		int height = 255-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 16;
