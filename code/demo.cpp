@@ -68,9 +68,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	switch (effect)
 	{
 		case 1:
-			{
-				Twister_Draw(pDest, timer, delta);
-			}
+			Twister_Draw(pDest, timer, delta);
 			break;
 	
 		case 2:

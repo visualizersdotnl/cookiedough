@@ -82,9 +82,9 @@ void HorizontalBoxBlur32(
 		curWeight += 16;
 	}
 
-	// note:
-	// the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
-	// until then the edge divisors account for it, it shouldn't really have visible consequence
+	// FIXME:
+	// - the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
+	// - what did I mean by this: "until then the edge divisors account for it, it shouldn't really have visible consequence"
 
 	// full pass length & divisor
 	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
@@ -92,7 +92,7 @@ void HorizontalBoxBlur32(
 
 	// ready, set, blur!
 	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < yRes; ++iY)
+	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		auto destIndex = iY*xRes;
 		const uint32_t *pSrcLine = pSrc + destIndex;
@@ -145,7 +145,7 @@ void HorizontalBoxBlur32(
 //   of the modern Intel and Apple M1/M2 cache line
 // - but the level 1 cache on an average Ryzen is 64KB and at least 128KB on the Apple M, so, if the buffers aren't all that huge 
 //   (which they are not), even in HD, 1920 pixels is 7,5KB per line; so for now, based on this, I won't optimize this
-// - oh, it's threaded to boot
+// - oh, and it's threaded to boot
 
 void VerticalBoxBlur32(
 	uint32_t *pDest,
@@ -176,23 +176,21 @@ void VerticalBoxBlur32(
 		curWeight += 16;
 	}
 
-	// note:
-	// the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
-	// until then the edge divisors account for it, it shouldn't really have visible consequence
+	// FIXME:
+	// - the algorithm has a 0.5 weight bias during the pre-pass: this must be fixed!
+	// - what did I mean by this: "until then the edge divisors account for it, it shouldn't really have visible consequence"
 
 	// full pass length & divisor
-	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
+	const unsigned int fullPassLen = yRes - (kernelMedian+edgeSpan);
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
 	// ready, set, blur!
 	#pragma omp parallel for schedule(static)
-	for (int iX = 0; iX < xRes; ++iX)
+	for (int iX = 0; iX < int(xRes); ++iX)
 	{
-		const uint32_t *pSrcLine = pSrc + iX;
-		uint32_t *pDestLine = pDest + iX;
-
-		unsigned int addPos = 0;
-		unsigned int subPos = 0;
+		auto destIndex = iX;
+		unsigned addPos = iX;
+		unsigned subPos = iX;
 
 		__m128i accumulator  = _mm_setzero_si128();
 		__m128i addRemainder = _mm_setzero_si128();
@@ -201,28 +199,31 @@ void VerticalBoxBlur32(
 		// pre-read: bring accumulator op to edge weight
 		for (unsigned int iY = 0; iY < edgeSpan; ++iY)
 		{
-			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
+			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
 			addPos += xRes;
 		}
 
 		// pre-pass: up to full weight
-		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
+		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
 		{
-			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
-			*pDestLine = Div(accumulator, edgeDivs[iX]);
+			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
 			addPos += xRes;
-			pDestLine += xRes;
+
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
+			destIndex += xRes;
 		}
 		
 		// main pass
 		for (unsigned int iX = 0; iX < fullPassLen; ++iX)
 		{
-			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
-			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
-			*pDestLine = Div(accumulator, fullDiv);
+			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
 			addPos += xRes;
+
+			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
 			subPos += xRes;
-			pDestLine += xRes;
+
+			pDest[destIndex] = Div(accumulator, fullDiv);
+			destIndex += xRes;
 		}
 		
 		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
@@ -232,10 +233,11 @@ void VerticalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
-			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
-			*pDestLine = Div(accumulator, edgeDivs[iX-1]);
+			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
 			subPos += xRes;
-			pDestLine += xRes;
+
+			pDest[destIndex] = Div(accumulator, edgeDivs[iX-1]);
+			destIndex += xRes;
 		}
 	}
 }

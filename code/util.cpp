@@ -87,7 +87,7 @@ void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_
 	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(0x01010101 * alpha), zero);
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
@@ -135,7 +135,7 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	const __m128i zero = _mm_setzero_si128();
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
@@ -150,7 +150,7 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	const __m128i zero = _mm_setzero_si128();
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
@@ -266,7 +266,7 @@ void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha
 	const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(RGB), zero);
 
 	#pragma omp parallel for schedule(static)
-	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*pDest), zero);
 		const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));

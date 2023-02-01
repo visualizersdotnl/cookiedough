@@ -181,7 +181,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
     std::filesystem::current_path("../../");
 #endif
 
-	// check for SSE 4.1
+	// check for SSE 4.1 / NEON
 	if (false == SDL_HasSSE41() && false == SDL_HasNEON())
 	{
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);

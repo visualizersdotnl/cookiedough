@@ -74,7 +74,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 8;
-		height /= kMapViewLenScale; // FIXME: no idea why this works, but it does
+		height /= kMapViewLenScale; // FIXME: this is pure evil, heed the FIXME above soon!
 		height /= iStep+1;          //
 		height *= kMapScale;
 		height >>= 8;
