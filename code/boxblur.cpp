@@ -4,10 +4,30 @@
 // this code was written in 2007 at Javeline, a former employer of mine
 // has been cleaned up considerably, but it does contain a slight weight bias flaw (commented)
 
-// 01/02/2023: it's also quite suboptimal in many places, but I don't really see a need to optimize it (yet)
+// 01/02/2023: 
+// - vertical pass is grossly cache-unfriendly, optimize (ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
+// - get rid of the gratuitous redundancy (lots of duplicate code)
+// - review SIMD
 
 #include "main.h"
 // #include "boxblur.h"
+
+static uint32_t *s_pCombiTempBuffer = nullptr;
+
+bool BoxBlur_Create()
+{
+	s_pCombiTempBuffer = static_cast<uint32_t *>(mallocAligned(kOutputBytes, kAlignTo));
+
+	return true;
+}
+
+void BoxBlur_Destroy()
+{
+	freeAligned(s_pCombiTempBuffer);
+	s_pCombiTempBuffer = nullptr;
+}
+
+// -- helper functions --
 
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
@@ -38,6 +58,8 @@ VIZ_INLINE uint32_t Div(__m128i accumulator, __m128i weightDiv)
 {
 	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_mulhi_epu16(accumulator, weightDiv), _mm_setzero_si128()));
 }
+
+// -- horizontal implementation --
 
 void HorizontalBoxBlur32(
 	uint32_t *pDest,
@@ -124,7 +146,9 @@ void HorizontalBoxBlur32(
 	}
 }
 
-// straight copy of HorizontalBoxBlur32() (FIXME: optimize)
+// -- suboptimal vertical implementation --
+
+// straight copy of HorizontalBoxBlur32() (FIXME: optimize / WARNING: quite cache unfriendly)
 void VerticalBoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
@@ -188,7 +212,6 @@ void VerticalBoxBlur32(
 		{
 			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
 			*pDestLine = Div(accumulator, edgeDivs[iX]);
-
 			addPos += xRes;
 			pDestLine += xRes;
 		}
@@ -199,7 +222,6 @@ void VerticalBoxBlur32(
 			Add(accumulator, addRemainder, pSrcLine[addPos], remainderShift);
 			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
 			*pDestLine = Div(accumulator, fullDiv);
-
 			addPos += xRes;
 			subPos += xRes;
 			pDestLine += xRes;
@@ -214,9 +236,24 @@ void VerticalBoxBlur32(
 		{
 			Sub(accumulator, subRemainder, pSrcLine[subPos], remainderShift);
 			*pDestLine = Div(accumulator, edgeDivs[iX-1]);
-
 			subPos += xRes;
 			pDestLine += xRes;
 		}
 	}
+}
+
+// -- this one should be optimized using Ryg's tip (see above) --
+
+void CombiBoxBlur32(
+	uint32_t *pDest,
+	const uint32_t *pSrc,
+	unsigned int xRes,
+	unsigned int yRes,
+	float strength)
+{
+	// we only have a temporary buffer kResX*kResY
+	VIZ_ASSERT(xRes <= kResX && yRes <= kResY); 
+
+	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
+	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
 }

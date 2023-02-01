@@ -272,8 +272,9 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	{
 		blur *= kBoxBlurScale;
 
-		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
-		VerticalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+//		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+//		VerticalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
+		CombiBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
 	}
 
 	Fx_Blit_2x2(pDest, g_pFxMap);

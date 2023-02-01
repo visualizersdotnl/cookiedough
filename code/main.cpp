@@ -90,6 +90,7 @@
 #include "polar.h"
 #include "fx-blitter.h"
 #include "satori-lumablur.h"
+#include "boxblur.h"
 
 // -- display & audio config. --
 
@@ -205,6 +206,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Polar_Create();
 	utilInit &= FxBlitter_Create();
 	utilInit &= SatoriLumaBlur_Create();
+	utilInit &= BoxBlur_Create();
 
 	Gamepad_Create();
 	initialize_random_generator();
@@ -268,6 +270,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	Polar_Destroy();
 	FxBlitter_Destroy();
 	SatoriLumaBlur_Destroy();
+	BoxBlur_Destroy();
 
 	SDL_Quit();
 
