@@ -1,5 +1,5 @@
 
-// cookiedough -- polar blits (640x480 -> kResX*kResY)
+// cookiedough -- polar blits
 
 #include "main.h"
 // #include "polar.h"
