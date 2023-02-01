@@ -267,9 +267,11 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderNautilusMap_2x2(g_pFxMap, time);
 
-	const float blur = Rocket::getf(trackNautilusBlur)*0.001f;
-	if (blur > 0.f)
+	float blur = Rocket::getf(trackNautilusBlur);
+	if (blur >= 1.f && blur <= 100.f)
 	{
+		blur *= kBoxBlurScale;
+
 		HorizontalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
 		VerticalBoxBlur32(g_pFxMap, g_pFxMap, kFxMapResX, kFxMapResY, blur);
 	}

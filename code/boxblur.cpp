@@ -47,15 +47,10 @@ void HorizontalBoxBlur32(
 	float strength)
 {
 	// calculate actual kernel span
-	const unsigned int kernelSpan = (unsigned int) (strength * (float) xRes);
-	if (kernelSpan == 0) 
-	{
+	const float fKernelSpan = strength*(xRes-1);
+	const unsigned kernelSpan = unsigned(fKernelSpan);
+	if (0 == kernelSpan)
 		return;
-	}
-	else 
-	{
-		VIZ_ASSERT(kernelSpan <= xRes);
-	}
 
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
@@ -138,15 +133,10 @@ void VerticalBoxBlur32(
 	float strength)
 {
 	// calculate actual kernel span
-	const unsigned int kernelSpan = (unsigned int) (strength * (float) yRes);
-	if (kernelSpan == 0) 
-	{
+	const float fKernelSpan = strength*(yRes-1);
+	const unsigned kernelSpan = unsigned(fKernelSpan);
+	if (0 == kernelSpan)
 		return;
-	}
-	else 
-	{
-		VIZ_ASSERT(kernelSpan <= yRes);
-	}
 
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
