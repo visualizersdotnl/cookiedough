@@ -219,7 +219,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
 
 				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
