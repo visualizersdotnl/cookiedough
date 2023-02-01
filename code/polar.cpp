@@ -89,6 +89,7 @@ VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc, const unsigned target
 	return bsamp32_32(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
 }
 
+// minor cache penalties are incurred, but L1 should always have us covered on modern CPUs
 void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
 {
 	int *pRead = (!inverse) ? s_pMap : s_pInvMap;

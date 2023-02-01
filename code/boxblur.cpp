@@ -2,30 +2,22 @@
 // cookiedough -- box blur filter (32-bit only, for now)
 
 // this code was written in 2007 at Javeline, a former employer of mine
-// has been cleaned up considerably, but it does contain a slight weight bias flaw (commented)
+// has been cleaned up considerably, but it does contain a slight weight bias flaw (commented), and probably 1 or 2 more quirks
 
 // 01/02/2023: 
-// - vertical pass is grossly cache-unfriendly, optimize (ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
+// - vertical pass is a bit cache-unfriendly, optimize (ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
 // - get rid of the gratuitous redundancy (lots of duplicate code)
 // - review SIMD
 
 #include "main.h"
 // #include "boxblur.h"
 
-static uint32_t *s_pCombiTempBuffer = nullptr;
-
 bool BoxBlur_Create()
 {
-	s_pCombiTempBuffer = static_cast<uint32_t *>(mallocAligned(kOutputBytes, kAlignTo));
-
 	return true;
 }
 
-void BoxBlur_Destroy()
-{
-	freeAligned(s_pCombiTempBuffer);
-	s_pCombiTempBuffer = nullptr;
-}
+void BoxBlur_Destroy() {}
 
 // -- helper functions --
 
@@ -146,9 +138,15 @@ void HorizontalBoxBlur32(
 	}
 }
 
-// -- suboptimal vertical implementation --
+// -- (suboptimal) vertical implementation --
 
-// straight copy of HorizontalBoxBlur32() (FIXME: optimize / WARNING: quite cache unfriendly)
+// straight copy of HorizontalBoxBlur32(), but simply reading & writing vertically:
+// - you'd think this is absolutely terrible for cache and sure it violates the 64 and 128 bytes respectively
+//   of the modern Intel and Apple M1/M2 cache line
+// - but the level 1 cache on an average Ryzen is 64KB and at least 128KB on the Apple M, so, if the buffers aren't all that huge 
+//   (which they are not), even in HD, 1920 pixels is 7,5KB per line; so for now, based on this, I won't optimize this
+// - oh, it's threaded to boot
+
 void VerticalBoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
@@ -242,7 +240,7 @@ void VerticalBoxBlur32(
 	}
 }
 
-// -- this one should be optimized using Ryg's tip (see above) --
+// -- <Alucard> ... --
 
 void CombiBoxBlur32(
 	uint32_t *pDest,
@@ -251,9 +249,6 @@ void CombiBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	// we only have a temporary buffer kResX*kResY
-	VIZ_ASSERT(xRes <= kResX && yRes <= kResY); 
-
 	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
 	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
 }

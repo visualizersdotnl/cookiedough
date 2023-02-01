@@ -18,7 +18,6 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength);
 
-// this one is obviously quite slow, since it has L1 (at least) cache misses all the time
 void VerticalBoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
