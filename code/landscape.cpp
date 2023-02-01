@@ -176,7 +176,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		float dY = Y2-Y1;
 		voxel::vnorm2D(dX, dY);
 
-		// counteract fisheye effect (FIXME: real-time parameter?)
+		// counteract fisheye effect
 		const float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
 		
 		vscape_ray(pDest+iRay, fpX1, fpY1, ftofp24(dX), ftofp24(dY), fishMul);

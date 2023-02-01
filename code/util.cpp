@@ -85,7 +85,9 @@ void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_
 {
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(0x01010101 * alpha), zero);
-	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
@@ -131,7 +133,9 @@ void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_
 void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();
-	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
@@ -144,7 +148,9 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();
-	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
 	{
 		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
 		const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
@@ -184,12 +190,12 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 #endif
 }
 
-// FIXME: optimize
+// FIXME: optimize, that shuffle instruction sucks!
 void BlitSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes)
 {
 	const __m128i zero = _mm_setzero_si128();
 
-	#pragma omp parallel for schedule(dynamic)
+	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		const uint32_t *srcPixel = pSrc + iY*srcResX;
@@ -214,20 +220,21 @@ void BlitSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsign
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i fixedAlphaUnp = c2vISSE16(0x01010101 * unsigned(alpha*255.f));
 
+	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
+		const uint32_t *srcPixel = pSrc + iY*srcResX;
+		uint32_t *destPixel = pDest + iY*destResX;
+
 		for (unsigned iX = 0; iX < srcResX; ++iX)
 		{
-			const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iX]), zero);
+			const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*srcPixel++), zero);
 			const __m128i alphaUnp = _mm_srli_epi16(_mm_mullo_epi16(_mm_shufflelo_epi16(srcColor, 0xff), fixedAlphaUnp), 8);
-			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iX]), zero);
+			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*destPixel), zero);
 			const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
 			const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
-			pDest[iX] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+			*destPixel++ = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
 		}
-
-		pSrc += srcResX;
-		pDest += destResX;
 	}
 }
 
@@ -235,20 +242,19 @@ void BlitAdd32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigne
 {
 	const __m128i zero = _mm_setzero_si128();
 
-	#pragma omp parallel for schedule(dynamic)
+	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
-		// FIXME: if getting rid of OMP, move these out of the loop and just increment them
 		const uint32_t *srcPixel = pSrc + iY*srcResX;
 		uint32_t *destPixel = pDest + iY*destResX;
 
 		for (unsigned iX = 0; iX < srcResX; ++iX)
 		{
-			const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(srcPixel[iX]), zero);
-			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(destPixel[iX]), zero);
+			const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*srcPixel++), zero);
+			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*destPixel), zero);
 			const __m128i delta = srcColor;
 			const __m128i color = _mm_add_epi16(destColor, delta);
-			destPixel[iX] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+			*destPixel++ = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
 		}
 	}
 }
@@ -258,11 +264,13 @@ void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(0x01010101 * alpha), zero);
 	const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(RGB), zero);
+
+	#pragma omp parallel for schedule(static)
 	for (unsigned int iPixel = 0; iPixel < numPixels; ++iPixel)
 	{
-		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(*pDest), zero);
 		const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
 		const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
-		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+		*pDest++ = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
 	}
 }

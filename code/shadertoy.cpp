@@ -5,16 +5,16 @@
 	important:
 		- *** R and B are swapped, as in: Vector3 color(B, G, R) ***
 		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed (use '.vSSE')
-		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this (see spikey objects for example)
-		  in that case divide UV.x by kAspect
+		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this
+		  in that case divide UV.x by kAspect (or multiply by kOneOverAspect)
 		- when scaling a vector by a scalar in a loop, write it in place instead of using the operator (which won't inline for some reason)
 		- if needed, parts of loops can be parallelized (SIMD), but that's a lot of hassle
 		- an obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
 		- be careful (precision, overflow) with normals and lighting calculations (see shadertoy-util.h)
+		- OpenMP's dynamic scheduling is usually best since A) there's little cache penalty due to out-of-order and B) unbalanced load
 
-	to do:
+	to do (priority):
 		- optimize where you can (which does not always mean more SIMD)
-		- hardcoded colors should be tweakable through assets
 		- fix normals left and right
 */
 
@@ -128,8 +128,9 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				// FIXME: parametrize (minus gives a black bar on the left, ideal for an old school logo)
-//				auto& UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
+				// idea: minus fifty gives a black bar on the left, ideal for an old school logo
+//				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
+
 				auto UV = Shadertoy::ToUV_FxMap(iX+iColor+10, iY+20, 2.f);
 
 				const int cosIndex = tocosindex(t*0.314f*0.5f);
@@ -137,7 +138,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				const float dirSin = lutsinf(cosIndex);
 
 				Vector3 direction(
-					dirCos*UV.x - dirSin*0.75f,
+					dirCos*UV.x*kOneOverAspect - dirSin*0.75f,
 					UV.y,
 					dirSin*UV.x + dirCos*0.75f);
 
@@ -183,7 +184,9 @@ VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 	const float cosX = lutcosf(lutcosf(position.x + fNautilus_global.x)*position.x - lutcosf(position.y + fNautilus_global.y)*position.y);
 	const float cosY = lutcosf(position.z*0.33f*position.x - fNautilus_global.z*position.y);
 	const float cosZ = lutcosf(position.x + position.y + position.z*0.8f + time);
+
 	const float dotted = cosX*cosX + cosY*cosY + cosZ*cosZ;
+
 	return dotted*0.5f - .7f;
 };
 
@@ -218,7 +221,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -226,7 +229,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 				float total = 0.01f;
 				float march = 1.f;
-				for (int iStep = 0; fabsf(march)> 0.01f && iStep < 64; ++iStep)
+				for (int iStep = 0; march > 0.01f && iStep < 48; ++iStep)
 				{
 					hit.x = direction.x*total;
 					hit.y = direction.y*total;
@@ -323,7 +326,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -392,7 +395,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
 
 				Vector3 origin(0.f, 0.f, -2.614f);
-				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -456,7 +459,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio);
 
 				Vector3 origin(0.f, 0.f, -3.314f);
-				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -557,7 +560,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 1.f);
-				Vector3 direction(UV.x/kAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 
 				// FIXME: this seems very suitable for SIMD, but the FPS is good as it is
@@ -670,7 +673,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x/kAspect, UV.y, 0.314f); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, 0.314f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -774,7 +777,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY);
 
-				Vector3 direction(UV.x/kAspect, UV.y, kPI); 
+				Vector3 direction(UV.x*kOneOverAspect, UV.y, kPI); 
 				Shadertoy::rotY(lauraYaw, direction.x, direction.z);
 				Shadertoy::rotX(lauraPitch, direction.y, direction.z);
 				Shadertoy::rotZ(lauraRoll*time, direction.x, direction.y);

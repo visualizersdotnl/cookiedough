@@ -80,7 +80,7 @@ static void vtwister(uint32_t *pDest, float time)
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
-		const float shearAngle = (float) iRay * (2.f*kPI / kTargetResY);
+		const float shearAngle = (float) iRay * (2.f*kPI/kTargetResY);
 
 		const float mapY = iRay*mapStepY;
 		const int fromX = ftofp24(256.f + 140.f*sinf(time*1.1f + shearAngle));

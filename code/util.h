@@ -21,18 +21,22 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 #endif
 
 // Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
-// FIXME: what is up with the use of 'static' here? that should be specified by the function decl., this way it won't hold up well for class members (potentially)
+// FIXME: I've obviously done something stupid by adding 'static', no idea why, but I'll try to phase it out using CKD_INLINE
 #ifdef  _WIN32
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
+		#define CKD_INLINE
 	#else
 		#define VIZ_INLINE static __forceinline
+		#define CKD_INLINE __forceinline
 	#endif
 #elif defined(__GNUC__)
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
+		#define CKD_INLINE
 	#else
 		#define VIZ_INLINE static __inline 
+		#define CKD_INLINE __inline
 	#endif
 #endif
 
