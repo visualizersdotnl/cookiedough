@@ -10,6 +10,7 @@
 #include "polar.h"
 #include "voxel-shared.h"
 #include "rocket.h"
+// #include "shadertoy-util.h"
 
 static uint8_t *s_pHeightMap[2] = { nullptr };
 static uint32_t *s_pColorMap = nullptr;
@@ -32,6 +33,7 @@ SyncTrack trackBallRayLength; // FIXME: implement!
 //   to synchronize this as an effect
 // - shape hmap_4.jpg looks good with proper beams on, possibly with an environment map; could do with some art
 //   + doesn't work all that well on a dark background?
+//   + I'm unsure what Orange themselves are doing, they have some kind of algorithm that's different from mine
 // - start parametrizing!
 // - ...
 
@@ -52,15 +54,15 @@ constexpr unsigned kRayLength = 512;
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kBallRadius = 850.f;
+constexpr float kBallRadius = 800.f;
 
 // scale applied to each beam sample
-const auto kBeamMul = 6;
+constexpr auto kBeamMul = 4;
 
 // how much (indexing gradient) to darken the beam while it's extruded
-// const auto kBeamExtMul = 4;
+constexpr auto kBeamExtMul = 3;
 
-static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
+static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, __m128i bgTint)
 {
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
@@ -70,7 +72,7 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 	__m128i beamAccum = _mm_setzero_si128();
 	const __m128i beamMul = g_gradientUnp[kBeamMul];
- //	const __m128i beamExtMul = g_gradientUnp[kBeamExtMul];
+ 	const __m128i beamExtMul = g_gradientUnp[kBeamExtMul];
 
 	int envU = (kMapSize>>1)<<8;
 	int envV = envU;
@@ -99,6 +101,10 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 #if !defined(NO_BEAMS)
 		// and beam (extrusion) color (while the prepared UVs are still intact)
 		const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+
+		// accumulate & add beam (separate map)
+		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
+		color = _mm_adds_epu16(color, beamAccum);
 #endif
 
 #if !defined(NO_ENV_MAP)
@@ -111,17 +117,8 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 #endif
 
-#if !defined(NO_BEAMS)
-
-		// accumulate & add beam (separate map)
-		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
-		color = _mm_adds_epu16(color, beamAccum);
-
-#endif
-
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
-
 
 		// voxel visible?
 		if (height > lastDrawnHeight)
@@ -145,15 +142,16 @@ static void vball_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 #else
 
 	// conservative beam glow (FIXME: remove?)
+//
 //	while (lastDrawnHeight < kTargetResX)
 //	{
-//		pDest[lastDrawnHeight++] = v2cISSE16(_mm_adds_epu16(lastColor, beamAccum));
+//		pDest[lastDrawnHeight++] = v2cISSE16(beamAccum);
 //		beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beamAccum, beamExtMul), 8);
 //	}
 
 	// beam fade out
 	const unsigned int remainder = kTargetResX-lastDrawnHeight;
-	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
+	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, bgTint); 
 
 #endif
 }
@@ -171,6 +169,8 @@ static void vball(uint32_t *pDest, float time)
 	constexpr float delta = fovAngle/kTargetResY;
 //	float curAngle = 0.f;
 
+	const __m128i bgTint = c2vISSE16(0x3fa2e1);
+
 	// cast rays
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
@@ -178,7 +178,7 @@ static void vball(uint32_t *pDest, float time)
 		float curAngle = iRay*delta;
 		float dX, dY;
 		voxel::calc_fandeltas(curAngle, dX, dY);
-		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
+		vball_ray(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY), bgTint);
 //		curAngle += delta;
 	}
 }

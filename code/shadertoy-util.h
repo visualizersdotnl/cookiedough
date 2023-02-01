@@ -123,12 +123,11 @@ namespace Shadertoy
 
 	// -- color write --
 
-	const __m128 chanScale = _mm_set1_ps(255.f);
-
 	// - writes 4 pixels at once
 	// - FIXME: swap R and B here?
 	VIZ_INLINE __m128i ToPixel4(const __m128 *colors)
 	{
+		const __m128 chanScale = _mm_set1_ps(255.f);
 		const __m128i iA = _mm_max_epi32(_mm_setzero_si128(), _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[0])));
 		const __m128i iB = _mm_max_epi32(_mm_setzero_si128(), _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[1])));
 		const __m128i iC = _mm_max_epi32(_mm_setzero_si128(), _mm_cvtps_epi32(_mm_mul_ps(chanScale, colors[2])));
@@ -149,6 +148,14 @@ namespace Shadertoy
 		return _mm_packus_epi16(AB, CD);
 	}
 
+	// - FIXME: swap R and B here?
+	VIZ_INLINE __m128i ToPixel(__m128 color)
+	{
+		const __m128 chanScale = _mm_set1_ps(255.f);
+		const __m128i iA = _mm_max_epi32(_mm_setzero_si128(), _mm_cvtps_epi32(_mm_mul_ps(chanScale, color)));
+		return iA;
+	}
+	
 	// -- basic primitives --
 
 	VIZ_INLINE float fSphere(const Vector3 &point, float radius)

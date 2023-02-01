@@ -263,3 +263,4 @@ void CombiBoxBlur32(
 	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
 	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
 }
+
