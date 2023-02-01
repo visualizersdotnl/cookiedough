@@ -174,12 +174,12 @@ namespace Shadertoy
 		return exp_ps(_mm_mul_ps(_mm_set1_ps(gamma), log_ps(color)));
 	}
 
-	// Michiel's palette
-	VIZ_INLINE Vector3 MichielPal(float time) {
+	// Michiel's palette (slightly modified)
+	VIZ_INLINE Vector3 MichielPal(float phase) {
 		return Vector3(
-			.1f-lutcosf(time/3.f)/(19.f*0.5f), 
+			.1f-lutcosf(phase/3.f)/(19.f*0.5f), 
 			.1f, 
-			.1f+lutcosf(time/14.f)/4.f);
+			.1f+lutcosf(phase/14.f)/4.f);
 	}
 
 	// IQ's palette function
