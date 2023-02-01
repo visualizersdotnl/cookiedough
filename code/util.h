@@ -86,7 +86,9 @@ void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 
 // blit 32-bit color buffer using the source buffer's alpha
 // use this to composite graphics on top of effects for ex.
+// BlitSrc32A(): alpha parameter will modulate source alpha ([0..1])
 void BlitSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes);
+void BlitSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes, float alpha);
 
 // same as above except it's simply additive
 void BlitAdd32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes);

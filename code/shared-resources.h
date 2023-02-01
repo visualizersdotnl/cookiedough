@@ -15,6 +15,9 @@ extern uint32_t *g_pNytrikMexico;
 // Alien's things for TPB-02 Xbox
 extern uint32_t *g_pXboxLogoTPB;
 
+// Thorsten's world famous Toypusher disco character (128x128)
+extern uint32_t *g_pToyPusherTiles[8];
+
 // render target resolution (let us agree to keep it's aspect ratio identical to the output resolution)
 constexpr size_t kTargetResX = kResX;
 constexpr size_t kTargetResY = kResY;

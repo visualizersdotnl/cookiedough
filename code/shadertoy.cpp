@@ -28,13 +28,15 @@
 
 // --- Sync. tracks ---
 
-// Aura for Laura sync. (currently not in use, FIXME):
+// Laura sync. 
 SyncTrack trackLauraSpeed;
 SyncTrack trackLauraYaw, trackLauraPitch, trackLauraRoll;
+SyncTrack trackLauraHue;
 
 // Nautilus sync.:
 SyncTrack trackNautilusRoll;
 SyncTrack trackNautilusHorzBlur;
+SyncTrack trackNautilusHue;
 
 // Spike (close) sync.:
 SyncTrack trackSpikeSpeed;
@@ -42,6 +44,7 @@ SyncTrack trackSpikeRoll;
 SyncTrack trackSpikeSpecular;
 SyncTrack trackSpikeDesaturation;
 SyncTrack trackDistSpikeWarmup; // specular-only glow blur effect, yanked from Aura for Laura
+SyncTrack trackSpikeHue;
 
 // Sinuses sync.:
 SyncTrack trackSinusesBrightness;
@@ -51,7 +54,6 @@ SyncTrack trackSinusesSpeed;
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
-static uint32_t *s_pQueenImg = nullptr;
 
 bool Shadertoy_Create()
 {
@@ -60,10 +62,12 @@ bool Shadertoy_Create()
 	trackLauraYaw = Rocket::AddTrack("lauraYaw");
 	trackLauraPitch = Rocket::AddTrack("lauraPitch");
 	trackLauraRoll = Rocket::AddTrack("lauraRoll");
+	trackLauraHue = Rocket::AddTrack("lauraHue");
 
 	// Nautilus:
 	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
 	trackNautilusHorzBlur = Rocket::AddTrack("nautilusHorzBlur");
+	trackNautilusHue = Rocket::AddTrack("nautilusHue");
 
 	// Spikes:
 	trackSpikeSpeed = Rocket::AddTrack("cSpikeSpeed");
@@ -71,6 +75,7 @@ bool Shadertoy_Create()
 	trackSpikeSpecular = Rocket::AddTrack("cSpikeSpecular");
 	trackSpikeDesaturation = Rocket::AddTrack("cSpikeDesaturation");
 	trackDistSpikeWarmup = Rocket::AddTrack("cDistSpikeWarmup");
+	trackSpikeHue = Rocket::AddTrack("cSpikeHue");
 
 	// Sinuses:
 	trackSinusesBrightness = Rocket::AddTrack("sinusesBrightness");
@@ -80,10 +85,6 @@ bool Shadertoy_Create()
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
 		return false;
-
-//	s_pQueenImg = Image_Load32("assets/shadertoy/Queen.png");
-//	if (nullptr == s_pQueenImg)
-//		return false;
 
 	return true;
 }
@@ -187,19 +188,20 @@ VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 
 static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
+	const float roll = Rocket::getf(trackNautilusRoll);
+	const float hue = Rocket::getf(trackNautilusHue);
+
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	fNautilus_global.x = time*0.125f;
 	fNautilus_global.y = time/9.f;
 	fNautilus_global.z = lutcosf(time*0.1428f);
 
-	// FIXME: parametrize (or at least a blend between sets)
+	// slightly different from MichielPal() for some reason
 	const Vector3 colorization(
-		.1f-lutcosf(time/3.f)/19.f, 
+		.1f-lutcosf(hue/3.f)/19.f, 
 		.1f, 
-		.1f+lutcosf(time/14.f)/8.f);
-
-	float roll = Rocket::getf(trackNautilusRoll);
+		.1f+lutcosf(hue/14.f)/8.f);
 
 	#pragma omp parallel for schedule(dynamic, 1) collapse(2)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -276,6 +278,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 //
 
 static Vector4 fSpike_global;
+
 VIZ_INLINE float fSpikey1(const Vector3 &position) 
 {
 	constexpr float scale = kGoldenRatio*0.1f;
@@ -298,8 +301,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
+	const float hue = Rocket::getf(trackSpikeHue);
 
-	/* const */ Vector3 colorization = Shadertoy::MichielPal(time);
+	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
 
 	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
@@ -366,8 +370,9 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const float roll = Rocket::getf(trackSpikeRoll);
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
+	const float hue = Rocket::getf(trackSpikeHue);
 
-	const Vector3 colorization = Shadertoy::MichielPal(time);
+	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation); 
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
@@ -742,10 +747,11 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 	const float lauraYaw = Rocket::getf(trackLauraYaw);
 	const float lauraPitch = Rocket::getf(trackLauraPitch);
 	const float lauraRoll = Rocket::getf(trackLauraRoll);
+	const float hue = Rocket::getf(trackLauraHue);
 
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	/* const */ Vector3 colorization = Shadertoy::MichielPal(time); // Vector3(0.4f, 0.3f, 0.05f);
+	/* const */ Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, 0.1f);
 
 	Vector3 origin(0.f, 0.f, lauraSpeed*time);
@@ -762,7 +768,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY);
 
-				Vector3 direction(UV.x/kAspect, UV.y, 3.f); 
+				Vector3 direction(UV.x/kAspect, UV.y, kPI); 
 				Shadertoy::rotY(lauraYaw, direction.x, direction.z);
 				Shadertoy::rotX(lauraPitch, direction.y, direction.z);
 				Shadertoy::rotZ(lauraRoll*time, direction.x, direction.y);

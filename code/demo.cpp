@@ -70,11 +70,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 1:
 			{
 				Twister_Draw(pDest, timer, delta);
-
-				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-243)/2); // + 250;
-				const auto xOffs = ((kResX-263)/2); // - 300;
-				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 			}
 			break;
 	
@@ -95,7 +90,21 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 6:
-			Nautilus_Draw(pDest, timer, delta);
+			{
+				Nautilus_Draw(pDest, timer, delta);
+
+				// offsets
+				static_assert(kResX == 1280 && kResY == 720);
+				const auto yOffs = ((kResY-128)/2) + 290; // lower..  
+				auto xOffs = ((kResX-(128*8))/2) + 120;   // .. right corner
+
+				// now simply draw the 8 gentlemen	
+				for (int iGuy = 0; iGuy < 8; ++iGuy)
+				{
+					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
+					xOffs += 128;
+				}
+			}
 			break;
 
 		case 7:			
@@ -119,7 +128,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Laura_Draw(pDest, timer, delta);
 
 				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-243)/2) + 250;
+				const auto yOffs = ((kResY-243)/2) + 240;
 				const auto xOffs = 44; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 			}
