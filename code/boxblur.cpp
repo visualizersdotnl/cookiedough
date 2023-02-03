@@ -32,7 +32,7 @@ void BoxBlur_Destroy()
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
-	return (65535*256 / weight) >> 4;
+	return ((65536*255)/weight)>>4;
 }
 
 // add pixel to accumulator
@@ -68,15 +68,12 @@ void HorizontalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(pDest != pSrc);
+//	VIZ_ASSERT(pDest != pSrc);
 
 	// calculate actual kernel span
-	const float fKernelSpan = strength*(float)xRes;
+	const float fKernelSpan = strength*256.f;
 	unsigned kernelSpan = unsigned(fKernelSpan);
-	if (kernelSpan == 0)
-		kernelSpan = 1;
-
-//	kernelSpan = xRes/4 + 0;
+	kernelSpan = clampi(1, 255, kernelSpan);
 
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
@@ -99,7 +96,7 @@ void HorizontalBoxBlur32(
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
 	// ready, set, blur!
-//	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		auto destIndex = iY*xRes;
@@ -140,8 +137,8 @@ void HorizontalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
-			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
 			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
+			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
 		}
 	}
 }
@@ -154,8 +151,8 @@ void HorizontalBoxBlur32(
 // - but the level 1 cache on an average Ryzen is 64KB and at least 128KB on the Apple M, so, if the buffers aren't all that huge 
 //   (which they are not), even in HD, 1920 pixels is 7,5KB per line; so for now, based on this, I won't optimize this
 // - on a 486SX or so in the past you'd get into trouble as it had only 8KB which fit just enough for 256, but then you had more in L1 and
-//   that generally ruined the party; by now memory is just so much faster and cache in abudance...
-// - oh, and it's threaded to boot
+//   that generally ruined the party; by now memory is just so much faster and cache in abudance
+// - and it's threaded as well
 
 void VerticalBoxBlur32(
 	uint32_t *pDest,
@@ -164,13 +161,12 @@ void VerticalBoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(pDest != pSrc);
+//	VIZ_ASSERT(pDest != pSrc);
 
 	// calculate actual kernel span
-	const float fKernelSpan = strength*(yRes>>1);
-	const unsigned kernelSpan = unsigned(fKernelSpan);
-	if (0 == kernelSpan)
-		return;
+	const float fKernelSpan = strength*255.f;
+	unsigned kernelSpan = unsigned(fKernelSpan);
+	kernelSpan = clampi(1, 255, kernelSpan);
 
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
@@ -214,11 +210,11 @@ void VerticalBoxBlur32(
 		// pre-pass: up to full weight
 		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
 		{
-			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
-			addPos += xRes;
-
 			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
 			destIndex += xRes;
+
+			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
+			addPos += xRes;
 		}
 		
 		// main pass
@@ -237,32 +233,34 @@ void VerticalBoxBlur32(
 		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
 		if (subEdges)
 			accumulator = _mm_adds_epu16(accumulator, addRemainder);
-		
+
 		// post-pass: back to median weight
-		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
+		for (unsigned int iY = edgeSpan; iY > 0; --iY)
 		{
-
 			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
-			subPos += xRes;
+			subPos += xRes;	
 
-			pDest[destIndex] = Div(accumulator, edgeDivs[kernelMedian-iY-1]);
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
 			destIndex += xRes;
 		}
 	}
 }
 
-// -- "<Alucard> ..."" --
+// -- what it says on the tin --
 
-void CombiBoxBlur32(
+void BoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
 	unsigned int xRes,
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(xRes <= kResX && yRes <= kResY); // otherwise temporary buffer will be too small
+	VIZ_ASSERT(xRes <= kResX && yRes <= kResY);
 
-	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
-	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
+//	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
+//	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
+
+	// FIXME: temporary buffer (used above) added in "4 in the morning"-paranoia, we never read back
+//	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength/kAspect);
+	VerticalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
 }
-

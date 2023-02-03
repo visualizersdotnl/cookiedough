@@ -271,7 +271,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	if (blur >= 1.f && blur <= 100.f)
 	{
 		blur *= kBoxBlurScale;
-		CombiBoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, blur);
+		BoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, blur);
 		Fx_Blit_2x2(pDest, g_pFxMap[1]);
 	}
 	else

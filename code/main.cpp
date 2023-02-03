@@ -50,6 +50,7 @@
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for other targets there are likewise constants
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
+// - could probably be using more streamed (WC) writes, but pick those battles carefully
 
 // where to configure what?
 // - windowed mode and window title can be decided in main.cpp

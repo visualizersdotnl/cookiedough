@@ -20,7 +20,8 @@ void FxBlitter_Destroy()
 	freeAligned(g_pFxMap[1]);
 }
 
-// 2x2 blit (2 pixels per SSE write
+// 2x2 blit (2 pixels per SSE write)
+// FIXME: borders!
 void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
 	VIZ_ASSERT(kFxMapDiv == 2);
@@ -29,14 +30,14 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
 
 	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < kFxMapResY-1; ++iY)
+	for (int iY = 1; iY < kFxMapResY-1; ++iY)
 	{
-		const unsigned yIndex = iY*kFxMapResX;
-		const unsigned yIndex2 = (iY<<1)*kResX;
+		const unsigned mapIndexY = iY*kFxMapResX;
+		const unsigned destIndexY = (iY*kFxMapDiv)*kResX;
 
-		for (int iX = 0; iX < kFxMapResX-1; ++iX)
+		for (int iX = 1; iX < kFxMapResX-1; ++iX)
 		{
-			const unsigned iA = yIndex + iX;
+			const unsigned iA = mapIndexY + iX;
 			const unsigned iB = iA+1;
 			const unsigned iC = iA+kFxMapResX;
 			const unsigned iD = iC+1;
@@ -52,7 +53,7 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 			__m128i fromY0 = _mm_slli_epi32(colA, 16);
 			__m128i fromY1 = _mm_slli_epi32(colC, 16);
 
-			auto destIndex = yIndex2 + (iX<<1);
+			auto destIndex = destIndexY + (iX*kFxMapDiv);
 			destIndex >>= 1;
 
 			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);

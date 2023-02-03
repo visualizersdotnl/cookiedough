@@ -51,7 +51,7 @@ static unsigned s_heightProj[kMaxRayLength];
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
-constexpr float kMaxBallRadius = 900.f;
+constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
 // scale applied to each beam sample
 constexpr auto kBeamMul = 4;
@@ -313,16 +313,16 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, false);
 
-	memset32(pDest, 0xffffff, kResX*kResY);
-	BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+//	memset32(pDest, 0xffffff, kResX*kResY);
+//	BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 
 	// blur (optional)
 	float blur = Rocket::getf(trackBallBlur);
 	if (blur >= 1.f && blur <= 100.f)
 	{
 		blur *= kBoxBlurScale;
-		memcpy(g_renderTarget, pDest, kOutputBytes);
-		HorizontalBoxBlur32(pDest, g_renderTarget, kResX, kResY, blur);
+		memcpy(g_renderTarget, pDest, kOutputSize);
+		HorizontalBoxBlur32(pDest, pDest, kResX, kResY, blur);
 	}
 
 #if 0

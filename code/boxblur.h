@@ -26,7 +26,7 @@ void VerticalBoxBlur32(
 	float strength);
 
 // full 2D blur
-void CombiBoxBlur32(
+void BoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
 	unsigned int xRes,
