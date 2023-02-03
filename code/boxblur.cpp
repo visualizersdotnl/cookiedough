@@ -137,7 +137,7 @@ void HorizontalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX]);
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
 		}
 	}
@@ -210,11 +210,11 @@ void VerticalBoxBlur32(
 		// pre-pass: up to full weight
 		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
 		{
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
-			destIndex += xRes;
-
 			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
 			addPos += xRes;
+
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
+			destIndex += xRes;
 		}
 		
 		// main pass
@@ -237,11 +237,11 @@ void VerticalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iY = edgeSpan; iY > 0; --iY)
 		{
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
+			destIndex += xRes;
+
 			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
 			subPos += xRes;	
-
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
-			destIndex += xRes;
 		}
 	}
 }
@@ -257,10 +257,10 @@ void BoxBlur32(
 {
 	VIZ_ASSERT(xRes <= kResX && yRes <= kResY);
 
+	// FIXME: what kind of nasty bug is this covering for?
 //	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
 //	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
 
-	// FIXME: temporary buffer (used above) added in "4 in the morning"-paranoia, we never read back
-//	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength/kAspect);
-	VerticalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
+	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
+	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
 }

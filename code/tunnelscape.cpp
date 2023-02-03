@@ -74,7 +74,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		int height = 256-mapHeight;		
 		height -= kMapViewHeight;
 		height <<= 8;
-		height /= int(height/kMapViewLenScale); // FIXME: this is pure evil, heed the FIXME above soon!
+		height = int(height/kMapViewLenScale); // FIXME: this is pure evil, heed the FIXME above soon!
 		height /= iStep+1;          //
 		height *= kMapScale;
 		height >>= 8;
@@ -161,9 +161,9 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	memset32(g_renderTarget, s_pFogGradient[0], kTargetResX*kTargetResY);
 	tscape(g_renderTarget, time);
 
-	// radial blur
-//	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 1.f*kBoxBlurScale);
-
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest, true);
+
+	// FIXME: parametrize
+	BoxBlur32(pDest, pDest, kResX, kResY, 1.f*kBoxBlurScale);
 }

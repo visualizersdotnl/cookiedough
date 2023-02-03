@@ -14,8 +14,10 @@
 #pragma once
 
 constexpr unsigned kFxMapDiv = 2;
+
 constexpr size_t kFxMapResX = kResX/kFxMapDiv;
 constexpr size_t kFxMapResY = kResY/kFxMapDiv;
+
 constexpr size_t kFxMapSize = kFxMapResX*kFxMapResY;
 constexpr size_t kFxMapBytes = kFxMapSize*sizeof(uint32_t);
 

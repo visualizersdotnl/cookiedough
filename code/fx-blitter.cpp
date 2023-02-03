@@ -21,21 +21,21 @@ void FxBlitter_Destroy()
 }
 
 // 2x2 blit (2 pixels per SSE write)
-// FIXME: borders!
+// FIXME: render to bigger map (X+1, Y+1) instead of copy hack below
 void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
-	VIZ_ASSERT(kFxMapDiv == 2);
-
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
 
+	uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
+
 	#pragma omp parallel for schedule(static)
-	for (int iY = 1; iY < kFxMapResY-1; ++iY)
+	for (int iY = 0; iY < kFxMapResY-1; ++iY)
 	{
 		const unsigned mapIndexY = iY*kFxMapResX;
 		const unsigned destIndexY = (iY*kFxMapDiv)*kResX;
 
-		for (int iX = 1; iX < kFxMapResX-1; ++iX)
+		for (int iX = 0; iX < kFxMapResX-1; ++iX)
 		{
 			const unsigned iA = mapIndexY + iX;
 			const unsigned iB = iA+1;
@@ -56,8 +56,6 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 			auto destIndex = destIndexY + (iX*kFxMapDiv);
 			destIndex >>= 1;
 
-			uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
-
 			for (int iPixel = 0; iPixel < 2; ++iPixel)
 			{
 				__m128i step = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(fromY1, fromY0), 16), divisor);
@@ -73,7 +71,17 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 				fromY1 = _mm_add_epi32(fromY1, stepY1);
 			}
 		}
+
+		// Border: copy last 2 pixels for both dest. columns
+		const auto destIndex = (destIndexY + ((kFxMapResX-2)*kFxMapDiv))>>1;
+		pCopy[destIndex+1] = pCopy[destIndex];
+		pCopy[destIndex+1+(kResX>>1)] = pCopy[destIndex+(kResX>>1)];
 	}
+
+	// Copy last 2 dest. rows
+	auto srcIndex = (kResY-4)*kResX;
+	auto destIndex = srcIndex + kResX*2;
+	memcpy(pDest+destIndex, pDest+srcIndex, kResX*2*sizeof(uint32_t));
 }
 
 void FxBlitter_DrawTestPattern(uint32_t* pDest)

@@ -21,13 +21,13 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 9;
 
 // trace depth
-const unsigned int kRayLength = 256;
+const unsigned int kRayLength = 128;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kCylRadius = 440.f;
+const float kCylRadius = 300.f;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {
@@ -87,8 +87,8 @@ static void vtwister(uint32_t *pDest, float time)
 		const int fromY = ftofp24(mapY + time*25.f);
 
 		const size_t xOffs = iRay*kTargetResX + (kTargetResX>>1);
-		vtwister_ray(pDest+xOffs, fromX, fromY,  256);
-		vtwister_ray(pDest+(xOffs-1), fromX, fromY, -256);
+		vtwister_ray(pDest+xOffs, fromX, -fromY,  256);
+		vtwister_ray(pDest+(xOffs-1), fromX, -fromY, -256);
 	}
 }
 
@@ -130,7 +130,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 	vtwister(g_renderTarget, time);
 
 	// (radial) blur
-	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, kGoldenRatio*0.01f);
+	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 15.f*kBoxBlurScale);
 
 	// polar blit
 	Polar_Blit(g_renderTarget, pDest);
