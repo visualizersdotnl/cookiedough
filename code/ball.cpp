@@ -329,7 +329,7 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// polar blit
-	Polar_Blit(pDest, g_renderTarget[0], true);
+	Polar_Blit(pDest, g_renderTarget[0], false);
 
 //	memset32(pDest, 0xffffff, kResX*kResY);
 //	BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
