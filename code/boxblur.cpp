@@ -16,7 +16,7 @@ static uint32_t *s_pTempBuf = nullptr;
 
 bool BoxBlur_Create()
 {
-	s_pTempBuf = static_cast<uint32_t *>(mallocAligned(kOutputSize, kAlignTo));
+//	s_pTempBuf = static_cast<uint32_t *>(mallocAligned(kOutputSize, kAlignTo));
 
 	return true;
 }
@@ -38,7 +38,9 @@ VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 // add pixel to accumulator
 VIZ_INLINE void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
 {
-	const __m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
+	__m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
+//	const __m128i alphaUnp = _mm_shufflelo_epi16(pixelUnp, 0xff);
+//	pixelUnp = _mm_srli_epi16(_mm_mullo_epi16(pixelUnp, alphaUnp), 8);
 	accumulator = _mm_adds_epu16(accumulator, remainder);
 	remainder = _mm_srli_epi16(pixelUnp, remainderShift);
 	accumulator = _mm_adds_epu16(accumulator, _mm_subs_epu16(pixelUnp, remainder));
@@ -47,7 +49,9 @@ VIZ_INLINE void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel, un
 // subtract pixel from accumulator
 VIZ_INLINE void Sub(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
 {
-	const __m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
+	__m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
+//	const __m128i alphaUnp = _mm_shufflelo_epi16(pixelUnp, 0xff);
+//	pixelUnp = _mm_srli_epi16(_mm_mullo_epi16(pixelUnp, alphaUnp), 8);
 	accumulator = _mm_subs_epu16(accumulator, remainder);
 	remainder = _mm_srli_epi16(pixelUnp, remainderShift);
 	accumulator = _mm_subs_epu16(accumulator, _mm_subs_epu16(pixelUnp, remainder));
@@ -71,7 +75,7 @@ void HorizontalBoxBlur32(
 //	VIZ_ASSERT(pDest != pSrc);
 
 	// calculate actual kernel span
-	const float fKernelSpan = strength*256.f;
+	const float fKernelSpan = strength*255.f;
 	unsigned kernelSpan = unsigned(fKernelSpan);
 	kernelSpan = clampi(1, 255, kernelSpan);
 
@@ -82,8 +86,8 @@ void HorizontalBoxBlur32(
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
-	static __m128i edgeDivs[kResX];
-	VIZ_ASSERT(kernelMedian < kResX);
+	static __m128i edgeDivs[256];
+	VIZ_ASSERT(kernelMedian < 256);
 	const unsigned int startWeight = (kernelMedian << 4) + (subEdges<<3); // FIXME: 0.5 weight bias during pre-pass
 	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
 	{
@@ -137,7 +141,7 @@ void HorizontalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
 		}
 	}
@@ -175,8 +179,8 @@ void VerticalBoxBlur32(
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
-	static __m128i edgeDivs[kResY];
-	VIZ_ASSERT(kernelMedian < kResY);
+	static __m128i edgeDivs[256];
+	VIZ_ASSERT(kernelMedian < 256);
 	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3);
 	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
 	{
@@ -237,7 +241,7 @@ void VerticalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iY = edgeSpan; iY > 0; --iY)
 		{
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
 			destIndex += xRes;
 
 			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
@@ -257,7 +261,7 @@ void BoxBlur32(
 {
 	VIZ_ASSERT(xRes <= kResX && yRes <= kResY);
 
-	// FIXME: what kind of nasty bug is this covering for?
+	// FIXME: what kind of nasty bug was this covering for?
 //	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
 //	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
 

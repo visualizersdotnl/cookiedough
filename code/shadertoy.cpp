@@ -271,8 +271,8 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	if (blur >= 1.f && blur <= 100.f)
 	{
 		blur *= kBoxBlurScale;
-		Fx_Blit_2x2(g_renderTarget, g_pFxMap[0]);
-		BoxBlur32(pDest, g_renderTarget, kResX, kResY, blur);
+		Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+		BoxBlur32(pDest, g_renderTarget[0], kResX, kResY, blur);
 	}
 	else
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
@@ -526,8 +526,8 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name "warmup")
 			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap[0], time, 1.f+warmup);
 //			HorizontalBoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, warmup*0.005f*kGoldenRatio);
-			Fx_Blit_2x2(g_renderTarget, g_pFxMap[0]);
-			HorizontalBoxBlur32(pDest, g_renderTarget, kResX, kResY, warmup*0.005f*kGoldenRatio);
+			Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+			HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, warmup*0.005f*kGoldenRatio);
 		}
 	}
 

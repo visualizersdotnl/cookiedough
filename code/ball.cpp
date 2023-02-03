@@ -34,9 +34,10 @@ SyncTrack trackBallHasBeams;
 // - fix environment mapping & very basic lighting (shouldn't be too hard to derive a normal)
 // - try to add a background: render the effect to separate target, then impose on background
 // - try to move the object around
+// - rotation speed differs when altering trace depth
 // - orange were doing something to curtail the beams, figure out what
 
-#define NO_ENV_MAP
+// #define NO_ENV_MAP
 
 // adjust to map resolution
 constexpr unsigned kMapSize = 512;
@@ -53,23 +54,29 @@ static unsigned s_curRayLength = kMaxRayLength;
 // max. radius (in pixels)
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
-// scale applied to each beam sample
-constexpr auto kBeamMul = 4;
+// applied to each beam sample
+constexpr auto kBeamMod = 4;
 
-// how much (indexing gradient) to darken the beam while it's extruded
-constexpr auto kBeamExtMul = 3;
+// unused
+//constexpr auto kBeamExtMul = 3;
 
 static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY, __m128i bgTint)
 {
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
 
-	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
+	unsigned int U0, V0, U1, V1, fracU, fracV;
+	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
+	__m128i lastColor = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+//	*pDest = v2cISSE16(lastColor);
 
-	__m128i beamAccum = _mm_setzero_si128();
-	const __m128i beamMul = g_gradientUnp[kBeamMul];
- 	const __m128i beamExtMul = g_gradientUnp[kBeamExtMul];
+//	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
+//	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
+
+	const __m128i beamMod = g_gradientUnp[kBeamMod];
+	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+	__m128i beamAccum =  _mm_srli_epi16(_mm_mullo_epi16(beam, beamMod), 8);
+// 	const __m128i beamExtMul = g_gradientUnp[kBeamExtMul];
 
 	int envU = (kMapSize>>1)<<8;
 	int envV = envU;
@@ -96,10 +103,11 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY,
 		__m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// and beam (extrusion) color (while the prepared UVs are still intact)
-		const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 
 		// accumulate & add beam (separate map)
-		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMul), 8));
+//		const __m128i beamAlphaUnp = _mm_srli_epi16(_mm_mullo_epi16(beamMod, _mm_shufflelo_epi16(beam, 0xff)), 8);
+		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMod), 8));
 		color = _mm_adds_epu16(color, beamAccum);
 
 #if !defined(NO_ENV_MAP)
@@ -130,7 +138,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY,
 	}
 
 	// beam fade out
-	const unsigned int remainder = kTargetResX-lastDrawnHeight;
+	const unsigned int remainder = (kTargetResX-1)-lastDrawnHeight;
 	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, bgTint); 
 }
 
@@ -235,7 +243,7 @@ static void vball(uint32_t *pDest, float time)
 //	float curAngle = 0.f;
 
 	// background tint (FIXME: parametrize / do away with)
-	const __m128i bgTint = c2vISSE16(0x1c075c);
+	const __m128i bgTint = c2vISSE16(0x52597e);
 
 	// cast rays
 	#pragma omp parallel for schedule(static)
@@ -278,7 +286,7 @@ bool Ball_Create()
 		return false;
 
 	// load env. map
-	s_pEnvMap = Image_Load32("assets/ball/envmap1.jpg");
+	s_pEnvMap = Image_Load32("assets/ball/envmap2.jpg");
 	if (s_pEnvMap == NULL)
 		return false;
 
@@ -308,14 +316,25 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[1]), 512*512/4 /* function processes 4 8-bit components at a time */, spikes);
 
 	// render unwrapped ball
-	vball(g_renderTarget, time);
+	vball(g_renderTarget[0], time);
+
+#if 1
+	// blur (optional)
+	float blur = Rocket::getf(trackBallBlur);
+	if (blur >= 1.f && blur <= 100.f)
+	{
+		blur *= kBoxBlurScale;
+		HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blur);
+	}
+#endif
 
 	// polar blit
-	Polar_Blit(g_renderTarget, pDest, false);
+	Polar_Blit(pDest, g_renderTarget[0], true);
 
 //	memset32(pDest, 0xffffff, kResX*kResY);
 //	BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 
+#if 0
 	// blur (optional)
 	float blur = Rocket::getf(trackBallBlur);
 	if (blur >= 1.f && blur <= 100.f)
@@ -324,10 +343,11 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 		memcpy(g_renderTarget, pDest, kOutputSize);
 		HorizontalBoxBlur32(pDest, pDest, kResX, kResY, blur);
 	}
+#endif
 
 #if 0
 	// debug blit: unwrapped
-	const uint32_t *pSrc = g_renderTarget;
+	const uint32_t *pSrc = g_renderTarget[0];
 	for (unsigned int iY = 0; iY < kResY; ++iY)
 	{
 		memcpy(pDest, pSrc, kTargetResX*4);

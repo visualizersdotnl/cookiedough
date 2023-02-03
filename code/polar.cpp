@@ -17,18 +17,17 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 	const float halfResY = destResY/2.f;
 
 	// calculate cartesian-to-polar transform map (srcRes -> destRes)
+	unsigned iPixel = 0;
 	const float maxDist = sqrtf(halfResX*halfResX + halfResY*halfResY);
-	for (unsigned int iPixel = 0, iY = 0; iY < destResY; ++iY)
+	for (float Y = -halfResY; Y < halfResY; Y += 1.f)
 	{
-		for (unsigned int iX = 0; iX < destResX; ++iX)
+		for (float X = -halfResX; X < halfResX; X += 1.f)
 		{
-			const float X = (float) iX - halfResX;
-			const float Y = (float) iY - halfResY;
 			const float distance = sqrtf(X*X + Y*Y) / maxDist;
 			float theta = atan2f(Y, X);
 			theta += kPI;
 			theta /= kPI*2.f;
-			const float U    = distance * (srcResX-1.f);
+			const float U    = distance*(srcResX-1.f);
 			const float invU = (1.f-distance) * (srcResX-1.f);
 			const float V    = theta * (srcResY-1.f);
 
@@ -36,12 +35,14 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 			// it's a simple reverse (read previous pixel first & invert weight)
 
 			if (U == srcResX-1.f)
-				pInvDest[iPixel] = pDest[iPixel] = (srcResX-2)<<8 | 0xff;
+				pDest[iPixel] = (srcResX-2)<<8 | 0xff;
 			else
-			{
 				pDest[iPixel] = ftofp24(U);
+
+			if (invU == srcResX)
+				pInvDest[iPixel] = (srcResX-2)<<8 | 0xff;
+			else
 				pInvDest[iPixel] = ftofp24(invU);
-			}
 
 			if (V == srcResY-1.f)
 				pInvDest[iPixel+1] = pDest[iPixel+1] = ((srcResY-2))<<8 | 0xff;
@@ -90,7 +91,7 @@ VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc, const unsigned target
 }
 
 // minor cache penalties are incurred, but L1 should always have us covered on modern CPUs
-void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
+void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
 {
 	int *pRead = (!inverse) ? s_pMap : s_pInvMap;
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
@@ -109,7 +110,7 @@ void Polar_Blit(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false *
 	}
 }
 
-void Polar_Blit_2x2(const uint32_t *pSrc, uint32_t *pDest, bool inverse /* = false */)
+void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
 {
 	int *pRead = (!inverse) ? s_pMap : s_pInvMap;
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);

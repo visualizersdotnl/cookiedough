@@ -125,13 +125,13 @@ void Twister_Destroy()
 
 void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
-	// render twister
-	memset32(g_renderTarget, 0x1f0053, kTargetSize);
-	vtwister(g_renderTarget, time);
+	// render twister (FIXME: background (color))
+	memset32(g_renderTarget[0], 0x1f0053, kTargetSize);
+	vtwister(g_renderTarget[0], time);
 
 	// (radial) blur
-	HorizontalBoxBlur32(g_renderTarget, g_renderTarget, kTargetResX, kTargetResY, 15.f*kBoxBlurScale);
+	HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, 15.f*kBoxBlurScale);
 
 	// polar blit
-	Polar_Blit(g_renderTarget, pDest);
+	Polar_Blit(pDest, g_renderTarget[0]);
 }

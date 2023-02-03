@@ -158,12 +158,12 @@ void Tunnelscape_Destroy()
 
 void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 {
-	memset32(g_renderTarget, s_pFogGradient[0], kTargetResX*kTargetResY);
-	tscape(g_renderTarget, time);
+	memset32(g_renderTarget[0], s_pFogGradient[0], kTargetResX*kTargetResY);
+	tscape(g_renderTarget[0], time);
 
 	// polar blit
-	Polar_Blit(g_renderTarget, pDest, true);
+	Polar_Blit(pDest, g_renderTarget[0], true);
 
 	// FIXME: parametrize
-	BoxBlur32(pDest, pDest, kResX, kResY, 1.f*kBoxBlurScale);
+	BoxBlur32(pDest, pDest, kResX, kResY, 3.f*kBoxBlurScale);
 }

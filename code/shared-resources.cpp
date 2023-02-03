@@ -6,7 +6,7 @@
 
 __m128i g_gradientUnp[256];
 
-uint32_t *g_renderTarget = nullptr;
+uint32_t *g_renderTarget[2] = { nullptr };
 
 uint32_t *g_pNytrikMexico = nullptr;
 
@@ -21,7 +21,8 @@ bool Shared_Create()
 		g_gradientUnp[iPixel] = c2vISSE16(iPixel * 0x01010101);
 
 	// allocate render target
-	g_renderTarget = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
+	g_renderTarget[0] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
+	g_renderTarget[1] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
 
 	// load Nytrik's "Mexico" logo
 	g_pNytrikMexico = Image_Load32("assets/TPB-Mexico-logo-01.jpg");
@@ -52,5 +53,6 @@ bool Shared_Create()
 
 void Shared_Destroy()
 {
-	freeAligned(g_renderTarget);
+	freeAligned(g_renderTarget[0]);
+	freeAligned(g_renderTarget[1]);
 }

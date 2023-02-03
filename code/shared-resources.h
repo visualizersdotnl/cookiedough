@@ -6,8 +6,8 @@
 // linear grayscale gradient (unpacked)
 extern __m128i g_gradientUnp[256];
 
-// render target
-extern uint32_t *g_renderTarget;
+// render targets
+extern uint32_t *g_renderTarget[2];
 
 // Nytrik's Mexico logo
 extern uint32_t *g_pNytrikMexico;
