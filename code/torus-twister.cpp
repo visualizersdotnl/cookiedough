@@ -20,7 +20,7 @@ const unsigned kMapSize = 512;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 const unsigned kMapShift = 9;
 
-// max. depth
+// trace depth
 const unsigned int kRayLength = 256;
 
 // height projection table

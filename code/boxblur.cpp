@@ -32,7 +32,7 @@ void BoxBlur_Destroy()
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
-	return ((65535*256) / weight) >> 4;
+	return (65535*256 / weight) >> 4;
 }
 
 // add pixel to accumulator
@@ -71,15 +71,17 @@ void HorizontalBoxBlur32(
 	VIZ_ASSERT(pDest != pSrc);
 
 	// calculate actual kernel span
-	const float fKernelSpan = strength*(xRes>>1);
-	const unsigned kernelSpan = unsigned(fKernelSpan);
-	if (0 == kernelSpan)
-		return;
+	const float fKernelSpan = strength*(float)xRes;
+	unsigned kernelSpan = unsigned(fKernelSpan);
+	if (kernelSpan == 0)
+		kernelSpan = 1;
+
+//	kernelSpan = xRes/4 + 0;
 
 	// derive edge details (even-sized kernels have subpixel edges)
 	const bool subEdges = (kernelSpan & 1) == 0;
 	const unsigned int edgeSpan = kernelSpan >> 1;
-	const unsigned int remainderShift = 1 + ((!subEdges)*7);
+	const unsigned int remainderShift = 1 + (!subEdges*7);
 	const unsigned int kernelMedian = edgeSpan + !subEdges;
 
 	// calculate divisors for edge passes
@@ -97,7 +99,7 @@ void HorizontalBoxBlur32(
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
 	// ready, set, blur!
-	#pragma omp parallel for schedule(static)
+//	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		auto destIndex = iY*xRes;
@@ -136,10 +138,10 @@ void HorizontalBoxBlur32(
 			accumulator = _mm_adds_epu16(accumulator, addRemainder);
 		
 		// post-pass: back to median weight
-		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
+		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			pDest[destIndex++] = Div(accumulator, edgeDivs[kernelMedian-iX-1]);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
 		}
 	}
 }

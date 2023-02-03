@@ -166,4 +166,9 @@ VIZ_INLINE int ftofp24(float value) { return (int) (value*256.f); }
 // arbitrary floating point to integer conversion
 VIZ_INLINE int ftofp(float value, float multiplier) { return (int) (value*multiplier); }
 
+// integer clamp (for curtailing Rocket parameters et cetera)
+VIZ_INLINE int clampi(int min, int max, int value) {
+	return std:: max<int>(min, std::min<int>(max, value));
+}
+
 #endif // _UTIL_H_

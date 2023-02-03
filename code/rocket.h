@@ -24,6 +24,6 @@ namespace Rocket
 
 	VIZ_INLINE int geti(const sync_track *track) 
 	{ 
-		return int(floor(get(track))); 
+		return int(roundf(getf(track))); 
 	}
 }

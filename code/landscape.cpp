@@ -22,7 +22,7 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize, document)
 constexpr float kMapViewLenScale = 0.314f*0.5f;
-constexpr int kMapViewHeight = 40;
+constexpr int kMapViewHeight = 60;
 constexpr int kMapTilt = 190;
 constexpr int kMapScale = 500;
 
@@ -31,7 +31,7 @@ constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 constexpr unsigned kMapShift = 10;
 
-// max. depth
+// trace depth
 const unsigned int kRayLength = 512;
 
 static int s_mapTilt = kMapTilt;

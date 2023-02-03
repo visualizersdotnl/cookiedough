@@ -37,7 +37,7 @@ constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 constexpr unsigned kMapShift = 10;
 
-// max. depth
+// trace depth
 const unsigned int kRayLength = 512; // 256 -- used for fog table!
 
 static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
