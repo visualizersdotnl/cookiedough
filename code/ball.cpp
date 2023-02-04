@@ -42,7 +42,7 @@ SyncTrack trackBallBaseShapeIndex;
 // - move object around
 // - orange were doing something to curtail yet unify the beams: figure out what
 
-#define DEBUG_BALL_LIGHTING
+// #define DEBUG_BALL_LIGHTING
 
 // adjust to map resolution
 constexpr unsigned kMapSize = 512;
@@ -54,6 +54,7 @@ constexpr unsigned kMaxRayLength = 512;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
+static unsigned s_heightProjNorm[kMaxRayLength]; // [0..255] (for lighting calculations for ex.)
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
@@ -61,6 +62,9 @@ constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
 // applied to each beam sample
 constexpr auto kBeamMod = 6;
+
+// ambient added to light calc.
+constexpr unsigned kAmbient = 32;
 
 static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
@@ -164,17 +168,20 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
 
 		// lighting
-		const unsigned diffuse = std::min<unsigned>(65535, unsigned(powf(mapHeight, 2.f))) >> 8; // FIXME: use LUT or something else faster
-		__m128i lit = _mm_set1_epi16(diffuse);
+		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+		const __m128i lit = _mm_set1_epi16(diffuse);
+		const __m128i litWithAmbient = _mm_set1_epi16((diffuse+kAmbient)&0xff);
 
 #if defined(DEBUG_BALL_LIGHTING)
 
-		color = lit;
+		color = litWithAmbient;
 		color = _mm_adds_epu16(c2vISSE16(0xff000000), color); // no blending please
 
 #else
 
-		color = _mm_adds_epu16(color, _mm_srli_epi16(_mm_mullo_epi16(envCol, lit), 8));
+		color = _mm_adds_epu16(color, _mm_srli_epi16(_mm_mullo_epi16(envCol, litWithAmbient), 8));
+		color = _mm_adds_epu16(color, lit);
 
 #endif
 
@@ -207,8 +214,8 @@ static void vball_precalc()
 	for (unsigned int iAngle = 0; iAngle < s_curRayLength; ++iAngle)
 	{
 		const float angle = angStep*iAngle;
-		const float scale = radius*sinf(angle);
-		s_heightProj[iAngle] = (unsigned) scale;
+		s_heightProj[iAngle] = unsigned(radius*sinf(angle));
+		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle));
 	}
 }
 
@@ -343,8 +350,10 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 
 	// put it together (FIXME)
 	memcpy(pDest, s_pBackground, kOutputBytes);
-//	MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
-	Add32(pDest, g_renderTarget[1], kResX*kResY);
+
+	(Rocket::geti(trackBallHasBeams) != 0)
+		? Add32(pDest, g_renderTarget[1], kOutputSize)
+		: MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
 
 	// FIXME
 	BlitSrc32(pDest + (((kResY-384)>>1)+100)*kResX + (((kResX-512)>>1)+150), s_pOrange, kResX, 512, 384);

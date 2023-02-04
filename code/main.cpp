@@ -41,10 +41,10 @@
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
 // - adv. instruction set: SSE2 for x86, not set for 64-bit (SSE2 is implied)
-// - uses C++11 (and possibly C++14)
+// - uses C++20 (not really, but for OSX at least I'm using that standard)
 
 // important:
-// - executables are built to target/x86/ or target/x64/ -- run from that directory!
+// - Windows: executables are built to target/x86/ or target/x64/ -- run from that directory!
 // - keep DLLs (see above) up to date for each build
 // - (almost) always include main.h on top
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
