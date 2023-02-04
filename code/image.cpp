@@ -90,7 +90,7 @@ uint32_t *Image_Load32_CA(const std::string &pathC, const std::string &pathA)
 		return nullptr;
 
 	// load alpha image (promising to dispose of the pointer if one is returned)
-	uint8_t *pAlpha = static_cast<uint8_t *>(Image_Load(pathA, true, nullptr, true));
+	uint32_t *pAlpha = static_cast<uint32_t *>(Image_Load(pathA, false, nullptr, true));
 	if (nullptr == pAlpha)
 		return nullptr;
 
@@ -99,7 +99,7 @@ uint32_t *Image_Load32_CA(const std::string &pathC, const std::string &pathA)
 	// combine
 	for (unsigned iPixel = 0; iPixel < numPixels; ++iPixel)
 	{
-		*pColor++ = (*pColor & 0xffffff) | *pAlpha++;
+		pColor[iPixel] = (pColor[iPixel] & 0xffffff) | (pAlpha[iPixel] & 0xff)<<24;
 	}
 
 	freeAligned(pAlpha);

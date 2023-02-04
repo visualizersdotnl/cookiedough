@@ -11,4 +11,8 @@ void Image_Destroy();
 uint32_t *Image_Load32(const std::string &path);
 uint8_t *Image_Load8(const std::string &path);
 
+// old school separate color & alpha image loader (chiefly to toy with other people's art, TBH)
+// ** expects the alpha image to be a regular RGB JPEG **
+uint32_t *Image_Load32_CA(const std::string &pathC, const std::string &pathA);
+
 #endif // _IMAGE_H_
