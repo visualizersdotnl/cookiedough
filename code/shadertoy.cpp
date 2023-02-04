@@ -25,6 +25,7 @@
 #include "shadertoy-util.h"
 #include "boxblur.h"
 #include "rocket.h"
+#include "polar.h"
 
 // --- Sync. tracks ---
 
@@ -549,6 +550,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 //
 // FIXME:
 // - make it into some kind of flowery effect (like in Stars) that does not look terrible
+// - expected (hardcoded): 256x256 texture
 //
 
 static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
@@ -556,12 +558,13 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	// FIXME: parametrize
-	float boxy = 0.6f;
-	float flowerScale = 0.0314f;
-	float flowerFreq = 3.f;
-	float flowerPhase = time;
-	float speed = 4.f;
-	float roll = 0.f;
+	const float boxy = 0.6f * (0.5f + sinf(time)*0.5f);
+	const float flowerScale = 0.01f;
+	const float flowerFreq = 6.f;
+	const float flowerPhase = time;
+	const float speed = 4.f;
+	const float roll = time*0.6f;
+	const float radius = 3.f;
 
 	#pragma omp parallel for schedule(static)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -573,14 +576,16 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 1.f);
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 4.f);
 				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Shadertoy::rotX(time*0.3f, direction.y, direction.z);
 				Shadertoy::rotZ(roll, direction.x, direction.y);
+				Shadertoy::vFastNorm3(direction);
 
 				// FIXME: this seems very suitable for SIMD, but the FPS is good as it is
 				float A;
 				A = direction.x*direction.x + direction.y*direction.y;
-				A += flowerScale*lutsinf(atan2f(direction.y, direction.x)*flowerFreq + flowerPhase) - flowerScale;
+				A += flowerScale*lutcosf(atan2f(direction.y, direction.x)*flowerFreq + flowerPhase);
 
 				float absX = fabsf(direction.x);
 				float absY = fabsf(direction.y);
@@ -588,22 +593,20 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				A = lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
-				float radius = 1.f;
 				float T = radius*A;
 				Vector3 intersection = direction*T;
 
 				float U = atan2f(intersection.y, intersection.x)/kPI;
 				float V = intersection.z + time*speed;
-				float shade = expf(-0.003f*T*T);
-
-				int fpU = ftofp24(U*256.f);
-				int fpV = ftofp24(V*16.f);
+				float shade = 1.f-expf(-0.004f*T*T);
+				int fpU = ftofp24(U*512.f);
+				int fpV = ftofp24(V*8.f);
 
 				unsigned U0, V0, U1, V1, fracU, fracV;
 				bsamp_prepUVs(fpU, fpV, 255, 8, U0, V0, U1, V1, fracU, fracV);
 				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
 
-				color = _mm_mul_ps(color, _mm_set1_ps(shade));
+				color = Shadertoy::vLerp4(color, _mm_set1_ps(255.f), shade);
 
 				colors[iColor] = color;
 			}
@@ -617,7 +620,8 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderTunnelMap_2x2(g_pFxMap[0], time);
-	Fx_Blit_2x2(pDest, g_pFxMap[0]);
+	Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+	HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, 3.f*kBoxBlurScale);
 }
 
 //
