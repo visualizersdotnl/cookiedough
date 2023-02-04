@@ -45,6 +45,9 @@ SyncTrack trackSpikeSpecular;
 SyncTrack trackSpikeDesaturation;
 SyncTrack trackDistSpikeWarmup; // specular-only glow blur effect, yanked from Aura for Laura
 SyncTrack trackSpikeHue;
+SyncTrack trackDistSpikeX;
+SyncTrack trackDistSpikeY;
+SyncTrack trackDistSpikeZ;
 
 // Sinuses sync.:
 SyncTrack trackSinusesBrightness;
@@ -70,12 +73,15 @@ bool Shadertoy_Create()
 	trackNautilusHue = Rocket::AddTrack("nautilusHue");
 
 	// Spikes:
-	trackSpikeSpeed = Rocket::AddTrack("cSpikeSpeed");
-	trackSpikeRoll = Rocket::AddTrack("cSpikeRoll");
-	trackSpikeSpecular = Rocket::AddTrack("cSpikeSpecular");
-	trackSpikeDesaturation = Rocket::AddTrack("cSpikeDesaturation");
-	trackDistSpikeWarmup = Rocket::AddTrack("cDistSpikeWarmup");
-	trackSpikeHue = Rocket::AddTrack("cSpikeHue");
+	trackSpikeSpeed = Rocket::AddTrack("spikeSpeed");
+	trackSpikeRoll = Rocket::AddTrack("spikeRoll");
+	trackSpikeSpecular = Rocket::AddTrack("spikeSpecular");
+	trackSpikeDesaturation = Rocket::AddTrack("spikeDesaturation");
+	trackDistSpikeWarmup = Rocket::AddTrack("distSpikeWarmup");
+	trackSpikeHue = Rocket::AddTrack("spikeHue");
+	trackDistSpikeX = Rocket::AddTrack("distSpikeX");
+	trackDistSpikeY = Rocket::AddTrack("distSpikeY");
+	trackDistSpikeZ = Rocket::AddTrack("distSpikeZ");
 
 	// Sinuses:
 	trackSinusesBrightness = Rocket::AddTrack("sinusesBrightness");
@@ -380,11 +386,16 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 	const float hue = Rocket::getf(trackSpikeHue);
+	const float xOffs = Rocket::getf(trackDistSpikeX);
+	const float yOffs = Rocket::getf(trackDistSpikeY);
+	const float zOffs = Rocket::getf(trackDistSpikeZ);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation); 
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
+
+	const Vector3 origin(xOffs, yOffs, -2.614f + zOffs);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -398,7 +409,6 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
 
-				Vector3 origin(0.f, 0.f, -2.614f);
 				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);

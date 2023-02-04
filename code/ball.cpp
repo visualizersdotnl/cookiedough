@@ -46,7 +46,7 @@ constexpr unsigned kMapAnd = kMapSize-1;
 constexpr unsigned kMapShift = 9;
 
 // max. trace depth
-constexpr unsigned kMaxRayLength = 1024;
+constexpr unsigned kMaxRayLength = 512;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
