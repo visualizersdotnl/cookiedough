@@ -32,9 +32,8 @@ SyncTrack trackBallHasBeams;
 // -- voxel renderer --
 
 // my notes about the current situation:
-// - fix environment mapping & very basic lighting (shouldn't be too hard to derive a normal)
+// - fix environment mapping & very basic lighting (shouldn't be too hard to derive N*L)
 // - try to add a background: render the effect to separate target, then impose on background
-//   + now try to unroll the target and draw (on/with) it during vball_ray()
 // - try to move the object around
 // - rotation speed differs when altering trace depth
 // - orange were doing something to curtail the beams, figure out what
@@ -189,6 +188,12 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
+
+		// FIXME: test for lighting (WIP)
+		auto diffuse = mapHeight;
+		diffuse = (diffuse*diffuse)>>8;
+		const __m128i lit = c2vISSE16(diffuse*0x010101);
+		color = _mm_adds_epu16(color, lit);
 
 		// voxel visible?
 		if (height > lastDrawnHeight)
