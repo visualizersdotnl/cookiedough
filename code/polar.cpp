@@ -27,25 +27,25 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 			float theta = atan2f(Y, X);
 			theta += kPI;
 			theta /= kPI*2.f;
-			const float U    = distance*(srcResX-2.f);         // minus two, because for bilin. sampling we add 1
-			const float invU = (1.f-distance) * (srcResX-2.f); // 
-			const float V    = theta * (srcResY-2.f);          //
+			const float U    = distance*(srcResX-1.f);         // minus one, because for bilin. sampling we add 1
+			const float invU = (1.f-distance) * (srcResX-1.f); // 
+			const float V    = theta * (srcResY-1.f);          //
 
 			// non-zero edges must be patched in absence of tiling logic
 			// it's a simple reverse (read previous pixel first & invert weight)
 
-			if (U == srcResX-2.f)
-				pDest[iPixel] = (srcResX-3)<<8 | 0xff;
+			if (U == srcResX-1.f)
+				pDest[iPixel] = (srcResX-2)<<8 | 0xff;
 			else
 				pDest[iPixel] = ftofp24(U);
 	
-			if (invU == srcResX-2.f)
-				pInvDest[iPixel] = (srcResX-3)<<8 | 0xff;
+			if (invU == srcResX-1.f)
+				pInvDest[iPixel] = (srcResX-2)<<8 | 0xff;
 			else
 				pInvDest[iPixel] = ftofp24(invU);
 
-			if (V == srcResY-2.f)
-				pInvDest[iPixel+1] = pDest[iPixel+1] = ((srcResY-3))<<8 | 0xff;
+			if (V == srcResY-1.f)
+				pInvDest[iPixel+1] = pDest[iPixel+1] = ((srcResY-2))<<8 | 0xff;
 			else
 				pInvDest[iPixel+1] = pDest[iPixel+1] = ftofp24(V);
 
@@ -56,10 +56,10 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 
 bool Polar_Create()
 {
-	s_pMap       = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kCacheLine));
-	s_pInvMap    = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kCacheLine));
-	s_pMap2x2    = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kCacheLine));
-	s_pInvMap2x2 = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kCacheLine));
+	s_pMap       = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kAlignTo));
+	s_pInvMap    = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kAlignTo));
+	s_pMap2x2    = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kAlignTo));
+	s_pInvMap2x2 = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kAlignTo));
 
 	CalculateMaps(s_pMap, s_pInvMap, kTargetResX, kTargetResY, kResX, kResY);
 	CalculateMaps(s_pMap2x2, s_pInvMap2x2, kFxMapResX, kFxMapResY, kFxMapResX, kFxMapResY);

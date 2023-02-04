@@ -48,14 +48,14 @@ static void *Image_Load(const std::string &path, bool isGrayscale)
 	if (!isGrayscale)
 	{
 		// load as 32-bit ARGB
-		pPixels = mallocAligned(width*height*sizeof(uint32_t), kCacheLine);
+		pPixels = mallocAligned(width*height*sizeof(uint32_t), kAlignTo);
 		ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
 		ilCopyPixels(0, 0, 0, width, height, 1, IL_BGRA, IL_UNSIGNED_BYTE, pPixels);
 	}
 	else
 	{
 		// load as 8-bit grayscale
-		pPixels = mallocAligned(width*height, kCacheLine);
+		pPixels = mallocAligned(width*height, kAlignTo);
 		ilConvertImage(IL_LUMINANCE, IL_UNSIGNED_BYTE);
 		ilCopyPixels(0, 0, 0, width, height, 1, IL_LUMINANCE, IL_UNSIGNED_BYTE, pPixels);
 	}

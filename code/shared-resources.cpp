@@ -21,8 +21,8 @@ bool Shared_Create()
 		g_gradientUnp[iPixel] = c2vISSE16(iPixel * 0x01010101);
 
 	// allocate render target
-	g_renderTarget[0] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
-	g_renderTarget[1] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kCacheLine));
+	g_renderTarget[0] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
+	g_renderTarget[1] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
 
 	// load Nytrik's "Mexico" logo
 	g_pNytrikMexico = Image_Load32("assets/TPB-Mexico-logo-01.jpg");

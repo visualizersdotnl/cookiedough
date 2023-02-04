@@ -233,7 +233,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
 				{
 					// frame buffer
-					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kCacheLine));
+					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kAlignTo));
 					memset32(pDest, 0, kOutputSize);
 
 					Timer timer;

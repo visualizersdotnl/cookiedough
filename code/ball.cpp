@@ -17,6 +17,7 @@ static uint32_t *s_pColorMap = nullptr;
 static uint32_t *s_pBeamMap = nullptr;
 static uint32_t *s_pEnvMap = nullptr;
 static uint8_t *s_heightMapMix = nullptr;
+static uint32_t *s_pBackground = nullptr;
 
 // --- Sync. tracks ---
 
@@ -37,7 +38,7 @@ SyncTrack trackBallHasBeams;
 // - rotation speed differs when altering trace depth
 // - orange were doing something to curtail the beams, figure out what
 
-// #define NO_ENV_MAP
+#define NO_ENV_MAP
 
 // adjust to map resolution
 constexpr unsigned kMapSize = 512;
@@ -55,7 +56,7 @@ static unsigned s_curRayLength = kMaxRayLength;
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
 // applied to each beam sample
-constexpr auto kBeamMod = 4;
+constexpr auto kBeamMod = 6;
 
 // unused
 //constexpr auto kBeamExtMul = 3;
@@ -139,7 +140,8 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY,
 
 	// beam fade out
 	const unsigned int remainder = (kTargetResX-1)-lastDrawnHeight;
-	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, bgTint); 
+	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
+//	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, bgTint); 
 }
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY, __m128i bgTint)
@@ -201,9 +203,9 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		lastColor = color;
 	}
 
-	const auto cBgTint = v2cISSE16(bgTint);
+//	const auto cBgTint = v2cISSE16(bgTint);
 	while (lastDrawnHeight < kTargetResX)
-		pDest[lastDrawnHeight++] = cBgTint;
+		pDest[lastDrawnHeight++] = 0; // cBgTint;
 }
 
 static void vball_precalc()
@@ -242,7 +244,7 @@ static void vball(uint32_t *pDest, float time)
 	constexpr float delta = fovAngle/kTargetResY;
 //	float curAngle = 0.f;
 
-	// background tint (FIXME: parametrize / do away with)
+	// background tint (FIXME: do away with)
 	const __m128i bgTint = c2vISSE16(0x52597e);
 
 	// cast rays
@@ -290,7 +292,12 @@ bool Ball_Create()
 	if (s_pEnvMap == NULL)
 		return false;
 
-	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kCacheLine));
+	// load background (720p)
+	s_pBackground = Image_Load32("assets/ball/background_1280x720.png");
+	if (nullptr == s_pBackground)
+		return false;
+
+	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kAlignTo));
 
 	// initialize sync. track(s)
 	trackBallBlur = Rocket::AddTrack("ballBlur");
@@ -329,7 +336,12 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// polar blit
-	Polar_Blit(pDest, g_renderTarget[0], false);
+	Polar_Blit(g_renderTarget[1], g_renderTarget[0], false);
+
+	// 
+	memcpy(pDest, s_pBackground, kOutputBytes);
+	Add32(pDest, g_renderTarget[1], kResX*kResY);
+
 
 //	memset32(pDest, 0xffffff, kResX*kResY);
 //	BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
