@@ -27,7 +27,7 @@ void Image_Destroy()
 		freeAligned(pImage);
 }
 
-static void *Image_Load(const std::string &path, bool isGrayscale)
+static void *Image_Load(const std::string &path, bool isGrayscale, unsigned *pNumPixels = nullptr, bool noGC = false)
 {
 	ILuint image;
 	ilGenImages(1, &image);
@@ -62,7 +62,11 @@ static void *Image_Load(const std::string &path, bool isGrayscale)
 
 	ilDeleteImages(1, &image);
 
-	s_pGC.push_back(pPixels);
+	if (false == noGC)
+		s_pGC.push_back(pPixels);
+
+	if (nullptr != pNumPixels)
+		*pNumPixels = width*height;
 
 	return pPixels;
 }
@@ -75,4 +79,30 @@ uint32_t *Image_Load32(const std::string &path)
 uint8_t *Image_Load8(const std::string &path)
 {
 	return static_cast<uint8_t *>(Image_Load(path, true));
+}
+
+uint32_t *Image_Load32_CA(const std::string &pathC, const std::string &pathA)
+{
+	// load color image
+	unsigned numPixels;
+	uint32_t *pColor = static_cast<uint32_t *>(Image_Load(pathC, false, &numPixels, false));
+	if (nullptr == pColor)
+		return nullptr;
+
+	// load alpha image (promising to dispose of the pointer if one is returned)
+	uint8_t *pAlpha = static_cast<uint8_t *>(Image_Load(pathA, true, nullptr, true));
+	if (nullptr == pAlpha)
+		return nullptr;
+
+	VIZ_ASSERT(numPixels > 0);
+
+	// combine
+	for (unsigned iPixel = 0; iPixel < numPixels; ++iPixel)
+	{
+		*pColor++ = (*pColor & 0xffffff) | *pAlpha++;
+	}
+
+	freeAligned(pAlpha);
+
+	return pColor;
 }
