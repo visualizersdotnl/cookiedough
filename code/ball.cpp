@@ -34,6 +34,7 @@ SyncTrack trackBallHasBeams;
 // my notes about the current situation:
 // - fix environment mapping & very basic lighting (shouldn't be too hard to derive a normal)
 // - try to add a background: render the effect to separate target, then impose on background
+//   + now try to unroll the target and draw (on/with) it during vball_ray()
 // - try to move the object around
 // - rotation speed differs when altering trace depth
 // - orange were doing something to curtail the beams, figure out what
