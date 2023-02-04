@@ -21,13 +21,13 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 9;
 
 // trace depth
-const unsigned int kRayLength = 128;
+const unsigned int kRayLength = 196;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kCylRadius = 300.f;
+const float kCylRadius = 400.f;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {

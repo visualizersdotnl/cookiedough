@@ -1,5 +1,5 @@
 
-// cookiedough -- rsqrtf() implemention (inspired) by Carmack (Quake III)
+// cookiedough -- rsqrtf() implemention (inspired) by Carmack (Quake III); be warned: not necessarily faster given the instructions surrounding this!
 
 #pragma once
 

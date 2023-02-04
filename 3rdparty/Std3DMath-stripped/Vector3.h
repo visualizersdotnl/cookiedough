@@ -56,6 +56,9 @@ public:
  	Vector3(const Vector2 &vec2D, float z = 1.f) :
 		x(vec2D.x), y(vec2D.y), z(z), padding(0.f) {}
 
+	explicit Vector3(__m128 _vSSE) :
+		vSSE(_vSSE) {}
+
 	const Vector3 operator +(const Vector3 &B) const { return Add(*this, B); }
 	const Vector3 operator +(float B)          const { return Add(*this, Vector3(B)); }
 	const Vector3 operator -(const Vector3 &B) const { return Sub(*this, B); }

@@ -55,6 +55,10 @@ SyncTrack trackSinusesBrightness;
 SyncTrack trackSinusesRoll;
 SyncTrack trackSinusesSpeed;
 
+// Plasma sync:
+SyncTrack trackPlasmaSpeed;
+SyncTrack trackPlasmaHue;
+
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
@@ -89,6 +93,10 @@ bool Shadertoy_Create()
 	trackSinusesRoll = Rocket::AddTrack("sinusesRoll");
 	trackSinusesSpeed = Rocket::AddTrack("sinusesSpeed");
 
+	// Plasma:
+	trackPlasmaSpeed = Rocket::AddTrack("plasmaSpeed");
+	trackPlasmaHue = Rocket::AddTrack("plasmaHue");
+
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
 		return false;
@@ -112,18 +120,26 @@ VIZ_INLINE float fPlasma(const Vector3 &point, float time)
 	const float fX = sine + lutcosf(point.x*0.33f);
 	const float fY = sine + lutcosf(point.y*0.43f);
 	const float fZ = sine + lutcosf((5.f*time+point.z)*0.53f);
-//	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
-	return 1.f/Q3_rsqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
+	return sqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
+//	return 1.f/Q3_rsqrtf(fX*fX + fY*fY + fZ*fZ)-0.8f;
 }
 
 static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
+	const float speed = Rocket::getf(trackPlasmaSpeed);
+	const float hue   = Rocket::getf(trackPlasmaHue);
+
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const Vector3 colMulA(0.1f, 0.3f, 0.6f);
-	const Vector3 colMulB(0.05f, 0.1f, 0.2f);
+	// keeping as much out of the inner loop as possible, could not be effective in some cases (local variables, cache et cetera)
+	const Vector3 colMulA = Shadertoy::MichielPal(hue);
+	const Vector3 colMulB = Vector3(Shadertoy::Desaturate(colMulA, 0.8f));
 
-	const float t = time*0.77f;
+	time = time*speed;
+
+	const int cosIndex = tocosindex(time*0.314f*0.5f);
+	const float dirCos = lutcosf(cosIndex);
+	const float dirSin = lutsinf(cosIndex);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -137,34 +153,31 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			{
 				// idea: minus fifty gives a black bar on the left, ideal for an old school logo
 //				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
+				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 4.f);
 
-				auto UV = Shadertoy::ToUV_FxMap(iX+iColor+10, iY+20, 2.f);
-
-				const int cosIndex = tocosindex(t*0.314f*0.5f);
-				const float dirCos = lutcosf(cosIndex);
-				const float dirSin = lutsinf(cosIndex);
-
-				Vector3 direction(
+				const Vector3 direction(
 					dirCos*UV.x*kOneOverAspect - dirSin*0.75f,
 					UV.y,
 					dirSin*UV.x + dirCos*0.75f);
 
-				Vector3 origin = direction;
-				for (int step = 0; step < 34; ++step)
+				float total = 0.0f;
+				float march = 1.f;
+				Vector3 hit(0.f);
+				for (int iStep = 0; march > 0.01f && iStep < 32; ++iStep)
 				{
-					float march = fPlasma(origin, t);
-					if (fabsf(march) < 0.001f)
-						break;
+					hit.x = direction.x*total;
+					hit.y = direction.y*total;
+					hit.z = direction.z*total;
+					
+					march = fPlasma(hit, time);
 
-					origin.x += direction.x*march;
-					origin.y += direction.y*march;
-					origin.z += direction.z*march;
+					total += march;
 				}
 				
-				Vector3 color = colMulA*fPlasma(origin+direction, t) + colMulB*fPlasma(origin*0.5f, t); 
-				color *= 8.f - origin.x*0.5f;
+				Vector3 color = colMulA*march + colMulB*fPlasma(hit*0.5f, time); 
+				color *= 8.f - direction.x*0.5f;
 
-				colors[iColor] = color;
+				colors[iColor] = Shadertoy::GammaAdj(color, 2.27f);
 			}
 
 			const int index = (yIndex+iX)>>2;
