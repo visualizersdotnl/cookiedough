@@ -559,7 +559,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 
 	// FIXME: parametrize
 	const float boxy = 0.6f * (0.5f + sinf(time)*0.5f);
-	const float flowerScale = 0.01f;
+	const float flowerScale = 0.05f;
 	const float flowerFreq = 6.f;
 	const float flowerPhase = time;
 	const float speed = 4.f;
