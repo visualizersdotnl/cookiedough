@@ -335,7 +335,8 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 
 	// put it together (FIXME)
 	memcpy(pDest, s_pBackground, kOutputBytes);
-	MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
+//	MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
+	Add32(pDest, g_renderTarget[1], kResX*kResY);
 
 #if 0
 	// debug blit: unwrapped
