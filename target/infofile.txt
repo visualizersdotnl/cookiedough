@@ -10,43 +10,7 @@
 	:                  /__/                                         .
 	¦:.                                                             :
 	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:       BYPASS presents SHADER HEAVYWEIGHT GRAND PRIX 2019      :
+	:                     BYPASS presents <TITLE>                   :
 	:        a retrosexual promotion in co-operation with TPB       :
 
 
-	system requirements:
-		- any desktop GPU will do (software rendering)
-		- a *fast* x64 CPU with SSE 4.1
-		- Windows 10 (not tested on earlier versions)
-		- a working default audio adapter
-
-	we realize the CPU draw is hefty, so if it doesn't run well
-	do like you'd do if it concerned your GPU: watch on Youtube!
-		
-	"who's doing it?"
-		- graphics: Nytrik/Cocoon
-		- soundtrack: Dascon/Deadliners
-		- programming: Superplek/Bypass
-		- shading support: Weyland Yutani (RIP) (Nautilus shader)
-
-	how to enjoy:
-		- turn up the volume, dim the lights
-		- go to /target/x64, run VS17.exe
-
-	third party libraries used:
-		- SDL 2.0 & DevIL
-		- GNU Rocket by Kusma & contributors
-		- BASS sound system by Ian Luck
-		- Std3DMath by http://www.visualizers.nl
-		- sse_mathfun.h by Julien Pommier
-
-	source code: https://github.com/visualizersdotnl/cookiedough
-
-	Q: why software rendering?
-	A: I picked up an old codebase and before I knew it I was having fun with it
-
-	Q: who is the f*ck is Kurt Bevacqua? 
-	A: no friend of Tommy Lasorda
-	
-	Q: it does not run as intended
-	A: please report on Pouet.net or find me on Facebook

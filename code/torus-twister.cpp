@@ -9,9 +9,8 @@
 #include "boxblur.h"
 #include "polar.h"
 
-static uint8_t *s_pHeightMap = NULL;
-static uint32_t *s_pColorMap = NULL;
-static uint32_t *s_pBeamMap = NULL;
+static uint8_t *s_pHeightMap = nullptr;
+static uint32_t *s_pColorMap = nullptr;
 
 // -- voxel renderer --
 
@@ -110,10 +109,9 @@ bool Twister_Create()
 	vtwister_precalc();
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/twister/hmap_2.jpg");
-	s_pColorMap = Image_Load32("assets/twister/colormap.jpg");
-	s_pBeamMap = Image_Load32("assets/ball/beammap.jpg");
-	if (s_pHeightMap == NULL || s_pColorMap == NULL || s_pBeamMap == NULL)
+	s_pHeightMap = Image_Load8("assets/twister/by-orange/hmap_2.jpg");
+	s_pColorMap = Image_Load32("assets/twister/by-orange/colormap.jpg");
+	if (nullptr == s_pHeightMap || nullptr == s_pColorMap)
 		return false;
 
 	return true;

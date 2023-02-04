@@ -132,8 +132,8 @@ static void tscape(uint32_t *pDest, float time)
 bool Tunnelscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D7.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C7W.png");
+	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D7.png");
+	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C7W.png");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 

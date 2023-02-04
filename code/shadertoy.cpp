@@ -38,6 +38,7 @@ SyncTrack trackLauraHue;
 SyncTrack trackNautilusRoll;
 SyncTrack trackNautilusBlur;
 SyncTrack trackNautilusHue;
+SyncTrack trackNautilusSpeed;
 
 // Spike (close) sync.:
 SyncTrack trackSpikeSpeed;
@@ -76,6 +77,7 @@ bool Shadertoy_Create()
 	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
 	trackNautilusBlur = Rocket::AddTrack("nautilusBlur");
 	trackNautilusHue = Rocket::AddTrack("nautilusHue");
+	trackNautilusSpeed = Rocket::AddTrack("nautliusSpeed");
 
 	// Spikes:
 	trackSpikeSpeed = Rocket::AddTrack("spikeSpeed");
@@ -214,8 +216,11 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 {
 	const float roll = Rocket::getf(trackNautilusRoll);
 	const float hue = Rocket::getf(trackNautilusHue);
+	const float speed = Rocket::getf(trackNautilusSpeed);
 
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
+	time = time*speed;
 
 	fNautilus_global.x = time*0.125f;
 	fNautilus_global.y = time/9.f;
@@ -303,7 +308,6 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 //
 // FIXME:
 // - try to "fix" normals
-// - animate spikes: switching the frequency per axis along with the rotation might look cool (mind the aliasing)
 //
 
 static Vector4 fSpike_global;

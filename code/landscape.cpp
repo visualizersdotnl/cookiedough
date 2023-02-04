@@ -184,8 +184,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 bool Landscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/maps/D19.png");
-	s_pColorMap = Image_Load32("assets/scape/maps/C19w.png");
+	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D19.png");
+	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C19w.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
