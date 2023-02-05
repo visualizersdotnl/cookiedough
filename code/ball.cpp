@@ -31,6 +31,7 @@ SyncTrack trackBallRayLength;
 SyncTrack trackBallSpikes;
 SyncTrack trackBallHasBeams;
 SyncTrack trackBallBaseShapeIndex;
+SyncTrack trackBallSpeed;
 
 // --------------------
 	
@@ -38,10 +39,14 @@ SyncTrack trackBallBaseShapeIndex;
 
 // things that need attention:
 // - environment mapping & basic lighting, including Hoplite's "specular" (WIP)
-// - proper background visibility/blending
+//   + specular, how? just simplify the math by wiping out all the zeroes and see what rolls out?
+// - proper background visibility/blending (WIP)
+//   + problem with beam extrusion: due to sampling et cetera some black comes through, figure out the best way to modulate the alpha so it masks this
+//   + if it really does not work, you could do a lower resolution render of only the beams and *add* that during compositing separately
 // - move object around
 // - orange were doing something to curtail yet unify the beams: figure out what
 
+// only works for non-beam ball momentarily (FIXME?)
 // #define DEBUG_BALL_LIGHTING
 
 // adjust to map resolution
@@ -60,7 +65,7 @@ static unsigned s_curRayLength = kMaxRayLength;
 // max. radius (in pixels)
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
-// applied to each beam sample
+// to tame first beam sample
 constexpr auto kBeamMod = 6;
 
 // ambient added to light calc.
@@ -79,9 +84,8 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 //	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
 //	__m128i lastColor = c2vISSE16(s_pColorMap[0][U+V]);
 
-	const __m128i beamMod = g_gradientUnp[kBeamMod];
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i beamAccum =  _mm_srli_epi16(_mm_mullo_epi16(beam, beamMod), 8);
+	__m128i beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamMod]), 8);
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -97,11 +101,23 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		const unsigned int mapHeight = bsamp8(s_heightMapMix, U0, V0, U1, V1, fracU, fracV);
 		__m128i color = bsamp32_16(s_pColorMap[0], U0, V0, U1, V1, fracU, fracV);
 
-		// and beam (extrusion) color (while the prepared UVs are still intact)
+		// and beam (light shaft) color
 		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 
-		// accumulate & add beam (separate map)
-		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, beamMod), 8));
+		// light beam
+		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+		const __m128i lit = _mm_set1_epi16(diffuse);
+		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
+
+#if defined(DEBUG_BALL_LIGHTING)
+
+		color = lit;
+		color = _mm_adds_epu16(c2vISSE16(0xff<<24), color); // no blending please
+
+#endif
+
+		// add beam to color
 		color = _mm_adds_epu16(color, beamAccum);
 
 		// project height
@@ -121,9 +137,13 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		lastColor = color;
 	}
 
-	// beam fade out
-	const unsigned int remainder = (kTargetResX-1)-lastDrawnHeight;
-	cspanISSE16_noclip(pDest + lastDrawnHeight, 1, remainder, beamAccum, _mm_setzero_si128()); 
+	// beam extrusion (FIXME)
+	unsigned beamCol = v2cISSE16(beamAccum);
+	const unsigned beamAlpha = (beamCol>>16)&0xff; // take red channel for now (FIXME)
+	beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
+
+	while (lastDrawnHeight < kTargetResX)
+		pDest[lastDrawnHeight++] = beamCol;
 }
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
@@ -176,7 +196,7 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 #if defined(DEBUG_BALL_LIGHTING)
 
 		color = litWithAmbient;
-		color = _mm_adds_epu16(c2vISSE16(0xff000000), color); // no blending please
+		color = _mm_adds_epu16(c2vISSE16(0xff<<24), color); // no blending please
 
 #else
 
@@ -215,7 +235,7 @@ static void vball_precalc()
 	{
 		const float angle = angStep*iAngle;
 		s_heightProj[iAngle] = unsigned(radius*sinf(angle));
-		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle));
+		s_heightProjNorm[iAngle] = unsigned(256.f*cosf(angle));
 	}
 }
 
@@ -308,6 +328,7 @@ bool Ball_Create()
 	trackBallSpikes = Rocket::AddTrack("ballSpikes");
 	trackBallHasBeams = Rocket::AddTrack("ballHasBeams");
 	trackBallBaseShapeIndex = Rocket::AddTrack("ballBaseShapeIndex");
+	trackBallSpeed = Rocket::AddTrack("ballSpeed");
 
 	// FIXME
 	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
@@ -333,7 +354,7 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[0]), 512*512/4 /* function processes 4 8-bit components at a time */, spikes);
 
 	// render unwrapped ball
-	vball(g_renderTarget[0], time);
+	vball(g_renderTarget[0], time * Rocket::getf(trackBallSpeed));
 
 #if 1
 	// blur (optional)
@@ -351,9 +372,8 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	// put it together (FIXME)
 	memcpy(pDest, s_pBackground, kOutputBytes);
 
-	(Rocket::geti(trackBallHasBeams) != 0)
-		? Add32(pDest, g_renderTarget[1], kOutputSize)
-		: MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
+//	Add32(pDest, g_renderTarget[1], kOutputSize)
+	MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
 
 	// FIXME
 	BlitSrc32(pDest + (((kResY-384)>>1)+100)*kResX + (((kResX-512)>>1)+150), s_pOrange, kResX, 512, 384);

@@ -7,7 +7,8 @@
 extern __m128i g_gradientUnp[256];
 
 // render targets
-extern uint32_t *g_renderTarget[2];
+constexpr unsigned kNumRenderTargets = 4;
+extern uint32_t *g_renderTarget[kNumRenderTargets];
 
 // Nytrik's Mexico logo
 extern uint32_t *g_pNytrikMexico;

@@ -6,12 +6,10 @@
 
 __m128i g_gradientUnp[256];
 
-uint32_t *g_renderTarget[2] = { nullptr };
+uint32_t *g_renderTarget[kNumRenderTargets] = { nullptr };
 
 uint32_t *g_pNytrikMexico = nullptr;
-
 uint32_t *g_pXboxLogoTPB = nullptr;
-
 uint32_t *g_pToyPusherTiles[8] = { nullptr };
 
 bool Shared_Create()
@@ -20,9 +18,9 @@ bool Shared_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		g_gradientUnp[iPixel] = c2vISSE16(iPixel * 0x01010101);
 
-	// allocate render target
-	g_renderTarget[0] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
-	g_renderTarget[1] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
+	// allocate render targets
+	for (unsigned iTarget = 0; iTarget < kNumRenderTargets; ++iTarget)
+		g_renderTarget[iTarget] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
 
 	// load Nytrik's "Mexico" logo
 	g_pNytrikMexico = Image_Load32("assets/TPB-Mexico-logo-01.jpg");
@@ -53,6 +51,6 @@ bool Shared_Create()
 
 void Shared_Destroy()
 {
-	freeAligned(g_renderTarget[0]);
-	freeAligned(g_renderTarget[1]);
+	for (unsigned iTarget = 0; iTarget < kNumRenderTargets; ++iTarget)
+		freeAligned(g_renderTarget[iTarget]);
 }
