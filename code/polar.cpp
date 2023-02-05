@@ -21,20 +21,21 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 	const float maxDist = sqrtf(halfResX*halfResX + halfResY*halfResY);
 	for (float Y = -halfResY; Y < halfResY; Y += 1.f)
 	{
-		for (float X = -halfResX; X < halfResX; X += 1.f)
+		for (float X = -halfResX + kEpsilon; X < halfResX; X += 1.f)
 		{
 			const float distance = sqrtf(X*X + Y*Y) / maxDist;
 			float theta = atan2f(Y, X);
 			theta += kPI;
 			theta /= kPI*2.f;
-			const float U    = distance*(srcResX-1.f);         // minus one, because for bilin. sampling we add 1
-			const float invU = (1.f-distance) * (srcResX-1.f); // 
-			const float V    = theta * (srcResY-1.f);          //
+			const float U    = distance*(srcResX-1.f);         
+			const float invU = (1.f-distance) * (srcResX-1.f); 
+			const float V    = theta * (srcResY-1.f);          
 
 			// non-zero edges must be patched in absence of tiling logic
 			// it's a simple reverse (read previous pixel first & invert weight)
 
 			if (U == srcResX-1.f)
+//			if (U == srcResX == srcResX-1.f)
 				pDest[iPixel] = (srcResX-2)<<8 | 0xff;
 			else
 				pDest[iPixel] = ftofp24(U);
@@ -48,6 +49,11 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 				pInvDest[iPixel+1] = pDest[iPixel+1] = ((srcResY-2))<<8 | 0xff;
 			else
 				pInvDest[iPixel+1] = pDest[iPixel+1] = ftofp24(V);
+
+//			pDest[iPixel] = ftofp24(U);
+//			pDest[iPixel+1] = ftofp24(V);
+//			pInvDest[iPixel] = ftofp24(invU);
+//			pInvDest[iPixel+1] = ftofp24(V);
 
 			iPixel += 2;
 		}

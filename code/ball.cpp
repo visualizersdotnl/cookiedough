@@ -106,7 +106,6 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-//		const unsigned diffuse = (heightNorm*heightNorm)>>8;
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
 		const __m128i lit = _mm_set1_epi16(diffuse);
 		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
@@ -177,16 +176,21 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
-	unsigned int lastHeight = 0;
-	unsigned int lastDrawnHeight = 0; 
+	const auto fromX = curX;
+	const auto fromY = curY;
 
 	// grab first color
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[1], U0, V0, U1, V1, fracU, fracV);
+	*pDest = 0;
 
 	int envU = ((kMapSize>>1))<<8;
 	int envV = envU;
+
+	unsigned lastHeight = 0;
+//	unsigned lastHeightNorm = 0;
+	unsigned lastDrawnHeight = 0; 
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -214,20 +218,25 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
 
 		// lighting
-		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+
+		unsigned fullyLit = kAmbient+diffuse;
+		if (fullyLit > 255)
+			fullyLit = 255;
+
 		const __m128i lit = _mm_set1_epi16(diffuse);
-		const __m128i litWithAmbient = _mm_set1_epi16((diffuse+kAmbient)&0xff);
+		const __m128i litFull = _mm_set1_epi16(fullyLit);
 
 #if defined(DEBUG_BALL_LIGHTING)
 
-		color = litWithAmbient;
+		color = litFull;
 		color = _mm_adds_epu16(c2vISSE16(0xff<<24), color); // no blending please
 
 #else
 
-		color = _mm_adds_epu16(color, _mm_srli_epi16(_mm_mullo_epi16(envCol, litWithAmbient), 8));
-		color = _mm_adds_epu16(color, lit);
+		color = _mm_adds_epu16(color, _mm_srli_epi16(_mm_mullo_epi16(envCol, litFull), 8));
+		color = _mm_adds_epu16(color, lit); // extra shine
 
 #endif
 
@@ -239,9 +248,11 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
 			lastDrawnHeight = height;
+
 		}
 
 		lastHeight = height;
+//		lastHeightNorm = heightNorm;
 		lastColor = color;
 	}
 
@@ -257,11 +268,11 @@ static void vball_precalc()
 
 	// heights along ray wrap around half a circle
 	const float angStep = kPI/(s_curRayLength-1);
-	for (unsigned int iAngle = 0; iAngle < s_curRayLength; ++iAngle)
+	for (unsigned iAngle = 0; iAngle < s_curRayLength; ++iAngle)
 	{
 		const float angle = angStep*iAngle;
 		s_heightProj[iAngle] = unsigned(radius*sinf(angle));
-		s_heightProjNorm[iAngle] = unsigned(256.f*cosf(angle));
+		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle));
 	}
 }
 
