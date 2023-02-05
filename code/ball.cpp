@@ -41,13 +41,14 @@ SyncTrack trackBallSpeed;
 // - environment mapping & basic lighting, including Hoplite's "specular" (WIP)
 //   + specular, how? just simplify the math by wiping out all the zeroes and see what rolls out?
 // - proper background visibility/blending (WIP)
-//   + problem with beam extrusion: due to sampling et cetera some black comes through, figure out the best way to modulate the alpha so it masks this
 //   + if it really does not work, you could do a lower resolution render of only the beams and *add* that during compositing separately
 // - move object around
-// - orange were doing something to curtail yet unify the beams: figure out what
 
 // only works for non-beam ball momentarily (FIXME?)
 // #define DEBUG_BALL_LIGHTING
+
+// uses NTSC-weighted luminosity otherwise
+// #define BEAM_ALPHA_USE_RED 
 
 // adjust to map resolution
 constexpr unsigned kMapSize = 512;
@@ -66,7 +67,7 @@ static unsigned s_curRayLength = kMaxRayLength;
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
 // [0..255]
-constexpr auto kBeamStartShade = 6;
+constexpr auto kBeamStartShade = 3;
 
 // ambient added to light calc.
 constexpr unsigned kAmbient = 32;
@@ -76,16 +77,15 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
 
+	// grab first color
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[0], U0, V0, U1, V1, fracU, fracV);
-//	*pDest = v2cISSE16(lastColor);
 
-//	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-//	__m128i lastColor = c2vISSE16(s_pColorMap[0][U+V]);
-
+	// same for beam (scaled)
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
 	__m128i beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamStartShade]), 8);
+	__m128i lastBeamAccum = beamAccum;
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -106,6 +106,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+//		const unsigned diffuse = (heightNorm*heightNorm)>>8;
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
 		const __m128i lit = _mm_set1_epi16(diffuse);
 		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
@@ -131,19 +132,47 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
 			lastDrawnHeight = height;
+
+			// only extrude from the last drawn pixel onwards
+			lastBeamAccum = beamAccum;
 		}
 
 		lastHeight = height;
 		lastColor = color;
 	}
 
-	// beam extrusion (FIXME)
-	unsigned beamCol = v2cISSE16(beamAccum);
-	const unsigned beamAlpha = (beamCol>>16)&0xff; // take red channel for now (FIXME)
+	// beam extrusion (FIXME: first get it work right, then optimize)
+	// I could do all of this in SIMD, but that won't make it any more readable nor speed it up much
+
+	unsigned beamCol = v2cISSE16(lastBeamAccum);
+
+#if !defined(BEAM_ALPHA_USE_RED)
+
+	const auto beamB = (beamCol>>16)&0xff;
+	const auto beamG = (beamCol>>8)&0xff;
+	const auto beamR = beamCol&0xff;
+
+//	const float luminosity   = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
+	constexpr unsigned mulR = unsigned(0.0722f*65536); // RGB reversed!
+	constexpr unsigned mulG = unsigned(0.7152f*65536); //
+	constexpr unsigned mulB = unsigned(0.2126f*65536); // 
+	const auto luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
+
+	const unsigned beamAlpha = unsigned(luminosity);
 	beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
 
 	while (lastDrawnHeight < kTargetResX)
 		pDest[lastDrawnHeight++] = beamCol;
+
+#else
+
+	const unsigned beamAlpha = (beamCol>>16)&0xff;
+	beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
+
+	while (lastDrawnHeight < kTargetResX)
+		pDest[lastDrawnHeight++] = beamCol;
+
+#endif
 }
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
@@ -151,13 +180,10 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
 
+	// grab first color
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[1], U0, V0, U1, V1, fracU, fracV);
-//	*pDest = v2cISSE16(lastColor);
-
-//	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-//	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
 
 	int envU = ((kMapSize>>1))<<8;
 	int envV = envU;
