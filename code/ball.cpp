@@ -46,7 +46,6 @@ SyncTrack trackBallBeamAlphaMin;
 //   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
 // - move object around
 
-// only works for non-beam ball momentarily (FIXME?)
 // #define DEBUG_BALL_LIGHTING
 
 // uses NTSC-weighted luminosity otherwise
@@ -116,7 +115,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
 		const __m128i lit = _mm_set1_epi16(diffuse);
-		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
+		beamAccum = _mm_adds_epi16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
 
 #if defined(DEBUG_BALL_LIGHTING)
 
@@ -162,14 +161,14 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 //	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
 //	FIXME: SIMD version (use _mm_mulhi_epu16()), comes in handy for that luminosity blur too
-	constexpr unsigned mulR = unsigned(0.0722f*65536);
-	constexpr unsigned mulG = unsigned(0.7152f*65536);
-	constexpr unsigned mulB = unsigned(0.2126f*65536);
+	constexpr unsigned mulR = unsigned(0.0722f*65536.f);
+	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
+	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
 
-	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
+	const float luminosity = float ( ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16) );
 
 	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
-	const float alphaStep = 1.f/remainder;
+	const float alphaStep = 1.f/(remainder-1);
 
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
@@ -202,7 +201,6 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 	int envV = envU;
 
 	unsigned lastHeight = 0;
-//	unsigned lastHeightNorm = 0;
 	unsigned lastDrawnHeight = 0; 
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
@@ -232,13 +230,11 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 
 		// lighting
 		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
-
-		unsigned fullyLit = kAmbient+diffuse;
-		if (fullyLit > 255)
-			fullyLit = 255;
-
 		const __m128i lit = _mm_set1_epi16(diffuse);
+
+		const unsigned fullyLit = std::min<unsigned>(255, kAmbient+diffuse);
 		const __m128i litFull = _mm_set1_epi16(fullyLit);
 
 #if defined(DEBUG_BALL_LIGHTING)
@@ -265,7 +261,6 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		}
 
 		lastHeight = height;
-//		lastHeightNorm = heightNorm;
 		lastColor = color;
 	}
 
@@ -284,7 +279,12 @@ static void vball_precalc()
 	{
 		const float angle = angStep*iAngle;
 		s_heightProj[iAngle] = unsigned(radius*sinf(angle));    // sine goes from 0 to 1 back to 0 so as to fold it around half a sphere
-		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle)); // cosine goes from 1 down to -1, effectively culling
+
+		// cosine goes from 1 down to -1, effectively culling
+		const float cosine = cosf(angle);
+		(cosine >= 0.f)
+			? s_heightProjNorm[iAngle] = unsigned(255.f*cosine)
+			: s_heightProjNorm[iAngle] = 0;
 	}
 }
 
