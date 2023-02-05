@@ -155,7 +155,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			{
 				// idea: minus fifty gives a black bar on the left, ideal for an old school logo
 //				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
-				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 4.f);
+				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 2.f);
 
 				const Vector3 direction(
 					dirCos*UV.x*kOneOverAspect - dirSin*0.75f,
@@ -165,7 +165,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				float total = 0.0f;
 				float march = 1.f;
 				Vector3 hit(0.f);
-				for (int iStep = 0; march > 0.01f && iStep < 32; ++iStep)
+				for (int iStep = 0; march > 0.005f && iStep < 48; ++iStep)
 				{
 					hit.x = direction.x*total;
 					hit.y = direction.y*total;
@@ -173,7 +173,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 					
 					march = fPlasma(hit, time);
 
-					total += march;
+					total += march*0.628f;
 				}
 				
 				Vector3 color = colMulA*march + colMulB*fPlasma(hit*0.5f, time); 

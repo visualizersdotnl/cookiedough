@@ -43,7 +43,7 @@ SyncTrack trackBallBeamAlphaMin;
 // - environment mapping & basic lighting, including Hoplite's "specular" (WIP)
 //   + specular, how? just simplify the math by wiping out all the zeroes and see what rolls out?
 // - proper background visibility/blending (WIP)
-//   + if it really does not work, you could do a lower resolution render of only the beams and *add* that during compositing separately
+//   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
 // - move object around
 
 // only works for non-beam ball momentarily (FIXME?)
@@ -92,7 +92,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	// prepare beam
 	__m128i beamAccum = _mm_setzero_si128();
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[s_beamAtten]), 8);
+	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -110,7 +110,8 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// and beam (light shaft) color
 		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[s_beamAtten]), 8);
+//		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
+		beam = (_mm_mulhi_epu16(beam, g_gradientUnp32[s_beamAtten]));
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
@@ -154,39 +155,29 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 #if !defined(BEAM_ALPHA_USE_RED)
 
+	beamCol &= 0xffffff;
 
-	const auto beamB = (beamCol>>16)&0xff;
-	const auto beamG = (beamCol>>8)&0xff;
-	const auto beamR = beamCol&0xff;
+	const auto beamB = beamCol>>16;        // RGB reversed (read as BGR)
+	const auto beamG = (beamCol>>8)&0xff;  //
+	const auto beamR = beamCol&0xff;       //
 
 //	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
-//	FIXME: SIMD version (use _mm_mulhi_epu16())
-	constexpr unsigned mulR = unsigned(0.0722f*65536); // RGB reversed!
-	constexpr unsigned mulG = unsigned(0.7152f*65536); //
-	constexpr unsigned mulB = unsigned(0.2126f*65536); // 
+//	FIXME: SIMD version (use _mm_mulhi_epu16()), comes in handy for that luminosity blur too
+	constexpr unsigned mulR = unsigned(0.0722f*65536);
+	constexpr unsigned mulG = unsigned(0.7152f*65536);
+	constexpr unsigned mulB = unsigned(0.2126f*65536);
 
 	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
 
-//	const unsigned beamAlpha = luminosity;
-
 	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
-
-//	const float alphaStep = float(luminosity)/remainder;
-//	float fBeamAlpha = luminosity;
-
 	const float alphaStep = 1.f/remainder;
 
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-//		unsigned beamAlpha = unsigned(fBeamAlpha);
-//		fBeamAlpha -= alphaStep;
-
-		const float fBeamAlpha = smoothstepf(luminosity, s_beamAlphaMin, iPixel*alphaStep);
+		const float fBeamAlpha = smootherstepf(luminosity, s_beamAlphaMin, iPixel*alphaStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
 
-		beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
-
-		pDest[lastDrawnHeight++] = beamCol;
+		pDest[lastDrawnHeight++] = beamCol | (beamAlpha<<24);
 	}
 
 #else
@@ -314,8 +305,9 @@ static void vball(uint32_t *pDest, float time)
 	vball_ray_fn = Rocket::geti(trackBallHasBeams) != 0 ? &vball_ray_beams : &vball_ray_no_beams;
 
 	// move ray origin to fake hacky rotation (FIXME)
-	const int fromX = ftofp24(512.f*cosf(time*0.25f) + 256.f);
-	const int fromY = ftofp24(512.f*sinf(time*0.25f) + 256.f);
+	const float scaleMul = s_curRayLength*(0.25f/kMaxRayLength);
+	const int fromX = ftofp24(512.f*cosf(time*scaleMul) + 256.f);
+	const int fromY = ftofp24(512.f*sinf(time*scaleMul) + 256.f);
 
 	// FOV (full circle)
 	constexpr float fovAngle = kPI*2.f;

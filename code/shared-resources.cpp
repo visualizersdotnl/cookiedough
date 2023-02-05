@@ -4,7 +4,8 @@
 #include "main.h"
 #include "image.h"
 
-__m128i g_gradientUnp[256];
+__m128i g_gradientUnp16[kNumGradients];
+__m128i g_gradientUnp32[kNumGradients];
 
 uint32_t *g_renderTarget[kNumRenderTargets] = { nullptr };
 
@@ -15,8 +16,13 @@ uint32_t *g_pToyPusherTiles[8] = { nullptr };
 bool Shared_Create()
 {
 	// create linear grayscale gradient (unpacked)
-	for (int iPixel = 0; iPixel < 256; ++iPixel)
-		g_gradientUnp[iPixel] = c2vISSE16(iPixel * 0x01010101);
+	for (int iPixel = 0; iPixel < kNumGradients; ++iPixel)
+	{
+		g_gradientUnp16[iPixel] = c2vISSE16(iPixel * 0x01010101);
+
+		// multiplied by 65536 so you can use _mm_mulhi_epi16() and save yourself a shift right
+		g_gradientUnp32[iPixel] = _mm_mulhi_epu16(c2vISSE32(iPixel * 0x01010101), _mm_set1_epi32(256));
+	}
 
 	// allocate render targets
 	for (unsigned iTarget = 0; iTarget < kNumRenderTargets; ++iTarget)

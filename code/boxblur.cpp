@@ -32,7 +32,7 @@ void BoxBlur_Destroy()
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
-	return ((65536*255)/weight)>>4;
+	return ((65536*256)/weight)>>4;
 }
 
 // add pixel to accumulator
