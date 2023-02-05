@@ -46,7 +46,7 @@ SyncTrack trackBallBeamAlphaMin;
 //   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
 // - move object around
 
-#define DEBUG_BALL_LIGHTING
+// #define DEBUG_BALL_LIGHTING
 
 // see implementation
 // #define USE_LAST_BEAM_ACCUM
@@ -198,14 +198,10 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
-	const auto origX = curX;
-	const auto origY = curY;
-
 	// grab first color
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[1], U0, V0, U1, V1, fracU, fracV);
-//	*pDest = 0;
 
 	int envU = ((kMapSize>>1))<<8;
 	int envV = envU;
@@ -242,33 +238,10 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		// lighting
 		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
 
-		// --- spectacular specular attempt ---
-
-/*
-		Vector3 O(origX>>8, origY>>8, 0.f);
-		O.Normalize();
-		Vector3 P(curX>>8, curY>>8, mapHeight);
-		P.Normalize();
-		Vector3 N(0.f,0.f,heightNorm);
-		N.Normalize();
-		Vector3 V = (O-P).Normalized();
-		Vector3 H = (Vector3(0.f,0.f,1.f)+V).Normalized();
-		float fSpecular = powf(std::max<float>(N*H, 0.f), 32.f);
-		unsigned specular = fSpecular*255.f; 
-*/
-
-		int hDiff = std::abs(long(mapHeight-lastMapHeight));
-//		hDiff = hDiff*s_heightProjNorm[iStep] >> 8;
-		int specular = (heightNorm*hDiff)>>8;
-		specular = unsigned(powf(std::max<float>(0.f, specular), 16.f));
-
-		// ---
-
 		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
 		const __m128i lit = _mm_set1_epi16(diffuse);
 
-//		const unsigned fullyLit = std::min<unsigned>(255, kAmbient+diffuse+specular);
-		const unsigned fullyLit = std::min<unsigned>(255, specular);
+		const unsigned fullyLit = std::min<unsigned>(255, kAmbient+diffuse);
 		const __m128i litFull = _mm_set1_epi16(fullyLit);
 
 #if defined(DEBUG_BALL_LIGHTING)
@@ -287,21 +260,18 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		if (height > lastDrawnHeight)
 		{
 			const unsigned int drawLength = height - lastDrawnHeight;
+			const unsigned int length = height - lastHeight;
 
-			int length = height - lastHeight;
-			if (length>0)
-			{
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, length, drawLength, lastColor, color);
 //			cspanISSE16_noclip(pDest + lastDrawnHeight, 1, drawLength, lastColor, color);
-			}
+
 			lastDrawnHeight = height;
 
 		}
 
 		lastHeight = height;
 		lastColor = color;
-		lastMapHeight = mapHeight;
 	}
 
 	while (lastDrawnHeight < kTargetResX)
