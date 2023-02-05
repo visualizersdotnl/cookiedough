@@ -6,7 +6,7 @@
 // linear grayscale gradients
 constexpr unsigned kNumGradients = 256;
 extern __m128i g_gradientUnp16[kNumGradients]; // unpacked to lower 16-bit
-extern __m128i g_gradientUnp32[kNumGradients]; // unpacked 32-bit, multiplied by 65536 for use with _mm_mulhi_epi16()
+extern __m128i g_gradientUnp32[kNumGradients]; // unpacked 32-bit, multiplied by 65536
 
 // render targets
 constexpr unsigned kNumRenderTargets = 4;

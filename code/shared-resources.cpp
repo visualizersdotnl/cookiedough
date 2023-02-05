@@ -19,9 +19,7 @@ bool Shared_Create()
 	for (int iPixel = 0; iPixel < kNumGradients; ++iPixel)
 	{
 		g_gradientUnp16[iPixel] = c2vISSE16(iPixel * 0x01010101);
-
-		// multiplied by 65536 so you can use _mm_mulhi_epi16() and save yourself a shift right
-		g_gradientUnp32[iPixel] = _mm_mulhi_epu16(c2vISSE32(iPixel * 0x01010101), _mm_set1_epi32(256));
+//		g_gradientUnp32[iPixel] = ...
 	}
 
 	// allocate render targets

@@ -110,8 +110,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// and beam (light shaft) color
 		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-//		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
-		beam = (_mm_mulhi_epu16(beam, g_gradientUnp32[s_beamAtten]));
+		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
