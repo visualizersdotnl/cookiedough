@@ -48,9 +48,6 @@ SyncTrack trackBallBeamAlphaMin;
 
 // #define DEBUG_BALL_LIGHTING
 
-// uses NTSC-weighted luminosity otherwise
-// #define BEAM_ALPHA_USE_RED 
-
 // see implementation
 // #define USE_LAST_BEAM_ACCUM
 
@@ -158,7 +155,8 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		lastColor = color;
 	}
 
-	// beam extrusion (FIXME: first get it work right, then optimize this 'MacGyver code')
+	// beam extrusion
+	// FIXME: this *should* be faster code, but for now it's sufficient
 
 #if defined(USE_LAST_BEAM_ACCUM)
 	unsigned beamCol = v2cISSE16(lastBeamAccum);
@@ -166,14 +164,14 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	unsigned beamCol = v2cISSE16(beamAccum);
 #endif
 
-#if !defined(BEAM_ALPHA_USE_RED)
+	// discard alpha
+	beamCol &= 0xffffff;
 
-	const auto beamB = (beamCol>>16)&0xff; // RGB reversed (read as BGR)
-	const auto beamG = (beamCol>>8)&0xff;  //
-	const auto beamR = beamCol&0xff;       //
+	const auto beamB = beamCol>>16;       // RGB reversed (read as BGR)
+	const auto beamG = (beamCol>>8)&0xff; //
+	const auto beamR = beamCol&0xff;      //
 
-//	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
-//	FIXME: SIMD version (use _mm_mulhi_epu16()), comes in handy for that luminosity blur too
+	// NTSC weights
 	constexpr unsigned mulR = unsigned(0.0722f*65536);
 	constexpr unsigned mulG = unsigned(0.7152f*65536);
 	constexpr unsigned mulB = unsigned(0.2126f*65536);
@@ -181,27 +179,21 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
 
 	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
-	const float alphaStep = 1.f/(remainder-1);
 
+	const float alphaStep = 1.f/(remainder-1);
+	float curStep = 0.f;
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		const float fBeamAlpha = smoothstepf(float(luminosity), s_beamAlphaMin, iPixel*alphaStep);
+		const float fBeamAlpha = smoothstepf(float(luminosity), s_beamAlphaMin, curStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
-
-		beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
-
-		pDest[lastDrawnHeight++] = beamCol;
+		pDest[lastDrawnHeight++] = beamCol|(beamAlpha<<24);
+		curStep += alphaStep;
 	}
 
-#else
-
-	const unsigned beamAlpha = (beamCol>>16)&0xff;
-	beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
-
-	while (lastDrawnHeight < kTargetResX)
-		pDest[lastDrawnHeight++] = beamCol;
-
-#endif
+	// performance diff. is negligible if there at all
+//	__m128i from = c2vISSE16((beamCol&0xffffff)|(luminosity<<24));
+//	__m128i   to = c2vISSE16((beamCol&0xffffff)|(unsigned(s_beamAlphaMin)<<24)); 
+//	cspanISSE16_noclip(pDest+lastDrawnHeight, 1, remainder, from, to);
 }
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
