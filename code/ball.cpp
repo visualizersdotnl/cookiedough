@@ -67,7 +67,7 @@ static unsigned s_curRayLength = kMaxRayLength;
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
 // [0..255]
-constexpr auto kBeamStartShade = 3;
+constexpr auto kBeamAtten = 64;
 
 // ambient added to light calc.
 constexpr unsigned kAmbient = 32;
@@ -82,10 +82,10 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[0], U0, V0, U1, V1, fracU, fracV);
 
-	// same for beam (scaled)
+	// prepare beam
+	__m128i beamAccum = _mm_setzero_si128();
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamStartShade]), 8);
-	__m128i lastBeamAccum = beamAccum;
+	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamAtten]), 8);
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -103,6 +103,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// and beam (light shaft) color
 		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamAtten]), 8);
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
@@ -140,28 +141,39 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		lastColor = color;
 	}
 
-	// beam extrusion (FIXME: first get it work right, then optimize)
-	// I could do all of this in SIMD, but that won't make it any more readable nor speed it up much
+	// beam extrusion (FIXME: first get it work right, then optimize this 'MacGyver code')
 
 	unsigned beamCol = v2cISSE16(lastBeamAccum);
 
 #if !defined(BEAM_ALPHA_USE_RED)
 
+
 	const auto beamB = (beamCol>>16)&0xff;
 	const auto beamG = (beamCol>>8)&0xff;
 	const auto beamR = beamCol&0xff;
 
-//	const float luminosity   = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
+//	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
+//	FIXME: SIMD version!	
 	constexpr unsigned mulR = unsigned(0.0722f*65536); // RGB reversed!
 	constexpr unsigned mulG = unsigned(0.7152f*65536); //
 	constexpr unsigned mulB = unsigned(0.2126f*65536); // 
-	const auto luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
 
-	const unsigned beamAlpha = unsigned(luminosity);
-	beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
+	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
+
+//	const unsigned beamAlpha = luminosity;
+
+	const float alphaStep = float(luminosity)/((kTargetResX-1)-lastDrawnHeight);
+	float fBeamAlpha = luminosity;
 
 	while (lastDrawnHeight < kTargetResX)
+	{
+		unsigned beamAlpha = unsigned(fBeamAlpha);
+		fBeamAlpha -= alphaStep;
+
+		beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
+
 		pDest[lastDrawnHeight++] = beamCol;
+	}
 
 #else
 
@@ -176,10 +188,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
-	const auto fromX = curX;
-	const auto fromY = curY;
-
-	// grab first color
+//	// grab first color
 	unsigned int U0, V0, U1, V1, fracU, fracV;
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[1], U0, V0, U1, V1, fracU, fracV);
@@ -271,8 +280,8 @@ static void vball_precalc()
 	for (unsigned iAngle = 0; iAngle < s_curRayLength; ++iAngle)
 	{
 		const float angle = angStep*iAngle;
-		s_heightProj[iAngle] = unsigned(radius*sinf(angle));
-		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle));
+		s_heightProj[iAngle] = unsigned(radius*sinf(angle));    // sine goes from 0 to 1 back to 0 so as to fold it around half a sphere
+		s_heightProjNorm[iAngle] = unsigned(255.f*cosf(angle)); // cosine goes from 1 down to -1, effectively culling
 	}
 }
 
