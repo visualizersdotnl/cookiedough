@@ -51,6 +51,9 @@ SyncTrack trackBallBeamAlphaMin;
 // uses NTSC-weighted luminosity otherwise
 // #define BEAM_ALPHA_USE_RED 
 
+// see implementation
+// #define USE_LAST_BEAM_ACCUM
+
 // adjust to map resolution
 constexpr unsigned kMapSize = 512;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
@@ -61,7 +64,7 @@ constexpr unsigned kMaxRayLength = 512;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
-static unsigned s_heightProjNorm[kMaxRayLength]; // [0..255] (for lighting calculations for ex.)
+static int s_heightProjNorm[256]; // for "lighting" calc.
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
@@ -88,10 +91,14 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
 	__m128i lastColor = bsamp32_16(s_pColorMap[0], U0, V0, U1, V1, fracU, fracV);
 
-	// prepare beam
+	// init. beam accumulator(s)
 	__m128i beamAccum = _mm_setzero_si128();
-	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
+
+#if defined(USE_LAST_BEAM_ACCUM)
+
+	__m128i lastBeamAccum = _mm_setzero_si128();
+
+#endif
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -112,10 +119,10 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 		// light beam
-		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+		const int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const int diffuse = (heightNorm*heightNorm*heightNorm)>>16;
 		const __m128i lit = _mm_set1_epi16(diffuse);
-		beamAccum = _mm_adds_epi16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
+		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
 
 #if defined(DEBUG_BALL_LIGHTING)
 
@@ -139,8 +146,12 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
 			lastDrawnHeight = height;
 
+#if defined(USE_LAST_BEAM_ACCUM)
+
 			// only extrude from the last drawn pixel onwards
 			lastBeamAccum = beamAccum;
+
+#endif
 		}
 
 		lastHeight = height;
@@ -149,33 +160,37 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 	// beam extrusion (FIXME: first get it work right, then optimize this 'MacGyver code')
 
+#if defined(USE_LAST_BEAM_ACCUM)
 	unsigned beamCol = v2cISSE16(lastBeamAccum);
+#else
+	unsigned beamCol = v2cISSE16(beamAccum);
+#endif
 
 #if !defined(BEAM_ALPHA_USE_RED)
 
-	beamCol &= 0xffffff;
-
-	const auto beamB = beamCol>>16;        // RGB reversed (read as BGR)
+	const auto beamB = (beamCol>>16)&0xff; // RGB reversed (read as BGR)
 	const auto beamG = (beamCol>>8)&0xff;  //
 	const auto beamR = beamCol&0xff;       //
 
 //	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
 //	FIXME: SIMD version (use _mm_mulhi_epu16()), comes in handy for that luminosity blur too
-	constexpr unsigned mulR = unsigned(0.0722f*65536.f);
-	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
-	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
+	constexpr unsigned mulR = unsigned(0.0722f*65536);
+	constexpr unsigned mulG = unsigned(0.7152f*65536);
+	constexpr unsigned mulB = unsigned(0.2126f*65536);
 
-	const float luminosity = float ( ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16) );
+	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
 
 	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
 	const float alphaStep = 1.f/(remainder-1);
 
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		const float fBeamAlpha = smootherstepf(luminosity, s_beamAlphaMin, iPixel*alphaStep);
+		const float fBeamAlpha = smoothstepf(float(luminosity), s_beamAlphaMin, iPixel*alphaStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
 
-		pDest[lastDrawnHeight++] = beamCol | (beamAlpha<<24);
+		beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
+
+		pDest[lastDrawnHeight++] = beamCol;
 	}
 
 #else
@@ -274,17 +289,18 @@ static void vball_precalc()
 	s_curRayLength = clampi(1, kMaxRayLength, Rocket::geti(trackBallRayLength));
 
 	// heights along ray wrap around half a circle
-	const float angStep = kPI/(s_curRayLength-1);
+	const float angStepSin = kPI/(s_curRayLength-1);
+	const float angStepCos = angStepSin * 0.9f; // don't cull immediately
 	for (unsigned iAngle = 0; iAngle < s_curRayLength; ++iAngle)
 	{
-		const float angle = angStep*iAngle;
-		s_heightProj[iAngle] = unsigned(radius*sinf(angle));    // sine goes from 0 to 1 back to 0 so as to fold it around half a sphere
+		// sine goes from 0 to 1 back to 0 for [0..kPI] so as to fold it around half a sphere
+		s_heightProj[iAngle] = unsigned(radius*sinf(angStepSin*iAngle));    
 
 		// cosine goes from 1 down to -1, effectively culling
-		const float cosine = cosf(angle);
+		const float cosine = cosf(angStepCos*iAngle);
 		(cosine >= 0.f)
-			? s_heightProjNorm[iAngle] = unsigned(255.f*cosine)
-			: s_heightProjNorm[iAngle] = 0;
+			? s_heightProjNorm[iAngle] = int(255.f*cosine)
+			: s_heightProjNorm[iAngle] = 0; // lighting calc. does not take kindly to negative (signed)
 	}
 }
 
