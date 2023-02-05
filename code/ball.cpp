@@ -438,14 +438,9 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	}
 #endif
 
-	// polar blit
-	Polar_Blit(g_renderTarget[1], g_renderTarget[0], false);
-
-	// put it together (FIXME)
+	// blit (polar wrap) effect on top of background
 	memcpy(pDest, s_pBackground, kOutputBytes);
-
-//	Add32(pDest, g_renderTarget[1], kOutputSize)
-	MixSrc32(pDest, g_renderTarget[1], kResX*kResY);
+	Polar_BlitA(pDest, g_renderTarget[0], false);
 
 	// FIXME
 	BlitSrc32(pDest + (((kResY-384)>>1)+100)*kResX + (((kResX-512)>>1)+150), s_pOrange, kResX, 512, 384);

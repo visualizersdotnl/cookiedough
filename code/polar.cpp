@@ -1,5 +1,5 @@
 
-// cookiedough -- polar blits
+// cookiedough -- polar blits (FIXME: tons of code duplication))
 
 #include "main.h"
 // #include "polar.h"
@@ -81,7 +81,7 @@ void Polar_Destroy()
 	freeAligned(s_pInvMap2x2);
 }
 
-VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc, const unsigned targetResX)
+VIZ_INLINE __m128i Fetch32(int *pRead, const uint32_t *pSrc, const unsigned targetResX)
 {
 	const int U = pRead[0];
 	const int V = pRead[1];
@@ -96,6 +96,21 @@ VIZ_INLINE __m128i Fetch(int *pRead, const uint32_t *pSrc, const unsigned target
 	return bsamp32_32(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
 }
 
+VIZ_INLINE __m128i Fetch16(int *pRead, const uint32_t *pSrc, const unsigned targetResX)
+{
+	const int U = pRead[0];
+	const int V = pRead[1];
+
+	// prepare UVs
+	const unsigned int U0 = U >> 8;
+	const unsigned int V0 = (V >> 8) * targetResX;
+	const unsigned int fracU = (U & 0xff) * 0x01010101;
+	const unsigned int fracV = (V & 0xff) * 0x01010101;
+
+	// sample & return
+	return bsamp32_16(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
+}
+
 // minor cache penalties are incurred, but L1 should always have us covered on modern CPUs
 void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
 {
@@ -106,13 +121,30 @@ void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false *
 	for (int iPixel = 0; iPixel < kOutputSize>>2; ++iPixel)
 	{
 		auto mapIndex = iPixel<<3;
-		__m128i A = Fetch(pRead+mapIndex+0, pSrc, kTargetResX);
-		__m128i B = Fetch(pRead+mapIndex+2, pSrc, kTargetResX);
-		__m128i C = Fetch(pRead+mapIndex+4, pSrc, kTargetResX);
-		__m128i D = Fetch(pRead+mapIndex+6, pSrc, kTargetResX);
+		__m128i A = Fetch32(pRead+mapIndex+0, pSrc, kTargetResX);
+		__m128i B = Fetch32(pRead+mapIndex+2, pSrc, kTargetResX);
+		__m128i C = Fetch32(pRead+mapIndex+4, pSrc, kTargetResX);
+		__m128i D = Fetch32(pRead+mapIndex+6, pSrc, kTargetResX);
 		__m128i AB = _mm_packus_epi32(A, B);
 		__m128i CD = _mm_packus_epi32(C, D);
 		pDest128[iPixel] = _mm_packus_epi16(AB, CD);
+	}
+}
+
+void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
+{
+	int *pRead = (!inverse) ? s_pMap : s_pInvMap;
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < kOutputSize; ++iPixel)
+	{
+		auto mapIndex = iPixel<<1;
+		const __m128i srcColor  = Fetch16(pRead+mapIndex, pSrc, kTargetResX);
+		const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), _mm_setzero_si128());
+		const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
+		const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128()));
 	}
 }
 
@@ -125,10 +157,10 @@ void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = fal
 	for (int iPixel = 0; iPixel < kFxMapSize>>2; ++iPixel)
 	{
 		auto mapIndex = iPixel<<3;
-		__m128i A = Fetch(pRead+mapIndex+0, pSrc, kFxMapResX);
-		__m128i B = Fetch(pRead+mapIndex+2, pSrc, kFxMapResX);
-		__m128i C = Fetch(pRead+mapIndex+4, pSrc, kFxMapResX);
-		__m128i D = Fetch(pRead+mapIndex+6, pSrc, kFxMapResX);
+		__m128i A = Fetch32(pRead+mapIndex+0, pSrc, kFxMapResX);
+		__m128i B = Fetch32(pRead+mapIndex+2, pSrc, kFxMapResX);
+		__m128i C = Fetch32(pRead+mapIndex+4, pSrc, kFxMapResX);
+		__m128i D = Fetch32(pRead+mapIndex+6, pSrc, kFxMapResX);
 		__m128i AB = _mm_packus_epi32(A, B);
 		__m128i CD = _mm_packus_epi32(C, D);
 		pDest128[iPixel] = _mm_packus_epi16(AB, CD);

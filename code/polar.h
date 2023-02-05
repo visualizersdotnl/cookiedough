@@ -10,6 +10,9 @@ void Polar_Destroy();
 // render target to output resolution
 void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse = false);
 
+// blend by source image alpha
+void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse = false);
+
 // for 2x2 effect map
 void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse = false);
 
