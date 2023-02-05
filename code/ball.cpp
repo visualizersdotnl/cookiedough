@@ -32,6 +32,8 @@ SyncTrack trackBallSpikes;
 SyncTrack trackBallHasBeams;
 SyncTrack trackBallBaseShapeIndex;
 SyncTrack trackBallSpeed;
+SyncTrack trackBallBeamAtten;
+SyncTrack trackBallBeamAlphaMin;
 
 // --------------------
 	
@@ -66,8 +68,13 @@ static unsigned s_curRayLength = kMaxRayLength;
 // max. radius (in pixels)
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
-// [0..255]
-constexpr auto kBeamAtten = 64;
+// beam attenuation (during accumulation) [0..255]
+constexpr auto kDefaultBeamAtten = 64;
+static unsigned s_beamAtten = kDefaultBeamAtten;
+
+// minimum beam alpha (extrusion) [0..255]
+constexpr float kDefaultBeamAlphaMin = 10.f;
+static float s_beamAlphaMin = kDefaultBeamAlphaMin;
 
 // ambient added to light calc.
 constexpr unsigned kAmbient = 32;
@@ -85,7 +92,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	// prepare beam
 	__m128i beamAccum = _mm_setzero_si128();
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamAtten]), 8);
+	__m128i lastBeamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[s_beamAtten]), 8);
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -103,7 +110,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// and beam (light shaft) color
 		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamAtten]), 8);
+		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[s_beamAtten]), 8);
 
 		// light beam
 		const unsigned int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
@@ -153,7 +160,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	const auto beamR = beamCol&0xff;
 
 //	const float luminosity = 0.0722f*beamR + 0.7152f*beamG + 0.2126f*beamB; // NTSC weights (source: Wikipedia)
-//	FIXME: SIMD version!	
+//	FIXME: SIMD version (use _mm_mulhi_epu16())
 	constexpr unsigned mulR = unsigned(0.0722f*65536); // RGB reversed!
 	constexpr unsigned mulG = unsigned(0.7152f*65536); //
 	constexpr unsigned mulB = unsigned(0.2126f*65536); // 
@@ -162,13 +169,20 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 //	const unsigned beamAlpha = luminosity;
 
-	const float alphaStep = float(luminosity)/((kTargetResX-1)-lastDrawnHeight);
-	float fBeamAlpha = luminosity;
+	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
 
-	while (lastDrawnHeight < kTargetResX)
+//	const float alphaStep = float(luminosity)/remainder;
+//	float fBeamAlpha = luminosity;
+
+	const float alphaStep = 1.f/remainder;
+
+	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		unsigned beamAlpha = unsigned(fBeamAlpha);
-		fBeamAlpha -= alphaStep;
+//		unsigned beamAlpha = unsigned(fBeamAlpha);
+//		fBeamAlpha -= alphaStep;
+
+		const float fBeamAlpha = smoothstepf(luminosity, s_beamAlphaMin, iPixel*alphaStep);
+		const unsigned beamAlpha = unsigned(fBeamAlpha);
 
 		beamCol = (beamCol&0xffffff)|(beamAlpha<<24);
 
@@ -272,8 +286,7 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 static void vball_precalc()
 {
 	const float radius = clampf(1.f, kMaxBallRadius, Rocket::getf(trackBallRadius));
-	const float fRayLength = clampf(1.f, kMaxRayLength, Rocket::getf(trackBallRayLength)); // FIXME: use 'geti()'
-	s_curRayLength = unsigned(fRayLength);
+	s_curRayLength = clampi(1, kMaxRayLength, Rocket::geti(trackBallRayLength));
 
 	// heights along ray wrap around half a circle
 	const float angStep = kPI/(s_curRayLength-1);
@@ -291,6 +304,10 @@ static void vball(uint32_t *pDest, float time)
 {
 	// precalc. projection map (FIXME: it's just a multiplication and a sine, can't we move this to the ray function already?)
 	vball_precalc();
+
+	// set global parameters
+	s_beamAtten = clampi(0, 255, Rocket::geti(trackBallBeamAtten));
+	s_beamAlphaMin = clampf(0.f, 255.f, Rocket::getf(trackBallBeamAlphaMin));
 
 	// select if has beams
 	void (*vball_ray_fn)(uint32_t *, int, int, int, int);
@@ -375,6 +392,8 @@ bool Ball_Create()
 	trackBallHasBeams = Rocket::AddTrack("ballHasBeams");
 	trackBallBaseShapeIndex = Rocket::AddTrack("ballBaseShapeIndex");
 	trackBallSpeed = Rocket::AddTrack("ballSpeed");
+	trackBallBeamAtten = Rocket::AddTrack("ballBeamAttenuation");
+	trackBallBeamAlphaMin = Rocket::AddTrack("ballBeamAlphaMin");
 
 	// FIXME
 	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
