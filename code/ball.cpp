@@ -65,8 +65,8 @@ static unsigned s_curRayLength = kMaxRayLength;
 // max. radius (in pixels)
 constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
 
-// to tame first beam sample
-constexpr auto kBeamMod = 6;
+// [0..255]
+constexpr auto kBeamStartShade = 6;
 
 // ambient added to light calc.
 constexpr unsigned kAmbient = 32;
@@ -85,7 +85,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 //	__m128i lastColor = c2vISSE16(s_pColorMap[0][U+V]);
 
 	const __m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
-	__m128i beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamMod]), 8);
+	__m128i beamAccum = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp[kBeamStartShade]), 8);
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{

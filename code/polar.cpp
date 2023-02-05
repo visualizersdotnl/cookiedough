@@ -6,10 +6,10 @@
 #include "bilinear.h"
 #include "fx-blitter.h"
 
-static int *s_pMap;
-static int *s_pInvMap;
-static int *s_pMap2x2;
-static int *s_pInvMap2x2;
+static int *s_pMap        = nullptr;
+static int *s_pInvMap     = nullptr;
+static int *s_pMap2x2     = nullptr;
+static int *s_pInvMap2x2  = nullptr;
 
 static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned srcResY, unsigned destResX, unsigned destResY)
 {
@@ -112,7 +112,7 @@ void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false *
 
 void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
 {
-	int *pRead = (!inverse) ? s_pMap : s_pInvMap;
+	int *pRead = (!inverse) ? s_pMap2x2 : s_pInvMap2x2;
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	#pragma omp parallel for schedule(static)
