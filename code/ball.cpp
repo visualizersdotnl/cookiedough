@@ -141,6 +141,8 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
+//			cspanISSE16_noclip(pDest + lastDrawnHeight, 1, drawLength, lastColor, color);
+
 			lastDrawnHeight = height;
 
 #if defined(USE_LAST_BEAM_ACCUM)
@@ -434,14 +436,14 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// blit (polar wrap) effect on top of background
-//	memcpy(pDest, s_pBackground, kOutputBytes);
-	memset32(pDest, 0, kOutputSize);
-	Polar_Blit(pDest, g_renderTarget[0], false);
+	memcpy(pDest, s_pBackground, kOutputBytes);
+//	memset32(pDest, 0, kOutputSize);
+	Polar_BlitA(pDest, g_renderTarget[0], false);
 
 	// FIXME
 	BlitSrc32(pDest + (((kResY-384)>>1)+100)*kResX + (((kResX-512)>>1)+150), s_pOrange, kResX, 512, 384);
 
-#if 1
+#if 0
 	// debug blit: unwrapped
 	const uint32_t *pSrc = g_renderTarget[0];
 	for (unsigned int iY = 0; iY < kResY; ++iY)
