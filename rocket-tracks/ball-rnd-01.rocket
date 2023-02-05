@@ -1,28 +1,28 @@
 <sync rows="128">
 	<tracks>
 		<track name="ballBlur">
-			<key row="0" value="3" interpolation="0"/>
+			<key row="0" interpolation="0" value="5"/>
 		</track>
 		<track name="ballRadius">
-			<key row="0" value="1000" interpolation="0"/>
+			<key row="0" interpolation="0" value="1280"/>
 		</track>
 		<track name="ballRayLength">
-			<key row="0" value="256" interpolation="0"/>
+			<key row="0" interpolation="0" value="200"/>
 		</track>
 		<track name="ballSpikes">
-			<key row="0" value="200" interpolation="0"/>
+			<key row="0" interpolation="0" value="150"/>
 		</track>
 		<track name="ballHasBeams">
-			<key row="0" value="1" interpolation="0"/>
+			<key row="0" interpolation="0" value="1"/>
 		</track>
 		<track name="ballBaseShapeIndex">
-			<key row="0" value="1" interpolation="0"/>
+			<key row="0" interpolation="0" value="1"/>
 		</track>
 		<track name="starsTunnelDirX">
-			<key row="0" value="1" interpolation="0"/>
+			<key row="0" interpolation="0" value="1"/>
 		</track>
 		<track name="starsTunnelDirY">
-			<key row="0" value="1" interpolation="0"/>
+			<key row="0" interpolation="0" value="1"/>
 		</track>
 		<track name="lauraSpeed"/>
 		<track name="lauraYaw"/>
@@ -48,18 +48,18 @@
 		<track name="plasmaSpeed"/>
 		<track name="plasmaHue"/>
 		<track name="effectTest">
-			<key row="0" value="3" interpolation="0"/>
+			<key row="0" interpolation="0" value="3"/>
 		</track>
 		<track name="fadeToBlack"/>
 		<track name="fadeToWhite"/>
 		<track name="ballSpeed">
-			<key row="0" value="0.5" interpolation="0"/>
+			<key row="0" interpolation="0" value="1"/>
 		</track>
 		<track name="ballBeamAttenuation">
-			<key row="0" value="64" interpolation="0"/>
+			<key row="0" interpolation="0" value="128"/>
 		</track>
 		<track name="ballBeamAlphaMin">
-			<key row="0" value="30" interpolation="0"/>
+			<key row="0" interpolation="0" value="20"/>
 		</track>
 	</tracks>
 	<bookmarks/>
