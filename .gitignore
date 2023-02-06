@@ -11,6 +11,9 @@ target/*.track
 Icon?
 Thumbs.db
 
+# -- Visual Studio code build folders --
+build/*
+
 # -- Windows --
 
 ## Ignore Visual Studio temporary files, build results, and
