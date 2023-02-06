@@ -102,10 +102,7 @@ const char *kTitle = "cocktails at Kurt Bevacqua's";
 
 const bool kFullScreen = false;
 
-// const char *kModule = "assets/moby_-_eliminator-tribute.mod";
-// const char *kModule = "assets/theduel.mod";
-// const char *kModule = "assets/knulla-kuk.mod";
-const char *kOGG = "assets/keito_-_hoochie_cooch.ogg";
+static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
 
 // when you're working on anything else than synchronization
 const bool kSilent = false;
@@ -229,7 +226,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 			audioHWND = GetForegroundWindow();
 #endif
 
-			if (Audio_Create(-1, kOGG, audioHWND, kSilent)) // FIXME: or is this just fine?
+			if (Audio_Create(-1, kMP3, audioHWND, kSilent)) // FIXME: or is this just fine?
 //			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;

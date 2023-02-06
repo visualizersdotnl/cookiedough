@@ -10,6 +10,7 @@
 #include "boxblur.h"
 #include "voxel-shared.h"
 #include "gamepad.h"
+#include "rocket.h"
 
 static uint8_t *s_pHeightMap = nullptr;
 static uint32_t *s_pColorMap = nullptr;
@@ -18,12 +19,20 @@ static uint32_t *s_pFogGradient = nullptr;
 
 static __m128i s_fogGradientUnp[256];
 
+// --- Sync. tracks ---
+
+SyncTrack trackVoxelScapeForward;
+SyncTrack trackVoxelScapeTilt;
+
+// --------------------
+
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
 constexpr float kMapViewLenScale = 0.314f*0.5f;
 constexpr int kMapViewHeight = 60;
 constexpr int kMapTilt = 190;
+constexpr float kMaxTiltDiff = 90.f; // [-kMaxTiltDiff..kMaxTiltDiff]
 constexpr int kMapScale = 500;
 
 // adjust to map resolution
@@ -104,15 +113,17 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	PadState pad;
 	Gamepad_Update(pad);
 
-	// tilt
+	// tilt (pad & sync.)
 	static float tilt = 0.f;
-	const float maxTilt = 90.f;
 	const float tiltStep = std::min(delta, 1.f);
-	if (tilt < maxTilt && pad.rightY > 0.f)
+	if (tilt < kMaxTiltDiff && pad.rightY > 0.f)
 		tilt += tiltStep;
-	if (tilt > -maxTilt && pad.rightY < 0.f)
+	if (tilt > -kMaxTiltDiff && pad.rightY < 0.f)
 		tilt -= tiltStep;
 	s_mapTilt = kMapTilt + int(tilt);
+
+	const float syncTilt = kMaxTiltDiff*0.01f*clampf(-100.f, 100.f, Rocket::getf(trackVoxelScapeTilt));
+	s_mapTilt = clampf(kMapTilt-kMaxTiltDiff, kMapTilt+kMaxTiltDiff, s_mapTilt+int(syncTilt));
 
 	// calc. view angle + it's sine & cosine (FIXME)
 	static float viewAngle = 0.f;
@@ -137,15 +148,19 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		strafeY += viewSin*strafe;
 	}
 
-	// move
-	static float moveX = 0.f;
-	static float moveY = 0.f;
-	if (pad.leftY != 0.f)
-	{
-		const float move = -pad.leftY*delta;
-		moveX += -viewSin*move;
-		moveY +=  viewCos*move;
-	}
+	// move (pad & sync.)
+	static float padMoveX = 0.f;
+	static float padMoveY = 0.f;
+	const float padMove = (pad.leftY != 0.f) ? -pad.leftY*delta : 0.f;
+	padMoveX += -viewSin*padMove;
+	padMoveY +=  viewCos*padMove;
+	
+	const float syncvMoveFwd = Rocket::getf(trackVoxelScapeForward);
+	float moveX = -viewSin*syncvMoveFwd;
+	float moveY =  viewCos*syncvMoveFwd;
+
+	moveX += padMoveX;
+	moveY += padMoveY;
 
 	// origin
 	float X1 = moveX+strafeX;
@@ -195,6 +210,10 @@ bool Landscape_Create()
 	// unpack fog gradient pixels
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
+
+	// init. sync.
+	trackVoxelScapeForward = Rocket::AddTrack("voxelScape:Forward");
+	trackVoxelScapeTilt = Rocket::AddTrack("voxelScape:Tilt");
 
 	return true;
 }
