@@ -7,7 +7,7 @@
 // 01/02/2023: 
 // - vertical pass is a bit cache-unfriendly, optimize (ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
 // - get rid of the gratuitous redundancy (lots of duplicate code)
-// - review SIMD
+// - review SIMD: the kernel overflows > 255 pixels span
 
 #include "main.h"
 // #include "boxblur.h"

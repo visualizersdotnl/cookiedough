@@ -20,7 +20,7 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
-SyncTrack trackEffectTest;
+SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 
 bool Demo_Create()
@@ -35,9 +35,9 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
-	trackEffectTest = Rocket::AddTrack("effectTest");
-	trackFadeToBlack = Rocket::AddTrack("fadeToBlack");
-	trackFadeToWhite = Rocket::AddTrack("fadeToWhite");
+	trackEffect = Rocket::AddTrack("demo:Effect");
+	trackFadeToBlack = Rocket::AddTrack("demo:FadeToBlack");
+	trackFadeToWhite = Rocket::AddTrack("demo:FadeToWhite");
 
 	return fxInit;
 }
@@ -61,7 +61,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	Rocket::Boost();
 
 	// render effect
-	int effect = Rocket::geti(trackEffectTest);
+	const int effect = Rocket::geti(trackEffect);
 	switch (effect)
 	{
 		case 1:

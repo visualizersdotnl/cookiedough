@@ -16,7 +16,7 @@
 #include "rocket.h"
 
 // Sync.
-SyncTrack trackStarsDirX, trackStarsDirY;
+SyncTrack trackStarsSpeedX, trackStarsSpeedY;
 
 static uint8_t *s_pHeightMap = NULL;
 static uint32_t *s_pColorMap = NULL;
@@ -104,8 +104,8 @@ static void tscape(uint32_t *pDest, float time)
 //	float mapX = 0.f; 
 	constexpr float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
 
-	const float syncDirX = Rocket::getf(trackStarsDirX);
-	const float syncDirY = Rocket::getf(trackStarsDirY);
+	const float syncDirX = Rocket::getf(trackStarsSpeedX);
+	const float syncDirY = Rocket::getf(trackStarsSpeedY);
 
 	const float fromY = 512.f + syncDirY*time*214.f;
 
@@ -146,8 +146,8 @@ bool Tunnelscape_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
 
-	trackStarsDirX = Rocket::AddTrack("starsTunnelDirX");
-	trackStarsDirY = Rocket::AddTrack("starsTunnelDirY");
+	trackStarsSpeedX = Rocket::AddTrack("starsTunnel:speedX");
+	trackStarsSpeedY = Rocket::AddTrack("starsTunnel:speedY");
 
 	return true;
 }
@@ -165,5 +165,5 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	Polar_Blit(pDest, g_renderTarget[0], true);
 
 	// FIXME: parametrize
-	BoxBlur32(pDest, pDest, kResX, kResY, 2.f*kBoxBlurScale);
+	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(2.f));
 }
