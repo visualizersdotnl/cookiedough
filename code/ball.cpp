@@ -425,12 +425,9 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 
 #if 1
 	// blur (optional)
-	float blur = Rocket::getf(trackBallBlur);
-	if (blur >= 1.f && blur <= 100.f)
-	{
-		blur *= kBoxBlurScale;
+	const float blur = BoxBlurScale(Rocket::getf(trackBallBlur));
+	if (0.f != blur)
 		HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blur);
-	}
 #endif
 
 	// blit (polar wrap) effect on top of background

@@ -154,26 +154,27 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				// idea: minus fifty gives a black bar on the left, ideal for an old school logo
-//				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 2.f);
-				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 2.f);
+//				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 3.f);
+				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 3.f);
 
 				const Vector3 direction(
 					dirCos*UV.x*kOneOverAspect - dirSin*0.75f,
 					UV.y,
 					dirSin*UV.x + dirCos*0.75f);
 
-				float total = 0.0f;
-				float march = 1.f;
+				float total = 0.f, march;
 				Vector3 hit(0.f);
-				for (int iStep = 0; march > 0.005f && iStep < 48; ++iStep)
-				{
+				for (int iStep = 0; iStep < 24; ++iStep)
+				{					
+					march = fPlasma(hit, time);
+					if (march < 0.001f)
+						break;
+
+					total += march;
+
 					hit.x = direction.x*total;
 					hit.y = direction.y*total;
 					hit.z = direction.z*total;
-					
-					march = fPlasma(hit, time);
-
-					total += march*0.628f;
 				}
 				
 				Vector3 color = colMulA*march + colMulB*fPlasma(hit*0.5f, time); 
@@ -292,12 +293,11 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderNautilusMap_2x2(g_pFxMap[0], time);
 
-	float blur = Rocket::getf(trackNautilusBlur);
-	if (blur >= 1.f && blur <= 100.f)
+	const float blur = BoxBlurScale(Rocket::getf(trackNautilusBlur));
+	if (0.f != blur)
 	{
-		blur *= kBoxBlurScale;
-		Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
-		BoxBlur32(pDest, g_renderTarget[0], kResX, kResY, blur);
+		Fx_Blit_2x2(pDest, g_pFxMap[0]);
+		BoxBlur32(pDest, pDest, kResX, kResY, blur);
 	}
 	else
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
