@@ -1,15 +1,15 @@
 
 /*
-	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
-	:                                                             ·:¦
+	-ï¿½---- - -ï¿½- -  -   -                              - --ï¿½-- - ----ï¿½-
+	:                                                             ï¿½:ï¿½
 	.               ______      ___  ____  ____  ____               :
 				_/_  \_ \/\__/   \_\_  \/  __\/  __\
 				/  / _/  /  /  /  / __  /\__ \/\__ \
 				/  _  /  /  /  ___/  /  /  /  /  /  /
-				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
+				ï¿½\___/ï¿½\_  /ï¿½\/   ï¿½\___/ï¿½\___/ï¿½\___/zS!
 	:                  /__/                                         .
-	¦:.                                                             :
-	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
+	ï¿½:.                                                             :
+	-ï¿½--- -             -   -  - -- --ï¿½-- - ---ï¿½-- -  -   -      - --ï¿½-
 	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
 */
 
@@ -175,11 +175,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// change path to target root
 #if !defined(CMAKE_BUILD)	
+	// probably Windows
     std::filesystem::current_path("../");
 #else
-    // CMake executable builds (Debug, Release, ...) lie one dir. deeper (if you follow the instructions, that is)
-    // FIXME: I probably want to do something about this for shipping builds!
-    std::filesystem::current_path("../../");
+    std::filesystem::current_path("../target");
 #endif
 
 	// check for SSE 4.1 / NEON
