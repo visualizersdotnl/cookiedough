@@ -286,7 +286,7 @@ static void vball_precalc()
 
 	// heights along ray wrap around half a circle
 	const float angStepSin = kPI/(s_curRayLength-1);
-	const float angStepCos = angStepSin * 0.9f; // don't cull immediately
+	const float angStepCos = angStepSin * 0.99f;
 	for (unsigned iAngle = 0; iAngle < s_curRayLength; ++iAngle)
 	{
 		// sine goes from 0 to 1 back to 0 for [0..kPI] so as to fold it around half a sphere
@@ -397,6 +397,7 @@ bool Ball_Create()
 	trackBallSpeed = Rocket::AddTrack("ball:Speed");
 	trackBallBeamAtten = Rocket::AddTrack("ball:BeamAttenuation");
 	trackBallBeamAlphaMin = Rocket::AddTrack("ball:BeamAlphaMin");
+
 	// FIXME
 	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
 	if (nullptr == s_pOrange)

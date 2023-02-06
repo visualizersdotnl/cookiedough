@@ -69,21 +69,25 @@ namespace Shadertoy
 
 	VIZ_INLINE float vFastLen3(const Vector3 &vector)
 	{
-		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		// results taught me that this, incurring float-to-long penalty, is not faster anymore
+//		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+
+		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
 	// use this instead of Normalize()/Normalized() on Vector3
 	VIZ_INLINE void vFastNorm3(Vector3 &vector)
 	{
-		const float oneOverLen = Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		// same as for vFastLen3()
+//		const float oneOverLen = Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+
+		const float oneOverLen = 1.f/vFastLen3(vector);
 		vector.x *= oneOverLen;
 		vector.y *= oneOverLen;
 		vector.z *= oneOverLen;
 	}
 
 	// because Normalize() contains a branch (as of 05/08/2018) and multiplying with a scalar won't inline properly
-	// solid reasons, no? ;)
-	// 30/01/2023: yes, but then also apply it to vFastNorm3()!
 	VIZ_INLINE void vNorm3(Vector3 &vector)
 	{
 		const float oneOverLen = 1.f/vector.Length();
@@ -92,7 +96,7 @@ namespace Shadertoy
 		vector.z *= oneOverLen;
 	}
 
-	// -- UVs --
+	// -- UVs (coordinates are returned 1:1, so you need to reapply aspect ratio correction if necessary!) --
 
 	VIZ_INLINE const Vector2 ToUV(unsigned iX, unsigned iY, float scale = 2.f)
 	{
@@ -100,7 +104,7 @@ namespace Shadertoy
 		float fY = (float) iY;
 		fX *= 1.f/kResX;
 		fY *= 1.f/kResY;
-		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
+		return Vector2((fX-0.5f)*scale*kOneOverAspect, (fY-0.5f)*scale);
 	}
 
 	VIZ_INLINE const Vector2 ToUV_RT(unsigned iX, unsigned iY, float scale = 2.f)
@@ -109,7 +113,7 @@ namespace Shadertoy
 		float fY = (float) iY;
 		fX *= 1.f/kTargetResX;
 		fY *= 1.f/kTargetResY;
-		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
+		return Vector2((fX-0.5f)*scale*kOneOverAspect, (fY-0.5f)*scale);
 	}
 
 	VIZ_INLINE const Vector2 ToUV_FxMap(unsigned iX, unsigned iY, float scale = 2.f)
@@ -118,7 +122,7 @@ namespace Shadertoy
 		float fY = (float) iY;
 		fX *= 1.f/kFxMapResX;
 		fY *= 1.f/kFxMapResY;
-		return Vector2((fX-0.5f)*scale*kAspect, (fY-0.5f)*scale);
+		return Vector2((fX-0.5f)*scale*kOneOverAspect, (fY-0.5f)*scale);
 	}
 
 	// -- color write --
@@ -230,7 +234,7 @@ namespace Shadertoy
 		return fog;
 	}
 
-	// cheap desaturation (amount [0..1])
+	// cheap desaturation (amount [0..1] - otherwise oversaturation follows, which can be what you're after)
 	VIZ_INLINE __m128 Desaturate(__m128 color, float amount)
 	{
 		const Vector3 weights(0.0722f, 0.7152f, 0.2126f); // linear NTSC, R and B swapped (source: Wikipedia)
