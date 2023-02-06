@@ -68,9 +68,6 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
 		 __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
-		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep]);
-//		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
 //		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
@@ -208,7 +205,7 @@ void Landscape_Destroy()
 
 void Landscape_Draw(uint32_t *pDest, float time, float delta)
 {
-	// render landscape (FIXME: take input)
+	// render landscape
 	memset32(pDest, s_pFogGradient[0], kResX*kResY);
 	vscape(pDest, time, delta);
 

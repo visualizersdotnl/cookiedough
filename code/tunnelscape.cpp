@@ -146,8 +146,8 @@ bool Tunnelscape_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
 
-	trackStarsDirX = Rocket::AddTrack("starsTunnelDirX");
-	trackStarsDirY = Rocket::AddTrack("starsTunnelDirY");
+	trackStarsDirX = Rocket::AddTrack("starsTunnel:DirX");
+	trackStarsDirY = Rocket::AddTrack("starsTunnel:DirY");
 
 	return true;
 }

@@ -61,7 +61,7 @@ constexpr unsigned kMaxRayLength = 512;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
-static int s_heightProjNorm[256]; // for "lighting", projects on quarter of a circle, to attenuate and cull
+static int s_heightProjNorm[kMaxRayLength]; // for "lighting", projects on quarter of a circle, to attenuate and cull
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
@@ -210,7 +210,6 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 
 	unsigned lastHeight = 0;
 	unsigned lastDrawnHeight = 0;
-	unsigned lastMapHeight = 0; // FIXME?
 
 	for (unsigned int iStep = 0; iStep < s_curRayLength; ++iStep)
 	{
@@ -389,16 +388,15 @@ bool Ball_Create()
 	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kAlignTo));
 
 	// initialize sync. track(s)
-	trackBallBlur = Rocket::AddTrack("ballBlur");
-	trackBallRadius = Rocket::AddTrack("ballRadius");
-	trackBallRayLength = Rocket::AddTrack("ballRayLength");
-	trackBallSpikes = Rocket::AddTrack("ballSpikes");
-	trackBallHasBeams = Rocket::AddTrack("ballHasBeams");
-	trackBallBaseShapeIndex = Rocket::AddTrack("ballBaseShapeIndex");
-	trackBallSpeed = Rocket::AddTrack("ballSpeed");
-	trackBallBeamAtten = Rocket::AddTrack("ballBeamAttenuation");
-	trackBallBeamAlphaMin = Rocket::AddTrack("ballBeamAlphaMin");
-
+	trackBallBlur = Rocket::AddTrack("ball:Blur");
+	trackBallRadius = Rocket::AddTrack("ball:Radius");
+	trackBallRayLength = Rocket::AddTrack("ball:RayLength");
+	trackBallSpikes = Rocket::AddTrack("ball:Spikes");
+	trackBallHasBeams = Rocket::AddTrack("ball:HasBeams");
+	trackBallBaseShapeIndex = Rocket::AddTrack("ball:BaseShapeIndex");
+	trackBallSpeed = Rocket::AddTrack("ball:Speed");
+	trackBallBeamAtten = Rocket::AddTrack("ball:BeamAttenuation");
+	trackBallBeamAlphaMin = Rocket::AddTrack("ball:BeamAlphaMin");
 	// FIXME
 	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
 	if (nullptr == s_pOrange)
