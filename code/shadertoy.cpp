@@ -2,11 +2,10 @@
 // cookiedough -- simple Shadertoy ports & my own shaders
 
 /*
-	important:
-		- *** R and B are swapped, as in: Vector3 color(B, G, R) ***
+	important (please read!):
+		- when calculating UVs using the helper functions, you may want/need to apply kAspect again!
+		- R and B are swapped, as in: Vector3 color(B, G, R)
 		- Vector3 and Vector4 are 16-bit aligned and can cast to __m128 (SIMD) once needed (use '.vSSE')
-		- the "to UV" functions in shader-util.h take aspect ratio into account, you don't always want this
-		  in that case divide UV.x by kAspect (or multiply by kOneOverAspect)
 		- when scaling a vector by a scalar in a loop, write it in place instead of using the operator (which won't inline for some reason)
 		- if needed, parts of loops can be parallelized (SIMD), but that's a lot of hassle
 		- an obvious optimization is to get offsets and deltas to calculate current UV, but that won't parallelize with OpenMP
@@ -52,13 +51,14 @@ SyncTrack trackDistSpikeY;
 SyncTrack trackDistSpikeZ;
 
 // Sinuses sync.:
-SyncTrack trackSinusesBrightness;
+SyncTrack trackSinusesSpecular;
 SyncTrack trackSinusesRoll;
 SyncTrack trackSinusesSpeed;
 
-// Plasma sync:
+// Plasma sync.:
 SyncTrack trackPlasmaSpeed;
 SyncTrack trackPlasmaHue;
+SyncTrack trackPlasmaGamma;
 
 // --------------------
 
@@ -91,13 +91,14 @@ bool Shadertoy_Create()
 	trackDistSpikeZ = Rocket::AddTrack("distSpike:zOffs");
 
 	// Sinuses:
-	trackSinusesBrightness = Rocket::AddTrack("sinusesTunnel:Brightness");
+	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
 	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
 	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
 
 	// Plasma:
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
 	trackPlasmaHue = Rocket::AddTrack("plasma:Hue");
+	trackPlasmaGamma = Rocket::AddTrack("plasma:Gamma");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
@@ -130,6 +131,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
 	const float speed = Rocket::getf(trackPlasmaSpeed);
 	const float hue   = Rocket::getf(trackPlasmaHue);
+	const float gamma = Rocket::getf(trackPlasmaGamma);
 
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
@@ -154,11 +156,11 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				// idea: minus fifty gives a black bar on the left, ideal for an old school logo
-//				auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY+20, 3.f);
-				auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY+20, 3.f);
+//				const auto UV = Shadertoy::ToUV_FxMap(iX+iColor-50, iY, 4.f);
+				const auto UV = Shadertoy::ToUV_FxMap(iX+iColor, iY, 4.f);
 
 				const Vector3 direction(
-					dirCos*UV.x*kOneOverAspect - dirSin*0.75f,
+					dirCos*UV.x*kAspect - dirSin*0.75f,
 					UV.y,
 					dirSin*UV.x + dirCos*0.75f);
 
@@ -167,10 +169,10 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				for (int iStep = 0; iStep < 24; ++iStep)
 				{					
 					march = fPlasma(hit, time);
-					if (march < 0.001f)
-						break;
+//					if (march < 0.001f)
+//						break;
 
-					total += march;
+					total += march*(0.5f*kGoldenRatio);
 
 					hit.x = direction.x*total;
 					hit.y = direction.y*total;
@@ -180,7 +182,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 				Vector3 color = colMulA*march + colMulB*fPlasma(hit*0.5f, time); 
 				color *= 8.f - direction.x*0.5f;
 
-				colors[iColor] = Shadertoy::GammaAdj(color, 2.27f);
+				colors[iColor] = Shadertoy::GammaAdj(color, gamma);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -247,7 +249,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
 
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x*kAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll*time, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -308,6 +310,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 //
 // FIXME:
 // - try to "fix" normals
+// - real specular please?
 //
 
 static Vector4 fSpike_global;
@@ -354,7 +357,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x*kAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -413,7 +416,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
 
-	const Vector3 origin(xOffs, yOffs, -2.614f + zOffs);
+	const Vector3 origin(0.f, 0.f, -2.614f + zOffs);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -427,7 +430,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
 
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x + xOffs, UV.y + yOffs, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -491,7 +494,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio);
 
 				Vector3 origin(0.f, 0.f, -3.314f);
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -566,8 +569,9 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 // Test case for texture sampling and color interpolation versus UV interpolation.
 //
 // FIXME:
-// - make it into some kind of flowery effect (like in Stars) that does not look terrible
 // - expected (hardcoded): 256x256 texture
+// - parametrize
+// - fake project light, like in the Mewlers 64KB 'Viagra'?
 //
 
 static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
@@ -594,7 +598,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 4.f);
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
+				Vector3 direction(UV.x, UV.y, 1.f); 
 				Shadertoy::rotX(time*0.3f, direction.y, direction.z);
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
@@ -687,9 +691,10 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
-	const float brightness = Rocket::getf(trackSinusesBrightness);
+	const float specPow = 1.f + Rocket::getf(trackSinusesSpecular);
 	const float roll = Rocket::getf(trackSinusesRoll);
 	const float speed = Rocket::getf(trackSinusesSpeed);
+	const float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
 
 	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
 
@@ -708,7 +713,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, 0.314f); 
+				Vector3 direction(UV.x, UV.y, 0.3f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -726,7 +731,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 					total += march*0.814f;
 				}
 
-				constexpr float nOffs = 0.1f;
+				constexpr float nOffs = 0.2f;
 				Vector3 normal(
 					march-fSinMap(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSinMap(Vector3(hit.x, hit.y+nOffs, hit.z)),
@@ -734,15 +739,15 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 				Shadertoy::vFastNorm3(normal);
 
 				float diffuse = normal.z*0.7f + 0.3f*normal.y;
-				float specular = normal*direction; // std::max(0.1f, normal*direction);
-
 				diffuse = 0.2f + 0.8f*diffuse;
-				specular = powf(specular, 1.f+brightness);
+
+				const float specDot = normal*direction; // std::max(0.1f, normal*direction);
+				const float specular = powf(specDot, specPow);
 
 				const float distance = hit.z-origin.z;
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, 0.224f)),
+					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, fog)),
 					2.73f);
 			}
 
@@ -796,7 +801,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	/* const */ Vector3 colorization = Shadertoy::MichielPal(hue);
-	const __m128 diffColor = Shadertoy::Desaturate(colorization, 0.1f);
+	const __m128 diffColor = Shadertoy::Desaturate(colorization, 2.f); // over-saturate a bit!
 
 	Vector3 origin(0.f, 0.f, lauraSpeed*time);
 
@@ -812,7 +817,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY);
 
-				Vector3 direction(UV.x*kOneOverAspect, UV.y, kPI); 
+				Vector3 direction(UV.x*kAspect, UV.y, kPI); 
 				Shadertoy::rotY(lauraYaw, direction.x, direction.z);
 				Shadertoy::rotX(lauraPitch, direction.y, direction.z);
 				Shadertoy::rotZ(lauraRoll*time, direction.x, direction.y);
