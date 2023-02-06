@@ -67,37 +67,37 @@ static uint32_t *s_pFDTunnelTex = nullptr;
 bool Shadertoy_Create()
 {
 	// Aura for Laura:
-	trackLauraSpeed = Rocket::AddTrack("lauraSpeed");
-	trackLauraYaw = Rocket::AddTrack("lauraYaw");
-	trackLauraPitch = Rocket::AddTrack("lauraPitch");
-	trackLauraRoll = Rocket::AddTrack("lauraRoll");
-	trackLauraHue = Rocket::AddTrack("lauraHue");
+	trackLauraSpeed = Rocket::AddTrack("laura:Speed");
+	trackLauraYaw = Rocket::AddTrack("laura:Yaw");
+	trackLauraPitch = Rocket::AddTrack("laura:Pitch");
+	trackLauraRoll = Rocket::AddTrack("laura:Roll");
+	trackLauraHue = Rocket::AddTrack("laura:Hue");
 
 	// Nautilus:
-	trackNautilusRoll = Rocket::AddTrack("nautilusRoll");
-	trackNautilusBlur = Rocket::AddTrack("nautilusBlur");
-	trackNautilusHue = Rocket::AddTrack("nautilusHue");
-	trackNautilusSpeed = Rocket::AddTrack("nautliusSpeed");
+	trackNautilusRoll = Rocket::AddTrack("nautilus:Roll");
+	trackNautilusBlur = Rocket::AddTrack("nautilus:Blur");
+	trackNautilusHue = Rocket::AddTrack("nautilus:Hue");
+	trackNautilusSpeed = Rocket::AddTrack("nautilus:Speed");
 
 	// Spikes:
-	trackSpikeSpeed = Rocket::AddTrack("spikeSpeed");
-	trackSpikeRoll = Rocket::AddTrack("spikeRoll");
-	trackSpikeSpecular = Rocket::AddTrack("spikeSpecular");
-	trackSpikeDesaturation = Rocket::AddTrack("spikeDesaturation");
-	trackDistSpikeWarmup = Rocket::AddTrack("distSpikeWarmup");
-	trackSpikeHue = Rocket::AddTrack("spikeHue");
-	trackDistSpikeX = Rocket::AddTrack("distSpikeX");
-	trackDistSpikeY = Rocket::AddTrack("distSpikeY");
-	trackDistSpikeZ = Rocket::AddTrack("distSpikeZ");
+	trackSpikeSpeed = Rocket::AddTrack("spike:Speed");
+	trackSpikeRoll = Rocket::AddTrack("spike:Roll");
+	trackSpikeSpecular = Rocket::AddTrack("spike:Specular");
+	trackSpikeDesaturation = Rocket::AddTrack("spike:Desaturation");
+	trackDistSpikeWarmup = Rocket::AddTrack("distSpike:Warmup");
+	trackSpikeHue = Rocket::AddTrack("spike:Hue");
+	trackDistSpikeX = Rocket::AddTrack("distSpike:xOffs");
+	trackDistSpikeY = Rocket::AddTrack("distSpike:yOffs");
+	trackDistSpikeZ = Rocket::AddTrack("distSpike:zOffs");
 
 	// Sinuses:
-	trackSinusesBrightness = Rocket::AddTrack("sinusesBrightness");
-	trackSinusesRoll = Rocket::AddTrack("sinusesRoll");
-	trackSinusesSpeed = Rocket::AddTrack("sinusesSpeed");
+	trackSinusesBrightness = Rocket::AddTrack("sinusesTunnel:Brightness");
+	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
+	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
 
 	// Plasma:
-	trackPlasmaSpeed = Rocket::AddTrack("plasmaSpeed");
-	trackPlasmaHue = Rocket::AddTrack("plasmaHue");
+	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
+	trackPlasmaHue = Rocket::AddTrack("plasma:Hue");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
@@ -247,7 +247,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
 
 				Vector3 direction(UV.x*kOneOverAspect, UV.y, 1.f); 
-				Shadertoy::rotZ(roll, direction.x, direction.y);
+				Shadertoy::rotZ(roll*time, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
