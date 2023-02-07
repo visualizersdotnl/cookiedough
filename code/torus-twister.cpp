@@ -21,8 +21,8 @@ const unsigned kMapSize = 512;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 const unsigned kMapShift = 9;
 
-// trace depth
-const unsigned int kRayLength = 196;
+// trace depth (FIXME: parametrize)
+const unsigned int kRayLength = 100;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
@@ -35,8 +35,10 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
 
-	const unsigned int U = curX >> 8 & kMapAnd, V = (curY >> 8 & kMapAnd) << kMapShift;
-	__m128i lastColor = c2vISSE16(s_pColorMap[U+V]);
+	// grab first color
+	unsigned int U0, V0, U1, V1, fracU, fracV;
+	bsamp_prepUVs(curX, curY, kMapAnd, kMapShift, U0, V0, U1, V1, fracU, fracV);
+	__m128i lastColor = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 	const int direction = (dX < 0) ? -1 : 1;
 
@@ -52,7 +54,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 
 		// fetch height & unpacked color
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
-		__m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+		const __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 		
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
@@ -76,20 +78,20 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 // - maps: 512x512
 static void vtwister(uint32_t *pDest, float time)
 {
-	constexpr float mapStepY = 512.f/kTargetResY; // tile (for blit)
+	constexpr float mapStepY = 512.f/(kTargetResY-1); // tile (for blit)
 
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
-		const float shearAngle = (float) iRay * (2.f*kPI/kTargetResY);
+		const float shearAngle = (float) iRay * (k2PI/(kTargetResY-1));
 
 		const float mapY = iRay*mapStepY;
-		const int fromX = ftofp24(256.f + 140.f*sinf(time*1.1f + shearAngle));
+		const int fromX = ftofp24(255.5f + 127.5f*sinf(time*1.1f + shearAngle));
 		const int fromY = ftofp24(mapY + time*25.f);
 
 		const size_t xOffs = iRay*kTargetResX + (kTargetResX>>1);
-		vtwister_ray(pDest+xOffs, fromX, -fromY,  256);
-		vtwister_ray(pDest+(xOffs-1), fromX, -fromY, -256);
+		vtwister_ray(pDest+xOffs, fromX, fromY,  256);
+		vtwister_ray(pDest+xOffs-1, fromX-256, fromY, -256);
 	}
 }
 
@@ -131,7 +133,7 @@ void Twister_Destroy()
 void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render twister 
-	memset32(g_renderTarget[0], 0, kTargetSize); // <- FIXME!
+	memset32(g_renderTarget[0], 0, kTargetSize); // FIXME
 	vtwister(g_renderTarget[0], time);
 
 	// (radial) blur
@@ -142,4 +144,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 
 	// polar blit
 	Polar_BlitA(pDest, g_renderTarget[0]);
+
+	// debug blit (vertical)
+//	memcpy(pDest, g_renderTarget[0], kOutputBytes);
 }
