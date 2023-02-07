@@ -101,7 +101,7 @@
 
 // -- display & audio config. --
 
-const char *kTitle = "BYPASS vs. The Pimp Brigade";
+const char *kTitle = "Bypass presents TPB-07";
 
 constexpr bool kFullScreen = false;
 

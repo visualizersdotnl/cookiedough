@@ -10,7 +10,7 @@
 	:                  /__/                                         .
 	¦:.                                                             :
 	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:                     BYPASS presents <TITLE>                   :
+	:                     BYPASS presents TPB-07                    :
 	:                a promotion in co-operation with TPB           :
 
    system:
@@ -21,10 +21,14 @@
    + resolution: 1280x720
 
    people involved:
-   + superplek (programming, sync., design)
-   + comatron (soundtrack)
-   + thorsten also known as Ernst Hot (head of the advisory board)
-   + alien (add. graphics)
-   + dascon (matchmaker)
+   + superplek
+   + comatron
+   + jade
+
+   advisory board:
+   + thorsten a.k.a Ernst Hot
+   + raimo
+   + alien 
+   + dascon
 
    repository: https://www.github.com/visualizersdotnl/cookiedough
