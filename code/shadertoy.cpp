@@ -32,6 +32,7 @@
 SyncTrack trackLauraSpeed;
 SyncTrack trackLauraYaw, trackLauraPitch, trackLauraRoll;
 SyncTrack trackLauraHue;
+SyncTrack trackLauraSaturate;
 
 // Nautilus sync.:
 SyncTrack trackNautilusRoll;
@@ -72,6 +73,7 @@ bool Shadertoy_Create()
 	trackLauraPitch = Rocket::AddTrack("laura:Pitch");
 	trackLauraRoll = Rocket::AddTrack("laura:Roll");
 	trackLauraHue = Rocket::AddTrack("laura:Hue");
+	trackLauraSaturate = Rocket::AddTrack("laura:Saturate");
 
 	// Nautilus:
 	trackNautilusRoll = Rocket::AddTrack("nautilus:Roll");
@@ -414,7 +416,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation); 
 
-	fSpike_global = Vector4(speed*time, 8.f, 16.f, 0.f);
+	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
 
 	const Vector3 origin(0.f, 0.f, -2.614f + zOffs);
 
@@ -428,8 +430,8 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio); // FIXME: possible parameter
-
+				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
+				
 				Vector3 direction(UV.x + xOffs, UV.y + yOffs, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
@@ -797,11 +799,12 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 	const float lauraPitch = Rocket::getf(trackLauraPitch);
 	const float lauraRoll = Rocket::getf(trackLauraRoll);
 	const float hue = Rocket::getf(trackLauraHue);
+	const float saturate = Rocket::getf(trackLauraSaturate);
 
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	/* const */ Vector3 colorization = Shadertoy::MichielPal(hue);
-	const __m128 diffColor = Shadertoy::Desaturate(colorization, 2.f); // over-saturate a bit!
+	const __m128 diffColor = Shadertoy::Desaturate(colorization, saturate); // over-saturate a bit!
 
 	Vector3 origin(0.f, 0.f, lauraSpeed*time);
 
@@ -855,10 +858,10 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 
 				float diffuse = std::max<float>(0.6f, normal*lightDir);
 				const float distance = hit.z-origin.z;
-				const float specular = Shadertoy::Specular(origin, hit, normal, lightDir, kGoldenRatio*3.f);
+				const float specular = Shadertoy::Specular(origin, hit, normal, lightDir, 4.f);
 
 				float rim = diffuse*diffuse;
-				rim = (rim-0.13f)*16.f;
+				rim = (rim*rim-0.13f)*32.f;
 				rim = std::max<float>(1.f, std::min<float>(0.f, rim));
 				diffuse *= rim;
 
@@ -867,8 +870,8 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 //					2.73f);
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.0011f)),
-					2.73f);
+					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.001f)),
+					2.33f);
 			}
 
 			const int index = (yIndex+iX)>>2;
