@@ -44,6 +44,7 @@ SyncTrack trackBallBeamAlphaMin;
 //   + specular, how? just simplify the math by wiping out all the zeroes and see what rolls out?
 // - proper background visibility/blending (WIP)
 //   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
+//   + devil speaking: draw to target in a single pass using 2D dir. vec. LUT
 // - move object around
 
 // #define DEBUG_BALL_LIGHTING
@@ -141,8 +142,6 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, height - lastHeight, drawLength, lastColor, color);
-//			cspanISSE16_noclip(pDest + lastDrawnHeight, 1, drawLength, lastColor, color);
-
 			lastDrawnHeight = height;
 
 #if defined(USE_LAST_BEAM_ACCUM)
@@ -191,11 +190,6 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		pDest[lastDrawnHeight++] = beamCol|(beamAlpha<<24);
 		curStep += alphaStep;
 	}
-
-	// performance diff. is negligible if there at all
-//	__m128i from = c2vISSE16((beamCol&0xffffff)|(luminosity<<24));
-//	__m128i   to = c2vISSE16((beamCol&0xffffff)|(unsigned(s_beamAlphaMin)<<24)); 
-//	cspanISSE16_noclip(pDest+lastDrawnHeight, 1, remainder, from, to);
 }
 
 static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
@@ -265,8 +259,6 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 
 			// draw span (clipped)
 			cspanISSE16(pDest + lastDrawnHeight, 1, length, drawLength, lastColor, color);
-//			cspanISSE16_noclip(pDest + lastDrawnHeight, 1, drawLength, lastColor, color);
-
 			lastDrawnHeight = height;
 
 		}
@@ -315,14 +307,14 @@ static void vball(uint32_t *pDest, float time)
 	void (*vball_ray_fn)(uint32_t *, int, int, int, int);
 	vball_ray_fn = Rocket::geti(trackBallHasBeams) != 0 ? &vball_ray_beams : &vball_ray_no_beams;
 
-	// move ray origin to fake hacky rotation (FIXME)
-	const float scaleMul = s_curRayLength*(0.25f/kMaxRayLength);
-	const int fromX = ftofp24(512.f*cosf(time*scaleMul) + 256.f);
-	const int fromY = ftofp24(512.f*sinf(time*scaleMul) + 256.f);
+	// move ray origin to fake hacky rotation 
+	const float timeScale = s_curRayLength*(0.25f/kMaxRayLength);
+	const int fromX = ftofp24(512.f*cosf(time*timeScale) + 256.f);
+	const int fromY = ftofp24(512.f*sinf(time*timeScale) + 256.f);
 
 	// FOV (full circle)
 	constexpr float fovAngle = kPI*2.f;
-	constexpr float delta = fovAngle/kTargetResY;
+	constexpr float delta = fovAngle/(kTargetResY-1);
 //	float curAngle = 0.f;
 
 	// cast rays

@@ -49,11 +49,6 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 			else
 				pInvDest[iPixel+1] = pDest[iPixel+1] = ftofp24(V);
 
-//			pDest[iPixel] = ftofp24(U);
-//			pDest[iPixel+1] = ftofp24(V);
-//			pInvDest[iPixel] = ftofp24(invU);
-//			pInvDest[iPixel+1] = ftofp24(V);
-
 			iPixel += 2;
 		}
 	}

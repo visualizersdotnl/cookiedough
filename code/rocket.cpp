@@ -9,8 +9,9 @@
 #include "rocket.h"
 #include "audio.h"
 
-const char *kHost = "localhost";
-// const char *kHost = "192.168.87.138";
+// const char *kHost = "localhost";
+// const char *kHost = "192.168.2.2";
+const char *kHost = "192.168.1.145"; // FIXME: yes this is hacky, this is my sync. PC
 
 static sync_device *s_hRocket = nullptr;
 

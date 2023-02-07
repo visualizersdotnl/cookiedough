@@ -103,7 +103,7 @@
 
 const char *kTitle = "BYPASS vs. The Pimp Brigade";
 
-const bool kFullScreen = true;
+const bool kFullScreen = false;
 
 static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
 

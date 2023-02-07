@@ -10,19 +10,21 @@
 	:                  /__/                                         .
 	¦:.                                                             :
 	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:                     BYPASS presents RETROSEXUAL               :
+	:                     BYPASS presents <TITLE>                   :
 	:                a promotion in co-operation with TPB           :
 
    system:
-   + OSX (Intel or Silicon) or Win64 (Intel)
+   + either OSX (Silicon) or Win64 (Intel)
    + software rendering, no GPU required
    + uses default audio device
    + does not use significant RAM or disk space
    + resolution: 1280x720
 
-   credits:
-   + programming: superplek
-   + soundtrack: comatron
-   + add. graphics: alien
+   people involved:
+   + superplek (programming, sync., design)
+   + comatron (soundtrack)
+   + thorsten also known as Ernst Hot (head of the advisory board)
+   + alien (add. graphics)
+   + dascon (matchmaker)
 
    repository: https://www.github.com/visualizersdotnl/cookiedough
