@@ -56,6 +56,7 @@
 // - for other targets there are likewise constants
 // - the delta time is in MS so it can be sensibly applied to for example gamepad axis values
 // - could probably be using more streamed (WC) writes, but pick those battles carefully
+// - not all Rocket sync. tracks are clamped, so you can potentially f*ck things over and violate access 
 
 // where to configure what?
 // - windowed mode and window title can be decided in main.cpp

@@ -64,6 +64,17 @@ SyncTrack trackPlasmaSpeed;
 SyncTrack trackPlasmaHue;
 SyncTrack trackPlasmaGamma;
 
+// Freedir. tunnel sync.:
+SyncTrack
+	trackTunnelBoxy,
+	trackTunnelFlowerScale,
+	trackTunnelFlowerFreq,
+	trackTunnelFlowerPhase,
+	trackTunnelSpeed,
+	trackTunnelRoll, trackTunnelPitch,
+	trackTunnelRadius,
+	trackTunnelMulU, trackTunnelMulV;
+
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
@@ -107,6 +118,18 @@ bool Shadertoy_Create()
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
 	trackPlasmaHue = Rocket::AddTrack("plasma:Hue");
 	trackPlasmaGamma = Rocket::AddTrack("plasma:Gamma");
+
+	// Tunnel:
+	trackTunnelBoxy = Rocket::AddTrack("tunnel:Boxy");
+	trackTunnelFlowerScale = Rocket::AddTrack("tunnel:FlowerScale");
+	trackTunnelFlowerFreq = Rocket::AddTrack("tunnel:FlowerFreq");
+	trackTunnelFlowerPhase = Rocket::AddTrack("tunnel:FlowerPhase");
+	trackTunnelSpeed = Rocket::AddTrack("tunnel:Speed");
+	trackTunnelRoll = Rocket::AddTrack("tunnel:Roll");
+	trackTunnelPitch = Rocket::AddTrack("tunnel:Pitch");
+	trackTunnelRadius = Rocket::AddTrack("tunnel:Radius");
+	trackTunnelMulU = Rocket::AddTrack("tunnel:MulU");
+	trackTunnelMulV = Rocket::AddTrack("tunnel:MulV");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
 	if (nullptr == s_pFDTunnelTex)
@@ -591,15 +614,20 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	// FIXME: parametrize
-	const float boxy = 0.6f * (0.5f + sinf(time)*0.5f);
-	const float flowerScale = 0.05f;
-	const float flowerFreq = 6.f;
-	const float flowerPhase = time;
-	const float speed = 4.f;
-	const float roll = time*0.6f;
-	const float radius = 3.f;
+	const float boxy = Rocket::getf(trackTunnelBoxy);
+	const float flowerScale = Rocket::getf(trackTunnelFlowerScale);
+	const float flowerFreq = Rocket::getf(trackTunnelFlowerFreq);
+	const float flowerPhase = Rocket::getf(trackTunnelFlowerPhase)*time;
+	const float speed = Rocket::getf(trackTunnelSpeed);
+	const float roll = Rocket::getf(trackTunnelRoll)*time;
+	const float pitch = Rocket::getf(trackTunnelPitch)*time;
+	const float radius = Rocket::getf(trackTunnelRadius);
+	const float uMul = Rocket::getf(trackTunnelMulU);
+	const float vMul = Rocket::getf(trackTunnelMulV);
 
-	#pragma omp parallel for schedule(static)
+	time *= speed;
+
+	#pragma omp parallel for schedule(static) // inner loop should perform roughly equally, mem. fetch locality is also appreciated
 	for (int iY = 0; iY < kFxMapResY; ++iY)
 	{
 		const int yIndex = iY*kFxMapResX;
@@ -609,9 +637,9 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 4.f);
+				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
 				Vector3 direction(UV.x, UV.y, 1.f); 
-				Shadertoy::rotX(time*0.3f, direction.y, direction.z);
+				Shadertoy::rotX(pitch, direction.y, direction.z);
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -620,28 +648,30 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				A = direction.x*direction.x + direction.y*direction.y;
 				A += flowerScale*lutcosf(atan2f(direction.y, direction.x)*flowerFreq + flowerPhase);
 
-				float absX = fabsf(direction.x);
-				float absY = fabsf(direction.y);
-				float box = absX > absY ? absX : absY;
+				const float absX = fabsf(direction.x);
+				const float absY = fabsf(direction.y);
+				const float box = absX > absY ? absX : absY;
 				A = lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
 				float T = radius*A;
-				Vector3 intersection = direction*T;
+				const Vector3 intersection = direction*T;
 
-				float U = atan2f(intersection.y, intersection.x)/kPI;
-				float V = intersection.z + time*speed;
-				float shade = 1.f-expf(-0.004f*T*T);
-				int fpU = ftofp24(U*512.f);
-				int fpV = ftofp24(V*8.f);
+				const float U = atan2f(intersection.y, intersection.x)/kPI;
+				const float V = intersection.z + time*speed;
+
+				// this is f*cking slow due to conversion (FTOL)
+				const int fpU = ftofp24(U*uMul);               
+				const int fpV = ftofp24(V*vMul);        
+
+				const float shade = clampf(0.f, 1.f, 1.f-expf(-0.003f*T*T));
 
 				unsigned U0, V0, U1, V1, fracU, fracV;
 				bsamp_prepUVs(fpU, fpV, 255, 8, U0, V0, U1, V1, fracU, fracV);
 				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
 
 				color = Shadertoy::vLerp4(color, _mm_set1_ps(255.f), shade);
-
-				colors[iColor] = color;
+				colors[iColor] = color; // FIXME: gamma?
 			}
 
 			const int index = (yIndex+iX)>>2;
