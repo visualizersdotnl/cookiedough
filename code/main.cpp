@@ -226,7 +226,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 #endif
 
 			if (Audio_Create(-1, kMP3, audioHWND, kSilent)) // FIXME: or is this just fine?
-//			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))

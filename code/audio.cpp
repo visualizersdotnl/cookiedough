@@ -12,8 +12,8 @@
 // FIXME: adjust per module (order also known as pattern); must be a power of 2
 // const int kRowsPerOrder = 64;
 
-// MP3/OGG
-const float kRowRate = (128.f /* BPM */ /60.f)*24.f /* RPB */;
+// MP3/OGG sync. rate
+const float kRowRate = (174.f /* BPM */ /60.f)*16.f /* RPB */;
 
 static HMUSIC s_hMusic = 0;
 

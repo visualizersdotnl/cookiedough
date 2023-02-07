@@ -30,10 +30,10 @@ SyncTrack trackVoxelScapeTilt;
 
 // adjust to map (FIXME: parametrize, document)
 constexpr float kMapViewLenScale = 0.314f*0.5f;
-constexpr int kMapViewHeight = 60;
-constexpr int kMapTilt = 190;
-constexpr float kMaxTiltDiff = 90.f; // [-kMaxTiltDiff..kMaxTiltDiff]
-constexpr int kMapScale = 500;
+constexpr int kMapViewHeight = 45;
+constexpr int kMapTilt = 120;
+constexpr float kMaxTiltDiff = 90.f;
+constexpr int kMapScale = 512;
 
 // adjust to map resolution
 constexpr unsigned kMapSize = 1024;
@@ -114,18 +114,17 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	Gamepad_Update(pad);
 
 	// tilt (pad & sync.)
-	static float tilt = 0.f;
+	static float padTilt = 0.f;
 	const float tiltStep = std::min(delta, 1.f);
-	if (tilt < kMaxTiltDiff && pad.rightY > 0.f)
-		tilt += tiltStep;
-	if (tilt > -kMaxTiltDiff && pad.rightY < 0.f)
-		tilt -= tiltStep;
+	if (padTilt < kMaxTiltDiff && pad.rightY > 0.f)
+		padTilt += tiltStep;
+	if (padTilt > -kMaxTiltDiff && pad.rightY < 0.f)
+		padTilt -= tiltStep;
+
+	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, (-kMaxTiltDiff + 2.f*Rocket::getf(trackVoxelScapeTilt))+ padTilt);
 	s_mapTilt = kMapTilt + int(tilt);
 
-	const float syncTilt = kMaxTiltDiff*0.01f*clampf(-100.f, 100.f, Rocket::getf(trackVoxelScapeTilt));
-	s_mapTilt = clampf(kMapTilt-kMaxTiltDiff, kMapTilt+kMaxTiltDiff, s_mapTilt+int(syncTilt));
-
-	// calc. view angle + it's sine & cosine (FIXME)
+	// calc. view angle + it's sine & cosine
 	static float viewAngle = 0.f;
 //	constexpr float maxAng = kPI*2.f;
 	float viewMul = 1.f/kAspect;
@@ -196,8 +195,10 @@ static void vscape(uint32_t *pDest, float time, float delta)
 bool Landscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D19.png");
-	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C19w.png");
+//	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D19.png");
+//	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C19w.png");
+	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D17.png");
+	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C17W.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
