@@ -27,4 +27,7 @@ int Audio_Rocket_IsPlaying(void *);
 // feed returned value to Rocket sync_update() as row position!
 double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha);
 
+// get pos. in seconds (does it work with anything else than streams?)
+float Audio_Get_Pos_In_Sec();
+
 #endif // _AUDIO_H_	

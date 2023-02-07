@@ -175,3 +175,11 @@ double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &mo
 	const double secPos = BASS_ChannelBytes2Seconds(s_hMusic, chanPos);
 	return (float) secPos*kRowRate;
 }
+
+float Audio_Get_Pos_In_Sec()
+{
+	VIZ_ASSERT(s_hMusic != 0);
+	const QWORD chanPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_BYTE);
+	const double secPos = BASS_ChannelBytes2Seconds(s_hMusic, chanPos);
+	return float(secPos);
+}

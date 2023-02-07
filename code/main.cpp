@@ -103,7 +103,7 @@
 
 const char *kTitle = "BYPASS vs. The Pimp Brigade";
 
-constexpr bool kFullScreen = false;
+constexpr bool kFullScreen = true;
 
 static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
@@ -246,8 +246,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 					{
 						oldTime = newTime;
 						newTime = timer.Get();
-						const float delta = newTime-oldTime;
-						Demo_Draw(pDest, newTime, delta*100.f);
+						const float delta = newTime-oldTime; // base delta on sys. time
+
+						const float audioTime = Audio_Get_Pos_In_Sec();
+						Demo_Draw(pDest, audioTime, delta*100.f);
+
 						display.Update(pDest);
 
 						totTime += delta;

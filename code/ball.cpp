@@ -310,8 +310,8 @@ static void vball(uint32_t *pDest, float time)
 
 	// move ray origin to fake hacky rotation 
 	const float timeScale = s_curRayLength*(0.25f/kMaxRayLength);
-	const int fromX = ftofp24(512.f*cosf(time*timeScale + Rocket::getf(trackBallRotateOffsX)) + 256.f);
-	const int fromY = ftofp24(512.f*sinf(time*timeScale + Rocket::getf(trackBallRotateOffsY)) + 256.f);
+	const int fromX = ftofp24(512.f*cosf(time*timeScale) + 256.f + Rocket::getf(trackBallRotateOffsX));
+	const int fromY = ftofp24(512.f*sinf(time*timeScale) + 256.f + Rocket::getf(trackBallRotateOffsY));
 
 	// FOV (full circle)
 	constexpr float fovAngle = kPI*2.f;
