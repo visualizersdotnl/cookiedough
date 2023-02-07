@@ -103,12 +103,10 @@
 
 const char *kTitle = "BYPASS vs. The Pimp Brigade";
 
-const bool kFullScreen = false;
+constexpr bool kFullScreen = false;
 
 static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
-
-// when you're working on anything else than synchronization
-const bool kSilent = false;
+constexpr bool kSilent = false; // when you're working on anything else than synchronization
 
 // -----------------------------
 

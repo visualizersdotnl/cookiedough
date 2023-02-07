@@ -34,6 +34,7 @@ SyncTrack trackBallBaseShapeIndex;
 SyncTrack trackBallSpeed;
 SyncTrack trackBallBeamAtten;
 SyncTrack trackBallBeamAlphaMin;
+SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
 
 // --------------------
 	
@@ -309,8 +310,8 @@ static void vball(uint32_t *pDest, float time)
 
 	// move ray origin to fake hacky rotation 
 	const float timeScale = s_curRayLength*(0.25f/kMaxRayLength);
-	const int fromX = ftofp24(512.f*cosf(time*timeScale) + 256.f);
-	const int fromY = ftofp24(512.f*sinf(time*timeScale) + 256.f);
+	const int fromX = ftofp24(512.f*cosf(time*timeScale + Rocket::getf(trackBallRotateOffsX)) + 256.f);
+	const int fromY = ftofp24(512.f*sinf(time*timeScale + Rocket::getf(trackBallRotateOffsY)) + 256.f);
 
 	// FOV (full circle)
 	constexpr float fovAngle = kPI*2.f;
@@ -389,6 +390,8 @@ bool Ball_Create()
 	trackBallSpeed = Rocket::AddTrack("ball:Speed");
 	trackBallBeamAtten = Rocket::AddTrack("ball:BeamAttenuation");
 	trackBallBeamAlphaMin = Rocket::AddTrack("ball:BeamAlphaMin");
+	trackBallRotateOffsX = Rocket::AddTrack("ball:RotateOffsX");
+	trackBallRotateOffsY = Rocket::AddTrack("ball:RotateOffsY");
 
 	// FIXME
 	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
