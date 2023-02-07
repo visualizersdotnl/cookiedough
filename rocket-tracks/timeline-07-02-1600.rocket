@@ -6,7 +6,6 @@
 	<group name="spike:" />
 	<group name="distSpike:" />
 	<group name="closeSpike:" />
-	<group name="sinusesTunnel:" />
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
@@ -188,7 +187,7 @@ color="ff60b250">
 	</track>
 	<track name="sinusesTunnel:Specular" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="7336" value="200.000000" interpolation="0" />
+		<key row="7336" value="32.000000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
