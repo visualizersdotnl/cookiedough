@@ -101,9 +101,9 @@
 
 // -- display & audio config. --
 
-const char *kTitle = "cocktails at Kurt Bevacqua's";
+const char *kTitle = "BYPASS vs. The Pimp Brigade";
 
-const bool kFullScreen = false;
+const bool kFullScreen = true;
 
 static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
 
@@ -233,6 +233,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
 				{
+					if (true == kFullScreen)
+						SDL_ShowCursor(SDL_DISABLE);
+
 					// frame buffer
 					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kAlignTo));
 					memset32(pDest, 0, kOutputSize);
