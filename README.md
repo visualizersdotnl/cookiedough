@@ -1,24 +1,26 @@
 # cookiedough
 
-This is a little testbed I set up to experiment with some retro (demoscene) graphics effects, back in 2007-2009.
+This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro
+(demoscene) graphical effects. 
+
 It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
-Was also used as testbed for FM. BISON, a hybrid/FM software synthesizer, but I deleted (almost?) all traces of that!
+Today it runs on OSX (through various standard libraries and something called SSE2NEON) and of course on Windows, using
+Visual Studio 2019 or newer.
 
-It's built using Visual Studio 2017, or rather, last tested with Visual Studio 2019.
+For OSX there is a script in '/target/OSX' which will generate two folders in the root, one for a debug build and one
+for release. However, it's easier, certainly if you want a non-XCode debugger, to use Visual Studio Code. Install the
+C++ extension, the CMake one, CMake tools, Makefile extension and probably a couple more, but Code will tell you what you
+need. If you're not going to use Code, please just run the generated make files and launch from the same folder; use
+LLDB on command line to debug ;)
 
-There is a CMake script (in '/code') to build for OSX, please read top of 'main.cpp' to get your dependencies right.
-Then navigate to '/target/OSX', run 'gen-builds.sh', use make to build either and run them from their respective directories.
+Do realize that you need to run a GNU Rocket client locally (or if you've modified '/code/rocket.cpp' perhaps on another
+machine); if it can't connect it will time out and quit.
 
-- 29/01/2023: OSX version runs!
-- 25/07/2018: got it running, back in production.
-- Use one of the supplied Rocket editors (Kusma's or Emoon's).
-- Set your startup directory to '/target'.
+DISCLAIMER: this code has been in tinkered with since 17 years back and I'm trying to straighten it out and modernize
+the use of C++ mostly but it will be an 'as we go' process. It started as a pure C project.
 
-Disclaimer: I've worked this over 10 years in varying states of mental clarity, so I know there's enough low hanging fruit.
-Check /code/main.cpp for a list of third party libraries used.
-
-This is old-school C/C++, I'm sticking with it (mostly) for consistency.
+Check /code/main.cpp for a list of third party libraries used and some more useful hints.
 
 ** Has content from Comanche (videogame by Novalogic in the early 1990s).  
 ** Has content from The Non-stop Ibiza Experience (demoscene, Orange).
