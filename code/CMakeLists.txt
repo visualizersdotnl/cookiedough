@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 project(cookiedough)
 
 file(GLOB CKD_SOURCEFILES *.cpp)
-file(GLOB ROCKET_SOURCEFILES ../3rdparty/rocket-stripped/lib/*.c)
+file(GLOB ROCKET_SOURCEFILES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/rocket-stripped/lib/*.c)
 
 add_executable(cookiedough ${CKD_SOURCEFILES} ${ROCKET_SOURCEFILES})
 
@@ -24,4 +24,4 @@ target_compile_definitions(cookiedough PUBLIC
     >
 )
 
-target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L../../../3rdparty/bass24-osx/arm64 -rpath ../../../3rdparty/bass24-osx/arm64 -lBASS -lSDL2 -lIL -fopenmp=libomp)
+target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -lBASS -lSDL2 -lIL -fopenmp=libomp)

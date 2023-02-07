@@ -1,16 +1,18 @@
 
 /*
-	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
-	:                                                             ·:¦
+	:                                                               :
+	-Ã·---- - -Ã·- -  -   -                              - --Ã·-- - ----Ã·-
+	:                                                             Â·:Â¦
 	.               ______      ___  ____  ____  ____               :
 				_/_  \_ \/\__/   \_\_  \/  __\/  __\
 				/  / _/  /  /  /  / __  /\__ \/\__ \
 				/  _  /  /  /  ___/  /  /  /  /  /  /
-				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
+				Â¯\___/Â¯\_  /Â¯\/   Â¯\___/Â¯\___/Â¯\___/zS!
 	:                  /__/                                         .
-	¦:.                                                             :
-	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	      'cocktails with Kurt Bevacqua' retrosexual demosystem          
+	Â¦:.                                                             :
+	-Ã·--- -             -   -  - -- --Ã·-- - ---Ã·-- -  -   -      - --Ã·-
+	:                    BYPASS presents <TITLE>                    :
+	:        a retrosexual promotion in co-operation with TPB       :
 */
 
 // codename: cookiedough (2009-2023)
@@ -102,10 +104,7 @@ const char *kTitle = "cocktails at Kurt Bevacqua's";
 
 const bool kFullScreen = false;
 
-// const char *kModule = "assets/moby_-_eliminator-tribute.mod";
-// const char *kModule = "assets/theduel.mod";
-// const char *kModule = "assets/knulla-kuk.mod";
-const char *kOGG = "assets/keito_-_hoochie_cooch.ogg";
+static const char *kMP3 = "assets/comatron - to the moon alpha.mp3";
 
 // when you're working on anything else than synchronization
 const bool kSilent = false;
@@ -178,11 +177,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// change path to target root
 #if !defined(CMAKE_BUILD)	
+	// probably Windows
     std::filesystem::current_path("../");
 #else
-    // CMake executable builds (Debug, Release, ...) lie one dir. deeper (if you follow the instructions, that is)
-    // FIXME: I probably want to do something about this for shipping builds!
-    std::filesystem::current_path("../../");
+    std::filesystem::current_path("../target");
 #endif
 
 	// check for SSE 4.1 / NEON
@@ -229,7 +227,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 			audioHWND = GetForegroundWindow();
 #endif
 
-			if (Audio_Create(-1, kOGG, audioHWND, kSilent)) // FIXME: or is this just fine?
+			if (Audio_Create(-1, kMP3, audioHWND, kSilent)) // FIXME: or is this just fine?
 //			if (Audio_Create(-1, kModule, GetForegroundWindow(), kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;

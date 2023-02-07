@@ -11,6 +11,11 @@ target/*.track
 Icon?
 Thumbs.db
 
+# -- Visual Studio Code + 'gen-build.sh' build folders --
+build/*
+gen-build-debug/*
+gen-build-release/*
+
 # -- Windows --
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -35,8 +40,6 @@ target/x64/*.exe
 target/x64/*.iobj
 target/x64/*.ipdb
 target/x64/*.map
-target/osx/Debug
-target/osx/Release
 bld/
 [Bb]in/
 [Oo]bj/ 
