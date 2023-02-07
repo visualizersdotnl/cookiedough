@@ -47,9 +47,12 @@ SyncTrack trackSpikeSpecular;
 SyncTrack trackSpikeDesaturation;
 SyncTrack trackDistSpikeWarmup; // specular-only glow blur effect, yanked from Aura for Laura
 SyncTrack trackSpikeHue;
+SyncTrack trackSpikeGamma;
 SyncTrack trackDistSpikeX;
 SyncTrack trackDistSpikeY;
 SyncTrack trackDistSpikeZ;
+SyncTrack trackCloseSpikeX;
+SyncTrack trackCloseSpikeY;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -88,9 +91,12 @@ bool Shadertoy_Create()
 	trackSpikeDesaturation = Rocket::AddTrack("spike:Desaturation");
 	trackDistSpikeWarmup = Rocket::AddTrack("distSpike:Warmup");
 	trackSpikeHue = Rocket::AddTrack("spike:Hue");
+	trackSpikeGamma = Rocket::AddTrack("spike:Gamma");
 	trackDistSpikeX = Rocket::AddTrack("distSpike:xOffs");
 	trackDistSpikeY = Rocket::AddTrack("distSpike:yOffs");
 	trackDistSpikeZ = Rocket::AddTrack("distSpike:zOffs");
+	trackCloseSpikeX = Rocket::AddTrack("closeSpike:xOffs");
+	trackCloseSpikeY = Rocket::AddTrack("closeSpike:yOffs");
 
 	// Sinuses:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
@@ -340,6 +346,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float specPow = Rocket::getf(trackSpikeSpecular);
 	const float desaturation = Rocket::getf(trackSpikeDesaturation);
 	const float hue = Rocket::getf(trackSpikeHue);
+	const float gamma = Rocket::getf(trackSpikeGamma);
+	const float xOffs = Rocket::getf(trackCloseSpikeX);
+	const float yOffs = Rocket::getf(trackCloseSpikeY);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
@@ -359,7 +368,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction(UV.x*kAspect, UV.y, 1.f); 
+				Vector3 direction((UV.x+xOffs)*kAspect, UV.y + yOffs, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -391,7 +400,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, 0.314f)),
-						1.628);
+						gamma);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -412,11 +421,12 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 	const float xOffs = Rocket::getf(trackDistSpikeX);
 	const float yOffs = Rocket::getf(trackDistSpikeY);
 	const float zOffs = Rocket::getf(trackDistSpikeZ);
+	const float gamma = Rocket::getf(trackSpikeGamma);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation); 
 
-	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
+	fSpike_global = Vector4(speed*time, 16.f, 16.f, kEpsilon);
 
 	const Vector3 origin(0.f, 0.f, -2.614f + zOffs);
 
@@ -451,20 +461,20 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 					total += march*0.314f;
 				}
 
-				constexpr float nOffs = 0.15f;
+				constexpr float nOffs = 0.05f;
 				Vector3 normal(
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-				const float diffuse = normal.z*0.8f + normal.y*0.2f;
-				const float specular = powf(std::max(0.25f, normal*direction), specPow);
+				const float diffuse = std::max<float>(0.f, normal.z*0.8f + normal.y*0.2f);
+				const float fakeSpecular = powf(std::max(0.25f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
 				
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, 0.133f)),
-					1.214f);
+					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(fakeSpecular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, 0.133f)),
+					gamma);
 			}
 
 			const int index = (yIndex+iX)>>2;
@@ -522,9 +532,9 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				Shadertoy::vFastNorm3(normal);
 
 				const float distance = hit.z-origin.z;
-				const float specular = warmup*powf(std::max(0.f, normal*direction), specPow);
+				const float fakeSpecular = warmup*powf(std::max(0.f, normal*direction), specPow);
 
-				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(specular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0333f));
+				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(fakeSpecular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0333f));
 				colors[iColor] = fogged;
 			}
 
@@ -715,7 +725,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x, UV.y, 0.3f); 
+				Vector3 direction(UV.x*kAspect, UV.y, 0.3f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -744,12 +754,12 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 				diffuse = 0.2f + 0.8f*diffuse;
 
 				const float specDot = normal*direction; // std::max(0.1f, normal*direction);
-				const float specular = powf(specDot, specPow);
+				const float fakeSpecular = powf(specDot, specPow);
 
 				const float distance = hit.z-origin.z;
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, fog)),
+					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(fakeSpecular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, fog)),
 					2.73f);
 			}
 
@@ -856,7 +866,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 				Vector3 lightDir = (lightPos-hit);
 				Shadertoy::vFastNorm3(lightDir);
 
-				float diffuse = std::max<float>(0.6f, normal*lightDir);
+				float diffuse = std::max<float>(0.3f, normal*lightDir);
 				const float distance = hit.z-origin.z;
 				const float specular = Shadertoy::Specular(origin, hit, normal, lightDir, 4.f);
 

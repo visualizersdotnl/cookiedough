@@ -12,6 +12,8 @@
 static uint8_t *s_pHeightMap = nullptr;
 static uint32_t *s_pColorMap = nullptr;
 
+static uint32_t *s_pBackground = nullptr;
+
 // -- voxel renderer --
 
 // adjust to map resolution
@@ -114,6 +116,11 @@ bool Twister_Create()
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap)
 		return false;
 
+	// load background (1280x720)
+	s_pBackground = Image_Load32("assets/ball/background_1280x720.png");
+	if (nullptr == s_pBackground)
+		return false;
+
 	return true;
 }
 
@@ -123,13 +130,16 @@ void Twister_Destroy()
 
 void Twister_Draw(uint32_t *pDest, float time, float delta)
 {
-	// render twister (FIXME: background (color))
-	memset32(g_renderTarget[0], 0x1f0053, kTargetSize);
+	// render twister 
+	memset32(g_renderTarget[0], 0, kTargetSize); // <- FIXME!
 	vtwister(g_renderTarget[0], time);
 
 	// (radial) blur
-	HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, BoxBlurScale(15.f));
+	HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, BoxBlurScale(10.f));
+
+	// blit background (FIXME)
+	memcpy(pDest, s_pBackground, kOutputBytes);
 
 	// polar blit
-	Polar_Blit(pDest, g_renderTarget[0]);
+	Polar_BlitA(pDest, g_renderTarget[0]);
 }

@@ -38,14 +38,14 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 		for (int iX = 0; iX < kFxMapResX-1; ++iX)
 		{
 			const unsigned iA = mapIndexY + iX;
-			const unsigned iB = iA+1;
+//			const unsigned iB = iA+1;
 			const unsigned iC = iA+kFxMapResX;
-			const unsigned iD = iC+1;
+//			const unsigned iD = iC+1;
 
 			const __m128i colA = c2vISSE32(pSrc[iA]);
-			const __m128i colB = c2vISSE32(pSrc[iB]);
+			const __m128i colB = c2vISSE32(pSrc[iA+1]);
 			const __m128i colC = c2vISSE32(pSrc[iC]);
-			const __m128i colD = c2vISSE32(pSrc[iD]);
+			const __m128i colD = c2vISSE32(pSrc[iC+1]);
 
 			const __m128i stepY0 = _mm_madd_epi16(_mm_sub_epi32(colB, colA), divisor);
 			const __m128i stepY1 = _mm_madd_epi16(_mm_sub_epi32(colD, colC), divisor);
