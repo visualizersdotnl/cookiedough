@@ -3,16 +3,13 @@
 	<group name="starsTunnel:" />
 	<group name="laura:" />
 	<group name="nautilus:" />
-	<group name="spike:" />
-	<group name="distSpike:" />
-	<group name="closeSpike:" />
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
 	<track name="voxelScape:Forward" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="1" />
-		<key row="1048" value="1024.000000" interpolation="0" />
+		<key row="1048" value="1024.000000" interpolation="1" />
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050" />
@@ -132,6 +129,8 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="3144" value="3.140000" interpolation="0" />
 		<key row="6288" value="6.280000" interpolation="0" />
+		<key row="6544" value="-6.280000" interpolation="0" />
+		<key row="7072" value="6.280000" interpolation="0" />
 	</track>
 	<track name="spike:Roll" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -175,7 +174,7 @@ color="ff8850b2">
 color="ffa9b250">
 		<key row="6680" value="1.000000" interpolation="0" />
 		<key row="6808" value="0.000000" interpolation="0" />
-		<key row="7072" value="0.600000" interpolation="0" />
+		<key row="7072" value="0.400000" interpolation="0" />
 	</track>
 	<track name="closeSpike:yOffs" folded="0" muteKeyCount="0"
 color="ff60b250">
