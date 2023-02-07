@@ -394,6 +394,8 @@ color="ffb27474">
 		<key row="3144" value="64.000000" interpolation="0" />
 		<key row="3936" value="66.000000" interpolation="0" />
 		<key row="6288" value="22.000000" interpolation="0" />
+		<key row="6808" value="6.000000" interpolation="1" />
+		<key row="7072" value="64.000000" interpolation="0" />
 	</track>
 	<track name="spike:Desaturation" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -576,7 +578,7 @@ color="ff8850b2">
 		<key row="5504" value="1.000000" interpolation="1" />
 		<key row="5512" value="0.000000" interpolation="0" />
 		<key row="7208" value="0.000000" interpolation="3" />
-		<key row="7335" value="1.000000" interpolation="0" />
+		<key row="7335" value="0.800000" interpolation="0" />
 		<key row="7336" value="0.000000" interpolation="0" />
 		<key row="9376" value="0.000000" interpolation="2" />
 		<key row="9407" value="1.000000" interpolation="0" />
