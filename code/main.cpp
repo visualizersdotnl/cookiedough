@@ -233,6 +233,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
 				{
+					if (true == kFullScreen)
+						SDL_ShowCursor(SDL_DISABLE);
+
 					// frame buffer
 					uint32_t* pDest = static_cast<uint32_t*>(mallocAligned(kOutputBytes, kAlignTo));
 					memset32(pDest, 0, kOutputSize);
