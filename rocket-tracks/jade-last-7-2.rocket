@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rootElement>
+	<loopmark row="3" />
 	<group name="starsTunnel:" />
 	<group name="laura:" />
-	<group name="nautilus:" />
+	<group name="closeSpike:" />
+	<group name="sinusesTunnel:" />
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
@@ -22,32 +24,50 @@ color="ffa9b250">
 		<key row="1416" value="30.000000" interpolation="1" />
 		<key row="1432" value="3.500000" interpolation="0" />
 		<key row="1936" value="3.500000" interpolation="1" />
-		<key row="2095" value="50.000000" interpolation="1" />
+		<key row="2095" value="30.000000" interpolation="1" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:Radius" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="1048" value="1280.000000" interpolation="0" />
 		<key row="1104" value="800.000000" interpolation="0" />
+		<key row="1416" value="1000.000000" interpolation="0" />
+		<key row="1672" value="800.000000" interpolation="0" />
+		<key row="1936" value="800.000000" interpolation="3" />
+		<key row="2095" value="1280.000000" interpolation="0" />
+		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:RayLength" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="1048" value="384.000000" interpolation="0" />
+		<key row="1416" value="256.000000" interpolation="0" />
+		<key row="1672" value="384.000000" interpolation="0" />
 	</track>
 	<track name="ball:Spikes" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="1048" value="144.000000" interpolation="0" />
 		<key row="1104" value="0.000000" interpolation="0" />
+		<key row="1416" value="200.000000" interpolation="0" />
+		<key row="1544" value="200.000000" interpolation="3" />
+		<key row="1672" value="0.000000" interpolation="0" />
+		<key row="1936" value="0.000000" interpolation="1" />
+		<key row="2095" value="255.000000" interpolation="0" />
+		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:HasBeams" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="1048" value="0.000000" interpolation="0" />
 		<key row="1104" value="1.000000" interpolation="0" />
+		<key row="1416" value="0.000000" interpolation="0" />
+		<key row="1672" value="1.000000" interpolation="0" />
 	</track>
 	<track name="ball:BaseShapeIndex" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="1048" value="4.000000" interpolation="0" />
 		<key row="1104" value="1.000000" interpolation="0" />
+		<key row="1416" value="4.000000" interpolation="0" />
+		<key row="1544" value="4.000000" interpolation="0" />
+		<key row="1672" value="1.000000" interpolation="0" />
 	</track>
 	<track name="ball:Speed" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -56,8 +76,8 @@ color="ffb27474">
 		<key row="1104" value="2.000000" interpolation="0" />
 		<key row="1152" value="-2.000000" interpolation="0" />
 		<key row="1208" value="2.000000" interpolation="0" />
-		<key row="1416" value="2.000000" interpolation="0" />
-		<key row="1544" value="-2.000000" interpolation="0" />
+		<key row="1416" value="3.000000" interpolation="0" />
+		<key row="1544" value="-3.000000" interpolation="0" />
 		<key row="1672" value="2.000000" interpolation="0" />
 		<key row="1776" value="-2.000000" interpolation="0" />
 		<key row="1832" value="-2.000000" interpolation="0" />
@@ -116,26 +136,32 @@ color="ffa9b250">
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="5240" value="0.000000" interpolation="0" />
+		<key row="5504" value="4.000000" interpolation="3" />
+		<key row="5520" value="1.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="5240" value="26.000000" interpolation="0" />
+		<key row="5504" value="2.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="5240" value="1.314000" interpolation="0" />
+		<key row="5240" value="1.628000" interpolation="0" />
+		<key row="5504" value="-1.660000" interpolation="0" />
 	</track>
 	<track name="spike:Speed" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="3144" value="3.140000" interpolation="0" />
+		<key row="3144" value="6.280000" interpolation="0" />
+		<key row="3408" value="-6.280000" interpolation="0" />
+		<key row="3664" value="-3.140000" interpolation="0" />
 		<key row="6288" value="6.280000" interpolation="0" />
-		<key row="6544" value="-6.280000" interpolation="0" />
-		<key row="6681" value="6.280000" interpolation="0" />
-		<key row="7072" value="-6.280000" interpolation="0" />
+		<key row="6544" value="-3.140000" interpolation="0" />
+		<key row="6681" value="8.000000" interpolation="0" />
+		<key row="7072" value="-9.300000" interpolation="0" />
 	</track>
 	<track name="spike:Roll" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="3144" value="2.000000" interpolation="0" />
+		<key row="3144" value="3.300000" interpolation="0" />
 		<key row="6288" value="1.000000" interpolation="0" />
 	</track>
 	<track name="spike:Specular" folded="0" muteKeyCount="0"
@@ -153,23 +179,33 @@ color="ffa9b250" />
 	<track name="spike:Hue" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="3144" value="29.000000" interpolation="0" />
-		<key row="6288" value="22.000000" interpolation="0" />
+		<key row="6288" value="24.000000" interpolation="0" />
+		<key row="6544" value="23.000000" interpolation="0" />
+		<key row="6680" value="24.000000" interpolation="0" />
+		<key row="6808" value="23.000000" interpolation="0" />
+		<key row="7072" value="22.000000" interpolation="0" />
 	</track>
 	<track name="spike:Gamma" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="3144" value="1.330000" interpolation="0" />
+		<key row="3144" value="1.660000" interpolation="0" />
 	</track>
 	<track name="distSpike:xOffs" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="3144" value="0.660000" interpolation="0" />
+		<key row="3408" value="-0.770000" interpolation="0" />
+		<key row="3664" value="0.660000" interpolation="0" />
 	</track>
 	<track name="distSpike:yOffs" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="3144" value="0.200000" interpolation="0" />
+		<key row="3408" value="-0.200000" interpolation="0" />
+		<key row="3664" value="0.200000" interpolation="0" />
 	</track>
 	<track name="distSpike:zOffs" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="3144" value="0.660000" interpolation="0" />
+		<key row="4032" value="0.660000" interpolation="2" />
+		<key row="4184" value="0.880000" interpolation="0" />
 	</track>
 	<track name="closeSpike:xOffs" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -199,7 +235,7 @@ color="ffb28050">
 	</track>
 	<track name="plasma:Speed" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="2096" value="1.000000" interpolation="0" />
+		<key row="2096" value="1.330000" interpolation="0" />
 	</track>
 	<track name="plasma:Hue" folded="0" muteKeyCount="0"
 color="ff60b250">
@@ -238,8 +274,6 @@ color="ff8850b2">
 		<key row="1216" value="0.000000" interpolation="0" />
 		<key row="1312" value="1.000000" interpolation="1" />
 		<key row="1320" value="0.000000" interpolation="0" />
-		<key row="1416" value="1.000000" interpolation="1" />
-		<key row="1424" value="0.000000" interpolation="0" />
 		<key row="1544" value="1.000000" interpolation="1" />
 		<key row="1552" value="0.000000" interpolation="0" />
 		<key row="1672" value="1.000000" interpolation="1" />
@@ -248,17 +282,20 @@ color="ff8850b2">
 		<key row="1784" value="0.000000" interpolation="0" />
 		<key row="1832" value="1.000000" interpolation="1" />
 		<key row="1840" value="0.000000" interpolation="0" />
-		<key row="1952" value="0.000000" interpolation="2" />
+		<key row="1952" value="0.000000" interpolation="3" />
 		<key row="2095" value="1.000000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 		<key row="4583" value="1.000000" interpolation="1" />
 		<key row="4600" value="0.000000" interpolation="0" />
 		<key row="4704" value="1.000000" interpolation="3" />
 		<key row="4736" value="0.000000" interpolation="0" />
+		<key row="5496" value="0.000000" interpolation="1" />
+		<key row="5504" value="1.000000" interpolation="1" />
+		<key row="5512" value="0.000000" interpolation="0" />
 		<key row="9392" value="0.000000" interpolation="1" />
 		<key row="9407" value="1.000000" interpolation="0" />
-		<key row="9408" value="0.000000" interpolation="2" />
-		<key row="9560" value="1.000000" interpolation="0" />
+		<key row="9408" value="0.000000" interpolation="3" />
+		<key row="9563" value="1.100000" interpolation="0" />
 	</track>
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -267,6 +304,10 @@ color="ffb25091">
 		<key row="1096" value="0.000000" interpolation="0" />
 		<key row="1104" value="1.000000" interpolation="1" />
 		<key row="1128" value="0.000000" interpolation="0" />
+		<key row="1416" value="1.000000" interpolation="1" />
+		<key row="1424" value="0.000000" interpolation="0" />
+		<key row="1656" value="1.000000" interpolation="3" />
+		<key row="1672" value="0.000000" interpolation="0" />
 		<key row="1936" value="1.000000" interpolation="1" />
 		<key row="1952" value="0.000000" interpolation="0" />
 		<key row="9408" value="1.000000" interpolation="3" />
