@@ -136,14 +136,18 @@ color="ffa9b250">
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="5240" value="0.000000" interpolation="0" />
+		<key row="5504" value="4.000000" interpolation="3" />
+		<key row="5520" value="1.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="5240" value="26.000000" interpolation="0" />
+		<key row="5504" value="11.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="5240" value="1.628000" interpolation="0" />
+		<key row="5504" value="-1.660000" interpolation="0" />
 	</track>
 	<track name="spike:Speed" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -281,10 +285,13 @@ color="ff8850b2">
 		<key row="4600" value="0.000000" interpolation="0" />
 		<key row="4704" value="1.000000" interpolation="3" />
 		<key row="4736" value="0.000000" interpolation="0" />
+		<key row="5496" value="0.000000" interpolation="1" />
+		<key row="5504" value="1.000000" interpolation="1" />
+		<key row="5512" value="0.000000" interpolation="0" />
 		<key row="9392" value="0.000000" interpolation="1" />
 		<key row="9407" value="1.000000" interpolation="0" />
 		<key row="9408" value="0.000000" interpolation="3" />
-		<key row="9563" value="1.000000" interpolation="0" />
+		<key row="9563" value="1.100000" interpolation="0" />
 	</track>
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
 color="ffb25091">
