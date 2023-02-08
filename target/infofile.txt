@@ -25,10 +25,11 @@
    + comatron
    + jade
 
-   advisory board:
+   advisory board / additional:
    + thorsten a.k.a Ernst Hot
    + raimo
    + alien 
    + dascon
+   + nytrik
 
    repository: https://www.github.com/visualizersdotnl/cookiedough
