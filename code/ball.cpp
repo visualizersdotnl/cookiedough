@@ -47,6 +47,7 @@ SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
 //   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
 //   + devil speaking: draw to target in a single pass using 2D dir. vec. LUT
 // - move object around
+//  + render to a larget target?
 
 // #define DEBUG_BALL_LIGHTING
 
