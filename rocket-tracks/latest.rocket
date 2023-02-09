@@ -11,7 +11,12 @@ color="ffb27474">
 		<key row="6457" value="inf" interpolation="0" />
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
-color="ffb28050" />
+color="ffb28050">
+		<key row="0" value="90.000000" interpolation="3" />
+		<key row="512" value="45.000000" interpolation="1" />
+		<key row="520" value="40.000000" interpolation="2" />
+		<key row="1048" value="0.000000" interpolation="0" />
+	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="1048" value="4.000000" interpolation="0" />
@@ -108,6 +113,7 @@ color="ff8850b2">
 		<key row="1776" value="-128.000000" interpolation="0" />
 		<key row="1832" value="128.000000" interpolation="0" />
 		<key row="1936" value="128.000000" interpolation="0" />
+		<key row="2040" value="-128.000000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:RotateOffsY" folded="0" muteKeyCount="0"
@@ -125,6 +131,7 @@ color="ffb25091">
 		<key row="1776" value="128.000000" interpolation="0" />
 		<key row="1832" value="-128.000000" interpolation="0" />
 		<key row="1936" value="-128.000000" interpolation="0" />
+		<key row="2040" value="128.000000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
 color="ff60b250">
@@ -135,7 +142,7 @@ color="ff60b250">
 color="ff4fb292">
 		<key row="4184" value="1.628000" interpolation="0" />
 		<key row="4584" value="-1.630000" interpolation="0" />
-		<key row="4704" value="1.600000" interpolation="0" />
+		<key row="4704" value="1.630000" interpolation="0" />
 	</track>
 	<track name="laura:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
