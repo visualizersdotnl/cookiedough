@@ -121,7 +121,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	if (padTilt > -kMaxTiltDiff && pad.rightY < 0.f)
 		padTilt -= tiltStep;
 
-	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, (-kMaxTiltDiff + 2.f*Rocket::getf(trackVoxelScapeTilt))+ padTilt);
+	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, (-kMaxTiltDiff + 2.f*Rocket::getf(trackVoxelScapeTilt)) + padTilt);
 	s_mapTilt = kMapTilt + int(tilt);
 
 	// calc. view angle + it's sine & cosine
@@ -198,7 +198,7 @@ bool Landscape_Create()
 //	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D19.png");
 //	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C19w.png");
 	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D17.png");
-	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C17W.png");
+	s_pColorMap = Image_Load32("assets/scape/C17W-edit.png");
 	s_pHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
 		return false;
