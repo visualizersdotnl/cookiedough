@@ -145,6 +145,22 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	}
 }
 
+void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
+{
+	const __m128i zero = _mm_setzero_si128();
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
+		const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
+		const __m128i delta = _mm_mullo_epi16(alphaUnp, destColor); 
+		const __m128i color = _mm_srli_epi16(delta, 8);
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+	}
+}
+
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();
