@@ -12,13 +12,17 @@ extern __m128i g_gradientUnp32[kNumGradients]; // unpacked 32-bit, multiplied by
 constexpr unsigned kNumRenderTargets = 4;
 extern uint32_t *g_renderTarget[kNumRenderTargets];
 
+/*
+    FIXME: move thsese images to demo implementation!
+*/
+
 // Nytrik's Mexico logo
 extern uint32_t *g_pNytrikMexico;
 
 // Alien's things for TPB-02 Xbox
 extern uint32_t *g_pXboxLogoTPB;
 
-// Thorsten's world famous Toypusher disco character (128x128)
+// Thorsten's (pardon me, Ernst Hot's) world famous Toypusher disco character (128x128)
 extern uint32_t *g_pToyPusherTiles[8];
 
 // render target resolution (let us agree to keep it's aspect ratio identical to the output resolution)

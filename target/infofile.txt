@@ -10,26 +10,31 @@
 	:                  /__/                                         .
 	¦:.                                                             :
 	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:                     BYPASS presents TPB-07                    :
+	:                BYPASS presents ARRESTED DEVELOPMENT           :
 	:                a promotion in co-operation with TPB           :
 
-   system:
-   + either OSX (Silicon) or Win64 (Intel)
+   a retrosexual multimedia demonstration
+   created for Revision 2023
+
+   system req.:
+   + either OSX (Silicon) or Win64 (Intel), nav. to '/bin' and run!
    + software rendering, no GPU required
    + uses default audio device
    + does not use significant RAM or disk space
-   + resolution: 1280x720
+   + native resolution: 1280x720
 
    people involved:
    + superplek
    + comatron
    + jade
+   + and introducing ernst hot
 
    advisory board / additional:
-   + thorsten a.k.a Ernst Hot
-   + raimo
-   + alien 
-   + dascon
-   + nytrik
+   + raimo (maps)
+   + alien  (TPB logo)
+   + dascon (networking)
+   + nytrik (TPB 'Mexico' logo)
 
-   repository: https://www.github.com/visualizersdotnl/cookiedough
+   how open are we?   
+   very -> repository: https://www.github.com/visualizersdotnl/cookiedough
+   

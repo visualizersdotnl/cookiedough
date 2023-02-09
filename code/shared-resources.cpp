@@ -13,6 +13,8 @@ uint32_t *g_pNytrikMexico = nullptr;
 uint32_t *g_pXboxLogoTPB = nullptr;
 uint32_t *g_pToyPusherTiles[8] = { nullptr };
 
+uint32_t *g_pCredits[3] = { nullptr };
+
 bool Shared_Create()
 {
 	// create linear grayscale gradient (unpacked)
@@ -48,7 +50,7 @@ bool Shared_Create()
 
 	for (auto pusher : g_pToyPusherTiles)
 		if (nullptr == pusher)
-			return false; 
+			return false;
 
 	return true;
 }
