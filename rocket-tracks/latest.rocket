@@ -13,8 +13,8 @@ color="ffb27474">
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050">
 		<key row="0" value="90.000000" interpolation="3" />
-		<key row="512" value="45.000000" interpolation="3" />
-		<key row="528" value="40.000000" interpolation="2" />
+		<key row="512" value="45.000000" interpolation="1" />
+		<key row="528" value="40.000000" interpolation="3" />
 		<key row="1048" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
@@ -361,12 +361,13 @@ color="ffb27474">
 	<track name="tunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb28050">
 		<key row="4448" value="1.000000" interpolation="0" />
-		<key row="4976" value="0.500000" interpolation="0" />
+		<key row="4976" value="0.660000" interpolation="0" />
 	</track>
 	<track name="tunnel:Pitch" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="4448" value="0.770000" interpolation="0" />
-		<key row="4976" value="0.620000" interpolation="0" />
+		<key row="4976" value="0.880000" interpolation="2" />
+		<key row="5240" value="0.810000" interpolation="0" />
 	</track>
 	<track name="tunnel:Radius" folded="0" muteKeyCount="0"
 color="ffa9b250">
