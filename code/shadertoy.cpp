@@ -557,7 +557,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				const float distance = hit.z-origin.z;
 				const float fakeSpecular = warmup*powf(std::max(0.f, normal*direction), specPow);
 
-				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(fakeSpecular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0333f));
+				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(fakeSpecular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0133f));
 				colors[iColor] = fogged;
 			}
 

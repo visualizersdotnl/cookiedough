@@ -1,11 +1,12 @@
 
-// cookiedough -- demo flow for: <?> by Bypass (Shader Superfights Grand Prix 2019 commercial)
+// cookiedough -- TPB-07
 
 #include "main.h"
 // #include <windows.h> // for audio.h
 #include "demo.h"
 // #include "audio.h"
 #include "rocket.h"
+#include "image.h"
 
 // filters & blitters
 #include "boxblur.h"
@@ -20,8 +21,16 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
+// --- Sync. tracks ---
+
 SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
+SyncTrack trackCreditLogo, trackCreditLogoAlpha;
+
+// --------------------
+
+// credits logos (1280x640)
+static uint32_t *s_pCredits[4] = { nullptr }; // FIXME: a fun opportunity to randomize the index on load so it appears in the demo likewise
 
 bool Demo_Create()
 {
@@ -35,9 +44,21 @@ bool Demo_Create()
 	fxInit &= Tunnelscape_Create();
 	fxInit &= Shadertoy_Create();
 
+	// init. sync.
 	trackEffect = Rocket::AddTrack("demo:Effect");
 	trackFadeToBlack = Rocket::AddTrack("demo:FadeToBlack");
 	trackFadeToWhite = Rocket::AddTrack("demo:FadeToWhite");
+	trackCreditLogo = Rocket::AddTrack("demo:CreditLogo");
+	trackCreditLogoAlpha = Rocket::AddTrack("demo:CreditLogoAlpha");
+
+	// load credits logos (1280x640)
+	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
+	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_outlined.png");
+	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
+	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined.png");
+	for (auto *pImg : s_pCredits)
+		if (nullptr == pImg)
+			return false;
 
 	return fxInit;
 }
@@ -137,6 +158,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		default:
 			FxBlitter_DrawTestPattern(pDest);
 	}
+
+	// credit logo blit
+	const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
+	if (0 != iLogo)
+		BlitSrc32A(pDest + ((kResY-640)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 640, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+
 
 	// post processing
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
