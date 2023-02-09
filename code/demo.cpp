@@ -55,7 +55,7 @@ bool Demo_Create()
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
 	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_outlined.png");
 	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
-	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined.png");
+	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined_new.png");
 	for (auto *pImg : s_pCredits)
 		if (nullptr == pImg)
 			return false;
@@ -117,7 +117,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// now simply draw the 8 gentlemen	
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 				{
-					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
+//					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
+					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 1.f);
 					xOffs += 128;
 				}
 			}
@@ -162,7 +163,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// credit logo blit
 	const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
 	if (0 != iLogo)
-		BlitSrc32A(pDest + ((kResY-640)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 640, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+		BlitSrc32A(pDest + ((kResY-568)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 568, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
 
 
 	// post processing

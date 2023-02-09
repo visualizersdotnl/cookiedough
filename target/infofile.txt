@@ -30,11 +30,13 @@
    + and introducing ernst hot
 
    advisory board / additional:
-   + raimo (maps)
-   + alien  (TPB logo)
    + dascon (networking)
    + nytrik (TPB 'Mexico' logo)
+   + alien (small TPB logo)
+   + raimo
+
+   nautilus effect was adapted with permission by the late Weyland Yutani
+   rest in peace, soldier
 
    how open are we?   
    very -> repository: https://www.github.com/visualizersdotnl/cookiedough
-   
