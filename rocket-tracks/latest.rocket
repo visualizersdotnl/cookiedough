@@ -527,7 +527,7 @@ color="ffb28050">
 		<key row="2096" value="0.500000" interpolation="1" />
 		<key row="2120" value="1.000000" interpolation="0" />
 		<key row="2336" value="1.000000" interpolation="2" />
-		<key row="2360" value="0.000000" interpolation="2" />
+		<key row="2360" value="0.220000" interpolation="2" />
 		<key row="2392" value="1.000000" interpolation="0" />
 		<key row="2880" value="0.300000" interpolation="3" />
 		<key row="2896" value="1.000000" interpolation="0" />
