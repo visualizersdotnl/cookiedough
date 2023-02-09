@@ -2,7 +2,6 @@
 <rootElement>
 	<bookmark row="86" />
 	<loopmark row="3" />
-	<group name="laura:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
 	<track name="voxelScape:Forward" folded="0" muteKeyCount="0"
@@ -141,6 +140,7 @@ color="ff4fb292">
 	<track name="laura:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="8384" value="3.000000" interpolation="0" />
+		<key row="8904" value="-3.000000" interpolation="0" />
 	</track>
 	<track name="laura:Yaw" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -153,6 +153,8 @@ color="ffb25091">
 	<track name="laura:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="8384" value="0.010000" interpolation="0" />
+		<key row="8888" value="0.010000" interpolation="2" />
+		<key row="8904" value="0.005000" interpolation="0" />
 	</track>
 	<track name="laura:Hue" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -216,6 +218,7 @@ color="ffb25091">
 		<key row="6680" value="33.000000" interpolation="0" />
 		<key row="6808" value="13.000000" interpolation="0" />
 		<key row="7072" value="44.000000" interpolation="0" />
+		<key row="7320" value="45.000000" interpolation="0" />
 	</track>
 	<track name="spike:Specular" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -234,7 +237,7 @@ color="ffb28050">
 		<key row="6288" value="4.000000" interpolation="0" />
 		<key row="6544" value="3.000000" interpolation="0" />
 		<key row="6680" value="0.100000" interpolation="0" />
-		<key row="6808" value="3.000000" interpolation="0" />
+		<key row="6808" value="2.660000" interpolation="0" />
 		<key row="7072" value="0.100000" interpolation="0" />
 	</track>
 	<track name="distSpike:Warmup" folded="0" muteKeyCount="0"
@@ -249,7 +252,7 @@ color="ff60b250">
 		<key row="6288" value="40.000000" interpolation="0" />
 		<key row="6544" value="2.000000" interpolation="0" />
 		<key row="6680" value="44.000000" interpolation="0" />
-		<key row="6808" value="35.000000" interpolation="0" />
+		<key row="6808" value="36.000000" interpolation="0" />
 		<key row="7072" value="11.000000" interpolation="0" />
 	</track>
 	<track name="spike:Gamma" folded="0" muteKeyCount="0"
@@ -441,9 +444,13 @@ color="ff8850b2">
 		<key row="6560" value="0.000000" interpolation="0" />
 		<key row="6680" value="0.700000" interpolation="2" />
 		<key row="6704" value="0.000000" interpolation="0" />
+		<key row="6808" value="0.620000" interpolation="1" />
+		<key row="6824" value="0.000000" interpolation="0" />
 		<key row="7208" value="0.000000" interpolation="3" />
 		<key row="7335" value="0.800000" interpolation="0" />
 		<key row="7336" value="0.000000" interpolation="0" />
+		<key row="8904" value="0.660000" interpolation="1" />
+		<key row="8920" value="0.000000" interpolation="0" />
 		<key row="9376" value="0.000000" interpolation="2" />
 		<key row="9407" value="1.000000" interpolation="0" />
 		<key row="9408" value="0.000000" interpolation="0" />
@@ -480,6 +487,7 @@ color="ffb25091">
 		<key row="3920" value="0.000000" interpolation="0" />
 		<key row="6288" value="1.000000" interpolation="3" />
 		<key row="6304" value="0.000000" interpolation="0" />
+		<key row="7320" value="1.000000" interpolation="1" />
 		<key row="7336" value="0.500000" interpolation="1" />
 		<key row="7360" value="0.000000" interpolation="0" />
 		<key row="9408" value="1.000000" interpolation="3" />
