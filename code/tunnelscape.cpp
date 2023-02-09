@@ -27,7 +27,7 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-constexpr float kMapViewLenScale = 0.314f*0.624f*kOneOverAspect;
+constexpr float kMapViewLenScale = 0.314f*0.5; // *kOneOverAspect;
 constexpr int kMapViewHeight = 110;
 constexpr int kMapTilt = 120;
 constexpr int kMapScale = 120;
