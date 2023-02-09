@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rootElement>
+	<bookmark row="86" />
 	<loopmark row="3" />
 	<group name="starsTunnel:" />
 	<group name="laura:" />
@@ -193,7 +194,7 @@ color="ff8850b2">
 		<key row="3144" value="9.440000" interpolation="0" />
 		<key row="3408" value="-11.000000" interpolation="0" />
 		<key row="3664" value="9.000000" interpolation="0" />
-		<key row="3912" value="24.000000" interpolation="0" />
+		<key row="3912" value="16.000000" interpolation="0" />
 		<key row="3936" value="-4.000000" interpolation="0" />
 		<key row="6288" value="6.280000" interpolation="0" />
 		<key row="6544" value="-7.000000" interpolation="0" />
@@ -450,20 +451,24 @@ color="ffb25091">
 	<track name="demo:CreditLogo" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="4184" value="3.000000" interpolation="0" />
-		<key row="4448" value="0.000000" interpolation="0" />
-		<key row="4584" value="2.000000" interpolation="0" />
-		<key row="4976" value="1.000000" interpolation="0" />
-		<key row="5240" value="0.000000" interpolation="0" />
+		<key row="2096" value="1.000000" interpolation="0" />
+		<key row="2360" value="4.000000" interpolation="0" />
+		<key row="2616" value="2.000000" interpolation="0" />
+		<key row="2880" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:CreditLogoAlpha" folded="0" muteKeyCount="0"
 color="ffb28050">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="4184" value="1.000000" interpolation="0" />
-		<key row="4584" value="1.000000" interpolation="0" />
-		<key row="4704" value="0.000000" interpolation="0" />
-		<key row="4976" value="1.000000" interpolation="0" />
-		<key row="5240" value="0.000000" interpolation="1" />
+		<key row="2096" value="0.500000" interpolation="1" />
+		<key row="2120" value="1.000000" interpolation="0" />
+		<key row="2328" value="1.000000" interpolation="3" />
+		<key row="2360" value="0.000000" interpolation="1" />
+		<key row="2376" value="1.000000" interpolation="0" />
+		<key row="2880" value="0.300000" interpolation="3" />
+		<key row="2896" value="1.000000" interpolation="0" />
+		<key row="2934" value="2.000000" interpolation="0" />
+		<key row="3016" value="1.000000" interpolation="1" />
+		<key row="3144" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
