@@ -580,5 +580,33 @@ color="ffb28050">
 		<key row="3062" value="0.883765" interpolation="2" />
 		<key row="3136" value="0.000000" interpolation="0" />
 	</track>
+	<track name="demo:CreditLogoBlurH" folded="0" muteKeyCount="0"
+color="ffa9b250">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="2880" value="16.000000" interpolation="2" />
+		<key row="2896" value="0.000000" interpolation="0" />
+		<key row="3062" value="0.000000" interpolation="3" />
+		<key row="3136" value="16.000000" interpolation="0" />
+	</track>
+	<track name="demo:CreditLogoBlurV" folded="0" muteKeyCount="0"
+color="ff60b250">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="2224" value="16.000000" interpolation="2" />
+		<key row="2232" value="8.000000" interpolation="3" />
+		<key row="2240" value="4.000000" interpolation="1" />
+		<key row="2248" value="0.000000" interpolation="0" />
+		<key row="2488" value="16.000000" interpolation="2" />
+		<key row="2496" value="8.000000" interpolation="3" />
+		<key row="2504" value="4.000000" interpolation="1" />
+		<key row="2512" value="0.000000" interpolation="0" />
+		<key row="2592" value="8.000000" interpolation="3" />
+		<key row="2608" value="0.000000" interpolation="0" />
+		<key row="2720" value="8.000000" interpolation="2" />
+		<key row="2728" value="0.000000" interpolation="0" />
+		<key row="2752" value="8.000000" interpolation="3" />
+		<key row="2768" value="0.000000" interpolation="0" />
+		<key row="3008" value="8.000000" interpolation="2" />
+		<key row="3024" value="0.000000" interpolation="0" />
+	</track>
 </tracks>
 	</rootElement>
