@@ -421,7 +421,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				const float distance = hit.z-origin.z;
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, 0.314f)),
+					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, kGoldenRatio*0.1f)),
 						gamma);
 			}
 
