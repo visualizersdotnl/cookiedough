@@ -684,6 +684,8 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
 	RenderTunnelMap_2x2(g_pFxMap[0], time);
 	Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+
+	// FIXME: parametrize!
 	HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, 3.f*kBoxBlurScale);
 }
 
