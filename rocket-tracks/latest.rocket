@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rootElement>
 	<bookmark row="86" />
+	<bookmark row="776" />
 	<bookmark row="1884" />
 	<loopmark row="3" />
 	<group name="closeSpike:" />
@@ -17,10 +18,10 @@ color="ffb27474">
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="0" value="90.000000" interpolation="3" />
-		<key row="512" value="45.000000" interpolation="1" />
+		<key row="0" value="90.000000" interpolation="2" />
+		<key row="512" value="48.000000" interpolation="2" />
 		<key row="528" value="40.000000" interpolation="3" />
-		<key row="1048" value="0.000000" interpolation="0" />
+		<key row="1048" value="101.000000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -210,9 +211,9 @@ color="ff4f71b2">
 	<track name="spike:Speed" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="3144" value="9.440000" interpolation="0" />
-		<key row="3248" value="-1.000000" interpolation="0" />
+		<key row="3248" value="2.000000" interpolation="0" />
 		<key row="3272" value="-12.000000" interpolation="0" />
-		<key row="3392" value="-1.000000" interpolation="0" />
+		<key row="3392" value="0.000000" interpolation="0" />
 		<key row="3408" value="-11.000000" interpolation="0" />
 		<key row="3504" value="-12.000000" interpolation="0" />
 		<key row="3536" value="1.000000" interpolation="0" />
