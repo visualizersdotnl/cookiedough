@@ -180,7 +180,7 @@ color="ffb27474">
 color="ffa9b250">
 		<key row="5240" value="0.000000" interpolation="0" />
 		<key row="6008" value="0.000000" interpolation="2" />
-		<key row="6048" value="-0.005000" interpolation="0" />
+		<key row="6048" value="-0.010000" interpolation="0" />
 	</track>
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
@@ -222,7 +222,7 @@ color="ff8850b2">
 		<key row="3912" value="12.000000" interpolation="0" />
 		<key row="3936" value="-9.000000" interpolation="0" />
 		<key row="4064" value="9.000000" interpolation="0" />
-		<key row="6288" value="11.000000" interpolation="0" />
+		<key row="6288" value="14.000000" interpolation="0" />
 		<key row="6544" value="-7.000000" interpolation="0" />
 		<key row="6680" value="-9.000000" interpolation="0" />
 		<key row="6808" value="-13.000000" interpolation="0" />
@@ -238,6 +238,8 @@ color="ffb25091">
 		<key row="6288" value="1.000000" interpolation="0" />
 		<key row="6544" value="3.000000" interpolation="0" />
 		<key row="6680" value="33.330002" interpolation="0" />
+		<key row="6800" value="33.330002" interpolation="1" />
+		<key row="6807" value="34.000000" interpolation="0" />
 		<key row="6808" value="13.000000" interpolation="0" />
 		<key row="6952" value="13.000000" interpolation="2" />
 		<key row="6968" value="13.220000" interpolation="0" />
@@ -481,8 +483,8 @@ color="ff8850b2">
 		<key row="4976" value="1.000000" interpolation="3" />
 		<key row="5000" value="0.000000" interpolation="0" />
 		<key row="5496" value="0.000000" interpolation="1" />
-		<key row="5504" value="1.000000" interpolation="1" />
-		<key row="5512" value="0.000000" interpolation="0" />
+		<key row="5504" value="0.770000" interpolation="3" />
+		<key row="5520" value="0.000000" interpolation="0" />
 		<key row="5760" value="0.000000" interpolation="3" />
 		<key row="5775" value="1.000000" interpolation="3" />
 		<key row="5792" value="0.000000" interpolation="0" />
