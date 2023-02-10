@@ -91,7 +91,7 @@ color="ffb27474">
 		<key row="1832" value="-2.000000" interpolation="0" />
 		<key row="1936" value="2.000000" interpolation="0" />
 		<key row="2040" value="-4.000000" interpolation="0" />
-		<key row="2096" value="0.000000" interpolation="0" />
+		<key row="2096" value="-0.010000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAttenuation" folded="0" muteKeyCount="0"
 color="ffb28050">
