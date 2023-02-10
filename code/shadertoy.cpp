@@ -527,16 +527,16 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio);
+				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, kGoldenRatio);
 
-				Vector3 origin(0.f, 0.f, -3.314f);
-				Vector3 direction(UV.x, UV.y, 1.f); 
+				const Vector3 origin(0.f, 0.f, -3.314f);
+				Vector3 direction(UV.x*kAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
 				Vector3 hit;
 
-				float march, total = 0.f; 
+				float march = 1.f, total = 0.f; 
 				for (int iStep = 0; iStep < 36; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
@@ -544,9 +544,8 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 					hit.z = origin.z + direction.z*total;
 
 					march = fSpikey2(hit);
-					march *= 0.075f*kGoldenRatio;
 
-					total += march;
+					total += march*0.075f*kGoldenRatio;
 				}
 
 				constexpr float nOffs = 0.01f;
@@ -557,7 +556,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				Shadertoy::vFastNorm3(normal);
 
 				const float distance = hit.z-origin.z;
-				const float fakeSpecular = warmup*powf(normal*direction, specPow);
+				const float fakeSpecular = warmup*powf(std::max(0.f, normal*direction), specPow);
 
 				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(fakeSpecular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0133f));
 				colors[iColor] = fogged;
@@ -593,9 +592,8 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		{
 			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name "warmup")
 			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap[0], time, 1.f+warmup);
-//			HorizontalBoxBlur32(g_pFxMap[1], g_pFxMap[0], kFxMapResX, kFxMapResY, warmup*0.005f*kGoldenRatio);
-			Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
-			HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, warmup*0.005f*kGoldenRatio);
+			HorizontalBoxBlur32(g_pFxMap[0], g_pFxMap[0], kFxMapResX, kFxMapResY, BoxBlurScale(1.f+warmup));
+			Fx_Blit_2x2(pDest, g_pFxMap[0]);
 		}
 	}
 
