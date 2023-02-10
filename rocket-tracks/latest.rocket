@@ -179,6 +179,7 @@ color="ffb27474">
 	<track name="nautilus:Roll" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="5240" value="0.000000" interpolation="0" />
+		<key row="5504" value="0.100000" interpolation="0" />
 		<key row="6008" value="0.000000" interpolation="2" />
 		<key row="6048" value="-0.010000" interpolation="0" />
 	</track>
