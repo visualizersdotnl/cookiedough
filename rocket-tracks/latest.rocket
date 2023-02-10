@@ -185,7 +185,7 @@ color="ff60b250">
 		<key row="5736" value="1.000000" interpolation="3" />
 		<key row="5775" value="50.000000" interpolation="0" />
 		<key row="5776" value="50.000000" interpolation="3" />
-		<key row="5816" value="0.000000" interpolation="0" />
+		<key row="5808" value="0.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -249,7 +249,7 @@ color="ffb27474">
 color="ffb28050">
 		<key row="3144" value="6.000000" interpolation="0" />
 		<key row="3936" value="3.000000" interpolation="0" />
-		<key row="6288" value="4.000000" interpolation="0" />
+		<key row="6288" value="3.000000" interpolation="0" />
 		<key row="6544" value="3.000000" interpolation="0" />
 		<key row="6680" value="3.300000" interpolation="0" />
 		<key row="6808" value="2.660000" interpolation="0" />
@@ -267,7 +267,7 @@ color="ff60b250">
 		<key row="3408" value="20.000000" interpolation="0" />
 		<key row="3664" value="14.500000" interpolation="0" />
 		<key row="3936" value="60.000000" interpolation="0" />
-		<key row="6288" value="40.000000" interpolation="0" />
+		<key row="6288" value="41.000000" interpolation="0" />
 		<key row="6544" value="2.000000" interpolation="0" />
 		<key row="6680" value="22.000000" interpolation="0" />
 		<key row="6808" value="36.000000" interpolation="0" />
