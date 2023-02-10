@@ -554,10 +554,10 @@ color="ffb25091">
 	<track name="demo:CreditLogo" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="2096" value="1.000000" interpolation="0" />
+		<key row="2096" value="2.000000" interpolation="0" />
 		<key row="2360" value="4.000000" interpolation="0" />
-		<key row="2616" value="2.000000" interpolation="0" />
-		<key row="2880" value="3.000000" interpolation="0" />
+		<key row="2616" value="3.000000" interpolation="0" />
+		<key row="2880" value="1.000000" interpolation="0" />
 		<key row="3144" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:CreditLogoAlpha" folded="0" muteKeyCount="0"
