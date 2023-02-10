@@ -556,7 +556,7 @@ color="ffb25091">
 		<key row="7336" value="0.500000" interpolation="1" />
 		<key row="7360" value="0.000000" interpolation="0" />
 		<key row="9408" value="1.000000" interpolation="3" />
-		<key row="9416" value="89.989998" interpolation="0" />
+		<key row="9416" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:CreditLogo" folded="0" muteKeyCount="0"
 color="ffb27474">
