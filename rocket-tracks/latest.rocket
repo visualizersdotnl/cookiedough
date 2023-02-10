@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rootElement>
 	<bookmark row="86" />
+	<bookmark row="1884" />
 	<loopmark row="3" />
 	<group name="closeSpike:" />
 	<group name="sinusesTunnel:" />
@@ -109,7 +110,7 @@ color="ff8850b2">
 		<key row="1104" value="0.000000" interpolation="0" />
 		<key row="1152" value="-128.000000" interpolation="0" />
 		<key row="1208" value="128.000000" interpolation="0" />
-		<key row="1312" value="-128.000000" interpolation="0" />
+		<key row="1312" value="-256.000000" interpolation="0" />
 		<key row="1416" value="128.000000" interpolation="0" />
 		<key row="1488" value="256.000000" interpolation="0" />
 		<key row="1544" value="-128.000000" interpolation="0" />
@@ -117,7 +118,7 @@ color="ff8850b2">
 		<key row="1776" value="-128.000000" interpolation="0" />
 		<key row="1832" value="128.000000" interpolation="0" />
 		<key row="1936" value="128.000000" interpolation="0" />
-		<key row="2040" value="-128.000000" interpolation="0" />
+		<key row="2040" value="-96.000000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:RotateOffsY" folded="0" muteKeyCount="0"
@@ -458,6 +459,8 @@ color="ff8850b2">
 		<key row="3400" value="0.000000" interpolation="0" />
 		<key row="3536" value="0.500000" interpolation="2" />
 		<key row="3544" value="0.000000" interpolation="0" />
+		<key row="3552" value="0.600000" interpolation="2" />
+		<key row="3560" value="0.000000" interpolation="0" />
 		<key row="3784" value="0.000000" interpolation="3" />
 		<key row="3800" value="1.000000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
@@ -525,6 +528,9 @@ color="ffb25091">
 		<key row="1584" value="0.000000" interpolation="0" />
 		<key row="1656" value="1.000000" interpolation="3" />
 		<key row="1672" value="0.000000" interpolation="0" />
+		<key row="1816" value="0.000000" interpolation="1" />
+		<key row="1824" value="0.660000" interpolation="2" />
+		<key row="1831" value="0.000000" interpolation="0" />
 		<key row="1936" value="1.000000" interpolation="1" />
 		<key row="1952" value="0.000000" interpolation="0" />
 		<key row="3144" value="0.500000" interpolation="3" />
