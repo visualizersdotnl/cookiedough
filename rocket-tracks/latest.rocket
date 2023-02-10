@@ -18,8 +18,8 @@ color="ffb27474">
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050">
 		<key row="0" value="90.000000" interpolation="2" />
-		<key row="512" value="48.000000" interpolation="2" />
-		<key row="528" value="40.000000" interpolation="3" />
+		<key row="512" value="48.000000" interpolation="3" />
+		<key row="528" value="40.000000" interpolation="2" />
 		<key row="1048" value="101.000000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
