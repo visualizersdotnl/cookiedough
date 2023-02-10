@@ -2,6 +2,10 @@
 <rootElement>
 	<bookmark row="86" />
 	<loopmark row="3" />
+	<group name="closeSpike:" />
+	<group name="sinusesTunnel:" />
+	<group name="plasma:" />
+	<group name="tunnel:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
 	<track name="voxelScape:Forward" folded="0" muteKeyCount="0"
@@ -207,7 +211,13 @@ color="ff4f71b2">
 	<track name="spike:Speed" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="3144" value="9.440000" interpolation="0" />
+		<key row="3248" value="-1.000000" interpolation="0" />
+		<key row="3272" value="-12.000000" interpolation="0" />
+		<key row="3392" value="-1.000000" interpolation="0" />
 		<key row="3408" value="-11.000000" interpolation="0" />
+		<key row="3504" value="-12.000000" interpolation="0" />
+		<key row="3536" value="1.000000" interpolation="0" />
+		<key row="3552" value="9.000000" interpolation="0" />
 		<key row="3664" value="9.000000" interpolation="0" />
 		<key row="3912" value="12.000000" interpolation="0" />
 		<key row="3936" value="-9.000000" interpolation="0" />
@@ -441,6 +451,12 @@ color="ff8850b2">
 		<key row="2096" value="0.000000" interpolation="0" />
 		<key row="2616" value="1.000000" interpolation="2" />
 		<key row="2672" value="0.000000" interpolation="0" />
+		<key row="3248" value="0.500000" interpolation="2" />
+		<key row="3264" value="0.000000" interpolation="0" />
+		<key row="3392" value="0.500000" interpolation="2" />
+		<key row="3400" value="0.000000" interpolation="0" />
+		<key row="3536" value="0.500000" interpolation="2" />
+		<key row="3544" value="0.000000" interpolation="0" />
 		<key row="3784" value="0.000000" interpolation="3" />
 		<key row="3800" value="1.000000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
