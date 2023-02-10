@@ -484,9 +484,8 @@ color="ff8850b2">
 		<key row="9376" value="0.000000" interpolation="2" />
 		<key row="9407" value="1.000000" interpolation="0" />
 		<key row="9408" value="0.000000" interpolation="0" />
-		<key row="9488" value="0.000000" interpolation="3" />
-		<key row="9528" value="0.200000" interpolation="2" />
-		<key row="9562" value="1.000000" interpolation="0" />
+		<key row="9416" value="0.000000" interpolation="3" />
+		<key row="9480" value="1.000000" interpolation="0" />
 	</track>
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
 color="ffb25091">
