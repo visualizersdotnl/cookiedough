@@ -29,8 +29,11 @@ SyncTrack trackCreditLogo, trackCreditLogoAlpha;
 
 // --------------------
 
-// credits logos (1280x640)
+// credits logos (1280x568)
 static uint32_t *s_pCredits[4] = { nullptr }; // FIXME: a fun opportunity to randomize the index on load so it appears in the demo likewise
+
+// vignette re-used (TPB-06)
+static uint32_t *s_pVignette06 = nullptr;
 
 bool Demo_Create()
 {
@@ -59,6 +62,11 @@ bool Demo_Create()
 	for (auto *pImg : s_pCredits)
 		if (nullptr == pImg)
 			return false;
+
+	// load generic TPB-06 dirty vignette
+	s_pVignette06 = Image_Load32("assets/tpb-06-dirty-vignette-1280x720.png");
+	if (nullptr == s_pVignette06)
+		return false;
 
 	return fxInit;
 }
@@ -130,6 +138,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 8:
 			Spikey_Draw(pDest, timer, delta, false);
+ 
+ 			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME
 			break;
 
 		case 9:
@@ -164,7 +174,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
 	if (0 != iLogo)
 		BlitSrc32A(pDest + ((kResY-568)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 568, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
-
 
 	// post processing
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);

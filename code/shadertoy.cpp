@@ -14,7 +14,6 @@
 
 	to do (priority):
 		- optimize where you can (which does not always mean more SIMD)
-		- fix normals left and right
 */
 
 #include "main.h"
@@ -340,8 +339,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 // A few distorted spheres (spikes).
 //
 // FIXME:
-// - try to "fix" normals
-// - real specular please?
+// - colored specular perhaps?
 //
 
 static Vector4 fSpike_global;
@@ -388,7 +386,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); // FIXME: possible parameter
+				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
 				Vector3 direction((UV.x+xOffs)*kAspect, UV.y + yOffs, 1.f); 
@@ -397,9 +395,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				Vector3 hit;
 
-				float march, total = 0.f; 
+				float march = 1.f, total = 0.f; 
 				int iStep;
-				for (iStep = 0; iStep < 32; ++iStep)
+				for (iStep = 0; march > 0.001f && iStep < 32; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
@@ -407,7 +405,8 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 					march = fSpikey1(hit);
 
-					total += march*0.14f;
+					// in this case it looks better to not scale march other than to, well: march
+					total += march*(0.05f*kPI);
 				}
 
 				constexpr float nOffs = 0.15f;
@@ -418,7 +417,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				Shadertoy::vFastNorm3(normal);
 
 				const float diffuse = normal.z;
-				const float specular = powf(std::max(0.f, normal*direction), specPow);
+				const float specular = powf(std::max<float>(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
@@ -432,6 +431,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	}
 }
 
+// FIXME: untested (10/02/2023)
 static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
@@ -471,20 +471,21 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 
 				Vector3 hit;
 
-				float march, total = 0.f; 
+				float march = 1.f, total = 0.f; 
 				int iStep;
-				for (iStep = 0; iStep < 36; ++iStep)
+				for (iStep = 0; march > 0.001f && iStep < 48; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
 
 					march = fSpikey2(hit);
+					march *= 0.314f;
 
-					total += march*0.314f;
+					total += march; 
 				}
 
-				constexpr float nOffs = 0.05f;
+				constexpr float nOffs = kPI*0.02f;
 				Vector3 normal(
 					march-fSpikey2(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey2(Vector3(hit.x, hit.y+nOffs, hit.z)),
@@ -492,7 +493,7 @@ static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 				Shadertoy::vFastNorm3(normal);
 
 				const float diffuse = std::max<float>(0.f, normal.z*0.8f + normal.y*0.2f);
-				const float fakeSpecular = powf(std::max(0.25f, normal*direction), specPow);
+				const float fakeSpecular = powf(normal*direction, specPow); // not clamping prevents artifacts
 				const float distance = hit.z-origin.z;
 				
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
@@ -543,8 +544,9 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 					hit.z = origin.z + direction.z*total;
 
 					march = fSpikey2(hit);
+					march *= 0.075f*kGoldenRatio;
 
-					total += march*0.075f*kGoldenRatio;
+					total += march;
 				}
 
 				constexpr float nOffs = 0.01f;
@@ -555,7 +557,7 @@ static void RenderSpikeyMap_2x2_Distant_SpecularOnly(uint32_t *pDest, float time
 				Shadertoy::vFastNorm3(normal);
 
 				const float distance = hit.z-origin.z;
-				const float fakeSpecular = warmup*powf(std::max(0.f, normal*direction), specPow);
+				const float fakeSpecular = warmup*powf(normal*direction, specPow);
 
 				const __m128 fogged = Shadertoy::vLerp4(_mm_set_ps1(fakeSpecular), _mm_setzero_ps(), Shadertoy::ExpFog(distance, 0.0133f));
 				colors[iColor] = fogged;
@@ -692,9 +694,6 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 // My Shadertoy version: https://www.shadertoy.com/view/XldyzX (private)
 //
 // It's glitchy, it's grainy, but with the right parameters and colors might be useful for a short show. 
-//
-// FIXME:
-// - try to "fix" normals
 //
 
 VIZ_INLINE const Vector3 fSinPath(float time)
