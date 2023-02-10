@@ -138,7 +138,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 8:
 			Spikey_Draw(pDest, timer, delta, false);
-			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME
+ 
+ 			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME
 			break;
 
 		case 9:
