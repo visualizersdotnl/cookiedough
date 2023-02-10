@@ -107,18 +107,20 @@ static void tscape(uint32_t *pDest, float time)
 	const float syncDirX = Rocket::getf(trackStarsSpeedX);
 	const float syncDirY = Rocket::getf(trackStarsSpeedY);
 
-	const float fromY = 512.f + syncDirY*time*214.f;
+	const float fromY = 512.f + syncDirY * time*128.f;
 
 	const int dX = ftofp24(0.5f);
 	const int dY = ftofp24(1.f);
+
+	const auto fpFromY = ftofp24(fromY);
 
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
-		const float fromX = mapX + syncDirX*time*kGoldenRatio*30.f;
+		const float fromX = mapX + syncDirX * time*kGoldenRatio*30.f;
 
-		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), ftofp24(fromY), dX, dY);
+		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), fpFromY, dX, dY);
 
 //		pDest += kTargetResX;
 //		mapX += mapStepX;

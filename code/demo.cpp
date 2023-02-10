@@ -25,12 +25,14 @@
 
 SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
-SyncTrack trackCreditLogo, trackCreditLogoAlpha;
+SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 
 // --------------------
 
 // credits logos (1280x568)
-static uint32_t *s_pCredits[4] = { nullptr }; // FIXME: a fun opportunity to randomize the index on load so it appears in the demo likewise
+static uint32_t *s_pCredits[4] = { nullptr };
+constexpr auto kCredX = 1280;
+constexpr auto kCredY = 568;
 
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
@@ -53,6 +55,8 @@ bool Demo_Create()
 	trackFadeToWhite = Rocket::AddTrack("demo:FadeToWhite");
 	trackCreditLogo = Rocket::AddTrack("demo:CreditLogo");
 	trackCreditLogoAlpha = Rocket::AddTrack("demo:CreditLogoAlpha");
+	trackCreditLogoBlurH = Rocket::AddTrack("demo:CreditLogoBlurH");
+	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -173,7 +177,27 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// credit logo blit
 	const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
 	if (0 != iLogo)
-		BlitSrc32A(pDest + ((kResY-568)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 568, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+	{
+		uint32_t *pCur = s_pCredits[iLogo-1];
+
+		const float blurH = Rocket::getf(trackCreditLogoBlurH);
+		if (0.f != blurH)
+		{
+			HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
+			pCur = g_renderTarget[0];
+		}
+
+		const float blurV = Rocket::getf(trackCreditLogoBlurV);
+		if (0 != blurV)
+		{
+			VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
+			pCur = g_renderTarget[0];
+		}
+
+		BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+
+//		BlitSrc32A(pDest + ((kResY-568)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 568, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+	}
 
 	// post processing
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
