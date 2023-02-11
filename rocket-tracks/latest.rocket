@@ -485,8 +485,8 @@ color="ff8850b2">
 		<key row="4952" value="0.000000" interpolation="3" />
 		<key row="4976" value="1.000000" interpolation="3" />
 		<key row="5000" value="0.000000" interpolation="0" />
-		<key row="5496" value="0.000000" interpolation="1" />
-		<key row="5504" value="0.770000" interpolation="3" />
+		<key row="5496" value="0.000000" interpolation="2" />
+		<key row="5504" value="0.880000" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
 		<key row="5760" value="0.000000" interpolation="3" />
 		<key row="5775" value="0.800000" interpolation="3" />
