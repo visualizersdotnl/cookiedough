@@ -167,5 +167,5 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	Polar_Blit(pDest, g_renderTarget[0], true);
 
 	// FIXME: parametrize
-	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(2.f));
+	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(1.f));
 }
