@@ -29,8 +29,8 @@ SyncTrack trackVoxelScapeTilt;
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
-constexpr float kMapViewLenScale = kAspect*0.25f;
-constexpr int kMapViewHeight = 100;
+constexpr float kMapViewLenScale = kAspect*(kPI*0.1f);
+// constexpr int kMapViewHeight = 100;
 constexpr int kMapTilt = 90;
 constexpr float kMaxTiltDiff = 90.f;
 constexpr int kMapScale = 512;
