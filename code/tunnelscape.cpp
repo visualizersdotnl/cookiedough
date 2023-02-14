@@ -27,8 +27,8 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-constexpr float kMapViewLenScale = 0.314f*0.5; // *kOneOverAspect;
-constexpr int kMapViewHeight = 110;
+constexpr float kMapViewLenScale = kAspect*.5f; // *kOneOverAspect;
+constexpr int kMapViewHeight = 128;
 constexpr int kMapTilt = 120;
 constexpr int kMapScale = 120;
 
@@ -72,8 +72,8 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// FIXME
 		int height = 255-mapHeight;		
-		height -= kMapViewHeight;
 		height <<= 8;
+		height -= kMapViewHeight;
 		height = int(height/kMapViewLenScale); // FIXME: this is pure evil, heed the FIXME above soon!
 		height /= iStep+1;          //
 		height *= kMapScale;
