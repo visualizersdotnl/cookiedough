@@ -120,7 +120,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	if (padTilt > -kMaxTiltDiff && pad.rightY < 0.f)
 		padTilt -= tiltStep;
 
-	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, (-kMaxTiltDiff + 2.f*Rocket::getf(trackVoxelScapeTilt)) + padTilt);
+	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, Rocket::getf(trackVoxelScapeTilt) + padTilt);
 	s_mapTilt = kMapTilt + int(tilt);
 
 	// calc. view angle + it's sine & cosine
