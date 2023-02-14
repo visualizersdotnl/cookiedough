@@ -13,7 +13,8 @@
 // const int kRowsPerOrder = 64;
 
 // MP3/OGG sync. rate
-const float kRowRate = (174.f /* BPM */ /60.f)*16.f /* RPB */;
+// HACK: we're compensating for the fact that it's actually 170BPM here instead of 174BPM, without wanting to resync. everything
+const float kRowRate = (170.f /* BPM */ / (60.f*(170.f/174.f)))*16.f /* RPB */;
 
 static HMUSIC s_hMusic = 0;
 
