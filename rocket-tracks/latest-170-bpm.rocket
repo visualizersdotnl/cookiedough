@@ -12,7 +12,7 @@ beatsPerMin="125">
 	<track name="voxelScape:Forward" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="1" />
-		<key row="1048" value="1024.000000" interpolation="0" />
+		<key row="1048" value="1023.989990" interpolation="0" />
 		<key row="6457" value="inf" interpolation="0" />
 		<key row="8456" value="inf" interpolation="0" />
 	</track>
@@ -110,13 +110,14 @@ color="ff8850b2">
 		<key row="1104" value="0.000000" interpolation="0" />
 		<key row="1152" value="-128.000000" interpolation="0" />
 		<key row="1208" value="128.000000" interpolation="0" />
-		<key row="1312" value="-256.000000" interpolation="0" />
+		<key row="1312" value="-400.000000" interpolation="0" />
 		<key row="1416" value="128.000000" interpolation="0" />
 		<key row="1488" value="256.000000" interpolation="0" />
 		<key row="1544" value="-128.000000" interpolation="0" />
-		<key row="1672" value="128.000000" interpolation="0" />
-		<key row="1776" value="-128.000000" interpolation="0" />
-		<key row="1832" value="128.000000" interpolation="0" />
+		<key row="1672" value="140.000000" interpolation="0" />
+		<key row="1736" value="-22.000000" interpolation="0" />
+		<key row="1776" value="-100.000000" interpolation="0" />
+		<key row="1832" value="400.000000" interpolation="0" />
 		<key row="1936" value="128.000000" interpolation="0" />
 		<key row="2040" value="-96.000000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
@@ -132,8 +133,9 @@ color="ffb25091">
 		<key row="1416" value="-128.000000" interpolation="0" />
 		<key row="1488" value="-256.000000" interpolation="0" />
 		<key row="1544" value="128.000000" interpolation="0" />
-		<key row="1672" value="-128.000000" interpolation="0" />
-		<key row="1776" value="128.000000" interpolation="0" />
+		<key row="1672" value="-300.000000" interpolation="0" />
+		<key row="1736" value="666.000000" interpolation="0" />
+		<key row="1776" value="-128.000000" interpolation="0" />
 		<key row="1832" value="-128.000000" interpolation="0" />
 		<key row="1936" value="-128.000000" interpolation="0" />
 		<key row="2040" value="128.000000" interpolation="0" />
@@ -227,7 +229,7 @@ color="ff8850b2">
 		<key row="6680" value="-9.000000" interpolation="0" />
 		<key row="6808" value="-13.000000" interpolation="0" />
 		<key row="6960" value="-19.000000" interpolation="0" />
-		<key row="7064" value="0.000000" interpolation="0" />
+		<key row="7064" value="3.140000" interpolation="0" />
 		<key row="7072" value="8.000000" interpolation="0" />
 	</track>
 	<track name="spike:Roll" folded="0" muteKeyCount="0"
@@ -494,6 +496,9 @@ color="ff8850b2">
 		<key row="5760" value="0.000000" interpolation="3" />
 		<key row="5775" value="0.800000" interpolation="2" />
 		<key row="5792" value="0.000000" interpolation="0" />
+		<key row="6160" value="0.000000" interpolation="2" />
+		<key row="6287" value="0.628000" interpolation="0" />
+		<key row="6288" value="0.000000" interpolation="0" />
 		<key row="6424" value="0.000000" interpolation="3" />
 		<key row="6542" value="1.000000" interpolation="1" />
 		<key row="6576" value="0.000000" interpolation="0" />
@@ -541,6 +546,8 @@ color="ffb25091">
 		<key row="1584" value="0.000000" interpolation="0" />
 		<key row="1656" value="1.000000" interpolation="3" />
 		<key row="1672" value="0.000000" interpolation="0" />
+		<key row="1736" value="1.000000" interpolation="1" />
+		<key row="1744" value="0.000000" interpolation="0" />
 		<key row="1816" value="0.000000" interpolation="1" />
 		<key row="1824" value="0.660000" interpolation="2" />
 		<key row="1831" value="0.000000" interpolation="0" />
