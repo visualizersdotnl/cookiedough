@@ -25,7 +25,7 @@ Another effect here is not off the table either.
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
-- Overlay referencing Stars and the year 19995 on top of the "earthy" voxel tunnel.
+- Overlay referencing Stars and the year 1995 on top of the "earthy" voxel tunnel.
 - New texture maps (tiling, 512x512 or higher!) for free-directional tunnel.
 
 ** Part 6: Nautilus tunnel **
