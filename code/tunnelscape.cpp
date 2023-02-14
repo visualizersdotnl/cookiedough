@@ -118,7 +118,7 @@ static void tscape(uint32_t *pDest, float time)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
-		const float fromX = mapX + syncDirX * time*kGoldenRatio*30.f;
+		const float fromX = mapX + syncDirX * time*kGoldenRatio;
 
 		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), fpFromY, dX, dY);
 
