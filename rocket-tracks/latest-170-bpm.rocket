@@ -143,14 +143,15 @@ color="ffb25091">
 	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
 color="ff60b250">
-		<key row="4184" value="1.314000" interpolation="0" />
-		<key row="4704" value="1.140000" interpolation="0" />
+		<key row="4184" value="1.000000" interpolation="0" />
+		<key row="4584" value="-1.000000" interpolation="0" />
+		<key row="4704" value="1.000000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:speedY" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="4184" value="3.660000" interpolation="0" />
+		<key row="4184" value="3.000000" interpolation="0" />
 		<key row="4584" value="-3.140000" interpolation="0" />
-		<key row="4704" value="3.628000" interpolation="0" />
+		<key row="4704" value="3.140000" interpolation="0" />
 	</track>
 	<track name="laura:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
