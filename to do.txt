@@ -32,7 +32,7 @@ Another effect here is not off the table either.
 +++ NEEDS ATTENTION BY SUPERPLEK +++ ** Part 6: Nautilus tunnel **
 
 - Sync. "disco guys" (a Thorsten a.k.a Ernst Hot classic; don't ask, TPB always has them).
-  + Maybe just only show them once things 'go orange'?
+  + Maybe just only show them once things 'go orange'? -> Done!
 - Any other ideas? -> Ernst has some, read in Messenger!
 
 ** Part 7: up-close spikey balls **
