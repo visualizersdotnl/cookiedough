@@ -26,6 +26,7 @@
 SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
+SyncTrack trackDiscoGuys;
 
 // --------------------
 
@@ -57,6 +58,7 @@ bool Demo_Create()
 	trackCreditLogoAlpha = Rocket::AddTrack("demo:CreditLogoAlpha");
 	trackCreditLogoBlurH = Rocket::AddTrack("demo:CreditLogoBlurH");
 	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
+	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -126,12 +128,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const auto yOffs = ((kResY-128)/2) + 290; // lower..  
 				auto xOffs = ((kResX-(128*8))/2) + 120;   // .. right corner
 
-				// now simply draw the 8 gentlemen	
-				for (int iGuy = 0; iGuy < 8; ++iGuy)
+				const float discoGuys = clampf(0.f, 1.f, Rocket::getf(trackDiscoGuys));
+				if (discoGuys > 0.f)
 				{
-//					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
-					BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 1.f);
-					xOffs += 128;
+					// now simply draw the 8 gentlemen	
+					for (int iGuy = 0; iGuy < 8; ++iGuy)
+					{
+//						BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
+						BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, discoGuys);
+						xOffs += 128;
+					}
 				}
 			}
 			break;
