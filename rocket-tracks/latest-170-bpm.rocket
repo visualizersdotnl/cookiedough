@@ -424,6 +424,8 @@ color="ff4fb292">
 color="ff4f71b2">
 		<key row="0" value="2.000000" interpolation="0" />
 		<key row="1048" value="3.000000" interpolation="0" />
+		<key row="2000" value="1.000000" interpolation="0" />
+		<key row="2016" value="3.000000" interpolation="0" />
 		<key row="2096" value="5.000000" interpolation="0" />
 		<key row="2123" value="5.000000" interpolation="0" />
 		<key row="3144" value="8.000000" interpolation="0" />
@@ -450,8 +452,12 @@ color="ff8850b2">
 		<key row="1224" value="0.000000" interpolation="0" />
 		<key row="1312" value="1.000000" interpolation="1" />
 		<key row="1320" value="0.000000" interpolation="0" />
+		<key row="1472" value="0.628000" interpolation="1" />
+		<key row="1487" value="0.000000" interpolation="0" />
 		<key row="1544" value="1.000000" interpolation="1" />
 		<key row="1552" value="0.000000" interpolation="0" />
+		<key row="1616" value="0.628000" interpolation="1" />
+		<key row="1624" value="0.000000" interpolation="0" />
 		<key row="1672" value="1.000000" interpolation="1" />
 		<key row="1680" value="0.000000" interpolation="0" />
 		<key row="1776" value="1.000000" interpolation="1" />
@@ -544,6 +550,8 @@ color="ffb25091">
 		<key row="1504" value="0.000000" interpolation="0" />
 		<key row="1552" value="1.000000" interpolation="2" />
 		<key row="1584" value="0.000000" interpolation="0" />
+		<key row="1632" value="0.628000" interpolation="3" />
+		<key row="1640" value="0.000000" interpolation="0" />
 		<key row="1656" value="1.000000" interpolation="3" />
 		<key row="1672" value="0.000000" interpolation="0" />
 		<key row="1736" value="1.000000" interpolation="1" />
@@ -551,8 +559,12 @@ color="ffb25091">
 		<key row="1816" value="0.000000" interpolation="1" />
 		<key row="1824" value="0.660000" interpolation="2" />
 		<key row="1831" value="0.000000" interpolation="0" />
+		<key row="1880" value="0.628000" interpolation="3" />
+		<key row="1888" value="0.000000" interpolation="0" />
 		<key row="1936" value="1.000000" interpolation="1" />
 		<key row="1952" value="0.000000" interpolation="0" />
+		<key row="2000" value="0.628000" interpolation="1" />
+		<key row="2016" value="0.000000" interpolation="0" />
 		<key row="3144" value="0.500000" interpolation="3" />
 		<key row="3160" value="0.000000" interpolation="0" />
 		<key row="3896" value="0.660000" interpolation="3" />
