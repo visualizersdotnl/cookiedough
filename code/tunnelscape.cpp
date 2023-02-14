@@ -17,6 +17,7 @@
 
 // Sync.
 SyncTrack trackStarsSpeedX, trackStarsSpeedY;
+SyncTrack trackStarsBlur;
 
 static uint8_t *s_pHeightMap = NULL;
 static uint32_t *s_pColorMap = NULL;
@@ -27,15 +28,15 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-constexpr float kMapViewLenScale = kAspect*0.314f; 
-constexpr int kMapViewHeight = 110;
+constexpr float kMapViewLenScale = kAspect*0.5f; 
+constexpr int kMapViewHeight = 96;
 constexpr int kMapTilt = 120;
-constexpr int kMapScale = 120;
+constexpr int kMapScale = 160;
 
-// adjust to map resolution (1024x1024)
-constexpr unsigned kMapSize = 1024;
+// adjust to map resolution (1024x1024 -> 2048x2048)
+constexpr unsigned kMapSize =  2048;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
-constexpr unsigned kMapShift = 10;
+constexpr unsigned kMapShift = 11;
 
 // trace depth
 const unsigned int kRayLength = 512; // 256 -- used for fog table!
@@ -63,7 +64,7 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		 __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
 
 		// apply fog (modulate)
-//		color = _mm_mullo_epi16(color, s_fogGradientUnp[iStep>>1]);
+//		color = _mm_mullo_epi16(color, s_fogGradientUnp[255-(iStep>>1)]);
 //		color = _mm_srli_epi16(color, 8);
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
@@ -98,16 +99,16 @@ static void tscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY)
 }
 
 // expected sizes:
-// - maps: 1024x1024
+// - maps: 1024x1024 -> 2048x2048
 static void tscape(uint32_t *pDest, float time)
 {
 //	float mapX = 0.f; 
-	constexpr float mapStepX = 1024.f/(kTargetResY-1.f); // tile (for blit)
+	constexpr float mapStepX = 2048.f/(kTargetResY-1); // tile (for blit)
 
 	const float syncDirX = Rocket::getf(trackStarsSpeedX);
 	const float syncDirY = Rocket::getf(trackStarsSpeedY);
 
-	const float fromY = 512.f + syncDirY * time*128.f;
+	const float fromY = 1024.f + syncDirY*time*128.f;
 
 	const int dX = ftofp24(0.5f);
 	const int dY = ftofp24(kAspect);
@@ -118,7 +119,7 @@ static void tscape(uint32_t *pDest, float time)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
-		const float fromX = mapX + syncDirX * time*kGoldenRatio;
+		const float fromX = mapX + syncDirX; // * time*kGoldenRatio;
 
 		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), fpFromY, dX, dY);
 
@@ -134,8 +135,8 @@ static void tscape(uint32_t *pDest, float time)
 bool Tunnelscape_Create()
 {
 	// load maps
-	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D7.png");
-	s_pColorMap = Image_Load32("assets/scape/C7W-edit.png");
+	s_pHeightMap = Image_Load8("assets/scape/tscape-D7-edit.png");
+	s_pColorMap = Image_Load32("assets/scape/tscape-C7W-edit.png");
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 
@@ -148,8 +149,10 @@ bool Tunnelscape_Create()
 	for (int iPixel = 0; iPixel < 256; ++iPixel)
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
 
+	// init. sync.
 	trackStarsSpeedX = Rocket::AddTrack("starsTunnel:speedX");
 	trackStarsSpeedY = Rocket::AddTrack("starsTunnel:speedY");
+	trackStarsBlur = Rocket::AddTrack("starsTunnel:Blur");
 
 	return true;
 }
@@ -166,6 +169,13 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	// polar blit
 	Polar_Blit(pDest, g_renderTarget[0], true);
 
-	// FIXME: parametrize
-	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(1.f));
+	const float blur = Rocket::getf(trackStarsBlur);
+	if (0.f != blur)
+	{
+		const float scaledBlur = BoxBlurScale(clampf(1.f, 100.f, blur));
+
+		// Twice, and not efficiently, but to come closer to non-linearity! (FIXME: optimize)
+		BoxBlur32(pDest, pDest, kResX, kResY, scaledBlur);
+		BoxBlur32(pDest, pDest, kResX, kResY, scaledBlur);
+	}
 }

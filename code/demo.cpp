@@ -38,6 +38,9 @@ constexpr auto kCredY = 568;
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
 
+// Nytrik's work once more (1280x602)
+static uint32_t *s_pFighters = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -72,6 +75,11 @@ bool Demo_Create()
 	// load generic TPB-06 dirty vignette
 	s_pVignette06 = Image_Load32("assets/tpb-06-dirty-vignette-1280x720.png");
 	if (nullptr == s_pVignette06)
+		return false;
+
+	// Nytrik's fighter logo
+	s_pFighters = Image_Load32("assets/roundfighters-1280.png");
+	if (nullptr == s_pFighters)
 		return false;
 
 	return fxInit;
@@ -174,6 +182,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 12:
 			memset32(pDest, 0xffffff, kResX*kResY);
 			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+			break;
+
+		case 13:
+			memset32(pDest, 0, kResX*kResY);
+			BlitSrc32(pDest + ((kResY-602)/2)*kResX, s_pFighters, kResX, 1280, 602);
 			break;
 
 		default:
