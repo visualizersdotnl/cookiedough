@@ -29,9 +29,9 @@ SyncTrack trackVoxelScapeTilt;
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
-constexpr float kMapViewLenScale = 0.314f*0.5f;
-constexpr int kMapViewHeight = 45;
-constexpr int kMapTilt = 120;
+constexpr float kMapViewLenScale = kAspect*(kPI*0.1f);
+// constexpr int kMapViewHeight = 100;
+constexpr int kMapTilt = 90;
 constexpr float kMaxTiltDiff = 90.f;
 constexpr int kMapScale = 512;
 
@@ -79,12 +79,11 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
-//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
-		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
+///		color = _mm_adds_epu16(color, s_fogGradientUnp[(iStep)>>1]);
+		color = _mm_subs_epu16(color, s_fogGradientUnp[(iStep)>>1]);
 
 		// FIXME
 		int height = 255-mapHeight;		
-		height -= kMapViewHeight;
 		height <<= 16;
 		height /= fpFishMul*(iStep+1);
 		height *= kMapScale;
@@ -121,7 +120,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	if (padTilt > -kMaxTiltDiff && pad.rightY < 0.f)
 		padTilt -= tiltStep;
 
-	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, (-kMaxTiltDiff + 2.f*Rocket::getf(trackVoxelScapeTilt)) + padTilt);
+	const float tilt = clampf(-kMaxTiltDiff, kMaxTiltDiff, Rocket::getf(trackVoxelScapeTilt) + padTilt);
 	s_mapTilt = kMapTilt + int(tilt);
 
 	// calc. view angle + it's sine & cosine
@@ -172,6 +171,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kResX; ++iRay)
 	{
+		// FIXME: subpixel accuracy adj.
+
 		const float rayX = 0.25f*(iRay - kResX*0.5f); // FIXME: parameter?
 
 		// FIXME: simplify
@@ -184,8 +185,8 @@ static void vscape(uint32_t *pDest, float time, float delta)
 		voxel::vnorm2D(dX, dY);
 
 		// counteract fisheye effect
-		const float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
-		
+		/* const */ float fishMul = rayY / sqrtf(rotRayX*rotRayX + rotRayY*rotRayY);
+	
 		vscape_ray(pDest+iRay, fpX1, fpY1, ftofp24(dX), ftofp24(dY), fishMul);
 	}
 }

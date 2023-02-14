@@ -27,7 +27,7 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-constexpr float kMapViewLenScale = 0.314f*0.5; // *kOneOverAspect;
+constexpr float kMapViewLenScale = kAspect*0.314f; 
 constexpr int kMapViewHeight = 110;
 constexpr int kMapTilt = 120;
 constexpr int kMapScale = 120;
@@ -110,7 +110,7 @@ static void tscape(uint32_t *pDest, float time)
 	const float fromY = 512.f + syncDirY * time*128.f;
 
 	const int dX = ftofp24(0.5f);
-	const int dY = ftofp24(1.f);
+	const int dY = ftofp24(kAspect);
 
 	const auto fpFromY = ftofp24(fromY);
 
@@ -118,7 +118,7 @@ static void tscape(uint32_t *pDest, float time)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
-		const float fromX = mapX + syncDirX * time*kGoldenRatio*30.f;
+		const float fromX = mapX + syncDirX * time*kGoldenRatio;
 
 		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), fpFromY, dX, dY);
 
@@ -167,5 +167,5 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	Polar_Blit(pDest, g_renderTarget[0], true);
 
 	// FIXME: parametrize
-	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(2.f));
+	BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(1.f));
 }
