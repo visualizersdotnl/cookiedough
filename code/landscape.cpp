@@ -29,9 +29,9 @@ SyncTrack trackVoxelScapeTilt;
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize, document)
-constexpr float kMapViewLenScale = 0.314f*0.5f;
-constexpr int kMapViewHeight = 45;
-constexpr int kMapTilt = 120;
+constexpr float kMapViewLenScale = kAspect*0.25f;
+constexpr int kMapViewHeight = 100;
+constexpr int kMapTilt = 90;
 constexpr float kMaxTiltDiff = 90.f;
 constexpr int kMapScale = 512;
 
@@ -79,12 +79,11 @@ static void vscape_ray(uint32_t *pDest, int curX, int curY, int dX, int dY, floa
 
 
 		// apply fog (additive/subtractive, no clamp: can overflow)
-//		color = _mm_adds_epu16(color, s_fogGradientUnp[iStep]);
-		color = _mm_subs_epu16(color, s_fogGradientUnp[iStep>>1]);
+///		color = _mm_adds_epu16(color, s_fogGradientUnp[(iStep)>>1]);
+		color = _mm_subs_epu16(color, s_fogGradientUnp[(iStep)>>1]);
 
 		// FIXME
 		int height = 255-mapHeight;		
-//		height -= kMapViewHeight;
 		height <<= 16;
 		height /= fpFishMul*(iStep+1);
 		height *= kMapScale;
