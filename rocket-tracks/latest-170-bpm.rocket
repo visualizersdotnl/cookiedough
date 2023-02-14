@@ -13,14 +13,15 @@ beatsPerMin="125">
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="1" />
 		<key row="81" value="0.000000" interpolation="1" />
-		<key row="1048" value="1023.989990" interpolation="0" />
+		<key row="1048" value="1000.000000" interpolation="0" />
 		<key row="6457" value="inf" interpolation="0" />
 		<key row="8456" value="inf" interpolation="0" />
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="0" value="90.000000" interpolation="2" />
-		<key row="1048" value="-90.000000" interpolation="0" />
+		<key row="0" value="90.000000" interpolation="3" />
+		<key row="968" value="0.000000" interpolation="3" />
+		<key row="1048" value="31.400000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -535,6 +536,9 @@ color="ff8850b2">
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
+		<key row="968" value="0.000000" interpolation="3" />
+		<key row="1046" value="0.628000" interpolation="0" />
+		<key row="1047" value="0.000000" interpolation="0" />
 		<key row="1088" value="0.660000" interpolation="1" />
 		<key row="1096" value="0.000000" interpolation="0" />
 		<key row="1104" value="1.000000" interpolation="1" />
