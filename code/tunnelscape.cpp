@@ -16,7 +16,7 @@
 #include "rocket.h"
 
 // Sync.
-SyncTrack trackStarsSpeedX, trackStarsSpeedY, trackStarsSpeed;
+SyncTrack trackStarsStepU, trackStarsStepV, trackStarsSpeed;
 SyncTrack trackStarsBlur;
 
 static uint8_t *s_pHeightMap = NULL;
@@ -105,8 +105,8 @@ static void tscape(uint32_t *pDest, float time)
 //	float mapX = 0.f; 
 	constexpr float mapStepX = 2048.f/(kTargetResY-1); // tile (for blit)
 
-	const float syncDirX = Rocket::getf(trackStarsSpeedX);
-	const float syncDirY = Rocket::getf(trackStarsSpeedY);
+	const float syncDirX = Rocket::getf(trackStarsStepU);
+	const float syncDirY = Rocket::getf(trackStarsStepV);
 
 	const float speedMul = sqrtf(syncDirX*syncDirX + syncDirY*syncDirY) * Rocket::getf(trackStarsSpeed);
 
@@ -152,8 +152,8 @@ bool Tunnelscape_Create()
 		s_fogGradientUnp[iPixel] = c2vISSE16(s_pFogGradient[iPixel]);
 
 	// init. sync.
-	trackStarsSpeedX = Rocket::AddTrack("starsTunnel:speedX");
-	trackStarsSpeedY = Rocket::AddTrack("starsTunnel:speedY");
+	trackStarsStepU = Rocket::AddTrack("starsTunnel:stepU");
+	trackStarsStepV = Rocket::AddTrack("starsTunnel:stepV");
 	trackStarsSpeed = Rocket::AddTrack("starsTunnel:Speed");
 	trackStarsBlur = Rocket::AddTrack("starsTunnel:Blur");
 
