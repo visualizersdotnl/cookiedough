@@ -55,12 +55,12 @@ SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
 // #define USE_LAST_BEAM_ACCUM
 
 // adjust to map resolution
-constexpr unsigned kMapSize = 512;
+constexpr unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
-constexpr unsigned kMapShift = 9;
+constexpr unsigned kMapShift = 10;
 
 // max. trace depth
-constexpr unsigned kMaxRayLength = 512;
+constexpr unsigned kMaxRayLength = 1024;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
@@ -295,7 +295,7 @@ static void vball_precalc()
 }
 
 // expected sizes:
-// - maps: 512x512
+// - maps: 1024x1024
 static void vball(uint32_t *pDest, float time)
 {
 	// precalc. projection map (FIXME: it's just a multiplication and a sine, can't we move this to the ray function already?)
@@ -311,8 +311,8 @@ static void vball(uint32_t *pDest, float time)
 
 	// move ray origin to fake hacky rotation 
 	const float timeScale = s_curRayLength*(0.25f/kMaxRayLength);
-	const int fromX = ftofp24(512.f*cosf(time*timeScale) + 256.f + Rocket::getf(trackBallRotateOffsX));
-	const int fromY = ftofp24(512.f*sinf(time*timeScale) + 256.f + Rocket::getf(trackBallRotateOffsY));
+	const int fromX = ftofp24(1024.f*cosf(time*timeScale) + 512.f + Rocket::getf(trackBallRotateOffsX));
+	const int fromY = ftofp24(1024.f*sinf(time*timeScale) + 512.f + Rocket::getf(trackBallRotateOffsY));
 
 	// FOV (full circle)
 	constexpr float fovAngle = kPI*2.f;
@@ -336,15 +336,15 @@ static void vball(uint32_t *pDest, float time)
 const char *kHeightMapPaths[5] =
 {
 	// spikey thing
-	"assets/ball/by-orange/hmap_1.jpg",  
+	"assets/ball/hmap_1_1k.jpg",  
 
 	// ball
-	"assets/ball/by-orange/hmap_4.jpg",    
+	"assets/ball/hmap_4_1k.jpg",    
 
 	// misc.
-	"assets/ball/by-orange/hmap_2.jpg", 
-	"assets/ball/by-orange/hmap_3.jpg", 
-	"assets/ball/by-orange/hmap_5.jpg", 
+	"assets/ball/hmap_2_1k.jpg", 
+	"assets/ball/hmap_3_1k.jpg", 
+	"assets/ball/hmap_5_1k.jpg", 
 };
 
 bool Ball_Create()
@@ -358,19 +358,18 @@ bool Ball_Create()
 	}
 	
 	// load color maps
-	s_pColorMap[0] = Image_Load32("assets/ball/by-orange/colormap.jpg"); // used as base map when beams active
-	s_pColorMap[1] = Image_Load32("assets/ball/by-orange/envmap2.jpg");  // used otherwise
+	s_pColorMap[0] = Image_Load32("assets/ball/by-orange/colormap_1k.jpg"); // used as base map when beams active
+	s_pColorMap[1] = Image_Load32("assets/ball/envmap2_1k.jpg");  // used otherwise
 	if (nullptr == s_pColorMap[0] || nullptr == s_pColorMap[1])
 		return false;
 
-	// load beam map (pairs with 'assets/ball/by-orange/colormap.jpg')
-	s_pBeamMap = Image_Load32("assets/ball/by-orange/beammap.jpg");
+	// load beam map (pairs with 'assets/ball/*/colormap_1k.jpg')
+	s_pBeamMap = Image_Load32("assets/ball/by-orange/beammap_1k.jpg");
 	if (nullptr == s_pBeamMap)
 		return false;
 
 	// load env. map
-	s_pEnvMap = Image_Load32("assets/ball/by-orange/envmap3.jpg");
-//	s_pEnvMap = Image_Load32("assets/ball/by-orange/envmap2.jpg");
+	s_pEnvMap = Image_Load32("assets/ball/envmap3_1k.jpg");
 	if (nullptr == s_pEnvMap)
 		return false;
 
@@ -379,7 +378,7 @@ bool Ball_Create()
 	if (nullptr == s_pBackground)
 		return false;
 
-	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(512*512*sizeof(uint8_t), kAlignTo));
+	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint8_t), kAlignTo));
 
 	// initialize sync. track(s)
 	trackBallBlur = Rocket::AddTrack("ball:Blur");
@@ -411,11 +410,11 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 {
 	// blend between map (1-4) and and #0 (spikes)
 	const unsigned iBaseMap = clampi(1, 4, Rocket::geti(trackBallBaseShapeIndex));
-	memcpy_fast(s_heightMapMix, s_pHeightMap[iBaseMap], 512*512);
+	memcpy_fast(s_heightMapMix, s_pHeightMap[iBaseMap], kMapSize*kMapSize);
 
 	const uint8_t spikes = (uint8_t) clampi(0, 255, Rocket::geti(trackBallSpikes));
 	if (spikes != 0)
-		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[0]), 512*512/4 /* function processes 4 8-bit components at a time */, spikes);
+		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[0]), kMapSize*kMapSize/4 /* function processes 4 8-bit components at a time */, spikes);
 
 	// render unwrapped ball
 	vball(g_renderTarget[0], time * Rocket::getf(trackBallSpeed));
