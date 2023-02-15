@@ -230,18 +230,22 @@ color="ff8850b2">
 		<key row="3144" value="9.440000" interpolation="2" />
 		<key row="3247" value="9.550000" interpolation="0" />
 		<key row="3248" value="2.000000" interpolation="0" />
-		<key row="3272" value="-12.000000" interpolation="0" />
+		<key row="3272" value="-12.000000" interpolation="2" />
+		<key row="3390" value="-12.100000" interpolation="0" />
 		<key row="3392" value="0.660000" interpolation="0" />
 		<key row="3408" value="-11.000000" interpolation="2" />
 		<key row="3504" value="-11.120000" interpolation="0" />
 		<key row="3536" value="1.000000" interpolation="0" />
-		<key row="3552" value="12.000000" interpolation="0" />
-		<key row="3664" value="9.000000" interpolation="0" />
+		<key row="3552" value="12.000000" interpolation="2" />
+		<key row="3662" value="12.200000" interpolation="0" />
+		<key row="3664" value="9.000000" interpolation="2" />
+		<key row="3798" value="9.100000" interpolation="0" />
 		<key row="3800" value="9.000000" interpolation="2" />
 		<key row="3910" value="9.100000" interpolation="0" />
 		<key row="3912" value="12.000000" interpolation="0" />
 		<key row="3936" value="-9.000000" interpolation="0" />
-		<key row="4064" value="9.000000" interpolation="0" />
+		<key row="4064" value="9.000000" interpolation="2" />
+		<key row="4183" value="9.130000" interpolation="0" />
 		<key row="6288" value="14.000000" interpolation="0" />
 		<key row="6544" value="-7.000000" interpolation="0" />
 		<key row="6680" value="-9.000000" interpolation="2" />
