@@ -268,7 +268,7 @@ color="ffb25091">
 		<key row="6968" value="13.220000" interpolation="0" />
 		<key row="7072" value="44.000000" interpolation="0" />
 		<key row="7288" value="44.000000" interpolation="3" />
-		<key row="7328" value="44.439999" interpolation="0" />
+		<key row="7328" value="42.000000" interpolation="0" />
 	</track>
 	<track name="spike:Specular" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -510,8 +510,7 @@ color="ff8850b2">
 		<key row="4064" value="1.000000" interpolation="1" />
 		<key row="4072" value="0.000000" interpolation="0" />
 		<key row="4184" value="0.628000" interpolation="1" />
-		<key row="4447" value="0.000000" interpolation="0" />
-		<key row="4448" value="0.000000" interpolation="0" />
+		<key row="4312" value="0.000000" interpolation="0" />
 		<key row="4584" value="1.000000" interpolation="2" />
 		<key row="4600" value="0.000000" interpolation="0" />
 		<key row="4680" value="0.000000" interpolation="3" />
