@@ -714,13 +714,13 @@ color="ffb25091">
 	</track>
 	<track name="twister:Speed" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="0" value="256.000000" interpolation="0" />
+		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1992" value="127.000000" interpolation="2" />
 		<key row="2016" value="129.000000" interpolation="0" />
 	</track>
 	<track name="twister::ShearSpeed" folded="0" muteKeyCount="0"
 color="ff60b250">
-		<key row="0" value="1.100000" interpolation="0" />
+		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1992" value="0.100000" interpolation="2" />
 		<key row="2016" value="0.150000" interpolation="0" />
 	</track>
