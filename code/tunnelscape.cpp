@@ -16,7 +16,7 @@
 #include "rocket.h"
 
 // Sync.
-SyncTrack trackStarsSpeedX, trackStarsSpeedY;
+SyncTrack trackStarsSpeedX, trackStarsSpeedY, trackStarsSpeed;
 SyncTrack trackStarsBlur;
 
 static uint8_t *s_pHeightMap = NULL;
@@ -108,10 +108,12 @@ static void tscape(uint32_t *pDest, float time)
 	const float syncDirX = Rocket::getf(trackStarsSpeedX);
 	const float syncDirY = Rocket::getf(trackStarsSpeedY);
 
-	const float fromY = 1024.f + syncDirY*time*128.f;
+	const float speedMul = sqrtf(syncDirX*syncDirX + syncDirY*syncDirY) * Rocket::getf(trackStarsSpeed);
 
-	const int dX = ftofp24(0.5f);
-	const int dY = ftofp24(kAspect);
+	const float fromY = 1024.f + speedMul*time;
+
+	const int dX = ftofp24(syncDirY);
+	const int dY = ftofp24(kOneOverAspect*syncDirX);
 
 	const auto fpFromY = ftofp24(fromY);
 
@@ -119,7 +121,7 @@ static void tscape(uint32_t *pDest, float time)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
-		const float fromX = mapX + syncDirX; // * time*kGoldenRatio;
+		const float fromX = mapX + syncDirX * time*kGoldenRatio;
 
 		tscape_ray(pDest + iRay*kTargetResX, ftofp24(fromX), fpFromY, dX, dY);
 
@@ -152,6 +154,7 @@ bool Tunnelscape_Create()
 	// init. sync.
 	trackStarsSpeedX = Rocket::AddTrack("starsTunnel:speedX");
 	trackStarsSpeedY = Rocket::AddTrack("starsTunnel:speedY");
+	trackStarsSpeed = Rocket::AddTrack("starsTunnel:Speed");
 	trackStarsBlur = Rocket::AddTrack("starsTunnel:Blur");
 
 	return true;
