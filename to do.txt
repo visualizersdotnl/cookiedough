@@ -11,9 +11,8 @@ For all things regarding TPB-07, let's go for the immediates:
 
 ** Part 2: voxel ball **
 
-- Ever so slightly hide that we're using Orange's maps.
+- Ever so slightly hide that we're using Orange's maps -> WIP.
 - Fix background.
-- Any further requests? Feel free.
 
 ** Part 3: credits and plasma **
 

@@ -8,27 +8,33 @@
 #include "bilinear.h"
 #include "boxblur.h"
 #include "polar.h"
+#include "rocket.h"
 
 static uint8_t *s_pHeightMap = nullptr;
 static uint32_t *s_pColorMap = nullptr;
 
 static uint32_t *s_pBackground = nullptr;
 
+// Sync.
+SyncTrack trackTwisterSpeed;
+SyncTrack trackTwisterShearSpeed;
+SyncTrack trackTwisterBlur;
+
 // -- voxel renderer --
 
 // adjust to map resolution
-const unsigned kMapSize = 512;
+const unsigned kMapSize = 1024;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
-const unsigned kMapShift = 9;
+const unsigned kMapShift = 10;
 
 // trace depth (FIXME: parametrize)
-const unsigned int kRayLength = 100;
+const unsigned int kRayLength = 128;
 
 // height projection table
 static unsigned int s_heightProj[kRayLength];
 
 // max. radius (in pixels)
-const float kCylRadius = 400.f;
+const float kCylRadius = 600.f;
 
 static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 {
@@ -75,10 +81,17 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 }
 
 // expected sizes:
-// - maps: 512x512
+// - maps: 512x512 -> 1024x1024
 static void vtwister(uint32_t *pDest, float time)
 {
-	constexpr float mapStepY = 512.f/(kTargetResY-1); // tile (for blit)
+	// tile (for blit)
+	constexpr float fMapSize = float(kMapSize);
+	constexpr float fMapSizeHH = (fMapSize*0.5f) - 0.5f;
+	constexpr float fMapSizeHHH = (fMapSize*0.25f) - 0.5f;
+	constexpr float mapStepY = fMapSize/(kTargetResY-1); 
+
+	const float speed = Rocket::getf(trackTwisterSpeed);
+	const float shearSpeed = Rocket::getf(trackTwisterShearSpeed);
 
 	#pragma omp parallel for schedule(static)
 	for (int iRay = 0; iRay < kTargetResY; ++iRay)
@@ -86,12 +99,12 @@ static void vtwister(uint32_t *pDest, float time)
 		const float shearAngle = (float) iRay * (k2PI/(kTargetResY-1));
 
 		const float mapY = iRay*mapStepY;
-		const int fromX = ftofp24(255.5f + 127.5f*sinf(time*1.1f + shearAngle));
-		const int fromY = ftofp24(mapY + time*25.f);
+		const int fromX = ftofp24(fMapSizeHH + fMapSizeHHH*sinf(time*shearSpeed + shearAngle));
+		const int fromY = ftofp24(mapY + time*speed);
 
 		const size_t xOffs = iRay*kTargetResX + (kTargetResX>>1);
-		vtwister_ray(pDest+xOffs, fromX, fromY,  256);
-		vtwister_ray(pDest+xOffs-1, fromX-256, fromY, -256);
+		vtwister_ray(pDest+xOffs, fromX, fromY,  kMapSize/2);
+		vtwister_ray(pDest+xOffs-1, fromX- kMapSize/2, fromY, -(kMapSize/2));
 	}
 }
 
@@ -113,8 +126,8 @@ bool Twister_Create()
 	vtwister_precalc();
 
 	// load maps
-	s_pHeightMap = Image_Load8("assets/twister/by-orange/hmap_2.jpg");
-	s_pColorMap = Image_Load32("assets/twister/by-orange/colormap.jpg");
+	s_pHeightMap = Image_Load8("assets/twister/hmap_2_1k.jpg");
+	s_pColorMap = Image_Load32("assets/twister/colormap_1k.jpg");
 	if (nullptr == s_pHeightMap || nullptr == s_pColorMap)
 		return false;
 
@@ -122,6 +135,11 @@ bool Twister_Create()
 	s_pBackground = Image_Load32("assets/ball/background_1280x720.png");
 	if (nullptr == s_pBackground)
 		return false;
+
+	// init. sync.
+	trackTwisterSpeed = Rocket::AddTrack("twister:Speed");
+	trackTwisterShearSpeed = Rocket::AddTrack("twister::ShearSpeed");
+	trackTwisterBlur = Rocket::AddTrack("twister:Blur");
 
 	return true;
 }
@@ -137,13 +155,18 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 	vtwister(g_renderTarget[0], time);
 
 	// (radial) blur
-	HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, BoxBlurScale(10.f));
+	const float blur = Rocket::getf(trackTwisterBlur);
+	if (0.f != blur)
+	{
+		const float scaledBlur = BoxBlurScale(clampf(1.f, 100.f, blur));
+		HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, scaledBlur);
+	}
 
 	// blit background (FIXME)
 	memcpy(pDest, s_pBackground, kOutputBytes);
 
 	// polar blit
-	Polar_BlitA(pDest, g_renderTarget[0]);
+	Polar_BlitA(pDest, g_renderTarget[0]), true;
 
 	// debug blit (vertical)
 //	memcpy(pDest, g_renderTarget[0], kOutputBytes);
