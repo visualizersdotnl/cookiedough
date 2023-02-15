@@ -5,8 +5,9 @@ For all things regarding TPB-07, let's go for the immediates:
 
 ** Part 1: landscape **
 
-- Enhance landscape rendering.
-- Render waveform of Apollo communication.
+- Enhance landscape rendering?
+- Render waveform of Apollo communication?
+- DEMO NAME IN SAME STYLE AS CREDITS?
 
 ** Part 2: voxel ball **
 
@@ -18,17 +19,17 @@ For all things regarding TPB-07, let's go for the immediates:
 
 I'm fine with how this looks, are you guys?
 
-** Part 4: spikey balls synchronized with dirt backdrop **
++++ NEEDS OVERLAY GRAPHICS/FX +++ ** Part 4: spikey balls synchronized with dirt backdrop **
 
 We need something going on in terms of overlays to make it a bit more interesting.
 Another effect here is not off the table either.
 
-** Part 5: Stars/NoooN tunnel & free-directional tunnel **
++++ NEEDS OVERLAY GRAPHICS/FX +++ ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
 - Overlay referencing Stars and the year 1995 on top of the "earthy" voxel tunnel.
 - New texture maps (tiling, 512x512 or higher!) for free-directional tunnel.
 
-** Part 6: Nautilus tunnel **
++++ NEEDS ATTENTION BY SUPERPLEK +++ ** Part 6: Nautilus tunnel **
 
 - Sync. "disco guys" (a Thorsten a.k.a Ernst Hot classic; don't ask, TPB always has them).
   + Maybe just only show them once things 'go orange'? -> Done!
@@ -39,11 +40,11 @@ Another effect here is not off the table either.
 - I really have no idea, perhaps just dress it up a bit with a vignette, overlay and colour tweaks?
 - Did most of the above: now render different specular to another target, blur it, and add it on top!
 
-** Part 8: the golden tunnel **
++++ NEEDS OVERLAY GRAPHICS/FX +++ ** Part 8: the golden tunnel **
 
 - Simple overlay and a bit tighter sync. will do the trick?
 
-** Part 9: greetings "Laura" boxy tunnel **
++++ NEEDS OVERLAY GRAPHICS/FX +++  ** Part 9: greetings "Laura" boxy tunnel **
 
 - Render greetings, Jade has an idea.
 
