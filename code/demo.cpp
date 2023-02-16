@@ -47,6 +47,7 @@ static uint32_t *s_pFighters = nullptr;
 static uint32_t *s_pNoooN = nullptr;
 static uint32_t *s_pTunnelpFullDirt = nullptr;
 static uint32_t *s_pTunnelVignette = nullptr;
+static uint32_t *s_pTunnelVignette2 = nullptr;
 
 bool Demo_Create()
 {
@@ -95,7 +96,8 @@ bool Demo_Create()
 	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
 	s_pTunnelpFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
 	s_pTunnelVignette = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette.jpg");
-	if (nullptr == s_pNoooN || nullptr == s_pTunnelpFullDirt || nullptr == s_pTunnelVignette)
+	s_pTunnelVignette2 = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette-2.jpg");
+	if (nullptr == s_pNoooN || nullptr == s_pTunnelpFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
 		return false;
 
 	return fxInit;
@@ -150,7 +152,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
-				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+				MulSrc32(pDest, s_pTunnelVignette2, kOutputSize);
 				
 				if (0 != Rocket::geti(trackShow1995))
 					MixSrc32(pDest, s_pNoooN, kOutputSize);
