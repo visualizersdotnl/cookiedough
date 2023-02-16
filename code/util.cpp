@@ -191,20 +191,26 @@ void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
-VIZ_INLINE uint8_t SoftLightBlend(uint8_t A, uint8_t B)
+// no bit shifting here, I should do that more often instead of obeying to that built-in demoscene tic to shift wherever possible, that stopped making sense decades ago
+// removing floating point calc. however is a sure shot, I also wonder if it might be faster to not have the branch and use a mask instead
+VIZ_INLINE unsigned SoftLightBlend(uint8_t A, uint8_t B)
 {
+	const auto dA = (A/2)+64;
 	if (B < 128)
 	{
-		return 2 * ((A>>1) + 64)*(B/255.f);
+		return (2*dA*B)/256;
+//		return 2 * ((A>>1) + 64)*(B/255.f);
 	}
 	else
 	{
-		return 255 - 2 * (255 - ((A>>1) + 64)) * (255 - B) / 255.f;
+		return 255 - (2*(255-dA)*(255-B))/256;
+//		return 255 - 2 * (255 - ((A>>1) + 64)) * (255 - B) / 255.f;
 	}
 }
 
 void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 {
+	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 			const uint32_t destPixel = pDest[iPixel];
@@ -232,7 +238,6 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 			pDest[iPixel] = result;
     }
 }
-
 
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {

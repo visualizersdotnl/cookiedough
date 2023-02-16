@@ -54,6 +54,7 @@ static uint32_t *s_pSpikeyFullDirt = nullptr;
 static uint32_t *s_pSpikeyBypass = nullptr;
 static uint32_t *s_pSpikeyArrested = nullptr;
 static uint32_t *s_pSpikeyVignette = nullptr;
+static uint32_t *s_pSpikeyVignette2 = nullptr;
 
 bool Demo_Create()
 {
@@ -81,7 +82,7 @@ bool Demo_Create()
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
-	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_outlined.png");
+	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_Featuring_Celin_outlined.png");
 	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
 	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined_new.png");
 	for (auto *pImg : s_pCredits)
@@ -97,21 +98,22 @@ bool Demo_Create()
 	s_pFighters = Image_Load32("assets/roundfighters-1280.png");
 	if (nullptr == s_pFighters)
 		return false;
+	
+	// first appearance of the 'spikey ball' including the title and main group
+	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
+	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_CoolFilmLook.png");
+	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
+	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
+	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
+	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
+		return false;
 
 	// NoooN et cetera
 	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
 	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
-	s_pTunnelVignette = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette.jpg");
-	s_pTunnelVignette2 = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette-2.jpg");
+	s_pTunnelVignette = Image_Load32("assets/tunnels/Vignette_CoolFilmLook.png");;
+	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
 	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
-		return false;
-	
-	// first appearance of the 'spikey ball' including the title and main group
-	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
-	s_pSpikeyVignette = Image_Load32("assets/spikeball/TheYearWas2023_Vignette.png");
-	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
-	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
-	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette)
 		return false;
 
 	return fxInit;
@@ -128,12 +130,25 @@ void Demo_Destroy()
 	Shadertoy_Destroy();
 }
 
+static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
+{
+		if (fadeToWhite > 0.f)
+			Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
+
+		if (fadeToBlack > 0.f)
+			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+}
+
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
 	// for this production:
 	VIZ_ASSERT(kResX == 1280 && kResY == 720);
 
 	Rocket::Boost();
+
+	// get fade/flash amounts
+	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
+	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
 
 	// render effect
 	const int effect = Rocket::geti(trackEffect);
@@ -158,7 +173,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Tunnels
 			{
 				Tunnelscape_Draw(pDest, timer, delta);
-				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+
+				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
 				const float dirt = Rocket::getf(trackDirt);
 				if (0.f == dirt)
@@ -170,10 +186,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
-				MulSrc32(pDest, s_pTunnelVignette2, kOutputSize);
-				
 				if (0 != Rocket::geti(trackShow1995))
 					MixSrc32(pDest, s_pNoooN, kOutputSize);
+
+				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
 			}
 			break;
 		
@@ -215,19 +231,19 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 8:
 			// Spike ball with title and group name (Bypass)
 			Spikey_Draw(pDest, timer, delta, false);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
- 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
+			Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
+			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
+			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+			SoftLight32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
 			// Part of the 'tunnels' part
 			Tunnel_Draw(pDest, timer, delta);
-			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
-			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+			Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 			break;
 
 		case 10:
@@ -286,15 +302,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
 	}
 
-	// post processing
-	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
-	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
-
-	if (fadeToWhite > 0.f)
-		Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
-
-	if (fadeToBlack > 0.f)
-		Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+	// post fade/flash (if not customized, FIXME: switch!)
+	if (8 != effect)
+	{
+		FadeFlash(pDest, fadeToBlack, fadeToWhite);
+	}
 
 	return;
 }
