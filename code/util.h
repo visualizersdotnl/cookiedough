@@ -80,15 +80,18 @@ VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 }
 
 // blend 32-bit color buffers
-void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_t alpha);
+void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, uint8_t alpha);
 
 // add 32-bit color buffers (source to/from destination)
-void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
 // subtract 32-bit color buffers (source to/from destination)
-void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
-// FIXME
+// exclusion filter between two 32-bit color buffers
+void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
+
+// multiply dest. buffer by either color or alpha of source buffer
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 

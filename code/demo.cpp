@@ -142,12 +142,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				const float dirt = Rocket::getf(trackDirt);
 				if (0.f == dirt)
-					Add32(pDest, s_pTunnelpFullDirt, kOutputSize);
+					Excl32(pDest, s_pTunnelpFullDirt, kOutputSize);
 				else
 				{
 					const float clampedDirt = clampf(0.f, 255.f, dirt);
 					BoxBlur32(g_renderTarget[0], s_pTunnelpFullDirt, kResX, kResY, BoxBlurScale(clampedDirt));
-					Add32(pDest, g_renderTarget[0], kOutputSize);
+					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
 				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
