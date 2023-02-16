@@ -54,6 +54,7 @@ static uint32_t *s_pSpikeyFullDirt = nullptr;
 static uint32_t *s_pSpikeyBypass = nullptr;
 static uint32_t *s_pSpikeyArrested = nullptr;
 static uint32_t *s_pSpikeyVignette = nullptr;
+static uint32_t *s_pSpikeyVignette2 = nullptr;
 
 bool Demo_Create()
 {
@@ -108,10 +109,11 @@ bool Demo_Create()
 	
 	// first appearance of the 'spikey ball' including the title and main group
 	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
-	s_pSpikeyVignette = Image_Load32("assets/spikeball/TheYearWas2023_Vignette.png");
+	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_Layer02.png");
+	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
 	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
-	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette)
+	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
 		return false;
 
 	return fxInit;
@@ -227,16 +229,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 8:
 			// Spike ball with title and group name (Bypass)
-//			memset32(pDest, 0xff, kOutputSize);
 			Spikey_Draw(pDest, timer, delta, false);
- 			FadeFlash(pDest, 0.f, fadeToWhite);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
- 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, 0.f);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
-			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
+			Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
+			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
+			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
