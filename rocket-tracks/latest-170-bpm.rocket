@@ -754,8 +754,8 @@ color="ff4f71b2">
 	<track name="demo:LensDirt" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="4584" value="16.000000" interpolation="3" />
-		<key row="4703" value="16.000000" interpolation="2" />
+		<key row="4184" value="0.000000" interpolation="0" />
+		<key row="4584" value="32.000000" interpolation="0" />
 		<key row="4704" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
