@@ -233,7 +233,7 @@ color="ff4f71b2">
 	</track>
 	<track name="spike:Speed" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="0" value="0.000000" interpolation="1" />
+		<key row="0" value="0.000000" interpolation="0" />
 		<key row="3144" value="9.440000" interpolation="2" />
 		<key row="3247" value="9.550000" interpolation="0" />
 		<key row="3248" value="2.000000" interpolation="0" />
@@ -244,7 +244,7 @@ color="ff8850b2">
 		<key row="3504" value="-11.120000" interpolation="0" />
 		<key row="3536" value="1.000000" interpolation="0" />
 		<key row="3552" value="12.000000" interpolation="2" />
-		<key row="3662" value="12.200000" interpolation="0" />
+		<key row="3662" value="12.100000" interpolation="0" />
 		<key row="3664" value="9.000000" interpolation="2" />
 		<key row="3798" value="9.100000" interpolation="0" />
 		<key row="3800" value="9.000000" interpolation="2" />
