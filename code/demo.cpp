@@ -82,7 +82,7 @@ bool Demo_Create()
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
-	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_outlined.png");
+	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_Featuring_Celin_outlined.png");
 	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
 	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined_new.png");
 	for (auto *pImg : s_pCredits)
