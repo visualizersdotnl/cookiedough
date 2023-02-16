@@ -18,16 +18,15 @@ For all things regarding TPB-07, let's go for the immediates:
 I'm fine with how this looks, are you guys?
 - Add credit for Celin's vocals!
 
-+++ NEEDS OVERLAY GRAPHICS/FX +++ ** Part 4: spikey balls synchronized with dirt backdrop **
+** Part 4: spikey balls synchronized with dirt backdrop **
 
-Jade is working on this!
+Looks finished to me.
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
-- Tweak blending for Stars tunnel.
-- New but likewise coloured map for free-directional tunnel.
+- Jade will probably tweak maps (we really need to disguise that free-directional tunnel map since it's from Kewlers' 1995).
 
-+++ NEEDS ATTENTION BY SUPERPLEK +++ ** Part 6: Nautilus tunnel **
++++ NEEDS ATTENTION BY SUPERPLEK + JADE +++ ** Part 6: Nautilus tunnel **
 
 - Dress up in some way.
 
@@ -37,7 +36,7 @@ Jade is working on this!
 
 ** Part 8: the golden tunnel **
 
-- Simply needs some dressing up.
+- Simply needs some dressing up, not too much, effect does the trick on it's own.
 
 ** Part 9: greetings "Laura" boxy tunnel **
 
