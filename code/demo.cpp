@@ -128,12 +128,25 @@ void Demo_Destroy()
 	Shadertoy_Destroy();
 }
 
+static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
+{
+		if (fadeToWhite > 0.f)
+			Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
+
+		if (fadeToBlack > 0.f)
+			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+}
+
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
 	// for this production:
 	VIZ_ASSERT(kResX == 1280 && kResY == 720);
 
 	Rocket::Boost();
+
+	// get fade/flash amounts
+	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
+	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
 
 	// render effect
 	const int effect = Rocket::geti(trackEffect);
@@ -214,13 +227,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 8:
 			// Spike ball with title and group name (Bypass)
+//			memset32(pDest, 0xff, kOutputSize);
 			Spikey_Draw(pDest, timer, delta, false);
+ 			FadeFlash(pDest, 0.f, fadeToWhite);
+			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 			SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
  			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
-			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
+			FadeFlash(pDest, fadeToBlack, 0.f);
 			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
+			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 
 		case 9:
@@ -286,15 +302,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
 	}
 
-	// post processing
-	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
-	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
-
-	if (fadeToWhite > 0.f)
-		Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
-
-	if (fadeToBlack > 0.f)
-		Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+	// post fade/flash (if not customized, FIXME: switch!)
+	if (8 != effect)
+	{
+		FadeFlash(pDest, fadeToBlack, fadeToWhite);
+	}
 
 	return;
 }
