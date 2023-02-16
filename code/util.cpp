@@ -193,7 +193,7 @@ void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 
 // no bit shifting here, I should do that more often instead of obeying to that built-in demoscene tic to shift wherever possible, that stopped making sense decades ago
 // removing floating point calc. however is a sure shot, I also wonder if it might be faster to not have the branch and use a mask instead
-VIZ_INLINE uint8_t SoftLightBlend(uint8_t A, uint8_t B)
+VIZ_INLINE unsigned SoftLightBlend(uint8_t A, uint8_t B)
 {
 	const auto dA = (A/2)+64;
 	if (B < 128)
@@ -238,7 +238,6 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 			pDest[iPixel] = result;
     }
 }
-
 
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {

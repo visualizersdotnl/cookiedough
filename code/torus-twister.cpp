@@ -166,7 +166,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 	memcpy(pDest, s_pBackground, kOutputBytes);
 
 	// polar blit
-	Polar_BlitA(pDest, g_renderTarget[0]), true;
+	Polar_BlitA(pDest, g_renderTarget[0]);
 
 	// debug blit (vertical)
 //	memcpy(pDest, g_renderTarget[0], kOutputBytes);

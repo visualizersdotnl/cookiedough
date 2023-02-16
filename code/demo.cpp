@@ -98,14 +98,6 @@ bool Demo_Create()
 	s_pFighters = Image_Load32("assets/roundfighters-1280.png");
 	if (nullptr == s_pFighters)
 		return false;
-
-	// NoooN et cetera
-	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
-	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
-	s_pTunnelVignette = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette.jpg");
-	s_pTunnelVignette2 = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette-2.jpg");
-	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
-		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
 	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
@@ -114,6 +106,14 @@ bool Demo_Create()
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
 	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
 	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
+		return false;
+
+	// NoooN et cetera
+	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
+	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
+	s_pTunnelVignette = Image_Load32("assets/tunnels/Vignette_CoolFilmLook.png");;
+	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
+	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
 		return false;
 
 	return fxInit;
@@ -173,7 +173,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Tunnels
 			{
 				Tunnelscape_Draw(pDest, timer, delta);
-				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+
+				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
 				const float dirt = Rocket::getf(trackDirt);
 				if (0.f == dirt)
@@ -185,10 +186,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
-				MulSrc32(pDest, s_pTunnelVignette2, kOutputSize);
-				
 				if (0 != Rocket::geti(trackShow1995))
 					MixSrc32(pDest, s_pNoooN, kOutputSize);
+
+				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
 			}
 			break;
 		
@@ -236,14 +237,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+			SoftLight32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
 			// Part of the 'tunnels' part
 			Tunnel_Draw(pDest, timer, delta);
-			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
-			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+			Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 			break;
 
 		case 10:
