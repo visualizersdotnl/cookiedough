@@ -27,6 +27,8 @@ SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 SyncTrack trackDiscoGuys;
+SyncTrack trackShow1995;
+SyncTrack trackDirt;
 
 // --------------------
 
@@ -40,6 +42,11 @@ static uint32_t *s_pVignette06 = nullptr;
 
 // Nytrik's work once more (1280x602)
 static uint32_t *s_pFighters = nullptr;
+
+// Stars/NoooN text overlay, lens dirt & vignette (1280x720)
+static uint32_t *s_pNoooN = nullptr;
+static uint32_t *s_pTunnelpFullDirt = nullptr;
+static uint32_t *s_pTunnelVignette = nullptr;
 
 bool Demo_Create()
 {
@@ -62,6 +69,8 @@ bool Demo_Create()
 	trackCreditLogoBlurH = Rocket::AddTrack("demo:CreditLogoBlurH");
 	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
 	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
+	trackShow1995 = Rocket::AddTrack("demo:Show1995");
+	trackDirt = Rocket::AddTrack("demo:LensDirt");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -80,6 +89,13 @@ bool Demo_Create()
 	// Nytrik's fighter logo
 	s_pFighters = Image_Load32("assets/roundfighters-1280.png");
 	if (nullptr == s_pFighters)
+		return false;
+
+	// NoooN et cetera
+	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
+	s_pTunnelpFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
+	s_pTunnelVignette = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette.jpg");
+	if (nullptr == s_pNoooN || nullptr == s_pTunnelpFullDirt || nullptr == s_pTunnelVignette)
 		return false;
 
 	return fxInit;
@@ -120,7 +136,25 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 4:
-			Tunnelscape_Draw(pDest, timer, delta);
+			{
+				Tunnelscape_Draw(pDest, timer, delta);
+				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+
+				const float dirt = Rocket::getf(trackDirt);
+				if (0.f == dirt)
+					Add32(pDest, s_pTunnelpFullDirt, kOutputSize);
+				else
+				{
+					const float clampedDirt = clampf(0.f, 255.f, dirt);
+					BoxBlur32(g_renderTarget[0], s_pTunnelpFullDirt, kResX, kResY, BoxBlurScale(clampedDirt));
+					Add32(pDest, g_renderTarget[0], kOutputSize);
+				}
+
+				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
+				
+				if (0 != Rocket::geti(trackShow1995))
+					MixSrc32(pDest, s_pNoooN, kOutputSize);
+			}
 			break;
 		
 		case 5:
@@ -162,6 +196,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 9:
 			Tunnel_Draw(pDest, timer, delta);
+			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
 			break;
 
 		case 10:

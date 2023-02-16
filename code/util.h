@@ -85,7 +85,11 @@ void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_
 // add 32-bit color buffers (source to/from destination)
 void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 
+// subtract 32-bit color buffers (source to/from destination)
+void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+
 // FIXME
+void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 
 // blend 32-bit color buffers using the source buffer's alpha

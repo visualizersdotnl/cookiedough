@@ -145,6 +145,36 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	}
 }
 
+void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
+{
+	const __m128i zero = _mm_setzero_si128();
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
+		const __m128i delta = srcColor;
+		const __m128i color = _mm_sub_epi16(destColor, delta);
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+	}
+}
+
+void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
+{
+	const __m128i zero = _mm_setzero_si128();
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[iPixel]), zero);
+		const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[iPixel]), zero);
+		const __m128i delta = _mm_mullo_epi16(srcColor, destColor); 
+		const __m128i color = _mm_srli_epi16(delta, 8);
+		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+	}
+}
+
 void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();
