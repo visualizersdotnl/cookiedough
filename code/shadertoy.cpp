@@ -329,7 +329,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	if (0.f != blur)
 	{
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
-		BoxBlur32(pDest, pDest, kResX, kResY, blur);
+		BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(blur));
 	}
 	else
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);

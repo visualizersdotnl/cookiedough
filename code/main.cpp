@@ -105,7 +105,7 @@ const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
 
 constexpr bool kFullScreen = false;
 
-static const char *kMP3 = "assets/audio/comatron - to the moon BETA.mp3";
+static const char *kMP3 = "assets/audio/comatron - to the moon 16-02-23.mp3";
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
 
 // -----------------------------
