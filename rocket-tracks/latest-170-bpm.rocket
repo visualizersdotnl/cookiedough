@@ -239,10 +239,10 @@ color="ff8850b2">
 		<key row="3248" value="2.000000" interpolation="0" />
 		<key row="3272" value="-12.000000" interpolation="2" />
 		<key row="3390" value="-12.100000" interpolation="0" />
-		<key row="3392" value="0.660000" interpolation="0" />
+		<key row="3392" value="3.140000" interpolation="0" />
 		<key row="3408" value="-11.000000" interpolation="2" />
 		<key row="3504" value="-11.120000" interpolation="0" />
-		<key row="3536" value="1.000000" interpolation="0" />
+		<key row="3536" value="6.280000" interpolation="0" />
 		<key row="3552" value="12.000000" interpolation="2" />
 		<key row="3662" value="12.100000" interpolation="0" />
 		<key row="3664" value="9.000000" interpolation="2" />
@@ -422,7 +422,8 @@ color="ffb25091">
 	</track>
 	<track name="tunnel:Speed" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="4448" value="4.000000" interpolation="0" />
+		<key row="3023" value="5.000000" interpolation="0" />
+		<key row="4448" value="5.000000" interpolation="0" />
 		<key row="4976" value="4.660000" interpolation="0" />
 	</track>
 	<track name="tunnel:Roll" folded="0" muteKeyCount="0"
