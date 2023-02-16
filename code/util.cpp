@@ -191,6 +191,49 @@ void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
+VIZ_INLINE uint8_t SoftLightBlend(uint8_t A, uint8_t B)
+{
+	if (B < 128)
+	{
+		return 2 * ((A>>1) + 64)*(B/255.f);
+	}
+	else
+	{
+		return 255 - 2 * (255 - ((A>>1) + 64)) * (255 - B) / 255.f;
+	}
+}
+
+void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
+{
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+			const uint32_t destPixel = pDest[iPixel];
+			const uint32_t srcPixel  = pSrc[iPixel];
+
+			const unsigned A2 = destPixel>>24;
+			const unsigned R2 = (destPixel>>16)&0xff;
+			const unsigned G2 = (destPixel>>8)&0xff;
+			const unsigned B2 = destPixel&0xff; 
+
+//			const unsigned A1 = srcPixel>>24;
+			const unsigned R1 = (srcPixel>>16)&0xff;
+			const unsigned G1 = (srcPixel>>8)&0xff;
+			const unsigned B1 = srcPixel&0xff; 
+
+//			const uint8_t R = R1 + R2 - 2*R1*R2/255;
+//			const uint8_t G = G1 + G2 - 2*G1*G2/255;
+//			const uint8_t B = B1 + B2 - 2*B1*B2/255;
+			const unsigned R = SoftLightBlend(R1, R2);
+			const unsigned G = SoftLightBlend(G1, G2);
+			const unsigned B = SoftLightBlend(B1, B2);
+			const unsigned A = A2;
+
+			const uint32_t result = (A<<24)|(R<<16)|(G<<8)|B;
+			pDest[iPixel] = result;
+    }
+}
+
+
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();

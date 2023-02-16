@@ -45,9 +45,15 @@ static uint32_t *s_pFighters = nullptr;
 
 // Stars/NoooN text overlay, lens dirt & vignette (1280x720)
 static uint32_t *s_pNoooN = nullptr;
-static uint32_t *s_pTunnelpFullDirt = nullptr;
+static uint32_t *s_pTunnelFullDirt = nullptr;
 static uint32_t *s_pTunnelVignette = nullptr;
 static uint32_t *s_pTunnelVignette2 = nullptr;
+
+// First spikey ball art
+static uint32_t *s_pSpikeyFullDirt = nullptr;
+static uint32_t *s_pSpikeyBypass = nullptr;
+static uint32_t *s_pSpikeyArrested = nullptr;
+static uint32_t *s_pSpikeyVignette = nullptr;
 
 bool Demo_Create()
 {
@@ -94,10 +100,18 @@ bool Demo_Create()
 
 	// NoooN et cetera
 	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
-	s_pTunnelpFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
+	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
 	s_pTunnelVignette = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette.jpg");
 	s_pTunnelVignette2 = Image_Load32("assets/tunnels/TheYearWas_Overlay_Vignette-2.jpg");
-	if (nullptr == s_pNoooN || nullptr == s_pTunnelpFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
+	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
+		return false;
+	
+	// first appearance of the 'spikey ball' including the title and main group
+	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
+	s_pSpikeyVignette = Image_Load32("assets/spikeball/TheYearWas2023_Vignette.png");
+	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
+	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
+	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette)
 		return false;
 
 	return fxInit;
@@ -126,29 +140,33 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	switch (effect)
 	{
 		case 1:
+			// Quick intermezzo: voxel torus
 			Twister_Draw(pDest, timer, delta);
 			break;
 	
 		case 2:
+			// Introduction: landscape
 			Landscape_Draw(pDest, timer, delta);
 			break;
 
 		case 3:
+			// Voxel ball
 			Ball_Draw(pDest, timer, delta);
 			break;
 
 		case 4:
+			// Tunnels
 			{
 				Tunnelscape_Draw(pDest, timer, delta);
 				MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
 
 				const float dirt = Rocket::getf(trackDirt);
 				if (0.f == dirt)
-					Excl32(pDest, s_pTunnelpFullDirt, kOutputSize);
+					Excl32(pDest, s_pTunnelFullDirt, kOutputSize);
 				else
 				{
 					const float clampedDirt = clampf(0.f, 255.f, dirt);
-					BoxBlur32(g_renderTarget[0], s_pTunnelpFullDirt, kResX, kResY, BoxBlurScale(clampedDirt));
+					BoxBlur32(g_renderTarget[0], s_pTunnelFullDirt, kResX, kResY, BoxBlurScale(clampedDirt));
 					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
@@ -160,10 +178,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 		
 		case 5:
+			// Plasma + Credits (see below)
 			Plasma_Draw(pDest, timer, delta);
 			break;
 
 		case 6:
+			// Nautilus (Michiel, RIP)
 			{
 				Nautilus_Draw(pDest, timer, delta);
 
@@ -187,25 +207,36 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 7:			
+			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
  			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME?
 			break;
 
 		case 8:
+			// Spike ball with title and group name (Bypass)
 			Spikey_Draw(pDest, timer, delta, false);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME?
+			SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
+ 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+ 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
+			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
+			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
+			// Part of the 'tunnels' part
 			Tunnel_Draw(pDest, timer, delta);
+			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
 			MulSrc32(pDest, s_pTunnelVignette, kOutputSize);
 			break;
 
 		case 10:
+			// The 'golden tunnel'
 			Sinuses_Draw(pDest, timer, delta);
 			break;
 
 		case 11:
+			// What was supposed to be the 'Aura for Laura' grid, but became boxy and intended for greetings
 			{
 				Laura_Draw(pDest, timer, delta);
 
@@ -217,11 +248,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 12:
+			// TPB represent
 			memset32(pDest, 0xffffff, kResX*kResY);
 			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 			break;
 
 		case 13:
+			// Nate Diaz represent
 			memset32(pDest, 0, kResX*kResY);
 			BlitSrc32(pDest + ((kResY-602)/2)*kResX, s_pFighters, kResX, 1280, 602);
 			break;
@@ -251,8 +284,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		}
 
 		BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
-
-//		BlitSrc32A(pDest + ((kResY-568)>>1)*kResX, s_pCredits[iLogo-1], kResX, 1280, 568, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
 	}
 
 	// post processing

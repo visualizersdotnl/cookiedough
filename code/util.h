@@ -88,8 +88,11 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 // subtract 32-bit color buffers (source to/from destination)
 void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
-// exclusion filter between two 32-bit color buffers
+// exclusion blend filter between two 32-bit color buffers
 void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
+
+// soft light blend filter between two 32-bit color buffers
+void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
 // multiply dest. buffer by either color or alpha of source buffer
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
