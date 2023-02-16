@@ -163,7 +163,7 @@ void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < numPixels; ++iPixel)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 			const uint32_t destPixel = pDest[iPixel];
 			const uint32_t srcPixel  = pSrc[iPixel];
