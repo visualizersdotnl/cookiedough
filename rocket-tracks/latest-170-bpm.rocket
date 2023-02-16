@@ -259,8 +259,8 @@ color="ff8850b2">
 		<key row="6806" value="-9.100000" interpolation="0" />
 		<key row="6808" value="-13.000000" interpolation="0" />
 		<key row="6960" value="-19.000000" interpolation="0" />
-		<key row="7072" value="8.000000" interpolation="2" />
-		<key row="7303" value="8.150000" interpolation="0" />
+		<key row="7072" value="12.000000" interpolation="0" />
+		<key row="7303" value="19.150000" interpolation="0" />
 	</track>
 	<track name="spike:Roll" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -400,14 +400,14 @@ color="ff4fb292">
 	</track>
 	<track name="tunnel:Boxy" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="4448" value="0.600000" interpolation="1" />
-		<key row="4584" value="0.880000" interpolation="0" />
+		<key row="4448" value="1.000000" interpolation="3" />
+		<key row="4584" value="0.500000" interpolation="0" />
 		<key row="4976" value="1.000000" interpolation="2" />
 		<key row="5240" value="0.600000" interpolation="0" />
 	</track>
 	<track name="tunnel:FlowerScale" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="4448" value="0.220000" interpolation="0" />
+		<key row="4448" value="0.200000" interpolation="0" />
 		<key row="4976" value="0.200000" interpolation="0" />
 	</track>
 	<track name="tunnel:FlowerFreq" folded="0" muteKeyCount="0"
@@ -417,40 +417,40 @@ color="ff8850b2">
 	</track>
 	<track name="tunnel:FlowerPhase" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="4448" value="0.100000" interpolation="2" />
-		<key row="4584" value="0.200000" interpolation="0" />
+		<key row="4448" value="0.500000" interpolation="3" />
+		<key row="4584" value="0.300000" interpolation="0" />
 	</track>
 	<track name="tunnel:Speed" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="3023" value="5.000000" interpolation="0" />
-		<key row="4448" value="5.000000" interpolation="0" />
+		<key row="4448" value="5.280000" interpolation="0" />
 		<key row="4976" value="4.660000" interpolation="0" />
 	</track>
 	<track name="tunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="4448" value="1.330000" interpolation="0" />
+		<key row="4448" value="1.000000" interpolation="0" />
 		<key row="4976" value="0.660000" interpolation="0" />
 	</track>
 	<track name="tunnel:Pitch" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="4448" value="0.100000" interpolation="0" />
+		<key row="4448" value="1.400000" interpolation="0" />
 		<key row="4976" value="0.880000" interpolation="2" />
 		<key row="5240" value="0.810000" interpolation="0" />
 	</track>
 	<track name="tunnel:Radius" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="4448" value="6.280000" interpolation="0" />
+		<key row="4448" value="6.000000" interpolation="0" />
 		<key row="4976" value="6.000000" interpolation="2" />
 		<key row="5240" value="8.000000" interpolation="0" />
 	</track>
 	<track name="tunnel:MulU" folded="0" muteKeyCount="0"
 color="ff60b250">
-		<key row="4448" value="120.000000" interpolation="0" />
+		<key row="4448" value="256.000000" interpolation="0" />
 		<key row="4976" value="256.000000" interpolation="0" />
 	</track>
 	<track name="tunnel:MulV" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="4448" value="16.000000" interpolation="0" />
+		<key row="4448" value="24.000000" interpolation="0" />
 		<key row="4976" value="24.000000" interpolation="0" />
 	</track>
 	<track name="demo:Effect" folded="0" muteKeyCount="0"
@@ -544,7 +544,7 @@ color="ff8850b2">
 		<key row="6576" value="0.000000" interpolation="0" />
 		<key row="6680" value="0.700000" interpolation="2" />
 		<key row="6704" value="0.000000" interpolation="0" />
-		<key row="6808" value="0.700000" interpolation="1" />
+		<key row="6808" value="0.800000" interpolation="1" />
 		<key row="6824" value="0.000000" interpolation="0" />
 		<key row="6992" value="0.000000" interpolation="2" />
 		<key row="7071" value="0.660000" interpolation="0" />
