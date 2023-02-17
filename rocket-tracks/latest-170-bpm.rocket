@@ -3,6 +3,7 @@
 	<bookmark row="86" />
 	<bookmark row="776" />
 	<bookmark row="1884" />
+	<bookmark row="3367" />
 	<bookmark row="4274" />
 	<bookmark row="4545" />
 	<bookmark row="4832" />
@@ -259,11 +260,9 @@ color="ff8850b2">
 		<key row="6678" value="-7.100000" interpolation="0" />
 		<key row="6680" value="-9.000000" interpolation="3" />
 		<key row="6806" value="-9.060000" interpolation="0" />
-		<key row="6808" value="-13.000000" interpolation="0" />
-		<key row="6960" value="16.000000" interpolation="0" />
+		<key row="6808" value="-16.000000" interpolation="0" />
+		<key row="6960" value="18.000000" interpolation="0" />
 		<key row="7072" value="12.000000" interpolation="0" />
-		<key row="7303" value="19.150000" interpolation="0" />
-		<key row="7418" value="3.000000" interpolation="0" />
 	</track>
 	<track name="spike:Roll" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -280,8 +279,8 @@ color="ffb25091">
 		<key row="6952" value="13.000000" interpolation="2" />
 		<key row="6968" value="13.100000" interpolation="0" />
 		<key row="7072" value="44.000000" interpolation="0" />
-		<key row="7288" value="44.000000" interpolation="2" />
-		<key row="7328" value="43.000000" interpolation="0" />
+		<key row="7288" value="44.000000" interpolation="3" />
+		<key row="7328" value="43.500000" interpolation="0" />
 	</track>
 	<track name="spike:Specular" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -303,7 +302,6 @@ color="ffb28050">
 		<key row="6680" value="3.300000" interpolation="0" />
 		<key row="6808" value="0.330000" interpolation="0" />
 		<key row="7072" value="3.140000" interpolation="0" />
-		<key row="7376" value="1.500000" interpolation="0" />
 	</track>
 	<track name="distSpike:Warmup" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -512,16 +510,17 @@ color="ff8850b2">
 		<key row="2672" value="0.000000" interpolation="0" />
 		<key row="3248" value="0.500000" interpolation="2" />
 		<key row="3272" value="0.000000" interpolation="0" />
-		<key row="3392" value="0.524000" interpolation="2" />
-		<key row="3408" value="0.000000" interpolation="0" />
+		<key row="3392" value="0.500000" interpolation="3" />
+		<key row="3408" value="0.800000" interpolation="3" />
+		<key row="3432" value="0.000000" interpolation="0" />
 		<key row="3536" value="0.500000" interpolation="2" />
 		<key row="3552" value="0.800000" interpolation="3" />
 		<key row="3568" value="0.000000" interpolation="0" />
 		<key row="3920" value="0.500000" interpolation="2" />
 		<key row="4055" value="0.000000" interpolation="0" />
-		<key row="4056" value="0.770000" interpolation="3" />
+		<key row="4056" value="0.500000" interpolation="3" />
 		<key row="4096" value="0.000000" interpolation="0" />
-		<key row="4184" value="0.528000" interpolation="1" />
+		<key row="4184" value="0.500000" interpolation="2" />
 		<key row="4312" value="0.000000" interpolation="0" />
 		<key row="4584" value="1.000000" interpolation="2" />
 		<key row="4600" value="0.000000" interpolation="0" />
@@ -543,9 +542,7 @@ color="ff8850b2">
 		<key row="6424" value="0.000000" interpolation="3" />
 		<key row="6542" value="1.000000" interpolation="1" />
 		<key row="6576" value="0.000000" interpolation="0" />
-		<key row="6680" value="0.700000" interpolation="2" />
-		<key row="6704" value="0.000000" interpolation="0" />
-		<key row="6808" value="0.800000" interpolation="1" />
+		<key row="6808" value="0.800000" interpolation="3" />
 		<key row="6824" value="0.000000" interpolation="0" />
 		<key row="6960" value="0.800000" interpolation="3" />
 		<key row="6992" value="0.000000" interpolation="2" />
@@ -616,15 +613,17 @@ color="ffb25091">
 		<key row="2024" value="0.000000" interpolation="0" />
 		<key row="3144" value="0.500000" interpolation="3" />
 		<key row="3160" value="0.000000" interpolation="0" />
-		<key row="3784" value="1.000000" interpolation="1" />
+		<key row="3784" value="1.000000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
-		<key row="3896" value="0.880000" interpolation="1" />
+		<key row="3896" value="0.880000" interpolation="3" />
 		<key row="3920" value="0.000000" interpolation="0" />
 		<key row="5192" value="0.000000" interpolation="3" />
 		<key row="5239" value="1.000000" interpolation="0" />
 		<key row="5240" value="0.000000" interpolation="0" />
 		<key row="6288" value="1.000000" interpolation="3" />
 		<key row="6304" value="0.000000" interpolation="0" />
+		<key row="6680" value="0.700000" interpolation="2" />
+		<key row="6704" value="0.000000" interpolation="0" />
 		<key row="6992" value="0.000000" interpolation="0" />
 		<key row="7072" value="1.000000" interpolation="1" />
 		<key row="7104" value="0.000000" interpolation="0" />
