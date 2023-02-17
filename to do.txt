@@ -19,7 +19,7 @@ I'm fine with how this looks, are you guys?
 
 ** Part 4: spikey balls synchronized with dirt backdrop and Bypass "logo" **
 
-Looks finished to me.
+Looks finished to me: no, create 'overlay blend' effect.
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
