@@ -1,5 +1,5 @@
 
-// cookiedough -- TPB-07
+// cookiedough -- Bypass/TPB-07: arrested development
 
 #include "main.h"
 // #include <windows.h> // for audio.h
@@ -20,6 +20,9 @@
 #include "torus-twister.h"
 #include "tunnelscape.h"
 #include "shadertoy.h"
+
+// for this production:
+static_assert(kResX == 1280 && kResY == 720);
 
 // --- Sync. tracks ---
 
@@ -55,6 +58,9 @@ static uint32_t *s_pSpikeyBypass = nullptr;
 static uint32_t *s_pSpikeyArrested = nullptr;
 static uint32_t *s_pSpikeyVignette = nullptr;
 static uint32_t *s_pSpikeyVignette2 = nullptr;
+
+// Landscape art
+static uint32_t *s_pHeliHUD = nullptr;
 
 bool Demo_Create()
 {
@@ -115,6 +121,11 @@ bool Demo_Create()
 	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
 	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
 		return false;
+	
+	// landscape
+	s_pHeliHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
+	if ( nullptr == s_pHeliHUD)
+		return false;
 
 	return fxInit;
 }
@@ -141,16 +152,14 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 
 void Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
-	// for this production:
-	VIZ_ASSERT(kResX == 1280 && kResY == 720);
-
+	// update sync.
 	Rocket::Boost();
 
 	// get fade/flash amounts
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
 	const float fadeToWhite = Rocket::getf(trackFadeToWhite);
 
-	// render effect
+	// render effect/part
 	const int effect = Rocket::geti(trackEffect);
 	switch (effect)
 	{
@@ -160,8 +169,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 	
 		case 2:
-			// Introduction: landscape
-			Landscape_Draw(pDest, timer, delta);
+			{
+				// Introduction: landscape
+				Landscape_Draw(pDest, timer, delta);
+
+				// overlay HUD
+				BlitAdd32(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720);
+			}
 			break;
 
 		case 3:
@@ -194,8 +208,33 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 		
 		case 5:
-			// Plasma + Credits (see below)
-			Plasma_Draw(pDest, timer, delta);
+			// Plasma and credits
+			{
+				Plasma_Draw(pDest, timer, delta);
+
+				// credit logo blit
+				const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
+				if (0 != iLogo)
+				{
+					uint32_t *pCur = s_pCredits[iLogo-1];
+
+					const float blurH = Rocket::getf(trackCreditLogoBlurH);
+					if (0.f != blurH)
+					{
+						HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
+						pCur = g_renderTarget[0];
+					}
+
+					const float blurV = Rocket::getf(trackCreditLogoBlurV);
+					if (0 != blurV)
+					{
+						VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
+						pCur = g_renderTarget[0];
+					}
+
+					BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+				}
+			}
 			break;
 
 		case 6:
@@ -277,34 +316,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		default:
 			FxBlitter_DrawTestPattern(pDest);
-	}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 	}
 
-	// credit logo blit
-	const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
-	if (0 != iLogo)
+	// post fade/flash
+	switch (effect)
 	{
-		uint32_t *pCur = s_pCredits[iLogo-1];
+	case 8:
+		// handled by effect/part
+		break;
 
-		const float blurH = Rocket::getf(trackCreditLogoBlurH);
-		if (0.f != blurH)
-		{
-			HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
-			pCur = g_renderTarget[0];
-		}
-
-		const float blurV = Rocket::getf(trackCreditLogoBlurV);
-		if (0 != blurV)
-		{
-			VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
-			pCur = g_renderTarget[0];
-		}
-
-		BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
-	}
-
-	// post fade/flash (if not customized, FIXME: switch!)
-	if (8 != effect)
-	{
+	default:
 		FadeFlash(pDest, fadeToBlack, fadeToWhite);
 	}
 

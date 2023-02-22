@@ -123,6 +123,7 @@ VIZ_INLINE __m128i bsamp32_32(
 	return result;
 }
 
+// SSE 4.1
 VIZ_INLINE __m128 bsamp32_32f(
 	const uint32_t *pTexture, 
 	unsigned int U0, unsigned int V0, 

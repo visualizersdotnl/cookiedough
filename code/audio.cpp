@@ -9,19 +9,16 @@
 	#include <Windows.h>
 #endif
 
-// FIXME: adjust per module (order also known as pattern); must be a power of 2
-// const int kRowsPerOrder = 64;
+// const int kRowsPerOrder = 64; // FIXME: adjust per module (order also known as pattern); must be a power of 2
+// const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
+// const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
 
 // MP3/OGG sync. rate
 // HACK: we're compensating for the fact that it's actually 170BPM here instead of 174BPM, without wanting to resync. everything
-const float kRowRate = (170.f /* BPM */ / (60.f*(170.f/174.f)))*16.f /* RPB */;
+const double kRowRate = (170.0 /* BPM */ / (60.0*(170.0/174.0)))*16.0 /* RPB */;
 
 static HMUSIC s_hMusic = 0;
-
 static BASS_INFO s_bassInf;
-
-// const DWORD kMusicFlagsProtracker = BASS_MUSIC_PT1MOD|BASS_MUSIC_CALCLEN;
-// const DWORD kMusicFlagsMisc = BASS_MUSIC_CALCLEN;
 
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent)
 {
@@ -55,7 +52,7 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 
 	BASS_GetInfo(&s_bassInf);
 
-	/*
+	/* for modules; patch up if/when necessary:
 	s_hMusic = BASS_MusicLoad(FALSE, (void*)musicPath.c_str(), 0, 0, kMusicFlagsMisc, 0);
 	if (NULL == s_hMusic)
 	{
@@ -144,6 +141,7 @@ void Audio_Rocket_Pause(void *, int mustPause)
 
 void Audio_Rocket_SetRow(void *, int row)
 {
+//	for modules; patch up if/when necessary:
 //	const int order = row/kRowsPerOrder;
 //	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
 
@@ -160,21 +158,24 @@ int Audio_Rocket_IsPlaying(void *)
 
 double Audio_Rocket_Sync(unsigned int &modOrder, unsigned int &modRow, float &modRowAlpha)
 {
-//	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
-//	const DWORD order = LOWORD(fullPos);
-//	const DWORD row = HIWORD(fullPos)>>8;
-//	const DWORD rowPart = HIWORD(fullPos)&255;
+/*  for modules; patch up when/if necessary:
 
-//	modOrder = order;
-//	modRow = row;
-//	modRowAlpha = rowPart/256.f;
+	const QWORD fullPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_MUSIC_ORDER);
+	const DWORD order = LOWORD(fullPos);
+	const DWORD row = HIWORD(fullPos)>>8;
+	const DWORD rowPart = HIWORD(fullPos)&255;
 
-//	return modRowAlpha+(order*kRowsPerOrder + row);
+	modOrder = order;
+	modRow = row;
+	modRowAlpha = rowPart/256.f;
+
+	return modRowAlpha+(order*kRowsPerOrder + row);
+*/
 
 	VIZ_ASSERT(s_hMusic != 0);
 	const QWORD chanPos = BASS_ChannelGetPosition(s_hMusic, BASS_POS_BYTE);
 	const double secPos = BASS_ChannelBytes2Seconds(s_hMusic, chanPos);
-	return (float) secPos*kRowRate;
+	return secPos*kRowRate;
 }
 
 float Audio_Get_Pos_In_Sec()

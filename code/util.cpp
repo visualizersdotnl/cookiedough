@@ -239,6 +239,32 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
+void TapeWarp32(uint32_t *pDest, unsigned xRes, unsigned yRes, float strength, float speed)
+{
+	uint32_t *pTemp = g_renderTarget[0];
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < yRes; ++iY)
+	{
+		for (unsigned iX = 0; iX < xRes; ++iX)
+		{
+			const unsigned index = iY*xRes + iX;
+
+			// FIXME: make fixed point!
+			const float dX = lutsinf(iY*speed)*strength;
+			const float dY = lutcosf(iX*speed)*strength;
+			const float tX = iX+dX;
+			const float tY = iY+dY;
+			if (tX >= 0.f && tX < xRes && tY >= 0.f && tY < yRes)
+				pTemp[index] = pDest[unsigned(tY)*xRes + unsigned(tX)];
+			else
+				pTemp[index] = 0; // FIXME: background color parameter?
+		}
+	}
+
+	memcpy(pDest, pTemp, xRes*yRes*sizeof(uint32_t));
+}
+
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();

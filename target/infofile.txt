@@ -35,8 +35,13 @@
    + alien (small TPB logo)
    + raimo (boy wonder)
 
-   nautilus effect was adapted with permission by the late Weyland Yutani
-   rest in peace, soldier
+   thank yous / shameful admissions:
+   * 2 shaders were ported off of Shadertoy, their authors/links are mentioned in the source code (see 'shadertoy.cpp')
+   * we're using a color- and heightmap from the 1992 game Comanche by Novalogic (upscaled using AI, as is the trend these days)
+   * hoplite/orange for making  PC software rendering demos that kicked ass, that basically is the entire reason this one exists
+
+   nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg)
+   rest in peace soldier!
 
    how open are we?   
    very -> repository: https://www.github.com/visualizersdotnl/cookiedough
