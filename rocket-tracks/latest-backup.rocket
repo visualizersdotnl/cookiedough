@@ -19,10 +19,6 @@ beatsPerMin="125">
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="1" />
 		<key row="1048" value="1000.000000" interpolation="0" />
-		<key row="3612" value="1000.000000" interpolation="0" />
-		<key row="5640" value="1000.000000" interpolation="0" />
-		<key row="6457" value="inf" interpolation="2" />
-		<key row="8456" value="inf" interpolation="0" />
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ffb28050">
