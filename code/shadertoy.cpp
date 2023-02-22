@@ -924,5 +924,3 @@ void Laura_Draw(uint32_t *pDest, float time, float delta)
 	RenderLaura_2x2(g_pFxMap[0], time);
 	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 }
-
-

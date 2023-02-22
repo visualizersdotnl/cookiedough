@@ -14,7 +14,6 @@
 
 static uint8_t *s_pHeightMap = nullptr;
 static uint32_t *s_pColorMap = nullptr;
-static uint32_t *s_pHUD = nullptr;
 static uint32_t *s_pFogGradient = nullptr;
 
 static __m128i s_fogGradientUnp[256];
@@ -23,6 +22,7 @@ static __m128i s_fogGradientUnp[256];
 
 SyncTrack trackVoxelScapeForward;
 SyncTrack trackVoxelScapeTilt;
+SyncTrack trackWarpSpeed, trackWarpStrength;
 
 // --------------------
 
@@ -200,8 +200,7 @@ bool Landscape_Create()
 //	s_pColorMap = Image_Load32("assets/scape/comanche-maps/C19w.png");
 	s_pHeightMap = Image_Load8("assets/scape/comanche-maps/D17.png");
 	s_pColorMap = Image_Load32("assets/scape/C17W-edit.png");
-	s_pHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
-	if (nullptr == s_pHeightMap || nullptr == s_pColorMap || nullptr == s_pHUD)
+	if (nullptr == s_pHeightMap || nullptr == s_pColorMap)
 		return false;
 
 	// load fog gradient (8-bit LUT)
@@ -216,6 +215,8 @@ bool Landscape_Create()
 	// init. sync.
 	trackVoxelScapeForward = Rocket::AddTrack("voxelScape:Forward");
 	trackVoxelScapeTilt = Rocket::AddTrack("voxelScape:Tilt");
+	trackWarpSpeed = Rocket::AddTrack("voxelScape:WarpSpeed");
+	trackWarpStrength = Rocket::AddTrack("voxelScape:WarpStrength");
 
 	return true;
 }
@@ -230,8 +231,8 @@ void Landscape_Draw(uint32_t *pDest, float time, float delta)
 	memset32(pDest, s_pFogGradient[0], kResX*kResY);
 	vscape(pDest, time, delta);
 
-	// overlay HUD
-	static_assert(kResX == 1280 && kResY == 720);
-	BlitAdd32(pDest + (kResX-960)/2, s_pHUD, kResX, 960, 720);
+	const float warpStrength = Rocket::getf(trackWarpStrength);
+	if (0.f != warpStrength)
+		TapeWarp32(pDest, kResX, kResY, Rocket::getf(trackWarpSpeed), warpStrength);
 }
 

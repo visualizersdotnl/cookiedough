@@ -71,8 +71,8 @@ static inline float saturatef(float value)
 	return std::max<float>(0.f, std::min<float>(1.f, value));
 }
 
-// GLSL frac().
-static inline float fracf(float value) { return value - std::truncf(value); }
+// GLSL fract().
+static inline float fracf(float value) { return value - std::floorf(value); }
 
 // Scalar interpolation.
 template<typename T>
