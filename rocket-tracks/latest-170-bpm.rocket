@@ -17,11 +17,11 @@
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="3"
-color="ffa9b250" muteValue="129.000000">
+	<track name="twister:Speed" folded="0" muteKeyCount="0"
+color="ffa9b250">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1992" value="127.000000" interpolation="2" />
-		<key row="2016" value="129.000000" interpolation="0" />
+		<key row="2016" value="129.000000" interpolation="1" />
 	</track>
 	<track name="twister::ShearSpeed" folded="0" muteKeyCount="0"
 color="ff60b250">
@@ -298,7 +298,7 @@ color="ff8850b2">
 		<key row="6288" value="14.000000" interpolation="0" />
 		<key row="6544" value="-7.000000" interpolation="1" />
 		<key row="6678" value="-7.100000" interpolation="0" />
-		<key row="6680" value="-9.000000" interpolation="3" />
+		<key row="6680" value="-9.000000" interpolation="2" />
 		<key row="6806" value="-9.060000" interpolation="0" />
 		<key row="6808" value="-16.000000" interpolation="0" />
 		<key row="6960" value="18.000000" interpolation="0" />
@@ -319,8 +319,8 @@ color="ffb25091">
 		<key row="6952" value="13.000000" interpolation="2" />
 		<key row="6968" value="13.100000" interpolation="0" />
 		<key row="7072" value="44.000000" interpolation="0" />
-		<key row="7288" value="44.000000" interpolation="3" />
-		<key row="7328" value="43.500000" interpolation="0" />
+		<key row="7280" value="44.000000" interpolation="2" />
+		<key row="7328" value="45.000000" interpolation="0" />
 	</track>
 	<track name="spike:Specular" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -337,10 +337,10 @@ color="ffb27474">
 color="ffb28050">
 		<key row="3144" value="6.000000" interpolation="0" />
 		<key row="3936" value="3.000000" interpolation="0" />
-		<key row="6288" value="4.400000" interpolation="0" />
+		<key row="6288" value="0.500000" interpolation="0" />
 		<key row="6544" value="12.000000" interpolation="0" />
 		<key row="6680" value="3.300000" interpolation="0" />
-		<key row="6808" value="0.330000" interpolation="0" />
+		<key row="6808" value="0.900000" interpolation="0" />
 		<key row="7072" value="3.140000" interpolation="0" />
 	</track>
 	<track name="distSpike:Warmup" folded="0" muteKeyCount="0"
@@ -355,10 +355,10 @@ color="ff60b250">
 		<key row="3408" value="20.000000" interpolation="0" />
 		<key row="3664" value="14.500000" interpolation="0" />
 		<key row="3936" value="60.000000" interpolation="0" />
-		<key row="6288" value="2.000000" interpolation="0" />
+		<key row="6288" value="3.000000" interpolation="0" />
 		<key row="6544" value="37.000000" interpolation="0" />
 		<key row="6680" value="22.000000" interpolation="0" />
-		<key row="6808" value="1.000000" interpolation="0" />
+		<key row="6808" value="44.000000" interpolation="0" />
 		<key row="7072" value="39.000000" interpolation="0" />
 	</track>
 	<track name="spike:Gamma" folded="0" muteKeyCount="0"
@@ -542,7 +542,7 @@ color="ff8850b2">
 		<key row="1832" value="1.000000" interpolation="1" />
 		<key row="1840" value="0.000000" interpolation="0" />
 		<key row="1952" value="0.000000" interpolation="3" />
-		<key row="2095" value="0.800000" interpolation="0" />
+		<key row="2095" value="0.628000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 		<key row="2616" value="1.000000" interpolation="2" />
 		<key row="2672" value="0.000000" interpolation="0" />
