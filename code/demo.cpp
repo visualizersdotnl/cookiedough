@@ -78,6 +78,13 @@ static uint32_t *s_pGreetings1 = nullptr;
 static uint32_t *s_pGreetings2 = nullptr;
 static uint32_t *s_pGreetingsVignette = nullptr;
 
+// nautilus art
+static uint32_t *s_pNautilusVignette = nullptr;
+static uint32_t *s_pNautilusDirt = nullptr;
+static uint32_t *s_pNautilusCockpitHighlight = nullptr;
+static uint32_t *s_pNautilusCockpitShadow = nullptr;
+static uint32_t *s_pNautilusText = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -163,6 +170,15 @@ bool Demo_Create()
 	s_pGreetings2 = Image_Load32("assets/greetings/Greetings_Part2_BG_Overlay.png");
 	s_pGreetingsVignette = Image_Load32("assets/greetings/Vignette_CoolFilmLook.png");
 	if (nullptr == s_pGreetingsDirt || nullptr == s_pGreetings1 || nullptr == s_pGreetings2 || nullptr == s_pGreetingsVignette)
+		return false;
+
+	// nautilus
+	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
+	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
+	s_pNautilusCockpitHighlight = Image_Load32("assets/nautilus/Cockpit_Highlight_noAlpha.png");
+	s_pNautilusCockpitShadow = Image_Load32("assets/nautilus/Cockpit_ShadowPart2.png");
+	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusCockpitHighlight || nullptr == s_pNautilusCockpitShadow ||  nullptr == s_pNautilusText)
 		return false;
 
 	return fxInit;
@@ -298,26 +314,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 6:
 			// Nautilus (Michiel, RIP)
-			{
-				Nautilus_Draw(pDest, timer, delta);
+			Nautilus_Draw(pDest, timer, delta);
+			SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
+			SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 
-				// offsets
-				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-128)/2) + 290; // lower..  
-				auto xOffs = ((kResX-(128*8))/2) + 120;   // .. right corner
+			// FIXME
+//			Overlay32(pDest, s_pNautilusCockpitHighlight, kOutputSize);
+//			MixSrc32(pDest, s_pNautilusCockpitShadow, kOutputSize);
 
-				const float discoGuys = clampf(0.f, 1.f, Rocket::getf(trackDiscoGuys));
-				if (discoGuys > 0.f)
-				{
-					// now simply draw the 8 gentlemen	
-					for (int iGuy = 0; iGuy < 8; ++iGuy)
-					{
-//						BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, 0.4f + iGuy*(0.6f/7.f));
-						BlitSrc32A(pDest + xOffs + yOffs*kResX, g_pToyPusherTiles[iGuy], kResX, 128, 128, discoGuys);
-						xOffs += 128;
-					}
-				}
-			}
+			MixSrc32(pDest, s_pNautilusText, kOutputSize);
 			break;
       
 		case 7:			
@@ -408,6 +414,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	{
 	case 1:
 	case 3:
+	case 6:
 	case 8:
 		// handled by effect/part
 		break;

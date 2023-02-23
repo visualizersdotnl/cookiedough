@@ -1,0 +1,10 @@
+
+
+FX Stacking from Bottom --> Top
+
+- BG / Effects ( render )
+- Vignette.png ( Blendmode: Softlight )
+- GlassDirt_Distorted2.png ( Blendmode: Softlight )
+- Cockpit_Highlight.png ( Blendmode: Overlay )
+- Cockpit_ShadowPart2.png ( Blendmode: Normal )
+- JacquesCousteau_Text.png ( Blendmode: Normal )
