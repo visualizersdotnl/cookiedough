@@ -88,17 +88,21 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 // subtract 32-bit color buffers (source to/from destination)
 void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
-// exclusion blend filter between two 32-bit color buffers
+// Photoshop-style exclusion blend filter between two 32-bit color buffers (retains dest. alpha)
 void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
-// soft light blend filter between two 32-bit color buffers
+// Photoshop-style soft light blend filter between two 32-bit color buffers (retains dest. alpha)
 void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
 // nonsensical warp effect applied to a 32-bit color buffer
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed);
 
-// Photoshop-style overlay blend effect between two 32-bit color buffers
+// Photoshop-style overlay blend effect between two 32-bit color buffers (zeroes dest. alpha)
 void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels);
+
+// Photoshop-style darken blend effect between two 32-bit color buffers (retains dest. alpha)
+// result is blended 50% - this is specifically because I needed it this way (FIXME)
+void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels);
 
 // multiply dest. buffer by either color or alpha of source buffer
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
