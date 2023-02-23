@@ -216,14 +216,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 3:
 			// Voxel ball
 			Ball_Draw(pDest, timer, delta);
+			SoftLight32(pDest, s_pBallVignette, kOutputSize);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			memcpy(g_renderTarget[0], pDest, kOutputBytes);
 			MixSrc32(g_renderTarget[0], s_pBallText, kOutputSize);
+			BlitAdd32A(g_renderTarget[0], s_pBallText, kResX, kResX, kResY, 0.5f);
 			SoftLight32(pDest, g_renderTarget[0], kOutputSize);
-			MulSrc32(pDest, s_pBallVignette, kOutputSize);
 			break;
 
 		case 4:
-			// Tunnels
+			// Tunnels (also see case 9)
 			{
 				Tunnelscape_Draw(pDest, timer, delta);
 
@@ -241,7 +243,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0 != Rocket::geti(trackShow1995))
 					MixSrc32(pDest, s_pNoooN, kOutputSize);
 
-				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
+				Overlay32(pDest, s_pTunnelVignette, kOutputSize);
 			}
 			break;
 		
@@ -298,7 +300,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				}
 			}
 			break;
-
+      
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
@@ -369,6 +371,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// post fade/flash
 	switch (effect)
 	{
+	case 3:
 	case 8:
 		// handled by effect/part
 		break;
