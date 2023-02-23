@@ -245,13 +245,13 @@ VIZ_INLINE float fNautilus(const Vector3 &position, float time)
 	return dotted*0.5f - .7f;
 };
 
-static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
+static void RenderNautilusMap_2x2(uint32_t *pDest, float time) 
 {
+	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+
 	const float roll = Rocket::getf(trackNautilusRoll);
 	const float hue = Rocket::getf(trackNautilusHue);
 	const float speed = Rocket::getf(trackNautilusSpeed);
-
-	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	time = time*speed;
 
@@ -305,17 +305,16 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 				Shadertoy::vFastNorm3(normal);
 
-
 				// I will leave the calculations here as written by Michiel (rust in vrede):
 				float diffuse = normal.z*0.1f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
 				constexpr float nOffs2 = 0.3f;
-				hit += lutcosf(time*0.3f);
+				Vector3 hitOffs = hit + fastcosf(time*0.14f);
 				Vector3 funk(
-					march-fNautilus(Vector3(hit.x+nOffs2, hit.y, hit.z), time),
-					march-fNautilus(Vector3(hit.x, hit.y+nOffs2, hit.z), time),
-					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs2), time));
+					march-fNautilus(Vector3(hitOffs.x+nOffs2, hitOffs.y,        hitOffs.z), time),
+					march-fNautilus(Vector3(hitOffs.x,        hitOffs.y+nOffs2, hitOffs.z), time),
+					march-fNautilus(Vector3(hitOffs.x,        hitOffs.y,        hitOffs.z+nOffs2), time));
 				Shadertoy::vFastNorm3(funk);
 
 				const float yMod = fracf(hit.y*0.3f + funk.x*0.628f + funk.y);
@@ -327,7 +326,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 
 				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
 			}
-
+			
 			pDest128[destIndex] = Shadertoy::ToPixel4(colors);
 		}
 	}

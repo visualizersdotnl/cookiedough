@@ -273,7 +273,7 @@ void TapeWarp32(uint32_t *pDest, unsigned xRes, unsigned yRes, float strength, f
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed)
 {
     #pragma omp parallel for schedule(static)
-    for (int iY = 0; iY < yRes; ++iY)
+    for (int iY = 0; iY < int(yRes); ++iY)
     {
 		const unsigned yIndex = iY*xRes;
 
@@ -289,12 +289,12 @@ void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 
 			if (tX < 0.f)
 				tX = 0.f;
-			else if (tX >= xRes)
-				tX = xRes - 1.f;
+			else if (tX >= xRes-1.f)
+				tX = xRes - 2.f;
 			if (tY < 0.f)
 				tY = 0.f;
-			else if (tY >= yRes)
-				tY = yRes - 1.f;
+			else if (tY >= yRes-1.f)
+				tY = yRes - 2.f;
 
 			const auto U = ftofp24(tX);
 			const auto V = ftofp24(tY);

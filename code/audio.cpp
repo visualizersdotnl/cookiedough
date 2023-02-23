@@ -146,7 +146,7 @@ void Audio_Rocket_SetRow(void *, int row)
 //	BASS_ChannelSetPosition(s_hMusic, MAKELONG(order, row&(kRowsPerOrder-1)), BASS_POS_MUSIC_ORDER); 
 
 	VIZ_ASSERT(s_hMusic != 0);
-	const float secPos = row/kRowRate;
+	const double secPos = row/kRowRate;
 	const QWORD newChanPos = BASS_ChannelSeconds2Bytes(s_hMusic, secPos);
 	BASS_ChannelSetPosition(s_hMusic, newChanPos, BASS_POS_BYTE);
 }
