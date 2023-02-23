@@ -228,7 +228,7 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// Nautilus Redux by Michiel v/d Berg
+// Nautilus Redux by Michiel v/d Berg (RIP)
 // 
 // Definitely a keeper. He was OK with that.
 //
