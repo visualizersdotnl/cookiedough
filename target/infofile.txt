@@ -13,35 +13,35 @@
 	:                BYPASS presents ARRESTED DEVELOPMENT           :
 	:                a promotion in co-operation with TPB           :
 
-   a retrosexual multimedia demonstration
-   created for Revision 2023
+	a retrosexual multimedia demonstration
+	created for Revision 2023
 
-   system req.:
-   + either OSX (Silicon) or Win64 (Intel), nav. to '/bin' and run!
-   + software rendering, no GPU required
-   + uses default audio device
-   + does not use significant RAM or disk space
-   + native resolution: 1280x720
+	system req.:
+	+ either OSX (Silicon) or Win64 (Intel), nav. to '/bin' and run!
+	+ software rendering, no GPU required
+	+ uses default audio device
+	+ does not use significant RAM or disk space
+	+ native resolution: 1280x720
 
-   people involved:
-   + superplek
-   + comatron ft. celin (vocals)
-   + jade
-   + and introducing ernst hot
+	people involved:
+	+ superplek
+	+ comatron ft. celin (vocals)
+	+ jade
+	+ and introducing ernst hot
 
-   advisory board / additional:
-   + dascon (networking)
-   + nytrik (ideas, graphics)
-   + alien (small TPB logo)
-   + raimo (boy wonder)
+	advisory board / additional:
+	+ dascon (networking)
+	+ nytrik (ideas, graphics)
+	+ alien (small TPB logo)
+	+ raimo (boy wonder)
 
-   thank yous / shameful admissions:
-   * 2 shaders were ported off of Shadertoy, their authors/links are mentioned in the source code (see 'shadertoy.cpp')
-   * we're using a color- and heightmap from the 1992 game Comanche by Novalogic (upscaled using AI, as is the trend these days)
-   * hoplite/orange for making  PC software rendering demos that kicked ass, that basically is the entire reason this one exists
+	thank yous / shameful admissions:
+	* 2 shaders were ported off of Shadertoy, their authors/links are mentioned in the source code (see 'shadertoy.cpp')
+	* we're using a color- and heightmap from the 1992 game Comanche by Novalogic (upscaled using AI, as is the trend these days)
+	* hoplite/orange for making PC software rendering demos that kicked ass, that basically is the entire reason this one exists
 
-   nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg)
-   rest in peace soldier!
+	nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg)
+	rest in peace soldier!
 
-   how open are we?   
-   very -> repository: https://www.github.com/visualizersdotnl/cookiedough
+	how open are we?   
+	very -> repository: https://www.github.com/visualizersdotnl/cookiedough
