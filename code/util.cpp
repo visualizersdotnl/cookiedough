@@ -240,36 +240,35 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
-#if 0
-
-void TapeWarp32(uint32_t *pDest, unsigned xRes, unsigned yRes, float strength, float speed)
+// FIXME: optimize properly
+void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels) 
 {
-	uint32_t *pTemp = g_renderTarget[0];
-
 	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < yRes; ++iY)
+	for (int iPixel = 0; iPixel < numPixels; ++iPixel) 
 	{
-		for (unsigned iX = 0; iX < xRes; ++iX)
-		{
-			const unsigned index = iY*xRes + iX;
+		const uint32_t bottom = pDest[iPixel];
+		const float bottomR = ((bottom>>16)&0xff)/255.f;
+		const float bottomG = ((bottom>>8)&0xff)/255.f;
+		const float bottomB = (bottom&0xff)/255.f;
 
-			// FIXME: make fixed point!
-			const float dX = lutsinf(iY*speed)*strength;
-			const float dY = lutcosf(iX*speed)*strength;
-			const float tX = iX+dX;
-			const float tY = iY+dY;
-			if (tX >= 0.f && tX < xRes && tY >= 0.f && tY < yRes)
-				pTemp[index] = pDest[unsigned(tY)*xRes + unsigned(tX)];
-			else
-				pTemp[index] = 0; // FIXME: background color parameter?
-		}
+		const uint32_t top = pSrc[iPixel];
+		const float topR = ((top>>16)&0xff)/255.f;
+		const float topG = ((top>>8)&0xff)/255.f;
+		const float topB = (top&0xff)/255.f;
+
+		float newR = bottomR < 0.5f ? (2.f * bottomR * topR) : (1.f - 2.f*(1.f-bottomR) * (1.f-topR));
+		float newG = bottomG < 0.5f ? (2.f * bottomG * topG) : (1.f - 2.f*(1.f-bottomG) * (1.f-topG));
+		float newB = bottomB < 0.5f ? (2.f * bottomB * topB) : (1.f - 2.f*(1.f-bottomB) * (1.f-topB));
+		
+		newR *= 255.f;
+		newG *= 255.f;
+		newB *= 255.f;
+
+		pDest[iPixel] = unsigned(newR)<<16 | unsigned(newG)<<8 | unsigned(newB);
 	}
-
-	memcpy(pDest, pTemp, xRes*yRes*sizeof(uint32_t));
 }
 
-#endif
-
+// FIXME: optimize properly
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed)
 {
     #pragma omp parallel for schedule(static)

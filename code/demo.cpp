@@ -34,6 +34,7 @@ SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB;
+SyncTrack trackFuckBlurV;
 
 // --------------------
 
@@ -97,6 +98,7 @@ bool Demo_Create()
 	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
+	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -215,15 +217,29 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 3:
 			// Voxel ball
-			Ball_Draw(pDest, timer, delta);
-			memcpy(g_renderTarget[0], pDest, kOutputBytes);
-			MixSrc32(g_renderTarget[0], s_pBallText, kOutputSize);
-			SoftLight32(pDest, g_renderTarget[0], kOutputSize);
-			MulSrc32(pDest, s_pBallVignette, kOutputSize);
+			{
+				uint32_t *pBallText = s_pBallText;
+				const float fuckBlur = Rocket::getf(trackFuckBlurV);
+				if (0.f != fuckBlur)
+				{
+					const float scaledBlur = BoxBlurScale(fuckBlur);
+					VerticalBoxBlur32(g_renderTarget[2], pBallText, kResX, kResY, scaledBlur);
+					HorizontalBoxBlur32(g_renderTarget[2], g_renderTarget[2], kResX, kResY, scaledBlur*0.314f);
+					pBallText = g_renderTarget[2];
+				}
+				
+				Ball_Draw(pDest, timer, delta);
+				SoftLight32(pDest, s_pBallVignette, kOutputSize);
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+				memcpy(g_renderTarget[0], pDest, kOutputBytes);
+				MixSrc32(g_renderTarget[0], pBallText, kOutputSize);
+				BlitAdd32A(g_renderTarget[0], pBallText, kResX, kResX, kResY, 0.5f);
+				SoftLight32(pDest, g_renderTarget[0], kOutputSize);
+			}
 			break;
 
 		case 4:
-			// Tunnels
+			// Tunnels (also see case 9)
 			{
 				Tunnelscape_Draw(pDest, timer, delta);
 
@@ -241,7 +257,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0 != Rocket::geti(trackShow1995))
 					MixSrc32(pDest, s_pNoooN, kOutputSize);
 
-				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
+				Overlay32(pDest, s_pTunnelVignette, kOutputSize);
 			}
 			break;
 		
@@ -298,7 +314,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				}
 			}
 			break;
-
+      
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
@@ -369,6 +385,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// post fade/flash
 	switch (effect)
 	{
+	case 3:
 	case 8:
 		// handled by effect/part
 		break;

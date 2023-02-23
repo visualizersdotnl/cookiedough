@@ -228,7 +228,7 @@ void Plasma_Draw(uint32_t *pDest, float time, float delta)
 }
 
 //
-// Nautilus Redux by Michiel v/d Berg
+// Nautilus Redux by Michiel v/d Berg (RIP)
 // 
 // Definitely a keeper. He was OK with that.
 //
@@ -264,6 +264,8 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 		.1f-lutcosf(hue/3.f)/19.f, 
 		.1f, 
 		.1f+lutcosf(hue/14.f)/8.f);
+
+	const float cosHitOffs = lutcosf(time*0.314f*0.5f);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -309,16 +311,16 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				float diffuse = normal.z*0.1f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
-				constexpr float nOffs2 = 0.3f;
-				Vector3 hitOffs = hit + fastcosf(time*0.14f);
+				constexpr float nOffs2 = 0.15f;
+				Vector3 hitOffs = hit + cosHitOffs;
 				Vector3 funk(
 					march-fNautilus(Vector3(hitOffs.x+nOffs2, hitOffs.y,        hitOffs.z), time),
 					march-fNautilus(Vector3(hitOffs.x,        hitOffs.y+nOffs2, hitOffs.z), time),
 					march-fNautilus(Vector3(hitOffs.x,        hitOffs.y,        hitOffs.z+nOffs2), time));
 				Shadertoy::vFastNorm3(funk);
 
-				const float yMod = fracf(hit.y*0.3f + funk.x*0.628f + funk.y);
-				diffuse *= yMod;
+				const float yMod = fracf(hit.y*0.3f + funk.x*0.628f + funk.y*lutcosf(time*kGoldenRatio*0.1f));
+				diffuse *= yMod*yMod*yMod;
 
 				Vector3 color(diffuse);
 				color += colorization*(1.56f*total + specular);
@@ -616,7 +618,6 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 //
 // FIXME:
 // - expected (hardcoded): 256x256 texture
-// - parametrize
 // - fake project light, like in the Mewlers 64KB 'Viagra'?
 //
 
