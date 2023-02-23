@@ -268,6 +268,40 @@ void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 	}
 }
 
+// FIXME: optimize properly; especially this one is crazy suitable for SIMD!
+void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+			const uint32_t destPixel = pDest[iPixel];
+			const uint32_t srcPixel  = pSrc[iPixel];
+
+			const unsigned A2 = destPixel>>24;
+			const unsigned R2 = (destPixel>>16)&0xff;
+			const unsigned G2 = (destPixel>>8)&0xff;
+			const unsigned B2 = destPixel&0xff; 
+
+//			const unsigned A1 = srcPixel>>24;
+			const unsigned R1 = (srcPixel>>16)&0xff;
+			const unsigned G1 = (srcPixel>>8)&0xff;
+			const unsigned B1 = srcPixel&0xff; 
+
+			const unsigned DR = std::min<unsigned>(R1, R2);
+			const unsigned DG = std::min<unsigned>(G1, G2);
+			const unsigned DB = std::min<unsigned>(B1, B2);
+
+			const unsigned R = (R2 + ((DR))>>1);
+			const unsigned G = (G2 + ((DG))>>1);
+			const unsigned B = (B2 + ((DB))>>1);
+
+			const unsigned A = A2;
+
+			const uint32_t result = (A<<24)|(R<<16)|(G<<8)|B;
+			pDest[iPixel] = result;
+    }
+}	
+
 // FIXME: optimize properly
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed)
 {

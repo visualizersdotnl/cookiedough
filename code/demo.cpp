@@ -35,6 +35,7 @@ SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB;
 SyncTrack trackFuckBlurV;
+SyncTrack trackGreetSwitch;
 
 // --------------------
 
@@ -71,6 +72,12 @@ static uint32_t *s_pRevLogo = nullptr;
 static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
 static uint32_t *s_pBallText = nullptr;
 
+// greetings art
+static uint32_t *s_pGreetingsDirt = nullptr;
+static uint32_t *s_pGreetings1 = nullptr;
+static uint32_t *s_pGreetings2 = nullptr;
+static uint32_t *s_pGreetingsVignette = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -99,6 +106,7 @@ bool Demo_Create()
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
+	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -147,6 +155,14 @@ bool Demo_Create()
 	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut.png");
 	s_pBallVignette = Image_Load32("assets/ball/Vignette_Sparta300.png");
 	if (nullptr == s_pBallText || nullptr == s_pBallVignette)
+		return false;
+
+	// greetings
+	s_pGreetingsDirt = Image_Load32("assets/greetings/Bokeh_Lens_Dirt_51.png");
+	s_pGreetings1 = Image_Load32("assets/greetings/Greetings_Part1_BG_Overlay.png");
+	s_pGreetings2 = Image_Load32("assets/greetings/Greetings_Part2_BG_Overlay.png");
+	s_pGreetingsVignette = Image_Load32("assets/greetings/Vignette_CoolFilmLook.png");
+	if (nullptr == s_pGreetingsDirt || nullptr == s_pGreetings1 || nullptr == s_pGreetings2 || nullptr == s_pGreetingsVignette)
 		return false;
 
 	return fxInit;
@@ -356,8 +372,24 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				static_assert(kResX == 1280 && kResY == 720);
 				const auto yOffs = ((kResY-243)/2) + 240;
-				const auto xOffs = 44; // ((kResX-263)/2) - 300;
+				const auto xOffs = 12; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+
+				const int greetSwitch = Rocket::geti(trackGreetSwitch);
+				switch (greetSwitch)
+				{
+				case 0:
+					Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					break;
+
+				default:
+				case 1:
+					Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					break;
+				}
+
+				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
+				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 			}
 			break;
 

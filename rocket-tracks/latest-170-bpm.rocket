@@ -602,7 +602,7 @@ color="ff8850b2">
 		<key row="8368" value="1.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="1" />
 		<key row="8392" value="0.000000" interpolation="0" />
-		<key row="8904" value="0.880000" interpolation="1" />
+		<key row="8904" value="1.000000" interpolation="2" />
 		<key row="8920" value="0.000000" interpolation="0" />
 		<key row="9376" value="0.000000" interpolation="2" />
 		<key row="9407" value="1.000000" interpolation="0" />
@@ -852,6 +852,12 @@ color="ff4f71b2">
 		<key row="2032" value="16.000000" interpolation="3" />
 		<key row="2064" value="60.000000" interpolation="2" />
 		<key row="2079" value="100.000000" interpolation="0" />
+	</track>
+	<track name="demo:GreetSwitch" folded="0" muteKeyCount="0"
+color="ff8850b2">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="8384" value="1.000000" interpolation="0" />
+		<key row="8904" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
