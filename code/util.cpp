@@ -244,7 +244,7 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels) 
 {
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < numPixels; ++iPixel) 
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel) 
 	{
 		const uint32_t bottom = pDest[iPixel];
 		const float bottomR = ((bottom>>16)&0xff)/255.f;
