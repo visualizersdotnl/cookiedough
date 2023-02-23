@@ -34,6 +34,8 @@ SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB;
+// SyncTrack trackFuckBlurV;
+SyncTrack trackGreetSwitch;
 
 // --------------------
 
@@ -68,7 +70,13 @@ static uint32_t *s_pRevLogo = nullptr;
 
 // ball art
 static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
-static uint32_t *s_pBallText = nullptr;
+// static uint32_t *s_pBallText = nullptr;
+
+// greetings art
+static uint32_t *s_pGreetingsDirt = nullptr;
+static uint32_t *s_pGreetings1 = nullptr;
+static uint32_t *s_pGreetings2 = nullptr;
+static uint32_t *s_pGreetingsVignette = nullptr;
 
 bool Demo_Create()
 {
@@ -97,6 +105,8 @@ bool Demo_Create()
 	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
+//	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
+	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -142,9 +152,17 @@ bool Demo_Create()
 		return false;
 
 	// voxel ball
-	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut.png");
+//	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut_smaller_desaturate.png");
 	s_pBallVignette = Image_Load32("assets/ball/Vignette_Sparta300.png");
-	if (nullptr == s_pBallText || nullptr == s_pBallVignette)
+	if (nullptr == s_pBallVignette)
+		return false;
+
+	// greetings
+	s_pGreetingsDirt = Image_Load32("assets/greetings/Bokeh_Lens_Dirt_51.png");
+	s_pGreetings1 = Image_Load32("assets/greetings/Greetings_Part1_BG_Overlay.png");
+	s_pGreetings2 = Image_Load32("assets/greetings/Greetings_Part2_BG_Overlay.png");
+	s_pGreetingsVignette = Image_Load32("assets/greetings/Vignette_CoolFilmLook.png");
+	if (nullptr == s_pGreetingsDirt || nullptr == s_pGreetings1 || nullptr == s_pGreetings2 || nullptr == s_pGreetingsVignette)
 		return false;
 
 	return fxInit;
@@ -186,6 +204,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 1:
 			// Quick intermezzo: voxel torus
 			Twister_Draw(pDest, timer, delta);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
+			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 	
 		case 2:
@@ -206,7 +226,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
 					else
 					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*16.f)));
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*8.f)));
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}
@@ -215,13 +235,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 3:
 			// Voxel ball
-			Ball_Draw(pDest, timer, delta);
-			SoftLight32(pDest, s_pBallVignette, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, fadeToWhite);
-			memcpy(g_renderTarget[0], pDest, kOutputBytes);
-			MixSrc32(g_renderTarget[0], s_pBallText, kOutputSize);
-			BlitAdd32A(g_renderTarget[0], s_pBallText, kResX, kResX, kResY, 0.5f);
-			SoftLight32(pDest, g_renderTarget[0], kOutputSize);
+			{
+				Ball_Draw(pDest, timer, delta);
+				SoftLight32(pDest, s_pBallVignette, kOutputSize);
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+				MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			}
 			break;
 
 		case 4:
@@ -342,8 +361,24 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				static_assert(kResX == 1280 && kResY == 720);
 				const auto yOffs = ((kResY-243)/2) + 240;
-				const auto xOffs = 44; // ((kResX-263)/2) - 300;
+				const auto xOffs = 12; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+
+				const int greetSwitch = Rocket::geti(trackGreetSwitch);
+				switch (greetSwitch)
+				{
+				case 0:
+					Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					break;
+
+				default:
+				case 1:
+					Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					break;
+				}
+
+				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
+				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 			}
 			break;
 
@@ -371,6 +406,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// post fade/flash
 	switch (effect)
 	{
+	case 1:
 	case 3:
 	case 8:
 		// handled by effect/part

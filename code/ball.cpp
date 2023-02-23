@@ -436,3 +436,9 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	}
 #endif
 }
+
+uint32_t *Ball_GetBackground()
+{
+	VIZ_ASSERT(nullptr != s_pBackground);
+	return s_pBackground;
+}
