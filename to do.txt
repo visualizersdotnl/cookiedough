@@ -15,19 +15,20 @@ For all things regarding TPB-07, let's go for the immediates:
 
 ** Part 3: credits and plasma **
 
-I'm fine with how this looks, are you guys?
+I'm fine with how this looks,.
 
 ** Part 4: spikey balls synchronized with dirt backdrop and Bypass "logo" **
 
-Looks finished to me: no, create 'overlay blend' effect.
+Looks finished to me.
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
-- Jade will probably tweak maps (we really need to disguise that free-directional tunnel map since it's from Kewlers' 1995).
+FINISHED.
 
-+++ NEEDS ATTENTION BY SUPERPLEK + JADE +++ ** Part 6: Nautilus tunnel **
+** Part 6: Nautilus tunnel **
 
 - Dress up in some way, I am at a total loss as what to do with this effect.
+- Jade and Thorsten can probably help out.
 
 ** Part 7: up-close spikey balls **
 
@@ -39,9 +40,8 @@ Looks finished to me: no, create 'overlay blend' effect.
 
 ** Part 9: greetings "Laura" boxy tunnel **
 
-- Render greetings, Jade has an idea?
+- Render greetings, Jade has an idea.
 
 ** Part 10: TPB goes to Mexico logo VS. Nate Diaz "ending" **
 
 - I'm OK with this for now, mabye Nytrik can tweak it a bit?
-
