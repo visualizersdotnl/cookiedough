@@ -1,19 +1,17 @@
+      :                                                               :
+     -�---- - -�- -  -   -                              - --�-- - ----�-
+      :                                                             �:�
+      .               ______      ___  ____  ____  ____               :
+                    _/_  \_ \/\__/   \_\_  \/  __\/  __\
+                   /  / _/  /  /  /  / __  /\__ \/\__ \
+                  /  _  /  /  /  ___/  /  /  /  /  /  /
+                  �\___/�\_  /�\/   �\___/�\___/�\___/dip!
+      :                  /__/                                         .
+      �:.                    a BYPASS PC release                      :
+     -�--- -             -   -  - -- --�-- - ---�-- -  -   -      - --�-
+      :                                                               :
 
-	:                                                               :
-	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
-	:                                                             ·:¦
-	.               ______      ___  ____  ____  ____               :
-				_/_  \_ \/\__/   \_\_  \/  __\/  __\
-				/  / _/  /  /  /  / __  /\__ \/\__ \
-				/  _  /  /  /  ___/  /  /  /  /  /  /
-				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
-	:                  /__/                                         .
-	¦:.                                                             :
-	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:                BYPASS presents ARRESTED DEVELOPMENT           :
-	:                a promotion in co-operation with TPB           :
-
-	a retrosexual multimedia demonstration
+	a retrosexual multimedia demonstration in co-operation with TPB
 	created for Revision 2023
 
 	system req.:
@@ -39,6 +37,7 @@
 	* 2 shaders were ported off of Shadertoy, their authors/links are mentioned in the source code (see 'shadertoy.cpp')
 	* we're using a color- and heightmap from the 1992 game Comanche by Novalogic (upscaled using AI, as is the trend these days)
 	* hoplite/orange for making PC software rendering demos that kicked ass, that basically is the entire reason this one exists
+   * might be a thing or two from earlier TPB productions in here
 
 	nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg)
 	rest in peace soldier!
