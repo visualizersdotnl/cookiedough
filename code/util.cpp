@@ -291,9 +291,9 @@ void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 			const unsigned DG = std::min<unsigned>(G1, G2);
 			const unsigned DB = std::min<unsigned>(B1, B2);
 
-			const unsigned R = (R2 + ((DR))>>1);
-			const unsigned G = (G2 + ((DG))>>1);
-			const unsigned B = (B2 + ((DB))>>1);
+			const unsigned R = (R2 + ((DR)))>>1;
+			const unsigned G = (G2 + ((DG)))>>1;
+			const unsigned B = (B2 + ((DB)))>>1;
 
 			const unsigned A = A2;
 

@@ -34,7 +34,7 @@ SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB;
-SyncTrack trackFuckBlurV;
+// SyncTrack trackFuckBlurV;
 SyncTrack trackGreetSwitch;
 
 // --------------------
@@ -70,7 +70,7 @@ static uint32_t *s_pRevLogo = nullptr;
 
 // ball art
 static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
-static uint32_t *s_pBallText = nullptr;
+// static uint32_t *s_pBallText = nullptr;
 
 // greetings art
 static uint32_t *s_pGreetingsDirt = nullptr;
@@ -105,7 +105,7 @@ bool Demo_Create()
 	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
-	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
+//	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 
 	// load credits logos (1280x640)
@@ -152,9 +152,9 @@ bool Demo_Create()
 		return false;
 
 	// voxel ball
-	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut.png");
+//	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut_smaller_desaturate.png");
 	s_pBallVignette = Image_Load32("assets/ball/Vignette_Sparta300.png");
-	if (nullptr == s_pBallText || nullptr == s_pBallVignette)
+	if (nullptr == s_pBallVignette)
 		return false;
 
 	// greetings
@@ -204,6 +204,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 1:
 			// Quick intermezzo: voxel torus
 			Twister_Draw(pDest, timer, delta);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
+			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 	
 		case 2:
@@ -224,7 +226,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
 					else
 					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*16.f)));
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*8.f)));
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}
@@ -234,23 +236,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 3:
 			// Voxel ball
 			{
-				uint32_t *pBallText = s_pBallText;
-				const float fuckBlur = Rocket::getf(trackFuckBlurV);
-				if (0.f != fuckBlur)
-				{
-					const float scaledBlur = BoxBlurScale(fuckBlur);
-					VerticalBoxBlur32(g_renderTarget[2], pBallText, kResX, kResY, scaledBlur);
-					HorizontalBoxBlur32(g_renderTarget[2], g_renderTarget[2], kResX, kResY, scaledBlur*0.314f);
-					pBallText = g_renderTarget[2];
-				}
-				
 				Ball_Draw(pDest, timer, delta);
 				SoftLight32(pDest, s_pBallVignette, kOutputSize);
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);
-				memcpy(g_renderTarget[0], pDest, kOutputBytes);
-				MixSrc32(g_renderTarget[0], pBallText, kOutputSize);
-				BlitAdd32A(g_renderTarget[0], pBallText, kResX, kResX, kResY, 0.5f);
-				SoftLight32(pDest, g_renderTarget[0], kOutputSize);
+				MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			}
 			break;
 
@@ -417,6 +406,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// post fade/flash
 	switch (effect)
 	{
+	case 1:
 	case 3:
 	case 8:
 		// handled by effect/part
