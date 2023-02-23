@@ -95,7 +95,7 @@ void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 
 // nonsensical warp effect applied to a 32-bit color buffer
-void TapeWarp32(uint32_t *pDest, unsigned xRes, unsigned yRes, float strength, float speed);
+void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed);
 
 // multiply dest. buffer by either color or alpha of source buffer
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
@@ -112,6 +112,7 @@ void BlitSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsign
 
 // same as above except it's simply additive
 void BlitAdd32(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes);
+void BlitAdd32A(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned srcResX, unsigned yRes, float alpha);
 
 // fade 32-bit color buffer
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);

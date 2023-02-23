@@ -175,7 +175,7 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	const float blur = Rocket::getf(trackStarsBlur);
 	if (0.f != blur)
 	{
-		const float scaledBlur = BoxBlurScale(clampf(1.f, 100.f, blur));
+		const float scaledBlur = BoxBlurScale(blur);
 
 		// Twice, and not efficiently, but to come closer to non-linearity! (FIXME: optimize)
 		BoxBlur32(pDest, pDest, kResX, kResY, scaledBlur);

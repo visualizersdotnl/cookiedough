@@ -30,8 +30,10 @@ SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 SyncTrack trackDiscoGuys;
-SyncTrack trackShow1995;
+SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
+SyncTrack trackScapeHUD, trackScapeRevision;
+SyncTrack trackDistortTPB;
 
 // --------------------
 
@@ -48,19 +50,25 @@ static uint32_t *s_pFighters = nullptr;
 
 // Stars/NoooN text overlay, lens dirt & vignette (1280x720)
 static uint32_t *s_pNoooN = nullptr;
+static uint32_t *s_pMFX = nullptr;
 static uint32_t *s_pTunnelFullDirt = nullptr;
 static uint32_t *s_pTunnelVignette = nullptr;
 static uint32_t *s_pTunnelVignette2 = nullptr;
 
-// First spikey ball art
+// first spikey ball art
 static uint32_t *s_pSpikeyFullDirt = nullptr;
 static uint32_t *s_pSpikeyBypass = nullptr;
 static uint32_t *s_pSpikeyArrested = nullptr;
 static uint32_t *s_pSpikeyVignette = nullptr;
 static uint32_t *s_pSpikeyVignette2 = nullptr;
 
-// Landscape art
+// landscape art
 static uint32_t *s_pHeliHUD = nullptr;
+static uint32_t *s_pRevLogo = nullptr;
+
+// ball art
+static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
+static uint32_t *s_pBallText = nullptr;
 
 bool Demo_Create()
 {
@@ -85,6 +93,10 @@ bool Demo_Create()
 	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
 	trackShow1995 = Rocket::AddTrack("demo:Show1995");
 	trackDirt = Rocket::AddTrack("demo:LensDirt");
+	trackShow2006 = Rocket::AddTrack("demo:Show2006");
+	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
+	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
+	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -115,16 +127,24 @@ bool Demo_Create()
 		return false;
 
 	// NoooN et cetera
-	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo.png");
+	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo_style2.png");
+	s_pMFX = Image_Load32("assets/tunnels/TheYearWas2006_Overlay_Overlay_Typo_style2.png");
 	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
 	s_pTunnelVignette = Image_Load32("assets/tunnels/Vignette_CoolFilmLook.png");;
 	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
-	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
+	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2 || nullptr == s_pMFX)
 		return false;
 	
 	// landscape
 	s_pHeliHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
-	if ( nullptr == s_pHeliHUD)
+	s_pRevLogo = Image_Load32("assets/scape/revision-logo_white.png");
+	if ( nullptr == s_pHeliHUD || nullptr == s_pRevLogo)
+		return false;
+
+	// voxel ball
+	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut.png");
+	s_pBallVignette = Image_Load32("assets/ball/Vignette_Sparta300.png");
+	if (nullptr == s_pBallText || nullptr == s_pBallVignette)
 		return false;
 
 	return fxInit;
@@ -174,13 +194,32 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Landscape_Draw(pDest, timer, delta);
 
 				// overlay HUD
-				BlitAdd32(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720);
+				const float alphaHUD = saturatef(Rocket::getf(trackScapeHUD));
+				if (0.f != alphaHUD)
+					BlitAdd32A(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720, alphaHUD);
+
+				// add Revision logo
+				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
+				if (0.f != alphaRev)
+				{
+					if (0.6f > alphaRev)
+						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
+					else
+					{
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*16.f)));
+						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
+					}
+				}
 			}
 			break;
 
 		case 3:
 			// Voxel ball
 			Ball_Draw(pDest, timer, delta);
+			memcpy(g_renderTarget[0], pDest, kOutputBytes);
+			MixSrc32(g_renderTarget[0], s_pBallText, kOutputSize);
+			SoftLight32(pDest, g_renderTarget[0], kOutputSize);
+			MulSrc32(pDest, s_pBallVignette, kOutputSize);
 			break;
 
 		case 4:
@@ -195,8 +234,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Excl32(pDest, s_pTunnelFullDirt, kOutputSize);
 				else
 				{
-					const float clampedDirt = clampf(0.f, 255.f, dirt);
-					BoxBlur32(g_renderTarget[0], s_pTunnelFullDirt, kResX, kResY, BoxBlurScale(clampedDirt));
+					BoxBlur32(g_renderTarget[0], s_pTunnelFullDirt, kResX, kResY, BoxBlurScale(dirt));
 					Excl32(pDest, g_renderTarget[0], kOutputSize);
 				}
 
@@ -281,8 +319,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 9:
 			// Part of the 'tunnels' part
-			Tunnel_Draw(pDest, timer, delta);
-			Sub32(pDest, s_pTunnelVignette2, kOutputSize);
+			{
+				Tunnel_Draw(pDest, timer, delta);
+				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
+
+				if (0 != Rocket::geti(trackShow2006))
+					MixSrc32(pDest, s_pMFX, kOutputSize);
+			}
 			break;
 
 		case 10:
@@ -303,9 +346,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 12:
-			// TPB represent
-			memset32(pDest, 0xffffff, kResX*kResY);
-			BlitSrc32(pDest + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+			{
+				// TPB represent
+				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
+				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+
+				const float distortTPB = Rocket::getf(trackDistortTPB);
+				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, kGoldenRatio, distortTPB);
+			}
 			break;
 
 		case 13:

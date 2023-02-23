@@ -277,7 +277,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 			__m128 colors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
-				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
+				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
 
 				Vector3 direction(UV.x*kAspect, UV.y, 1.f); 
 				Shadertoy::rotZ(roll*time, direction.x, direction.y);
@@ -305,13 +305,25 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs), time));
 				Shadertoy::vFastNorm3(normal);
 
+
 				// I will leave the calculations here as written by Michiel (rust in vrede):
 				float diffuse = normal.z*0.1f;
 				float specular = powf(std::max(0.f, normal*direction), 16.f);
 
+				constexpr float nOffs2 = 0.3f;
+				hit += lutcosf(time*0.3f);
+				Vector3 funk(
+					march-fNautilus(Vector3(hit.x+nOffs2, hit.y, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y+nOffs2, hit.z), time),
+					march-fNautilus(Vector3(hit.x, hit.y, hit.z+nOffs2), time));
+				Shadertoy::vFastNorm3(funk);
+
+				const float yMod = fracf(hit.y*0.3f + funk.x*0.628f + funk.y);
+				diffuse *= yMod;
+
 				Vector3 color(diffuse);
 				color += colorization*(1.56f*total + specular);
-				color += specular*0.314f;
+				color += specular*kGoldenRatio*0.2f;
 
 				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
 			}
@@ -329,7 +341,7 @@ void Nautilus_Draw(uint32_t *pDest, float time, float delta)
 	if (0.f != blur)
 	{
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
-		BoxBlur32(pDest, pDest, kResX, kResY, BoxBlurScale(blur));
+		BoxBlur32(pDest, pDest, kResX, kResY, blur);
 	}
 	else
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
@@ -685,7 +697,7 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 	RenderTunnelMap_2x2(g_pFxMap[0], time);
 	Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
 
-	// FIXME: parametrize!
+	// FIXME: blur parameter!
 	HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, 3.f*kBoxBlurScale);
 }
 

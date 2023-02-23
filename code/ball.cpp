@@ -20,9 +20,6 @@ static uint32_t *s_pBackground = nullptr;
 
 static uint8_t *s_heightMapMix = nullptr;
 
-// FIXME: temporary fun, please remove
-static uint32_t *s_pOrange = nullptr;
-
 // --- Sync. tracks ---
 
 SyncTrack trackBallBlur;
@@ -395,11 +392,6 @@ bool Ball_Create()
 	trackBallRotateOffsX = Rocket::AddTrack("ball:RotateOffsX");
 	trackBallRotateOffsY = Rocket::AddTrack("ball:RotateOffsY");
 
-	// FIXME
-	s_pOrange = Image_Load32_CA("assets/by-orange/x37.jpg", "assets/by-orange/x40.jpg");
-	if (nullptr == s_pOrange)
-		return false;
-
 	return true;
 }
 
@@ -432,9 +424,6 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 	memcpy(pDest, s_pBackground, kOutputBytes);
 //	memset32(pDest, 0, kOutputSize);
 	Polar_BlitA(pDest, g_renderTarget[0], false);
-
-	// FIXME
-	BlitSrc32(pDest + (((kResY-384)>>1)+100)*kResX + (((kResX-512)>>1)+150), s_pOrange, kResX, 512, 384);
 
 #if 0
 	// debug blit: unwrapped

@@ -158,7 +158,7 @@ void Twister_Draw(uint32_t *pDest, float time, float delta)
 	const float blur = Rocket::getf(trackTwisterBlur);
 	if (0.f != blur)
 	{
-		const float scaledBlur = BoxBlurScale(clampf(1.f, 100.f, blur));
+		const float scaledBlur = BoxBlurScale(blur);
 		HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kTargetResX, kTargetResY, scaledBlur);
 	}
 

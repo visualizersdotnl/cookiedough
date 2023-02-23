@@ -228,11 +228,13 @@ void Landscape_Destroy()
 void Landscape_Draw(uint32_t *pDest, float time, float delta)
 {
 	// render landscape
-	memset32(pDest, s_pFogGradient[0], kResX*kResY);
-	vscape(pDest, time, delta);
+	memset32(g_renderTarget[0], s_pFogGradient[0], kResX*kResY);
+	vscape(g_renderTarget[0], time, delta);
 
 	const float warpStrength = Rocket::getf(trackWarpStrength);
 	if (0.f != warpStrength)
-		TapeWarp32(pDest, kResX, kResY, Rocket::getf(trackWarpSpeed), warpStrength);
+		TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, Rocket::getf(trackWarpSpeed), warpStrength);
+	else
+		memcpy(pDest, g_renderTarget[0], kOutputBytes);
 }
 
