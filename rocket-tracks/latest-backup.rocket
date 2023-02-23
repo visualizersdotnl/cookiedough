@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rootElement>
 	<bookmark row="86" />
+	<bookmark row="417" />
+	<bookmark row="648" />
 	<bookmark row="776" />
 	<bookmark row="1884" />
 	<bookmark row="3367" />
@@ -15,8 +17,8 @@
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="0"
-color="ffa9b250">
+	<track name="twister:Speed" folded="0" muteKeyCount="3"
+color="ffa9b250" muteValue="129.000000">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1992" value="127.000000" interpolation="2" />
 		<key row="2016" value="129.000000" interpolation="0" />
@@ -43,6 +45,20 @@ color="ffb28050">
 		<key row="0" value="90.000000" interpolation="3" />
 		<key row="968" value="0.000000" interpolation="2" />
 		<key row="1048" value="-45.000000" interpolation="0" />
+	</track>
+	<track name="voxelScape:WarpSpeed" folded="0" muteKeyCount="0"
+color="ff4fb292">
+		<key row="0" value="0.000000" interpolation="2" />
+		<key row="968" value="6.000000" interpolation="2" />
+		<key row="1024" value="9.000000" interpolation="3" />
+		<key row="1047" value="12.000000" interpolation="0" />
+	</track>
+	<track name="voxelScape:WarpStrength" folded="0" muteKeyCount="0"
+color="ff4f71b2">
+		<key row="0" value="0.000000" interpolation="2" />
+		<key row="968" value="0.000000" interpolation="2" />
+		<key row="1024" value="0.100000" interpolation="3" />
+		<key row="1047" value="1.440000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -234,13 +250,12 @@ color="ffa9b250">
 	</track>
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
-		<key row="5240" value="0.000000" interpolation="0" />
-		<key row="5504" value="8.000000" interpolation="3" />
-		<key row="5520" value="0.000000" interpolation="0" />
-		<key row="5602" value="3.000000" interpolation="0" />
-		<key row="5736" value="1.000000" interpolation="2" />
+		<key row="5240" value="2.000000" interpolation="0" />
+		<key row="5504" value="20.000000" interpolation="3" />
+		<key row="5520" value="2.000000" interpolation="0" />
+		<key row="5736" value="2.000000" interpolation="2" />
 		<key row="5776" value="44.000000" interpolation="3" />
-		<key row="5792" value="0.000000" interpolation="0" />
+		<key row="5792" value="2.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -560,7 +575,7 @@ color="ff8850b2">
 		<key row="5775" value="0.800000" interpolation="2" />
 		<key row="5792" value="0.000000" interpolation="0" />
 		<key row="6160" value="0.000000" interpolation="2" />
-		<key row="6287" value="0.628000" interpolation="0" />
+		<key row="6287" value="0.440000" interpolation="0" />
 		<key row="6288" value="0.000000" interpolation="0" />
 		<key row="6424" value="0.000000" interpolation="3" />
 		<key row="6542" value="1.000000" interpolation="1" />
@@ -585,7 +600,7 @@ color="ff8850b2">
 		<key row="9376" value="0.000000" interpolation="2" />
 		<key row="9407" value="1.000000" interpolation="0" />
 		<key row="9408" value="0.000000" interpolation="0" />
-		<key row="9416" value="0.000000" interpolation="1" />
+		<key row="9600" value="0.000000" interpolation="1" />
 		<key row="9895" value="1.000000" interpolation="2" />
 		<key row="9904" value="0.000000" interpolation="0" />
 		<key row="9952" value="0.000000" interpolation="2" />
@@ -593,10 +608,7 @@ color="ff8850b2">
 	</track>
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="0" value="0.000000" interpolation="0" />
-		<key row="968" value="0.000000" interpolation="3" />
-		<key row="1046" value="0.628000" interpolation="0" />
-		<key row="1047" value="0.000000" interpolation="0" />
+		<key row="0" value="-0.010000" interpolation="0" />
 		<key row="1048" value="1.000000" interpolation="2" />
 		<key row="1064" value="0.000000" interpolation="0" />
 		<key row="1088" value="0.660000" interpolation="1" />
@@ -752,16 +764,6 @@ color="ff8850b2">
 		<key row="4584" value="32.000000" interpolation="0" />
 		<key row="4704" value="0.000000" interpolation="0" />
 	</track>
-	<track name="voxelScape:WarpSpeed" folded="0" muteKeyCount="0"
-color="ff4fb292">
-		<key row="968" value="6.280000" interpolation="0" />
-	</track>
-	<track name="voxelScape:WarpStrength" folded="0" muteKeyCount="0"
-color="ff4f71b2">
-		<key row="968" value="0.000000" interpolation="3" />
-		<key row="1032" value="0.150000" interpolation="3" />
-		<key row="1047" value="0.600000" interpolation="0" />
-	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
 color="ff60b250" />
 	<track name="starsTunnel:speedY" folded="0" muteKeyCount="0"
@@ -771,6 +773,29 @@ color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="5504" value="1.000000" interpolation="0" />
 		<key row="5775" value="0.000000" interpolation="0" />
+	</track>
+	<track name="demo:Show2006" folded="0" muteKeyCount="0"
+color="ffb28050">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="4976" value="1.000000" interpolation="0" />
+	</track>
+	<track name="demo:ScapeHUD" folded="0" muteKeyCount="0"
+color="ffa9b250">
+		<key row="0" value="1.000000" interpolation="0" />
+		<key row="848" value="1.000000" interpolation="3" />
+		<key row="968" value="0.000000" interpolation="0" />
+	</track>
+	<track name="demo:ScapeRev" folded="0" muteKeyCount="0"
+color="ff60b250">
+		<key row="0" value="0.000000" interpolation="3" />
+		<key row="968" value="0.000000" interpolation="3" />
+		<key row="1047" value="0.900000" interpolation="0" />
+	</track>
+	<track name="demo:DistortTPB" folded="0" muteKeyCount="0"
+color="ff4fb292">
+		<key row="9536" value="0.000000" interpolation="2" />
+		<key row="9560" value="0.050000" interpolation="3" />
+		<key row="9600" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
