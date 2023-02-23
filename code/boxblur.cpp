@@ -141,8 +141,8 @@ void HorizontalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iX = edgeSpan; iX > 0; --iX)
 		{
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
 			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
+			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
 		}
 	}
 }
@@ -241,11 +241,11 @@ void VerticalBoxBlur32(
 		// post-pass: back to median weight
 		for (unsigned int iY = edgeSpan; iY > 0; --iY)
 		{
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
-			destIndex += xRes;
-
 			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
 			subPos += xRes;	
+
+			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
+			destIndex += xRes;
 		}
 	}
 }
