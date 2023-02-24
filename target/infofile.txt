@@ -15,17 +15,17 @@ a retrosexual multimedia demonstration in co-operation with TPB
 created for Revision 2023
 
 system req.:
-  + either OSX (Silicon) or Win64 (Intel), nav. to '/bin' and run!
-  + software rendering, no GPU required
+  + either OSX (Silicon) or Win64 (Intel), nav. to '/target/bin' and run!
+  + software rendering, no noteworthy GPU required
   + uses default audio device
   + does not use significant RAM or disk space
   + native resolution: 1280x720
 
 people involved:
-  + superplek
-  + comatron ft. celin (vocals)
-  + jade
-  + and introducing ernst hot
+  + superplek (programming)
+  + comatron (soundtrack) ft. celin (vocals)
+  + jade (graphics)
+  + and introducing ernst hot (technical support)
 
 advisory board / additional:
   + dascon (networking)
