@@ -105,9 +105,9 @@
 
 const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = false;
+constexpr bool kFullScreen = true;
 
-static const char *kMP3 = "assets/audio/comatron - to the moon 16-02-23.mp3";
+static const char *kStream = "assets/audio/comatron - to the moon - final questionmark.wav";
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
 
 // -----------------------------
@@ -228,7 +228,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 			audioHWND = GetForegroundWindow();
 #endif
 
-			if (Audio_Create(-1, kMP3, audioHWND, kSilent)) // FIXME: or is this just fine?
+			if (Audio_Create(-1, kStream, audioHWND, kSilent)) // FIXME: or is this just fine?
 			{
 				Display display;
 				if (display.Open(kTitle, kResX, kResY, kFullScreen))
