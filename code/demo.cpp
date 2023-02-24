@@ -329,7 +329,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize); // FIXME?
+
+			// FIXME: placeholder
+			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
+ 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 
 		case 8:

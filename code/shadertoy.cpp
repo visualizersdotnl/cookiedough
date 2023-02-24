@@ -423,7 +423,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					total += march*(0.05f*kPI);
 				}
 
-				constexpr float nOffs = 0.15f;
+				constexpr float nOffs = 0.3f; // this coarse results in really nice and soft lighting/shading!
 				Vector3 normal(
 					march-fSpikey1(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y+nOffs, hit.z)),
