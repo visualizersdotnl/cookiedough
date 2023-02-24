@@ -33,7 +33,7 @@ SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
-SyncTrack trackDistortTPB;
+SyncTrack trackDistortTPB, trackDistortStrengthTPB;
 // SyncTrack trackFuckBlurV;
 SyncTrack trackGreetSwitch;
 
@@ -112,6 +112,7 @@ bool Demo_Create()
 	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
+	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
 //	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 
@@ -228,6 +229,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				// Introduction: landscape
 				Landscape_Draw(pDest, timer, delta);
+
+				// FIXME: placeholder
+				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
 
 				// overlay HUD
 				const float alphaHUD = saturatef(Rocket::getf(trackScapeHUD));
@@ -368,21 +372,28 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				Laura_Draw(pDest, timer, delta);
 
-				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-243)/2) - 237;
-				const auto xOffs = 12; // ((kResX-263)/2) - 300;
-				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
-
 				const int greetSwitch = Rocket::geti(trackGreetSwitch);
 				switch (greetSwitch)
 				{
 				case 0:
-					Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					{
+						const auto yOffs = ((kResY-243)/2) + 237;
+						const auto xOffs = kResX-263-12; // ((kResX-263)/2) - 300;
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+					
+						Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					}
 					break;
 
 				default:
 				case 1:
-					Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					{
+						const auto yOffs = ((kResY-243)/2) - 237;
+						const auto xOffs = 12; // ((kResX-263)/2) - 300;
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+
+						Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					}
 					break;
 				}
 
@@ -398,7 +409,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 
 				const float distortTPB = Rocket::getf(trackDistortTPB);
-				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, kGoldenRatio+distortTPB, distortTPB);
+				const float distortStrengthTPB = Rocket::getf(trackDistortStrengthTPB);
+				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, distortStrengthTPB, distortTPB);
 			}
 			break;
 
