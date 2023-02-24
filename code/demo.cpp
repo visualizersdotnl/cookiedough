@@ -372,21 +372,28 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				Laura_Draw(pDest, timer, delta);
 
-				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-243)/2) - 237;
-				const auto xOffs = 12; // ((kResX-263)/2) - 300;
-				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
-
 				const int greetSwitch = Rocket::geti(trackGreetSwitch);
 				switch (greetSwitch)
 				{
 				case 0:
-					Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					{
+						const auto yOffs = ((kResY-243)/2) + 237;
+						const auto xOffs = kResX-263-12; // ((kResX-263)/2) - 300;
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+					
+						Darken32_50(pDest, s_pGreetings1, kOutputSize);
+					}
 					break;
 
 				default:
 				case 1:
-					Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					{
+						const auto yOffs = ((kResY-243)/2) - 237;
+						const auto xOffs = 12; // ((kResX-263)/2) - 300;
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+
+						Darken32_50(pDest, s_pGreetings2, kOutputSize);
+					}
 					break;
 				}
 

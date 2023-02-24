@@ -923,7 +923,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.001f)),
-					2.33f);
+					1.88f);
 			}
 
 			const int index = (yIndex+iX)>>2;
