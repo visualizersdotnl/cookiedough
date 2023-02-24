@@ -74,7 +74,8 @@ color="ffa9b250">
 		<key row="1160" value="5.000000" interpolation="0" />
 		<key row="1416" value="30.000000" interpolation="1" />
 		<key row="1432" value="3.500000" interpolation="0" />
-		<key row="1936" value="3.500000" interpolation="1" />
+		<key row="1936" value="3.500000" interpolation="2" />
+		<key row="2056" value="10.000000" interpolation="3" />
 		<key row="2095" value="40.000000" interpolation="1" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
@@ -135,8 +136,7 @@ color="ffb27474">
 		<key row="1776" value="-2.000000" interpolation="0" />
 		<key row="1832" value="-2.000000" interpolation="0" />
 		<key row="1936" value="2.000000" interpolation="0" />
-		<key row="2040" value="-4.000000" interpolation="0" />
-		<key row="2096" value="-0.010000" interpolation="0" />
+		<key row="2016" value="-2.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAttenuation" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -145,13 +145,13 @@ color="ffb28050">
 		<key row="1712" value="80.000000" interpolation="2" />
 		<key row="1728" value="30.000000" interpolation="0" />
 		<key row="1936" value="20.000000" interpolation="3" />
-		<key row="2096" value="160.000000" interpolation="0" />
+		<key row="2096" value="128.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAlphaMin" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="1048" value="0.000000" interpolation="0" />
-		<key row="1936" value="0.000000" interpolation="2" />
-		<key row="2095" value="40.000000" interpolation="2" />
+		<key row="1936" value="0.000000" interpolation="3" />
+		<key row="2095" value="100.000000" interpolation="2" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:RotateOffsX" folded="0" muteKeyCount="0"
@@ -257,24 +257,23 @@ color="ffb27474">
 	<track name="nautilus:Roll" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="5240" value="0.000000" interpolation="0" />
-		<key row="5776" value="0.050000" interpolation="0" />
+		<key row="5760" value="0.050000" interpolation="0" />
 		<key row="6024" value="-0.050000" interpolation="0" />
 	</track>
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="5240" value="0.000000" interpolation="0" />
-		<key row="5496" value="0.000000" interpolation="3" />
 		<key row="5504" value="100.000000" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
-		<key row="5776" value="100.000000" interpolation="3" />
-		<key row="5792" value="0.000000" interpolation="0" />
+		<key row="5760" value="12.000000" interpolation="3" />
+		<key row="5776" value="0.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="5240" value="26.000000" interpolation="0" />
 		<key row="5504" value="2.000000" interpolation="2" />
-		<key row="5792" value="26.000000" interpolation="0" />
+		<key row="5784" value="26.000000" interpolation="0" />
 		<key row="6024" value="0.100000" interpolation="0" />
 		<key row="6208" value="0.100000" interpolation="2" />
 		<key row="6288" value="29.000000" interpolation="0" />
@@ -583,8 +582,7 @@ color="ff8850b2">
 		<key row="5496" value="0.000000" interpolation="3" />
 		<key row="5504" value="0.900000" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
-		<key row="5760" value="0.000000" interpolation="3" />
-		<key row="5774" value="0.880000" interpolation="0" />
+		<key row="5760" value="1.000000" interpolation="3" />
 		<key row="5776" value="0.000000" interpolation="0" />
 		<key row="6160" value="0.000000" interpolation="3" />
 		<key row="6287" value="0.440000" interpolation="0" />
@@ -659,8 +657,8 @@ color="ffb25091">
 		<key row="2016" value="0.660000" interpolation="3" />
 		<key row="2024" value="0.000000" interpolation="0" />
 		<key row="2064" value="0.000000" interpolation="3" />
-		<key row="2080" value="0.800000" interpolation="3" />
-		<key row="2095" value="1.000000" interpolation="0" />
+		<key row="2080" value="0.330000" interpolation="3" />
+		<key row="2095" value="0.880000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 		<key row="3144" value="0.500000" interpolation="3" />
 		<key row="3160" value="0.000000" interpolation="0" />
