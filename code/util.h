@@ -4,6 +4,9 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+// found this in one of my Shadertoy shaders
+constexpr float kGoldenAngle = 2.39996f;
+
 // size of cache line
 #if defined(FOR_INTEL)
 	constexpr size_t kCacheLine = sizeof(size_t)<<3;
