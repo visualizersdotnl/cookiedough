@@ -398,7 +398,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 
 				const float distortTPB = Rocket::getf(trackDistortTPB);
-				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, kGoldenRatio, distortTPB);
+				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, kGoldenRatio+distortTPB, distortTPB);
 			}
 			break;
 
