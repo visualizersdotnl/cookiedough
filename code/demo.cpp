@@ -369,7 +369,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Laura_Draw(pDest, timer, delta);
 
 				static_assert(kResX == 1280 && kResY == 720);
-				const auto yOffs = ((kResY-243)/2) - 240;
+				const auto yOffs = ((kResY-243)/2) - 237;
 				const auto xOffs = 12; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 
