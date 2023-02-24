@@ -224,7 +224,7 @@ color="ff4f71b2">
 	<track name="laura:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="8384" value="3.140000" interpolation="0" />
-		<key row="8904" value="-3.140000" interpolation="0" />
+		<key row="8880" value="-3.140000" interpolation="0" />
 	</track>
 	<track name="laura:Yaw" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -241,8 +241,8 @@ color="ffb27474">
 		<key row="8536" value="0.000000" interpolation="0" />
 		<key row="8648" value="0.000000" interpolation="2" />
 		<key row="8664" value="0.010000" interpolation="0" />
-		<key row="8888" value="0.010000" interpolation="2" />
-		<key row="8904" value="0.000000" interpolation="0" />
+		<key row="8880" value="0.010000" interpolation="2" />
+		<key row="8896" value="0.000000" interpolation="0" />
 		<key row="9168" value="0.000000" interpolation="2" />
 		<key row="9184" value="0.010000" interpolation="0" />
 	</track>
@@ -266,8 +266,7 @@ color="ff60b250">
 		<key row="5496" value="0.000000" interpolation="3" />
 		<key row="5504" value="100.000000" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
-		<key row="5768" value="0.000000" interpolation="3" />
-		<key row="5776" value="100.000000" interpolation="2" />
+		<key row="5776" value="100.000000" interpolation="3" />
 		<key row="5792" value="0.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Hue" folded="0" muteKeyCount="0"
@@ -326,7 +325,7 @@ color="ffb25091">
 		<key row="6288" value="4.000000" interpolation="0" />
 		<key row="6544" value="3.000000" interpolation="0" />
 		<key row="6680" value="33.330002" interpolation="0" />
-		<key row="6800" value="33.330002" interpolation="3" />
+		<key row="6792" value="33.330002" interpolation="2" />
 		<key row="6807" value="33.660000" interpolation="0" />
 		<key row="6808" value="4.000000" interpolation="0" />
 		<key row="7072" value="44.000000" interpolation="0" />
@@ -868,7 +867,7 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="0" />
-		<key row="8904" value="0.000000" interpolation="0" />
+		<key row="8880" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
