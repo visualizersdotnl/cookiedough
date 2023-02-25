@@ -71,8 +71,7 @@ static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
 
 // greetings art
 static uint32_t *s_pGreetingsDirt = nullptr;
-static uint32_t *s_pGreetings1 = nullptr;
-static uint32_t *s_pGreetings2 = nullptr;
+static uint32_t *s_pGreetings[4] = { nullptr };
 static uint32_t *s_pGreetingsVignette = nullptr;
 
 // nautilus art
@@ -168,11 +167,16 @@ bool Demo_Create()
 
 	// greetings
 	s_pGreetingsDirt = Image_Load32("assets/greetings/Bokeh_Lens_Dirt_51.png");
-	s_pGreetings1 = Image_Load32("assets/greetings/Greetings_Part1_BG_Overlay.png");
-	s_pGreetings2 = Image_Load32("assets/greetings/Greetings_Part2_BG_Overlay.png");
+	s_pGreetings[0]= Image_Load32("assets/greetings/Greetings_Part1_BG_Overlay.png");
+	s_pGreetings[1] = Image_Load32("assets/greetings/Greetings_Part2_BG_Overlay.png");
+	s_pGreetings[2] = Image_Load32("assets/greetings/Greetings_Part3_BG_Overlay.png");
+	s_pGreetings[3] = Image_Load32("assets/greetings/Greetings_Part4_BG_Overlay.png");
 	s_pGreetingsVignette = Image_Load32("assets/greetings/Vignette_CoolFilmLook.png");
-	if (nullptr == s_pGreetingsDirt || nullptr == s_pGreetings1 || nullptr == s_pGreetings2 || nullptr == s_pGreetingsVignette)
-		return false;
+	if (
+		nullptr == s_pGreetingsDirt || 
+		nullptr == s_pGreetings[0] || nullptr == s_pGreetings[1] || nullptr == s_pGreetings[2] || nullptr == s_pGreetings[3] ||
+		nullptr == s_pGreetingsVignette)
+			return false;
 
 	// nautilus
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
@@ -395,35 +399,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Laura_Draw(pDest, timer, delta);
 
 				const int greetSwitch = Rocket::geti(trackGreetSwitch);
-				switch (greetSwitch)
-				{
-				case 0:
-					{
-						const auto yOffs = ((kResY-243)/2) + 237;
-						const auto xOffs = kResX-263-12; // ((kResX-263)/2) - 300;
-					
-						Darken32_50(pDest, s_pGreetings1, kOutputSize);
-						SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
-						Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 
-						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
-					}
-					break;
+				Darken32_50(pDest, s_pGreetings[greetSwitch], kOutputSize);
+				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
+				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 
-				default:
-				case 1:
-					{
-						const auto yOffs = ((kResY-243)/2) - 237;
-						const auto xOffs = 12; // ((kResX-263)/2) - 300;
-
-						Darken32_50(pDest, s_pGreetings2, kOutputSize);
-						SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
-						Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
-
-						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
-					}
-					break;
-				}
+				const auto yOffs = ((kResY-243)/2) + 237;
+				const auto xOffs = 12; // ((kResX-263)/2) - 300;
+				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 			}
 			break;
 
