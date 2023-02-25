@@ -39,9 +39,8 @@ FINISHED.
 
 ** Part 9: greetings "Laura" boxy tunnel **
 
-- Render greetings, Jade has an idea.
 - Jade's idea is partially implemented, but we do need to make it look nicer, and add that group Comatron asked for.
 
-** Part 10: TPB goes to Mexico logo VS. Nate Diaz "ending" **
+** Part 10: TPB goes to Mexico logo & TPB's 2001 - 2023 ending **
 
 - I'm OK with this for now, mabye Nytrik can tweak it a bit?
