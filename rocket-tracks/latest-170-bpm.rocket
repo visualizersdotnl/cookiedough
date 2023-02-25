@@ -14,6 +14,7 @@
 	<bookmark row="9984" />
 	<bookmark row="10018" />
 	<bookmark row="10061" />
+	<bookmark row="10081" />
 	<loopmark row="3" />
 	<group name="closeSpike:" />
 	<group name="plasma:" />
@@ -333,7 +334,7 @@ color="ffb27474">
 		<key row="3144" value="64.000000" interpolation="0" />
 		<key row="3664" value="22.000000" interpolation="0" />
 		<key row="3936" value="66.000000" interpolation="0" />
-		<key row="6288" value="24.000000" interpolation="0" />
+		<key row="6288" value="3.000000" interpolation="0" />
 		<key row="6544" value="3.000000" interpolation="0" />
 		<key row="6680" value="16.000000" interpolation="0" />
 		<key row="6808" value="24.000000" interpolation="0" />
@@ -665,7 +666,7 @@ color="ffb25091">
 		<key row="3768" value="0.000000" interpolation="2" />
 		<key row="3784" value="0.600000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
-		<key row="3896" value="0.660000" interpolation="3" />
+		<key row="3896" value="0.550000" interpolation="3" />
 		<key row="3920" value="0.000000" interpolation="0" />
 		<key row="5192" value="0.000000" interpolation="3" />
 		<key row="5239" value="1.000000" interpolation="0" />
