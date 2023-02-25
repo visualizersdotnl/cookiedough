@@ -263,11 +263,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
 				if (0.f != alphaRev)
 				{
-					if (0.6f > alphaRev)
+					if (0.5f > alphaRev)
 						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
 					else
 					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.6f)*8.f)));
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.5f)*12.f)));
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}
