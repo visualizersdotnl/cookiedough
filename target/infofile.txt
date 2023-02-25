@@ -25,7 +25,7 @@ people involved:
   + superplek (programming)
   + comatron (soundtrack) ft. celin (vocals)
   + jade (graphics)
-  + and introducing ernst hot (technical support)
+  + and introducing ernst hot formerly known as thorsten/purple (creative support, Linux build)
 
 advisory board / additional:
   + dascon (networking)
