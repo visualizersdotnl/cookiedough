@@ -34,8 +34,8 @@ SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB;
-// SyncTrack trackFuckBlurV;
 SyncTrack trackGreetSwitch;
+SyncTrack trackCousteau;
 
 // --------------------
 
@@ -77,8 +77,8 @@ static uint32_t *s_pGreetingsVignette = nullptr;
 // nautilus art
 static uint32_t *s_pNautilusVignette = nullptr;
 static uint32_t *s_pNautilusDirt = nullptr;
-// static uint32_t *s_pNautilusCockpitHighlight = nullptr;
-// static uint32_t *s_pNautilusCockpitShadow = nullptr;
+static uint32_t *s_pNautilusCousteau1 = nullptr;
+static uint32_t *s_pNautilusCousteau2 = nullptr;
 static uint32_t *s_pNautilusText = nullptr;
 
 // disco guys (hello Thorsten, TPB-06) + melancholic numbers to accompany them
@@ -113,8 +113,8 @@ bool Demo_Create()
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
-//	trackFuckBlurV = Rocket::AddTrack("demo:FuckBlurV");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
+	trackCousteau = Rocket::AddTrack("demo::Cousteau");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -129,11 +129,6 @@ bool Demo_Create()
 	s_pVignette06 = Image_Load32("assets/demo/tpb-06-dirty-vignette-1280x720.png");
 	if (nullptr == s_pVignette06)
 		return false;
-
-	// Nytrik's fighter logo
-//	s_pFighters = Image_Load32("assets/demo/roundfighters-1280.png");
-//	if (nullptr == s_pFighters)
-//		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
 	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
@@ -181,11 +176,10 @@ bool Demo_Create()
 	// nautilus
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
-//	s_pNautilusCockpitHighlight = Image_Load32("assets/nautilus/Cockpit_Highlight_noAlpha.png");
-//	s_pNautilusCockpitShadow = Image_Load32("assets/nautilus/Cockpit_ShadowPart2.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_1.png");
+	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_2.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
-//	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusCockpitHighlight || nullptr == s_pNautilusCockpitShadow ||  nullptr == s_pNautilusText)
-	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText)
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2)
 		return false;
 
 	// load 'disco guys'
@@ -346,11 +340,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Nautilus_Draw(pDest, timer, delta);
 			SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
 			SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, fadeToWhite);
+			FadeFlash(pDest, fadeToBlack, 0.f);
 
-			// FIXME
-//			Overlay32(pDest, s_pNautilusCockpitHighlight, kOutputSize);
-//			MixSrc32(pDest, s_pNautilusCockpitShadow, kOutputSize);
+			if (0 == Rocket::geti(trackCousteau))
+				MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
+			else
+				MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
+
+			FadeFlash(pDest, 0.f, fadeToWhite);
 
 			MixSrc32(pDest, s_pNautilusText, kOutputSize);
 			break;
@@ -426,7 +423,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 13:
 			{
 				memset32(pDest, 0, kResX*kResY);
-//				BlitSrc32(pDest + ((kResY-602)/2)*kResX, s_pFighters, kResX, 1280, 602);
 
 				const float discoGuys = saturatef(Rocket::getf(trackDiscoGuys));
 				const unsigned xStart = (kResX-(8*128))>>1;
