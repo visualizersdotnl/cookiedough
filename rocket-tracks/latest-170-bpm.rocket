@@ -25,6 +25,7 @@ color="ffa9b250">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1749" value="0.000000" interpolation="0" />
 		<key row="1992" value="128.000000" interpolation="0" />
+		<key row="5445" value="inf" interpolation="0" />
 		<key row="5876" value="8.000000" interpolation="1" />
 		<key row="6280" value="8.000000" interpolation="0" />
 		<key row="10081" value="0.000000" interpolation="0" />
@@ -276,8 +277,7 @@ color="ff4fb292">
 		<key row="5240" value="26.000000" interpolation="0" />
 		<key row="5504" value="2.000000" interpolation="0" />
 		<key row="5760" value="55.000000" interpolation="0" />
-		<key row="6024" value="0.100000" interpolation="0" />
-		<key row="6208" value="0.100000" interpolation="0" />
+		<key row="6024" value="18.000000" interpolation="0" />
 	</track>
 	<track name="nautilus:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
@@ -368,7 +368,7 @@ color="ff60b250">
 		<key row="6544" value="37.000000" interpolation="0" />
 		<key row="6680" value="39.000000" interpolation="0" />
 		<key row="6808" value="23.000000" interpolation="0" />
-		<key row="7072" value="39.000000" interpolation="0" />
+		<key row="7072" value="40.000000" interpolation="0" />
 	</track>
 	<track name="spike:Gamma" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -423,6 +423,7 @@ color="ffb25091">
 		<key row="7336" value="1.000000" interpolation="0" />
 		<key row="7600" value="10.000000" interpolation="0" />
 		<key row="7864" value="24.000000" interpolation="0" />
+		<key row="8120" value="29.000000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -814,7 +815,7 @@ color="ff4fb292">
 		<key row="9560" value="0.050000" interpolation="3" />
 		<key row="9591" value="0.000000" interpolation="0" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="0.140000" interpolation="0" />
+		<key row="9895" value="0.100000" interpolation="0" />
 	</track>
 	<track name="demo:FuckBlurV" folded="0" muteKeyCount="0"
 color="ff4f71b2">
@@ -873,7 +874,7 @@ color="ff8850b2">
 color="ffb25091">
 		<key row="9536" value="2.390000" interpolation="1" />
 		<key row="9760" value="0.000000" interpolation="3" />
-		<key row="9895" value="8.000000" interpolation="0" />
+		<key row="9895" value="31.400000" interpolation="0" />
 		<key row="10081" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo::Cousteau" folded="0" muteKeyCount="0"
