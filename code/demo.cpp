@@ -221,6 +221,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 1:
 			// Quick intermezzo: voxel torus
 			Twister_Draw(pDest, timer, delta);
+			SoftLight32(pDest, s_pBallVignette, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
@@ -411,6 +412,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// TPB represent
 				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
 				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+				MulSrc32(g_renderTarget[0], s_pNautilusVignette, kOutputSize); // FIXME: placeholder
 
 				const float distortTPB = Rocket::getf(trackDistortTPB);
 				const float distortStrengthTPB = Rocket::getf(trackDistortStrengthTPB);
