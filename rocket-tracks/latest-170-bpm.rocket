@@ -29,7 +29,7 @@ color="ffa9b250">
 color="ff60b250">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1992" value="0.100000" interpolation="2" />
-		<key row="2024" value="0.150000" interpolation="0" />
+		<key row="2024" value="0.160000" interpolation="0" />
 	</track>
 	<track name="twister:Blur" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -221,7 +221,7 @@ color="ff4f71b2">
 	<track name="laura:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="8384" value="3.140000" interpolation="0" />
-		<key row="8880" value="-3.140000" interpolation="0" />
+		<key row="8880" value="-4.440000" interpolation="0" />
 	</track>
 	<track name="laura:Yaw" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -610,8 +610,8 @@ color="ff8850b2">
 		<key row="8880" value="1.000000" interpolation="2" />
 		<key row="8904" value="-1000.000000" interpolation="0" />
 		<key row="9376" value="0.000000" interpolation="2" />
-		<key row="9407" value="1.000000" interpolation="0" />
-		<key row="9408" value="0.000000" interpolation="0" />
+		<key row="9407" value="1.000000" interpolation="2" />
+		<key row="9416" value="0.000000" interpolation="0" />
 		<key row="9600" value="0.000000" interpolation="3" />
 		<key row="9896" value="1.000000" interpolation="2" />
 		<key row="9904" value="0.000000" interpolation="0" />
@@ -686,8 +686,6 @@ color="ffb25091">
 		<key row="7360" value="0.000000" interpolation="0" />
 		<key row="7600" value="1.000000" interpolation="3" />
 		<key row="7624" value="0.000000" interpolation="0" />
-		<key row="9408" value="1.000000" interpolation="3" />
-		<key row="9416" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:CreditLogo" folded="0" muteKeyCount="0"
 color="ffb27474">
