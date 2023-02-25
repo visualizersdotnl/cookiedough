@@ -47,9 +47,6 @@ constexpr auto kCredY = 568;
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
 
-// Nytrik's work once more (1280x602)
-static uint32_t *s_pFighters = nullptr;
-
 // Stars/NoooN text overlay, lens dirt & vignette (1280x720)
 static uint32_t *s_pNoooN = nullptr;
 static uint32_t *s_pMFX = nullptr;
@@ -81,9 +78,13 @@ static uint32_t *s_pGreetingsVignette = nullptr;
 // nautilus art
 static uint32_t *s_pNautilusVignette = nullptr;
 static uint32_t *s_pNautilusDirt = nullptr;
-static uint32_t *s_pNautilusCockpitHighlight = nullptr;
-static uint32_t *s_pNautilusCockpitShadow = nullptr;
+// static uint32_t *s_pNautilusCockpitHighlight = nullptr;
+// static uint32_t *s_pNautilusCockpitShadow = nullptr;
 static uint32_t *s_pNautilusText = nullptr;
+
+// disco guys (hello Thorsten, TPB-06) + melancholic numbers to accompany them
+static uint32_t *s_pDiscoGuys[8] = { nullptr };
+static uint32_t *s_pAreWeDone = nullptr;
 
 bool Demo_Create()
 {
@@ -131,9 +132,9 @@ bool Demo_Create()
 		return false;
 
 	// Nytrik's fighter logo
-	s_pFighters = Image_Load32("assets/demo/roundfighters-1280.png");
-	if (nullptr == s_pFighters)
-		return false;
+//	s_pFighters = Image_Load32("assets/demo/roundfighters-1280.png");
+//	if (nullptr == s_pFighters)
+//		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
 	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
@@ -176,10 +177,29 @@ bool Demo_Create()
 	// nautilus
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
-	s_pNautilusCockpitHighlight = Image_Load32("assets/nautilus/Cockpit_Highlight_noAlpha.png");
-	s_pNautilusCockpitShadow = Image_Load32("assets/nautilus/Cockpit_ShadowPart2.png");
+//	s_pNautilusCockpitHighlight = Image_Load32("assets/nautilus/Cockpit_Highlight_noAlpha.png");
+//	s_pNautilusCockpitShadow = Image_Load32("assets/nautilus/Cockpit_ShadowPart2.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
-	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusCockpitHighlight || nullptr == s_pNautilusCockpitShadow ||  nullptr == s_pNautilusText)
+//	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusCockpitHighlight || nullptr == s_pNautilusCockpitShadow ||  nullptr == s_pNautilusText)
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText)
+		return false;
+
+	// load 'disco guys'
+	s_pDiscoGuys[0] = Image_Load32("assets/demo/tpb-06-disco-guy/1.png");
+	s_pDiscoGuys[1] = Image_Load32("assets/demo/tpb-06-disco-guy/1b.png");
+	s_pDiscoGuys[2] = Image_Load32("assets/demo/tpb-06-disco-guy/2.png");
+	s_pDiscoGuys[3] = Image_Load32("assets/demo/tpb-06-disco-guy/2b.png");
+	s_pDiscoGuys[4] = Image_Load32("assets/demo/tpb-06-disco-guy/3.png");
+	s_pDiscoGuys[5] = Image_Load32("assets/demo/tpb-06-disco-guy/3b.png");
+	s_pDiscoGuys[6] = Image_Load32("assets/demo/tpb-06-disco-guy/4.png");
+	s_pDiscoGuys[7] = Image_Load32("assets/demo/tpb-06-disco-guy/4b.png");
+	for (const auto *pointer : s_pDiscoGuys)
+		if (nullptr == pointer)
+			return false;
+
+	// and in with the melancholy
+	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
+	if (nullptr == s_pAreWeDone)
 		return false;
 
 	return fxInit;
@@ -421,9 +441,18 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 13:
-			// Nate Diaz represent
-			memset32(pDest, 0, kResX*kResY);
-			BlitSrc32(pDest + ((kResY-602)/2)*kResX, s_pFighters, kResX, 1280, 602);
+			{
+				memset32(pDest, 0, kResX*kResY);
+//				BlitSrc32(pDest + ((kResY-602)/2)*kResX, s_pFighters, kResX, 1280, 602);
+
+				const float discoGuys = saturatef(Rocket::getf(trackDiscoGuys));
+				const unsigned xStart = (kResX-(8*128))>>1;
+				const unsigned yOffs = ((kResY-128)>>1) + 16;
+				for (int iGuy = 0; iGuy < 8; ++iGuy)
+					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
+
+				BlitAdd32A(pDest + (yOffs+130)*kResX, s_pAreWeDone, kResX, kResX, 64, discoGuys);
+			}
 			break;
 
 		default:
