@@ -430,9 +430,14 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					march-fSpikey1(Vector3(hit.x, hit.y, hit.z+nOffs)));
 				Shadertoy::vFastNorm3(normal);
 
-				const float diffuse = normal.z;
+				/* const */ float diffuse = normal.z;
 				const float specular = powf(std::max<float>(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
+
+				float rim = diffuse*diffuse;
+				rim = (rim*rim-0.13f)*64.f;
+				rim = std::max<float>(1.f, std::min<float>(0.f, rim));
+				diffuse *= rim;
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, kGoldenRatio*0.1f)),

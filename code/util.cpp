@@ -305,6 +305,10 @@ void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 // FIXME: optimize properly
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed)
 {
+//	const float halfResX = xRes/2.f;
+//	const float halfResY = yRes/2.f;
+//	const float maxDist = sqrtf(halfResX*halfResX + halfResY*halfResY);
+
     #pragma omp parallel for schedule(static)
     for (int iY = 0; iY < int(yRes); ++iY)
     {
@@ -315,8 +319,14 @@ void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
             const unsigned index = yIndex + iX;
 
             // FIXME: SIMD, fixed point!
-            const float dX = lutsinf(iY*speed)*strength;
-            const float dY = lutcosf(iX*speed)*strength;
+
+//			const auto iXC = iX-halfResX;
+//			const auto iYC = iY-halfResY;
+//			const float distance = 1.f-sqrtf(iXC*iXC + iYC*iYC) / maxDist;
+			constexpr float distance = 1.f;
+			
+            const float dX = lutsinf(iY*speed)*strength*distance;
+            const float dY = lutcosf(iX*speed)*strength*distance;
             float tX = iX + dX;
             float tY = iY + dY;
 
