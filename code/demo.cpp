@@ -126,12 +126,12 @@ bool Demo_Create()
 			return false;
 
 	// load generic TPB-06 dirty vignette
-	s_pVignette06 = Image_Load32("assets/tpb-06-dirty-vignette-1280x720.png");
+	s_pVignette06 = Image_Load32("assets/demo/tpb-06-dirty-vignette-1280x720.png");
 	if (nullptr == s_pVignette06)
 		return false;
 
 	// Nytrik's fighter logo
-	s_pFighters = Image_Load32("assets/roundfighters-1280.png");
+	s_pFighters = Image_Load32("assets/demo/roundfighters-1280.png");
 	if (nullptr == s_pFighters)
 		return false;
 	
@@ -348,7 +348,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
-			SoftLight32(pDest, s_pSpikeyVignette, kOutputSize);
+//			SoftLight32(pDest, s_pSpikeyVignette, kOutputSize);
+			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
@@ -379,9 +380,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					{
 						const auto yOffs = ((kResY-243)/2) + 237;
 						const auto xOffs = kResX-263-12; // ((kResX-263)/2) - 300;
-						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 					
 						Darken32_50(pDest, s_pGreetings1, kOutputSize);
+						SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
+						Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
+
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 					}
 					break;
 
@@ -390,15 +394,15 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					{
 						const auto yOffs = ((kResY-243)/2) - 237;
 						const auto xOffs = 12; // ((kResX-263)/2) - 300;
-						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 
 						Darken32_50(pDest, s_pGreetings2, kOutputSize);
+						SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
+						Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
+
+						BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 					}
 					break;
 				}
-
-				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
-				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 			}
 			break;
 

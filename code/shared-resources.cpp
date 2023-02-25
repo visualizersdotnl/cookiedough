@@ -24,12 +24,12 @@ bool Shared_Create()
 		g_renderTarget[iTarget] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
 
 	// load Nytrik's "Mexico" logo
-	g_pNytrikMexico = Image_Load32("assets/TPB-Mexico-logo-01.jpg");
+	g_pNytrikMexico = Image_Load32("assets/demo/TPB-Mexico-logo-01.jpg");
 	if (g_pNytrikMexico == NULL)
 		return false;
 
 	// load Alien's TPB-02 Xbox logo
-	g_pXboxLogoTPB = Image_Load32("assets/tpb_xbox_tp-263x243.png");
+	g_pXboxLogoTPB = Image_Load32("assets/demo/tpb_xbox_tp-263x243.png");
 	if (g_pXboxLogoTPB == NULL)
 		return false;
 
