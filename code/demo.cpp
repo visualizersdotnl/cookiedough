@@ -67,7 +67,6 @@ static uint32_t *s_pRevLogo = nullptr;
 
 // ball art
 static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
-// static uint32_t *s_pBallText = nullptr;
 
 // greetings art
 static uint32_t *s_pGreetingsDirt = nullptr;
@@ -78,12 +77,17 @@ static uint32_t *s_pGreetingsVignette = nullptr;
 static uint32_t *s_pNautilusVignette = nullptr;
 static uint32_t *s_pNautilusDirt = nullptr;
 static uint32_t *s_pNautilusCousteau1 = nullptr;
+static uint32_t *s_pNautilusCousteauRim1 = nullptr;
 static uint32_t *s_pNautilusCousteau2 = nullptr;
 static uint32_t *s_pNautilusText = nullptr;
 
 // disco guys (hello Thorsten, TPB-06) + melancholic numbers to accompany them
 static uint32_t *s_pDiscoGuys[8] = { nullptr };
 static uint32_t *s_pAreWeDone = nullptr;
+
+// close-up 'spikey' art
+static uint32_t *s_pCloseSpikeDirt = nullptr;
+static uint32_t *s_pCloseSpikeText = nullptr;
 
 bool Demo_Create()
 {
@@ -176,10 +180,11 @@ bool Demo_Create()
 	// nautilus
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
-	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_1.png");
-	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_2.png");
+	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Sillhouette.png");
+	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
-	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2)
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
 		return false;
 
 	// load 'disco guys'
@@ -198,6 +203,12 @@ bool Demo_Create()
 	// and in with the melancholy
 	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
 	if (nullptr == s_pAreWeDone)
+		return false;
+
+	// close-up 'spikey' 
+	s_pCloseSpikeDirt = Image_Load32("assets/closeup/LensDirt5_invert.png");
+	s_pCloseSpikeText = Image_Load32("assets/closeup/Vignette.png");
+	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeText)
 		return false;
 
 	return fxInit;
@@ -337,28 +348,34 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 6:
 			// Nautilus (Michiel, RIP)
-			Nautilus_Draw(pDest, timer, delta);
-			SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
-			SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, 0.f);
+			{
+				Nautilus_Draw(pDest, timer, delta);
+				SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
+				SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
+				FadeFlash(pDest, fadeToBlack, 0.f);
 
-			if (0 == Rocket::geti(trackCousteau))
-				MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
-			else
-				MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
+				if (0 == Rocket::geti(trackCousteau))
+				{
+//					BlitSrc32(pDest, s_pNautilusCousteau1, kResX, kResX, kResY);
+					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
+					SoftLight32(pDest, s_pNautilusCousteauRim1, kOutputSize);
+			}
+				else
+					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
 
-			FadeFlash(pDest, 0.f, fadeToWhite);
+				FadeFlash(pDest, 0.f, fadeToWhite);
 
-			MixSrc32(pDest, s_pNautilusText, kOutputSize);
+				MixSrc32(pDest, s_pNautilusText, kOutputSize);
+			}
 			break;
       
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
 
-			// FIXME: placeholder
-			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			// FIXME
+			Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
+ 			SoftLight32(pDest, s_pCloseSpikeText, kOutputSize);
 			break;
 
 		case 8:
@@ -401,8 +418,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
 				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 
-				const auto yOffs = ((kResY-243)/2) + 237;
-				const auto xOffs = 12; // ((kResX-263)/2) - 300;
+				const auto yOffs = ((kResY-243)/2) + 227;
+				const auto xOffs = 24; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 			}
 			break;
