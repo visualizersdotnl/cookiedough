@@ -67,7 +67,6 @@ static uint32_t *s_pRevLogo = nullptr;
 
 // ball art
 static uint32_t *s_pBallVignette = nullptr; // and free color grading too!
-// static uint32_t *s_pBallText = nullptr;
 
 // greetings art
 static uint32_t *s_pGreetingsDirt = nullptr;
@@ -78,6 +77,7 @@ static uint32_t *s_pGreetingsVignette = nullptr;
 static uint32_t *s_pNautilusVignette = nullptr;
 static uint32_t *s_pNautilusDirt = nullptr;
 static uint32_t *s_pNautilusCousteau1 = nullptr;
+static uint32_t *s_pNautilusCousteauRim1 = nullptr;
 static uint32_t *s_pNautilusCousteau2 = nullptr;
 static uint32_t *s_pNautilusText = nullptr;
 
@@ -180,10 +180,11 @@ bool Demo_Create()
 	// nautilus
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
-	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_1.png");
-	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/Cousteau_Watching_Silhouette_2.png");
+	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Sillhouette.png");
+	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
-	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2)
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
 		return false;
 
 	// load 'disco guys'
@@ -347,19 +348,25 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 6:
 			// Nautilus (Michiel, RIP)
-			Nautilus_Draw(pDest, timer, delta);
-			SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
-			SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, 0.f);
+			{
+				Nautilus_Draw(pDest, timer, delta);
+				SoftLight32(pDest, s_pNautilusVignette, kOutputSize);
+				SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
+				FadeFlash(pDest, fadeToBlack, 0.f);
 
-			if (0 == Rocket::geti(trackCousteau))
-				MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
-			else
-				MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
+				if (0 == Rocket::geti(trackCousteau))
+				{
+//					BlitSrc32(pDest, s_pNautilusCousteau1, kResX, kResX, kResY);
+					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
+					SoftLight32(pDest, s_pNautilusCousteauRim1, kOutputSize);
+			}
+				else
+					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
 
-			FadeFlash(pDest, 0.f, fadeToWhite);
+				FadeFlash(pDest, 0.f, fadeToWhite);
 
-			MixSrc32(pDest, s_pNautilusText, kOutputSize);
+				MixSrc32(pDest, s_pNautilusText, kOutputSize);
+			}
 			break;
       
 		case 7:			
