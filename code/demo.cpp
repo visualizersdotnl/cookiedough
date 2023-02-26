@@ -85,6 +85,10 @@ static uint32_t *s_pNautilusText = nullptr;
 static uint32_t *s_pDiscoGuys[8] = { nullptr };
 static uint32_t *s_pAreWeDone = nullptr;
 
+// close-up 'spikey' art
+static uint32_t *s_pCloseSpikeDirt = nullptr;
+static uint32_t *s_pCloseSpikeText = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -198,6 +202,12 @@ bool Demo_Create()
 	// and in with the melancholy
 	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
 	if (nullptr == s_pAreWeDone)
+		return false;
+
+	// close-up 'spikey' 
+	s_pCloseSpikeDirt = Image_Load32("assets/closeup/LensDirt5_invert.png");
+	s_pCloseSpikeText = Image_Load32("assets/closeup/Vignette.png");
+	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeText)
 		return false;
 
 	return fxInit;
@@ -356,9 +366,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
 
-			// FIXME: placeholder
-			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
- 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			// FIXME
+			Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
+ 			SoftLight32(pDest, s_pCloseSpikeText, kOutputSize);
 			break;
 
 		case 8:
@@ -401,8 +411,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
 				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 
-				const auto yOffs = ((kResY-243)/2) + 237;
-				const auto xOffs = 12; // ((kResX-263)/2) - 300;
+				const auto yOffs = ((kResY-243)/2) + 227;
+				const auto xOffs = 24; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
 			}
 			break;
