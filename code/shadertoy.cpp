@@ -327,7 +327,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				color += colorization*(1.56f*total + specular);
 				color += specular*kGoldenRatio*0.2f;
 
-				colors[iColor] = Shadertoy::GammaAdj(color, 2.22f);
+				colors[iColor] = Shadertoy::GammaAdj(color, 1.44f);
 			}
 			
 			pDest128[destIndex] = Shadertoy::ToPixel4(colors);

@@ -268,6 +268,39 @@ void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 	}
 }
 
+// FIXME: optimize properly
+void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels) 
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel) 
+	{
+		const uint32_t bottom = pDest[iPixel];
+		const float bottomR = ((bottom>>16)&0xff)/255.f;
+		const float bottomG = ((bottom>>8)&0xff)/255.f;
+		const float bottomB = (bottom&0xff)/255.f;
+
+		const uint32_t top = pSrc[iPixel];
+		const float topA = (top>>24)/255.f;
+		const float topR = ((top>>16)&0xff)/255.f;
+		const float topG = ((top>>8)&0xff)/255.f;
+		const float topB = (top&0xff)/255.f;
+
+		float newR = bottomR < 0.5f ? (2.f * bottomR * topR) : (1.f - 2.f*(1.f-bottomR) * (1.f-topR));
+		float newG = bottomG < 0.5f ? (2.f * bottomG * topG) : (1.f - 2.f*(1.f-bottomG) * (1.f-topG));
+		float newB = bottomB < 0.5f ? (2.f * bottomB * topB) : (1.f - 2.f*(1.f-bottomB) * (1.f-topB));
+
+		newR = lerpf<float>(bottomR, newR, topA);
+		newG = lerpf<float>(bottomG, newG, topA);
+		newB = lerpf<float>(bottomB, newB, topA);
+
+		newR *= 255.f;
+		newG *= 255.f;
+		newB *= 255.f;
+
+		pDest[iPixel] = unsigned(newR)<<16 | unsigned(newG)<<8 | unsigned(newB);
+	}
+}
+
 // FIXME: optimize properly; especially this one is crazy suitable for SIMD!
 void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 {
