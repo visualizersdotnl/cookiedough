@@ -1,0 +1,8 @@
+FX Stacking from Bottom --> Top
+
+- BG / Effects ( render )
+- Vignette.png ( Blendmode: Multiply )
+- LensDirt3_invert.png ( Blendmode: Softlight )
+- LogoTestLeft_Rim.png ( Blendmode: Softlight )
+- LogoTestRight_blend_Left ( Blendmode: Normal )
+
