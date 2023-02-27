@@ -135,7 +135,8 @@ bool Demo_Create()
 		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
-	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
+	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo_alphaFixTest.tga");
+//	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
 	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_CoolFilmLook.png");
 	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
@@ -181,7 +182,7 @@ bool Demo_Create()
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
 	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
-	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Sillhouette.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_.png");
 	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
 	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
@@ -355,11 +356,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				FadeFlash(pDest, fadeToBlack, 0.f);
 
 				if (0 == Rocket::geti(trackCousteau))
-				{
-//					BlitSrc32(pDest, s_pNautilusCousteau1, kResX, kResX, kResY);
 					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
-					SoftLight32(pDest, s_pNautilusCousteauRim1, kOutputSize);
-			}
 				else
 					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
 
@@ -386,9 +383,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
-			MixSrc32(pDest, s_pSpikeyArrested, kOutputSize);
-//			SoftLight32(pDest, s_pSpikeyVignette, kOutputSize);
 			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
+			MixOver32(pDest, s_pSpikeyArrested, kOutputBytes);
 			break;
 
 		case 9:

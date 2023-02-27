@@ -16,6 +16,10 @@ static std::vector<void*> s_pGC;
 bool Image_Create()
 {
 	ilInit();
+
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
+
 	s_pGC.clear();
 
 	return true;

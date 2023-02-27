@@ -85,6 +85,9 @@ VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 // blend 32-bit color buffers
 void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, uint8_t alpha);
 
+// blend 32-bit color buffers as follows: A+B(1-ALPHA)
+void MixOver32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
+
 // add 32-bit color buffers (source to/from destination)
 void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 

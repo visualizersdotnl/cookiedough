@@ -146,6 +146,41 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	}
 }
 
+void MixOver32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+			const uint32_t destPixel = pDest[iPixel];
+			const uint32_t srcPixel  = pSrc[iPixel];
+
+//			const unsigned A2 = destPixel>>24;
+			const unsigned R2 = (destPixel>>16)&0xff;
+			const unsigned G2 = (destPixel>>8)&0xff;
+			const unsigned B2 = destPixel&0xff; 
+
+			const unsigned A1 = 0xff - (srcPixel>>24);
+			const unsigned R1 = (srcPixel>>16)&0xff;
+			const unsigned G1 = (srcPixel>>8)&0xff;
+			const unsigned B1 = srcPixel&0xff; 
+
+
+
+//			const uint8_t R = R1 + R2 - 2*R1*R2/255;
+//			const uint8_t G = G1 + G2 - 2*G1*G2/255;
+//			const uint8_t B = B1 + B2 - 2*B1*B2/255;
+			unsigned R = R1 +  ((R2*A1)>>9);
+			unsigned G = G1 +  ((G2*A1)>>9);
+			unsigned B = B1 +  ((B2*A1)>>9);
+			if (R>255)R=255;
+			if (G>255)G=255;
+			if (B>255)B=255;
+
+			const uint32_t result = (A1<<24)|(R<<16)|(G<<8)|B;
+			pDest[iPixel] = result;
+    }
+}
+
 void Sub32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	const __m128i zero = _mm_setzero_si128();
