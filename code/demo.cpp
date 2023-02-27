@@ -384,7 +384,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
-			MixOver32(pDest, s_pSpikeyArrested, kOutputBytes);
+			MixOver32(pDest, s_pSpikeyArrested, kOutputSize);
 			break;
 
 		case 9:
