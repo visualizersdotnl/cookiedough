@@ -772,7 +772,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x*kAspect, UV.y, 0.3f); 
+				Vector3 direction(UV.x*kAspect + 0.3f, UV.y, 0.3f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 

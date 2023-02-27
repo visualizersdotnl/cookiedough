@@ -146,6 +146,7 @@ void Add32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 	}
 }
 
+// FIXME: optimize (SIMD)
 void MixOver32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 {
 	#pragma omp parallel for schedule(static)
@@ -164,14 +165,10 @@ void MixOver32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 			const unsigned G1 = (srcPixel>>8)&0xff;
 			const unsigned B1 = srcPixel&0xff; 
 
+			unsigned R = ((R1*(0xff-A1))>>8) + ((R2*A1)>>8);
+			unsigned G = ((G1*(0xff-A1))>>8) + ((G2*A1)>>8);
+			unsigned B = ((B1*(0xff-A1))>>8) + ((B2*A1)>>8);
 
-
-//			const uint8_t R = R1 + R2 - 2*R1*R2/255;
-//			const uint8_t G = G1 + G2 - 2*G1*G2/255;
-//			const uint8_t B = B1 + B2 - 2*B1*B2/255;
-			unsigned R = R1 +  ((R2*A1)>>9);
-			unsigned G = G1 +  ((G2*A1)>>9);
-			unsigned B = B1 +  ((B2*A1)>>9);
 			if (R>255)R=255;
 			if (G>255)G=255;
 			if (B>255)B=255;

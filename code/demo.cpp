@@ -135,8 +135,8 @@ bool Demo_Create()
 		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
-	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo_alphaFixTest.tga");
-//	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
+//	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo_alphaFixTest.tga");
+	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
 	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_CoolFilmLook.png");
 	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
@@ -383,8 +383,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
 			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
 			MulSrc32A(pDest, s_pVignette06, kOutputSize);
-			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
 			MixOver32(pDest, s_pSpikeyArrested, kOutputSize);
+			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
 			break;
 
 		case 9:
