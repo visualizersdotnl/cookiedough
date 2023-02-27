@@ -264,7 +264,7 @@ color="ffa9b250">
 	<track name="nautilus:Blur" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="5240" value="0.000000" interpolation="0" />
-		<key row="5504" value="100.000000" interpolation="3" />
+		<key row="5504" value="33.139999" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
 		<key row="5760" value="12.000000" interpolation="3" />
 		<key row="5776" value="0.000000" interpolation="0" />
