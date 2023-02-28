@@ -5,7 +5,7 @@ For all things regarding TPB-07, let's go for the immediates:
 
 ** Part 1: landscape **
 
-- I promised a shooting star.
+- I promised a shooting star, and a lame first attempt has been implemented, thank you Rocket!
 
 ** Part 2: voxel ball **
 
@@ -27,6 +27,7 @@ Finished for beta.
 ** Part 6: Nautilus tunnel **
 
 - Rim not implemented to first silhouette: what about adding the rim to the image it should be applied to itself?
+- I am not going to discard .TGA because it's a bit harder to export if it means burning extra clockcycles.
 
 ** Part 7: up-close spikey balls **
 
@@ -34,7 +35,7 @@ Finished for beta.
 
 ** Part 8: the golden tunnel **
 
-- I discared the logo for now, it didn't really add anything.
+- I discarded the logo for now, it didn't really add anything.
 - Instead I used the vignette from the part before it; to me it creates a certain continuity that breaks with the "logo, graphics, logo"- pattern.
 
 ** Part 9: greetings "Laura" boxy tunnel **
