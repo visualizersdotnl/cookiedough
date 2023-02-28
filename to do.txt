@@ -26,8 +26,8 @@ Finished for beta.
 
 ** Part 6: Nautilus tunnel **
 
-- Rim not implemented to first silhouette: what about adding the rim to the image it should be applied to itself?
-- I am not going to discard .TGA because it's a bit harder to export if it means burning extra clockcycles.
+- Rim for second image.
+- Tweak rim for first image.
 
 ** Part 7: up-close spikey balls **
 
@@ -35,8 +35,10 @@ Finished for beta.
 
 ** Part 8: the golden tunnel **
 
-- I discarded the logo for now, it didn't really add anything.
+- I discarded the logo for now, it didn't really add anything; might be a temporary lapse of judgement on my end.
 - Instead I used the vignette from the part before it; to me it creates a certain continuity that breaks with the "logo, graphics, logo"- pattern.
+
+By all means, tell me what to do :-)
 
 ** Part 9: greetings "Laura" boxy tunnel **
 

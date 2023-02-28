@@ -419,10 +419,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				if (0 == Rocket::geti(trackCousteau))
 				{
-					// FIXME: it just doesn't seem necessary to apply this and it breaks consistency with the second image,
-					//        plus it screws up the nice and sharp border
-//					MulSrc32(pDest, s_pNautilusCousteauRim1, kOutputSize);
-
+					Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
 					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
 				}
 				else

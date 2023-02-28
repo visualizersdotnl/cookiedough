@@ -11,6 +11,7 @@
 	<bookmark row="4832" />
 	<bookmark row="5039" />
 	<bookmark row="5534" />
+	<bookmark row="7072" />
 	<bookmark row="8428" />
 	<bookmark row="9984" />
 	<bookmark row="10018" />
@@ -20,12 +21,13 @@
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="0"
-color="ffa9b250">
+	<track name="twister:Speed" folded="0" muteKeyCount="7"
+color="ffa9b250" muteValue="8.000000">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1749" value="0.000000" interpolation="0" />
 		<key row="1992" value="128.000000" interpolation="0" />
 		<key row="5445" value="inf" interpolation="0" />
+		<key row="5693" value="inf" interpolation="0" />
 		<key row="5876" value="8.000000" interpolation="1" />
 		<key row="6280" value="8.000000" interpolation="0" />
 	</track>
@@ -427,16 +429,17 @@ color="ffb25091">
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="7336" value="-0.200000" interpolation="0" />
-		<key row="7592" value="-0.200000" interpolation="1" />
-		<key row="7864" value="3.000000" interpolation="3" />
+		<key row="7336" value="-3.000000" interpolation="2" />
+		<key row="7592" value="-0.200000" interpolation="2" />
+		<key row="7864" value="-3.000000" interpolation="2" />
 		<key row="8120" value="0.020000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Speed" folded="0" muteKeyCount="0"
 color="ffb28050">
+		<key row="1472" value="-3.140000" interpolation="0" />
 		<key row="7336" value="-3.140000" interpolation="0" />
 		<key row="7592" value="3.140000" interpolation="0" />
-		<key row="7864" value="-3.660000" interpolation="0" />
+		<key row="7864" value="3.660000" interpolation="0" />
 		<key row="8120" value="2.440000" interpolation="0" />
 	</track>
 	<track name="plasma:Speed" folded="0" muteKeyCount="0"
@@ -889,13 +892,12 @@ color="ffb28050">
 	</track>
 	<track name="sinusesTunnel:Gamma" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="0" value="2.000000" interpolation="3" />
-		<key row="7336" value="2.000000" interpolation="3" />
-		<key row="7592" value="1.660000" interpolation="3" />
-		<key row="7864" value="1.330000" interpolation="3" />
-		<key row="8120" value="1.000000" interpolation="0" />
-		<key row="8312" value="1.000000" interpolation="3" />
-		<key row="8352" value="2.000000" interpolation="3" />
+		<key row="0" value="2.000000" interpolation="0" />
+		<key row="7336" value="2.770000" interpolation="3" />
+		<key row="7592" value="2.330000" interpolation="3" />
+		<key row="7864" value="2.000000" interpolation="3" />
+		<key row="8120" value="1.770000" interpolation="0" />
+		<key row="8312" value="1.770000" interpolation="3" />
 		<key row="8368" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
@@ -905,8 +907,8 @@ color="ff60b250">
 	</track>
 	<track name="sinusesTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="7336" value="-0.630000" interpolation="0" />
-		<key row="7864" value="0.630000" interpolation="0" />
+		<key row="7336" value="-0.330000" interpolation="0" />
+		<key row="7864" value="0.330000" interpolation="0" />
 		<key row="8120" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
@@ -948,6 +950,7 @@ color="ffa9b250">
 		<key row="456" value="0.000000" interpolation="1" />
 		<key row="504" value="4.000000" interpolation="2" />
 		<key row="544" value="32.000000" interpolation="0" />
+		<key row="5693" value="32.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
