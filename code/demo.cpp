@@ -87,7 +87,7 @@ static uint32_t *s_pAreWeDone = nullptr;
 
 // close-up 'spikey' art
 static uint32_t *s_pCloseSpikeDirt = nullptr;
-static uint32_t *s_pCloseSpikeText = nullptr;
+static uint32_t *s_pCloseSpikeVignette = nullptr;
 
 // goldfinger tunnel art
 static uint32_t *s_pGoldLogo = nullptr;
@@ -212,8 +212,8 @@ bool Demo_Create()
 
 	// close-up 'spikey' 
 	s_pCloseSpikeDirt = Image_Load32("assets/closeup/LensDirt5_invert.png");
-	s_pCloseSpikeText = Image_Load32("assets/closeup/Vignette.png");
-	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeText)
+	s_pCloseSpikeVignette = Image_Load32("assets/closeup/Vignette_CoolFilmLook.png");
+	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeVignette)
 		return false;
 
 	// goldfinger tunnel art
@@ -379,10 +379,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
-
-			// FIXME?
-			Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
- 			SoftLight32(pDest, s_pCloseSpikeText, kOutputSize);
+			MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
+			Overlay32(pDest, s_pSpikeyVignette, kOutputSize); 
 			break;
 
 		case 8:
@@ -411,8 +409,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 10:
 			// The 'golden tunnel' (FIXME)
 			Sinuses_Draw(pDest, timer, delta);
-			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
 			MixSrc32(pDest, s_pGoldLogo, kOutputSize);
+			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			break;
 

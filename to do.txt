@@ -21,7 +21,7 @@ Finished for beta.
 Finished for beta.
 
 Except:
-- Blend mode of "text" (see Facebook conversation).
+- Blend mode of "text" (see Facebook conversation), though it's close enough now, right?
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
@@ -29,14 +29,15 @@ Finished for beta.
 
 ** Part 6: Nautilus tunnel **
 
-- Rim not implemented: what about adding the rim to the image it should be applied to itself?
+- Rim not implemented to first silhouette: what about adding the rim to the image it should be applied to itself?
 
 ** Part 7: up-close spikey balls **
 
-- The effects are tame but nice (or at least I think so), but something needs to happen on top!
+- I am using another (the blue 'film' one) vignette (mostly for it's color grading), looks more like what was intended in the preview render.
 
 ** Part 8: the golden tunnel **
 
+- I have scaled the logo up so it sort of 'fills' the left side of the screen more, which I personally feel looks much better.
 - Rim not implemented: what about adding the rim to the image it should be applied to itself?
 
 ** Part 9: greetings "Laura" boxy tunnel **
