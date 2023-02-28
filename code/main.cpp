@@ -107,7 +107,7 @@ const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
 
 constexpr bool kFullScreen = false;
 
-static const char *kStream = "assets/audio/comatron - to the moon - final questionmark.wav";
+static const char *kStream = "assets/audio/comatron - to the moon - 28-02-23.wav";
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
 
 // -----------------------------
@@ -143,8 +143,6 @@ static bool HandleEvents()
 
 	return true;
 }
-
-// #include "../shaderGP-detour/snatchtiler.h"
 
 #if !defined(_WIN32)
 int main(int argc, char *argv[])

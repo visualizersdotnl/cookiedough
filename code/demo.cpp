@@ -236,7 +236,7 @@ bool Demo_Create()
 		return false;
 
 	// goldfinger tunnel
-	s_pGoldDirt = Image_Load32("assets/gold/LensDirt5_invert.png");
+	s_pGoldDirt = Image_Load32("assets/gold/LensDirt3_invert.png");
 	if (nullptr == s_pGoldDirt)
 		return false;
 
@@ -343,6 +343,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}
+
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			}
 			break;
 
@@ -528,6 +530,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	switch (effect)
 	{
 	case 1:
+	case 2:
 	case 3:
 	case 6:
 	case 8:
