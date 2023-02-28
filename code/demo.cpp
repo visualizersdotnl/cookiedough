@@ -419,7 +419,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				if (0 == Rocket::geti(trackCousteau))
 				{
-					SoftLight32(pDest, s_pNautilusCousteauRim1, kOutputSize);
+					Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
 					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
 				}
 				else
