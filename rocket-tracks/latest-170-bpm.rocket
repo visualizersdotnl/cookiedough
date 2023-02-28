@@ -420,7 +420,7 @@ color="ff60b250">
 	<track name="sinusesTunnel:Specular" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="7336" value="1.000000" interpolation="0" />
-		<key row="7600" value="2.000000" interpolation="0" />
+		<key row="7592" value="2.000000" interpolation="0" />
 		<key row="7864" value="32.000000" interpolation="0" />
 		<key row="8120" value="64.000000" interpolation="0" />
 	</track>
@@ -667,6 +667,7 @@ color="ffb25091">
 		<key row="3768" value="0.000000" interpolation="2" />
 		<key row="3784" value="0.600000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
+		<key row="3880" value="0.000000" interpolation="2" />
 		<key row="3896" value="0.660000" interpolation="3" />
 		<key row="3920" value="0.000000" interpolation="0" />
 		<key row="5192" value="0.000000" interpolation="3" />
@@ -871,6 +872,7 @@ color="ff8850b2">
 	</track>
 	<track name="demo:DistortStrengthTPB" folded="0" muteKeyCount="0"
 color="ffb25091">
+		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9536" value="2.390000" interpolation="1" />
 		<key row="9760" value="0.000000" interpolation="3" />
 		<key row="9895" value="31.400000" interpolation="0" />
@@ -883,7 +885,31 @@ color="ffb27474">
 	</track>
 	<track name="sinusTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="7336" value="-0.628000" interpolation="0" />
+		<key row="0" value="0.000000" interpolation="0" />
+	</track>
+	<track name="sinusesTunnel:Gamma" folded="0" muteKeyCount="0"
+color="ffa9b250">
+		<key row="7336" value="2.220000" interpolation="1" />
+		<key row="7592" value="1.880000" interpolation="1" />
+		<key row="7864" value="1.440000" interpolation="1" />
+		<key row="8120" value="1.000000" interpolation="0" />
+	</track>
+	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
+color="ff60b250">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="6024" value="1.000000" interpolation="0" />
+	</track>
+	<track name="sinusesTunnel:OffsX" folded="0" muteKeyCount="0"
+color="ff4fb292">
+		<key row="7336" value="-0.630000" interpolation="0" />
+	</track>
+	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
+color="ff4f71b2">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="9520" value="0.000000" interpolation="3" />
+		<key row="9552" value="2.000000" interpolation="3" />
+		<key row="9560" value="4.000000" interpolation="2" />
+		<key row="9591" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
