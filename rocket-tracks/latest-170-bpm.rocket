@@ -889,6 +889,7 @@ color="ffb28050">
 	</track>
 	<track name="sinusesTunnel:Gamma" folded="0" muteKeyCount="0"
 color="ffa9b250">
+		<key row="0" value="2.000000" interpolation="3" />
 		<key row="7336" value="2.000000" interpolation="3" />
 		<key row="7592" value="1.660000" interpolation="3" />
 		<key row="7864" value="1.330000" interpolation="3" />
@@ -915,6 +916,38 @@ color="ff4f71b2">
 		<key row="9552" value="2.000000" interpolation="3" />
 		<key row="9560" value="6.000000" interpolation="2" />
 		<key row="9591" value="0.000000" interpolation="0" />
+	</track>
+	<track name="shootingStar:Enabled" folded="0" muteKeyCount="0"
+color="ff8850b2">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="456" value="1.000000" interpolation="0" />
+		<key row="544" value="0.000000" interpolation="0" />
+	</track>
+	<track name="shootingStar:X" folded="0" muteKeyCount="0"
+color="ffb25091">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="456" value="1200.000000" interpolation="2" />
+		<key row="544" value="10.000000" interpolation="0" />
+	</track>
+	<track name="shootingStar:Y" folded="0" muteKeyCount="0"
+color="ffb27474">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="456" value="20.000000" interpolation="3" />
+		<key row="544" value="80.000000" interpolation="0" />
+	</track>
+	<track name="shootingStar:A" folded="0" muteKeyCount="0"
+color="ffb28050">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="456" value="0.000000" interpolation="3" />
+		<key row="504" value="1.000000" interpolation="3" />
+		<key row="544" value="0.000000" interpolation="0" />
+	</track>
+	<track name="shootingStar:Trail" folded="0" muteKeyCount="0"
+color="ffa9b250">
+		<key row="0" value="0.000000" interpolation="3" />
+		<key row="456" value="1.000000" interpolation="3" />
+		<key row="504" value="4.000000" interpolation="3" />
+		<key row="544" value="32.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
