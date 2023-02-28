@@ -57,6 +57,7 @@ SyncTrack trackCloseSpikeY;
 SyncTrack trackSinusesSpecular;
 SyncTrack trackSinusesRoll;
 SyncTrack trackSinusesSpeed;
+SyncTrack trackSinusesOffsX;
 
 // Plasma sync.:
 SyncTrack trackPlasmaSpeed;
@@ -112,6 +113,7 @@ bool Shadertoy_Create()
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
 	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
 	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
+	trackSinusesOffsX = Rocket::AddTrack("sinusTunnel:OffsX");
 
 	// Plasma:
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
@@ -753,6 +755,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const float specPow = 1.f + Rocket::getf(trackSinusesSpecular);
 	const float roll = Rocket::getf(trackSinusesRoll);
 	const float speed = Rocket::getf(trackSinusesSpeed);
+	const float offsX = Rocket::getf(trackSinusesOffsX);
 	const float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
 
 	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
@@ -772,7 +775,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x*kAspect - 0.5f, UV.y, 0.3f); 
+				Vector3 direction((UV.x+offsX)*kAspect, UV.y, 0.3f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
