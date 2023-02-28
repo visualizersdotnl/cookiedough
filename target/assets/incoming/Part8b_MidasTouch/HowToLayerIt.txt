@@ -1,4 +1,4 @@
-FX Stacking from Bottom --> Top
+SFX Stacking from Bottom --> Top
 
 - BG / Effects ( render )
 - Vignette.png ( Blendmode: Multiply )

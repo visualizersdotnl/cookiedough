@@ -105,7 +105,7 @@ void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 
 // Photoshop-style overlay blend effect between two 32-bit color buffers (zeroes dest. alpha)
 void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels);
-void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels);
+void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels); // FIXME: dead slow!
 
 // Photoshop-style darken blend effect between two 32-bit color buffers (retains dest. alpha)
 // result is blended 50% - this is specifically because I needed it this way (FIXME)

@@ -29,7 +29,7 @@ Finished for beta.
 
 ** Part 6: Nautilus tunnel **
 
-- Finished for beta / Need more lighting around the map edges:?
+- Rim not implemented: what about adding the rim to the image it should be applied to itself?
 
 ** Part 7: up-close spikey balls **
 
@@ -37,7 +37,7 @@ Finished for beta.
 
 ** Part 8: the golden tunnel **
 
-Finished for beta.
+- Rim not implemented: what about adding the rim to the image it should be applied to itself?
 
 ** Part 9: greetings "Laura" boxy tunnel **
 
@@ -45,4 +45,5 @@ Foinished for beta.
 
 ** Part 10: TPB goes to Mexico logo & TPB's 2001 - 2023 ending **
 
-Foinished for bbta.
+Finished for beta.
+

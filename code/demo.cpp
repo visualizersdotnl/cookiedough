@@ -89,6 +89,10 @@ static uint32_t *s_pAreWeDone = nullptr;
 static uint32_t *s_pCloseSpikeDirt = nullptr;
 static uint32_t *s_pCloseSpikeText = nullptr;
 
+// goldfinger tunnel art
+static uint32_t *s_pGoldLogo = nullptr;
+static uint32_t *s_pGoldDirt = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -182,7 +186,7 @@ bool Demo_Create()
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
 	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
-	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Sillhouette.png");
 	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
 	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
@@ -210,6 +214,12 @@ bool Demo_Create()
 	s_pCloseSpikeDirt = Image_Load32("assets/closeup/LensDirt5_invert.png");
 	s_pCloseSpikeText = Image_Load32("assets/closeup/Vignette.png");
 	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeText)
+		return false;
+
+	// goldfinger tunnel art
+	s_pGoldLogo = Image_Load32("assets/gold/LogoTestRight_blend_Left.png");
+	s_pGoldDirt = Image_Load32("assets/gold/LensDirt3_invert.png");
+	if (nullptr == s_pGoldDirt || nullptr == s_pGoldLogo)
 		return false;
 
 	return fxInit;
@@ -370,7 +380,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
 
-			// FIXME
+			// FIXME?
 			Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
  			SoftLight32(pDest, s_pCloseSpikeText, kOutputSize);
 			break;
@@ -399,8 +409,11 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 10:
-			// The 'golden tunnel'
+			// The 'golden tunnel' (FIXME)
 			Sinuses_Draw(pDest, timer, delta);
+			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
+			MixSrc32(pDest, s_pGoldLogo, kOutputSize);
+			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			break;
 
 		case 11:
@@ -458,6 +471,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 	case 3:
 	case 6:
 	case 8:
+	case 10:
 		// handled by effect/part
 		break;
 

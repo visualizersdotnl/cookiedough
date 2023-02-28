@@ -772,7 +772,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction(UV.x*kAspect + 0.3f, UV.y, 0.3f); 
+				Vector3 direction(UV.x*kAspect - 0.5f, UV.y, 0.3f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
@@ -807,7 +807,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(fakeSpecular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, fog)),
-					2.73f);
+					2.22f);
 			}
 
 			const int index = (yIndex+iX)>>2;
