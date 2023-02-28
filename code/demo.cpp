@@ -33,7 +33,7 @@ SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeHUD, trackScapeRevision;
-SyncTrack trackDistortTPB, trackDistortStrengthTPB;
+SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
 
@@ -121,8 +121,9 @@ bool Demo_Create()
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
+	trackBlurTPB = Rocket::AddTrack("demo:BlurTPB");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
-	trackCousteau = Rocket::AddTrack("demo::Cousteau");
+	trackCousteau = Rocket::AddTrack("demo:Cousteau");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -186,7 +187,7 @@ bool Demo_Create()
 	s_pNautilusVignette = Image_Load32("assets/nautilus/Vignette.png");
 	s_pNautilusDirt = Image_Load32("assets/nautilus/GlassDirt_Distorted2.png");
 	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
-	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Sillhouette.png");
+	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette.png");
 	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
 	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
@@ -366,7 +367,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				FadeFlash(pDest, fadeToBlack, 0.f);
 
 				if (0 == Rocket::geti(trackCousteau))
+				{
+					// FIXME: it just doesn't seem necessary to apply this and it breaks consistency with the second image,
+					//        plus it screws up the nice and sharp border
+//					MulSrc32(pDest, s_pNautilusCousteauRim1, kOutputSize);
+
 					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
+				}
 				else
 					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
 
@@ -436,6 +443,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// TPB represent
 				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
 				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+
+				float blurTPB = Rocket::getf(trackBlurTPB);
+				if (0.f != blurTPB)
+				{
+					blurTPB = BoxBlurScale(blurTPB);
+					HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blurTPB);
+				}
+
 				MulSrc32(g_renderTarget[0], s_pNautilusVignette, kOutputSize); // FIXME: placeholder
 
 				const float distortTPB = Rocket::getf(trackDistortTPB);
