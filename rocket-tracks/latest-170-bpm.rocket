@@ -11,6 +11,7 @@
 	<bookmark row="4832" />
 	<bookmark row="5039" />
 	<bookmark row="5534" />
+	<bookmark row="7072" />
 	<bookmark row="8428" />
 	<bookmark row="9984" />
 	<bookmark row="10018" />
@@ -20,8 +21,8 @@
 	<group name="plasma:" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="0"
-color="ffa9b250">
+	<track name="twister:Speed" folded="0" muteKeyCount="7"
+color="ffa9b250" muteValue="8.000000">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1749" value="0.000000" interpolation="0" />
 		<key row="1992" value="128.000000" interpolation="0" />
