@@ -37,6 +37,10 @@ SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
 
+SyncTrack trackShooting;
+SyncTrack trackShootingX, trackShootingY, trackShootingAlpha;
+SyncTrack trackShootingTrail;
+
 // --------------------
 
 // credits logos (1280x568)
@@ -95,6 +99,12 @@ static uint32_t *s_pGoldDirt = nullptr;
 // shooting star art
 static uint32_t *s_pLenz = nullptr;
 
+// --- Shooting star related things ---
+
+constexpr unsigned kLenzSize = 64;
+
+// --------------------
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -126,6 +136,12 @@ bool Demo_Create()
 	trackBlurTPB = Rocket::AddTrack("demo:BlurTPB");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 	trackCousteau = Rocket::AddTrack("demo:Cousteau");
+
+	trackShooting = Rocket::AddTrack("shootingStar:Enabled");
+	trackShootingX = Rocket::AddTrack("shootingStar:X");
+	trackShootingY = Rocket::AddTrack("shootingStar:Y");
+	trackShootingAlpha = Rocket::AddTrack("shootingStar:A");
+	trackShootingTrail = Rocket::AddTrack("shootingStar:Trail");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -225,7 +241,7 @@ bool Demo_Create()
 		return false;
 
 	// shooting star
-	// ...
+	s_pLenz = Image_Load32("assets/shooting/Lenz.png");
 
 	return fxInit;
 }
@@ -275,6 +291,37 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				// Introduction: landscape
 				Landscape_Draw(pDest, timer, delta);
+
+				// shooting star (or what has to pass for it)
+				// this is the charm of a hack made possible by Rocket
+				// FIXME: really shouldn't be using threaded blit function(s) here
+				if (1 == Rocket::geti(trackShooting))
+				{
+					int xPos = Rocket::geti(trackShootingX);
+					int yPos = Rocket::geti(trackShootingY);
+					float alpha = Rocket::getf(trackShootingAlpha);
+
+					const unsigned offset = yPos*kResX + xPos;
+					BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
+
+					int trail = Rocket::geti(trackShootingTrail);
+					if (trail > 0)
+					{
+						const int xStep = kLenzSize/16;
+						const int yStep = 1;
+						const float alphaStep = alpha/trail;
+
+						for (int iTrail = 0; iTrail < trail; ++iTrail)
+						{
+							xPos += xStep; // simply assuming we're going from right to left
+							yPos -= yStep; // and from top to bottom
+							alpha -= alphaStep;
+
+							const unsigned offset = yPos*kResX + xPos;
+							BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
+						}
+					}
+				}
 
 				// FIXME: placeholder
 				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
