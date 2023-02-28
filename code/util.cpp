@@ -173,7 +173,7 @@ void MixOver32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 			if (G>255)G=255;
 			if (B>255)B=255;
 
-			const uint32_t result = (A1<<24)|(R<<16)|(G<<8)|B;
+			const uint32_t result = (R<<16)|(G<<8)|B;
 			pDest[iPixel] = result;
     }
 }
