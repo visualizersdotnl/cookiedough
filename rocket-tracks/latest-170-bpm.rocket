@@ -667,7 +667,7 @@ color="ffb25091">
 		<key row="3768" value="0.000000" interpolation="2" />
 		<key row="3784" value="0.600000" interpolation="3" />
 		<key row="3816" value="0.000000" interpolation="0" />
-		<key row="3880" value="0.000000" interpolation="2" />
+		<key row="3880" value="0.000000" interpolation="3" />
 		<key row="3896" value="0.660000" interpolation="3" />
 		<key row="3920" value="0.000000" interpolation="0" />
 		<key row="5192" value="0.000000" interpolation="3" />
@@ -902,13 +902,15 @@ color="ff60b250">
 	<track name="sinusesTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="7336" value="-0.630000" interpolation="0" />
+		<key row="7864" value="0.630000" interpolation="0" />
+		<key row="8120" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9520" value="0.000000" interpolation="3" />
 		<key row="9552" value="2.000000" interpolation="3" />
-		<key row="9560" value="4.000000" interpolation="2" />
+		<key row="9560" value="6.000000" interpolation="2" />
 		<key row="9591" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
