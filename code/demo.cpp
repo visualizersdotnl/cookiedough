@@ -92,6 +92,9 @@ static uint32_t *s_pCloseSpikeVignette = nullptr;
 // "goldfinger" tunnel art
 static uint32_t *s_pGoldDirt = nullptr;
 
+// shooting star art
+static uint32_t *s_pLenz = nullptr;
+
 bool Demo_Create()
 {
 	if (false == Rocket::Launch())
@@ -216,10 +219,13 @@ bool Demo_Create()
 	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeVignette)
 		return false;
 
-	// goldfinger tunnel art
+	// goldfinger tunnel
 	s_pGoldDirt = Image_Load32("assets/gold/LensDirt5_invert.png");
 	if (nullptr == s_pGoldDirt)
 		return false;
+
+	// shooting star
+	// ...
 
 	return fxInit;
 }
