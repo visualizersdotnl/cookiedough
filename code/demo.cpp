@@ -375,7 +375,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				}
 
 				if (0 != Rocket::geti(trackShow1995))
-					MixSrc32(pDest, s_pNoooN, kOutputSize);
+					MixOver32(pDest, s_pNoooN, kOutputSize);
 
 				Overlay32(pDest, s_pTunnelVignette, kOutputSize);
 			}
@@ -459,7 +459,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
 				if (0 != Rocket::geti(trackShow2006))
-					MixSrc32(pDest, s_pMFX, kOutputSize);
+					MixOver32(pDest, s_pMFX, kOutputSize);
 			}
 			break;
 
