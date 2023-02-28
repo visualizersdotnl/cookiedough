@@ -889,13 +889,12 @@ color="ffb28050">
 	</track>
 	<track name="sinusesTunnel:Gamma" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="0" value="2.000000" interpolation="3" />
-		<key row="7336" value="2.000000" interpolation="3" />
-		<key row="7592" value="1.660000" interpolation="3" />
-		<key row="7864" value="1.330000" interpolation="3" />
-		<key row="8120" value="1.000000" interpolation="0" />
-		<key row="8312" value="1.000000" interpolation="3" />
-		<key row="8352" value="2.000000" interpolation="3" />
+		<key row="0" value="2.000000" interpolation="0" />
+		<key row="7336" value="2.770000" interpolation="3" />
+		<key row="7592" value="2.330000" interpolation="3" />
+		<key row="7864" value="2.000000" interpolation="3" />
+		<key row="8120" value="1.770000" interpolation="0" />
+		<key row="8312" value="1.770000" interpolation="3" />
 		<key row="8368" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
