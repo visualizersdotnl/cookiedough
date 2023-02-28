@@ -58,6 +58,7 @@ SyncTrack trackSinusesSpecular;
 SyncTrack trackSinusesRoll;
 SyncTrack trackSinusesSpeed;
 SyncTrack trackSinusesOffsX;
+SyncTrack trackSinusesGamma;
 
 // Plasma sync.:
 SyncTrack trackPlasmaSpeed;
@@ -113,7 +114,8 @@ bool Shadertoy_Create()
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
 	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
 	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
-	trackSinusesOffsX = Rocket::AddTrack("sinusTunnel:OffsX");
+	trackSinusesOffsX = Rocket::AddTrack("sinusesTunnel:OffsX");
+	trackSinusesGamma = Rocket::AddTrack("sinusesTunnel:Gamma");
 
 	// Plasma:
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
@@ -756,7 +758,8 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const float roll = Rocket::getf(trackSinusesRoll);
 	const float speed = Rocket::getf(trackSinusesSpeed);
 	const float offsX = Rocket::getf(trackSinusesOffsX);
-	const float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
+	const float gamma = Rocket::getf(trackSinusesGamma);
+	constexpr float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
 
 	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
 
@@ -810,7 +813,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(fakeSpecular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, fog)),
-					2.22f);
+					gamma);
 			}
 
 			const int index = (yIndex+iX)>>2;

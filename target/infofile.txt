@@ -15,16 +15,16 @@ a retrosexual multimedia demonstration in co-operation with TPB
 created for Revision 2023
 
 system req.:
-  + either OSX (Silicon) or Win64 (Intel), nav. to '/target/bin' and run!
+  + either OSX (Silicon) or Win64 (Intel), nav. to '/target/bin' and run! (could be that the party version is Win64-only, in that case just wait a day or 2!)
   + software rendering, no noteworthy GPU required
   + uses default audio device
   + does not use significant RAM or disk space
   + native resolution: 1280x720
 
 people involved:
-  + superplek (programming)
+  + superplek (programming, design)
   + comatron (soundtrack) ft. celin (vocals)
-  + jade (graphics)
+  + jade (graphics, design)
   + and introducing ernst hot formerly known as thorsten/purple (creative support, Linux build)
 
 advisory board / additional:
@@ -32,9 +32,7 @@ advisory board / additional:
   + nytrik (ideas, graphics)
   + alien (small TPB logo)
   + raimo (boy wonder)
-
-  nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg)
-  rest in peace soldier!
+  + nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg); rest in peace soldier!
 
   how open are we? very -> repository: https://www.github.com/visualizersdotnl/cookiedough (MIT license)
  
