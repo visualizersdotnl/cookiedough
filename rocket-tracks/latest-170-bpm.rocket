@@ -11,6 +11,7 @@
 	<bookmark row="4832" />
 	<bookmark row="5039" />
 	<bookmark row="5534" />
+	<bookmark row="8428" />
 	<bookmark row="9984" />
 	<bookmark row="10018" />
 	<bookmark row="10061" />
@@ -419,9 +420,9 @@ color="ff60b250">
 	<track name="sinusesTunnel:Specular" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="7336" value="1.000000" interpolation="0" />
-		<key row="7600" value="10.000000" interpolation="0" />
-		<key row="7864" value="24.000000" interpolation="0" />
-		<key row="8120" value="29.000000" interpolation="0" />
+		<key row="7600" value="2.000000" interpolation="0" />
+		<key row="7864" value="32.000000" interpolation="0" />
+		<key row="8120" value="64.000000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -598,10 +599,10 @@ color="ff8850b2">
 		<key row="7208" value="0.000000" interpolation="3" />
 		<key row="7335" value="0.800000" interpolation="0" />
 		<key row="7336" value="0.000000" interpolation="0" />
+		<key row="7592" value="1.000000" interpolation="3" />
+		<key row="7624" value="0.000000" interpolation="0" />
 		<key row="7864" value="1.000000" interpolation="3" />
-		<key row="7880" value="0.000000" interpolation="0" />
-		<key row="8120" value="0.660000" interpolation="2" />
-		<key row="8136" value="0.000000" interpolation="0" />
+		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8312" value="0.000000" interpolation="2" />
 		<key row="8368" value="1.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="1" />
@@ -683,10 +684,10 @@ color="ffb25091">
 		<key row="6992" value="0.000000" interpolation="0" />
 		<key row="7072" value="1.000000" interpolation="1" />
 		<key row="7104" value="0.000000" interpolation="0" />
-		<key row="7336" value="0.700000" interpolation="3" />
+		<key row="7336" value="0.700000" interpolation="2" />
 		<key row="7360" value="0.000000" interpolation="0" />
-		<key row="7592" value="1.000000" interpolation="3" />
-		<key row="7624" value="0.000000" interpolation="0" />
+		<key row="8120" value="1.000000" interpolation="3" />
+		<key row="8152" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:CreditLogo" folded="0" muteKeyCount="0"
 color="ffb27474">
@@ -879,6 +880,10 @@ color="ffb25091">
 color="ffb27474">
 		<key row="5240" value="0.000000" interpolation="0" />
 		<key row="6024" value="1.000000" interpolation="0" />
+	</track>
+	<track name="sinusTunnel:OffsX" folded="0" muteKeyCount="0"
+color="ffb28050">
+		<key row="7336" value="-0.628000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
