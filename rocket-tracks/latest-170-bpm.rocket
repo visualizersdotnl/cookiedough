@@ -427,9 +427,9 @@ color="ffb25091">
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="7336" value="-0.200000" interpolation="0" />
+		<key row="7336" value="-3.000000" interpolation="1" />
 		<key row="7592" value="-0.200000" interpolation="1" />
-		<key row="7864" value="3.000000" interpolation="3" />
+		<key row="7864" value="-3.000000" interpolation="3" />
 		<key row="8120" value="0.020000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Speed" folded="0" muteKeyCount="0"
@@ -904,8 +904,8 @@ color="ff60b250">
 	</track>
 	<track name="sinusesTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="7336" value="-0.630000" interpolation="0" />
-		<key row="7864" value="0.630000" interpolation="0" />
+		<key row="7336" value="-0.330000" interpolation="0" />
+		<key row="7864" value="0.330000" interpolation="0" />
 		<key row="8120" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
