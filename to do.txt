@@ -18,10 +18,7 @@ Finished for beta.
 
 ** Part 4: spikey balls synchronized with dirt backdrop and Bypass "logo" **
 
-Finished for beta.
-
-Except:
-- Blend mode of "text" (see Facebook conversation), though it's close enough now, right?
+- Finished for beta, except blend mode of "text" (see Facebook conversation), though it's close enough now, right?
 
 ** Part 5: Stars/NoooN tunnel & free-directional tunnel **
 
@@ -37,14 +34,13 @@ Finished for beta.
 
 ** Part 8: the golden tunnel **
 
-- I have scaled the logo up so it sort of 'fills' the left side of the screen more, which I personally feel looks much better.
-- Rim not implemented: what about adding the rim to the image it should be applied to itself?
+- I discared the logo for now, it didn't really add anything.
+- Instead I used the vignette from the part before it; to me it creates a certain continuity that breaks with the "logo, graphics, logo"- pattern.
 
 ** Part 9: greetings "Laura" boxy tunnel **
 
-Foinished for beta.
+Finished for beta.
 
 ** Part 10: TPB goes to Mexico logo & TPB's 2001 - 2023 ending **
 
 Finished for beta.
-
