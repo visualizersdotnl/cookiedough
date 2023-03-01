@@ -344,13 +344,13 @@ void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const uint32_t bottom = pDest[iPixel];
-		const float bottomR = ((bottom >> 16) & 0xff);
-		const float bottomG = ((bottom >> 8) & 0xff);
-		const float bottomB = (bottom & 0xff);
+		const float bottomR = float((bottom >> 16) & 0xff);
+		const float bottomG = float((bottom >> 8) & 0xff);
+		const float bottomB = float(bottom & 0xff);
 		const uint32_t top = pSrc[iPixel];
-		const float topR = ((top >> 16) & 0xff);
-		const float topG = ((top >> 8) & 0xff);
-		const float topB = (top & 0xff);
+		const float topR = float((top >> 16) & 0xff);
+		const float topG = float((top >> 8) & 0xff);
+		const float topB = float(top & 0xff);
 		float newR = bottomR < 128.f ? (2.f * bottomR * topR / 255.f) : (255.f - 2.f * (255.f - bottomR) * (255.f - topR) / 255.f);
 		float newG = bottomG < 128.f ? (2.f * bottomG * topG / 255.f) : (255.f - 2.f * (255.f - bottomG) * (255.f - topG) / 255.f);
 		float newB = bottomB < 128.f ? (2.f * bottomB * topB / 255.f) : (255.f - 2.f * (255.f - bottomB) * (255.f - topB) / 255.f);
@@ -365,14 +365,14 @@ void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
 	{
 		const uint32_t bottom = pDest[iPixel];
-		const float bottomR = ((bottom >> 16) & 0xff);
-		const float bottomG = ((bottom >> 8) & 0xff);
-		const float bottomB = (bottom & 0xff);
+		const float bottomR = float((bottom >> 16) & 0xff);
+		const float bottomG = float((bottom >> 8) & 0xff);
+		const float bottomB = float(bottom & 0xff);
 		const uint32_t top = pSrc[iPixel];
-		const float topA = (top >> 24) / 255.f;
-		const float topR = ((top >> 16) & 0xff);
-		const float topG = ((top >> 8) & 0xff);
-		const float topB = (top & 0xff);
+		const float topA = float(top >> 24) / 255.f;
+		const float topR = float((top >> 16) & 0xff);
+		const float topG = float((top >> 8) & 0xff);
+		const float topB = float(top & 0xff);
 		float newR = bottomR < 128.f ? (2.f * bottomR * topR / 255.f) : (255.f - 2.f * (255.f - bottomR) * (255.f - topR) / 255.f);
 		float newG = bottomG < 128.f ? (2.f * bottomG * topG / 255.f) : (255.f - 2.f * (255.f - bottomG) * (255.f - topG) / 255.f);
 		float newB = bottomB < 128.f ? (2.f * bottomB * topB / 255.f) : (255.f - 2.f * (255.f - bottomB) * (255.f - topB) / 255.f);
