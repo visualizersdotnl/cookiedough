@@ -272,6 +272,8 @@ void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
+#if 0
+
 // FIXME: optimize properly
 void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels) 
 {
@@ -300,7 +302,7 @@ void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 	}
 }
 
-// FIXME: optimize properly
+// FIXME: the most ham-fisted, but always correct, version
 void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels) 
 {
 	#pragma omp parallel for schedule(static)
@@ -332,6 +334,56 @@ void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 		pDest[iPixel] = unsigned(newR)<<16 | unsigned(newG)<<8 | unsigned(newB);
 	}
 }
+
+#else
+
+// FIXME: optimize properly
+void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const uint32_t bottom = pDest[iPixel];
+		const float bottomR = ((bottom >> 16) & 0xff);
+		const float bottomG = ((bottom >> 8) & 0xff);
+		const float bottomB = (bottom & 0xff);
+		const uint32_t top = pSrc[iPixel];
+		const float topR = ((top >> 16) & 0xff);
+		const float topG = ((top >> 8) & 0xff);
+		const float topB = (top & 0xff);
+		float newR = bottomR < 128.f ? (2.f * bottomR * topR / 255.f) : (255.f - 2.f * (255.f - bottomR) * (255.f - topR) / 255.f);
+		float newG = bottomG < 128.f ? (2.f * bottomG * topG / 255.f) : (255.f - 2.f * (255.f - bottomG) * (255.f - topG) / 255.f);
+		float newB = bottomB < 128.f ? (2.f * bottomB * topB / 255.f) : (255.f - 2.f * (255.f - bottomB) * (255.f - topB) / 255.f);
+		pDest[iPixel] = ((unsigned)newR << 16) | ((unsigned)newG << 8) | (unsigned)newB;
+	}
+}
+
+// FIXME: optimize properly
+void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const uint32_t bottom = pDest[iPixel];
+		const float bottomR = ((bottom >> 16) & 0xff);
+		const float bottomG = ((bottom >> 8) & 0xff);
+		const float bottomB = (bottom & 0xff);
+		const uint32_t top = pSrc[iPixel];
+		const float topA = (top >> 24) / 255.f;
+		const float topR = ((top >> 16) & 0xff);
+		const float topG = ((top >> 8) & 0xff);
+		const float topB = (top & 0xff);
+		float newR = bottomR < 128.f ? (2.f * bottomR * topR / 255.f) : (255.f - 2.f * (255.f - bottomR) * (255.f - topR) / 255.f);
+		float newG = bottomG < 128.f ? (2.f * bottomG * topG / 255.f) : (255.f - 2.f * (255.f - bottomG) * (255.f - topG) / 255.f);
+		float newB = bottomB < 128.f ? (2.f * bottomB * topB / 255.f) : (255.f - 2.f * (255.f - bottomB) * (255.f - topB) / 255.f);
+		newR = lerpf<float>(bottomR, newR, topA);
+		newG = lerpf<float>(bottomG, newG, topA);
+		newB = lerpf<float>(bottomB, newB, topA);
+		pDest[iPixel] = ((unsigned)newR << 16) | ((unsigned)newG << 8) | (unsigned)newB;
+	}
+}
+
+#endif
 
 // FIXME: optimize properly; especially this one is crazy suitable for SIMD!
 void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
