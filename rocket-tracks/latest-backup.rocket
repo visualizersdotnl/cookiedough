@@ -1037,7 +1037,7 @@ color="ffa9b250">
 		<key row="7864" value="1.660000" interpolation="1" />
 		<key row="8120" value="1.000000" interpolation="0" />
 		<key row="8312" value="1.000000" interpolation="3" />
-		<key row="8368" value="2.220000" interpolation="0" />
+		<key row="8368" value="1.220000" interpolation="0" />
 	</track>
 	<track name="plasma:Speed" folded="0" muteKeyCount="0"
 color="ffa9b250">
