@@ -437,7 +437,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
 			MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
-			Overlay32(pDest, s_pSpikeyVignette, kOutputSize); 
+			Overlay32A(pDest, s_pSpikeyVignette, kOutputSize); 
 			break;
 
 		case 8:
