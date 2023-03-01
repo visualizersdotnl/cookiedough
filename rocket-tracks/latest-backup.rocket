@@ -1203,8 +1203,6 @@ color="ff8850b2">
 		<key row="7336" value="0.000000" interpolation="0" />
 		<key row="7592" value="1.000000" interpolation="3" />
 		<key row="7624" value="0.000000" interpolation="0" />
-		<key row="7864" value="1.000000" interpolation="3" />
-		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8312" value="0.000000" interpolation="3" />
 		<key row="8368" value="1.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="1" />
@@ -1287,6 +1285,8 @@ color="ffb25091">
 		<key row="7104" value="0.000000" interpolation="0" />
 		<key row="7336" value="0.700000" interpolation="2" />
 		<key row="7360" value="0.000000" interpolation="0" />
+		<key row="7864" value="0.500000" interpolation="3" />
+		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8120" value="1.000000" interpolation="3" />
 		<key row="8152" value="0.000000" interpolation="0" />
 		<key row="9360" value="0.000000" interpolation="3" />
