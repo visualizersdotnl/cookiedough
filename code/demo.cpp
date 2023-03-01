@@ -95,6 +95,8 @@ static uint32_t *s_pCloseSpikeVignette = nullptr;
 
 // "goldfinger" tunnel art
 static uint32_t *s_pGoldDirt = nullptr;
+// static uint32_t *s_pGoldLogo = nullptr;
+// static uint32_t *s_pGoldRim = nullptr;
 
 // shooting star art
 static uint32_t *s_pLenz = nullptr;
@@ -239,6 +241,9 @@ bool Demo_Create()
 	s_pGoldDirt = Image_Load32("assets/gold/LensDirt3_invert.png");
 	if (nullptr == s_pGoldDirt)
 		return false;
+
+//	s_pGoldLogo = Image_Load32("assets/gold/LogoTestRight_blend_Left.png");
+//	s_pGoldRim = Image_Load32("assets/gold/LogoTestLeft_Rim.png");
 
 	// shooting star
 	s_pLenz = Image_Load32("assets/shooting/Lenz.png");
@@ -466,6 +471,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 10:
 			// The 'golden tunnel' (FIXME)
 			Sinuses_Draw(pDest, timer, delta);
+			Sub32(pDest, s_pTunnelVignette2, kOutputSize); // FIXME: placeholder
 			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			break;
