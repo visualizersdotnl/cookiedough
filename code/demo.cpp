@@ -471,7 +471,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 10:
 			// The 'golden tunnel' (FIXME)
 			Sinuses_Draw(pDest, timer, delta);
-			Sub32(pDest, s_pTunnelVignette2, kOutputSize); // FIXME: placeholder
 			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			break;
