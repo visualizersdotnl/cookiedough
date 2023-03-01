@@ -26,7 +26,7 @@ color="ffa9b250">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="1749" value="0.000000" interpolation="0" />
 		<key row="1992" value="128.000000" interpolation="0" />
-		<key row="5445" value="inf" interpolation="0" />
+		<key row="5445" value="inf" interpolation="2" />
 		<key row="5664" value="inf" interpolation="0" />
 		<key row="5693" value="inf" interpolation="0" />
 		<key row="5876" value="8.000000" interpolation="1" />
