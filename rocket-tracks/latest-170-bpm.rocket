@@ -845,9 +845,10 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="8384" value="0.000000" interpolation="0" />
-		<key row="8744" value="1.000000" interpolation="0" />
-		<key row="8880" value="2.000000" interpolation="0" />
+		<key row="8744" value="2.000000" interpolation="0" />
+		<key row="8880" value="1.000000" interpolation="0" />
 		<key row="9168" value="3.000000" interpolation="0" />
+		<key row="10087" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
 color="ff60b250">
