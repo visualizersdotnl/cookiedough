@@ -12,6 +12,7 @@
 	<bookmark row="5039" />
 	<bookmark row="5534" />
 	<bookmark row="7072" />
+	<bookmark row="8352" />
 	<bookmark row="8428" />
 	<bookmark row="9984" />
 	<bookmark row="10018" />
@@ -1429,8 +1430,8 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="8384" value="0.000000" interpolation="0" />
-		<key row="8744" value="1.000000" interpolation="0" />
-		<key row="8880" value="2.000000" interpolation="0" />
+		<key row="8744" value="2.000000" interpolation="0" />
+		<key row="8880" value="1.000000" interpolation="0" />
 		<key row="9168" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
