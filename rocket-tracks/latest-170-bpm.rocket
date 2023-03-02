@@ -422,14 +422,14 @@ color="ffb25091">
 		<key row="7336" value="6.000000" interpolation="0" />
 		<key row="7592" value="3.000000" interpolation="0" />
 		<key row="7864" value="16.000000" interpolation="0" />
-		<key row="8120" value="48.000000" interpolation="0" />
+		<key row="8120" value="32.000000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Roll" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="7336" value="-3.000000" interpolation="3" />
 		<key row="7592" value="-0.660000" interpolation="3" />
 		<key row="7864" value="-2.500000" interpolation="3" />
-		<key row="8120" value="-1.000000" interpolation="0" />
+		<key row="8120" value="-0.900000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:Speed" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -437,7 +437,7 @@ color="ffb28050">
 		<key row="7336" value="-3.140000" interpolation="0" />
 		<key row="7592" value="3.140000" interpolation="0" />
 		<key row="7864" value="3.660000" interpolation="0" />
-		<key row="8120" value="2.440000" interpolation="0" />
+		<key row="8120" value="1.880000" interpolation="0" />
 	</track>
 	<track name="sinusesTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -449,10 +449,10 @@ color="ff4fb292">
 color="ffa9b250">
 		<key row="0" value="2.000000" interpolation="0" />
 		<key row="7336" value="2.130000" interpolation="0" />
-		<key row="7592" value="2.130000" interpolation="1" />
+		<key row="7592" value="2.130000" interpolation="3" />
 		<key row="7864" value="1.880000" interpolation="3" />
-		<key row="8120" value="1.000000" interpolation="0" />
-		<key row="8312" value="1.000000" interpolation="3" />
+		<key row="8120" value="1.440000" interpolation="0" />
+		<key row="8312" value="1.440000" interpolation="3" />
 		<key row="8368" value="2.220000" interpolation="0" />
 	</track>
 	<track name="plasma:Speed" folded="0" muteKeyCount="0"
@@ -845,9 +845,10 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="8384" value="0.000000" interpolation="0" />
-		<key row="8744" value="1.000000" interpolation="0" />
-		<key row="8880" value="2.000000" interpolation="0" />
+		<key row="8744" value="2.000000" interpolation="0" />
+		<key row="8880" value="1.000000" interpolation="0" />
 		<key row="9168" value="3.000000" interpolation="0" />
+		<key row="10087" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
 color="ff60b250">

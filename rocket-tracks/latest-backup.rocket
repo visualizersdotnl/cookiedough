@@ -12,6 +12,7 @@
 	<bookmark row="5039" />
 	<bookmark row="5534" />
 	<bookmark row="7072" />
+	<bookmark row="8352" />
 	<bookmark row="8428" />
 	<bookmark row="9984" />
 	<bookmark row="10018" />
@@ -1037,7 +1038,7 @@ color="ffa9b250">
 		<key row="7864" value="1.660000" interpolation="1" />
 		<key row="8120" value="1.000000" interpolation="0" />
 		<key row="8312" value="1.000000" interpolation="3" />
-		<key row="8368" value="2.220000" interpolation="0" />
+		<key row="8368" value="1.220000" interpolation="0" />
 	</track>
 	<track name="plasma:Speed" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -1202,8 +1203,6 @@ color="ff8850b2">
 		<key row="7336" value="0.000000" interpolation="0" />
 		<key row="7592" value="1.000000" interpolation="3" />
 		<key row="7624" value="0.000000" interpolation="0" />
-		<key row="7864" value="1.000000" interpolation="3" />
-		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8312" value="0.000000" interpolation="3" />
 		<key row="8368" value="1.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="1" />
@@ -1286,6 +1285,8 @@ color="ffb25091">
 		<key row="7104" value="0.000000" interpolation="0" />
 		<key row="7336" value="0.700000" interpolation="2" />
 		<key row="7360" value="0.000000" interpolation="0" />
+		<key row="7864" value="0.500000" interpolation="3" />
+		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8120" value="1.000000" interpolation="3" />
 		<key row="8152" value="0.000000" interpolation="0" />
 		<key row="9360" value="0.000000" interpolation="3" />
@@ -1429,8 +1430,8 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="8384" value="0.000000" interpolation="0" />
-		<key row="8744" value="1.000000" interpolation="0" />
-		<key row="8880" value="2.000000" interpolation="0" />
+		<key row="8744" value="2.000000" interpolation="0" />
+		<key row="8880" value="1.000000" interpolation="0" />
 		<key row="9168" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:Cousteau" folded="0" muteKeyCount="0"
