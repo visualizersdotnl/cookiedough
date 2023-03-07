@@ -36,6 +36,7 @@ SyncTrack trackScapeHUD, trackScapeRevision;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
+SyncTrack trackCousteauHorzBlur;
 
 SyncTrack trackShooting;
 SyncTrack trackShootingX, trackShootingY, trackShootingAlpha;
@@ -138,6 +139,7 @@ bool Demo_Create()
 	trackBlurTPB = Rocket::AddTrack("demo:BlurTPB");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 	trackCousteau = Rocket::AddTrack("demo:Cousteau");
+	trackCousteauHorzBlur = Rocket::AddTrack("demo:CousteauHorzBlur");
 
 	trackShooting = Rocket::AddTrack("shootingStar:Enabled");
 	trackShootingX = Rocket::AddTrack("shootingStar:X");
@@ -427,7 +429,18 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0 == Rocket::geti(trackCousteau))
 				{
 					Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
-					MixSrc32(pDest, s_pNautilusCousteau1, kOutputSize);
+
+					// just so we can add a little shakin'
+					uint32_t *pCousteau = s_pNautilusCousteau1;
+					float hBlur = Rocket::getf(trackCousteauHorzBlur);
+					if (0.f != hBlur)
+					{
+						hBlur = BoxBlurScale(hBlur);
+						HorizontalBoxBlur32(g_renderTarget[0], pCousteau, kResX, kResY, hBlur);
+						pCousteau = g_renderTarget[0];
+					}
+
+					MixSrc32(pDest, pCousteau, kOutputSize);
 				}
 				else
 					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
