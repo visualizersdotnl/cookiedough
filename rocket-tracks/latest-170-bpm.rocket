@@ -24,10 +24,107 @@ beatsPerMin="125">
 	<track name="twister:Speed" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="0" value="0.000000" interpolation="0" />
+		<key row="986" value="0.000000" interpolation="0" />
+		<key row="1011" value="0.000000" interpolation="0" />
 		<key row="1749" value="0.000000" interpolation="0" />
 		<key row="1992" value="128.000000" interpolation="0" />
+		<key row="3491" value="128.000000" interpolation="0" />
+		<key row="3514" value="128.000000" interpolation="0" />
+		<key row="3516" value="128.000000" interpolation="0" />
+		<key row="3518" value="128.000000" interpolation="0" />
+		<key row="3522" value="128.000000" interpolation="0" />
+		<key row="3526" value="128.000000" interpolation="0" />
+		<key row="3530" value="128.000000" interpolation="0" />
+		<key row="3533" value="128.000000" interpolation="0" />
+		<key row="3536" value="128.000000" interpolation="0" />
+		<key row="3537" value="128.000000" interpolation="0" />
+		<key row="3541" value="128.000000" interpolation="0" />
+		<key row="3543" value="128.000000" interpolation="0" />
+		<key row="3546" value="128.000000" interpolation="0" />
+		<key row="3547" value="128.000000" interpolation="0" />
+		<key row="3550" value="128.000000" interpolation="0" />
+		<key row="3552" value="128.000000" interpolation="0" />
+		<key row="3555" value="128.000000" interpolation="0" />
+		<key row="3556" value="128.000000" interpolation="0" />
+		<key row="3560" value="128.000000" interpolation="0" />
+		<key row="3563" value="128.000000" interpolation="0" />
+		<key row="3564" value="128.000000" interpolation="0" />
+		<key row="3566" value="128.000000" interpolation="0" />
+		<key row="3570" value="128.000000" interpolation="0" />
+		<key row="3573" value="128.000000" interpolation="0" />
+		<key row="3613" value="128.000000" interpolation="0" />
+		<key row="3627" value="128.000000" interpolation="0" />
+		<key row="3701" value="128.000000" interpolation="0" />
 		<key row="5876" value="8.000000" interpolation="1" />
 		<key row="6280" value="8.000000" interpolation="0" />
+		<key row="8288" value="8.000000" interpolation="0" />
+		<key row="8310" value="8.000000" interpolation="0" />
+		<key row="8315" value="8.000000" interpolation="0" />
+		<key row="8317" value="8.000000" interpolation="0" />
+		<key row="8320" value="8.000000" interpolation="0" />
+		<key row="8323" value="8.000000" interpolation="0" />
+		<key row="8324" value="8.000000" interpolation="0" />
+		<key row="8327" value="8.000000" interpolation="0" />
+		<key row="8328" value="8.000000" interpolation="0" />
+		<key row="8331" value="8.000000" interpolation="0" />
+		<key row="8335" value="8.000000" interpolation="0" />
+		<key row="8337" value="8.000000" interpolation="0" />
+		<key row="8367" value="8.000000" interpolation="0" />
+		<key row="8391" value="8.000000" interpolation="0" />
+		<key row="8396" value="8.000000" interpolation="0" />
+		<key row="8398" value="8.000000" interpolation="0" />
+		<key row="8401" value="8.000000" interpolation="0" />
+		<key row="8402" value="8.000000" interpolation="0" />
+		<key row="8406" value="8.000000" interpolation="0" />
+		<key row="8408" value="8.000000" interpolation="0" />
+		<key row="8411" value="8.000000" interpolation="0" />
+		<key row="8412" value="8.000000" interpolation="0" />
+		<key row="8416" value="8.000000" interpolation="0" />
+		<key row="8577" value="8.000000" interpolation="0" />
+		<key row="8600" value="8.000000" interpolation="0" />
+		<key row="8603" value="8.000000" interpolation="0" />
+		<key row="8604" value="8.000000" interpolation="0" />
+		<key row="8607" value="8.000000" interpolation="0" />
+		<key row="8609" value="8.000000" interpolation="0" />
+		<key row="8613" value="8.000000" interpolation="0" />
+		<key row="8614" value="8.000000" interpolation="0" />
+		<key row="8616" value="8.000000" interpolation="0" />
+		<key row="8617" value="8.000000" interpolation="0" />
+		<key row="8618" value="8.000000" interpolation="0" />
+		<key row="8623" value="8.000000" interpolation="0" />
+		<key row="8624" value="8.000000" interpolation="0" />
+		<key row="8626" value="8.000000" interpolation="0" />
+		<key row="8631" value="8.000000" interpolation="0" />
+		<key row="8633" value="8.000000" interpolation="0" />
+		<key row="8637" value="8.000000" interpolation="0" />
+		<key row="8638" value="8.000000" interpolation="0" />
+		<key row="8640" value="8.000000" interpolation="0" />
+		<key row="8643" value="8.000000" interpolation="0" />
+		<key row="8644" value="8.000000" interpolation="0" />
+		<key row="8645" value="8.000000" interpolation="0" />
+		<key row="8646" value="8.000000" interpolation="0" />
+		<key row="8648" value="8.000000" interpolation="0" />
+		<key row="8651" value="8.000000" interpolation="0" />
+		<key row="8652" value="8.000000" interpolation="0" />
+		<key row="8654" value="8.000000" interpolation="0" />
+		<key row="8655" value="8.000000" interpolation="0" />
+		<key row="8659" value="8.000000" interpolation="0" />
+		<key row="8663" value="8.000000" interpolation="0" />
+		<key row="8665" value="8.000000" interpolation="0" />
+		<key row="8669" value="8.000000" interpolation="0" />
+		<key row="8673" value="8.000000" interpolation="0" />
+		<key row="8676" value="8.000000" interpolation="0" />
+		<key row="8677" value="8.000000" interpolation="0" />
+		<key row="8680" value="8.000000" interpolation="0" />
+		<key row="8682" value="8.000000" interpolation="0" />
+		<key row="8686" value="8.000000" interpolation="0" />
+		<key row="8690" value="8.000000" interpolation="0" />
+		<key row="8692" value="8.000000" interpolation="0" />
+		<key row="8693" value="8.000000" interpolation="0" />
+		<key row="8694" value="8.000000" interpolation="0" />
+		<key row="8698" value="8.000000" interpolation="0" />
+		<key row="10086" value="8.000000" interpolation="0" />
+		<key row="10087" value="8.000000" interpolation="0" />
 	</track>
 	<track name="twister::ShearSpeed" folded="0" muteKeyCount="0"
 color="ff60b250">
@@ -108,6 +205,7 @@ color="ff4f71b2">
 		<key row="1936" value="0.000000" interpolation="3" />
 		<key row="2095" value="255.000000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
+		<key row="4088" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:HasBeams" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -605,7 +703,7 @@ color="ff8850b2">
 		<key row="5760" value="1.000000" interpolation="3" />
 		<key row="5776" value="0.000000" interpolation="0" />
 		<key row="6160" value="0.000000" interpolation="3" />
-		<key row="6287" value="0.440000" interpolation="0" />
+		<key row="6287" value="0.660000" interpolation="0" />
 		<key row="6288" value="0.000000" interpolation="0" />
 		<key row="6424" value="0.000000" interpolation="3" />
 		<key row="6542" value="1.000000" interpolation="1" />
@@ -952,6 +1050,20 @@ color="ffb27474">
 	<track name="sinusTunnel:OffsX" folded="0" muteKeyCount="0"
 color="ffb28050">
 		<key row="0" value="0.000000" interpolation="0" />
+	</track>
+	<track name="demo:CousteauHorzBlur" folded="0" muteKeyCount="0"
+color="ff60b250">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="5376" value="6.280000" interpolation="3" />
+		<key row="5384" value="0.000000" interpolation="0" />
+		<key row="5504" value="6.280000" interpolation="3" />
+		<key row="5520" value="0.000000" interpolation="0" />
+		<key row="5632" value="6.280000" interpolation="3" />
+		<key row="5656" value="0.000000" interpolation="0" />
+		<key row="5768" value="6.280000" interpolation="3" />
+		<key row="5792" value="0.000000" interpolation="0" />
+		<key row="5896" value="6.280000" interpolation="3" />
+		<key row="5920" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
