@@ -34,5 +34,7 @@ advisory board / additional:
   + raimo (boy wonder)
   + nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg); rest in peace soldier!
 
+  creative use has been made of exactly 2 texture maps, and they've been liars about their so-called lack of acceleration!
+
   how open are we? very -> repository: https://www.github.com/visualizersdotnl/cookiedough (MIT license)
  
