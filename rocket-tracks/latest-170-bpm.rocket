@@ -736,7 +736,7 @@ color="ff8850b2">
 		<key row="9895" value="1.000000" interpolation="3" />
 		<key row="9904" value="0.000000" interpolation="0" />
 		<key row="10000" value="0.000000" interpolation="1" />
-		<key row="10087" value="0.500000" interpolation="0" />
+		<key row="10087" value="1.000000" interpolation="0" />
 		<key row="10176" value="1.000000" interpolation="0" />
 	</track>
 	<track name="demo:FadeToWhite" folded="0" muteKeyCount="0"
