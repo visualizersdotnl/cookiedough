@@ -880,8 +880,10 @@ color="ff60b250">
 		<key row="2888" value="8.000000" interpolation="3" />
 		<key row="2896" value="4.000000" interpolation="1" />
 		<key row="2904" value="0.000000" interpolation="0" />
-		<key row="3008" value="8.000000" interpolation="2" />
+		<key row="3008" value="12.000000" interpolation="2" />
 		<key row="3024" value="0.000000" interpolation="0" />
+		<key row="3032" value="6.000000" interpolation="2" />
+		<key row="3040" value="0.000000" interpolation="0" />
 		<key row="3778" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:DiscoGuys" folded="0" muteKeyCount="0"
