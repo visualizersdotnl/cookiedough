@@ -237,6 +237,7 @@ color="ffb27474">
 		<key row="1832" value="-3.140000" interpolation="0" />
 		<key row="1936" value="2.000000" interpolation="0" />
 		<key row="2016" value="-2.000000" interpolation="0" />
+		<key row="10087" value="2.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAttenuation" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -640,7 +641,7 @@ color="ff4f71b2">
 		<key row="6288" value="7.000000" interpolation="0" />
 		<key row="7336" value="10.000000" interpolation="0" />
 		<key row="8384" value="11.000000" interpolation="0" />
-		<key row="9408" value="12.000000" interpolation="0" />
+		<key row="9407" value="12.000000" interpolation="0" />
 		<key row="9895" value="13.000000" interpolation="0" />
 	</track>
 	<track name="demo:FadeToBlack" folded="0" muteKeyCount="0"
@@ -697,11 +698,17 @@ color="ff8850b2">
 		<key row="4936" value="0.000000" interpolation="3" />
 		<key row="4976" value="1.000000" interpolation="3" />
 		<key row="5000" value="0.000000" interpolation="0" />
+		<key row="5376" value="0.330000" interpolation="3" />
+		<key row="5384" value="0.000000" interpolation="0" />
 		<key row="5496" value="0.000000" interpolation="3" />
 		<key row="5504" value="0.900000" interpolation="3" />
 		<key row="5520" value="0.000000" interpolation="0" />
+		<key row="5632" value="0.330000" interpolation="3" />
+		<key row="5656" value="0.000000" interpolation="0" />
 		<key row="5760" value="1.000000" interpolation="3" />
 		<key row="5776" value="0.000000" interpolation="0" />
+		<key row="5896" value="0.330000" interpolation="3" />
+		<key row="5920" value="0.000000" interpolation="0" />
 		<key row="6160" value="0.000000" interpolation="3" />
 		<key row="6287" value="0.660000" interpolation="0" />
 		<key row="6288" value="0.000000" interpolation="0" />
@@ -723,7 +730,7 @@ color="ff8850b2">
 		<key row="8808" value="0.000000" interpolation="2" />
 		<key row="8880" value="1.000000" interpolation="2" />
 		<key row="8904" value="0.000000" interpolation="0" />
-		<key row="9407" value="1.000000" interpolation="3" />
+		<key row="9407" value="0.500000" interpolation="3" />
 		<key row="9424" value="0.000000" interpolation="0" />
 		<key row="9744" value="0.000000" interpolation="3" />
 		<key row="9895" value="1.000000" interpolation="3" />
@@ -1054,11 +1061,11 @@ color="ffb28050">
 	<track name="demo:CousteauHorzBlur" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="5376" value="6.280000" interpolation="3" />
+		<key row="5376" value="6.280000" interpolation="2" />
 		<key row="5384" value="0.000000" interpolation="0" />
-		<key row="5504" value="6.280000" interpolation="3" />
+		<key row="5504" value="6.280000" interpolation="2" />
 		<key row="5520" value="0.000000" interpolation="0" />
-		<key row="5632" value="6.280000" interpolation="3" />
+		<key row="5632" value="6.280000" interpolation="2" />
 		<key row="5656" value="0.000000" interpolation="0" />
 		<key row="5768" value="6.280000" interpolation="3" />
 		<key row="5792" value="0.000000" interpolation="0" />
