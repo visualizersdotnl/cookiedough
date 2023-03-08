@@ -937,7 +937,7 @@ color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9536" value="2.390000" interpolation="1" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="32.000000" interpolation="0" />
+		<key row="9895" value="16.000000" interpolation="0" />
 		<key row="10081" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
