@@ -229,8 +229,8 @@ bool Demo_Create()
 			return false;
 
 	// and in with the melancholy
-	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-alternative.png");
-//	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
+//	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-alternative.png");
+	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
 	if (nullptr == s_pAreWeDone)
 		return false;
 
