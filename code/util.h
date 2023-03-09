@@ -52,6 +52,7 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 #include "q3-rsqrt.h"
 #include "random.h"
 #include "fast-cosine.h"
+#include "synth-math-easings.h"
 
 // memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*

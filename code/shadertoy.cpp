@@ -38,6 +38,7 @@ SyncTrack trackNautilusRoll;
 SyncTrack trackNautilusBlur;
 SyncTrack trackNautilusHue;
 SyncTrack trackNautilusSpeed;
+SyncTrack trackNautilusDesaturation;
 
 // Spike (close) sync.:
 SyncTrack trackSpikeSpeed;
@@ -52,6 +53,8 @@ SyncTrack trackDistSpikeY;
 SyncTrack trackDistSpikeZ;
 SyncTrack trackCloseSpikeX;
 SyncTrack trackCloseSpikeY;
+SyncTrack trackCloseSpikeZ;
+SyncTrack trackCloseSpikeZScale;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -95,6 +98,7 @@ bool Shadertoy_Create()
 	trackNautilusBlur = Rocket::AddTrack("nautilus:Blur");
 	trackNautilusHue = Rocket::AddTrack("nautilus:Hue");
 	trackNautilusSpeed = Rocket::AddTrack("nautilus:Speed");
+	trackNautilusDesaturation = Rocket::AddTrack("nautilus:Desat");
 
 	// Spikes:
 	trackSpikeSpeed = Rocket::AddTrack("spike:Speed");
@@ -109,6 +113,8 @@ bool Shadertoy_Create()
 	trackDistSpikeZ = Rocket::AddTrack("distSpike:zOffs");
 	trackCloseSpikeX = Rocket::AddTrack("closeSpike:xOffs");
 	trackCloseSpikeY = Rocket::AddTrack("closeSpike:yOffs");
+	trackCloseSpikeZ = Rocket::AddTrack("closeSpike:zOffs");
+	trackCloseSpikeZScale = Rocket::AddTrack("closeSpike:zOffsScale");
 
 	// Sinuses:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
@@ -256,6 +262,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 	const float roll = Rocket::getf(trackNautilusRoll);
 	const float hue = Rocket::getf(trackNautilusHue);
 	const float speed = Rocket::getf(trackNautilusSpeed);
+	const float desaturation = Rocket::getf(trackNautilusDesaturation);
 
 	time = time*speed;
 
@@ -268,6 +275,10 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 		.1f-lutcosf(hue/3.f)/19.f, 
 		.1f, 
 		.1f+lutcosf(hue/14.f)/8.f);
+
+	const __m128 vecDiffColor = Shadertoy::Desaturate(colorization, desaturation);
+	Vector3 diffColor;
+	diffColor.vSSE = vecDiffColor;
 
 	const float cosHitOffs = lutcosf(time*0.314f*0.5f);
 	const float funkCos = lutcosf(time*kGoldenRatio*0.1f);
@@ -328,7 +339,7 @@ static void RenderNautilusMap_2x2(uint32_t *pDest, float time)
 				diffuse *= yMod*yMod*yMod;
 
 				Vector3 color(diffuse);
-				color += colorization*(1.56f*total + specular);
+				color += diffColor*(1.56f*total + specular);
 				color += specular*kGoldenRatio*0.2f;
 
 				colors[iColor] = Shadertoy::GammaAdj(color, 1.44f);
@@ -388,6 +399,9 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float gamma = Rocket::getf(trackSpikeGamma);
 	const float xOffs = Rocket::getf(trackCloseSpikeX);
 	const float yOffs = Rocket::getf(trackCloseSpikeY);
+	const float zOffs = Rocket::getf(trackCloseSpikeZ);
+	const float zOffsScale = Rocket::getf(trackCloseSpikeZScale);
+	const float zOffsFinal = easeInOutElasticf(zOffs)*zOffsScale;
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
@@ -407,7 +421,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
 				Vector3 origin(0.2f, 0.f, -2.23f); // FIXME: nice parameters too!
-				Vector3 direction((UV.x+xOffs)*kAspect, UV.y + yOffs, 1.f); 
+				Vector3 direction((UV.x+xOffs)*kAspect, UV.y + yOffs, 1.f + zOffsFinal); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 
