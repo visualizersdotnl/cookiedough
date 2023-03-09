@@ -372,8 +372,8 @@ void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 
 #else
 
-// FIXME: optimize properly
-void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+/*
+static void Overlay32_Slow_Float(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
@@ -392,9 +392,35 @@ void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 		pDest[iPixel] = ((unsigned)newR << 16) | ((unsigned)newG << 8) | (unsigned)newB;
 	}
 }
+*/
 
-// FIXME: optimize properly
-void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+// FIXME: next step would be SIMD, but why bother?
+void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const uint32_t bottom = pDest[iPixel];
+		const unsigned bottomR = (bottom >> 16) & 0xff;
+		const unsigned bottomG = (bottom >> 8) & 0xff;
+		const unsigned bottomB = bottom & 0xff;
+
+		const uint32_t top = pSrc[iPixel];
+		const unsigned topR = (top >> 16) & 0xff;
+		const unsigned topG = (top >> 8) & 0xff;
+		const unsigned topB = top & 0xff;
+
+		// FIXME: use lambda!
+		const unsigned iNewR = bottomR < 128 ? (2 * bottomR * topR / 255) : (255 - 2 * (255 - bottomR) * (255 - topR) / 255);
+		const unsigned iNewG = bottomG < 128 ? (2 * bottomG * topG / 255) : (255 - 2 * (255 - bottomG) * (255 - topG) / 255);
+		const unsigned iNewB = bottomB < 128 ? (2 * bottomB * topB / 255) : (255 - 2 * (255 - bottomB) * (255 - topB) / 255);
+
+		pDest[iPixel] = (iNewR<<16)|(iNewG<<8)|iNewB;
+	}
+}
+
+/*
+static void Overlay32A_Slow_Float(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
@@ -415,6 +441,38 @@ void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 		newG = lerpf<float>(bottomG, newG, topA);
 		newB = lerpf<float>(bottomB, newB, topA);
 		pDest[iPixel] = ((unsigned)newR << 16) | ((unsigned)newG << 8) | (unsigned)newB;
+	}
+}
+*/
+
+// FIXME: next step would be SIMD, but why bother?
+void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+{
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+		const uint32_t bottom = pDest[iPixel];
+		const unsigned bottomR = (bottom >> 16) & 0xff;
+		const unsigned bottomG = (bottom >> 8) & 0xff;
+		const unsigned bottomB = bottom & 0xff;
+
+		const uint32_t top = pSrc[iPixel];
+		const unsigned topA = top >> 24;
+		const unsigned topR = (top >> 16) & 0xff;
+		const unsigned topG = (top >> 8) & 0xff;
+		const unsigned topB = top & 0xff;
+
+		// FIXME: use lambda!
+		const unsigned iNewR = bottomR < 128 ? (2 * bottomR * topR / 255) : (255 - 2 * (255 - bottomR) * (255 - topR) / 255);
+		const unsigned iNewG = bottomG < 128 ? (2 * bottomG * topG / 255) : (255 - 2 * (255 - bottomG) * (255 - topG) / 255);
+		const unsigned iNewB = bottomB < 128 ? (2 * bottomB * topB / 255) : (255 - 2 * (255 - bottomB) * (255 - topB) / 255);
+
+		const auto _A1 = topA;
+		const unsigned R = bottomR+(((iNewR-bottomR)*_A1)>>8);
+		const unsigned G = bottomG+(((iNewG-bottomG)*_A1)>>8);
+		const unsigned B = bottomB+(((iNewB-bottomB)*_A1)>>8);
+
+		pDest[iPixel] = (R<<16)|(G<<8)|B;
 	}
 }
 
@@ -454,7 +512,7 @@ void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
     }
 }	
 
-// FIXME: optimize properly
+// FIXME: optimize properly, though this one is really low priority
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed)
 {
 //	const float halfResX = xRes/2.f;
@@ -477,6 +535,7 @@ void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 //			const float distance = 1.f-sqrtf(iXC*iXC + iYC*iYC) / maxDist;
 			constexpr float distance = 1.f;
 			
+			// FIXME: start by offering fixed point LUT sine & cosine
             const float dX = lutsinf(iY*speed)*strength*distance;
             const float dY = lutcosf(iX*speed)*strength*distance;
             float tX = iX + dX;
