@@ -482,8 +482,8 @@
 		<track name="sinusesTunnel:Specular">
 			<key row="7336" value="48" interpolation="0"/>
 			<key row="7592" value="36" interpolation="0"/>
-			<key row="7864" value="16" interpolation="0"/>
-			<key row="8120" value="6" interpolation="0"/>
+			<key row="7864" value="48" interpolation="0"/>
+			<key row="8120" value="64" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Roll">
 			<key row="7336" value="-3" interpolation="3"/>
@@ -508,7 +508,7 @@
 			<key row="7336" value="1" interpolation="0"/>
 			<key row="7592" value="1" interpolation="3"/>
 			<key row="7864" value="1" interpolation="0"/>
-			<key row="8120" value="1" interpolation="0"/>
+			<key row="8120" value="1.5" interpolation="0"/>
 		</track>
 		<track name="plasma:Speed">
 			<key row="2096" value="1.33" interpolation="0"/>
@@ -629,7 +629,7 @@
 			<key row="4055" value="0" interpolation="0"/>
 			<key row="4056" value="0.5" interpolation="3"/>
 			<key row="4096" value="0" interpolation="0"/>
-			<key row="4184" value="0.5" interpolation="2"/>
+			<key row="4184" value="0.33" interpolation="2"/>
 			<key row="4312" value="0" interpolation="0"/>
 			<key row="4584" value="1" interpolation="2"/>
 			<key row="4600" value="0" interpolation="0"/>
@@ -726,8 +726,9 @@
 			<key row="3768" value="0" interpolation="2"/>
 			<key row="3784" value="0.6" interpolation="3"/>
 			<key row="3816" value="0" interpolation="0"/>
-			<key row="3912" value="1" interpolation="3"/>
-			<key row="3920" value="0" interpolation="0"/>
+			<key row="3906" value="0" interpolation="3"/>
+			<key row="3910" value="0.66" interpolation="2"/>
+			<key row="3936" value="0" interpolation="0"/>
 			<key row="5192" value="0" interpolation="3"/>
 			<key row="5239" value="1" interpolation="0"/>
 			<key row="5240" value="0" interpolation="0"/>
@@ -879,7 +880,7 @@
 			<key row="8384" value="0" interpolation="0"/>
 			<key row="8744" value="2" interpolation="0"/>
 			<key row="8880" value="1" interpolation="0"/>
-			<key row="9176" value="3" interpolation="0"/>
+			<key row="9178" value="3" interpolation="0"/>
 		</track>
 		<track name="demo:Cousteau">
 			<key row="0" value="0" interpolation="0"/>
