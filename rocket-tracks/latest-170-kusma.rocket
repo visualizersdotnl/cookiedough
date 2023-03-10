@@ -459,7 +459,7 @@
 		<track name="closeSpike:xOffs">
 			<key row="6288" value="0.314" interpolation="0"/>
 			<key row="6680" value="-0.02" interpolation="0"/>
-			<key row="6808" value="0.314" interpolation="2"/>
+			<key row="6808" value="-0.1" interpolation="1"/>
 			<key row="6824" value="0" interpolation="0"/>
 			<key row="7072" value="-0.6" interpolation="0"/>
 		</track>
@@ -467,8 +467,8 @@
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="-1" interpolation="0"/>
 			<key row="6680" value="0.1" interpolation="0"/>
-			<key row="6808" value="-0.77" interpolation="3"/>
-			<key row="6824" value="-0.05" interpolation="2"/>
+			<key row="6808" value="0.22" interpolation="2"/>
+			<key row="6824" value="-0.13" interpolation="2"/>
 			<key row="7071" value="0" interpolation="0"/>
 			<key row="7072" value="-0.6" interpolation="0"/>
 		</track>
@@ -480,10 +480,10 @@
 			<key row="6288" value="2" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
-			<key row="7336" value="6" interpolation="0"/>
-			<key row="7592" value="3" interpolation="0"/>
+			<key row="7336" value="48" interpolation="0"/>
+			<key row="7592" value="36" interpolation="0"/>
 			<key row="7864" value="16" interpolation="0"/>
-			<key row="8120" value="32" interpolation="0"/>
+			<key row="8120" value="6" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Roll">
 			<key row="7336" value="-3" interpolation="3"/>
@@ -495,22 +495,20 @@
 			<key row="1472" value="-3.14" interpolation="0"/>
 			<key row="7336" value="-3.14" interpolation="0"/>
 			<key row="7592" value="3.14" interpolation="0"/>
-			<key row="7864" value="3.66" interpolation="0"/>
-			<key row="8120" value="1.88" interpolation="0"/>
+			<key row="7864" value="-3.14" interpolation="0"/>
+			<key row="8120" value="3.14" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:OffsX">
 			<key row="7336" value="-0.33" interpolation="0"/>
-			<key row="7864" value="0.66" interpolation="0"/>
+			<key row="7864" value="0.33" interpolation="0"/>
 			<key row="8120" value="0" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Gamma">
 			<key row="0" value="2" interpolation="0"/>
-			<key row="7336" value="2" interpolation="0"/>
-			<key row="7592" value="1.8" interpolation="3"/>
-			<key row="7864" value="1.6" interpolation="3"/>
-			<key row="8120" value="1.3" interpolation="0"/>
-			<key row="8312" value="1.44" interpolation="3"/>
-			<key row="8368" value="2.22" interpolation="0"/>
+			<key row="7336" value="1" interpolation="0"/>
+			<key row="7592" value="1" interpolation="3"/>
+			<key row="7864" value="1" interpolation="0"/>
+			<key row="8120" value="1" interpolation="0"/>
 		</track>
 		<track name="plasma:Speed">
 			<key row="2096" value="1.33" interpolation="0"/>
@@ -728,7 +726,7 @@
 			<key row="3768" value="0" interpolation="2"/>
 			<key row="3784" value="0.6" interpolation="3"/>
 			<key row="3816" value="0" interpolation="0"/>
-			<key row="3904" value="1" interpolation="3"/>
+			<key row="3912" value="1" interpolation="3"/>
 			<key row="3920" value="0" interpolation="0"/>
 			<key row="5192" value="0" interpolation="3"/>
 			<key row="5239" value="1" interpolation="0"/>
@@ -868,7 +866,6 @@
 			<key row="9536" value="2.39" interpolation="1"/>
 			<key row="9760" value="0" interpolation="2"/>
 			<key row="9895" value="16" interpolation="0"/>
-			<key row="10081" value="0" interpolation="0"/>
 		</track>
 		<track name="demo:BlurTPB">
 			<key row="0" value="0" interpolation="0"/>
@@ -882,8 +879,7 @@
 			<key row="8384" value="0" interpolation="0"/>
 			<key row="8744" value="2" interpolation="0"/>
 			<key row="8880" value="1" interpolation="0"/>
-			<key row="9168" value="3" interpolation="0"/>
-			<key row="10087" value="3" interpolation="0"/>
+			<key row="9176" value="3" interpolation="0"/>
 		</track>
 		<track name="demo:Cousteau">
 			<key row="0" value="0" interpolation="0"/>
