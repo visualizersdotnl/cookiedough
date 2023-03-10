@@ -775,7 +775,11 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const float gamma = Rocket::getf(trackSinusesGamma);
 	constexpr float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
 
-	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
+	// teal like color (preferred)
+	const Vector3 diffColor(0.623529f, 0.5686274f, 0.f);
+
+	// gold-ish color
+//	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
 
 	const Vector3 origin = fSinPath(time*speed);
 
@@ -792,7 +796,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 			{
 				auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f); 
 
-				Vector3 direction((UV.x+offsX)*kAspect, UV.y, 0.3f); 
+				Vector3 direction((UV.x+offsX)*kAspect, UV.y, 0.314f); 
 				Shadertoy::rotZ(roll, direction.x, direction.y);
 				Shadertoy::vFastNorm3(direction);
 

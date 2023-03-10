@@ -36,6 +36,3 @@ advisory board / additional:
 
   creative use has been made of exactly 2 texture maps, and they've been liars about their so-called lack of acceleration!
   other textures come from previous The Pimp Brigade productions and are entirely ours to use
-
-  how open are we? very -> repository: https://www.github.com/visualizersdotnl/cookiedough (MIT license)
- 
