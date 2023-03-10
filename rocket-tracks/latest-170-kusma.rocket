@@ -459,14 +459,17 @@
 		<track name="closeSpike:xOffs">
 			<key row="6288" value="0.314" interpolation="0"/>
 			<key row="6680" value="-0.02" interpolation="0"/>
-			<key row="6808" value="0" interpolation="0"/>
+			<key row="6808" value="0.314" interpolation="2"/>
+			<key row="6824" value="0" interpolation="0"/>
 			<key row="7072" value="-0.6" interpolation="0"/>
 		</track>
 		<track name="closeSpike:yOffs">
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="-1" interpolation="0"/>
 			<key row="6680" value="0.1" interpolation="0"/>
-			<key row="6808" value="0" interpolation="0"/>
+			<key row="6808" value="-0.77" interpolation="3"/>
+			<key row="6824" value="-0.05" interpolation="2"/>
+			<key row="7071" value="0" interpolation="0"/>
 			<key row="7072" value="-0.6" interpolation="0"/>
 		</track>
 		<track name="closeSpike:zOffs">
