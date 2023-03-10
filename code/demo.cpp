@@ -13,6 +13,7 @@
 #include "polar.h"
 #include "fx-blitter.h"
 #include "satori-lumablur.h"
+#include "lens.h"
 
 // effects
 #include "ball.h"
@@ -483,7 +484,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 10:
-			// The 'golden tunnel' (FIXME)
+			// The 'golden tunnel' (which is no longer coloured like that)
 			Sinuses_Draw(pDest, timer, delta);
 			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
