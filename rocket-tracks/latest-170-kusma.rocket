@@ -152,7 +152,7 @@
 		<track name="ball:Radius">
 			<key row="1048" value="1280" interpolation="0"/>
 			<key row="1104" value="800" interpolation="0"/>
-			<key row="1416" value="1000" interpolation="0"/>
+			<key row="1416" value="1280" interpolation="0"/>
 			<key row="1672" value="800" interpolation="0"/>
 			<key row="1936" value="800" interpolation="3"/>
 			<key row="2095" value="1280" interpolation="0"/>
