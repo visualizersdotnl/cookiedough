@@ -97,8 +97,6 @@ static uint32_t *s_pCloseSpikeVignette = nullptr;
 
 // "goldfinger" tunnel art
 static uint32_t *s_pGoldDirt = nullptr;
-// static uint32_t *s_pGoldLogo = nullptr;
-// static uint32_t *s_pGoldRim = nullptr;
 
 // shooting star art
 static uint32_t *s_pLenz = nullptr;
@@ -230,7 +228,6 @@ bool Demo_Create()
 			return false;
 
 	// and in with the melancholy
-//	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-alternative.png");
 	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
 	if (nullptr == s_pAreWeDone)
 		return false;
@@ -241,13 +238,10 @@ bool Demo_Create()
 	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeVignette)
 		return false;
 
-	// goldfinger tunnel
+	// "goldfinger" tunnel
 	s_pGoldDirt = Image_Load32("assets/gold/LensDirt3_invert.png");
 	if (nullptr == s_pGoldDirt)
 		return false;
-
-//	s_pGoldLogo = Image_Load32("assets/gold/LogoTestRight_blend_Left.png");
-//	s_pGoldRim = Image_Load32("assets/gold/LogoTestLeft_Rim.png");
 
 	// shooting star
 	s_pLenz = Image_Load32("assets/shooting/Lenz.png");
@@ -510,8 +504,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 12:
 			{
 				// TPB represent
-				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
-				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+//				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
+//				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
+				memcpy(g_renderTarget[0], g_pNytrikTPB, kOutputBytes);
 
 				float blurTPB = Rocket::getf(trackBlurTPB);
 				if (0.f != blurTPB)

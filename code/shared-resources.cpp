@@ -8,7 +8,7 @@ __m128i g_gradientUnp16[kNumGradients];
 
 uint32_t *g_renderTarget[kNumRenderTargets] = { nullptr };
 
-uint32_t *g_pNytrikMexico = nullptr;
+uint32_t *g_pNytrikTPB = nullptr;
 uint32_t *g_pXboxLogoTPB = nullptr;
 
 bool Shared_Create()
@@ -23,9 +23,9 @@ bool Shared_Create()
 	for (unsigned iTarget = 0; iTarget < kNumRenderTargets; ++iTarget)
 		g_renderTarget[iTarget] = static_cast<uint32_t*>(mallocAligned(kTargetBytes, kAlignTo));
 
-	// load Nytrik's "Mexico" logo
-	g_pNytrikMexico = Image_Load32("assets/demo/TPB-Mexico-logo-01.jpg");
-	if (g_pNytrikMexico == NULL)
+	// load Nytrik's TPB 'end' logo
+	g_pNytrikTPB = Image_Load32("assets/demo/TPB-logo.png");
+	if (g_pNytrikTPB == NULL)
 		return false;
 
 	// load Alien's TPB-02 Xbox logo
