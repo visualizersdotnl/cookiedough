@@ -441,3 +441,8 @@ uint32_t *Ball_GetBackground()
 	VIZ_ASSERT(nullptr != s_pBackground);
 	return s_pBackgrounds[0];
 }
+
+bool Ball_HasBeams()
+{
+	return Rocket::geti(trackBallHasBeams) != 0;
+}
