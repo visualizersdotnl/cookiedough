@@ -117,7 +117,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// light beam
 		const int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const int diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+		const int diffuse = (heightNorm*heightNorm)>>8;
 		const __m128i lit = _mm_set1_epi16(diffuse);
 		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
 
@@ -172,11 +172,12 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	const auto beamR = beamCol&0xff;      //
 
 	// NTSC weights
-	constexpr unsigned mulR = unsigned(0.0722f*65536);
-	constexpr unsigned mulG = unsigned(0.7152f*65536);
-	constexpr unsigned mulB = unsigned(0.2126f*65536);
+	constexpr unsigned mulR = unsigned(0.0722f*65536.f);
+	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
+	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
 
 	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
+	const float fLuminosity = float(luminosity);
 
 	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
 
@@ -184,7 +185,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	float curStep = 0.f;
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		const float fBeamAlpha = smoothstepf(float(luminosity), s_beamAlphaMin, curStep);
+		const float fBeamAlpha = smoothstepf(fLuminosity, s_beamAlphaMin, curStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
 		pDest[lastDrawnHeight++] = beamCol|(beamAlpha<<24);
 		curStep += alphaStep;
@@ -357,13 +358,13 @@ bool Ball_Create()
 	}
 	
 	// load color maps
-	s_pColorMap[0] = Image_Load32("assets/ball/by-orange/colormap_1k.jpg"); // used as base map when beams active
+	s_pColorMap[0] = Image_Load32("assets/ball/colormap_1k.jpg"); // used as base map when beams active
 	s_pColorMap[1] = Image_Load32("assets/ball/envmap2_1k.jpg");  // used otherwise
 	if (nullptr == s_pColorMap[0] || nullptr == s_pColorMap[1])
 		return false;
 
 	// load beam map (pairs with 'assets/ball/*/colormap_1k.jpg')
-	s_pBeamMap = Image_Load32("assets/ball/by-orange/beammap_1k.jpg");
+	s_pBeamMap = Image_Load32("assets/ball/beammap_1k.jpg");
 	if (nullptr == s_pBeamMap)
 		return false;
 
@@ -373,7 +374,7 @@ bool Ball_Create()
 		return false;
 
 	// load background (1280x720)
-	s_pBackground = Image_Load32("assets/ball/background_1280x720.png");
+	s_pBackground = Image_Load32("assets/ball/nytrik-background_1280x720.png");
 	if (nullptr == s_pBackground)
 		return false;
 

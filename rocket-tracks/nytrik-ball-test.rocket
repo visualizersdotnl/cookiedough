@@ -46,7 +46,7 @@ color="ff4f71b2">
 	</track>
 	<track name="ball:BeamAttenuation" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="0" value="64.000000" interpolation="0" />
+		<key row="0" value="255.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAlphaMin" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -204,5 +204,69 @@ color="ff8850b2" />
 color="ffb25091" />
 	<track name="shootingStar:Trail" folded="0" muteKeyCount="0"
 color="ffb27474" />
+	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
+color="ffb28050" />
+	<track name="starsTunnel:speedY" folded="0" muteKeyCount="0"
+color="ffa9b250" />
+	<track name="nautilus:FuckedVignette" folded="0" muteKeyCount="0"
+color="ff60b250">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="5504" value="1.000000" interpolation="0" />
+		<key row="5775" value="0.000000" interpolation="0" />
+	</track>
+	<track name="demo:FuckBlurV" folded="0" muteKeyCount="0"
+color="ff4fb292">
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="1048" value="12.000000" interpolation="3" />
+		<key row="1064" value="0.000000" interpolation="0" />
+		<key row="1152" value="64.000000" interpolation="3" />
+		<key row="1168" value="0.000000" interpolation="0" />
+		<key row="1176" value="64.000000" interpolation="3" />
+		<key row="1192" value="0.000000" interpolation="0" />
+		<key row="1248" value="64.000000" interpolation="3" />
+		<key row="1264" value="0.000000" interpolation="0" />
+		<key row="1288" value="64.000000" interpolation="3" />
+		<key row="1304" value="0.000000" interpolation="0" />
+		<key row="1312" value="64.000000" interpolation="3" />
+		<key row="1328" value="0.000000" interpolation="0" />
+		<key row="1416" value="64.000000" interpolation="3" />
+		<key row="1432" value="0.000000" interpolation="0" />
+		<key row="1440" value="64.000000" interpolation="3" />
+		<key row="1456" value="0.000000" interpolation="0" />
+		<key row="1512" value="64.000000" interpolation="3" />
+		<key row="1528" value="0.000000" interpolation="0" />
+		<key row="1552" value="64.000000" interpolation="3" />
+		<key row="1568" value="0.000000" interpolation="0" />
+		<key row="1576" value="64.000000" interpolation="3" />
+		<key row="1592" value="0.000000" interpolation="0" />
+		<key row="1672" value="64.000000" interpolation="3" />
+		<key row="1688" value="0.000000" interpolation="0" />
+		<key row="1704" value="64.000000" interpolation="3" />
+		<key row="1720" value="0.000000" interpolation="0" />
+		<key row="1768" value="64.000000" interpolation="3" />
+		<key row="1784" value="0.000000" interpolation="0" />
+		<key row="1800" value="64.000000" interpolation="3" />
+		<key row="1816" value="0.000000" interpolation="0" />
+		<key row="1832" value="64.000000" interpolation="3" />
+		<key row="1848" value="96.000000" interpolation="3" />
+		<key row="1864" value="0.000000" interpolation="0" />
+		<key row="1936" value="64.000000" interpolation="3" />
+		<key row="1952" value="0.000000" interpolation="0" />
+		<key row="1968" value="64.000000" interpolation="3" />
+		<key row="1984" value="0.000000" interpolation="0" />
+		<key row="2032" value="16.000000" interpolation="3" />
+		<key row="2064" value="20.000000" interpolation="2" />
+		<key row="2079" value="30.000000" interpolation="0" />
+		<key row="2242" value="30.000000" interpolation="0" />
+	</track>
+	<track name="demo::Cousteau" folded="0" muteKeyCount="0"
+color="ff4f71b2">
+		<key row="5240" value="0.000000" interpolation="0" />
+		<key row="6024" value="1.000000" interpolation="0" />
+	</track>
+	<track name="sinusTunnel:OffsX" folded="0" muteKeyCount="0"
+color="ff8850b2">
+		<key row="0" value="0.000000" interpolation="0" />
+	</track>
 </tracks>
 	</rootElement>

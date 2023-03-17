@@ -132,7 +132,7 @@ bool Twister_Create()
 		return false;
 
 	// load background (1280x720)
-	s_pBackground = Image_Load32("assets/ball/background_1280x720.png");
+	s_pBackground = Image_Load32("assets/twister/background_1280x720.png");
 	if (nullptr == s_pBackground)
 		return false;
 
