@@ -165,9 +165,9 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	// discard alpha
 	beamCol &= 0xffffff;
 
-	const auto beamB = beamCol >> 16;
-	const auto beamG = (beamCol >> 8) & 0xff;
-	const auto beamR = beamCol & 0xff;
+	const auto beamB = beamCol >> 16;         // not sure why I switched R and B (FIXME?)
+	const auto beamG = (beamCol >> 8) & 0xff; //
+	const auto beamR = beamCol & 0xff;        //
 
 	// NTSC weights
 	constexpr unsigned mulR = unsigned(0.0722f * 65536.f);

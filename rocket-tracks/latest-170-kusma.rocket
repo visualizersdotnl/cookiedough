@@ -78,7 +78,7 @@ color="ffb25091">
 		<key row="1760" value="2.000000" interpolation="0" />
 		<key row="1936" value="3.500000" interpolation="2" />
 		<key row="2056" value="10.000000" interpolation="3" />
-		<key row="2095" value="40.000000" interpolation="1" />
+		<key row="2095" value="33.000000" interpolation="3" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:Radius" folded="0" muteKeyCount="0"
@@ -88,7 +88,7 @@ color="ffb27474">
 		<key row="1416" value="1280.000000" interpolation="0" />
 		<key row="1672" value="1920.000000" interpolation="0" />
 		<key row="1936" value="1800.000000" interpolation="3" />
-		<key row="2095" value="1920.000000" interpolation="0" />
+		<key row="2095" value="1920.000000" interpolation="2" />
 		<key row="2096" value="0.000000" interpolation="0" />
 	</track>
 	<track name="ball:RayLength" folded="0" muteKeyCount="0"
@@ -650,7 +650,7 @@ color="ffa9b250">
 		<key row="7336" value="0.000000" interpolation="0" />
 		<key row="7592" value="1.000000" interpolation="3" />
 		<key row="7624" value="0.000000" interpolation="0" />
-		<key row="8312" value="0.000000" interpolation="3" />
+		<key row="8328" value="0.000000" interpolation="3" />
 		<key row="8376" value="1.000000" interpolation="0" />
 		<key row="8384" value="1.000000" interpolation="1" />
 		<key row="8392" value="0.000000" interpolation="0" />
@@ -700,9 +700,9 @@ color="ff60b250">
 		<key row="1952" value="0.000000" interpolation="0" />
 		<key row="2024" value="1.000000" interpolation="3" />
 		<key row="2032" value="0.000000" interpolation="0" />
-		<key row="2064" value="0.000000" interpolation="3" />
-		<key row="2080" value="0.330000" interpolation="3" />
-		<key row="2095" value="0.880000" interpolation="0" />
+		<key row="2064" value="0.000000" interpolation="2" />
+		<key row="2088" value="0.100000" interpolation="3" />
+		<key row="2095" value="0.660000" interpolation="0" />
 		<key row="2096" value="0.000000" interpolation="0" />
 		<key row="3144" value="0.500000" interpolation="3" />
 		<key row="3160" value="0.000000" interpolation="0" />
@@ -852,23 +852,22 @@ color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9536" value="0.000000" interpolation="2" />
 		<key row="9560" value="0.050000" interpolation="3" />
-		<key row="9591" value="0.000000" interpolation="0" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="0.100000" interpolation="0" />
+		<key row="9895" value="0.050000" interpolation="0" />
 	</track>
 	<track name="demo:DistortStrengthTPB" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="9536" value="2.390000" interpolation="1" />
+		<key row="9536" value="2.390000" interpolation="3" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="16.000000" interpolation="0" />
+		<key row="9895" value="8.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9520" value="0.000000" interpolation="3" />
-		<key row="9552" value="2.000000" interpolation="3" />
-		<key row="9560" value="12.000000" interpolation="2" />
+		<key row="9552" value="8.000000" interpolation="3" />
+		<key row="9560" value="24.000000" interpolation="2" />
 		<key row="9591" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:GreetSwitch" folded="0" muteKeyCount="0"
@@ -1000,7 +999,7 @@ color="ff8850b2">
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="7336" value="0.330000" interpolation="0" />
-		<key row="8256" value="0.330000" interpolation="3" />
+		<key row="8256" value="0.330000" interpolation="2" />
 		<key row="8312" value="1.000000" interpolation="0" />
 		<key row="8384" value="0.000000" interpolation="0" />
 	</track>
