@@ -72,7 +72,8 @@ color="ffb25091">
 		<key row="1160" value="5.000000" interpolation="0" />
 		<key row="1416" value="30.000000" interpolation="2" />
 		<key row="1432" value="3.500000" interpolation="0" />
-		<key row="1672" value="0.000000" interpolation="0" />
+		<key row="1672" value="12.000000" interpolation="3" />
+		<key row="1696" value="1.000000" interpolation="0" />
 		<key row="1736" value="32.000000" interpolation="3" />
 		<key row="1760" value="2.000000" interpolation="0" />
 		<key row="1936" value="3.500000" interpolation="2" />
@@ -92,7 +93,7 @@ color="ffb27474">
 	</track>
 	<track name="ball:RayLength" folded="0" muteKeyCount="0"
 color="ffb28050">
-		<key row="1048" value="512.000000" interpolation="0" />
+		<key row="1048" value="384.000000" interpolation="0" />
 		<key row="1104" value="512.000000" interpolation="0" />
 		<key row="1416" value="512.000000" interpolation="0" />
 		<key row="1672" value="512.000000" interpolation="0" />
@@ -147,15 +148,16 @@ color="ff8850b2">
 		<key row="1048" value="0.000000" interpolation="0" />
 		<key row="1104" value="64.000000" interpolation="2" />
 		<key row="1152" value="196.000000" interpolation="0" />
-		<key row="1672" value="32.000000" interpolation="3" />
+		<key row="1672" value="64.000000" interpolation="3" />
 		<key row="1712" value="196.000000" interpolation="2" />
 		<key row="1728" value="255.000000" interpolation="0" />
-		<key row="1936" value="100.000000" interpolation="2" />
+		<key row="1936" value="255.000000" interpolation="3" />
+		<key row="2064" value="0.000000" interpolation="2" />
 		<key row="2096" value="255.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAlphaMin" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="1048" value="64.000000" interpolation="0" />
+		<key row="1048" value="255.000000" interpolation="0" />
 		<key row="1936" value="64.000000" interpolation="3" />
 		<key row="2095" value="255.000000" interpolation="2" />
 		<key row="2096" value="0.000000" interpolation="0" />
@@ -583,17 +585,15 @@ color="ffa9b250">
 		<key row="1320" value="0.000000" interpolation="0" />
 		<key row="1400" value="0.660000" interpolation="2" />
 		<key row="1408" value="0.000000" interpolation="0" />
-		<key row="1472" value="0.628000" interpolation="1" />
+		<key row="1472" value="0.628000" interpolation="3" />
 		<key row="1487" value="0.000000" interpolation="0" />
 		<key row="1544" value="1.000000" interpolation="1" />
 		<key row="1552" value="0.000000" interpolation="0" />
-		<key row="1616" value="0.628000" interpolation="1" />
-		<key row="1624" value="0.000000" interpolation="0" />
 		<key row="1672" value="1.000000" interpolation="3" />
 		<key row="1688" value="0.000000" interpolation="0" />
 		<key row="1776" value="1.000000" interpolation="1" />
 		<key row="1784" value="0.000000" interpolation="0" />
-		<key row="1832" value="1.000000" interpolation="1" />
+		<key row="1832" value="0.330000" interpolation="3" />
 		<key row="1840" value="0.000000" interpolation="0" />
 		<key row="1952" value="0.000000" interpolation="3" />
 		<key row="1992" value="0.500000" interpolation="3" />
@@ -696,10 +696,6 @@ color="ff60b250">
 		<key row="1816" value="0.000000" interpolation="1" />
 		<key row="1824" value="0.660000" interpolation="2" />
 		<key row="1831" value="0.000000" interpolation="0" />
-		<key row="1880" value="0.628000" interpolation="3" />
-		<key row="1888" value="0.000000" interpolation="0" />
-		<key row="1896" value="0.880000" interpolation="3" />
-		<key row="1904" value="0.000000" interpolation="0" />
 		<key row="1936" value="1.000000" interpolation="1" />
 		<key row="1952" value="0.000000" interpolation="0" />
 		<key row="2024" value="1.000000" interpolation="3" />

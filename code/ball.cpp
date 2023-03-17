@@ -38,13 +38,7 @@ SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
 // -- voxel renderer --
 
 // things that need attention:
-// - environment mapping & basic lighting, including Hoplite's "specular" (WIP)
-//   + specular, how? just simplify the math by wiping out all the zeroes and see what rolls out?
-// - proper background visibility/blending (WIP)
-//   + you could do a lower resolution render of only the beams and *add* that during compositing separately?
-//   + devil speaking: draw to target in a single pass using 2D dir. vec. LUT
-// - move object around
-//  + render to a larget target?
+// - use 16-bit height map(s)
 
 // #define DEBUG_BALL_LIGHTING
 
@@ -118,9 +112,10 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 		// light beam
 		const int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const int diffuse = (heightNorm*heightNorm)>>8;
+		const int diffuse = (heightNorm*heightNorm) >> 8;
 		const __m128i lit = _mm_set1_epi16(diffuse);
-		beamAccum = _mm_adds_epu16(beamAccum, _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8));
+		const __m128i beamLit = _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8);
+		beamAccum = _mm_adds_epu16(beamAccum, beamLit);
 
 #if defined(DEBUG_BALL_LIGHTING)
 
@@ -165,30 +160,30 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	unsigned beamCol = v2cISSE16(beamAccum);
 #endif
 
+	const unsigned remainder = (kTargetResX - 1) - lastDrawnHeight;
+
 	// discard alpha
 	beamCol &= 0xffffff;
 
-	const auto beamB = beamCol>>16;       // RGB reversed (read as BGR)
-	const auto beamG = (beamCol>>8)&0xff; //
-	const auto beamR = beamCol&0xff;      //
+	const auto beamB = beamCol >> 16;
+	const auto beamG = (beamCol >> 8) & 0xff;
+	const auto beamR = beamCol & 0xff;
 
 	// NTSC weights
-	constexpr unsigned mulR = unsigned(0.0722f*65536.f);
-	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
-	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
+	constexpr unsigned mulR = unsigned(0.0722f * 65536.f);
+	constexpr unsigned mulG = unsigned(0.7152f * 65536.f);
+	constexpr unsigned mulB = unsigned(0.2126f * 65536.f);
 
-	const unsigned luminosity = ((beamR*mulR)>>16) + ((beamG*mulG)>>16) + ((beamB*mulB)>>16);
+	const unsigned luminosity = ((beamR * mulR) >> 16) + ((beamG * mulG) >> 16) + ((beamB * mulB) >> 16);
 	const float fLuminosity = float(luminosity);
 
-	const unsigned remainder = (kTargetResX-1)-lastDrawnHeight;
-
-	const float alphaStep = 1.f/(remainder-1);
+	const float alphaStep = 1.f / (remainder - 1);
 	float curStep = 0.f;
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		const float fBeamAlpha = smoothstepf(fLuminosity, s_beamAlphaMin, curStep);
+		const float fBeamAlpha = smootherstepf(s_beamAlphaMin, fLuminosity, curStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
-		pDest[lastDrawnHeight++] = beamCol|(beamAlpha<<24);
+		pDest[lastDrawnHeight++] = beamCol | (beamAlpha << 24);
 		curStep += alphaStep;
 	}
 }
