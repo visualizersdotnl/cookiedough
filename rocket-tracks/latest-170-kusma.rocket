@@ -651,9 +651,9 @@ color="ffa9b250">
 		<key row="7592" value="1.000000" interpolation="3" />
 		<key row="7624" value="0.000000" interpolation="0" />
 		<key row="8328" value="0.000000" interpolation="3" />
-		<key row="8376" value="1.000000" interpolation="0" />
-		<key row="8384" value="1.000000" interpolation="1" />
-		<key row="8392" value="0.000000" interpolation="0" />
+		<key row="8376" value="0.500000" interpolation="2" />
+		<key row="8384" value="1.000000" interpolation="3" />
+		<key row="8400" value="0.000000" interpolation="0" />
 		<key row="8808" value="0.000000" interpolation="2" />
 		<key row="8880" value="1.000000" interpolation="2" />
 		<key row="8904" value="0.000000" interpolation="0" />
@@ -999,9 +999,9 @@ color="ff8850b2">
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="7336" value="0.330000" interpolation="0" />
-		<key row="8256" value="0.330000" interpolation="2" />
+		<key row="8120" value="0.330000" interpolation="1" />
+		<key row="8184" value="0.628000" interpolation="2" />
 		<key row="8312" value="1.000000" interpolation="0" />
-		<key row="8384" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
