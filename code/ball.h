@@ -9,5 +9,6 @@ void Ball_Destroy();
 void Ball_Draw(uint32_t *pDest, float time, float delta);
 
 uint32_t *Ball_GetBackground();
+bool Ball_HasBeams();
 
 #endif // _BALL_H_

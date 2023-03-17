@@ -362,7 +362,12 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			// Voxel ball
 			{
 				Ball_Draw(pDest, timer, delta);
-				SoftLight32(pDest, s_pBallVignette, kOutputSize);
+
+				if (false == Ball_HasBeams())
+					MulSrc32(pDest, s_pGreetingsVignette, kOutputSize); // FIXME: borrowed
+				else
+					SoftLight32(pDest, s_pBallVignette, kOutputSize);
+
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);
 				MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			}
