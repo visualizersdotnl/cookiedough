@@ -86,6 +86,7 @@ static uint32_t *s_pNautilusVignette = nullptr;
 static uint32_t *s_pNautilusDirt = nullptr;
 static uint32_t *s_pNautilusCousteau1 = nullptr;
 static uint32_t *s_pNautilusCousteauRim1 = nullptr;
+static uint32_t* s_pNautilusCousteauRim2 = nullptr;
 static uint32_t *s_pNautilusCousteau2 = nullptr;
 static uint32_t *s_pNautilusText = nullptr;
 
@@ -213,8 +214,9 @@ bool Demo_Create()
 	s_pNautilusCousteau2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2.png");
 	s_pNautilusCousteau1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette.png");
 	s_pNautilusCousteauRim1 = Image_Load32("assets/nautilus/JacquesCousteau1_Silhouette_RimMask.png");
+	s_pNautilusCousteauRim2 = Image_Load32("assets/nautilus/JacquesCousteau_Silhouette2_RimMask.png");
 	s_pNautilusText = Image_Load32("assets/nautilus/JacquesCousteau_Text.png");
-	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1)
+	if (nullptr == s_pNautilusVignette || nullptr == s_pNautilusDirt || nullptr == s_pNautilusText || nullptr == s_pNautilusCousteau1 || nullptr == s_pNautilusCousteau2 || nullptr == s_pNautilusCousteauRim1 || nullptr == s_pNautilusCousteauRim2)
 		return false;
 
 	// load 'disco guys'
@@ -451,7 +453,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					MixSrc32(pDest, pCousteau, kOutputSize);
 				}
 				else
+				{
+					Overlay32A(pDest, s_pNautilusCousteauRim2, kOutputSize);
 					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
+				}
 
 				FadeFlash(pDest, 0.f, fadeToWhite);
 
