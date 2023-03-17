@@ -16,7 +16,7 @@ static uint8_t *s_pHeightMap[5] = { nullptr };
 static uint32_t *s_pColorMap[2] = { nullptr };
 static uint32_t *s_pBeamMap = nullptr;
 static uint32_t *s_pEnvMap = nullptr;
-static uint32_t *s_pBackground = nullptr;
+static uint32_t* s_pBackgrounds[2] = { nullptr };
 
 static uint8_t *s_heightMapMix = nullptr;
 
@@ -65,7 +65,8 @@ static int s_heightProjNorm[kMaxRayLength]; // for "lighting", projects on quart
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
-constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
+// constexpr float kMaxBallRadius = float((kResX > kResY) ? kResX : kResY);
+constexpr float kMaxBallRadius = 1920.f;
 
 // beam attenuation (during accumulation) [0..255]
 constexpr auto kDefaultBeamAtten = 64;
@@ -373,9 +374,10 @@ bool Ball_Create()
 	if (nullptr == s_pEnvMap)
 		return false;
 
-	// load background (1280x720)
-	s_pBackground = Image_Load32("assets/ball/nytrik-background_1280x720.png");
-	if (nullptr == s_pBackground)
+	// load backgrounds (1280x720)
+	s_pBackgrounds[0] = Image_Load32("assets/ball/nytrik-background_1280x720.png");
+	s_pBackgrounds[1] = Image_Load32("assets/ball/nytrik-background-2-1280x720.png");
+	if (nullptr == s_pBackgrounds[0] || nullptr == s_pBackgrounds[1])
 		return false;
 
 	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint8_t), kAlignTo));
@@ -421,8 +423,9 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 		HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blur);
 #endif
 
-	// blit (polar wrap) effect on top of background
-	memcpy(pDest, s_pBackground, kOutputBytes);
+	// blit (polar wrap) effect on top of background (2 of them, one for the object *with* beams, one for without)
+	const auto* pBackground = Rocket::geti(trackBallHasBeams) != 0 ? s_pBackgrounds[0] : s_pBackgrounds[1];
+	memcpy(pDest, pBackground, kOutputBytes);
 //	memset32(pDest, 0, kOutputSize);
 	Polar_BlitA(pDest, g_renderTarget[0], false);
 
@@ -441,5 +444,5 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 uint32_t *Ball_GetBackground()
 {
 	VIZ_ASSERT(nullptr != s_pBackground);
-	return s_pBackground;
+	return s_pBackgrounds[0];
 }

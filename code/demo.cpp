@@ -43,6 +43,8 @@ SyncTrack trackShooting;
 SyncTrack trackShootingX, trackShootingY, trackShootingAlpha;
 SyncTrack trackShootingTrail;
 
+SyncTrack trackWaterLove;
+
 // --------------------
 
 // credits logos (1280x568)
@@ -95,8 +97,9 @@ static uint32_t *s_pAreWeDone = nullptr;
 static uint32_t *s_pCloseSpikeDirt = nullptr;
 static uint32_t *s_pCloseSpikeVignette = nullptr;
 
-// "goldfinger" tunnel art
-static uint32_t *s_pGoldDirt = nullptr;
+// under water tunnel art
+static uint32_t *s_pWaterDirt = nullptr;
+static uint32_t* s_pWaterPrismOverlay = nullptr;
 
 // shooting star art
 static uint32_t *s_pLenz = nullptr;
@@ -139,6 +142,7 @@ bool Demo_Create()
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 	trackCousteau = Rocket::AddTrack("demo:Cousteau");
 	trackCousteauHorzBlur = Rocket::AddTrack("demo:CousteauHorzBlur");
+	trackWaterLove = Rocket::AddTrack("demo:WaterLove");
 
 	trackShooting = Rocket::AddTrack("shootingStar:Enabled");
 	trackShootingX = Rocket::AddTrack("shootingStar:X");
@@ -161,12 +165,11 @@ bool Demo_Create()
 		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
-//	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo_alphaFixTest.tga");
 	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
 	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_CoolFilmLook.png");
 	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
-	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/TheYearWas_Overlay_LensDirt.jpg");
+	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/nytrik-TheYearWas_Overlay_LensDirt.jpg");
 	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
 		return false;
 
@@ -227,8 +230,8 @@ bool Demo_Create()
 		if (nullptr == pointer)
 			return false;
 
-	// and in with the melancholy
-	s_pAreWeDone = Image_Load32("assets/demo/are-we-done.png");
+	// full credits (used to be a melancholic '2001-2023' to signify the end of TPB, hence the variable name)
+	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-1000x52.png");
 	if (nullptr == s_pAreWeDone)
 		return false;
 
@@ -238,9 +241,13 @@ bool Demo_Create()
 	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeVignette)
 		return false;
 
-	// "goldfinger" tunnel
-	s_pGoldDirt = Image_Load32("assets/gold/LensDirt3_invert.png");
-	if (nullptr == s_pGoldDirt)
+	// under water tunnel
+	s_pWaterDirt = Image_Load32("assets/underwater/LensDirt3_invert.png");
+	if (nullptr == s_pWaterDirt)
+		return false;
+
+	s_pWaterPrismOverlay = Image_Load32("assets/underwater/love prism_alpha 1280_720.png");
+	if (nullptr == s_pWaterPrismOverlay)
 		return false;
 
 	// shooting star
@@ -478,9 +485,10 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 10:
-			// The 'golden tunnel' (which is no longer coloured like that)
+			// The 'under water' tunnel
 			Sinuses_Draw(pDest, timer, delta);
-			MulSrc32(pDest, s_pGoldDirt, kOutputSize);
+			BlitAdd32A(pDest, s_pWaterPrismOverlay, kResX, kResX, kResY, saturatef(Rocket::getf(trackWaterLove)));
+			MulSrc32(pDest, s_pWaterDirt, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			break;
 
@@ -493,20 +501,24 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				Darken32_50(pDest, s_pGreetings[greetSwitch], kOutputSize);
 				SoftLight32(pDest, s_pGreetingsDirt, kOutputSize);
-				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 
 				const auto yOffs = ((kResY-243)/2) + 227;
 				const auto xOffs = 24; // ((kResX-263)/2) - 300;
 				BlitSrc32(pDest + xOffs + yOffs*kResX, g_pXboxLogoTPB, kResX, 263, 243);
+
+				Overlay32(pDest, s_pGreetingsVignette, kOutputSize);
 			}
 			break;
 
 		case 12:
 			{
 				// TPB represent
-//				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
+				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
+
 //				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
-				memcpy(g_renderTarget[0], g_pNytrikTPB, kOutputBytes);
+//				memcpy(g_renderTarget[0], g_pNytrikTPB, kOutputBytes);
+
+				MixSrc32(g_renderTarget[0], g_pNytrikTPB, kOutputSize);
 
 				float blurTPB = Rocket::getf(trackBlurTPB);
 				if (0.f != blurTPB)
@@ -533,7 +545,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
 
-				BlitAdd32A(pDest + (yOffs+130)*kResX, s_pAreWeDone, kResX, kResX, 64, discoGuys);
+				BlitAdd32A(pDest + (kResX-1000)/2 + (yOffs+115)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
 			}
 			break;
 

@@ -140,7 +140,7 @@ bool Shadertoy_Create()
 	trackTunnelMulU = Rocket::AddTrack("tunnel:MulU");
 	trackTunnelMulV = Rocket::AddTrack("tunnel:MulV");
 
-	s_pFDTunnelTex = Image_Load32("assets/shadertoy/grid2b.jpg");
+	s_pFDTunnelTex = Image_Load32("assets/shadertoy/nytrik-hextexture.png");
 	if (nullptr == s_pFDTunnelTex)
 		return false;
 
@@ -703,7 +703,13 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				const float shade = clampf(0.f, 1.f, 1.f-expf(-0.003f*T*T));
 
 				unsigned U0, V0, U1, V1, fracU, fracV;
-				bsamp_prepUVs(fpU, fpV, 255, 8, U0, V0, U1, V1, fracU, fracV);
+
+				// 256x256
+//				bsamp_prepUVs(fpU, fpV, 255, 8, U0, V0, U1, V1, fracU, fracV);
+
+				// 1024x1024
+				bsamp_prepUVs(fpU, fpV, 1023, 10, U0, V0, U1, V1, fracU, fracV);
+
 				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
 
 				color = Shadertoy::vLerp4(color, _mm_set1_ps(255.f), shade);

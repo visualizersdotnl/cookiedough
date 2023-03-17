@@ -33,8 +33,8 @@ constexpr int kMapViewHeight = 96;
 constexpr int kMapTilt = 120;
 constexpr int kMapScale = 160;
 
-// adjust to map resolution (1024x1024 -> 2048x2048)
-constexpr unsigned kMapSize =  2048;
+// adjust to map resolution (1024x1024 or 2048x2048)
+constexpr unsigned kMapSize = 2048;
 constexpr unsigned kMapAnd = kMapSize-1;                                          
 constexpr unsigned kMapShift = 11;
 
