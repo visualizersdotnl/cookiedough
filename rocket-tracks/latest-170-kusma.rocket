@@ -1016,7 +1016,7 @@ color="ffb25091">
 	<track name="demo:ScapeOverlay" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="1.000000" interpolation="0" />
-		<key row="936" value="1.000000" interpolation="3" />
+		<key row="936" value="1.000000" interpolation="2" />
 		<key row="984" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
