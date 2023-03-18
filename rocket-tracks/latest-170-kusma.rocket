@@ -998,7 +998,8 @@ color="ff8850b2">
 	<track name="demo:WaterLove" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="7336" value="0.330000" interpolation="0" />
+		<key row="7336" value="0.000000" interpolation="3" />
+		<key row="7472" value="0.330000" interpolation="0" />
 		<key row="8120" value="0.330000" interpolation="1" />
 		<key row="8184" value="0.628000" interpolation="2" />
 		<key row="8312" value="1.000000" interpolation="0" />

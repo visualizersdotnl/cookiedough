@@ -436,27 +436,33 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
 				FadeFlash(pDest, fadeToBlack, 0.f);
 
+				Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
+
+				// just so we can add a little shakin'
+				const uint32_t* pCousteau;
+				const uint32_t* pCousteauRim;
 				if (0 == Rocket::geti(trackCousteau))
 				{
-					Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
-
-					// just so we can add a little shakin'
-					uint32_t *pCousteau = s_pNautilusCousteau1;
-					float hBlur = Rocket::getf(trackCousteauHorzBlur);
-					if (0.f != hBlur)
-					{
-						hBlur = BoxBlurScale(hBlur);
-						HorizontalBoxBlur32(g_renderTarget[0], pCousteau, kResX, kResY, hBlur);
-						pCousteau = g_renderTarget[0];
-					}
-
-					MixSrc32(pDest, pCousteau, kOutputSize);
+					pCousteau = s_pNautilusCousteau1;
+					pCousteauRim = s_pNautilusCousteauRim1;
 				}
 				else
 				{
-					Overlay32A(pDest, s_pNautilusCousteauRim2, kOutputSize);
-					MixSrc32(pDest, s_pNautilusCousteau2, kOutputSize);
+					pCousteau = s_pNautilusCousteau2;
+					pCousteauRim = s_pNautilusCousteauRim2;
 				}
+
+				Overlay32A(pDest, pCousteauRim, kOutputSize);
+
+				float hBlur = Rocket::getf(trackCousteauHorzBlur);
+				if (0.f != hBlur)
+				{
+					hBlur = BoxBlurScale(hBlur);
+					HorizontalBoxBlur32(g_renderTarget[0], pCousteau, kResX, kResY, hBlur);
+					pCousteau = g_renderTarget[0];
+				}
+
+				MixSrc32(pDest, pCousteau, kOutputSize);
 
 				FadeFlash(pDest, 0.f, fadeToWhite);
 

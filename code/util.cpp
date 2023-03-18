@@ -395,7 +395,7 @@ static void Overlay32_Slow_Float(uint32_t *pDest, uint32_t *pSrc, unsigned numPi
 */
 
 // FIXME: next step would be SIMD, but why bother?
-void Overlay32(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+void Overlay32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
@@ -446,7 +446,7 @@ static void Overlay32A_Slow_Float(uint32_t *pDest, uint32_t *pSrc, unsigned numP
 */
 
 // FIXME: next step would be SIMD, but why bother?
-void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+void Overlay32A(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
@@ -479,7 +479,7 @@ void Overlay32A(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
 #endif
 
 // FIXME: optimize properly; especially this one is crazy suitable for SIMD!
-void Darken32_50(uint32_t *pDest, uint32_t *pSrc, unsigned numPixels)
+void Darken32_50(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 {
 	#pragma omp parallel for schedule(static)
 	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)

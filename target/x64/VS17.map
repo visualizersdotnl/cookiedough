@@ -1,6 +1,6 @@
  VS17
 
- Timestamp is 6414e93c (Fri Mar 17 23:27:08 2023)
+ Timestamp is 6415233f (Sat Mar 18 03:34:39 2023)
 
  Preferred load address is 0000000140000000
 
@@ -99,24 +99,24 @@
  0001:000012a0       ??0Vector4@@QEAA@MMMM@Z    00000001400022a0 f i Matrix44.obj
  0001:000012c0       ??0exception@std@@QEAA@AEBV01@@Z 00000001400022c0 f i audio.obj
  0001:00001300       ?what@exception@std@@UEBAPEBDXZ 0000000140002300 f i audio.obj
- 0001:00001320       ??_Gruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i main.obj
- 0001:00001320       ??_Elogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
- 0001:00001320       ??_Eruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
- 0001:00001320       ??_Gexception@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Glength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Gbad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
- 0001:00001320       ??_Ebad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
  0001:00001320       ??_Gbad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
  0001:00001320       ??_Ebad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
- 0001:00001320       ??_Gbad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
- 0001:00001320       ??_Glength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Glogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Eexception@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
+ 0001:00001320       ??_Gexception@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Ebad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
+ 0001:00001320       ??_Gbad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Gruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i main.obj
+ 0001:00001320       ??_Eruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
+ 0001:00001320       ??_Elogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Ebad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
  0001:00001320       ??_Elength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001370       ??1length_error@std@@UEAA@XZ 0000000140002370 f i libcpmt:xthrow.obj
- 0001:00001370       ??1system_error@std@@UEAA@XZ 0000000140002370 f i main.obj
  0001:00001370       ??1bad_alloc@std@@UEAA@XZ  0000000140002370 f i audio.obj
  0001:00001370       ??1bad_array_new_length@std@@UEAA@XZ 0000000140002370 f i audio.obj
+ 0001:00001370       ??1system_error@std@@UEAA@XZ 0000000140002370 f i main.obj
  0001:00001370       ??1bad_exception@std@@UEAA@XZ 0000000140002370 f i libvcruntime:frame.obj
  0001:00001390       ??0bad_array_new_length@std@@QEAA@XZ 0000000140002390 f i audio.obj
  0001:000013c0       ?_Throw_bad_array_new_length@std@@YAXXZ 00000001400023c0 f i audio.obj
@@ -155,19 +155,19 @@
  0001:000086f0       ?make_error_code@std@@YA?AVerror_code@1@W4errc@1@@Z 00000001400096f0 f i main.obj
  0001:00008710       ??0_System_error@std@@IEAA@Verror_code@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@1@@Z 0000000140009710 f i main.obj
  0001:000088b0       ??_G_System_error@std@@UEAAPEAXI@Z 00000001400098b0 f i main.obj
- 0001:000088b0       ??_Esystem_error@std@@UEAAPEAXI@Z 00000001400098b0 f i * CIL library *:* CIL module *
- 0001:000088b0       ??_E_System_error@std@@UEAAPEAXI@Z 00000001400098b0 f i * CIL library *:* CIL module *
  0001:000088b0       ??_Gsystem_error@std@@UEAAPEAXI@Z 00000001400098b0 f i main.obj
+ 0001:000088b0       ??_E_System_error@std@@UEAAPEAXI@Z 00000001400098b0 f i * CIL library *:* CIL module *
+ 0001:000088b0       ??_Esystem_error@std@@UEAAPEAXI@Z 00000001400098b0 f i * CIL library *:* CIL module *
  0001:00008900       ??0system_error@std@@QEAA@Verror_code@1@@Z 0000000140009900 f i main.obj
  0001:000089b0       ?_Throw_system_error@std@@YAXW4errc@1@@Z 00000001400099b0 f i main.obj
  0001:000089f0       ??0system_error@std@@QEAA@AEBV01@@Z 00000001400099f0 f i main.obj
  0001:00008a50       ??0_System_error@std@@QEAA@AEBV01@@Z 0000000140009a50 f i main.obj
  0001:00008aa0       ?name@_Generic_error_category@std@@UEBAPEBDXZ 0000000140009aa0 f i main.obj
  0001:00008ab0       ?message@_Generic_error_category@std@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@H@Z 0000000140009ab0 f i main.obj
- 0001:00008b00       ??_G_System_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i main.obj
- 0001:00008b00       ??_E_System_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i * CIL library *:* CIL module *
  0001:00008b00       ??_E_Generic_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i * CIL library *:* CIL module *
  0001:00008b00       ??_G_Generic_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i main.obj
+ 0001:00008b00       ??_E_System_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i * CIL library *:* CIL module *
+ 0001:00008b00       ??_G_System_error_category@std@@UEAAPEAXI@Z 0000000140009b00 f i main.obj
  0001:00008b30       ?name@_System_error_category@std@@UEBAPEBDXZ 0000000140009b30 f i main.obj
  0001:00008b40       ?message@_System_error_category@std@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@H@Z 0000000140009b40 f i main.obj
  0001:00008bb0       ?default_error_condition@_System_error_category@std@@UEBA?AVerror_condition@2@H@Z 0000000140009bb0 f i main.obj
@@ -201,9 +201,9 @@
  0001:0000bad0       ?Sub32@@YAXPEAIPEBII@Z     000000014000cad0 f   util.obj
  0001:0000bb20       ?Excl32@@YAXPEAIPEBII@Z    000000014000cb20 f   util.obj
  0001:0000bb60       ?SoftLight32@@YAXPEAIPEBII@Z 000000014000cb60 f   util.obj
- 0001:0000bba0       ?Overlay32@@YAXPEAI0I@Z    000000014000cba0 f   util.obj
- 0001:0000bbe0       ?Overlay32A@@YAXPEAI0I@Z   000000014000cbe0 f   util.obj
- 0001:0000bc20       ?Darken32_50@@YAXPEAI0I@Z  000000014000cc20 f   util.obj
+ 0001:0000bba0       ?Overlay32@@YAXPEAIPEBII@Z 000000014000cba0 f   util.obj
+ 0001:0000bbe0       ?Overlay32A@@YAXPEAIPEBII@Z 000000014000cbe0 f   util.obj
+ 0001:0000bc20       ?Darken32_50@@YAXPEAIPEBII@Z 000000014000cc20 f   util.obj
  0001:0000bc60       ?TapeWarp32@@YAXPEAIPEBIIIMM@Z 000000014000cc60 f   util.obj
  0001:0000bcc0       ?MulSrc32@@YAXPEAIPEBII@Z  000000014000ccc0 f   util.obj
  0001:0000bd10       ?MulSrc32A@@YAXPEAIPEBII@Z 000000014000cd10 f   util.obj
@@ -215,8 +215,8 @@
  0001:0000bff0       ??2@YAPEAX_K@Z             000000014000cff0 f   LIBCMT:new_scalar.obj
  0001:0000c02c       ??3@YAXPEAX@Z              000000014000d02c f   LIBCMT:delete_scalar.obj
  0001:0000c034       ??3@YAXPEAX_K@Z            000000014000d034 f   LIBCMT:delete_scalar_size.obj
- 0001:0000c03c       ??_Gtype_info@@UEAAPEAXI@Z 000000014000d03c f i LIBCMT:std_type_info_static.obj
  0001:0000c03c       ??_Etype_info@@UEAAPEAXI@Z 000000014000d03c f i LIBCMT:std_type_info_static.obj
+ 0001:0000c03c       ??_Gtype_info@@UEAAPEAXI@Z 000000014000d03c f i LIBCMT:std_type_info_static.obj
  0001:0000c068       __scrt_acquire_startup_lock 000000014000d068 f   LIBCMT:utility.obj
  0001:0000c0a4       __scrt_initialize_crt      000000014000d0a4 f   LIBCMT:utility.obj
  0001:0000c0f0       __scrt_initialize_onexit_tables 000000014000d0f0 f   LIBCMT:utility.obj
@@ -236,18 +236,18 @@
  0001:0000c870       __scrt_get_show_window_mode 000000014000d870 f   LIBCMT:utility_desktop.obj
  0001:0000c8ac       __scrt_initialize_mta      000000014000d8ac f   LIBCMT:utility_desktop.obj
  0001:0000c8b4       __scrt_initialize_winrt    000000014000d8b4 f   LIBCMT:utility_desktop.obj
+ 0001:0000c8b4       __scrt_stub_for_initialize_mta 000000014000d8b4 f   LIBCMT:utility_desktop.obj
+ 0001:0000c8b4       _get_startup_thread_locale_mode 000000014000d8b4 f   LIBCMT:thread_locale.obj
+ 0001:0000c8b4       _get_startup_commit_mode   000000014000d8b4 f   LIBCMT:commit_mode.obj
+ 0001:0000c8b4       __scrt_exe_initialize_mta  000000014000d8b4 f   LIBCMT:utility_desktop.obj
  0001:0000c8b4       _get_startup_new_mode      000000014000d8b4 f   LIBCMT:new_mode.obj
  0001:0000c8b4       _matherr                   000000014000d8b4 f   LIBCMT:matherr.obj
- 0001:0000c8b4       _get_startup_thread_locale_mode 000000014000d8b4 f   LIBCMT:thread_locale.obj
- 0001:0000c8b4       __scrt_exe_initialize_mta  000000014000d8b4 f   LIBCMT:utility_desktop.obj
- 0001:0000c8b4       _get_startup_commit_mode   000000014000d8b4 f   LIBCMT:commit_mode.obj
- 0001:0000c8b4       __scrt_stub_for_initialize_mta 000000014000d8b4 f   LIBCMT:utility_desktop.obj
  0001:0000c8b8       __scrt_is_managed_app      000000014000d8b8 f   LIBCMT:utility_desktop.obj
  0001:0000c90c       __scrt_set_unhandled_exception_filter 000000014000d90c f   LIBCMT:utility_desktop.obj
  0001:0000c91c       __scrt_unhandled_exception_filter 000000014000d91c f   LIBCMT:utility_desktop.obj
  0001:0000c978       _initialize_denormal_control 000000014000d978 f i LIBCMT:denormal_control.obj
- 0001:0000c978       _guard_check_icall_nop     000000014000d978 f i LIBCMT:guard_support.obj
  0001:0000c978       _initialize_invalid_parameter_handler 000000014000d978 f i LIBCMT:invalid_parameter_handler.obj
+ 0001:0000c978       _guard_check_icall_nop     000000014000d978 f i LIBCMT:guard_support.obj
  0001:0000c97c       __security_init_cookie     000000014000d97c f   LIBCMT:gs_support.obj
  0001:0000ca28       _get_startup_file_mode     000000014000da28 f   LIBCMT:file_mode.obj
  0001:0000ca30       ?__scrt_initialize_type_info@@YAXXZ 000000014000da30 f   LIBCMT:tncleanup.obj
@@ -374,41 +374,41 @@
  0001:000123dc       realloc                    00000001400133dc f   libucrt:realloc.obj
  0001:00012424       ??$ensure_buffer_is_big_enough@D@formatting_buffer@__crt_stdio_output@@QEAA_N_KAEAV__crt_cached_ptd_host@@@Z 0000000140013424 f i libucrt:output.obj
  0001:000124cc       ??$parse_integer@KV?$c_string_character_source@D@__crt_strtox@@$0A@@__crt_strtox@@YAKAEAV__crt_cached_ptd_host@@V?$c_string_character_source@D@0@H_N@Z 00000001400134cc f i libucrt:output.obj
- 0001:00012780       ??$type_case_integer@$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013780 f i libucrt:output.obj
  0001:00012780       ??$type_case_integer@$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013780 f i libucrt:output.obj
+ 0001:00012780       ??$type_case_integer@$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013780 f i libucrt:output.obj
  0001:00012984       ??$type_case_integer@$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013984 f i libucrt:output.obj
  0001:00012984       ??$type_case_integer@$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013984 f i libucrt:output.obj
  0001:00012b88       ??$type_case_integer@$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013b88 f i libucrt:output.obj
  0001:00012b88       ??$type_case_integer@$0BA@@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013b88 f i libucrt:output.obj
- 0001:00012d8c       ??$type_case_integer_parse_into_buffer@I$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013d8c f i libucrt:output.obj
  0001:00012d8c       ??$type_case_integer_parse_into_buffer@I$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013d8c f i libucrt:output.obj
- 0001:00012dfc       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013dfc f i libucrt:output.obj
+ 0001:00012d8c       ??$type_case_integer_parse_into_buffer@I$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013d8c f i libucrt:output.obj
  0001:00012dfc       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013dfc f i libucrt:output.obj
+ 0001:00012dfc       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013dfc f i libucrt:output.obj
  0001:00012ea8       ??$type_case_integer_parse_into_buffer@I$0BA@@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013ea8 f i libucrt:output.obj
  0001:00012ea8       ??$type_case_integer_parse_into_buffer@I$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013ea8 f i libucrt:output.obj
- 0001:00012f2c       ??$type_case_integer_parse_into_buffer@_K$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f2c f i libucrt:output.obj
  0001:00012f2c       ??$type_case_integer_parse_into_buffer@_K$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f2c f i libucrt:output.obj
+ 0001:00012f2c       ??$type_case_integer_parse_into_buffer@_K$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f2c f i libucrt:output.obj
  0001:00012f9c       ??$type_case_integer_parse_into_buffer@_K$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f9c f i libucrt:output.obj
  0001:00012f9c       ??$type_case_integer_parse_into_buffer@_K$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f9c f i libucrt:output.obj
- 0001:0001304c       ??$type_case_integer_parse_into_buffer@_K$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 000000014001404c f i libucrt:output.obj
  0001:0001304c       ??$type_case_integer_parse_into_buffer@_K$0BA@@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 000000014001404c f i libucrt:output.obj
+ 0001:0001304c       ??$type_case_integer_parse_into_buffer@_K$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 000000014001404c f i libucrt:output.obj
  0001:000131ec       ?crop_zeroes@__crt_stdio_output@@YAXPEADQEAU__crt_locale_pointers@@@Z 00000001400141ec f i libucrt:output.obj
- 0001:00013258       ?parse_int_from_format_string@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NQEAH@Z 0000000140014258 f i libucrt:output.obj
  0001:00013258       ?parse_int_from_format_string@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NQEAH@Z 0000000140014258 f i libucrt:output.obj
+ 0001:00013258       ?parse_int_from_format_string@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NQEAH@Z 0000000140014258 f i libucrt:output.obj
  0001:000132e8       ?process@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@QEAAHXZ 00000001400142e8 f i libucrt:output.obj
  0001:00013680       ?process@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@QEAAHXZ 0000000140014680 f i libucrt:output.obj
  0001:00013a00       ?state_case_size@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140014a00 f i libucrt:output.obj
  0001:00013b88       ?state_case_size@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140014b88 f i libucrt:output.obj
  0001:00013d10       ?state_case_type@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140014d10 f i libucrt:output.obj
  0001:00014148       ?state_case_type@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140015148 f i libucrt:output.obj
- 0001:0001454c       ?type_case_Z@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 000000014001554c f i libucrt:output.obj
  0001:0001454c       ?type_case_Z@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 000000014001554c f i libucrt:output.obj
+ 0001:0001454c       ?type_case_Z@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 000000014001554c f i libucrt:output.obj
  0001:000145c8       ?type_case_a@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400155c8 f i libucrt:output.obj
  0001:000145c8       ?type_case_a@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400155c8 f i libucrt:output.obj
  0001:0001481c       ?type_case_c_tchar@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_ND@Z 000000014001581c f i libucrt:output.obj
  0001:0001481c       ?type_case_c_tchar@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_ND@Z 000000014001581c f i libucrt:output.obj
- 0001:000148f0       ?type_case_n@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400158f0 f i libucrt:output.obj
  0001:000148f0       ?type_case_n@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400158f0 f i libucrt:output.obj
+ 0001:000148f0       ?type_case_n@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400158f0 f i libucrt:output.obj
  0001:000149a8       ?type_case_s@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400159a8 f i libucrt:output.obj
  0001:000149a8       ?type_case_s@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400159a8 f i libucrt:output.obj
  0001:00014a50       ?update_locale_slow@__crt_cached_ptd_host@@AEAAXXZ 0000000140015a50 f i libucrt:output.obj
@@ -488,8 +488,8 @@
  0001:00018670       _set_new_mode              0000000140019670 f   libucrt:new_mode.obj
  0001:0001869c       __p__commode               000000014001969c f   libucrt:ncommode.obj
  0001:000186a4       terminate                  00000001400196a4 f   libucrt:terminate.obj
- 0001:000186d0       strdup                     00000001400196d0 f   libucrt:strdup.obj
  0001:000186d0       _strdup                    00000001400196d0 f   libucrt:strdup.obj
+ 0001:000186d0       strdup                     00000001400196d0 f   libucrt:strdup.obj
  0001:00018748       ___lc_codepage_func        0000000140019748 f   libucrt:initctype.obj
  0001:00018778       strcpy_s                   0000000140019778 f   libucrt:strcpy_s.obj
  0001:000187d8       abort                      00000001400197d8 f   libucrt:abort.obj
@@ -726,8 +726,8 @@
  0001:00028ac0       __report_rangecheckfailure 0000000140029ac0 f   LIBCMT:gs_report.obj
  0001:00028ad4       __report_securityfailure   0000000140029ad4 f   LIBCMT:gs_report.obj
  0001:00028c54       __GSHandlerCheck_EH        0000000140029c54 f   LIBCMT:gshandlereh.obj
- 0001:00028cf0       __chkstk                   0000000140029cf0 f   LIBCMT:chkstk.obj
  0001:00028cf0       _alloca_probe              0000000140029cf0 f   LIBCMT:chkstk.obj
+ 0001:00028cf0       __chkstk                   0000000140029cf0 f   LIBCMT:chkstk.obj
  0001:00028d40       __C_specific_handler_noexcept 0000000140029d40 f   libvcruntime:chandler_noexcept.obj
  0001:00028d8c       wcsrchr                    0000000140029d8c f   libvcruntime:wcsrchr.obj
  0001:00028e50       memcmp                     0000000140029e50 f   libvcruntime:memcmp.obj
@@ -1966,7 +1966,7 @@
  0002:0000b428       __real@3f50624e            0000000140044428     shadertoy.obj
  0002:0000b430       __real@3f7921fb60000000    0000000140044430     fast-cosine.obj
  0002:0000b438       __real@3f7d70a4            0000000140044438     ball.obj
- 0002:0000b43c       __real@3f800000            000000014004443c     tunnelscape.obj
+ 0002:0000b43c       __real@3f800000            000000014004443c     ball.obj
  0002:0000b440       __real@3f833333            0000000140044440     shadertoy.obj
  0002:0000b448       __real@3f9611a7b9611a7c    0000000140044448     audio.obj
  0002:0000b450       __real@3faa3d71            0000000140044450     shadertoy.obj
@@ -2000,7 +2000,7 @@
  0002:0000b4cc       __real@42826136            00000001400444cc     shadertoy.obj
  0002:0000b4d0       __real@42a2f983            00000001400444d0     shadertoy.obj
  0002:0000b4d4       __real@42b40000            00000001400444d4     landscape.obj
- 0002:0000b4d8       __real@42c80000            00000001400444d8     tunnelscape.obj
+ 0002:0000b4d8       __real@42c80000            00000001400444d8     demo.obj
  0002:0000b4dc       __real@4334f4ac            00000001400444dc     landscape.obj
  0002:0000b4e0       __real@434cb238            00000001400444e0     shadertoy.obj
  0002:0000b4e4       __real@43572066            00000001400444e4     shadertoy.obj
@@ -2585,8 +2585,8 @@
  0001:000042f0       ?RenderSpikeyMap_2x2_Distant_SpecularOnly@@YAXPEAIMM@Z 00000001400052f0 f   shadertoy.obj
  0001:000043e0       ?RenderTunnelMap_2x2@@YAXPEAIM@Z 00000001400053e0 f   shadertoy.obj
  0001:000045f0       ?RenderSinMap_2x2@@YAXPEAIM@Z 00000001400055f0 f   shadertoy.obj
- 0001:0000733c       $LN1081                    000000014000833c     demo.obj
- 0001:00007370       $LN1080                    0000000140008370     demo.obj
+ 0001:0000733c       $LN1077                    000000014000833c     demo.obj
+ 0001:00007370       $LN1076                    0000000140008370     demo.obj
  0001:000078a0       ?Image_Load@@YAPEAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_NPEAI1@Z 00000001400088a0 f   image.obj
  0001:00007e10       ?vscape_ray@@YAXPEAIHHHHM@Z 0000000140008e10 f   landscape.obj
  0001:00008110       ?vscape@@YAXPEAIMM@Z       0000000140009110 f   landscape.obj
@@ -2772,7 +2772,7 @@
  0001:00030400       ?BlitAdd32A$omp$1@@YAXPEAIPEBIIIIM@Z 0000000140031400 f   util.obj
  0001:00030510       ?BlitSrc32$omp$1@@YAXPEAIPEBIIII@Z 0000000140031510 f   util.obj
  0001:00030620       ?BlitSrc32A$omp$1@@YAXPEAIPEBIIIIM@Z 0000000140031620 f   util.obj
- 0001:00030740       ?Darken32_50$omp$1@@YAXPEAI0I@Z 0000000140031740 f   util.obj
+ 0001:00030740       ?Darken32_50$omp$1@@YAXPEAIPEBII@Z 0000000140031740 f   util.obj
  0001:00030870       ?Excl32$omp$1@@YAXPEAIPEBII@Z 0000000140031870 f   util.obj
  0001:00030990       ?Fade32$omp$1@@YAXPEAIIIE@Z 0000000140031990 f   util.obj
  0001:00030a50       ?Mix32$omp$1@@YAXPEAIPEBIIE@Z 0000000140031a50 f   util.obj
@@ -2780,8 +2780,8 @@
  0001:00030c60       ?MixSrc32$omp$1@@YAXPEAIPEBII@Z 0000000140031c60 f   util.obj
  0001:00030d30       ?MulSrc32$omp$1@@YAXPEAIPEBII@Z 0000000140031d30 f   util.obj
  0001:00030de0       ?MulSrc32A$omp$1@@YAXPEAIPEBII@Z 0000000140031de0 f   util.obj
- 0001:00030e90       ?Overlay32$omp$1@@YAXPEAI0I@Z 0000000140031e90 f   util.obj
- 0001:00031040       ?Overlay32A$omp$1@@YAXPEAI0I@Z 0000000140032040 f   util.obj
+ 0001:00030e90       ?Overlay32$omp$1@@YAXPEAIPEBII@Z 0000000140031e90 f   util.obj
+ 0001:00031040       ?Overlay32A$omp$1@@YAXPEAIPEBII@Z 0000000140032040 f   util.obj
  0001:00031230       ?SoftLight32$omp$1@@YAXPEAIPEBII@Z 0000000140032230 f   util.obj
  0001:000313f0       ?Sub32$omp$1@@YAXPEAIPEBII@Z 00000001400323f0 f   util.obj
  0001:000314a0       ?TapeWarp32$omp$1@@YAXPEAIPEBIIIMM@Z 00000001400324a0 f   util.obj
@@ -3286,11 +3286,11 @@
  0002:0000e48c       $unwind$__acrt_stdio_begin_temporary_buffering_nolock 000000014004748c     libucrt:_sftbuf.obj
  0002:0000e498       $unwind$?_Throw_bad_array_new_length@std@@YAXXZ 0000000140047498     audio.obj
  0002:0000e498       $unwind$?Shadertoy_Create@@YA_NXZ 0000000140047498     shadertoy.obj
- 0002:0000e498       $unwind$?Darken32_50@@YAXPEAI0I@Z 0000000140047498     util.obj
+ 0002:0000e498       $unwind$?Darken32_50@@YAXPEAIPEBII@Z 0000000140047498     util.obj
  0002:0000e498       $unwind$?Excl32@@YAXPEAIPEBII@Z 0000000140047498     util.obj
  0002:0000e498       $unwind$?MixOver32@@YAXPEAIPEBII@Z 0000000140047498     util.obj
- 0002:0000e498       $unwind$?Overlay32@@YAXPEAI0I@Z 0000000140047498     util.obj
- 0002:0000e498       $unwind$?Overlay32A@@YAXPEAI0I@Z 0000000140047498     util.obj
+ 0002:0000e498       $unwind$?Overlay32@@YAXPEAIPEBII@Z 0000000140047498     util.obj
+ 0002:0000e498       $unwind$?Overlay32A@@YAXPEAIPEBII@Z 0000000140047498     util.obj
  0002:0000e498       $unwind$?SoftLight32@@YAXPEAIPEBII@Z 0000000140047498     util.obj
  0002:0000e498       $unwind$?__scrt_throw_std_bad_alloc@@YAXXZ 0000000140047498     LIBCMT:throw_bad_alloc.obj
  0002:0000e498       $unwind$?__scrt_throw_std_bad_array_new_length@@YAXXZ 0000000140047498     LIBCMT:throw_bad_alloc.obj
@@ -3975,9 +3975,9 @@
  0002:00010b7c       $chain$1$?BlitSrc32A$omp$1@@YAXPEAIPEBIIIIM@Z 0000000140049b7c     util.obj
  0002:00010b90       $chain$2$?BlitSrc32A$omp$1@@YAXPEAIPEBIIIIM@Z 0000000140049b90     util.obj
  0002:00010ba0       $chain$3$?BlitSrc32A$omp$1@@YAXPEAIPEBIIIIM@Z 0000000140049ba0     util.obj
- 0002:00010bb0       $unwind$?Darken32_50$omp$1@@YAXPEAI0I@Z 0000000140049bb0     util.obj
- 0002:00010bbc       $chain$3$?Darken32_50$omp$1@@YAXPEAI0I@Z 0000000140049bbc     util.obj
- 0002:00010bdc       $chain$4$?Darken32_50$omp$1@@YAXPEAI0I@Z 0000000140049bdc     util.obj
+ 0002:00010bb0       $unwind$?Darken32_50$omp$1@@YAXPEAIPEBII@Z 0000000140049bb0     util.obj
+ 0002:00010bbc       $chain$3$?Darken32_50$omp$1@@YAXPEAIPEBII@Z 0000000140049bbc     util.obj
+ 0002:00010bdc       $chain$4$?Darken32_50$omp$1@@YAXPEAIPEBII@Z 0000000140049bdc     util.obj
  0002:00010bec       $unwind$?Excl32$omp$1@@YAXPEAIPEBII@Z 0000000140049bec     util.obj
  0002:00010bf8       $chain$2$?Excl32$omp$1@@YAXPEAIPEBII@Z 0000000140049bf8     util.obj
  0002:00010c14       $chain$3$?Excl32$omp$1@@YAXPEAIPEBII@Z 0000000140049c14     util.obj
@@ -3988,13 +3988,13 @@
  0002:00010c38       $unwind$?MixOver32$omp$1@@YAXPEAIPEBII@Z 0000000140049c38     util.obj
  0002:00010c44       $chain$2$?MixOver32$omp$1@@YAXPEAIPEBII@Z 0000000140049c44     util.obj
  0002:00010c60       $chain$3$?MixOver32$omp$1@@YAXPEAIPEBII@Z 0000000140049c60     util.obj
- 0002:00010c70       $unwind$?Overlay32$omp$1@@YAXPEAI0I@Z 0000000140049c70     util.obj
+ 0002:00010c70       $unwind$?Overlay32$omp$1@@YAXPEAIPEBII@Z 0000000140049c70     util.obj
  0002:00010c70       $unwind$?SoftLight32$omp$1@@YAXPEAIPEBII@Z 0000000140049c70     util.obj
- 0002:00010c7c       $chain$1$?Overlay32$omp$1@@YAXPEAI0I@Z 0000000140049c7c     util.obj
- 0002:00010c94       $chain$2$?Overlay32$omp$1@@YAXPEAI0I@Z 0000000140049c94     util.obj
- 0002:00010ca4       $unwind$?Overlay32A$omp$1@@YAXPEAI0I@Z 0000000140049ca4     util.obj
- 0002:00010cb0       $chain$3$?Overlay32A$omp$1@@YAXPEAI0I@Z 0000000140049cb0     util.obj
- 0002:00010cd0       $chain$4$?Overlay32A$omp$1@@YAXPEAI0I@Z 0000000140049cd0     util.obj
+ 0002:00010c7c       $chain$1$?Overlay32$omp$1@@YAXPEAIPEBII@Z 0000000140049c7c     util.obj
+ 0002:00010c94       $chain$2$?Overlay32$omp$1@@YAXPEAIPEBII@Z 0000000140049c94     util.obj
+ 0002:00010ca4       $unwind$?Overlay32A$omp$1@@YAXPEAIPEBII@Z 0000000140049ca4     util.obj
+ 0002:00010cb0       $chain$3$?Overlay32A$omp$1@@YAXPEAIPEBII@Z 0000000140049cb0     util.obj
+ 0002:00010cd0       $chain$4$?Overlay32A$omp$1@@YAXPEAIPEBII@Z 0000000140049cd0     util.obj
  0002:00010ce0       $chain$2$?SoftLight32$omp$1@@YAXPEAIPEBII@Z 0000000140049ce0     util.obj
  0002:00010cfc       $chain$3$?SoftLight32$omp$1@@YAXPEAIPEBII@Z 0000000140049cfc     util.obj
  0002:00010d0c       $unwind$?TapeWarp32$omp$1@@YAXPEAIPEBIIIMM@Z 0000000140049d0c     util.obj
