@@ -296,7 +296,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 			Twister_Draw(pDest, timer, delta);
 			SoftLight32(pDest, s_pBallVignette, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
-			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+
+			// commented why? see case #3
+//			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 	
 		case 2:
@@ -371,7 +373,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					SoftLight32(pDest, s_pBallVignette, kOutputSize);
 
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);
-				MulSrc32A(pDest, s_pVignette06, kOutputSize);
+				
+				// I think it looks slightly better without this vignette on top
+				// MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			}
 			break;
 
@@ -561,7 +565,8 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
 
-				BlitAdd32A(pDest + (kResX-1000)/2 + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
+				// FIXME: this 1 pixel offset (X) matters, and that's entirely because it's a fucked up bitmap (waiting for Jade)
+				BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
 			}
 			break;
 

@@ -1,6 +1,6 @@
  VS17
 
- Timestamp is 6415233f (Sat Mar 18 03:34:39 2023)
+ Timestamp is 6415499e (Sat Mar 18 06:18:22 2023)
 
  Preferred load address is 0000000140000000
 
@@ -2585,8 +2585,8 @@
  0001:000042f0       ?RenderSpikeyMap_2x2_Distant_SpecularOnly@@YAXPEAIMM@Z 00000001400052f0 f   shadertoy.obj
  0001:000043e0       ?RenderTunnelMap_2x2@@YAXPEAIM@Z 00000001400053e0 f   shadertoy.obj
  0001:000045f0       ?RenderSinMap_2x2@@YAXPEAIM@Z 00000001400055f0 f   shadertoy.obj
- 0001:0000733c       $LN1077                    000000014000833c     demo.obj
- 0001:00007370       $LN1076                    0000000140008370     demo.obj
+ 0001:0000733c       $LN1066                    000000014000833c     demo.obj
+ 0001:00007370       $LN1065                    0000000140008370     demo.obj
  0001:000078a0       ?Image_Load@@YAPEAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_NPEAI1@Z 00000001400088a0 f   image.obj
  0001:00007e10       ?vscape_ray@@YAXPEAIHHHHM@Z 0000000140008e10 f   landscape.obj
  0001:00008110       ?vscape@@YAXPEAIMM@Z       0000000140009110 f   landscape.obj
