@@ -305,6 +305,26 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// Introduction: landscape
 				Landscape_Draw(pDest, timer, delta);
 
+				// overlay HUD
+				const float alphaHUD = saturatef(Rocket::getf(trackScapeHUD));
+				if (0.f != alphaHUD)
+					BlitAdd32A(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720, alphaHUD);
+
+				// add Revision logo
+				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
+				if (0.f != alphaRev)
+				{
+					if (0.5f > alphaRev)
+						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
+					else
+					{
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.5f)*12.f)));
+						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
+					}
+				}
+
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+
 				// shooting star (or what has to pass for it)
 				// this is the charm of a hack made possible by Rocket
 				// FIXME: really shouldn't be using threaded blit function(s) here
@@ -331,33 +351,14 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 							alpha -= alphaStep;
 
 							const unsigned offset = yPos*kResX + xPos;
+							const unsigned offset = yPos * kResX + xPos;
 							BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
 						}
 					}
 				}
 
 				// FIXME: placeholder
-				SoftLight32(pDest, s_pTunnelVignette, kOutputSize);
-
-				// overlay HUD
-				const float alphaHUD = saturatef(Rocket::getf(trackScapeHUD));
-				if (0.f != alphaHUD)
-					BlitAdd32A(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720, alphaHUD);
-
-				// add Revision logo
-				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
-				if (0.f != alphaRev)
-				{
-					if (0.5f > alphaRev)
-						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
-					else
-					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.5f)*12.f)));
-						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
-					}
-				}
-
-				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+				SoftLight32A(pDest, s_pCloseSpikeVignette, kOutputSize);
 			}
 			break;
 

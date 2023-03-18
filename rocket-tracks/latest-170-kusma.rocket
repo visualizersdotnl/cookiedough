@@ -129,7 +129,7 @@ color="ff4fb292">
 	</track>
 	<track name="ball:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="1048" value="3.140000" interpolation="0" />
+		<key row="1048" value="6.280000" interpolation="0" />
 		<key row="1104" value="3.140000" interpolation="0" />
 		<key row="1152" value="-3.140000" interpolation="0" />
 		<key row="1208" value="3.140000" interpolation="0" />
@@ -913,30 +913,30 @@ color="ff4fb292">
 	<track name="shootingStar:X" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="1200.000000" interpolation="2" />
+		<key row="456" value="1200.000000" interpolation="3" />
 		<key row="544" value="5.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:Y" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="456" value="40.000000" interpolation="3" />
-		<key row="520" value="100.000000" interpolation="2" />
-		<key row="544" value="140.000000" interpolation="0" />
+		<key row="520" value="100.000000" interpolation="1" />
+		<key row="544" value="120.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:A" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="0.000000" interpolation="1" />
-		<key row="496" value="1.000000" interpolation="3" />
-		<key row="528" value="0.314000" interpolation="3" />
+		<key row="456" value="0.000000" interpolation="3" />
+		<key row="480" value="1.000000" interpolation="2" />
+		<key row="536" value="1.000000" interpolation="3" />
 		<key row="544" value="0.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:Trail" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="3" />
-		<key row="456" value="0.000000" interpolation="1" />
-		<key row="504" value="8.000000" interpolation="3" />
-		<key row="544" value="32.000000" interpolation="0" />
+		<key row="456" value="0.000000" interpolation="3" />
+		<key row="504" value="8.000000" interpolation="2" />
+		<key row="544" value="16.000000" interpolation="0" />
 		<key row="5693" value="32.000000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
