@@ -252,8 +252,8 @@ color="ffb28050">
 		<key row="8752" value="0.010000" interpolation="0" />
 		<key row="8880" value="0.010000" interpolation="2" />
 		<key row="8912" value="0.000000" interpolation="0" />
-		<key row="9168" value="0.000000" interpolation="2" />
-		<key row="9200" value="0.010000" interpolation="0" />
+		<key row="9164" value="0.000000" interpolation="3" />
+		<key row="9192" value="0.010000" interpolation="0" />
 	</track>
 	<track name="laura:Hue" folded="0" muteKeyCount="0"
 color="ffa9b250">
@@ -869,6 +869,8 @@ color="ffb27474">
 		<key row="9552" value="8.000000" interpolation="3" />
 		<key row="9560" value="24.000000" interpolation="2" />
 		<key row="9591" value="0.000000" interpolation="0" />
+		<key row="9760" value="1.000000" interpolation="3" />
+		<key row="9895" value="3.000000" interpolation="0" />
 	</track>
 	<track name="demo:GreetSwitch" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -1006,7 +1008,7 @@ color="ffb25091">
 		<key row="7336" value="0.000000" interpolation="3" />
 		<key row="7352" value="0.330000" interpolation="0" />
 		<key row="8064" value="0.330000" interpolation="2" />
-		<key row="8119" value="0.000000" interpolation="0" />
+		<key row="8119" value="0.220000" interpolation="0" />
 		<key row="8120" value="0.330000" interpolation="3" />
 		<key row="8184" value="0.770000" interpolation="2" />
 		<key row="8312" value="1.000000" interpolation="0" />
