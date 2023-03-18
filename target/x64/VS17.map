@@ -1,6 +1,6 @@
  VS17
 
- Timestamp is 64155e03 (Sat Mar 18 07:45:23 2023)
+ Timestamp is 6415a6a9 (Sat Mar 18 12:55:21 2023)
 
  Preferred load address is 0000000140000000
 
@@ -1922,7 +1922,7 @@
  0002:0000b378       __real@3b4ccccd            0000000140044378     shadertoy.obj
  0002:0000b37c       __real@3b9346ed            000000014004437c     shadertoy.obj
  0002:0000b380       __real@3bb60b61            0000000140044380     shadertoy.obj
- 0002:0000b384       __real@3c0f2d1e            0000000140044384     ball.obj
+ 0002:0000b384       __real@3c0f2d1e            0000000140044384     torus-twister.obj
  0002:0000b388       __real@3c23d70a            0000000140044388     tunnelscape.obj
  0002:0000b38c       __real@3c360b61            000000014004438c     shadertoy.obj
  0002:0000b390       __real@3c91a2b4            0000000140044390     landscape.obj
@@ -1966,7 +1966,7 @@
  0002:0000b428       __real@3f50624e            0000000140044428     shadertoy.obj
  0002:0000b430       __real@3f7921fb60000000    0000000140044430     fast-cosine.obj
  0002:0000b438       __real@3f7d70a4            0000000140044438     ball.obj
- 0002:0000b43c       __real@3f800000            000000014004443c     ball.obj
+ 0002:0000b43c       __real@3f800000            000000014004443c     tunnelscape.obj
  0002:0000b440       __real@3f833333            0000000140044440     shadertoy.obj
  0002:0000b448       __real@3f9611a7b9611a7c    0000000140044448     audio.obj
  0002:0000b450       __real@3faa3d71            0000000140044450     shadertoy.obj
@@ -1983,7 +1983,7 @@
  0002:0000b488       __real@4048f5c3            0000000140044488     shadertoy.obj
  0002:0000b48c       __real@40490fdb            000000014004448c     ball.obj
  0002:0000b490       __real@404f1bbd            0000000140044490     shadertoy.obj
- 0002:0000b494       __real@40638e39            0000000140044494     tunnelscape.obj
+ 0002:0000b494       __real@40638e39            0000000140044494     shadertoy.obj
  0002:0000b498       __real@40c00000            0000000140044498     ball.obj
  0002:0000b49c       __real@41000000            000000014004449c     shadertoy.obj
  0002:0000b4a0       __real@41200000            00000001400444a0     shadertoy.obj
@@ -2005,8 +2005,8 @@
  0002:0000b4e0       __real@434cb238            00000001400444e0     shadertoy.obj
  0002:0000b4e4       __real@43572066            00000001400444e4     shadertoy.obj
  0002:0000b4e8       __real@43594caf            00000001400444e8     shadertoy.obj
- 0002:0000b4ec       __real@437f0000            00000001400444ec     ball.obj
- 0002:0000b4f0       __real@43800000            00000001400444f0     ball.obj
+ 0002:0000b4ec       __real@437f0000            00000001400444ec     util.obj
+ 0002:0000b4f0       __real@43800000            00000001400444f0     util.obj
  0002:0000b4f4       __real@438c2880            00000001400444f4     shadertoy.obj
  0002:0000b4f8       __real@43a2f983            00000001400444f8     shadertoy.obj
  0002:0000b4fc       __real@43acc0cd            00000001400444fc     shadertoy.obj

@@ -290,7 +290,6 @@
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\to do.txt" />
     <Text Include="..\target\infofile.txt">
       <Filter>/target</Filter>
     </Text>

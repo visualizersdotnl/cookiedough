@@ -157,7 +157,6 @@
     <Text Include="..\bypasszs-ascii.txt" />
     <Text Include="..\rocket-track-guide.txt" />
     <Text Include="..\target\infofile.txt" />
-    <Text Include="..\to do.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

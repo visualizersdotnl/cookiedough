@@ -124,8 +124,9 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 
 #endif
 
-		// add beam to color
+		// add beam & very simple directional light to color
 		color = _mm_adds_epu16(color, beamAccum);
+		color = _mm_adds_epu16(color, lit);
 
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
