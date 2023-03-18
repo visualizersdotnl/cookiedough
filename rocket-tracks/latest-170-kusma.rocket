@@ -840,7 +840,7 @@ color="ff60b250">
 color="ff4fb292">
 		<key row="0" value="1.000000" interpolation="0" />
 		<key row="848" value="1.000000" interpolation="3" />
-		<key row="968" value="0.000000" interpolation="0" />
+		<key row="1000" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:ScapeRev" folded="0" muteKeyCount="0"
 color="ff4f71b2">
@@ -928,14 +928,14 @@ color="ff8850b2">
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="448" value="0.000000" interpolation="3" />
-		<key row="456" value="1.000000" interpolation="1" />
+		<key row="464" value="1.000000" interpolation="1" />
 		<key row="512" value="0.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:Trail" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="448" value="1.000000" interpolation="2" />
-		<key row="456" value="10.000000" interpolation="0" />
+		<key row="448" value="1.000000" interpolation="3" />
+		<key row="464" value="10.000000" interpolation="0" />
 		<key row="5693" value="32.000000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
