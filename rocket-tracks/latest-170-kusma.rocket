@@ -18,8 +18,8 @@
 	<bookmark row="10061" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="0"
-color="ffb27474">
+	<track name="twister:Speed" folded="0" muteKeyCount="6"
+color="ffb27474" muteValue="8.000000">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="986" value="0.000000" interpolation="0" />
 		<key row="1011" value="0.000000" interpolation="0" />
@@ -130,14 +130,12 @@ color="ff4fb292">
 	<track name="ball:Speed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="1048" value="3.140000" interpolation="0" />
-		<key row="1088" value="-4.000000" interpolation="0" />
 		<key row="1104" value="3.140000" interpolation="0" />
 		<key row="1152" value="-3.140000" interpolation="0" />
 		<key row="1208" value="3.140000" interpolation="0" />
 		<key row="1416" value="4.000000" interpolation="0" />
 		<key row="1544" value="-3.140000" interpolation="0" />
 		<key row="1672" value="3.140000" interpolation="0" />
-		<key row="1776" value="-4.140000" interpolation="0" />
 		<key row="1832" value="-3.140000" interpolation="0" />
 		<key row="1936" value="2.000000" interpolation="0" />
 		<key row="2024" value="-4.000000" interpolation="0" />
@@ -590,9 +588,10 @@ color="ffa9b250">
 		<key row="1487" value="0.000000" interpolation="0" />
 		<key row="1544" value="1.000000" interpolation="1" />
 		<key row="1552" value="0.000000" interpolation="0" />
+		<key row="1668" value="0.000000" interpolation="1" />
 		<key row="1672" value="1.000000" interpolation="3" />
-		<key row="1688" value="0.000000" interpolation="0" />
-		<key row="1776" value="1.000000" interpolation="1" />
+		<key row="1696" value="0.000000" interpolation="0" />
+		<key row="1776" value="1.000000" interpolation="3" />
 		<key row="1784" value="0.000000" interpolation="0" />
 		<key row="1832" value="0.330000" interpolation="3" />
 		<key row="1840" value="0.000000" interpolation="0" />
@@ -693,12 +692,12 @@ color="ff60b250">
 		<key row="1640" value="0.000000" interpolation="0" />
 		<key row="1656" value="1.000000" interpolation="3" />
 		<key row="1672" value="0.000000" interpolation="0" />
-		<key row="1736" value="1.000000" interpolation="1" />
+		<key row="1736" value="1.000000" interpolation="3" />
 		<key row="1744" value="0.000000" interpolation="0" />
 		<key row="1816" value="0.000000" interpolation="1" />
 		<key row="1824" value="0.660000" interpolation="2" />
 		<key row="1831" value="0.000000" interpolation="0" />
-		<key row="1936" value="1.000000" interpolation="1" />
+		<key row="1936" value="1.000000" interpolation="3" />
 		<key row="1952" value="0.000000" interpolation="0" />
 		<key row="2024" value="1.000000" interpolation="3" />
 		<key row="2032" value="0.000000" interpolation="0" />
