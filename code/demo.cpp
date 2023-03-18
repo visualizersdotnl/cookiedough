@@ -351,7 +351,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 							alpha -= alphaStep;
 
 							const unsigned offset = yPos*kResX + xPos;
-							const unsigned offset = yPos * kResX + xPos;
 							BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
 						}
 					}
