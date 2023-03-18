@@ -25,16 +25,16 @@ people involved:
   + comatron (soundtrack) ft. celin (vocals)
   + jade (graphics, design)
   + nytrik (ideas, graphics)
-  + and introducing ernst hot formerly known as thorsten/purple (creative support, Linux build)
   + alien (small TPB logo)
-  + superplek (superstar programmer, design, sync.)
+  + superplek (programming, design, sync.)
+  + and introducing Ernst Hot formerly known as thorsten/purple (TPB legacy, creative support, Linux build)
 
 advisory board / additional:
   + nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg); rest in peace soldier!
-  + thec (ideas, support, catering, gun safety training)
+  + thec (ideas, support, catering, gun safety)
   + dascon (networking)
   + raimo (boy wonder)
   + dipswitch (the beauty on top of this file)
 
   some textures come from previous The Pimp Brigade productions and are entirely ours to use
-  too slow, want to make your own build, other issues? check 'visualizersdotnl' @ Github, repository 'cookiedough'
+  too slow? want to make your own build? other issues? -> https://github.com/visualizersdotnl/cookiedough

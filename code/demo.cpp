@@ -190,7 +190,6 @@ bool Demo_Create()
 		return false;
 
 	// voxel ball
-//	s_pBallText = Image_Load32("assets/ball/RGBFuckUp_Pixel_MaskedOut_smaller_desaturate.png");
 	s_pBallVignette = Image_Load32("assets/ball/Vignette_Sparta300.png");
 	if (nullptr == s_pBallVignette)
 		return false;
