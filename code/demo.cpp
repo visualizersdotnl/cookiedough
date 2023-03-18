@@ -561,7 +561,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
 
-				BlitAdd32A(pDest + (kResX-1000)/2 + (yOffs+115)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
+				BlitAdd32A(pDest + (kResX-1000)/2 + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
 			}
 			break;
 
