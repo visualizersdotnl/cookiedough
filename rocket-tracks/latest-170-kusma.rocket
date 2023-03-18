@@ -18,8 +18,8 @@
 	<bookmark row="10061" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
 beatsPerMin="125">
-	<track name="twister:Speed" folded="0" muteKeyCount="6"
-color="ffb27474" muteValue="8.000000">
+	<track name="twister:Speed" folded="0" muteKeyCount="0"
+color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="986" value="0.000000" interpolation="0" />
 		<key row="1011" value="0.000000" interpolation="0" />
@@ -144,18 +144,18 @@ color="ff4f71b2">
 	<track name="ball:BeamAttenuation" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="1048" value="0.000000" interpolation="0" />
-		<key row="1104" value="64.000000" interpolation="2" />
+		<key row="1104" value="32.000000" interpolation="2" />
 		<key row="1152" value="196.000000" interpolation="0" />
 		<key row="1672" value="64.000000" interpolation="3" />
 		<key row="1712" value="196.000000" interpolation="2" />
 		<key row="1728" value="255.000000" interpolation="0" />
 		<key row="1936" value="255.000000" interpolation="3" />
-		<key row="2064" value="0.000000" interpolation="2" />
+		<key row="2064" value="32.000000" interpolation="2" />
 		<key row="2096" value="255.000000" interpolation="0" />
 	</track>
 	<track name="ball:BeamAlphaMin" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="1048" value="255.000000" interpolation="0" />
+		<key row="1048" value="196.000000" interpolation="0" />
 		<key row="1936" value="64.000000" interpolation="3" />
 		<key row="2095" value="255.000000" interpolation="2" />
 		<key row="2096" value="0.000000" interpolation="0" />
@@ -249,7 +249,7 @@ color="ffb28050">
 		<key row="8576" value="0.000000" interpolation="0" />
 		<key row="8720" value="0.000000" interpolation="3" />
 		<key row="8752" value="0.010000" interpolation="0" />
-		<key row="9173" value="0.000000" interpolation="2" />
+		<key row="9173" value="0.000000" interpolation="3" />
 		<key row="9200" value="0.010000" interpolation="0" />
 	</track>
 	<track name="laura:Hue" folded="0" muteKeyCount="0"
@@ -844,7 +844,7 @@ color="ff4fb292">
 	</track>
 	<track name="demo:ScapeRev" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="0" value="0.000000" interpolation="3" />
+		<key row="0" value="0.000000" interpolation="0" />
 		<key row="968" value="0.000000" interpolation="3" />
 		<key row="1047" value="0.900000" interpolation="0" />
 	</track>
@@ -907,36 +907,35 @@ color="ff60b250">
 	<track name="shootingStar:Enabled" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="1.000000" interpolation="0" />
-		<key row="544" value="0.000000" interpolation="0" />
+		<key row="448" value="1.000000" interpolation="0" />
+		<key row="512" value="0.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:X" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="1200.000000" interpolation="3" />
-		<key row="544" value="5.000000" interpolation="0" />
+		<key row="448" value="1100.000000" interpolation="0" />
+		<key row="456" value="1100.000000" interpolation="3" />
+		<key row="504" value="100.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:Y" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="40.000000" interpolation="3" />
-		<key row="520" value="100.000000" interpolation="1" />
-		<key row="544" value="120.000000" interpolation="0" />
+		<key row="448" value="10.000000" interpolation="0" />
+		<key row="456" value="10.000000" interpolation="3" />
+		<key row="504" value="300.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:A" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="456" value="0.000000" interpolation="3" />
-		<key row="480" value="1.000000" interpolation="2" />
-		<key row="536" value="1.000000" interpolation="3" />
-		<key row="544" value="0.000000" interpolation="0" />
+		<key row="448" value="0.000000" interpolation="3" />
+		<key row="456" value="1.000000" interpolation="1" />
+		<key row="512" value="0.000000" interpolation="0" />
 	</track>
 	<track name="shootingStar:Trail" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="0" value="0.000000" interpolation="3" />
-		<key row="456" value="0.000000" interpolation="3" />
-		<key row="504" value="8.000000" interpolation="2" />
-		<key row="544" value="16.000000" interpolation="0" />
+		<key row="0" value="0.000000" interpolation="0" />
+		<key row="448" value="1.000000" interpolation="2" />
+		<key row="456" value="10.000000" interpolation="0" />
 		<key row="5693" value="32.000000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:speedX" folded="0" muteKeyCount="0"
@@ -1013,6 +1012,12 @@ color="ffb25091">
 		<key row="8120" value="0.330000" interpolation="3" />
 		<key row="8184" value="0.770000" interpolation="2" />
 		<key row="8312" value="1.000000" interpolation="0" />
+	</track>
+	<track name="demo:ScapeOverlay" folded="0" muteKeyCount="0"
+color="ffb27474">
+		<key row="0" value="1.000000" interpolation="0" />
+		<key row="936" value="1.000000" interpolation="3" />
+		<key row="984" value="0.000000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>

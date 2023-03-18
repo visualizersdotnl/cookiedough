@@ -39,10 +39,10 @@ SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
 
 // things that need attention:
 // - use 16-bit height map(s)
-
-// #define DEBUG_BALL_LIGHTING
+// - ...
 
 // see implementation
+// #define DEBUG_BALL_LIGHTING
 // #define USE_LAST_BEAM_ACCUM
 
 // adjust to map resolution
@@ -111,22 +111,23 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 		// light beam
-		const int heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const int diffuse = (heightNorm*heightNorm) >> 8;
-		const __m128i lit = _mm_set1_epi16(diffuse);
-		const __m128i beamLit = _mm_srli_epi16(_mm_mullo_epi16(beam, lit), 8);
+		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const unsigned diffuse = (heightNorm*heightNorm) >> 8;
+		const __m128i litWhite = _mm_set1_epi16(diffuse);
+//		const __m128i litPurple = c2vISSE16(diffuse*0x01010001); 
+		const __m128i beamLit = _mm_srli_epi16(_mm_mullo_epi16(beam, litWhite), 8);
 		beamAccum = _mm_adds_epu16(beamAccum, beamLit);
 
 #if defined(DEBUG_BALL_LIGHTING)
 
-		color = lit;
+		color = litWhite;
 		color = _mm_adds_epu16(c2vISSE16(0xff<<24), color); // no blending please
 
 #endif
 
 		// add beam & very simple directional light to color
 		color = _mm_adds_epu16(color, beamAccum);
-		color = _mm_adds_epu16(color, lit);
+		color = _mm_adds_epu16(color, litWhite);
 
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
@@ -166,23 +167,23 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	// discard alpha
 	beamCol &= 0xffffff;
 
-	const auto beamB = beamCol >> 16;         // not sure why I switched R and B (FIXME?)
-	const auto beamG = (beamCol >> 8) & 0xff; //
-	const auto beamR = beamCol & 0xff;        //
+	const auto beamR = beamCol >> 16;        
+	const auto beamG = (beamCol >> 8) & 0xff;
+	const auto beamB = beamCol & 0xff;        
 
 	// NTSC weights
-	constexpr unsigned mulR = unsigned(0.0722f * 65536.f);
-	constexpr unsigned mulG = unsigned(0.7152f * 65536.f);
-	constexpr unsigned mulB = unsigned(0.2126f * 65536.f);
+	constexpr unsigned mulR = unsigned(0.0722f*65536.f);
+	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
+	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
 
-	const unsigned luminosity = ((beamR * mulR) >> 16) + ((beamG * mulG) >> 16) + ((beamB * mulB) >> 16);
+	const unsigned luminosity = ((beamR*mulR) >> 16) + ((beamG*mulG) >> 16) + ((beamB*mulB) >> 16);
 	const float fLuminosity = float(luminosity);
 
 	const float alphaStep = 1.f / (remainder - 1);
 	float curStep = 0.f;
 	for (unsigned iPixel = 0; iPixel < remainder; ++iPixel)
 	{
-		const float fBeamAlpha = smootherstepf(s_beamAlphaMin, fLuminosity, curStep);
+		const float fBeamAlpha = smoothstepf(s_beamAlphaMin, fLuminosity, curStep);
 		const unsigned beamAlpha = unsigned(fBeamAlpha);
 		pDest[lastDrawnHeight++] = beamCol | (beamAlpha << 24);
 		curStep += alphaStep;

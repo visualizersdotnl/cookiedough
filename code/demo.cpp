@@ -33,7 +33,7 @@ SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCred
 SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
-SyncTrack trackScapeHUD, trackScapeRevision;
+SyncTrack trackScapeOverlay, trackScapeRevision;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
@@ -70,7 +70,7 @@ static uint32_t *s_pSpikeyVignette = nullptr;
 static uint32_t *s_pSpikeyVignette2 = nullptr;
 
 // landscape art
-static uint32_t *s_pHeliHUD = nullptr;
+static uint32_t *s_pGodLayer = nullptr;
 static uint32_t *s_pRevLogo = nullptr;
 
 // ball art
@@ -135,7 +135,7 @@ bool Demo_Create()
 	trackShow1995 = Rocket::AddTrack("demo:Show1995");
 	trackDirt = Rocket::AddTrack("demo:LensDirt");
 	trackShow2006 = Rocket::AddTrack("demo:Show2006");
-	trackScapeHUD = Rocket::AddTrack("demo:ScapeHUD");
+	trackScapeOverlay = Rocket::AddTrack("demo:ScapeOverlay");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
@@ -184,9 +184,9 @@ bool Demo_Create()
 		return false;
 	
 	// landscape
-	s_pHeliHUD = Image_Load32("assets/scape/aircraft_hud_960x720.png"); 
+	s_pGodLayer = Image_Load32("assets/demo/nytrik-god-layer-720p.png"); 
 	s_pRevLogo = Image_Load32("assets/scape/revision-logo_white.png");
-	if ( nullptr == s_pHeliHUD || nullptr == s_pRevLogo)
+	if ( nullptr == s_pGodLayer || nullptr == s_pRevLogo)
 		return false;
 
 	// voxel ball
@@ -305,26 +305,6 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// Introduction: landscape
 				Landscape_Draw(pDest, timer, delta);
 
-				// overlay HUD
-				const float alphaHUD = saturatef(Rocket::getf(trackScapeHUD));
-				if (0.f != alphaHUD)
-					BlitAdd32A(pDest + (kResX-960)/2, s_pHeliHUD, kResX, 960, 720, alphaHUD);
-
-				// add Revision logo
-				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
-				if (0.f != alphaRev)
-				{
-					if (0.5f > alphaRev)
-						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
-					else
-					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.5f)*12.f)));
-						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
-					}
-				}
-
-				FadeFlash(pDest, fadeToBlack, fadeToWhite);
-
 				// shooting star (or what has to pass for it)
 				// this is the charm of a hack made possible by Rocket
 				// FIXME: really shouldn't be using threaded blit function(s) here
@@ -335,7 +315,7 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 					float alpha = Rocket::getf(trackShootingAlpha);
 
 					const unsigned offset = yPos*kResX + xPos;
-					BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
+					BlitAdd32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
 
 					int trail = Rocket::geti(trackShootingTrail);
 					if (trail > 0)
@@ -351,10 +331,30 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 							alpha -= alphaStep;
 
 							const unsigned offset = yPos*kResX + xPos;
-							BlitSrc32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
+							BlitAdd32A(pDest + offset, s_pLenz, kResX, kLenzSize, kLenzSize, alpha);
 						}
 					}
 				}
+
+				// add overlay
+				const float overlayAlpha = saturatef(Rocket::getf(trackScapeOverlay));
+				if (0.f != overlayAlpha)
+					BlitAdd32A(pDest, s_pGodLayer, kResX, kResX, kResY, overlayAlpha);
+
+				// add Revision logo
+				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
+				if (0.f != alphaRev)
+				{
+					if (0.5f > alphaRev)
+						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
+					else
+					{
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.5f)*12.f)));
+						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
+					}
+				}
+
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
 
 				// FIXME: placeholder
 				SoftLight32A(pDest, s_pCloseSpikeVignette, kOutputSize);
