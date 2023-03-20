@@ -505,10 +505,16 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 		case 10:
 			// The 'under water' tunnel
-			Sinuses_Draw(pDest, timer, delta);
-			BlitAdd32A(pDest, s_pWaterPrismOverlay, kResX, kResX, kResY, saturatef(Rocket::getf(trackWaterLove)));
-			MulSrc32(pDest, s_pWaterDirt, kOutputSize);
-			FadeFlash(pDest, fadeToBlack, fadeToWhite);
+			{
+				const float overlayA = saturatef(Rocket::getf(trackWaterLove));
+				Sinuses_Draw(pDest, timer, delta);
+				BlitAdd32A(pDest, s_pWaterPrismOverlay, kResX, kResX, kResY, overlayA);
+				
+				if (overlayA >= 0.34f) // FIXME: dirty pull, need to keep in sync. with Rocket 
+					MulSrc32(pDest, s_pWaterDirt, kOutputSize);
+
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+			}
 			break;
 
 		case 11:
