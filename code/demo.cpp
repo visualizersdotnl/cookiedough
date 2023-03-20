@@ -346,10 +346,15 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0.f != alphaRev)
 				{
 					if (alphaRev < 0.314f)
-						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
+					{
+						const float easeA = easeOutElasticf(alphaRev)*kGoldenAngle;
+						const float easeB = easeInBackf(alphaRev)*kGoldenRatio;
+						TapeWarp32(g_renderTarget[0], s_pRevLogo, kResX, kResY, easeA, easeB);
+						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
+					}
 					else
 					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*24.f)));
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*kGoldenAngle*kPI)));
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}

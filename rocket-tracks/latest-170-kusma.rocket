@@ -207,14 +207,14 @@ color="ffb28050">
 	</track>
 	<track name="starsTunnel:stepU" folded="0" muteKeyCount="0"
 color="ffa9b250">
-		<key row="4184" value="1.000000" interpolation="0" />
-		<key row="4584" value="1.000000" interpolation="0" />
+		<key row="4184" value="0.770000" interpolation="0" />
+		<key row="4584" value="0.880000" interpolation="0" />
 		<key row="4704" value="0.500000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:stepV" folded="0" muteKeyCount="0"
 color="ff60b250">
-		<key row="4184" value="1.000000" interpolation="0" />
-		<key row="4584" value="1.000000" interpolation="0" />
+		<key row="4184" value="0.770000" interpolation="0" />
+		<key row="4584" value="0.990000" interpolation="0" />
 		<key row="4704" value="0.500000" interpolation="0" />
 	</track>
 	<track name="starsTunnel:Speed" folded="0" muteKeyCount="0"
@@ -227,10 +227,10 @@ color="ff4fb292">
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="4184" value="0.000000" interpolation="0" />
-		<key row="4584" value="33.000000" interpolation="2" />
-		<key row="4600" value="1.500000" interpolation="0" />
+		<key row="4584" value="4.000000" interpolation="3" />
+		<key row="4600" value="0.000000" interpolation="0" />
 		<key row="4704" value="11.000000" interpolation="3" />
-		<key row="4712" value="0.000000" interpolation="0" />
+		<key row="4720" value="0.000000" interpolation="0" />
 		<key row="4904" value="0.000000" interpolation="3" />
 		<key row="4975" value="3.000000" interpolation="0" />
 		<key row="4976" value="0.000000" interpolation="0" />
@@ -544,16 +544,16 @@ color="ff4f71b2">
 color="ff8850b2">
 		<key row="4448" value="6.000000" interpolation="0" />
 		<key row="4976" value="6.000000" interpolation="2" />
-		<key row="5240" value="7.000000" interpolation="0" />
+		<key row="5240" value="9.000000" interpolation="0" />
 	</track>
 	<track name="tunnel:MulU" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="4448" value="1024.000000" interpolation="0" />
+		<key row="4448" value="768.000000" interpolation="0" />
 		<key row="4976" value="768.000000" interpolation="0" />
 	</track>
 	<track name="tunnel:MulV" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="4448" value="32.000000" interpolation="0" />
+		<key row="4448" value="64.000000" interpolation="0" />
 		<key row="4976" value="64.000000" interpolation="0" />
 	</track>
 	<track name="demo:Effect" folded="0" muteKeyCount="0"
@@ -835,7 +835,8 @@ color="ffb28050">
 color="ffa9b250">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="4184" value="0.000000" interpolation="0" />
-		<key row="4584" value="32.000000" interpolation="0" />
+		<key row="4584" value="9.660000" interpolation="3" />
+		<key row="4703" value="3.140000" interpolation="3" />
 		<key row="4704" value="0.000000" interpolation="0" />
 	</track>
 	<track name="demo:Show2006" folded="0" muteKeyCount="0"
@@ -852,7 +853,7 @@ color="ff4fb292">
 	<track name="demo:ScapeRev" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="968" value="0.000000" interpolation="3" />
+		<key row="968" value="0.000000" interpolation="2" />
 		<key row="1047" value="0.770000" interpolation="0" />
 	</track>
 	<track name="demo:DistortTPB" folded="0" muteKeyCount="0"
@@ -1023,9 +1024,13 @@ color="ffb25091">
 	</track>
 	<track name="demo:ScapeOverlay" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="0" value="0.880000" interpolation="1" />
+		<key row="0" value="0.880000" interpolation="2" />
 		<key row="936" value="1.000000" interpolation="2" />
-		<key row="984" value="0.000000" interpolation="0" />
+		<key row="992" value="0.000000" interpolation="0" />
+	</track>
+	<track name="demo:ScapeRevRot" folded="0" muteKeyCount="0"
+color="ffb28050">
+		<key row="984" value="0.400000" interpolation="0" />
 	</track>
 </tracks>
 	</rootElement>
