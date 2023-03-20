@@ -1,6 +1,6 @@
  VS17
 
- Timestamp is 64187456 (Mon Mar 20 15:57:26 2023)
+ Timestamp is 6418bd41 (Mon Mar 20 21:08:33 2023)
 
  Preferred load address is 0000000140000000
 
@@ -99,28 +99,28 @@
  0001:000012a0       ??0Vector4@@QEAA@MMMM@Z    00000001400022a0 f i Matrix44.obj
  0001:000012c0       ??0exception@std@@QEAA@AEBV01@@Z 00000001400022c0 f i audio.obj
  0001:00001300       ?what@exception@std@@UEBAPEBDXZ 0000000140002300 f i audio.obj
- 0001:00001320       ??_Elength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
- 0001:00001320       ??_Eexception@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
- 0001:00001320       ??_Glogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
- 0001:00001320       ??_Elogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Gruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i main.obj
- 0001:00001320       ??_Gbad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
- 0001:00001320       ??_Gexception@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
- 0001:00001320       ??_Gbad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
- 0001:00001320       ??_Ebad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
- 0001:00001320       ??_Eruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
- 0001:00001320       ??_Glength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
+ 0001:00001320       ??_Eexception@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
  0001:00001320       ??_Ebad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
- 0001:00001320       ??_Gbad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Ebad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
+ 0001:00001320       ??_Elength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
+ 0001:00001320       ??_Gexception@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Glength_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
+ 0001:00001320       ??_Elogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
  0001:00001320       ??_Ebad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
- 0001:00001370       ??1system_error@std@@UEAA@XZ 0000000140002370 f i main.obj
- 0001:00001370       ??1bad_array_new_length@std@@UEAA@XZ 0000000140002370 f i audio.obj
+ 0001:00001320       ??_Gbad_exception@std@@UEAAPEAXI@Z 0000000140002320 f i libvcruntime:frame.obj
+ 0001:00001320       ??_Gbad_array_new_length@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Glogic_error@std@@UEAAPEAXI@Z 0000000140002320 f i libcpmt:xthrow.obj
+ 0001:00001320       ??_Gbad_alloc@std@@UEAAPEAXI@Z 0000000140002320 f i audio.obj
+ 0001:00001320       ??_Eruntime_error@std@@UEAAPEAXI@Z 0000000140002320 f i * CIL library *:* CIL module *
  0001:00001370       ??1bad_alloc@std@@UEAA@XZ  0000000140002370 f i audio.obj
- 0001:00001370       ??1bad_exception@std@@UEAA@XZ 0000000140002370 f i libvcruntime:frame.obj
  0001:00001370       ??1length_error@std@@UEAA@XZ 0000000140002370 f i libcpmt:xthrow.obj
+ 0001:00001370       ??1bad_array_new_length@std@@UEAA@XZ 0000000140002370 f i audio.obj
+ 0001:00001370       ??1system_error@std@@UEAA@XZ 0000000140002370 f i main.obj
+ 0001:00001370       ??1bad_exception@std@@UEAA@XZ 0000000140002370 f i libvcruntime:frame.obj
  0001:00001390       ??0bad_array_new_length@std@@QEAA@XZ 0000000140002390 f i audio.obj
- 0001:000013c0       ?_Throw_bad_array_new_length@std@@YAXXZ 00000001400023c0 f i audio.obj
  0001:000013c0       ?__scrt_throw_std_bad_array_new_length@@YAXXZ 00000001400023c0 f i LIBCMT:throw_bad_alloc.obj
+ 0001:000013c0       ?_Throw_bad_array_new_length@std@@YAXXZ 00000001400023c0 f i audio.obj
  0001:000013e0       ??0bad_array_new_length@std@@QEAA@AEBV01@@Z 00000001400023e0 f i audio.obj
  0001:00001420       ??0bad_alloc@std@@QEAA@AEBV01@@Z 0000000140002420 f i audio.obj
  0001:00001460       ?_Xlen_string@std@@YAXXZ   0000000140002460 f i audio.obj
@@ -154,10 +154,10 @@
  0001:000086b0       ?equivalent@error_category@std@@UEBA_NAEBVerror_code@2@H@Z 00000001400096b0 f i main.obj
  0001:000086d0       ?make_error_code@std@@YA?AVerror_code@1@W4errc@1@@Z 00000001400096d0 f i main.obj
  0001:000086f0       ??0_System_error@std@@IEAA@Verror_code@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@1@@Z 00000001400096f0 f i main.obj
- 0001:00008890       ??_E_System_error@std@@UEAAPEAXI@Z 0000000140009890 f i * CIL library *:* CIL module *
  0001:00008890       ??_Esystem_error@std@@UEAAPEAXI@Z 0000000140009890 f i * CIL library *:* CIL module *
- 0001:00008890       ??_Gsystem_error@std@@UEAAPEAXI@Z 0000000140009890 f i main.obj
  0001:00008890       ??_G_System_error@std@@UEAAPEAXI@Z 0000000140009890 f i main.obj
+ 0001:00008890       ??_E_System_error@std@@UEAAPEAXI@Z 0000000140009890 f i * CIL library *:* CIL module *
+ 0001:00008890       ??_Gsystem_error@std@@UEAAPEAXI@Z 0000000140009890 f i main.obj
  0001:000088e0       ??0system_error@std@@QEAA@Verror_code@1@@Z 00000001400098e0 f i main.obj
  0001:00008990       ?_Throw_system_error@std@@YAXW4errc@1@@Z 0000000140009990 f i main.obj
  0001:000089d0       ??0system_error@std@@QEAA@AEBV01@@Z 00000001400099d0 f i main.obj
@@ -165,8 +165,8 @@
  0001:00008a80       ?name@_Generic_error_category@std@@UEBAPEBDXZ 0000000140009a80 f i main.obj
  0001:00008a90       ?message@_Generic_error_category@std@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@H@Z 0000000140009a90 f i main.obj
  0001:00008ae0       ??_G_Generic_error_category@std@@UEAAPEAXI@Z 0000000140009ae0 f i main.obj
- 0001:00008ae0       ??_E_Generic_error_category@std@@UEAAPEAXI@Z 0000000140009ae0 f i * CIL library *:* CIL module *
  0001:00008ae0       ??_G_System_error_category@std@@UEAAPEAXI@Z 0000000140009ae0 f i main.obj
+ 0001:00008ae0       ??_E_Generic_error_category@std@@UEAAPEAXI@Z 0000000140009ae0 f i * CIL library *:* CIL module *
  0001:00008ae0       ??_E_System_error_category@std@@UEAAPEAXI@Z 0000000140009ae0 f i * CIL library *:* CIL module *
  0001:00008b10       ?name@_System_error_category@std@@UEBAPEBDXZ 0000000140009b10 f i main.obj
  0001:00008b20       ?message@_System_error_category@std@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@H@Z 0000000140009b20 f i main.obj
@@ -216,8 +216,8 @@
  0001:0000c010       ??2@YAPEAX_K@Z             000000014000d010 f   LIBCMT:new_scalar.obj
  0001:0000c04c       ??3@YAXPEAX@Z              000000014000d04c f   LIBCMT:delete_scalar.obj
  0001:0000c054       ??3@YAXPEAX_K@Z            000000014000d054 f   LIBCMT:delete_scalar_size.obj
- 0001:0000c05c       ??_Etype_info@@UEAAPEAXI@Z 000000014000d05c f i LIBCMT:std_type_info_static.obj
  0001:0000c05c       ??_Gtype_info@@UEAAPEAXI@Z 000000014000d05c f i LIBCMT:std_type_info_static.obj
+ 0001:0000c05c       ??_Etype_info@@UEAAPEAXI@Z 000000014000d05c f i LIBCMT:std_type_info_static.obj
  0001:0000c088       __scrt_acquire_startup_lock 000000014000d088 f   LIBCMT:utility.obj
  0001:0000c0c4       __scrt_initialize_crt      000000014000d0c4 f   LIBCMT:utility.obj
  0001:0000c110       __scrt_initialize_onexit_tables 000000014000d110 f   LIBCMT:utility.obj
@@ -236,24 +236,24 @@
  0001:0000c744       __scrt_fastfail            000000014000d744 f   LIBCMT:utility_desktop.obj
  0001:0000c890       __scrt_get_show_window_mode 000000014000d890 f   LIBCMT:utility_desktop.obj
  0001:0000c8cc       __scrt_initialize_mta      000000014000d8cc f   LIBCMT:utility_desktop.obj
- 0001:0000c8d4       __scrt_stub_for_initialize_mta 000000014000d8d4 f   LIBCMT:utility_desktop.obj
- 0001:0000c8d4       __scrt_initialize_winrt    000000014000d8d4 f   LIBCMT:utility_desktop.obj
  0001:0000c8d4       _get_startup_new_mode      000000014000d8d4 f   LIBCMT:new_mode.obj
  0001:0000c8d4       _matherr                   000000014000d8d4 f   LIBCMT:matherr.obj
- 0001:0000c8d4       __scrt_exe_initialize_mta  000000014000d8d4 f   LIBCMT:utility_desktop.obj
- 0001:0000c8d4       _get_startup_commit_mode   000000014000d8d4 f   LIBCMT:commit_mode.obj
  0001:0000c8d4       _get_startup_thread_locale_mode 000000014000d8d4 f   LIBCMT:thread_locale.obj
+ 0001:0000c8d4       __scrt_exe_initialize_mta  000000014000d8d4 f   LIBCMT:utility_desktop.obj
+ 0001:0000c8d4       __scrt_initialize_winrt    000000014000d8d4 f   LIBCMT:utility_desktop.obj
+ 0001:0000c8d4       __scrt_stub_for_initialize_mta 000000014000d8d4 f   LIBCMT:utility_desktop.obj
+ 0001:0000c8d4       _get_startup_commit_mode   000000014000d8d4 f   LIBCMT:commit_mode.obj
  0001:0000c8d8       __scrt_is_managed_app      000000014000d8d8 f   LIBCMT:utility_desktop.obj
  0001:0000c92c       __scrt_set_unhandled_exception_filter 000000014000d92c f   LIBCMT:utility_desktop.obj
  0001:0000c93c       __scrt_unhandled_exception_filter 000000014000d93c f   LIBCMT:utility_desktop.obj
- 0001:0000c998       _initialize_invalid_parameter_handler 000000014000d998 f i LIBCMT:invalid_parameter_handler.obj
  0001:0000c998       _initialize_denormal_control 000000014000d998 f i LIBCMT:denormal_control.obj
+ 0001:0000c998       _initialize_invalid_parameter_handler 000000014000d998 f i LIBCMT:invalid_parameter_handler.obj
  0001:0000c998       _guard_check_icall_nop     000000014000d998 f i LIBCMT:guard_support.obj
  0001:0000c99c       __security_init_cookie     000000014000d99c f   LIBCMT:gs_support.obj
  0001:0000ca48       _get_startup_file_mode     000000014000da48 f   LIBCMT:file_mode.obj
  0001:0000ca50       ?__scrt_initialize_type_info@@YAXXZ 000000014000da50 f   LIBCMT:tncleanup.obj
- 0001:0000ca60       __acrt_uninitialize_command_line 000000014000da60 f   libucrt:argv_data.obj
  0001:0000ca60       _should_initialize_environment 000000014000da60 f   LIBCMT:env_mode.obj
+ 0001:0000ca60       __acrt_uninitialize_command_line 000000014000da60 f   libucrt:argv_data.obj
  0001:0000ca64       __local_stdio_scanf_options 000000014000da64 f i LIBCMT:default_local_stdio_options.obj
  0001:0000ca6c       __scrt_initialize_default_local_stdio_options 000000014000da6c f   LIBCMT:default_local_stdio_options.obj
  0001:0000ca88       __scrt_is_user_matherr_present 000000014000da88 f   LIBCMT:matherr_detection.obj
@@ -331,8 +331,8 @@
  0001:0000e60c       __CxxFrameHandler3         000000014000f60c f   libvcruntime:risctrnsctrl.obj
  0001:0000e694       __CxxFrameHandler4         000000014000f694 f   libvcruntime:risctrnsctrl.obj
  0001:0000e770       memcpy_repmovs             000000014000f770 f   libvcruntime:memcpy.obj
- 0001:0000e790       memcpy                     000000014000f790 f   libvcruntime:memcpy.obj
  0001:0000e790       memmove                    000000014000f790 f   libvcruntime:memcpy.obj
+ 0001:0000e790       memcpy                     000000014000f790 f   libvcruntime:memcpy.obj
  0001:0000ee08       ?GetCurrentState@__FrameHandler3@@SAHPEA_KPEAU_xDISPATCHER_CONTEXT@@PEBU_s_FuncInfo@@@Z 000000014000fe08 f   libvcruntime:ehstate.obj
  0001:0000ee30       ?GetUnwindTryBlock@__FrameHandler3@@SAHPEA_KPEAU_xDISPATCHER_CONTEXT@@PEBU_s_FuncInfo@@@Z 000000014000fe30 f   libvcruntime:ehstate.obj
  0001:0000ee5c       ?SetState@__FrameHandler3@@SAXPEA_KPEBU_s_FuncInfo@@H@Z 000000014000fe5c f   libvcruntime:ehstate.obj
@@ -375,18 +375,18 @@
  0001:000123fc       realloc                    00000001400133fc f   libucrt:realloc.obj
  0001:00012444       ??$ensure_buffer_is_big_enough@D@formatting_buffer@__crt_stdio_output@@QEAA_N_KAEAV__crt_cached_ptd_host@@@Z 0000000140013444 f i libucrt:output.obj
  0001:000124ec       ??$parse_integer@KV?$c_string_character_source@D@__crt_strtox@@$0A@@__crt_strtox@@YAKAEAV__crt_cached_ptd_host@@V?$c_string_character_source@D@0@H_N@Z 00000001400134ec f i libucrt:output.obj
- 0001:000127a0       ??$type_case_integer@$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400137a0 f i libucrt:output.obj
  0001:000127a0       ??$type_case_integer@$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400137a0 f i libucrt:output.obj
- 0001:000129a4       ??$type_case_integer@$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400139a4 f i libucrt:output.obj
+ 0001:000127a0       ??$type_case_integer@$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400137a0 f i libucrt:output.obj
  0001:000129a4       ??$type_case_integer@$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400139a4 f i libucrt:output.obj
+ 0001:000129a4       ??$type_case_integer@$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 00000001400139a4 f i libucrt:output.obj
  0001:00012ba8       ??$type_case_integer@$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013ba8 f i libucrt:output.obj
  0001:00012ba8       ??$type_case_integer@$0BA@@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_N_N@Z 0000000140013ba8 f i libucrt:output.obj
  0001:00012dac       ??$type_case_integer_parse_into_buffer@I$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013dac f i libucrt:output.obj
  0001:00012dac       ??$type_case_integer_parse_into_buffer@I$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013dac f i libucrt:output.obj
- 0001:00012e1c       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013e1c f i libucrt:output.obj
  0001:00012e1c       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013e1c f i libucrt:output.obj
- 0001:00012ec8       ??$type_case_integer_parse_into_buffer@I$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013ec8 f i libucrt:output.obj
+ 0001:00012e1c       ??$type_case_integer_parse_into_buffer@I$09@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013e1c f i libucrt:output.obj
  0001:00012ec8       ??$type_case_integer_parse_into_buffer@I$0BA@@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013ec8 f i libucrt:output.obj
+ 0001:00012ec8       ??$type_case_integer_parse_into_buffer@I$0BA@@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAXI_N@Z 0000000140013ec8 f i libucrt:output.obj
  0001:00012f4c       ??$type_case_integer_parse_into_buffer@_K$07@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f4c f i libucrt:output.obj
  0001:00012f4c       ??$type_case_integer_parse_into_buffer@_K$07@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013f4c f i libucrt:output.obj
  0001:00012fbc       ??$type_case_integer_parse_into_buffer@_K$09@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAAX_K_N@Z 0000000140013fbc f i libucrt:output.obj
@@ -406,12 +406,12 @@
  0001:0001456c       ?type_case_Z@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 000000014001556c f i libucrt:output.obj
  0001:000145e8       ?type_case_a@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400155e8 f i libucrt:output.obj
  0001:000145e8       ?type_case_a@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400155e8 f i libucrt:output.obj
- 0001:0001483c       ?type_case_c_tchar@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_ND@Z 000000014001583c f i libucrt:output.obj
  0001:0001483c       ?type_case_c_tchar@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_ND@Z 000000014001583c f i libucrt:output.obj
+ 0001:0001483c       ?type_case_c_tchar@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_ND@Z 000000014001583c f i libucrt:output.obj
  0001:00014910       ?type_case_n@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140015910 f i libucrt:output.obj
  0001:00014910       ?type_case_n@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 0000000140015910 f i libucrt:output.obj
- 0001:000149c8       ?type_case_s@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400159c8 f i libucrt:output.obj
  0001:000149c8       ?type_case_s@?$output_processor@DV?$string_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$string_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400159c8 f i libucrt:output.obj
+ 0001:000149c8       ?type_case_s@?$output_processor@DV?$stream_output_adapter@D@__crt_stdio_output@@V?$standard_base@DV?$stream_output_adapter@D@__crt_stdio_output@@@2@@__crt_stdio_output@@AEAA_NXZ 00000001400159c8 f i libucrt:output.obj
  0001:00014a70       ?update_locale_slow@__crt_cached_ptd_host@@AEAAXXZ 0000000140015a70 f i libucrt:output.obj
  0001:00014ae8       ?validate_stream_is_ansi_if_required@?$__acrt_stdio_char_traits@D@@SA_NQEAU_iobuf@@@Z 0000000140015ae8 f i libucrt:output.obj
  0001:00014b84       ?write_string@?$string_output_adapter@D@__crt_stdio_output@@QEBAXQEBDHQEAHAEAV__crt_cached_ptd_host@@@Z 0000000140015b84 f i libucrt:output.obj
@@ -727,8 +727,8 @@
  0001:00028ae0       __report_rangecheckfailure 0000000140029ae0 f   LIBCMT:gs_report.obj
  0001:00028af4       __report_securityfailure   0000000140029af4 f   LIBCMT:gs_report.obj
  0001:00028c74       __GSHandlerCheck_EH        0000000140029c74 f   LIBCMT:gshandlereh.obj
- 0001:00028d10       __chkstk                   0000000140029d10 f   LIBCMT:chkstk.obj
  0001:00028d10       _alloca_probe              0000000140029d10 f   LIBCMT:chkstk.obj
+ 0001:00028d10       __chkstk                   0000000140029d10 f   LIBCMT:chkstk.obj
  0001:00028d60       __C_specific_handler_noexcept 0000000140029d60 f   libvcruntime:chandler_noexcept.obj
  0001:00028dac       wcsrchr                    0000000140029dac f   libvcruntime:wcsrchr.obj
  0001:00028e70       memcmp                     0000000140029e70 f   libvcruntime:memcmp.obj
@@ -1949,12 +1949,12 @@
  0002:0000b3f0       __real@3e75c290            00000001400443f0     shadertoy.obj
  0002:0000b3f4       __real@3e800000            00000001400443f4     polar.obj
  0002:0000b3f8       __real@3e99999a            00000001400443f8     shadertoy.obj
- 0002:0000b3fc       __real@3ea0c49c            00000001400443fc     shadertoy.obj
+ 0002:0000b3fc       __real@3ea0c49c            00000001400443fc     demo.obj
  0002:0000b400       __real@3ea5afcb            0000000140044400     shadertoy.obj
  0002:0000b404       __real@3ea8f5c3            0000000140044404     shadertoy.obj
  0002:0000b408       __real@3eae147b            0000000140044408     demo.obj
  0002:0000b40c       __real@3ec9999a            000000014004440c     shadertoy.obj
- 0002:0000b410       __real@3f000000            0000000140044410     demo.obj
+ 0002:0000b410       __real@3f000000            0000000140044410     shadertoy.obj
  0002:0000b414       __real@3f0f5c29            0000000140044414     shadertoy.obj
  0002:0000b418       __real@3f100000            0000000140044418     shadertoy.obj
  0002:0000b41c       __real@3f119191            000000014004441c     shadertoy.obj
@@ -1990,10 +1990,10 @@
  0002:0000b4a8       __real@41000000            00000001400444a8     shadertoy.obj
  0002:0000b4ac       __real@41200000            00000001400444ac     shadertoy.obj
  0002:0000b4b0       __real@41320000            00000001400444b0     shadertoy.obj
- 0002:0000b4b4       __real@41400000            00000001400444b4     demo.obj
- 0002:0000b4b8       __real@41800000            00000001400444b8     shadertoy.obj
- 0002:0000b4bc       __real@41a00000            00000001400444bc     shadertoy.obj
- 0002:0000b4c0       __real@41b00000            00000001400444c0     shadertoy.obj
+ 0002:0000b4b4       __real@41800000            00000001400444b4     shadertoy.obj
+ 0002:0000b4b8       __real@41a00000            00000001400444b8     shadertoy.obj
+ 0002:0000b4bc       __real@41b00000            00000001400444bc     shadertoy.obj
+ 0002:0000b4c0       __real@41c00000            00000001400444c0     demo.obj
  0002:0000b4c4       __real@42000000            00000001400444c4     shadertoy.obj
  0002:0000b4c8       __real@423a41bb            00000001400444c8     shadertoy.obj
  0002:0000b4cc       __real@426c0000            00000001400444cc     main.obj

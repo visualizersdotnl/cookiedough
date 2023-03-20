@@ -14,6 +14,7 @@
 	<bookmark row="7072" />
 	<bookmark row="8428" />
 	<bookmark row="9984" />
+	<bookmark row="10012" />
 	<bookmark row="10018" />
 	<bookmark row="10061" />
 <tracks rows="10000" startRow="0" endRow="10000" rowsPerBeat="8"
@@ -46,22 +47,22 @@ color="ff60b250">
 	</track>
 	<track name="voxelScape:Tilt" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="0" value="90.000000" interpolation="3" />
-		<key row="968" value="0.000000" interpolation="2" />
+		<key row="0" value="-90.000000" interpolation="3" />
+		<key row="968" value="0.000000" interpolation="3" />
 		<key row="1048" value="-45.000000" interpolation="0" />
 	</track>
 	<track name="voxelScape:WarpSpeed" folded="0" muteKeyCount="0"
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="2" />
 		<key row="968" value="6.000000" interpolation="2" />
-		<key row="1024" value="9.000000" interpolation="3" />
+		<key row="1024" value="6.000000" interpolation="3" />
 		<key row="1047" value="12.000000" interpolation="0" />
 	</track>
 	<track name="voxelScape:WarpStrength" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="0" value="0.000000" interpolation="2" />
 		<key row="968" value="0.000000" interpolation="2" />
-		<key row="1024" value="0.100000" interpolation="3" />
+		<key row="1024" value="0.120000" interpolation="3" />
 		<key row="1047" value="1.440000" interpolation="0" />
 	</track>
 	<track name="ball:Blur" folded="0" muteKeyCount="0"
@@ -105,8 +106,8 @@ color="ffb28050">
 color="ffa9b250">
 		<key row="1048" value="188.000000" interpolation="0" />
 		<key row="1104" value="0.000000" interpolation="0" />
-		<key row="1296" value="0.000000" interpolation="2" />
-		<key row="1312" value="64.000000" interpolation="3" />
+		<key row="1280" value="0.000000" interpolation="2" />
+		<key row="1312" value="80.000000" interpolation="3" />
 		<key row="1328" value="0.000000" interpolation="0" />
 		<key row="1416" value="200.000000" interpolation="0" />
 		<key row="1544" value="200.000000" interpolation="3" />
@@ -662,8 +663,6 @@ color="ffa9b250">
 		<key row="8808" value="0.000000" interpolation="2" />
 		<key row="8880" value="1.000000" interpolation="2" />
 		<key row="8904" value="0.000000" interpolation="0" />
-		<key row="9200" value="1.000000" interpolation="2" />
-		<key row="9232" value="0.000000" interpolation="0" />
 		<key row="9407" value="0.500000" interpolation="3" />
 		<key row="9424" value="0.000000" interpolation="0" />
 		<key row="9744" value="0.000000" interpolation="3" />
@@ -740,6 +739,8 @@ color="ff60b250">
 		<key row="7888" value="0.000000" interpolation="0" />
 		<key row="8120" value="0.660000" interpolation="3" />
 		<key row="8152" value="0.000000" interpolation="0" />
+		<key row="9200" value="0.880000" interpolation="2" />
+		<key row="9232" value="0.000000" interpolation="0" />
 		<key row="9360" value="0.000000" interpolation="2" />
 		<key row="9406" value="1.000000" interpolation="0" />
 		<key row="9407" value="0.000000" interpolation="0" />
@@ -852,7 +853,7 @@ color="ff4fb292">
 color="ff4f71b2">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="968" value="0.000000" interpolation="3" />
-		<key row="1047" value="0.900000" interpolation="0" />
+		<key row="1047" value="0.770000" interpolation="0" />
 	</track>
 	<track name="demo:DistortTPB" folded="0" muteKeyCount="0"
 color="ff8850b2">
@@ -860,14 +861,14 @@ color="ff8850b2">
 		<key row="9536" value="0.000000" interpolation="2" />
 		<key row="9560" value="0.050000" interpolation="3" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="0.050000" interpolation="0" />
+		<key row="9895" value="0.030000" interpolation="0" />
 	</track>
 	<track name="demo:DistortStrengthTPB" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
 		<key row="9536" value="2.390000" interpolation="3" />
 		<key row="9760" value="0.000000" interpolation="2" />
-		<key row="9895" value="8.000000" interpolation="0" />
+		<key row="9895" value="6.000000" interpolation="0" />
 	</track>
 	<track name="demo:BlurTPB" folded="0" muteKeyCount="0"
 color="ffb27474">
