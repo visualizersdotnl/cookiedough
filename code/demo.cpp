@@ -232,7 +232,8 @@ bool Demo_Create()
 			return false;
 
 	// full credits (used to be a melancholic '2001-2023' to signify the end of TPB, hence the variable name)
-	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-1000x52.png");
+//	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-1000x52.png");
+	s_pAreWeDone = Image_Load32("assets/demo/are-we-done-1100x57.png");
 	if (nullptr == s_pAreWeDone)
 		return false;
 
@@ -575,8 +576,9 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
 
-				// FIXME: this 1 pixel offset (X) matters, and that's entirely because it's a fucked up bitmap (waiting for Jade)
-				BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
+				// (semi-)full credits
+//				BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
+				BlitAdd32A(pDest + (((kResX-1100)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1100, 57, discoGuys);
 			}
 			break;
 
