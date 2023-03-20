@@ -45,30 +45,6 @@ SyncTrack trackShootingTrail;
 
 SyncTrack trackWaterLove;
 
-//
-
-void rotate_image(unsigned int* image, int width, int height)
-{
-    unsigned int* rotated = (unsigned int *) malloc(width * height * sizeof(unsigned int));
-
-    int center_x = width / 2;
-    int center_y = height / 2;
-    float angle = 1.5708f; // This is pi/2 in radians
-
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            int new_x = cos(angle) * (x - center_x) - sin(angle) * (y - center_y) + center_x;
-            int new_y = sin(angle) * (x - center_x) + cos(angle) * (y - center_y) + center_y;
-
-            rotated[new_y * width + new_x] = image[y * width + x];
-        }
-    }
-
-    memcpy(image, rotated, width * height * sizeof(unsigned int));
-    free(rotated);
-}
-
-
 // --------------------
 
 // credits logos (1280x568)
@@ -369,17 +345,13 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const float alphaRev = saturatef(Rocket::getf(trackScapeRevision));
 				if (0.f != alphaRev)
 				{
-					memcpy(g_renderTarget[0], s_pRevLogo, kOutputBytes);
-					rotate_image(g_renderTarget[0], kResX, kResY);
-					BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
-
-//					if (alphaRev < 0.314f)
-//						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
-//					else
-//					{
-//						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*24.f)));
-//						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
-//					}
+					if (alphaRev < 0.314f)
+						BlitSrc32A(pDest, s_pRevLogo, kResX, kResX, kResY, alphaRev);
+					else
+					{
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*24.f)));
+						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
+					}
 				}
 
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);
