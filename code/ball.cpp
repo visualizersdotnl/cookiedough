@@ -429,7 +429,7 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 
 	// and then some
 	if (true == hasBeams)
-		SoftLight32A(pDest, pBackground, kOutputSize);
+		SoftLight32AA(pDest, pBackground, kOutputSize, 0.4f);
 
 #if 0
 	// debug blit: unwrapped

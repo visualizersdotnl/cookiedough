@@ -381,7 +381,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Ball_Draw(pDest, timer, delta);
 
 				if (false == Ball_HasBeams())
-					MulSrc32(pDest, s_pGreetingsVignette, kOutputSize); // FIXME: borrowed
+					MulSrc32(pDest, s_pGreetingsVignette, kOutputSize); // FIXME: borrowed/placeholder
 				else
 					SoftLight32(pDest, s_pBallVignette, kOutputSize);
 

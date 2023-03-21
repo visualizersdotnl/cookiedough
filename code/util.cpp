@@ -307,6 +307,43 @@ void SoftLight32A(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
+void SoftLight32AA(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, float alpha)
+{
+	alpha = saturatef(alpha)*255.f;
+	const unsigned iA = unsigned(alpha);
+
+	#pragma omp parallel for schedule(static)
+	for (int iPixel = 0; iPixel < int(numPixels); ++iPixel)
+	{
+			const uint32_t destPixel = pDest[iPixel];
+			const uint32_t srcPixel  = pSrc[iPixel];
+
+//			const unsigned A2 = destPixel>>24;
+			const unsigned R2 = (destPixel>>16)&0xff;
+			const unsigned G2 = (destPixel>>8)&0xff;
+			const unsigned B2 = destPixel&0xff; 
+
+//			const unsigned A1 = srcPixel>>24;
+			const unsigned R1 = (srcPixel>>16)&0xff;
+			const unsigned G1 = (srcPixel>>8)&0xff;
+			const unsigned B1 = srcPixel&0xff; 
+
+			unsigned R, G, B;
+
+			R = SoftLightBlend(R1, R2);
+			G = SoftLightBlend(G1, G2);
+			B = SoftLightBlend(B1, B2);
+
+			const auto _A1 = iA; // A1;
+			R = R2+(((R-R2)*_A1)>>8);
+			G = G2+(((G-G2)*_A1)>>8);
+			B = B2+(((B-B2)*_A1)>>8);
+
+			const uint32_t result = (R<<16)|(G<<8)|B;
+			pDest[iPixel] = result;
+    }
+}
+
 #if 0
 
 // FIXME: optimize properly

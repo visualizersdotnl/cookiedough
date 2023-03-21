@@ -105,6 +105,7 @@ void Excl32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 // Photoshop-style soft light blend filter between two 32-bit color buffers (retains dest. alpha)
 void SoftLight32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 void SoftLight32A(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels); // applies effect by src. alpha
+void SoftLight32AA(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, float alpha); // applies effect by alpha
 
 // nonsensical warp effect applied to a 32-bit color buffer
 void TapeWarp32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float speed);
