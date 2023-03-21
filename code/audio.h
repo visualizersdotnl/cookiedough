@@ -16,6 +16,9 @@ bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd,
 void Audio_Destroy();
 void Audio_Update();
 
+// for streams: start with this function if not in Rocket sync. editor mode
+void Audio_Start_Stream(unsigned bufLenMS);
+
 BASS_INFO &Audio_Get_Info();
 
 // GNU Rocket callbacks

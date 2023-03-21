@@ -278,10 +278,11 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
 }
 
-void Demo_Draw(uint32_t *pDest, float timer, float delta)
+bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
 	// update sync.
-	Rocket::Boost();
+	if (false == Rocket::Boost())
+		return false; // demo is over!
 
 	// get fade/flash amounts
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);
@@ -602,5 +603,5 @@ void Demo_Draw(uint32_t *pDest, float timer, float delta)
 		FadeFlash(pDest, fadeToBlack, fadeToWhite);
 	}
 
-	return;
+	return true;
 }

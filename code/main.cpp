@@ -73,7 +73,7 @@
 #define WIN32_CRT_BREAK_ALLOC -1
 
 // Undef. for < 60FPS warning (release builds only)
-#define FPS_WARNING
+// define FPS_WARNING
 
 #include "main.h" // always include first!
 
@@ -249,7 +249,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						const float delta = newTime-oldTime; // base delta on sys. time
 
 						const float audioTime = Audio_Get_Pos_In_Sec();
-						Demo_Draw(pDest, audioTime, delta*100.f);
+						if (false == Demo_Draw(pDest, audioTime, delta*100.f))
+							break; // Rocket track says we're done
 
 						display.Update(pDest);
 
