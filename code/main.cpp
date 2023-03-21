@@ -67,6 +67,7 @@
 // - stream playback details, also: audio.cpp
 // - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
 // - when writing code that depends on a certain resolution it's wise to put a static_assert() along with it
+// - to enable playback mode (Rocket): rocket.h
 
 // Undef. for Windows CRT leak check
 #define WIN32_CRT_LEAK_CHECK

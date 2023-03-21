@@ -36,6 +36,7 @@ namespace Rocket
 	#endif
 
 		// purely to indicate when it's time to exit
+		// there are more elegant ways to do this but it worked in 'hot stuff' so it'll work now just as well
 		s_stopTrack = AddTrack("demo:quit");
 
 		return true;
