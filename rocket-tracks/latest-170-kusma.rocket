@@ -640,8 +640,9 @@
 			<key row="3768" value="0" interpolation="2"/>
 			<key row="3784" value="0.6" interpolation="3"/>
 			<key row="3816" value="0" interpolation="0"/>
-			<key row="3906" value="0" interpolation="3"/>
-			<key row="3910" value="0.66" interpolation="2"/>
+			<key row="3897" value="0" interpolation="3"/>
+			<key row="3906" value="0.66" interpolation="2"/>
+			<key row="3912" value="0.44" interpolation="3"/>
 			<key row="3936" value="0" interpolation="0"/>
 			<key row="5192" value="0" interpolation="3"/>
 			<key row="5239" value="1" interpolation="0"/>
