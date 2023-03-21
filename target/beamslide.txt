@@ -1,0 +1,6 @@
+
+- entry type: PC demo
+- group: bypass ft. the pimp Brigade
+- entry name: arrested development
+
+beamslide text: the non-stop software experience, sit tight!
