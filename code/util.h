@@ -4,6 +4,10 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#if !defined(_WIN64) && defined(_WIN32)
+	#define UTIL_WIN_32BIT
+#endif
+
 // found this in one of my Shadertoy shaders
 constexpr float kGoldenAngle = 2.39996f;
 
@@ -58,7 +62,7 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*
 // - align addresses to 8 byte boundary
 
-#if _WIN64 || !defined(FOR_INTEL)
+#if _WIN64 || defined(FOR_ARM)
 
 	// memcpy() has been optimized: http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx
 	#define memcpy_fast memcpy

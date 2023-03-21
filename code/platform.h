@@ -22,7 +22,6 @@
 
 #if defined(FOR_INTEL)
 	// SSE intrinsics
-	#include <intrin.h>
 	#include <xmmintrin.h> // 1
 	#include <emmintrin.h> // 2, 3
 	#include <smmintrin.h> // 4

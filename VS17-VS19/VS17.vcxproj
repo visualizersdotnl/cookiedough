@@ -95,6 +95,7 @@
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\fast-cosine.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
+    <ClInclude Include="..\code\platform.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />
     <ClInclude Include="..\code\rocket.h" />

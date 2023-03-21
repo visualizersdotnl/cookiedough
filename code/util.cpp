@@ -5,7 +5,7 @@
 // #include "util.h"
 #include "bilinear.h"
 
-#if !_WIN64 && defined(FOR_INTEL)
+#if !defined(_WIN64) && defined(_WIN32)
 
 // memcpy_fast()
 // - approx. twice faster than it's CRT counterpart on a 2009 netbook with 1.66GHz Intel Atom CPU

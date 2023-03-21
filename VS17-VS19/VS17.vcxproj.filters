@@ -261,6 +261,9 @@
     <ClInclude Include="..\code\util.h">
       <Filter>/code\util-lib</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\platform.h">
+      <Filter>/code</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
