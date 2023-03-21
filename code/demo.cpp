@@ -296,11 +296,14 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 1:
 			// Quick intermezzo: voxel torus
 			Twister_Draw(pDest, timer, delta);
-			SoftLight32(pDest, s_pBallVignette, kOutputSize);
+//			SoftLight32(pDest, s_pBallVignette, kOutputSize);
 			FadeFlash(pDest, fadeToBlack, fadeToWhite);
 
-			// commented why? see case #3
-//			MulSrc32A(pDest, s_pVignette06, kOutputSize);
+			// FIXME: placeholder
+			SoftLight32A(pDest, s_pCloseSpikeVignette, kOutputSize);
+
+			// curious but might be grunge enough for this part
+			MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			break;
 	
 		case 2:

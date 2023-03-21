@@ -357,7 +357,7 @@ bool Ball_Create()
 	
 	// load color maps
 	s_pColorMap[0] = Image_Load32("assets/ball/colormap_1k.jpg"); // used as base map when beams active
-	s_pColorMap[1] = Image_Load32("assets/ball/envmap2_1k.jpg");  // used otherwise
+	s_pColorMap[1] = Image_Load32("assets/ball/colormap_2_1k.jpg");  // used otherwise
 	if (nullptr == s_pColorMap[0] || nullptr == s_pColorMap[1])
 		return false;
 
@@ -421,10 +421,15 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// blit (polar wrap) effect on top of background (2 of them, one for the object *with* beams, one for without)
-	const auto* pBackground = Rocket::geti(trackBallHasBeams) != 0 ? s_pBackgrounds[0] : s_pBackgrounds[1];
+	const bool hasBeams = Rocket::geti(trackBallHasBeams) != 0;
+	const auto* pBackground = hasBeams ? s_pBackgrounds[0] : s_pBackgrounds[1];
 	memcpy(pDest, pBackground, kOutputBytes);
 //	memset32(pDest, 0, kOutputSize);
 	Polar_BlitA(pDest, g_renderTarget[0], false);
+
+	// and then some
+	if (true == hasBeams)
+		SoftLight32A(pDest, pBackground, kOutputSize);
 
 #if 0
 	// debug blit: unwrapped

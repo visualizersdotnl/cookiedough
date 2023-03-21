@@ -28,10 +28,11 @@ constexpr unsigned kMapAnd = kMapSize-1;
 const unsigned kMapShift = 10;
 
 // trace depth (FIXME: parametrize)
-const unsigned int kRayLength = 128;
+const unsigned int kRayLength = 512;
 
 // height projection table
-static unsigned int s_heightProj[kRayLength];
+static unsigned s_heightProj[kRayLength];
+static unsigned s_heightProjNorm[kRayLength];
 
 // max. radius (in pixels)
 const float kCylRadius = 600.f;
@@ -60,8 +61,14 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 
 		// fetch height & unpacked color
 		const unsigned int mapHeight = bsamp8(s_pHeightMap, U0, V0, U1, V1, fracU, fracV);
-		const __m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
-		
+		__m128i color = bsamp32_16(s_pColorMap, U0, V0, U1, V1, fracU, fracV);
+
+		// add basic lighting
+		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
+		const unsigned diffuse = (heightNorm*heightNorm) >> 8;
+		const __m128i litWhite = _mm_set1_epi16(diffuse);
+		color = _mm_adds_epu16(color, litWhite);
+
 		// project height
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
 
@@ -116,6 +123,13 @@ void vtwister_precalc()
 		const float angle = kPI/(kRayLength-1) * iAngle;
 		const float scale = kCylRadius*sinf(angle);
 		s_heightProj[iAngle] = (unsigned) scale;
+		
+		// for basic lighting
+		const float cosine = cosf(angle*0.99f);
+		if (cosine > 0.f)
+			s_heightProjNorm[iAngle] = unsigned(255.f*cosine);
+		else
+			s_heightProjNorm[iAngle] = 0;
 	}
 }
 
@@ -132,7 +146,7 @@ bool Twister_Create()
 		return false;
 
 	// load background (1280x720)
-	s_pBackground = Image_Load32("assets/twister/background_1280x720.png");
+	s_pBackground = Image_Load32("assets/twister/nytrik-background_1280x720.png");
 	if (nullptr == s_pBackground)
 		return false;
 
