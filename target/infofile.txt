@@ -15,7 +15,7 @@ a retrosexual multimedia demonstration in co-operation with TPB
 created for Revision 2023
 
 system req.:
-  + either OSX (Silicon, no Intel) or Win64 (Intel), nav. to '/target/x64' (Intel) and run! (could be that the party version is Win64-only, in that case just wait a day or 2-3!)
+  + for Intel nav. to '/target/x64' and run! (Mac Silicon & Intel versions build and will be released soon, please give us a few days)
   + software rendering, no noteworthy GPU required
   + uses default audio device
   + does not use significant RAM or disk space
@@ -31,6 +31,7 @@ people involved:
 
 advisory board / additional:
   + nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg); rest in peace soldier!
+  + sh0ck/disaster area for his patience and help with the OSX Intel build
   + thec (ideas, support, catering, gun safety)
   + dascon (networking)
   + raimo (boy wonder)

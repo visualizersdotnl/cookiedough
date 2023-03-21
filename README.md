@@ -3,10 +3,15 @@
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro
 (demoscene) graphical effects. 
 
+Supported platforms:
+- Win64/x64
+- OSX/x64
+- OSX/Silicon
+
 It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
-Today it runs on OSX (through various standard libraries and something called SSE2NEON) and of course on Windows, using
-Visual Studio 2019 or newer.
+Today it runs on OSX (through various standard libraries and something called SSE2NEON for Silicon) and of course on Windows, 
+using Visual Studio 2019 or newer.
 
 For OSX there is a script in '/target/OSX' which will generate two folders in the root, one for a debug build and one
 for release. However, it's easier, certainly if you want a non-XCode debugger, to use Visual Studio Code. Install the
