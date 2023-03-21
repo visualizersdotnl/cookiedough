@@ -4,7 +4,7 @@
 #pragma once
 
 // def. for sync. replay (instead of edit) mode
-#define SYNC_PLAYER
+// #define SYNC_PLAYER
 
 #include "../3rdparty/rocket-stripped/lib/sync.h"
 

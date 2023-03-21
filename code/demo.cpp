@@ -33,7 +33,7 @@ SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCred
 SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
-SyncTrack trackScapeOverlay, trackScapeRevision;
+SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
@@ -137,6 +137,7 @@ bool Demo_Create()
 	trackShow2006 = Rocket::AddTrack("demo:Show2006");
 	trackScapeOverlay = Rocket::AddTrack("demo:ScapeOverlay");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
+	trackScapeFade = Rocket::AddTrack("demo:ScapeFade");
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
 	trackBlurTPB = Rocket::AddTrack("demo:BlurTPB");
@@ -307,6 +308,9 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				// Introduction: landscape
 				Landscape_Draw(pDest, timer, delta);
 
+				const float scapeFade = saturatef(Rocket::getf(trackScapeFade));
+				FadeFlash(pDest, scapeFade, 0.f);
+
 				// shooting star (or what has to pass for it)
 				// this is the charm of a hack made possible by Rocket
 				// FIXME: really shouldn't be using threaded blit function(s) here
@@ -356,7 +360,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					}
 					else
 					{
-						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*kGoldenAngle*kPI)));
+						BoxBlur32(g_renderTarget[0], s_pRevLogo, kResX, kResY, BoxBlurScale(((alphaRev-0.314f)*kPI)));
 						BlitSrc32A(pDest, g_renderTarget[0], kResX, kResX, kResY, alphaRev);
 					}
 				}
