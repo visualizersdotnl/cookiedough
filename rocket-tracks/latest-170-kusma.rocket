@@ -871,10 +871,9 @@
 			<key row="0" value="0" interpolation="0"/>
 			<key row="7336" value="0" interpolation="3"/>
 			<key row="7368" value="0.33" interpolation="0"/>
-			<key row="7864" value="0.34" interpolation="0"/>
-			<key row="8064" value="0.34" interpolation="2"/>
+			<key row="7864" value="0.34" interpolation="2"/>
 			<key row="8119" value="0.66" interpolation="0"/>
-			<key row="8120" value="0.33" interpolation="3"/>
+			<key row="8120" value="0.34" interpolation="3"/>
 			<key row="8184" value="0.77" interpolation="2"/>
 			<key row="8312" value="1" interpolation="0"/>
 		</track>
