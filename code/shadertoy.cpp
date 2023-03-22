@@ -759,7 +759,7 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 	if (true == litTiles)
 	{
 		if (litBlur >= 1.f)
-			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(litBlur));
+			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(litBlur)); // FIXME: can easily turn this into a directional blur by using different kernel sizes
 
 		Add32(g_pFxMap[0], g_pFxMap[1], kFxMapSize);
 	}
