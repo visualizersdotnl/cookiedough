@@ -32,7 +32,7 @@ SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
-SyncTrack trackDirt;
+// SyncTrack trackDirt;
 SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
@@ -133,7 +133,7 @@ bool Demo_Create()
 	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
 	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
 	trackShow1995 = Rocket::AddTrack("demo:Show1995");
-	trackDirt = Rocket::AddTrack("demo:LensDirt");
+//	trackDirt = Rocket::AddTrack("demo:LensDirt");
 	trackShow2006 = Rocket::AddTrack("demo:Show2006");
 	trackScapeOverlay = Rocket::AddTrack("demo:ScapeOverlay");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
@@ -178,7 +178,7 @@ bool Demo_Create()
 	// NoooN et cetera
 	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo_style2.png");
 	s_pMFX = Image_Load32("assets/tunnels/TheYearWas2006_Overlay_Overlay_Typo_style2.png");
-	s_pTunnelFullDirt = Image_Load32("assets/tunnels/TheYearWas_Overlay_LensDirt.jpg");
+	s_pTunnelFullDirt = Image_Load32("assets/tunnels/nytrik-TheYearWas_Overlay_LensDirt.png");
 	s_pTunnelVignette = Image_Load32("assets/tunnels/Vignette_CoolFilmLook.png");;
 	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
 	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2 || nullptr == s_pMFX)
@@ -399,14 +399,19 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
-				const float dirt = Rocket::getf(trackDirt);
-				if (0.f == dirt)
-					Excl32(pDest, s_pTunnelFullDirt, kOutputSize);
-				else
-				{
-					BoxBlur32(g_renderTarget[0], s_pTunnelFullDirt, kResX, kResY, BoxBlurScale(dirt));
-					Excl32(pDest, g_renderTarget[0], kOutputSize);
-				}
+				MixSrc32(pDest, s_pTunnelFullDirt, kOutputSize);
+
+				// FIXME: belongs to the old lens dirt overlay; remove, or?
+//				const float dirt = Rocket::getf(trackDirt);
+//				if (0.f == dirt)
+//				{
+//					Excl32(pDest, s_pTunnelFullDirt, kOutputSize);
+//				}
+//				else
+//				{
+//					BoxBlur32(g_renderTarget[0], s_pTunnelFullDirt, kResX, kResY, BoxBlurScale(dirt));
+//					Excl32(pDest, g_renderTarget[0], kOutputSize);
+//				}
 
 				if (0 != Rocket::geti(trackShow1995))
 					MixOver32(pDest, s_pNoooN, kOutputSize);

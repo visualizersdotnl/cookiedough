@@ -77,11 +77,14 @@ SyncTrack
 	trackTunnelSpeed,
 	trackTunnelRoll, trackTunnelPitch,
 	trackTunnelRadius,
-	trackTunnelMulU, trackTunnelMulV;
+	trackTunnelMulU, trackTunnelMulV,
+	trackTunnelLitTiles, trackTunnelLitBlur,
+	trackTunnelFog1, trackTunnelFog2;
 
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
+static uint32_t *s_pFDTunnelTex2 = nullptr;
 
 bool Shadertoy_Create()
 {
@@ -139,9 +142,14 @@ bool Shadertoy_Create()
 	trackTunnelRadius = Rocket::AddTrack("tunnel:Radius");
 	trackTunnelMulU = Rocket::AddTrack("tunnel:MulU");
 	trackTunnelMulV = Rocket::AddTrack("tunnel:MulV");
+	trackTunnelLitTiles = Rocket::AddTrack("tunnel:LitTiles");
+	trackTunnelLitBlur = Rocket::AddTrack("tunnel:LitBlur");
+	trackTunnelFog1 = Rocket::AddTrack("tunnel:Fog1");
+	trackTunnelFog2 = Rocket::AddTrack("tunnel:Fog2");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/nytrik-hextexture.png");
-	if (nullptr == s_pFDTunnelTex)
+	s_pFDTunnelTex2 = Image_Load32("assets/shadertoy/nytrik-hextexture-fx.png");
+	if (nullptr == s_pFDTunnelTex || nullptr == s_pFDTunnelTex2)
 		return false;
 
 	return true;
@@ -641,13 +649,16 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 // Test case for texture sampling and color interpolation versus UV interpolation.
 //
 // FIXME:
-// - expected (hardcoded): 256x256 texture
-// - fake project light, like in the Mewlers 64KB 'Viagra'?
+// - expected (hardcoded): 1024x1024 texture(s)
+//
+// I've tweaked it a bit so you can have a second layer sampled to a secondary buffer to blur and whatnot,
+// you know, classic fun.
 //
 
-static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
+static void RenderTunnelMap_2x2(uint32_t *pDest, uint32_t *pGlowDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
+	__m128i *pGlowDest128 = reinterpret_cast<__m128i*>(pGlowDest);
 
 	// FIXME: parametrize
 	const float boxy = Rocket::getf(trackTunnelBoxy);
@@ -660,6 +671,10 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 	const float radius = Rocket::getf(trackTunnelRadius);
 	const float uMul = Rocket::getf(trackTunnelMulU);
 	const float vMul = Rocket::getf(trackTunnelMulV);
+	const float fogs[2] = { Rocket::getf(trackTunnelFog1), Rocket::getf(trackTunnelFog2) }; // FIXME: should clamp, but lazy today
+
+	const __m128 baseFog = _mm_set1_ps(fogs[0]);
+	const __m128 litFog = _mm_set1_ps(fogs[1]);
 
 	time *= speed;
 
@@ -670,7 +685,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 
 		for (int iX = 0; iX < kFxMapResX; iX += 4)
 		{	
-			__m128 colors[4];
+			__m128 colors[4], glowColors[4];
 			for (int iColor = 0; iColor < 4; ++iColor)
 			{
 				const auto UV = Shadertoy::ToUV_FxMap(iColor+iX, iY, 2.f);
@@ -690,17 +705,23 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 				A = lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
-				float T = radius*A;
+				const float T = radius*A;
+//				const float T2 = radius*A*0.314f;
 				const Vector3 intersection = direction*T;
+//				const Vector3 intersection2 = direction*T2;
 
 				const float U = atan2f(intersection.y, intersection.x)/kPI;
 				const float V = intersection.z + time*speed;
+//				const float U2 = atan2f(intersection2.y, intersection2.x)/kPI;
+//				const float V2 = intersection2.z + time*speed;
 
 				// this is f*cking slow due to conversion (FTOL)
 				const int fpU = ftofp24(U*uMul);               
 				const int fpV = ftofp24(V*vMul);        
+//				const int fpU2 = ftofp24(U2*uMul);               
+//				const int fpV2 = ftofp24(V2*vMul);        
 
-				const float shade = clampf(0.f, 1.f, 1.f-expf(-0.003f*T*T));
+				const float shade = clampf(0.f, 1.f, 1.f-expf(-0.006f*T*T));
 
 				unsigned U0, V0, U1, V1, fracU, fracV;
 
@@ -709,26 +730,45 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, float time)
 
 				// 1024x1024
 				bsamp_prepUVs(fpU, fpV, 1023, 10, U0, V0, U1, V1, fracU, fracV);
-
 				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
 
-				color = Shadertoy::vLerp4(color, _mm_set1_ps(255.f), shade);
+//				bsamp_prepUVs(fpU2, fpV2, 1023, 10, U0, V0, U1, V1, fracU, fracV);
+				__m128 glowColor = bsamp32_32f(s_pFDTunnelTex2, U0, V0, U1, V1, fracU, fracV);
+
+				color = Shadertoy::vLerp4(color, baseFog, shade);
+				glowColor = Shadertoy::vLerp4(glowColor, litFog, shade); // FIXME: perhaps don't sample this if not necessary, though it's not what will make or break the framerate
+
 				colors[iColor] = color; // FIXME: gamma?
+				glowColors[iColor] = glowColor;
 			}
 
 			const int index = (yIndex+iX)>>2;
 			pDest128[index] = Shadertoy::ToPixel4_NoConv(colors);
+			pGlowDest128[index] = Shadertoy::ToPixel4_NoConv(glowColors);
 		}
 	}
 }
 
 void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 {
-	RenderTunnelMap_2x2(g_pFxMap[0], time);
-	Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+	const bool litTiles = Rocket::geti(trackTunnelLitTiles) != 0;
+	const float litBlur = clampf(0.f, 100.f, Rocket::getf(trackTunnelLitBlur));
+
+	RenderTunnelMap_2x2(g_pFxMap[0], g_pFxMap[1], time);
+
+	if (true == litTiles)
+	{
+		if (litBlur >= 1.f)
+			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(litBlur));
+
+		Add32(g_pFxMap[0], g_pFxMap[1], kFxMapSize);
+	}
+
+//	Fx_Blit_2x2(g_renderTarget[0], g_pFxMap[0]);
+	Fx_Blit_2x2(pDest, g_pFxMap[0]);
 
 	// FIXME: blur parameter!
-	HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, 3.f*kBoxBlurScale);
+//	HorizontalBoxBlur32(pDest, g_renderTarget[0], kResX, kResY, 3.f*kBoxBlurScale);
 }
 
 //
