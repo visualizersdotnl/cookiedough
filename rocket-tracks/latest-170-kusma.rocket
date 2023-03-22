@@ -170,6 +170,45 @@
 			<key row="1936" value="-256" interpolation="0"/>
 			<key row="2024" value="256" interpolation="0"/>
 		</track>
+		<track name="ball:Beams1">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="1104" value="0.5" interpolation="3"/>
+			<key row="1416" value="1" interpolation="0"/>
+			<key row="1672" value="0.66" interpolation="3"/>
+			<key row="1712" value="1" interpolation="0"/>
+			<key row="1888" value="1" interpolation="3"/>
+			<key row="1992" value="0.66" interpolation="0"/>
+			<key row="2024" value="1" interpolation="0"/>
+		</track>
+		<track name="ball:Beams2">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="1104" value="0" interpolation="3"/>
+			<key row="1416" value="1" interpolation="0"/>
+			<key row="1672" value="0.75" interpolation="3"/>
+			<key row="1712" value="1" interpolation="0"/>
+			<key row="1888" value="1" interpolation="3"/>
+			<key row="1992" value="0.66" interpolation="0"/>
+			<key row="2024" value="1" interpolation="0"/>
+		</track>
+		<track name="ball:Beams3">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="1104" value="1" interpolation="3"/>
+			<key row="1416" value="0.5" interpolation="0"/>
+			<key row="1672" value="0.5" interpolation="3"/>
+			<key row="1712" value="1" interpolation="0"/>
+			<key row="1888" value="1" interpolation="3"/>
+			<key row="1992" value="0.66" interpolation="0"/>
+			<key row="2024" value="1" interpolation="0"/>
+		</track>
+		<track name="ball:BallLowBeams">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="1104" value="255" interpolation="2"/>
+			<key row="1416" value="0" interpolation="0"/>
+			<key row="1672" value="32" interpolation="0"/>
+			<key row="1712" value="0" interpolation="1"/>
+			<key row="1992" value="64" interpolation="0"/>
+			<key row="2024" value="0" interpolation="0"/>
+		</track>
 		<track name="starsTunnel:stepU">
 			<key row="4184" value="0.77" interpolation="0"/>
 			<key row="4584" value="0.88" interpolation="0"/>
@@ -579,6 +618,7 @@
 			<key row="7336" value="0" interpolation="0"/>
 			<key row="7592" value="1" interpolation="3"/>
 			<key row="7624" value="0" interpolation="0"/>
+			<key row="8120" value="0" interpolation="2"/>
 			<key row="8128" value="0.77" interpolation="3"/>
 			<key row="8152" value="0" interpolation="0"/>
 			<key row="8328" value="0" interpolation="3"/>
@@ -612,8 +652,8 @@
 			<key row="1368" value="0" interpolation="3"/>
 			<key row="1376" value="1" interpolation="2"/>
 			<key row="1392" value="0" interpolation="0"/>
-			<key row="1416" value="1" interpolation="2"/>
-			<key row="1424" value="0" interpolation="0"/>
+			<key row="1416" value="1" interpolation="3"/>
+			<key row="1432" value="0" interpolation="0"/>
 			<key row="1488" value="0.88" interpolation="3"/>
 			<key row="1504" value="0" interpolation="0"/>
 			<key row="1552" value="1" interpolation="2"/>

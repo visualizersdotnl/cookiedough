@@ -307,6 +307,7 @@ void SoftLight32A(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
     }
 }
 
+// uses a fixed alpha to blend the result
 void SoftLight32AA(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, float alpha)
 {
 	alpha = saturatef(alpha)*255.f;
@@ -447,7 +448,7 @@ void Overlay32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 		const unsigned topG = (top >> 8) & 0xff;
 		const unsigned topB = top & 0xff;
 
-		// FIXME: use lambda!
+		// FIXME: use lambda! / shifts?
 		const unsigned iNewR = bottomR < 128 ? (2 * bottomR * topR / 255) : (255 - 2 * (255 - bottomR) * (255 - topR) / 255);
 		const unsigned iNewG = bottomG < 128 ? (2 * bottomG * topG / 255) : (255 - 2 * (255 - bottomG) * (255 - topG) / 255);
 		const unsigned iNewB = bottomB < 128 ? (2 * bottomB * topB / 255) : (255 - 2 * (255 - bottomB) * (255 - topB) / 255);
@@ -499,7 +500,7 @@ void Overlay32A(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels)
 		const unsigned topG = (top >> 8) & 0xff;
 		const unsigned topB = top & 0xff;
 
-		// FIXME: use lambda!
+		// FIXME: use lambda! / shifts?
 		const unsigned iNewR = bottomR < 128 ? (2 * bottomR * topR / 255) : (255 - 2 * (255 - bottomR) * (255 - topR) / 255);
 		const unsigned iNewG = bottomG < 128 ? (2 * bottomG * topG / 255) : (255 - 2 * (255 - bottomG) * (255 - topG) / 255);
 		const unsigned iNewB = bottomB < 128 ? (2 * bottomB * topB / 255) : (255 - 2 * (255 - bottomB) * (255 - topB) / 255);

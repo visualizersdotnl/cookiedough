@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel ball (2-pass approach)
+// cookiedough -- voxel balls (2-pass approach)
 
 #include "main.h"
 // #include "ball.h"
@@ -14,11 +14,13 @@
 
 static uint8_t *s_pHeightMap[5] = { nullptr };
 static uint32_t *s_pColorMap[2] = { nullptr };
-static uint32_t *s_pBeamMap = nullptr;
+static uint32_t *s_pBeamMaps[3] = { nullptr };
 static uint32_t *s_pEnvMap = nullptr;
 static uint32_t* s_pBackgrounds[2] = { nullptr };
+static uint32_t* s_pHalo = nullptr;
 
 static uint8_t *s_heightMapMix = nullptr;
+static uint32_t *s_pBeamMapMix = nullptr;
 
 // --- Sync. tracks ---
 
@@ -32,6 +34,8 @@ SyncTrack trackBallSpeed;
 SyncTrack trackBallBeamAtten;
 SyncTrack trackBallBeamAlphaMin;
 SyncTrack trackBallRotateOffsX, trackBallRotateOffsY;
+SyncTrack trackBallBeams1, trackBallBeams2, trackBallBeams3;
+SyncTrack trackBallLowBeams;
 
 // --------------------
 	
@@ -75,6 +79,8 @@ constexpr unsigned kAmbient = 32;
 
 static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 {
+	const unsigned lowLight = unsigned(clampi(0, 255, Rocket::geti(trackBallLowBeams)));
+
 	unsigned int lastHeight = 0;
 	unsigned int lastDrawnHeight = 0; 
 
@@ -107,14 +113,18 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		__m128i color = bsamp32_16(s_pColorMap[0], U0, V0, U1, V1, fracU, fracV);
 
 		// and beam (light shaft) color
-		__m128i beam = bsamp32_16(s_pBeamMap, U0, V0, U1, V1, fracU, fracV);
+		__m128i beam = bsamp32_16(s_pBeamMapMix, U0, V0, U1, V1, fracU, fracV);
 		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
-		// light beam
+		// light beam & diffuse light calc.
 		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const unsigned diffuse = (heightNorm*heightNorm) >> 8;
+		const unsigned heightNorm2 = heightNorm*heightNorm;
+
+		const unsigned diffuseLo = (heightNorm2*heightNorm)>>16;
+		const unsigned diffuseHi = heightNorm2>>8;
+		const unsigned diffuse = diffuseHi + (((diffuseLo-diffuseHi)*lowLight)>>8);
+
 		const __m128i litWhite = _mm_set1_epi16(diffuse);
-//		const __m128i litPurple = c2vISSE16(diffuse*0x01010001); 
 		const __m128i beamLit = _mm_srli_epi16(_mm_mullo_epi16(beam, litWhite), 8);
 		beamAccum = _mm_adds_epu16(beamAccum, beamLit);
 
@@ -361,9 +371,11 @@ bool Ball_Create()
 	if (nullptr == s_pColorMap[0] || nullptr == s_pColorMap[1])
 		return false;
 
-	// load beam map (pairs with 'assets/ball/*/colormap_1k.jpg')
-	s_pBeamMap = Image_Load32("assets/ball/beammap_1k.jpg");
-	if (nullptr == s_pBeamMap)
+	// load beam maps (pairs with 'assets/ball/*/colormap_1k.jpg')
+	s_pBeamMaps[0]= Image_Load32("assets/ball/beammap_1k_1.jpg");
+	s_pBeamMaps[1]= Image_Load32("assets/ball/beammap_1k_2.jpg");
+	s_pBeamMaps[2]= Image_Load32("assets/ball/beammap_1k_3-2.jpg");
+	if (nullptr == s_pBeamMaps[0] || nullptr == s_pBeamMaps[1] || nullptr == s_pBeamMaps[2])
 		return false;
 
 	// load env. map
@@ -377,7 +389,14 @@ bool Ball_Create()
 	if (nullptr == s_pBackgrounds[0] || nullptr == s_pBackgrounds[1])
 		return false;
 
+	// load halo (for beams)
+	s_pHalo = Image_Load32("assets/ball/halo.png");
+	if (nullptr == s_pHalo)
+		return false;
+
+	// alloc. mix maps
 	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint8_t), kAlignTo));
+	s_pBeamMapMix = static_cast<uint32_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint32_t), kAlignTo));
 
 	// initialize sync. track(s)
 	trackBallBlur = Rocket::AddTrack("ball:Blur");
@@ -391,6 +410,10 @@ bool Ball_Create()
 	trackBallBeamAlphaMin = Rocket::AddTrack("ball:BeamAlphaMin");
 	trackBallRotateOffsX = Rocket::AddTrack("ball:RotateOffsX");
 	trackBallRotateOffsY = Rocket::AddTrack("ball:RotateOffsY");
+	trackBallBeams1 =Rocket::AddTrack("ball:Beams1");
+	trackBallBeams2 =Rocket::AddTrack("ball:Beams2");
+	trackBallBeams3 =Rocket::AddTrack("ball:Beams3");
+	trackBallLowBeams = Rocket::AddTrack("ball:BallLowBeams");
 
 	return true;
 }
@@ -402,13 +425,33 @@ void Ball_Destroy()
 
 void Ball_Draw(uint32_t *pDest, float time, float delta)
 {
+	constexpr size_t mapNumPixels = kMapSize*kMapSize;
+
+	const bool hasBeams = Rocket::geti(trackBallHasBeams) != 0;
+
 	// blend between map (1-4) and and #0 (spikes)
 	const unsigned iBaseMap = clampi(1, 4, Rocket::geti(trackBallBaseShapeIndex));
 	memcpy_fast(s_heightMapMix, s_pHeightMap[iBaseMap], kMapSize*kMapSize);
 
-	const uint8_t spikes = (uint8_t) clampi(0, 255, Rocket::geti(trackBallSpikes));
-	if (spikes != 0)
-		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[0]), kMapSize*kMapSize/4 /* function processes 4 8-bit components at a time */, spikes);
+	const uint8_t spikes = uint8_t(Rocket::geti(trackBallSpikes));
+	if (0 != spikes)
+		Mix32(reinterpret_cast<uint32_t *>(s_heightMapMix), reinterpret_cast<uint32_t*>(s_pHeightMap[0]), mapNumPixels/4 /* function processes 4 8-bit components at a time */, spikes);
+
+	if (true == hasBeams)
+	{
+		// blend beam maps
+		const float beamA1 = saturatef(Rocket::getf(trackBallBeams1));
+		const float beamA2 = saturatef(Rocket::getf(trackBallBeams2));
+		const float beamA3 = saturatef(Rocket::getf(trackBallBeams3));
+
+		memset32(s_pBeamMapMix, 0, kMapSize*kMapSize);
+		if (beamA1 > 0.f)
+			BlitAdd32A(s_pBeamMapMix, s_pBeamMaps[0], kMapSize, kMapSize, kMapSize, beamA1);
+		if (beamA2 > 0.f)
+			BlitAdd32A(s_pBeamMapMix, s_pBeamMaps[1], kMapSize, kMapSize, kMapSize, beamA2);
+		if (beamA3 > 0.f)
+			BlitAdd32A(s_pBeamMapMix, s_pBeamMaps[2], kMapSize, kMapSize, kMapSize, beamA3);
+	}
 
 	// render unwrapped ball
 	vball(g_renderTarget[0], time * Rocket::getf(trackBallSpeed));
@@ -421,15 +464,16 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 #endif
 
 	// blit (polar wrap) effect on top of background (2 of them, one for the object *with* beams, one for without)
-	const bool hasBeams = Rocket::geti(trackBallHasBeams) != 0;
 	const auto* pBackground = hasBeams ? s_pBackgrounds[0] : s_pBackgrounds[1];
 	memcpy(pDest, pBackground, kOutputBytes);
 //	memset32(pDest, 0, kOutputSize);
 	Polar_BlitA(pDest, g_renderTarget[0], false);
 
-	// and then some
 	if (true == hasBeams)
-		SoftLight32AA(pDest, pBackground, kOutputSize, 0.4f);
+	{
+//		SoftLight32AA(pDest, pBackground, kOutputSize, 0.4f);
+		SoftLight32A(pDest, s_pHalo, kOutputSize);
+	}
 
 #if 0
 	// debug blit: unwrapped
