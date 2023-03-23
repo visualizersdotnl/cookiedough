@@ -498,7 +498,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			SoftLight32(pDest, s_pSpikeyVignette2, kOutputSize); // FIXME: borrowed resource
 
 			if (0 != Rocket::geti(trackDirt))
-				MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
+				Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
 
 			break;
 
