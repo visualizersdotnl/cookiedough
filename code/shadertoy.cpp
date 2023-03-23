@@ -55,6 +55,7 @@ SyncTrack trackCloseSpikeX;
 SyncTrack trackCloseSpikeY;
 SyncTrack trackCloseSpikeZ;
 SyncTrack trackCloseSpikeZScale;
+SyncTrack trackCLoseSpikeNormalGrain;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -118,8 +119,9 @@ bool Shadertoy_Create()
 	trackCloseSpikeY = Rocket::AddTrack("closeSpike:yOffs");
 	trackCloseSpikeZ = Rocket::AddTrack("closeSpike:zOffs");
 	trackCloseSpikeZScale = Rocket::AddTrack("closeSpike:zOffsScale");
-
-	// Sinuses:
+	trackCLoseSpikeNormalGrain = Rocket::AddTrack("closeSpike:NormalGrain");
+	
+	// Sinuses tunnel:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
 	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
 	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
@@ -410,6 +412,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float zOffs = Rocket::getf(trackCloseSpikeZ);
 	const float zOffsScale = Rocket::getf(trackCloseSpikeZScale);
 	const float zOffsFinal = easeInOutElasticf(zOffs)*zOffsScale;
+	const float normalGrain = Rocket::getf(trackCLoseSpikeNormalGrain);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
@@ -437,7 +440,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				float march = 1.f, total = 0.f; 
 				int iStep;
-				for (iStep = 0; march > 0.001f && iStep < 32; ++iStep)
+				for (iStep = 0; march > 0.0001f && iStep < 32; ++iStep)
 				{
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
@@ -449,7 +452,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 					total += march*(0.05f*kPI);
 				}
 
-				constexpr float nOffs = 0.3f; // this coarse results in really nice and soft lighting/shading!
+				const float nOffs = normalGrain; 
 				Vector3 normal(
 					march-fSpikey1(Vector3(hit.x+nOffs, hit.y, hit.z)),
 					march-fSpikey1(Vector3(hit.x, hit.y+nOffs, hit.z)),
@@ -462,6 +465,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 
 				float rim = diffuse*diffuse;
 				rim = (rim*rim-0.13f)*64.f;
+//				rim = saturatef(rim);
 				rim = std::max<float>(1.f, std::min<float>(0.f, rim));
 				diffuse *= rim;
 

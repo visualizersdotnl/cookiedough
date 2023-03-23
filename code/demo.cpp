@@ -32,7 +32,7 @@ SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 SyncTrack trackDiscoGuys;
 SyncTrack trackShow1995, trackShow2006;
-// SyncTrack trackDirt;
+SyncTrack trackDirt;
 SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
 SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
 SyncTrack trackGreetSwitch;
@@ -133,7 +133,7 @@ bool Demo_Create()
 	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
 	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
 	trackShow1995 = Rocket::AddTrack("demo:Show1995");
-//	trackDirt = Rocket::AddTrack("demo:LensDirt");
+	trackDirt = Rocket::AddTrack("demo:Dirt");
 	trackShow2006 = Rocket::AddTrack("demo:Show2006");
 	trackScapeOverlay = Rocket::AddTrack("demo:ScapeOverlay");
 	trackScapeRevision = Rocket::AddTrack("demo:ScapeRev");
@@ -495,8 +495,11 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
-			MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
-			Overlay32A(pDest, s_pSpikeyVignette, kOutputSize); 
+			SoftLight32(pDest, s_pSpikeyVignette2, kOutputSize); // FIXME: borrowed resource
+
+			if (0 != Rocket::geti(trackDirt))
+				MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
+
 			break;
 
 		case 8:
@@ -528,8 +531,8 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const float overlayA = saturatef(Rocket::getf(trackWaterLove));
 				Sinuses_Draw(pDest, timer, delta);
 				BlitAdd32A(pDest, s_pWaterPrismOverlay, kResX, kResX, kResY, overlayA);
-				
-				if (overlayA >= 0.34f) // FIXME: dirty pull, need to keep in sync. with Rocket 
+
+				if (0 != Rocket::geti(trackDirt))
 					MulSrc32(pDest, s_pWaterDirt, kOutputSize);
 
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);

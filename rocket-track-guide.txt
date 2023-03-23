@@ -1,4 +1,0 @@
-
-Rocket tracks explained by effect (including range of valid values).
-
-...
