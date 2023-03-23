@@ -4,12 +4,16 @@
 #include "main.h"
 #include "fx-blitter.h"
 
-uint32_t *g_pFxMap[2] = { nullptr };
+uint32_t *g_pFxMap[4] = { nullptr };
 
 bool FxBlitter_Create()
 {
-	g_pFxMap[0] = static_cast<uint32_t*>(mallocAligned(kFxMapBytes, kAlignTo));
-	g_pFxMap[1] = static_cast<uint32_t*>(mallocAligned(kFxMapBytes, kAlignTo));
+	uint32_t* basePtr = static_cast<uint32_t*>(mallocAligned(kFxMapBytes*4, kAlignTo));
+
+	g_pFxMap[0] = basePtr;
+	g_pFxMap[1] = g_pFxMap[0] + kFxMapSize;
+	g_pFxMap[2] = g_pFxMap[1] + kFxMapSize;
+	g_pFxMap[3] = g_pFxMap[2] + kFxMapSize;
 
 	return true;
 }
@@ -17,7 +21,6 @@ bool FxBlitter_Create()
 void FxBlitter_Destroy()
 {
 	freeAligned(g_pFxMap[0]);
-	freeAligned(g_pFxMap[1]);
 }
 
 // 2x2 blit (2 pixels per SSE write)

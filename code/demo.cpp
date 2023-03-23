@@ -282,8 +282,12 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 {
 	// update sync.
+#if defined(SYNC_PLAYER)
 	if (false == Rocket::Boost())
 		return false; // demo is over!
+#else
+	Rocket::Boost();
+#endif
 
 	// get fade/flash amounts
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);

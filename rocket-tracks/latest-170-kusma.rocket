@@ -481,6 +481,22 @@
 		<track name="plasma:Gamma">
 			<key row="2096" value="2" interpolation="0"/>
 		</track>
+		<track name="plasma:Desaturation">
+			<key row="2256" value="0" interpolation="1"/>
+			<key row="2328" value="1" interpolation="3"/>
+			<key row="2336" value="0" interpolation="0"/>
+			<key row="2448" value="0" interpolation="3"/>
+			<key row="2456" value="0.5" interpolation="3"/>
+			<key row="2472" value="0.8" interpolation="3"/>
+			<key row="2488" value="0" interpolation="0"/>
+			<key row="2768" value="0" interpolation="3"/>
+			<key row="2848" value="1" interpolation="1"/>
+			<key row="2888" value="0" interpolation="0"/>
+			<key row="2976" value="0" interpolation="1"/>
+			<key row="2984" value="0.66" interpolation="3"/>
+			<key row="2992" value="1" interpolation="1"/>
+			<key row="3040" value="0" interpolation="0"/>
+		</track>
 		<track name="tunnel:Boxy">
 			<key row="4448" value="1" interpolation="3"/>
 			<key row="4584" value="0.5" interpolation="0"/>
@@ -529,7 +545,7 @@
 			<key row="4976" value="64" interpolation="0"/>
 		</track>
 		<track name="tunnel:LitTiles">
-			<key row="4448" value="0" interpolation="0"/>
+			<key row="4448" value="1" interpolation="0"/>
 			<key row="4976" value="1" interpolation="0"/>
 		</track>
 		<track name="tunnel:LitBlur">

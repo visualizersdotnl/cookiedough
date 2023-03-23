@@ -68,6 +68,7 @@ SyncTrack trackSinusesGamma;
 SyncTrack trackPlasmaSpeed;
 SyncTrack trackPlasmaHue;
 SyncTrack trackPlasmaGamma;
+SyncTrack trackPlasmaDesat;
 
 // Freedir. tunnel sync.:
 SyncTrack
@@ -132,6 +133,7 @@ bool Shadertoy_Create()
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
 	trackPlasmaHue = Rocket::AddTrack("plasma:Hue");
 	trackPlasmaGamma = Rocket::AddTrack("plasma:Gamma");
+	trackPlasmaDesat = Rocket::AddTrack("plasma:Desaturation");
 
 	// Tunnel:
 	trackTunnelBoxy = Rocket::AddTrack("tunnel:Boxy");
@@ -179,14 +181,15 @@ VIZ_INLINE float fPlasma(const Vector3 &point, float time)
 
 static void RenderPlasmaMap(uint32_t *pDest, float time)
 {
-	const float speed = Rocket::getf(trackPlasmaSpeed);
-	const float hue   = Rocket::getf(trackPlasmaHue);
-	const float gamma = Rocket::getf(trackPlasmaGamma);
+	const float speed        = Rocket::getf(trackPlasmaSpeed);
+	const float hue          = Rocket::getf(trackPlasmaHue);
+	const float gamma        = Rocket::getf(trackPlasmaGamma);
+	const float desaturation = Rocket::getf(trackPlasmaDesat);
 
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	// keeping as much out of the inner loop as possible, could not be effective in some cases (local variables, cache et cetera)
-	const Vector3 colMulA = Shadertoy::MichielPal(hue);
+	const Vector3 colMulA = Vector3(Shadertoy::Desaturate(Shadertoy::MichielPal(hue), desaturation));
 	const Vector3 colMulB = Vector3(Shadertoy::Desaturate(colMulA, 0.8f));
 
 	time = time*speed;
@@ -706,7 +709,7 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, uint32_t *pGlowDest, float time
 				const float absX = fabsf(direction.x);
 				const float absY = fabsf(direction.y);
 				const float box = absX > absY ? absX : absY;
-				A = lerpf(A, box, boxy); //  smoothstepf(A, box, boxy);
+				A = smoothstepf(A, box, boxy);
 				A += kEpsilon;
 				A = 1.f/A;
 				const float T = radius*A;
@@ -765,6 +768,7 @@ void Tunnel_Draw(uint32_t *pDest, float time, float delta)
 		if (litBlur >= 1.f)
 			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(litBlur)); // FIXME: can easily turn this into a directional blur by using different kernel sizes
 
+//		MulSrc32(g_pFxMap[2], g_pFxMap[1], kFxMapSize);
 		Add32(g_pFxMap[0], g_pFxMap[1], kFxMapSize);
 	}
 
