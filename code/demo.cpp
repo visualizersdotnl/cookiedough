@@ -499,7 +499,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 7:			
 			// Close-up spike ball
 			Spikey_Draw(pDest, timer, delta, true);
-			SoftLight32(pDest, s_pSpikeyVignette2, kOutputSize); // FIXME: borrowed resource
+			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 
 			if (0 != Rocket::geti(trackDirt))
 				Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
@@ -594,7 +594,15 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const unsigned xStart = (kResX-(8*128))>>1;
 				const unsigned yOffs = ((kResY-128)>>1) + 16;
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
+				{
 					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
+
+					if (discoGuys < 1.f)
+					{
+						uint32_t *pStrip = pDest + yOffs*kResX;
+						HorizontalBoxBlur32(pStrip, pStrip, kResX, 128, BoxBlurScale((1.f-discoGuys)*kGoldenAngle));
+					}
+				}
 
 				// (semi-)full credits
 //				BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
