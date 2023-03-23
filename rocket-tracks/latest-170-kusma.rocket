@@ -348,7 +348,7 @@
 			<key row="6288" value="2" interpolation="0"/>
 			<key row="6544" value="3" interpolation="0"/>
 			<key row="6680" value="8" interpolation="0"/>
-			<key row="6808" value="4" interpolation="0"/>
+			<key row="6808" value="1" interpolation="0"/>
 			<key row="7072" value="33" interpolation="0"/>
 		</track>
 		<track name="spike:Desaturation">
@@ -427,7 +427,7 @@
 		<track name="closeSpike:zOffs">
 			<key row="6288" value="1" interpolation="1"/>
 			<key row="6489" value="0" interpolation="0"/>
-			<key row="7036" value="0" interpolation="1"/>
+			<key row="7040" value="0" interpolation="1"/>
 			<key row="7071" value="0.49" interpolation="1"/>
 			<key row="7072" value="0" interpolation="0"/>
 		</track>
@@ -438,7 +438,7 @@
 			<key row="6288" value="1" interpolation="2"/>
 			<key row="6544" value="0.33" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
-			<key row="6816" value="0.22" interpolation="3"/>
+			<key row="6808" value="0.22" interpolation="3"/>
 			<key row="7079" value="0.33" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
@@ -550,8 +550,8 @@
 		</track>
 		<track name="tunnel:LitBlur">
 			<key row="4448" value="0" interpolation="0"/>
-			<key row="4976" value="1" interpolation="3"/>
-			<key row="5232" value="12" interpolation="3"/>
+			<key row="4976" value="1" interpolation="2"/>
+			<key row="5232" value="6.28" interpolation="3"/>
 			<key row="5240" value="0" interpolation="0"/>
 		</track>
 		<track name="tunnel:Fog1">
@@ -559,7 +559,7 @@
 			<key row="4544" value="220" interpolation="3"/>
 			<key row="4584" value="255" interpolation="0"/>
 			<key row="4976" value="0" interpolation="0"/>
-			<key row="5112" value="0" interpolation="3"/>
+			<key row="5128" value="0" interpolation="2"/>
 			<key row="5240" value="255" interpolation="0"/>
 		</track>
 		<track name="tunnel:Fog2">
@@ -664,8 +664,7 @@
 			<key row="7072" value="0" interpolation="0"/>
 			<key row="7208" value="0" interpolation="3"/>
 			<key row="7320" value="0.5" interpolation="3"/>
-			<key row="7328" value="0.6" interpolation="3"/>
-			<key row="7336" value="0" interpolation="0"/>
+			<key row="7328" value="0" interpolation="0"/>
 			<key row="7592" value="1" interpolation="3"/>
 			<key row="7624" value="0" interpolation="0"/>
 			<key row="8120" value="0" interpolation="2"/>
@@ -982,6 +981,7 @@
 		<track name="demo:Dirt">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6552" value="1" interpolation="0"/>
+			<key row="6680" value="0" interpolation="0"/>
 			<key row="6816" value="0" interpolation="0"/>
 			<key row="7072" value="0" interpolation="0"/>
 			<key row="7336" value="0" interpolation="0"/>
