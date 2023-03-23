@@ -86,7 +86,7 @@ SyncTrack
 // --------------------
 
 static uint32_t *s_pFDTunnelTex = nullptr;
-static uint32_t *s_pFDTunnelTex2 = nullptr;
+static uint32_t *s_pFDTunnelTexHighlights = nullptr;
 
 bool Shadertoy_Create()
 {
@@ -152,8 +152,8 @@ bool Shadertoy_Create()
 	trackTunnelFog2 = Rocket::AddTrack("tunnel:Fog2");
 
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/nytrik-hextexture.png");
-	s_pFDTunnelTex2 = Image_Load32("assets/shadertoy/nytrik-hextexture-fx.png");
-	if (nullptr == s_pFDTunnelTex || nullptr == s_pFDTunnelTex2)
+	s_pFDTunnelTexHighlights = Image_Load32("assets/shadertoy/nytrik-hextexture-fx.png");
+	if (nullptr == s_pFDTunnelTex || nullptr == s_pFDTunnelTexHighlights)
 		return false;
 
 	return true;
@@ -713,20 +713,20 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, uint32_t *pGlowDest, float time
 				A += kEpsilon;
 				A = 1.f/A;
 				const float T = radius*A;
-//				const float T2 = radius*A*0.314f;
+				const float T2 = T*0.912f; // FIXME: parametrize (though this is a nice offset)
 				const Vector3 intersection = direction*T;
-//				const Vector3 intersection2 = direction*T2;
+				const Vector3 intersection2 = direction*T2;
 
 				const float U = atan2f(intersection.y, intersection.x)/kPI;
 				const float V = intersection.z + time*speed;
-//				const float U2 = atan2f(intersection2.y, intersection2.x)/kPI;
-//				const float V2 = intersection2.z + time*speed;
+				const float U2 = atan2f(intersection2.y, intersection2.x)/kPI;
+				const float V2 = intersection2.z + time*speed;
 
 				// this is f*cking slow due to conversion (FTOL)
 				const int fpU = ftofp24(U*uMul);               
 				const int fpV = ftofp24(V*vMul);        
-//				const int fpU2 = ftofp24(U2*uMul);               
-//				const int fpV2 = ftofp24(V2*vMul);        
+				const int fpU2 = ftofp24(U2*uMul);               
+				const int fpV2 = ftofp24(V2*vMul);        
 
 				const float shade = clampf(0.f, 1.f, 1.f-expf(-0.006f*T*T));
 
@@ -739,8 +739,8 @@ static void RenderTunnelMap_2x2(uint32_t *pDest, uint32_t *pGlowDest, float time
 				bsamp_prepUVs(fpU, fpV, 1023, 10, U0, V0, U1, V1, fracU, fracV);
 				__m128 color = bsamp32_32f(s_pFDTunnelTex, U0, V0, U1, V1, fracU, fracV);
 
-//				bsamp_prepUVs(fpU2, fpV2, 1023, 10, U0, V0, U1, V1, fracU, fracV);
-				__m128 glowColor = bsamp32_32f(s_pFDTunnelTex2, U0, V0, U1, V1, fracU, fracV);
+				bsamp_prepUVs(fpU2, fpV2, 1023, 10, U0, V0, U1, V1, fracU, fracV);
+				__m128 glowColor = bsamp32_32f(s_pFDTunnelTexHighlights, U0, V0, U1, V1, fracU, fracV);
 
 				color = Shadertoy::vLerp4(color, baseFog, shade);
 				glowColor = Shadertoy::vLerp4(glowColor, litFog, shade); // FIXME: perhaps don't sample this if not necessary, though it's not what will make or break the framerate
