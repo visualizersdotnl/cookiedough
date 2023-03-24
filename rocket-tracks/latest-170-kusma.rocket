@@ -986,6 +986,46 @@
 			<key row="7336" value="0" interpolation="0"/>
 			<key row="8120" value="1" interpolation="0"/>
 		</track>
+		<track name="demo:DiscoGuy1">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9920" value="0" interpolation="3"/>
+			<key row="9924" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy2">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9924" value="0" interpolation="2"/>
+			<key row="9928" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy3">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9928" value="0" interpolation="3"/>
+			<key row="9932" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy4">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9932" value="0" interpolation="2"/>
+			<key row="9936" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy5">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9936" value="0" interpolation="3"/>
+			<key row="9940" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy6">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9940" value="0" interpolation="2"/>
+			<key row="9944" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy7">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9944" value="0" interpolation="3"/>
+			<key row="9948" value="1" interpolation="0"/>
+		</track>
+		<track name="demo:DiscoGuy8">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="9948" value="0" interpolation="2"/>
+			<key row="9951" value="1" interpolation="0"/>
+		</track>
 		<track name="shootingStar:Enabled">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="448" value="1" interpolation="0"/>

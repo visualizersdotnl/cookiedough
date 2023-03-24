@@ -30,7 +30,7 @@ static_assert(kResX == 1280 && kResY == 720);
 SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
-SyncTrack trackDiscoGuys;
+SyncTrack trackDiscoGuys, trackDiscoGuysAppearance[8];
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
@@ -131,7 +131,17 @@ bool Demo_Create()
 	trackCreditLogoAlpha = Rocket::AddTrack("demo:CreditLogoAlpha");
 	trackCreditLogoBlurH = Rocket::AddTrack("demo:CreditLogoBlurH");
 	trackCreditLogoBlurV = Rocket::AddTrack("demo:CreditLogoBlurV");
+
 	trackDiscoGuys = Rocket::AddTrack("demo:DiscoGuys");
+	trackDiscoGuysAppearance[0] = Rocket::AddTrack("demo:DiscoGuy1");
+	trackDiscoGuysAppearance[1] = Rocket::AddTrack("demo:DiscoGuy2");
+	trackDiscoGuysAppearance[2] = Rocket::AddTrack("demo:DiscoGuy3");
+	trackDiscoGuysAppearance[3] = Rocket::AddTrack("demo:DiscoGuy4");
+	trackDiscoGuysAppearance[4] = Rocket::AddTrack("demo:DiscoGuy5");
+	trackDiscoGuysAppearance[5] = Rocket::AddTrack("demo:DiscoGuy6");
+	trackDiscoGuysAppearance[6] = Rocket::AddTrack("demo:DiscoGuy7");
+	trackDiscoGuysAppearance[7] = Rocket::AddTrack("demo:DiscoGuy8");
+
 	trackShow1995 = Rocket::AddTrack("demo:Show1995");
 	trackDirt = Rocket::AddTrack("demo:Dirt");
 	trackShow2006 = Rocket::AddTrack("demo:Show2006");
@@ -595,12 +605,15 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				const unsigned yOffs = ((kResY-128)>>1) + 16;
 				for (int iGuy = 0; iGuy < 8; ++iGuy)
 				{
-					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys);
+					// this gives me the opportunity to for ex. fade them in in order
+					const float appearance = saturatef(Rocket::getf(trackDiscoGuysAppearance[iGuy]));
+
+					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys*appearance);
 
 					if (discoGuys < 1.f)
 					{
 						uint32_t *pStrip = pDest + yOffs*kResX;
-						HorizontalBoxBlur32(pStrip, pStrip, kResX, 128, BoxBlurScale((1.f-discoGuys)*kGoldenAngle));
+						HorizontalBoxBlur32(pStrip, pStrip, kResX, 128, BoxBlurScale((1.f-discoGuys)*k2PI*kGoldenAngle));
 					}
 				}
 
