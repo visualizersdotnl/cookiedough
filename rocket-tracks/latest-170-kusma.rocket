@@ -324,8 +324,8 @@
 			<key row="6678" value="-7.1" interpolation="0"/>
 			<key row="6680" value="-9" interpolation="2"/>
 			<key row="6807" value="-9.1" interpolation="2"/>
-			<key row="6808" value="-9" interpolation="0"/>
-			<key row="7072" value="16" interpolation="3"/>
+			<key row="6808" value="15.8" interpolation="2"/>
+			<key row="7072" value="16" interpolation="1"/>
 			<key row="7335" value="16.1" interpolation="0"/>
 		</track>
 		<track name="spike:Roll">
@@ -337,8 +337,8 @@
 			<key row="6544" value="3" interpolation="0"/>
 			<key row="6680" value="33.33" interpolation="0"/>
 			<key row="6808" value="7" interpolation="0"/>
-			<key row="7072" value="44" interpolation="0"/>
-			<key row="7280" value="44" interpolation="2"/>
+			<key row="7072" value="44" interpolation="3"/>
+			<key row="7280" value="44.1" interpolation="2"/>
 			<key row="7328" value="45" interpolation="0"/>
 		</track>
 		<track name="spike:Specular">
@@ -632,7 +632,7 @@
 			<key row="4096" value="0" interpolation="0"/>
 			<key row="4184" value="0.33" interpolation="2"/>
 			<key row="4312" value="0" interpolation="0"/>
-			<key row="4576" value="0" interpolation="3"/>
+			<key row="4568" value="0" interpolation="2"/>
 			<key row="4584" value="1" interpolation="2"/>
 			<key row="4600" value="0" interpolation="0"/>
 			<key row="4680" value="0" interpolation="3"/>
@@ -981,7 +981,7 @@
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6552" value="1" interpolation="0"/>
 			<key row="6680" value="0" interpolation="0"/>
-			<key row="6816" value="0" interpolation="0"/>
+			<key row="6816" value="2" interpolation="0"/>
 			<key row="7072" value="0" interpolation="0"/>
 			<key row="7336" value="0" interpolation="0"/>
 			<key row="8120" value="1" interpolation="0"/>

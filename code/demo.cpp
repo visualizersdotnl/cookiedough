@@ -507,13 +507,17 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
       
 		case 7:			
-			// Close-up spike ball
-			Spikey_Draw(pDest, timer, delta, true);
-			MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+			{
+				// Close-up spike ball
+				Spikey_Draw(pDest, timer, delta, true);
+				MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 
-			if (0 != Rocket::geti(trackDirt))
-				Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
-
+				const auto dirt = Rocket::geti(trackDirt);
+				if (1 == dirt)
+					Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
+				else if (2 == dirt)
+					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.1f*kGoldenAngle); // FIXME: borrowed asset
+			}
 			break;
 
 		case 8:
@@ -608,7 +612,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					// this gives me the opportunity to for ex. fade them in in order
 					const float appearance = saturatef(Rocket::getf(trackDiscoGuysAppearance[iGuy]));
 
-					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys*appearance);
+					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys*smootherstepf(0.f, 1.f, appearance));
 
 					if (discoGuys < 1.f)
 					{
