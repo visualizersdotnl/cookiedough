@@ -517,6 +517,8 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
 				else if (2 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.1f*kGoldenAngle); // FIXME: borrowed asset
+				else if (3 == dirt)
+					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.075f*kGoldenAngle); // FIXME: borrowed asset
 			}
 			break;
 
