@@ -510,11 +510,18 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				// Close-up spike ball
 				Spikey_Draw(pDest, timer, delta, true);
-				MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
 
+				// what follows ain't pretty
 				const auto dirt = Rocket::geti(trackDirt);
+
+				if (1 != dirt)
+					MulSrc32(pDest, s_pSpikeyVignette, kOutputSize);
+
 				if (1 == dirt)
-					Overlay32(pDest, s_pCloseSpikeDirt, kOutputSize);
+				{
+					MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
+					Darken32_50(pDest, s_pCloseSpikeDirt, kOutputSize);
+				}
 				else if (2 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.1f*kGoldenAngle); // FIXME: borrowed asset
 				else if (3 == dirt)

@@ -55,7 +55,8 @@ SyncTrack trackCloseSpikeX;
 SyncTrack trackCloseSpikeY;
 SyncTrack trackCloseSpikeZ;
 SyncTrack trackCloseSpikeZScale;
-SyncTrack trackCLoseSpikeNormalGrain;
+SyncTrack trackCloseSpikeNormalGrain;
+SyncTrack trackCloseSpikeScale;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -120,8 +121,9 @@ bool Shadertoy_Create()
 	trackCloseSpikeY = Rocket::AddTrack("closeSpike:yOffs");
 	trackCloseSpikeZ = Rocket::AddTrack("closeSpike:zOffs");
 	trackCloseSpikeZScale = Rocket::AddTrack("closeSpike:zOffsScale");
-	trackCLoseSpikeNormalGrain = Rocket::AddTrack("closeSpike:NormalGrain");
-	
+	trackCloseSpikeNormalGrain = Rocket::AddTrack("closeSpike:NormalGrain");
+	trackCloseSpikeScale = Rocket::AddTrack("closeSpike:Scale");
+
 	// Sinuses tunnel:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
 	trackSinusesRoll = Rocket::AddTrack("sinusesTunnel:Roll");
@@ -388,7 +390,7 @@ static Vector4 fSpike_global;
 
 VIZ_INLINE float fSpikey1(const Vector3 &position) 
 {
-	constexpr float scale = kGoldenRatio*0.1f;
+	constexpr float scale = kGoldenAngle*0.1f;
 	const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
 	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
 }
@@ -415,12 +417,13 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float zOffs = Rocket::getf(trackCloseSpikeZ);
 	const float zOffsScale = Rocket::getf(trackCloseSpikeZScale);
 	const float zOffsFinal = easeInOutElasticf(zOffs)*zOffsScale;
-	const float normalGrain = Rocket::getf(trackCLoseSpikeNormalGrain);
+	const float normalGrain = Rocket::getf(trackCloseSpikeNormalGrain);
+	const float scale = Rocket::getf(trackCloseSpikeScale);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
 
-	fSpike_global = Vector4(speed*time, 16.f, 22.f, 0.f);
+	fSpike_global = Vector4(speed*time, 16.f*scale, 22.f*scale, 0.f);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
