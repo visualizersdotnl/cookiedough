@@ -57,6 +57,8 @@ SyncTrack trackCloseSpikeZ;
 SyncTrack trackCloseSpikeZScale;
 SyncTrack trackCloseSpikeNormalGrain;
 SyncTrack trackCloseSpikeScale;
+SyncTrack trackCloseSpikeRim;
+SyncTrack trackCloseSpikeAspectMul;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -123,6 +125,8 @@ bool Shadertoy_Create()
 	trackCloseSpikeZScale = Rocket::AddTrack("closeSpike:zOffsScale");
 	trackCloseSpikeNormalGrain = Rocket::AddTrack("closeSpike:NormalGrain");
 	trackCloseSpikeScale = Rocket::AddTrack("closeSpike:Scale");
+	trackCloseSpikeRim = Rocket::AddTrack("closeSpike:Rim");
+	trackCloseSpikeAspectMul = Rocket::AddTrack("closeSpike:AspectMul");
 
 	// Sinuses tunnel:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
@@ -419,11 +423,16 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	const float zOffsFinal = easeInOutElasticf(zOffs)*zOffsScale;
 	const float normalGrain = Rocket::getf(trackCloseSpikeNormalGrain);
 	const float scale = Rocket::getf(trackCloseSpikeScale);
+	const bool rim = 0 != Rocket::geti(trackCloseSpikeRim);
+	const bool aspectMul = 0 != Rocket::geti(trackCloseSpikeAspectMul);
 
 	const Vector3 colorization = Shadertoy::MichielPal(hue);
 	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
 
-	fSpike_global = Vector4(speed*time, 16.f*scale, 22.f*scale, 0.f);
+	if (false == aspectMul)
+		fSpike_global = Vector4(speed*time, 16.f*scale, 22.f*scale, 0.f);
+	else
+		fSpike_global = Vector4(speed*time, kAspect*16.f*scale, 22.f*scale, 0.f);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
@@ -469,11 +478,14 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				const float specular = powf(std::max<float>(0.f, normal*direction), specPow);
 				const float distance = hit.z-origin.z;
 
-				float rim = diffuse*diffuse;
-				rim = (rim*rim-0.13f)*64.f;
-//				rim = saturatef(rim);
-				rim = std::max<float>(1.f, std::min<float>(0.f, rim));
-				diffuse *= rim;
+				if (rim)
+				{
+					float rim = diffuse*diffuse;
+					rim = (rim*rim-0.13f)*64.f;
+//					rim = saturatef(rim);
+					rim = std::max<float>(1.f, std::min<float>(0.f, rim));
+					diffuse *= rim;
+				}
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
 					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, kGoldenRatio*0.1f)),
@@ -486,7 +498,6 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	}
 }
 
-// FIXME: untested (10/02/2023)
 static void RenderSpikeyMap_2x2_Distant(uint32_t *pDest, float time)
 {
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
@@ -655,14 +666,14 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 }
 
 //
-// Classic free-directional tunnel (ported from my 2007 demoscene codebase).
+// Classic free-directional planes & tunnel (ported from my 2007 demoscene codebase).
 // Test case for texture sampling and color interpolation versus UV interpolation.
 //
 // FIXME:
 // - expected (hardcoded): 1024x1024 texture(s)
 //
 // I've tweaked it a bit so you can have a second layer sampled to a secondary buffer to blur and whatnot,
-// you know, classic fun.
+// you know, classic fun (for tunnel).
 //
 
 static void RenderTunnelMap_2x2(uint32_t *pDest, uint32_t *pGlowDest, float time)

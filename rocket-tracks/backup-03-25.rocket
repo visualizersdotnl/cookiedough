@@ -321,7 +321,7 @@
 			<key row="4183" value="9.13" interpolation="0"/>
 			<key row="6288" value="16" interpolation="0"/>
 			<key row="6544" value="-7" interpolation="2"/>
-			<key row="6679" value="-7.1" interpolation="0"/>
+			<key row="6678" value="-7.1" interpolation="1"/>
 			<key row="6680" value="9" interpolation="2"/>
 			<key row="6807" value="9.1" interpolation="2"/>
 			<key row="6808" value="11" interpolation="0"/>
@@ -334,7 +334,7 @@
 			<key row="3936" value="66" interpolation="0"/>
 			<key row="6288" value="8" interpolation="0"/>
 			<key row="6544" value="3" interpolation="0"/>
-			<key row="6680" value="2" interpolation="0"/>
+			<key row="6680" value="8" interpolation="0"/>
 			<key row="6808" value="16" interpolation="0"/>
 			<key row="6952" value="128" interpolation="2"/>
 			<key row="7072" value="4" interpolation="0"/>
@@ -346,7 +346,7 @@
 			<key row="3912" value="1.1" interpolation="0"/>
 			<key row="6288" value="4" interpolation="0"/>
 			<key row="6544" value="3" interpolation="0"/>
-			<key row="6680" value="36" interpolation="0"/>
+			<key row="6680" value="33.33" interpolation="0"/>
 			<key row="6808" value="45" interpolation="0"/>
 			<key row="7072" value="44" interpolation="3"/>
 			<key row="7280" value="44.1" interpolation="3"/>
@@ -357,7 +357,7 @@
 			<key row="3936" value="3" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6415" value="0" interpolation="2"/>
-			<key row="6420" value="2" interpolation="0"/>
+			<key row="6420" value="4" interpolation="0"/>
 			<key row="6544" value="4" interpolation="0"/>
 			<key row="6680" value="3.14" interpolation="0"/>
 			<key row="6808" value="8" interpolation="0"/>
@@ -386,7 +386,7 @@
 			<key row="6544" value="1.24" interpolation="0"/>
 			<key row="6680" value="1.88" interpolation="0"/>
 			<key row="6808" value="0.66" interpolation="0"/>
-			<key row="7072" value="1.66" interpolation="0"/>
+			<key row="7072" value="1.33" interpolation="0"/>
 		</track>
 		<track name="distSpike:Warmup">
 			<key row="0" value="0" interpolation="0"/>
@@ -427,6 +427,7 @@
 		<track name="closeSpike:zOffs">
 			<key row="6288" value="1" interpolation="1"/>
 			<key row="6489" value="0" interpolation="0"/>
+			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:zOffsScale">
 			<key row="6288" value="2" interpolation="0"/>
@@ -451,15 +452,8 @@
 		<track name="closeSpike:Rim">
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="1" interpolation="0"/>
-			<key row="6680" value="0" interpolation="0"/>
 			<key row="6808" value="0" interpolation="0"/>
 			<key row="7080" value="1" interpolation="0"/>
-		</track>
-		<track name="closeSpike:AspectMul">
-			<key row="6288" value="0" interpolation="0"/>
-			<key row="6544" value="1" interpolation="0"/>
-			<key row="6680" value="1" interpolation="0"/>
-			<key row="6808" value="0" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
 			<key row="7336" value="48" interpolation="0"/>
@@ -709,7 +703,7 @@
 			<key row="0" value="0" interpolation="0"/>
 			<key row="490" value="0" interpolation="3"/>
 			<key row="502" value="0.66" interpolation="2"/>
-			<key row="512" value="0" interpolation="0"/>
+			<key row="506" value="0" interpolation="0"/>
 			<key row="1048" value="1" interpolation="3"/>
 			<key row="1072" value="0.5" interpolation="1"/>
 			<key row="1080" value="0" interpolation="0"/>
