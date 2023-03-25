@@ -321,7 +321,7 @@
 			<key row="4183" value="9.13" interpolation="0"/>
 			<key row="6288" value="16" interpolation="0"/>
 			<key row="6544" value="-7" interpolation="2"/>
-			<key row="6678" value="-7.1" interpolation="1"/>
+			<key row="6678" value="-7.1" interpolation="2"/>
 			<key row="6680" value="9" interpolation="2"/>
 			<key row="6807" value="9.1" interpolation="2"/>
 			<key row="6808" value="11" interpolation="0"/>
@@ -463,6 +463,18 @@
 			<key row="6680" value="1" interpolation="0"/>
 			<key row="6808" value="1" interpolation="0"/>
 			<key row="7080" value="0" interpolation="0"/>
+		</track>
+		<track name="closeSpike:MixBlurMap">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6808" value="0" interpolation="0"/>
+		</track>
+		<track name="closeSpike:MixBlur">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6808" value="2" interpolation="0"/>
+		</track>
+		<track name="closeSpike:MixBlurOpacity">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6808" value="1" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
 			<key row="7336" value="48" interpolation="0"/>
@@ -750,8 +762,7 @@
 			<key row="3768" value="0" interpolation="2"/>
 			<key row="3784" value="0.6" interpolation="3"/>
 			<key row="3816" value="0" interpolation="0"/>
-			<key row="3897" value="0" interpolation="3"/>
-			<key row="3906" value="0.66" interpolation="2"/>
+			<key row="3897" value="0" interpolation="2"/>
 			<key row="3912" value="0.44" interpolation="2"/>
 			<key row="3936" value="0" interpolation="0"/>
 			<key row="5192" value="0" interpolation="3"/>
@@ -773,6 +784,8 @@
 			<key row="7328" value="0" interpolation="3"/>
 			<key row="7336" value="1" interpolation="2"/>
 			<key row="7360" value="0" interpolation="0"/>
+			<key row="7600" value="1" interpolation="0"/>
+			<key row="7624" value="0" interpolation="0"/>
 			<key row="7864" value="0.77" interpolation="3"/>
 			<key row="7888" value="0" interpolation="0"/>
 			<key row="9200" value="0.88" interpolation="2"/>

@@ -23,13 +23,13 @@ system req.:
 
 people involved:
   + comatron (soundtrack) ft. celin (vocals)
-  + jade (graphics, design)
+  + jade (graphics)
   + nytrik (ideas, graphics)
-  + alien (small TPB logo)
-  + superplek (programming hotshot, design, sync.)
+  + superplek (programming, design, sync.)
   + and introducing Ernst Hot formerly known as thorsten/purple (TPB legacy, creative support, Linux build)
 
 advisory board / additional:
+  + alien (small TPB logo)
   + nautilus effect was adapted to C++/SIMD with explicit permission by the late Weyland Yutani (Michiel v/d Berg); rest in peace soldier!
   + sh0ck/disaster area for his patience and help with the OSX Intel build
   + thec (ideas, support, catering, trigger finger training)

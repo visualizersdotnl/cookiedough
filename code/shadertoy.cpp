@@ -59,6 +59,7 @@ SyncTrack trackCloseSpikeNormalGrain;
 SyncTrack trackCloseSpikeScale;
 SyncTrack trackCloseSpikeRim;
 SyncTrack trackCloseSpikeAspectMul;
+SyncTrack trackCloseMixBlurMap, trackCloseMixBlur, trackCloseMixBlurOpacity;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -88,8 +89,12 @@ SyncTrack
 
 // --------------------
 
+// Tunnel textures (free-directional)
 static uint32_t *s_pFDTunnelTex = nullptr;
 static uint32_t *s_pFDTunnelTexHighlights = nullptr;
+
+// Blur mask(s) for 'spikey close-up'
+static uint32_t *s_pSpikeBlurMaps[2]= { nullptr };
 
 bool Shadertoy_Create()
 {
@@ -127,6 +132,9 @@ bool Shadertoy_Create()
 	trackCloseSpikeScale = Rocket::AddTrack("closeSpike:Scale");
 	trackCloseSpikeRim = Rocket::AddTrack("closeSpike:Rim");
 	trackCloseSpikeAspectMul = Rocket::AddTrack("closeSpike:AspectMul");
+	trackCloseMixBlurMap = Rocket::AddTrack("closeSpike:MixBlurMap");
+	trackCloseMixBlur = Rocket::AddTrack("closeSpike:MixBlur");
+	trackCloseMixBlurOpacity = Rocket::AddTrack("closeSpike:MixBlurOpacity");
 
 	// Sinuses tunnel:
 	trackSinusesSpecular = Rocket::AddTrack("sinusesTunnel:Specular");
@@ -157,9 +165,15 @@ bool Shadertoy_Create()
 	trackTunnelFog1 = Rocket::AddTrack("tunnel:Fog1");
 	trackTunnelFog2 = Rocket::AddTrack("tunnel:Fog2");
 
+	// Maps
 	s_pFDTunnelTex = Image_Load32("assets/shadertoy/nytrik-hextexture.png");
 	s_pFDTunnelTexHighlights = Image_Load32("assets/shadertoy/nytrik-hextexture-fx.png");
 	if (nullptr == s_pFDTunnelTex || nullptr == s_pFDTunnelTexHighlights)
+		return false;
+
+	s_pSpikeBlurMaps[0] = Image_Load32("assets/shadertoy/close-up-blur-map-1.png");
+	s_pSpikeBlurMaps[1] = Image_Load32("assets/shadertoy/close-up-blur-map-2.png");
+	if (nullptr == s_pSpikeBlurMaps[0] || nullptr == s_pSpikeBlurMaps[1])
 		return false;
 
 	return true;
@@ -640,6 +654,20 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 	{
 		// render close-up
 		RenderSpikeyMap_2x2_Close(g_pFxMap[0], time);
+
+		const float mbOpacity = saturatef(Rocket::getf(trackCloseMixBlurOpacity));
+		const float mbBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixBlur));
+		const int mbMap = clampi(0, 1, Rocket::geti(trackCloseMixBlurMap));
+
+		if (mbOpacity > 0.f)
+		{
+			// dirty trick to add some flavour because showing off this effect for too long got boring!
+			memcpy(g_pFxMap[1], g_pFxMap[0], kFxMapBytes);
+			Excl32(g_pFxMap[1], s_pSpikeBlurMaps[mbMap], kFxMapSize);
+			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(mbBlur));
+			BlitSrc32A(g_pFxMap[0], g_pFxMap[1], kFxMapResX, kFxMapResX, kFxMapResY, unsigned(mbOpacity*255.f));
+		}
+
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
 	}
 	else
