@@ -472,11 +472,9 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				SoftLight32(pDest, s_pNautilusDirt, kOutputSize);
 				FadeFlash(pDest, fadeToBlack, 0.f);
 
-				Overlay32A(pDest, s_pNautilusCousteauRim1, kOutputSize);
-
 				// just so we can add a little shakin'
-				const uint32_t* pCousteau;
-				const uint32_t* pCousteauRim;
+				const uint32_t *pCousteau;
+				const uint32_t *pCousteauRim;
 				if (0 == Rocket::geti(trackCousteau))
 				{
 					pCousteau = s_pNautilusCousteau1;
@@ -488,6 +486,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					pCousteauRim = s_pNautilusCousteauRim2;
 				}
 
+				// add rim overlay
 				Overlay32A(pDest, pCousteauRim, kOutputSize);
 
 				float hBlur = Rocket::getf(trackCousteauHorzBlur);
@@ -498,6 +497,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					pCousteau = g_renderTarget[0];
 				}
 
+				// and now Jacques himself!
 				MixSrc32(pDest, pCousteau, kOutputSize);
 
 				FadeFlash(pDest, 0.f, fadeToWhite);
@@ -523,7 +523,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Darken32_50(pDest, s_pCloseSpikeDirt, kOutputSize);
 				}
 				else if (2 == dirt)
-					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.1f*kGoldenAngle); // FIXME: borrowed asset
+					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.09f*kGoldenAngle); // FIXME: borrowed asset
 				else if (3 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.075f*kGoldenAngle); // FIXME: borrowed asset
 			}

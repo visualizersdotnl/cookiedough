@@ -432,7 +432,7 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 	if (false == aspectMul)
 		fSpike_global = Vector4(speed*time, 16.f*scale, 22.f*scale, 0.f);
 	else
-		fSpike_global = Vector4(speed*time, kAspect*16.f*scale, 22.f*scale, 0.f);
+		fSpike_global = Vector4(speed*time, 16.f*scale, kAspect*22.f*scale, 0.f);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (int iY = 0; iY < kFxMapResY; ++iY)
