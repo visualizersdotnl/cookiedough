@@ -695,6 +695,9 @@
 		</track>
 		<track name="demo:FadeToWhite">
 			<key row="0" value="0" interpolation="0"/>
+			<key row="490" value="0" interpolation="3"/>
+			<key row="502" value="0.66" interpolation="2"/>
+			<key row="506" value="0" interpolation="0"/>
 			<key row="1048" value="1" interpolation="3"/>
 			<key row="1072" value="0.5" interpolation="1"/>
 			<key row="1080" value="0" interpolation="0"/>
