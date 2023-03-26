@@ -643,7 +643,7 @@ void MixSrc32S(uint32_t *pDest, const uint32_t *pSrc, unsigned resX, unsigned re
 	for (int iY = 0; iY < int(resY); ++iY)
 	{
 		const auto yIndex = iY*resX;
-		const auto yIndexSrc = iY*(resX+srcStride);
+		const auto yIndexSrc = iY*srcStride;
 
 		for (int iX = 0; iX < int(resX); ++iX)
 		{
