@@ -1098,7 +1098,7 @@
 			<key row="9951" value="1" interpolation="0"/>
 		</track>
 		<track name="demo:RibbonsX">
-			<key row="9408" value="0" interpolation="3"/>
+			<key row="9408" value="0" interpolation="2"/>
 			<key row="9896" value="1280" interpolation="0"/>
 		</track>
 		<track name="shootingStar:Enabled">
