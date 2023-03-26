@@ -599,7 +599,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
 
 				// ribbon (1 layer, FIXME)
-				const auto ribX = clampi(0.f, kResX, Rocket::geti(trackRibbonsTPB));
+				const auto ribX = clampi(0, kResX, Rocket::geti(trackRibbonsTPB));
 				MixSrc32S(g_renderTarget[0], s_pRibbons + ribX, kResX, kResY, 2160-kResX);
 
 //				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
