@@ -335,8 +335,8 @@
 			<key row="6288" value="8" interpolation="0"/>
 			<key row="6544" value="3" interpolation="0"/>
 			<key row="6680" value="8" interpolation="0"/>
-			<key row="6808" value="12" interpolation="3"/>
-			<key row="6952" value="6" interpolation="2"/>
+			<key row="6808" value="4" interpolation="0"/>
+			<key row="6952" value="4" interpolation="2"/>
 			<key row="7072" value="8" interpolation="0"/>
 		</track>
 		<track name="spike:Roll">
@@ -360,7 +360,7 @@
 			<key row="6420" value="4" interpolation="0"/>
 			<key row="6544" value="4" interpolation="0"/>
 			<key row="6680" value="6.14" interpolation="0"/>
-			<key row="6808" value="12" interpolation="0"/>
+			<key row="6808" value="2" interpolation="0"/>
 			<key row="7072" value="4" interpolation="0"/>
 		</track>
 		<track name="spike:Hue">
@@ -371,10 +371,10 @@
 			<key row="3936" value="60" interpolation="0"/>
 			<key row="6288" value="65" interpolation="0"/>
 			<key row="6415" value="65" interpolation="3"/>
-			<key row="6420" value="69" interpolation="0"/>
+			<key row="6420" value="44" interpolation="0"/>
 			<key row="6544" value="37" interpolation="0"/>
 			<key row="6680" value="39" interpolation="0"/>
-			<key row="6808" value="23" interpolation="0"/>
+			<key row="6808" value="44" interpolation="0"/>
 			<key row="7072" value="40" interpolation="0"/>
 		</track>
 		<track name="spike:Gamma">
@@ -385,7 +385,7 @@
 			<key row="6288" value="1.8" interpolation="0"/>
 			<key row="6544" value="1.24" interpolation="0"/>
 			<key row="6680" value="1.88" interpolation="0"/>
-			<key row="6808" value="1" interpolation="0"/>
+			<key row="6808" value="0.88" interpolation="0"/>
 			<key row="7072" value="1.33" interpolation="0"/>
 		</track>
 		<track name="distSpike:Warmup">
@@ -422,21 +422,24 @@
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="-1" interpolation="0"/>
 			<key row="6680" value="0.1" interpolation="0"/>
+			<key row="6808" value="0" interpolation="0"/>
 			<key row="7072" value="-0.3" interpolation="0"/>
 		</track>
 		<track name="closeSpike:zOffs">
 			<key row="6288" value="1" interpolation="1"/>
 			<key row="6489" value="0" interpolation="0"/>
+			<key row="6808" value="-1" interpolation="0"/>
 			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:zOffsScale">
 			<key row="6288" value="2" interpolation="0"/>
+			<key row="6808" value="1" interpolation="0"/>
 		</track>
 		<track name="closeSpike:NormalGrain">
 			<key row="6288" value="1" interpolation="2"/>
-			<key row="6544" value="0.33" interpolation="0"/>
+			<key row="6544" value="0.28" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
-			<key row="6808" value="0.1" interpolation="2"/>
+			<key row="6808" value="0.2" interpolation="2"/>
 			<key row="7079" value="0.22" interpolation="2"/>
 			<key row="7080" value="0.33" interpolation="0"/>
 		</track>
@@ -469,24 +472,40 @@
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
 			<key row="6808" value="0" interpolation="0"/>
-			<key row="7080" value="1" interpolation="0"/>
+			<key row="6840" value="1" interpolation="0"/>
+			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixBlur">
 			<key row="0" value="0" interpolation="0"/>
-			<key row="6288" value="10" interpolation="0"/>
+			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
-			<key row="6808" value="1" interpolation="3"/>
-			<key row="7016" value="50" interpolation="0"/>
-			<key row="7080" value="6.28" interpolation="0"/>
+			<key row="6808" value="0" interpolation="0"/>
+			<key row="6840" value="0" interpolation="0"/>
+			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixBlurOpacity">
 			<key row="0" value="0" interpolation="0"/>
-			<key row="6288" value="0.33" interpolation="0"/>
+			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
-			<key row="6808" value="0.2" interpolation="1"/>
-			<key row="7064" value="0.8" interpolation="2"/>
-			<key row="7080" value="1" interpolation="0"/>
-			<key row="7336" value="1" interpolation="0"/>
+			<key row="6808" value="1" interpolation="3"/>
+			<key row="6864" value="0.05" interpolation="0"/>
+			<key row="7024" value="0" interpolation="1"/>
+			<key row="7080" value="0" interpolation="3"/>
+			<key row="7120" value="1" interpolation="0"/>
+			<key row="7210" value="3" interpolation="0"/>
+			<key row="7216" value="1" interpolation="3"/>
+			<key row="7336" value="0" interpolation="0"/>
+		</track>
+		<track name="closeSpike:MixMapBlur">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6808" value="0" interpolation="2"/>
+			<key row="6840" value="4" interpolation="0"/>
+			<key row="7040" value="0" interpolation="1"/>
+			<key row="7056" value="3" interpolation="0"/>
+			<key row="7080" value="0" interpolation="0"/>
+			<key row="7256" value="1" interpolation="3"/>
+			<key row="7305" value="3" interpolation="0"/>
+			<key row="7336" value="62.8" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
 			<key row="7336" value="48" interpolation="0"/>
@@ -796,7 +815,7 @@
 			<key row="7328" value="0" interpolation="3"/>
 			<key row="7336" value="1" interpolation="2"/>
 			<key row="7360" value="0" interpolation="0"/>
-			<key row="7600" value="1" interpolation="0"/>
+			<key row="7600" value="1" interpolation="3"/>
 			<key row="7624" value="0" interpolation="0"/>
 			<key row="7864" value="0.77" interpolation="3"/>
 			<key row="7888" value="0" interpolation="0"/>
@@ -1031,8 +1050,8 @@
 		</track>
 		<track name="demo:Dirt">
 			<key row="0" value="0" interpolation="0"/>
-			<key row="6552" value="1" interpolation="0"/>
-			<key row="6680" value="0" interpolation="0"/>
+			<key row="6288" value="0" interpolation="0"/>
+			<key row="6680" value="1" interpolation="0"/>
 			<key row="6816" value="2" interpolation="0"/>
 			<key row="7072" value="3" interpolation="0"/>
 			<key row="7336" value="0" interpolation="0"/>
@@ -1079,7 +1098,7 @@
 			<key row="9951" value="1" interpolation="0"/>
 		</track>
 		<track name="demo:RibbonsX">
-			<key row="9408" value="0" interpolation="3"/>
+			<key row="9408" value="0" interpolation="2"/>
 			<key row="9896" value="1280" interpolation="0"/>
 		</track>
 		<track name="shootingStar:Enabled">
