@@ -59,7 +59,7 @@ SyncTrack trackCloseSpikeNormalGrain;
 SyncTrack trackCloseSpikeScale;
 SyncTrack trackCloseSpikeRim;
 SyncTrack trackCloseSpikeAspectMul;
-SyncTrack trackCloseMixBlurMap, trackCloseMixBlur, trackCloseMixBlurOpacity;
+SyncTrack trackCloseMixBlurMap, trackCloseMixBlur, trackCloseMixBlurOpacity, trackCloseMixMapBlur;
 
 // Sinuses sync.:
 SyncTrack trackSinusesSpecular;
@@ -134,6 +134,7 @@ bool Shadertoy_Create()
 	trackCloseSpikeAspectMul = Rocket::AddTrack("closeSpike:AspectMul");
 	trackCloseMixBlurMap = Rocket::AddTrack("closeSpike:MixBlurMap");
 	trackCloseMixBlur = Rocket::AddTrack("closeSpike:MixBlur");
+	trackCloseMixMapBlur = Rocket::AddTrack("closeSpike:MixMapBlur");
 	trackCloseMixBlurOpacity = Rocket::AddTrack("closeSpike:MixBlurOpacity");
 
 	// Sinuses tunnel:
@@ -655,19 +656,37 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		// render close-up
 		RenderSpikeyMap_2x2_Close(g_pFxMap[0], time);
 
+		// and now we'll be performing a little trick to make things more interesting
 		const float mbOpacity = saturatef(Rocket::getf(trackCloseMixBlurOpacity));
-		const float mbBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixBlur));
-		const int mbMap = clampi(0, 1, Rocket::geti(trackCloseMixBlurMap));
 
 		if (mbOpacity > 0.f)
 		{
-			// dirty trick to add some flavour because showing off this effect for too long got boring!
+			// grab remaining Rocket parameters
+			const int mbMap = clampi(0, 1, Rocket::geti(trackCloseMixBlurMap));
+			const float mbBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixBlur));
+			const float mbMapBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixMapBlur));
+
+			// OK - this is fun, so let's first copy our two maps
 			memcpy(g_pFxMap[1], g_pFxMap[0], kFxMapBytes);
-			Excl32(g_pFxMap[1], s_pSpikeBlurMaps[mbMap], kFxMapSize);
-			BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(mbBlur));
-			BlitSrc32A(g_pFxMap[0], g_pFxMap[1], kFxMapResX, kFxMapResX, kFxMapResY, unsigned(mbOpacity*255.f));
+			memcpy(g_pFxMap[2], s_pSpikeBlurMaps[mbMap], kFxMapBytes);
+
+			// then blur the source 'spike blur map' if requested
+			if (mbMapBlur >= 1.f)
+				BoxBlur32(g_pFxMap[2], g_pFxMap[2], kFxMapResX, kFxMapResY, BoxBlurScale(mbMapBlur));
+			
+			// do we want to apply some blur to the copied effect itself?
+			if (mbBlur >= 1.f)
+				BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(mbBlur));
+			
+			// apply 'soft light' blend mode using appropriate map 
+			SoftLight32AA(g_pFxMap[1], g_pFxMap[2], kFxMapSize, tanhf(mbBlur+mbOpacity));
+
+			// mix 'em back together
+//			Mix32(g_pFxMap[0], g_pFxMap[1], kFxMapSize, unsigned(mbOpacity*255.f));
+			Overlay32A(g_pFxMap[0], g_pFxMap[1], kFxMapSize);
 		}
 
+		// blit to main buffer
 		Fx_Blit_2x2(pDest, g_pFxMap[0]);
 	}
 	else

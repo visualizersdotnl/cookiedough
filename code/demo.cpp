@@ -34,7 +34,7 @@ SyncTrack trackDiscoGuys, trackDiscoGuysAppearance[8];
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
-SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB;
+SyncTrack trackDistortTPB, trackDistortStrengthTPB, trackBlurTPB, trackRibbonsTPB;
 SyncTrack trackGreetSwitch;
 SyncTrack trackCousteau;
 SyncTrack trackCousteauHorzBlur;
@@ -105,6 +105,9 @@ static uint32_t* s_pWaterPrismOverlay = nullptr;
 // shooting star art
 static uint32_t *s_pLenz = nullptr;
 
+// ribbons (2160x720)
+static uint32_t *s_pRibbons = nullptr;
+
 // --- Shooting star related things ---
 
 constexpr unsigned kLenzSize = 64;
@@ -151,6 +154,7 @@ bool Demo_Create()
 	trackDistortTPB = Rocket::AddTrack("demo:DistortTPB");
 	trackDistortStrengthTPB = Rocket::AddTrack("demo:DistortStrengthTPB");
 	trackBlurTPB = Rocket::AddTrack("demo:BlurTPB");
+	trackRibbonsTPB = Rocket::AddTrack("demo:RibbonsX");
 	trackGreetSwitch = Rocket::AddTrack("demo:GreetSwitch");
 	trackCousteau = Rocket::AddTrack("demo:Cousteau");
 	trackCousteauHorzBlur = Rocket::AddTrack("demo:CousteauHorzBlur");
@@ -265,6 +269,11 @@ bool Demo_Create()
 
 	// shooting star
 	s_pLenz = Image_Load32("assets/shooting/Lenz.png");
+
+	// ribbons
+	s_pRibbons = Image_Load32("assets/demo/ribbons.png");
+	if (nullptr == s_pRibbons)
+		return false;
 
 	return fxInit;
 }
@@ -523,7 +532,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					Darken32_50(pDest, s_pCloseSpikeDirt, kOutputSize);
 				}
 				else if (2 == dirt)
-					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.09f*kGoldenAngle); // FIXME: borrowed asset
+					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.09f*kGoldenRatio); // FIXME: borrowed asset
 				else if (3 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.075f*kGoldenAngle); // FIXME: borrowed asset
 			}
@@ -588,6 +597,10 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				// TPB represent
 				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
+
+				// ribbon (F*CK this for now)
+//				const auto ribX = clampi(0.f, kResX, Rocket::geti(trackRibbonsTPB));
+//				MixSrc32S(g_renderTarget[0], s_pRibbons + ribX, kResX, kResY, 2160-kResX);
 
 //				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 //				memcpy(g_renderTarget[0], g_pNytrikTPB, kOutputBytes);

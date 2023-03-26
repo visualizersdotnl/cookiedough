@@ -122,8 +122,9 @@ void Darken32_50(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels);
 void MulSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
 
-// blend 32-bit color buffers using the source buffer's alpha
+// blend 32-bit color buffers using the source buffer's alpha (the latter has a src. stride)
 void MixSrc32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels);
+void MixSrc32S(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsigned destResY, unsigned srcStride);
 
 // blit 32-bit color buffer using the source buffer's alpha
 // use this to composite graphics on top of effects for ex.

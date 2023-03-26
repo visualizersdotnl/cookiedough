@@ -340,7 +340,7 @@ void SoftLight32AA(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, fl
 			G = G2+(((G-G2)*_A1)>>8);
 			B = B2+(((B-B2)*_A1)>>8);
 
-			const uint32_t result = (R<<16)|(G<<8)|B;
+			const uint32_t result = (_A1<<24)|(R<<16)|(G<<8)|B;
 			pDest[iPixel] = result;
     }
 }
@@ -632,6 +632,31 @@ void MulSrc32A(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels)
 		const __m128i delta = _mm_mullo_epi16(alphaUnp, destColor); 
 		const __m128i color = _mm_srli_epi16(delta, 8);
 		pDest[iPixel] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+	}
+}
+
+void MixSrc32S(uint32_t *pDest, const uint32_t *pSrc, unsigned resX, unsigned resY, unsigned srcStride)
+{
+	const __m128i zero = _mm_setzero_si128();
+
+	#pragma omp parallel for schedule(static)
+	for (int iY = 0; iY < int(resY); ++iY)
+	{
+		const auto yIndex = iY*resX;
+		const auto yIndexSrc = iY*(resX+srcStride);
+
+		for (int iX = 0; iX < resX; ++iX)
+		{
+			const auto srcIndex = yIndexSrc + iX; 
+			const auto destIndex = yIndex + iX;
+
+			const __m128i srcColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pSrc[srcIndex]), zero);
+			const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
+			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDest[destIndex]), zero);
+			const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
+			const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
+			pDest[destIndex] = _mm_cvtsi128_si32(_mm_packus_epi16(color, zero));
+		}
 	}
 }
 
