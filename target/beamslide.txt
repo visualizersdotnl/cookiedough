@@ -1,6 +1,6 @@
 
-- entry type: PC demo, software rendered
-- group: bypass & the pimp brigade
-- entry name: arrested development
+- entry type: PC demo / 100% software rendered
+- group: Bypass & The Pimp Brigade
+- entry name: Arrested Development
 
-beamslide text: late 1990s style (software rendering), inspired by Metropolis by Kolor (Evoke 1998) and Orange
+beamslide text: Bypass paying their respects to the now defunct Pimp Brigade in 100% software rendering
