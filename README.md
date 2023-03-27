@@ -3,6 +3,8 @@
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro
 (demoscene) graphical effects. 
 
+CURRENT PROJECT BEING MADE W/IT: Revision 2023 demo, "Arrested development" by Bypass
+
 Supported platforms:
 - Win64/x64
 - OSX/x64
