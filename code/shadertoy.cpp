@@ -666,7 +666,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		if (mbOpacity > 0.f)
 		{
 			// grab remaining Rocket parameters
-			const float mbMap = clampf(0, 1.f, Rocket::geti(trackCloseMixBlurMap));
+			const float mbMap = clampf(0, 1.f, Rocket::getf(trackCloseMixBlurMap));
 			const float mbBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixBlur));
 			const float mbMapBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixMapBlur));
 
