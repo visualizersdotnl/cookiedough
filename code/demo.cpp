@@ -45,6 +45,8 @@ SyncTrack trackShootingTrail;
 
 SyncTrack trackWaterLove;
 
+SyncTrack trackLoveBlurHorz;
+
 // --------------------
 
 // credits logos (1280x568)
@@ -159,6 +161,7 @@ bool Demo_Create()
 	trackCousteau = Rocket::AddTrack("demo:Cousteau");
 	trackCousteauHorzBlur = Rocket::AddTrack("demo:CousteauHorzBlur");
 	trackWaterLove = Rocket::AddTrack("demo:WaterLove");
+	trackLoveBlurHorz = Rocket::AddTrack("demo:LoveBlurHorZ");
 
 	trackShooting = Rocket::AddTrack("shootingStar:Enabled");
 	trackShootingX = Rocket::AddTrack("shootingStar:X");
@@ -566,7 +569,16 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				const float overlayA = saturatef(Rocket::getf(trackWaterLove));
 				Sinuses_Draw(pDest, timer, delta);
-				BlitAdd32A(pDest, s_pWaterPrismOverlay, kResX, kResX, kResY, overlayA);
+
+				const uint32_t *pWaterOverlay = s_pWaterPrismOverlay;
+				const float waterOverlayBlurHorz = clampf(0.f, 100.f, Rocket::getf(trackLoveBlurHorz));
+				if (0.f != waterOverlayBlurHorz)
+				{
+					HorizontalBoxBlur32(g_renderTarget[0], pWaterOverlay, kResX, kResY, BoxBlurScale(waterOverlayBlurHorz));
+					pWaterOverlay = g_renderTarget[0];
+				}
+
+				BlitAdd32A(pDest, pWaterOverlay, kResX, kResX, kResY, overlayA);
 
 				if (0 != Rocket::geti(trackDirt))
 					MulSrc32(pDest, s_pWaterDirt, kOutputSize);
