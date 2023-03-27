@@ -2,5 +2,4 @@
 - entry type: PC demo / 100% software rendered
 - group: Bypass & The Pimp Brigade
 - entry name: Arrested Development
-
-beamslide text: Bypass paying their respects to the now defunct Pimp Brigade in 100% software rendering
+- beamslide text: Bypass and TPB one last time 100% software like the gangsters they are

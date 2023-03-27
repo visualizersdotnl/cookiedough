@@ -470,7 +470,8 @@
 			<key row="6288" value="65" interpolation="0"/>
 			<key row="6415" value="65" interpolation="3"/>
 			<key row="6420" value="60" interpolation="3"/>
-			<key row="6543" value="16" interpolation="3"/>
+			<key row="6528" value="44" interpolation="0"/>
+			<key row="6543" value="32" interpolation="3"/>
 			<key row="6544" value="37" interpolation="0"/>
 			<key row="6680" value="60" interpolation="0"/>
 			<key row="6808" value="15" interpolation="0"/>
@@ -585,7 +586,7 @@
 			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixBlurMap">
-			<key row="0" value="0" interpolation="1"/>
+			<key row="0" value="0" interpolation="0"/>
 			<key row="4436" value="9" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
@@ -1265,8 +1266,8 @@
 		</track>
 		<track name="demo:RibbonsX">
 			<key row="9366" value="900" interpolation="2"/>
-			<key row="9408" value="0" interpolation="2"/>
-			<key row="9896" value="800" interpolation="2"/>
+			<key row="9408" value="0" interpolation="3"/>
+			<key row="9896" value="800" interpolation="0"/>
 		</track>
 		<track name="demo:LoveBlurHorZ">
 			<key row="0" value="0" interpolation="0"/>
