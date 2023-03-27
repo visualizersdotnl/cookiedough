@@ -15,7 +15,7 @@ a retrosexual multimedia demonstration in co-operation with TPB
 created for Revision 2023
 
 system req.:
-  + for Intel nav. to '/target/x64' and run! (Mac Silicon & Intel versions build and will be released soon, please give us a few days)
+  + for Intel nav. to '/target/x64' and run! (OSX Silicon & Intel versions build and will be released soon, please give us a few days)
   + software rendering, no noteworthy GPU required
   + uses default audio device
   + does not use significant RAM or disk space
@@ -24,7 +24,7 @@ system req.:
 people involved:
   + comatron (soundtrack) ft. celin (vocals)
   + jade (graphics)
-  + nytrik (ideas, graphics)
+  + nytrik (ideas, graphics, sync.)
   + superplek (programming, design, sync.)
   + and introducing Ernst Hot formerly known as thorsten/purple (TPB legacy, creative support, Linux build)
 
