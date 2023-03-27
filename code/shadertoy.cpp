@@ -681,7 +681,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 			// apply 'soft light' blend mode using appropriate map 
 			SoftLight32AA(g_pFxMap[1], g_pFxMap[2], kFxMapSize, tanhf(mbBlur+mbOpacity));
 
-			// mix 'em back together
+			// mix 'em back together (using 'overlay blend', not exactly a 'mix', but it does look nice)
 //			Mix32(g_pFxMap[0], g_pFxMap[1], kFxMapSize, unsigned(mbOpacity*255.f));
 			Overlay32A(g_pFxMap[0], g_pFxMap[1], kFxMapSize);
 		}
