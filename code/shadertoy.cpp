@@ -95,6 +95,7 @@ static uint32_t *s_pFDTunnelTexHighlights = nullptr;
 
 // Blur mask(s) for 'spikey close-up'
 static uint32_t *s_pSpikeBlurMaps[2]= { nullptr };
+static uint32_t *s_pSpikeBlurMap = nullptr;
 
 bool Shadertoy_Create()
 {
@@ -177,11 +178,14 @@ bool Shadertoy_Create()
 	if (nullptr == s_pSpikeBlurMaps[0] || nullptr == s_pSpikeBlurMaps[1])
 		return false;
 
+	s_pSpikeBlurMap = static_cast<uint32_t*>(mallocAligned((1280*720)/2 * sizeof(uint32_t), kAlignTo));
+
 	return true;
 }
 
 void Shadertoy_Destroy()
 {
+	freeAligned(s_pSpikeBlurMap);
 }
 
 //
@@ -662,24 +666,34 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		if (mbOpacity > 0.f)
 		{
 			// grab remaining Rocket parameters
-			const int mbMap = clampi(0, 1, Rocket::geti(trackCloseMixBlurMap));
+			const float mbMap = clampf(0, 1.f, Rocket::geti(trackCloseMixBlurMap));
 			const float mbBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixBlur));
 			const float mbMapBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseMixMapBlur));
 
-			// OK - this is fun, so let's first copy our two maps
+			// get the right (blended) spike blur map in there
+			if (0.f == mbMap)
+				memcpy(s_pSpikeBlurMap, s_pSpikeBlurMaps[0], kFxMapBytes);
+			else if (1.f == mbMap)
+				memcpy(s_pSpikeBlurMap, s_pSpikeBlurMaps[1], kFxMapBytes);
+			else
+			{
+				memcpy(s_pSpikeBlurMap, s_pSpikeBlurMaps[0], kFxMapBytes);
+				Mix32(s_pSpikeBlurMap, s_pSpikeBlurMaps[1], kFxMapSize, unsigned(mbMap*255.f));
+			}
+
+			// OK - this is fun, so let's first copy our FX map
 			memcpy(g_pFxMap[1], g_pFxMap[0], kFxMapBytes);
-			memcpy(g_pFxMap[2], s_pSpikeBlurMaps[mbMap], kFxMapBytes);
 
 			// then blur the source 'spike blur map' if requested
 			if (mbMapBlur >= 1.f)
-				BoxBlur32(g_pFxMap[2], g_pFxMap[2], kFxMapResX, kFxMapResY, BoxBlurScale(mbMapBlur));
+				BoxBlur32(s_pSpikeBlurMap, s_pSpikeBlurMap, kFxMapResX, kFxMapResY, BoxBlurScale(mbMapBlur));
 			
 			// do we want to apply some blur to the copied effect itself?
 			if (mbBlur >= 1.f)
 				BoxBlur32(g_pFxMap[1], g_pFxMap[1], kFxMapResX, kFxMapResY, BoxBlurScale(mbBlur));
 			
 			// apply 'soft light' blend mode using appropriate map 
-			SoftLight32AA(g_pFxMap[1], g_pFxMap[2], kFxMapSize, tanhf(mbBlur+mbOpacity));
+			SoftLight32AA(g_pFxMap[1], s_pSpikeBlurMap, kFxMapSize, tanhf(mbBlur+mbOpacity));
 
 			// mix 'em back together (using 'overlay blend', not exactly a 'mix', but it does look nice)
 //			Mix32(g_pFxMap[0], g_pFxMap[1], kFxMapSize, unsigned(mbOpacity*255.f));
