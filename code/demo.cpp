@@ -551,7 +551,6 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					}
 				}
 				else if (2 == dirt)
-					// FIXME: unused for now, looks too dark
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.09f*kGoldenRatio); // FIXME: borrowed asset
 				else if (3 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.075f*kGoldenAngle); // FIXME: borrowed asset
