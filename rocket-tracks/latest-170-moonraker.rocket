@@ -426,7 +426,7 @@
 			<key row="4136" value="0" interpolation="0"/>
 			<key row="6288" value="8" interpolation="0"/>
 			<key row="6544" value="3" interpolation="0"/>
-			<key row="6680" value="8" interpolation="0"/>
+			<key row="6680" value="22" interpolation="0"/>
 			<key row="6808" value="4" interpolation="0"/>
 			<key row="6952" value="4" interpolation="2"/>
 			<key row="7072" value="8" interpolation="0"/>
@@ -453,10 +453,14 @@
 			<key row="3664" value="-1" interpolation="0"/>
 			<key row="3936" value="3" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
-			<key row="6415" value="0" interpolation="2"/>
-			<key row="6420" value="4" interpolation="0"/>
+			<key row="6415" value="0" interpolation="3"/>
+			<key row="6420" value="4" interpolation="2"/>
+			<key row="6490" value="0.5" interpolation="1"/>
+			<key row="6504" value="0.8" interpolation="3"/>
+			<key row="6520" value="4" interpolation="0"/>
+			<key row="6528" value="4" interpolation="0"/>
 			<key row="6544" value="4" interpolation="0"/>
-			<key row="6680" value="6.14" interpolation="0"/>
+			<key row="6680" value="3" interpolation="0"/>
 			<key row="6808" value="2" interpolation="0"/>
 			<key row="7072" value="4" interpolation="0"/>
 		</track>
@@ -469,11 +473,10 @@
 			<key row="3936" value="60" interpolation="0"/>
 			<key row="6288" value="65" interpolation="0"/>
 			<key row="6415" value="65" interpolation="3"/>
-			<key row="6420" value="60" interpolation="3"/>
-			<key row="6528" value="44" interpolation="0"/>
-			<key row="6543" value="32" interpolation="3"/>
+			<key row="6420" value="60" interpolation="2"/>
+			<key row="6528" value="36.5" interpolation="2"/>
 			<key row="6544" value="37" interpolation="0"/>
-			<key row="6680" value="60" interpolation="0"/>
+			<key row="6680" value="22" interpolation="0"/>
 			<key row="6808" value="15" interpolation="0"/>
 			<key row="7072" value="40" interpolation="0"/>
 			<key row="7073" value="59" interpolation="0"/>
@@ -500,7 +503,7 @@
 			<key row="6544" value="1.24" interpolation="0"/>
 			<key row="6547" value="1.24" interpolation="1"/>
 			<key row="6679" value="0.5" interpolation="0"/>
-			<key row="6680" value="2.5" interpolation="0"/>
+			<key row="6680" value="2" interpolation="0"/>
 			<key row="6808" value="0.5" interpolation="0"/>
 			<key row="7072" value="0.9" interpolation="0"/>
 		</track>
@@ -645,6 +648,12 @@
 			<key row="7256" value="1" interpolation="3"/>
 			<key row="7305" value="3" interpolation="3"/>
 			<key row="7336" value="10" interpolation="3"/>
+		</track>
+		<track name="closeSpike:Moonraker">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6400" value="0" interpolation="0"/>
+			<key row="6544" value="1" interpolation="1"/>
+			<key row="6808" value="0" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
 			<key row="7336" value="30" interpolation="0"/>
@@ -870,9 +879,8 @@
 			<key row="6160" value="0" interpolation="3"/>
 			<key row="6287" value="0.66" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
-			<key row="6424" value="0" interpolation="3"/>
-			<key row="6544" value="1" interpolation="3"/>
-			<key row="6576" value="0" interpolation="0"/>
+			<key row="6424" value="0" interpolation="2"/>
+			<key row="6544" value="0" interpolation="0"/>
 			<key row="6992" value="0" interpolation="3"/>
 			<key row="7071" value="0.66" interpolation="0"/>
 			<key row="7072" value="0" interpolation="0"/>
@@ -961,7 +969,8 @@
 			<key row="6304" value="0" interpolation="0"/>
 			<key row="6679" value="0" interpolation="0"/>
 			<key row="6680" value="0.7" interpolation="2"/>
-			<key row="6704" value="0" interpolation="0"/>
+			<key row="6704" value="0.33" interpolation="1"/>
+			<key row="6792" value="0.5" interpolation="3"/>
 			<key row="6808" value="1" interpolation="3"/>
 			<key row="6824" value="0" interpolation="0"/>
 			<key row="6992" value="0" interpolation="0"/>
@@ -1218,6 +1227,7 @@
 		<track name="demo:Dirt">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
+			<key row="6544" value="1" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
 			<key row="6816" value="2" interpolation="0"/>
 			<key row="7072" value="3" interpolation="0"/>
@@ -1320,6 +1330,10 @@
 		</track>
 		<track name="sinusTunnel:OffsX">
 			<key row="0" value="0" interpolation="0"/>
+		</track>
+		<track name="closeUp:Moonraker">
+			<key row="0" value="0" interpolation="0"/>
+			<key row="6400" value="1" interpolation="0"/>
 		</track>
 	</tracks>
 	<bookmarks>

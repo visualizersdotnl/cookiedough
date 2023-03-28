@@ -47,6 +47,8 @@ SyncTrack trackWaterLove;
 
 SyncTrack trackLoveBlurHorz;
 
+SyncTrack trackCloseUpMoonraker;
+
 // --------------------
 
 // credits logos (1280x568)
@@ -97,8 +99,9 @@ static uint32_t *s_pDiscoGuys[8] = { nullptr };
 static uint32_t *s_pAreWeDone = nullptr;
 
 // close-up 'spikey' art
-static uint32_t *s_pCloseSpikeDirt = nullptr;
+static uint32_t *s_pCloseSpikeDirtRaker = nullptr;
 static uint32_t *s_pCloseSpikeVignette = nullptr;
+static uint32_t *s_pCloseSpikeVignetteForRaker = nullptr;
 
 // under water tunnel art
 static uint32_t *s_pWaterDirt = nullptr;
@@ -168,6 +171,9 @@ bool Demo_Create()
 	trackShootingY = Rocket::AddTrack("shootingStar:Y");
 	trackShootingAlpha = Rocket::AddTrack("shootingStar:A");
 	trackShootingTrail = Rocket::AddTrack("shootingStar:Trail");
+
+	// FIXME: this one might not belong in this file for but for compositing reasons it does
+	trackCloseUpMoonraker = Rocket::AddTrack("closeSpike:Moonraker");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -256,9 +262,10 @@ bool Demo_Create()
 		return false;
 
 	// close-up 'spikey' 
-	s_pCloseSpikeDirt = Image_Load32("assets/closeup/LensDirt5_invert.png");
+	s_pCloseSpikeDirtRaker = Image_Load32("assets/closeup/raker-LensDirt5_invert.png");
+	s_pCloseSpikeVignetteForRaker = Image_Load32("assets/closeup/VignetteForRaker.png");
 	s_pCloseSpikeVignette = Image_Load32("assets/closeup/Vignette_CoolFilmLook.png");
-	if (nullptr == s_pCloseSpikeDirt || nullptr == s_pCloseSpikeVignette)
+	if (nullptr == s_pCloseSpikeDirtRaker || nullptr == s_pCloseSpikeVignette || nullptr == s_pCloseSpikeVignetteForRaker)
 		return false;
 
 	// under water tunnel
@@ -531,13 +538,26 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 				if (1 == dirt)
 				{
-					MulSrc32(pDest, s_pCloseSpikeDirt, kOutputSize);
-					Darken32_50(pDest, s_pCloseSpikeDirt, kOutputSize);
+					// Moonraker
+					const float raker = Rocket::getf(trackCloseUpMoonraker);
+
+					if (raker > 0.f)
+					{
+						MulSrc32(pDest, s_pCloseSpikeVignetteForRaker, kOutputSize);
+						SoftLight32AA(pDest, s_pCloseSpikeDirtRaker, kOutputSize, raker);
+						FadeFlash(pDest, 0.f, fadeToWhite);
+						Overlay32(pDest, s_pCloseSpikeDirtRaker, kOutputSize);
+						FadeFlash(pDest, fadeToBlack, 0.f);
+					}
 				}
 				else if (2 == dirt)
+					// FIXME: unused for now, looks too dark
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.09f*kGoldenRatio); // FIXME: borrowed asset
 				else if (3 == dirt)
 					SoftLight32AA(pDest, s_pGreetingsDirt, kOutputSize, 0.075f*kGoldenAngle); // FIXME: borrowed asset
+
+				if (1 != dirt)
+					FadeFlash(pDest, fadeToBlack, fadeToWhite);
 			}
 			break;
 
@@ -672,6 +692,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 	case 2:
 	case 3:
 	case 6:
+	case 7:
 	case 8:
 	case 10:
 		// handled by effect/part
