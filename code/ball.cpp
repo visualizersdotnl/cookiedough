@@ -59,8 +59,7 @@ constexpr unsigned kMaxRayLength = 1024;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
-static int s_heightProjNorm[kMaxRayLength];     // for "lighting", projects on quarter of a circle, to attenuate and cull
-static float s_heightProjNormF[kMaxRayLength];  //
+static int s_heightProjNorm[kMaxRayLength][3]; // for "lighting" (second index is 'to the power of'), projects on quarter of a circle, to attenuate and cull
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
@@ -118,19 +117,13 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 		// light beam & diffuse light calc.
-#if 1
-		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const unsigned heightNorm2 = heightNorm*heightNorm;
+		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep][0] >> 8;
+		const unsigned heightNorm2 = mapHeight*s_heightProjNorm[iStep][1] >> 8;
 
- 		const unsigned diffuseHi = heightNorm2 >> 8;
-		const unsigned diffuseLo = diffuseHi>>1;
+ 		const unsigned diffuseHi = heightNorm;
+		const unsigned diffuseLo = heightNorm2;
 
 		const unsigned diffuse = diffuseHi + ((int(diffuseLo-diffuseHi)*lowLight)>>8);
-#else
-		const float heightNormF = mapHeight*s_heightProjNormF[iStep];
-		const float heightNorm2 = heightNormF*heightNormF;
-		const unsigned diffuse = unsigned(heightNorm2/256.f);
-#endif
 
 		const __m128i litWhite = _mm_set1_epi16(diffuse);
 //		const __m128i litWhiteHalf = _mm_set1_epi16(diffuse>>1); // FIXME: hack against banding and a map that's a bit on the bright side of things
@@ -248,9 +241,8 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		const unsigned int height = mapHeight*s_heightProj[iStep] >> 8;
 
 		// lighting
-		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-
-		const unsigned diffuse = (heightNorm*heightNorm*heightNorm)>>16;
+		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep][2] >> 8;
+		const unsigned diffuse = heightNorm;
 		const __m128i lit = _mm_set1_epi16(diffuse);
 
 		const unsigned fullyLit = std::min<unsigned>(255, kAmbient+diffuse);
@@ -305,13 +297,15 @@ static void vball_precalc()
 		const float cosine = cosf(angStepCos*iAngle);
 		if (cosine >= 0.f)
 		{
-			s_heightProjNorm[iAngle] = int(256.f*cosine);
-//			s_heightProjNormF[iAngle] = cosine;
+			// doing this calc. here prevents banding
+			s_heightProjNorm[iAngle][0] = int(255.f*cosine);
+			s_heightProjNorm[iAngle][1] = int(255.f*powf(cosine, 2.f));
+			s_heightProjNorm[iAngle][2] = int(255.f*powf(cosine, 3.f));
 		}
 		else
 		{
-			s_heightProjNorm[iAngle] = 0; // lighting calc. does not take kindly to negative (signed)
-//			s_heightProjNormF[iAngle] = 0.f;
+			// lighting calc. does not take kindly to negative (signed)
+			s_heightProjNorm[iAngle][0] = s_heightProjNorm[iAngle][1] = s_heightProjNorm[iAngle][2] = 0; 
 		}
 	}
 }

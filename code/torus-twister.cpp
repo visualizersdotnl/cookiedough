@@ -65,7 +65,7 @@ static void vtwister_ray(uint32_t *pDest, int curX, int curY, int dX)
 
 		// add basic lighting
 		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
-		const unsigned diffuse = (heightNorm*heightNorm) >> 8;
+		const unsigned diffuse = heightNorm;
 		const __m128i litWhite = _mm_set1_epi16(diffuse);
 		color = _mm_adds_epu16(color, litWhite);
 
@@ -127,7 +127,7 @@ void vtwister_precalc()
 		// for basic lighting
 		const float cosine = cosf(angle*0.99f);
 		if (cosine > 0.f)
-			s_heightProjNorm[iAngle] = unsigned(255.f*cosine);
+			s_heightProjNorm[iAngle] = unsigned(255.f*powf(cosine, 2.f)); // raise it to the second power for some nicer highlights without banding
 		else
 			s_heightProjNorm[iAngle] = 0;
 	}
