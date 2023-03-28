@@ -26,7 +26,7 @@ people involved:
   + jade (graphics)
   + nytrik (ideas, graphics, sync.)
   + superplek (programming, design, sync.)
-  + and introducing Ernst Hot formerly known as thorsten/purple (TPB legacy, creative support, Linux build)
+  + and introducing ernst hot formerly known as thorsten/purple (TPB legacy, creative support, Linux)
 
 advisory board / additional:
   + alien (small TPB logo)
@@ -34,8 +34,8 @@ advisory board / additional:
   + sh0ck/disaster area for his patience and help with the OSX Intel build
   + thec (ideas, support, catering, trigger finger training)
   + dascon (networking)
-  + raimo (boy wonder)
   + dipswitch for the beauty on top of this file
+  + raimo (boy wonder)
 
   some textures come from previous The Pimp Brigade productions and are entirely ours to use
   too slow? want to make your own build? other issues? -> https://github.com/visualizersdotnl/cookiedough

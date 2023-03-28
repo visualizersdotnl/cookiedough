@@ -11,7 +11,7 @@
 	:                  /__/                                         .
 	¦:.                                                             :
 	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:                    BYPASS presents <TITLE>                    :
+	:             BYPASS presents 'Arrested Development'            :
 	:        a retrosexual promotion in co-operation with TPB       :
 */
 
@@ -106,7 +106,7 @@
 
 const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = false;
+constexpr bool kFullScreen = true;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM

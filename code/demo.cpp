@@ -31,6 +31,7 @@ SyncTrack trackEffect;
 SyncTrack trackFadeToBlack, trackFadeToWhite;
 SyncTrack trackCreditLogo, trackCreditLogoAlpha, trackCreditLogoBlurH, trackCreditLogoBlurV;
 SyncTrack trackDiscoGuys, trackDiscoGuysAppearance[8];
+SyncTrack trackCheapJoke;
 SyncTrack trackShow1995, trackShow2006;
 SyncTrack trackDirt;
 SyncTrack trackScapeOverlay, trackScapeRevision, trackScapeFade;
@@ -113,6 +114,9 @@ static uint32_t *s_pLenz = nullptr;
 // ribbons (2160x720)
 static uint32_t *s_pRibbons = nullptr;
 
+// GPU joke (960x160)
+static uint32_t *s_pGPUJoke = nullptr;
+
 // --- Shooting star related things ---
 
 constexpr unsigned kLenzSize = 64;
@@ -171,6 +175,8 @@ bool Demo_Create()
 	trackShootingY = Rocket::AddTrack("shootingStar:Y");
 	trackShootingAlpha = Rocket::AddTrack("shootingStar:A");
 	trackShootingTrail = Rocket::AddTrack("shootingStar:Trail");
+
+	trackCheapJoke = Rocket::AddTrack("demo:CheapGPU");
 
 	// FIXME: this one might not belong in this file for but for compositing reasons it does
 	trackCloseUpMoonraker = Rocket::AddTrack("closeSpike:Moonraker");
@@ -283,6 +289,11 @@ bool Demo_Create()
 	// ribbons
 	s_pRibbons = Image_Load32("assets/demo/ribbons.png");
 	if (nullptr == s_pRibbons)
+		return false;
+
+	// making fun of cheap competition machine
+	s_pGPUJoke = Image_Load32("assets/demo/GPU-joke.png");
+	if (nullptr == s_pGPUJoke)
 		return false;
 
 	return fxInit;
@@ -658,25 +669,36 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				memset32(pDest, 0, kResX*kResY);
 
 				const float discoGuys = saturatef(Rocket::getf(trackDiscoGuys));
-				const unsigned xStart = (kResX-(8*128))>>1;
-				const unsigned yOffs = ((kResY-128)>>1) + 16;
-				for (int iGuy = 0; iGuy < 8; ++iGuy)
+				const float joke = saturatef(Rocket::getf(trackCheapJoke));
+
+				if (discoGuys > 0.f)
 				{
-					// this gives me the opportunity to for ex. fade them in in order
-					const float appearance = saturatef(Rocket::getf(trackDiscoGuysAppearance[iGuy]));
-
-					BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys*smootherstepf(0.f, 1.f, appearance));
-
-					if (discoGuys < 1.f)
+					const unsigned xStart = (kResX-(8*128))>>1;
+					const unsigned yOffs = ((kResY-128)>>1) + 16;
+					for (int iGuy = 0; iGuy < 8; ++iGuy)
 					{
-						uint32_t *pStrip = pDest + yOffs*kResX;
-						HorizontalBoxBlur32(pStrip, pStrip, kResX, 128, BoxBlurScale((1.f-discoGuys)*k2PI*kGoldenAngle));
-					}
-				}
+						// this gives me the opportunity to for ex. fade them in in order
+						const float appearance = saturatef(Rocket::getf(trackDiscoGuysAppearance[iGuy]));
 
-				// (semi-)full credits
-//				BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
-				BlitAdd32A(pDest + (((kResX-1100)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1100, 57, discoGuys);
+						BlitSrc32A(pDest + xStart + iGuy*128 + yOffs*kResX, s_pDiscoGuys[iGuy], kResX, 128, 128, discoGuys*smootherstepf(0.f, 1.f, appearance));
+
+						if (discoGuys < 1.f)
+						{
+							uint32_t *pStrip = pDest + yOffs*kResX;
+							HorizontalBoxBlur32(pStrip, pStrip, kResX, 128, BoxBlurScale((1.f-discoGuys)*k2PI*kGoldenAngle));
+						}
+					}
+
+					// (semi-)full credits
+//					BlitAdd32A(pDest + (((kResX-1000)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1000, 52, discoGuys);
+					BlitAdd32A(pDest + (((kResX-1100)/2)-1) + (yOffs+130)*kResX, s_pAreWeDone, kResX, 1100, 57, discoGuys);
+				}
+				else if (joke > 0.f)
+				{
+					// they can't 'ford no GPU
+					memset(pDest, 0, kOutputBytes);
+					BlitSrc32A(pDest + ((kResX-960)/2) + (((kResY-160 )/2)*kResX), s_pGPUJoke, kResX, 960, 160, joke);
+				}
 			}
 			break;
 
