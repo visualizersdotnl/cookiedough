@@ -59,7 +59,8 @@ constexpr unsigned kMaxRayLength = 1024;
 
 // height projection table
 static unsigned s_heightProj[kMaxRayLength];
-static int s_heightProjNorm[kMaxRayLength]; // for "lighting", projects on quarter of a circle, to attenuate and cull
+static int s_heightProjNorm[kMaxRayLength];     // for "lighting", projects on quarter of a circle, to attenuate and cull
+static float s_heightProjNormF[kMaxRayLength];  //
 static unsigned s_curRayLength = kMaxRayLength;
 
 // max. radius (in pixels)
@@ -117,14 +118,22 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 		beam = _mm_srli_epi16(_mm_mullo_epi16(beam, g_gradientUnp16[s_beamAtten]), 8);
 
 		// light beam & diffuse light calc.
+#if 1
 		const unsigned heightNorm = mapHeight*s_heightProjNorm[iStep] >> 8;
 		const unsigned heightNorm2 = heightNorm*heightNorm;
 
-		const unsigned diffuseLo = (heightNorm2*heightNorm)>>16;
-		const unsigned diffuseHi = heightNorm2>>8;
-		const unsigned diffuse = diffuseHi + (((diffuseLo-diffuseHi)*lowLight)>>8);
+ 		const unsigned diffuseHi = heightNorm2 >> 8;
+		const unsigned diffuseLo = diffuseHi>>1;
+
+		const unsigned diffuse = diffuseHi + ((int(diffuseLo-diffuseHi)*lowLight)>>8);
+#else
+		const float heightNormF = mapHeight*s_heightProjNormF[iStep];
+		const float heightNorm2 = heightNormF*heightNormF;
+		const unsigned diffuse = unsigned(heightNorm2/256.f);
+#endif
 
 		const __m128i litWhite = _mm_set1_epi16(diffuse);
+//		const __m128i litWhiteHalf = _mm_set1_epi16(diffuse>>1); // FIXME: hack against banding and a map that's a bit on the bright side of things
 		const __m128i beamLit = _mm_srli_epi16(_mm_mullo_epi16(beam, litWhite), 8);
 		beamAccum = _mm_adds_epu16(beamAccum, beamLit);
 
@@ -294,9 +303,16 @@ static void vball_precalc()
 
 		// cosine goes from 1 down to -1, effectively culling
 		const float cosine = cosf(angStepCos*iAngle);
-		(cosine >= 0.f)
-			? s_heightProjNorm[iAngle] = int(255.f*cosine)
-			: s_heightProjNorm[iAngle] = 0; // lighting calc. does not take kindly to negative (signed)
+		if (cosine >= 0.f)
+		{
+			s_heightProjNorm[iAngle] = int(256.f*cosine);
+//			s_heightProjNormF[iAngle] = cosine;
+		}
+		else
+		{
+			s_heightProjNorm[iAngle] = 0; // lighting calc. does not take kindly to negative (signed)
+//			s_heightProjNormF[iAngle] = 0.f;
+		}
 	}
 }
 
@@ -471,7 +487,6 @@ void Ball_Draw(uint32_t *pDest, float time, float delta)
 
 	if (true == hasBeams)
 	{
-//		SoftLight32AA(pDest, pBackground, kOutputSize, 0.4f);
 		SoftLight32A(pDest, s_pHalo, kOutputSize);
 	}
 
