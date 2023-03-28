@@ -427,9 +427,9 @@
 			<key row="6288" value="8" interpolation="0"/>
 			<key row="6544" value="2" interpolation="0"/>
 			<key row="6680" value="22" interpolation="0"/>
-			<key row="6808" value="4" interpolation="0"/>
-			<key row="6952" value="4" interpolation="2"/>
-			<key row="7072" value="8" interpolation="0"/>
+			<key row="6808" value="1.24" interpolation="0"/>
+			<key row="6952" value="2.24" interpolation="2"/>
+			<key row="7072" value="6.28" interpolation="0"/>
 		</track>
 		<track name="spike:Roll">
 			<key row="3144" value="3.33" interpolation="0"/>
@@ -453,8 +453,9 @@
 			<key row="3664" value="-1" interpolation="0"/>
 			<key row="3936" value="3" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
-			<key row="6415" value="3.8" interpolation="3"/>
-			<key row="6544" value="0.628" interpolation="0"/>
+			<key row="6416" value="0.44" interpolation="3"/>
+			<key row="6448" value="2" interpolation="2"/>
+			<key row="6544" value="3.3" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
 			<key row="6800" value="3" interpolation="2"/>
 			<key row="6808" value="2" interpolation="0"/>
@@ -468,8 +469,10 @@
 			<key row="3664" value="66" interpolation="0"/>
 			<key row="3936" value="60" interpolation="0"/>
 			<key row="6288" value="33" interpolation="0"/>
-			<key row="6415" value="41" interpolation="3"/>
-			<key row="6544" value="31" interpolation="0"/>
+			<key row="6416" value="77" interpolation="2"/>
+			<key row="6448" value="66" interpolation="3"/>
+			<key row="6456" value="55" interpolation="2"/>
+			<key row="6544" value="55" interpolation="0"/>
 			<key row="6680" value="32" interpolation="0"/>
 			<key row="6808" value="15" interpolation="0"/>
 			<key row="7072" value="40" interpolation="0"/>
@@ -494,11 +497,11 @@
 			<key row="4136" value="1" interpolation="1"/>
 			<key row="4183" value="0" interpolation="0"/>
 			<key row="6288" value="1.66" interpolation="0"/>
-			<key row="6415" value="0.6" interpolation="0"/>
-			<key row="6544" value="1" interpolation="2"/>
+			<key row="6416" value="1.6" interpolation="3"/>
+			<key row="6544" value="0.66" interpolation="2"/>
 			<key row="6679" value="0.5" interpolation="0"/>
 			<key row="6680" value="2" interpolation="0"/>
-			<key row="6808" value="0.5" interpolation="0"/>
+			<key row="6808" value="0.66" interpolation="0"/>
 			<key row="7072" value="0.9" interpolation="0"/>
 		</track>
 		<track name="distSpike:Warmup">
@@ -552,7 +555,8 @@
 		</track>
 		<track name="closeSpike:NormalGrain">
 			<key row="6288" value="1" interpolation="2"/>
-			<key row="6487" value="0.33" interpolation="0"/>
+			<key row="6487" value="0.1" interpolation="0"/>
+			<key row="6544" value="0.2" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
 			<key row="6808" value="0.2" interpolation="2"/>
 			<key row="7079" value="0.22" interpolation="2"/>
@@ -580,7 +584,7 @@
 			<key row="6544" value="1" interpolation="0"/>
 			<key row="6680" value="1" interpolation="0"/>
 			<key row="6808" value="1" interpolation="0"/>
-			<key row="6864" value="10" interpolation="0"/>
+			<key row="6864" value="1" interpolation="0"/>
 			<key row="7080" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixBlurMap">
@@ -594,7 +598,8 @@
 			<key row="7037" value="1" interpolation="3"/>
 			<key row="7040" value="0" interpolation="1"/>
 			<key row="7048" value="1" interpolation="2"/>
-			<key row="7053" value="0" interpolation="0"/>
+			<key row="7056" value="0" interpolation="0"/>
+			<key row="7077" value="0" interpolation="3"/>
 			<key row="7080" value="1" interpolation="0"/>
 			<key row="7148" value="1" interpolation="3"/>
 			<key row="7152" value="0" interpolation="0"/>
@@ -608,50 +613,52 @@
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
 			<key row="6808" value="0" interpolation="0"/>
-			<key row="6840" value="50" interpolation="0"/>
-			<key row="6864" value="10" interpolation="0"/>
-			<key row="7080" value="10" interpolation="0"/>
+			<key row="6840" value="33" interpolation="0"/>
+			<key row="6864" value="5" interpolation="0"/>
+			<key row="7080" value="2" interpolation="0"/>
 			<key row="7152" value="2" interpolation="0"/>
-			<key row="7210" value="10" interpolation="0"/>
-			<key row="7305" value="3" interpolation="0"/>
+			<key row="7210" value="5" interpolation="0"/>
+			<key row="7296" value="5" interpolation="3"/>
+			<key row="7305" value="100" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixBlurOpacity">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6288" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="0"/>
 			<key row="6808" value="30" interpolation="0"/>
-			<key row="6840" value="100" interpolation="0"/>
-			<key row="6864" value="2" interpolation="3"/>
+			<key row="6840" value="0.66" interpolation="0"/>
+			<key row="6864" value="0.1" interpolation="3"/>
+			<key row="6981" value="0.1" interpolation="2"/>
 			<key row="7024" value="0" interpolation="1"/>
-			<key row="7080" value="10" interpolation="1"/>
-			<key row="7120" value="40" interpolation="1"/>
-			<key row="7152" value="20" interpolation="1"/>
-			<key row="7210" value="3" interpolation="0"/>
+			<key row="7080" value="0.1" interpolation="1"/>
+			<key row="7120" value="0.4" interpolation="1"/>
+			<key row="7152" value="0.5" interpolation="3"/>
+			<key row="7210" value="1" interpolation="0"/>
 			<key row="7216" value="1" interpolation="3"/>
 			<key row="7305" value="3" interpolation="3"/>
-			<key row="7336" value="3" interpolation="3"/>
+			<key row="7336" value="3" interpolation="0"/>
 		</track>
 		<track name="closeSpike:MixMapBlur">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6680" value="10" interpolation="0"/>
 			<key row="6808" value="0" interpolation="2"/>
-			<key row="6840" value="4" interpolation="0"/>
-			<key row="6864" value="1" interpolation="0"/>
-			<key row="6912" value="4" interpolation="0"/>
-			<key row="7040" value="0" interpolation="1"/>
-			<key row="7056" value="3" interpolation="0"/>
-			<key row="7080" value="0" interpolation="0"/>
+			<key row="6840" value="2" interpolation="1"/>
+			<key row="6864" value="5" interpolation="1"/>
+			<key row="6912" value="3.14" interpolation="3"/>
+			<key row="7040" value="0" interpolation="3"/>
+			<key row="7056" value="3" interpolation="3"/>
+			<key row="7080" value="0" interpolation="2"/>
 			<key row="7120" value="5" interpolation="0"/>
-			<key row="7152" value="2" interpolation="0"/>
+			<key row="7152" value="33" interpolation="1"/>
 			<key row="7256" value="1" interpolation="3"/>
 			<key row="7305" value="3" interpolation="3"/>
-			<key row="7336" value="10" interpolation="3"/>
+			<key row="7336" value="0" interpolation="0"/>
 		</track>
 		<track name="closeSpike:Moonraker">
 			<key row="0" value="0" interpolation="0"/>
 			<key row="6400" value="0" interpolation="0"/>
 			<key row="6544" value="0" interpolation="1"/>
-			<key row="6547" value="1" interpolation="2"/>
+			<key row="6547" value="1" interpolation="3"/>
 			<key row="6808" value="0" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Specular">
