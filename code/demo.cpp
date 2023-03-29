@@ -638,17 +638,22 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 		case 12:
 			{
 				// TPB represent
-				memset32(g_renderTarget[0], 0xffffff, kResX*kResY);
 
-				// ribbon (1 layer, FIXME)
+				// clear 2 targets, so we can composite them and only warp one
+				memset32(g_renderTarget[0], 0xffffff, kOutputSize);
+				memset32(pDest, 0xffffff, kOutputSize);
+
+				// ribbon to layer 
 				const auto ribX = clampi(0, kResX, Rocket::geti(trackRibbonsTPB));
-				MixSrc32S(g_renderTarget[0], s_pRibbons + ribX, kResX, kResY-1, 2160); // FIXME
+				MixSrc32S(pDest, s_pRibbons + ribX, kResX, kResY-1, 2160); // FIXME
 
 //				BlitSrc32(g_renderTarget[0] + ((kResX-800)/2) + ((kResY-600)/2)*kResX, g_pNytrikMexico, kResX, 800, 600);
 //				memcpy(g_renderTarget[0], g_pNytrikTPB, kOutputBytes);
 
+				// logo to layer
 				MixSrc32(g_renderTarget[0], g_pNytrikTPB, kOutputSize);
 
+				// blur logo
 				float blurTPB = Rocket::getf(trackBlurTPB);
 				if (0.f != blurTPB)
 				{
@@ -656,11 +661,17 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blurTPB);
 				}
 
-				MulSrc32(g_renderTarget[0], s_pNautilusVignette, kOutputSize); // FIXME: placeholder
-
+				// distort logo
 				const float distortTPB = Rocket::getf(trackDistortTPB);
 				const float distortStrengthTPB = Rocket::getf(trackDistortStrengthTPB);
-				TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, distortStrengthTPB, distortTPB);
+				TapeWarp32(g_renderTarget[1], g_renderTarget[0], kResX, kResY, distortStrengthTPB, distortTPB);
+
+				// add logo on top of layer
+				MixOver32(pDest, g_renderTarget[1], kOutputSize);
+
+				// vignette
+				MulSrc32(pDest, s_pNautilusVignette, kOutputSize); // FIXME: placeholder
+
 			}
 			break;
 

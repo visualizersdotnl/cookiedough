@@ -162,6 +162,7 @@
 			<key row="2095" value="128" interpolation="3"/>
 			<key row="2096" value="0" interpolation="0"/>
 			<key row="4088" value="0" interpolation="0"/>
+			<key row="10480" value="0" interpolation="0"/>
 		</track>
 		<track name="ball:HasBeams">
 			<key row="1048" value="0" interpolation="0"/>
@@ -880,8 +881,8 @@
 			<key row="9895" value="1" interpolation="3"/>
 			<key row="9904" value="0" interpolation="0"/>
 			<key row="10000" value="0" interpolation="3"/>
-			<key row="10319" value="1" interpolation="0"/>
-			<key row="10320" value="0" interpolation="0"/>
+			<key row="10303" value="1" interpolation="0"/>
+			<key row="10304" value="0" interpolation="0"/>
 		</track>
 		<track name="demo:FadeToWhite">
 			<key row="0" value="0" interpolation="0"/>
@@ -1044,7 +1045,7 @@
 			<key row="0" value="0" interpolation="0"/>
 			<key row="9920" value="0" interpolation="2"/>
 			<key row="9976" value="1" interpolation="0"/>
-			<key row="10320" value="0" interpolation="0"/>
+			<key row="10304" value="0" interpolation="0"/>
 		</track>
 		<track name="demo:Show1995">
 			<key row="0" value="0" interpolation="0"/>
@@ -1280,7 +1281,7 @@
 			<key row="8383" value="10" interpolation="0"/>
 		</track>
 		<track name="demo:CheapGPU">
-			<key row="10320" value="0" interpolation="1"/>
+			<key row="10304" value="0" interpolation="1"/>
 			<key row="10336" value="1" interpolation="0"/>
 		</track>
 		<track name="shootingStar:Enabled">

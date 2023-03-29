@@ -106,7 +106,7 @@
 
 const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = true;
+constexpr bool kFullScreen = false;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
