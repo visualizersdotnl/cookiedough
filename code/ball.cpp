@@ -298,9 +298,9 @@ static void vball_precalc()
 		if (cosine >= 0.f)
 		{
 			// doing this calc. here prevents banding
-			s_heightProjNorm[iAngle][0] = int(255.f*cosine);
-			s_heightProjNorm[iAngle][1] = int(255.f*powf(cosine, 2.f));
-			s_heightProjNorm[iAngle][2] = int(255.f*powf(cosine, 3.f));
+			s_heightProjNorm[iAngle][0] = int(255.f*powf(cosine, kGoldenRatio));
+			s_heightProjNorm[iAngle][1] = int(255.f*powf(cosine, kGoldenAngle));
+			s_heightProjNorm[iAngle][2] = int(255.f*powf(cosine, kPI));
 		}
 		else
 		{

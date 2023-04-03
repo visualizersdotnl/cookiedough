@@ -104,7 +104,7 @@
 
 // -- display & audio config. --
 
-const char *kTitle = "Bypass & TPB present 'ARRESTED DEVELOPMENT'";
+const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
 constexpr bool kFullScreen = false;
 
