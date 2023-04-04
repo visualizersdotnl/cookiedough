@@ -48,7 +48,7 @@ SyncTrack trackWaterLove;
 
 SyncTrack trackLoveBlurHorz;
 
-SyncTrack trackCloseUpMoonraker;
+SyncTrack trackCloseUpMoonraker, trackCloseUpMoonrakerText;
 
 // --------------------
 
@@ -103,6 +103,7 @@ static uint32_t *s_pAreWeDone = nullptr;
 static uint32_t *s_pCloseSpikeDirtRaker = nullptr;
 static uint32_t *s_pCloseSpikeVignette = nullptr;
 static uint32_t *s_pCloseSpikeVignetteForRaker = nullptr;
+static uint32_t *s_pCloseSpike1961 = nullptr; // 442x152 px.
 
 // under water tunnel art
 static uint32_t *s_pWaterDirt = nullptr;
@@ -180,6 +181,7 @@ bool Demo_Create()
 
 	// FIXME: this one might not belong in this file for but for compositing reasons it does
 	trackCloseUpMoonraker = Rocket::AddTrack("closeSpike:Moonraker");
+	trackCloseUpMoonrakerText = Rocket::AddTrack("closeSpike:MoonrakerText");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -271,7 +273,8 @@ bool Demo_Create()
 	s_pCloseSpikeDirtRaker = Image_Load32("assets/closeup/raker-LensDirt5_invert.png");
 	s_pCloseSpikeVignetteForRaker = Image_Load32("assets/closeup/VignetteForRaker.png");
 	s_pCloseSpikeVignette = Image_Load32("assets/closeup/Vignette_CoolFilmLook.png");
-	if (nullptr == s_pCloseSpikeDirtRaker || nullptr == s_pCloseSpikeVignette || nullptr == s_pCloseSpikeVignetteForRaker)
+	s_pCloseSpike1961 = Image_Load32("assets/closeup/raker_textSmall.png");
+	if (nullptr == s_pCloseSpikeDirtRaker || nullptr == s_pCloseSpikeVignette || nullptr == s_pCloseSpikeVignetteForRaker || nullptr == s_pCloseSpike1961)
 		return false;
 
 	// under water tunnel
@@ -551,11 +554,28 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				{
 					// Moonraker
 					const float raker = Rocket::getf(trackCloseUpMoonraker);
+					const float rakerText = clampf(0.f, 2.f, Rocket::getf(trackCloseUpMoonrakerText));
 
 					if (raker > 0.f)
 					{
 						MulSrc32(pDest, s_pCloseSpikeVignetteForRaker, kOutputSize);
 						SoftLight32AA(pDest, s_pCloseSpikeDirtRaker, kOutputSize, raker);
+						
+//						BlitSrc32A(pDest, s_pCloseSpikeRakerText, kResX, kResX, kResY, rakerText);
+//						SoftLight32A(pDest, s_pCloseSpikeRakerText, kOutputSize);
+						if (rakerText > 0.f && rakerText < 1.f)
+						{						
+							// this is shit slow, but it'll only last a short whole (FIXME: optimize for major release)
+							memset(g_renderTarget[2], 0, kOutputBytes);
+							BlitSrc32(g_renderTarget[2] + ((kResY-152)*kResX), s_pCloseSpike1961, kResX, 442, 152);
+							SoftLight32A(pDest, g_renderTarget[2], kOutputSize);
+						}
+						else if (rakerText >= 1.f)
+						{
+							BlitSrc32(pDest + ((kResY-152)*kResX), s_pCloseSpike1961, kResX, 442, 152);
+						}
+						
+
 						FadeFlash(pDest, 0.f, fadeToWhite);
 						Overlay32(pDest, s_pCloseSpikeDirtRaker, kOutputSize);
 						FadeFlash(pDest, fadeToBlack, 0.f);

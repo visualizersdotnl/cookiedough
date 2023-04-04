@@ -40,7 +40,7 @@ static void *Image_Load(const std::string &path, bool isGrayscale, unsigned *pNu
 	const ILboolean isLoaded = ilLoadImage(path.c_str());
 	if (isLoaded == IL_FALSE)
 	{
-//		const ILenum error = ilGetError();
+		const ILenum error = ilGetError();
 		SetLastError("Can not load image: " + path);
 		return NULL;
 	}
