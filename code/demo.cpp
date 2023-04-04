@@ -1,5 +1,5 @@
 
-// cookiedough -- Bypass/TPB-07: arrested development
+// cookiedough -- Bypass featuring TPB. presents 'Arrested Development'
 
 #include "main.h"
 // #include <windows.h> // for audio.h
@@ -48,7 +48,11 @@ SyncTrack trackWaterLove;
 
 SyncTrack trackLoveBlurHorz;
 
-SyncTrack trackCloseUpMoonraker, trackCloseUpMoonrakerText;
+SyncTrack trackCloseUpMoonraker, trackCloseUpMoonrakerText, trackCloseUpMoonrakerTextBlur;
+
+SyncTrack trackSpikeDemoLogoIndex;
+
+SyncTrack trackBloodEffectLogoBlend;
 
 // --------------------
 
@@ -60,9 +64,9 @@ constexpr auto kCredY = 568;
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
 
-// Stars/NoooN text overlay, lens dirt & vignette (1280x720)
-static uint32_t *s_pNoooN = nullptr;
-static uint32_t *s_pMFX = nullptr;
+// Stars/NoooN + MFX text overlays, lens dirt & vignette (1280x720)
+static uint32_t *s_pNoooN[4] = { nullptr };
+static uint32_t *s_pMFX[4] = { nullptr };
 static uint32_t *s_pTunnelFullDirt = nullptr;
 static uint32_t *s_pTunnelVignette = nullptr;
 static uint32_t *s_pTunnelVignette2 = nullptr;
@@ -70,7 +74,7 @@ static uint32_t *s_pTunnelVignette2 = nullptr;
 // first spikey ball art
 static uint32_t *s_pSpikeyFullDirt = nullptr;
 static uint32_t *s_pSpikeyBypass = nullptr;
-static uint32_t *s_pSpikeyArrested = nullptr;
+static uint32_t *s_pSpikeyArrested[4] = { nullptr };
 static uint32_t *s_pSpikeyVignette = nullptr;
 static uint32_t *s_pSpikeyVignette2 = nullptr;
 
@@ -179,9 +183,12 @@ bool Demo_Create()
 
 	trackCheapJoke = Rocket::AddTrack("demo:CheapGPU");
 
+	trackSpikeDemoLogoIndex = Rocket::AddTrack("demo:MainLogoIndex");
+
 	// FIXME: this one might not belong in this file for but for compositing reasons it does
 	trackCloseUpMoonraker = Rocket::AddTrack("closeSpike:Moonraker");
 	trackCloseUpMoonrakerText = Rocket::AddTrack("closeSpike:MoonrakerText");
+	trackCloseUpMoonrakerTextBlur = Rocket::AddTrack("closeSpike:MoonrakerBlur");
 
 	// load credits logos (1280x640)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
@@ -198,27 +205,41 @@ bool Demo_Create()
 		return false;
 	
 	// first appearance of the 'spikey ball' including the title and main group
-	s_pSpikeyArrested = Image_Load32("assets/spikeball/TheYearWas2023_Overlay_Typo.png");
+	s_pSpikeyArrested[0] = Image_Load32("assets/spikeball/Layer 2023_1.png");
+	s_pSpikeyArrested[1] = Image_Load32("assets/spikeball/Layer 2023_2.png");
+	s_pSpikeyArrested[2] = Image_Load32("assets/spikeball/Layer 2023_3.png");
+	s_pSpikeyArrested[3] = Image_Load32("assets/spikeball/Layer 2023_4.png");
 	s_pSpikeyVignette = Image_Load32("assets/spikeball/Vignette_CoolFilmLook.png");
 	s_pSpikeyVignette2 = Image_Load32("assets/spikeball/Vignette_Layer02_inverted.png");
 	s_pSpikeyBypass = Image_Load32("assets/spikeball/SpikeyBall_byPass_BG_Overlay.png");
 	s_pSpikeyFullDirt = Image_Load32("assets/spikeball/nytrik-TheYearWas_Overlay_LensDirt.jpg");
-	if (nullptr == s_pSpikeyArrested || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
+	const bool spikeyArresteds = nullptr == s_pSpikeyArrested[0] || nullptr == s_pSpikeyArrested[1] || nullptr == s_pSpikeyArrested[2] || nullptr == s_pSpikeyArrested[3];
+	if (true == spikeyArresteds || nullptr == s_pSpikeyBypass || nullptr == s_pSpikeyFullDirt || nullptr == s_pSpikeyVignette || nullptr == s_pSpikeyVignette2)
 		return false;
 
 	// NoooN et cetera
-	s_pNoooN = Image_Load32("assets/tunnels/TheYearWas_Overlay_Typo_style2.png");
-	s_pMFX = Image_Load32("assets/tunnels/TheYearWas2006_Overlay_Overlay_Typo_style2.png");
+	s_pNoooN[0] = Image_Load32("assets/tunnels/layer 1995_1.png");
+	s_pNoooN[1] = Image_Load32("assets/tunnels/layer 1995_2.png");
+	s_pNoooN[2] = Image_Load32("assets/tunnels/layer 1995_3.png");
+	s_pNoooN[3] = Image_Load32("assets/tunnels/layer 1995_4.png");
+	s_pMFX[0] = Image_Load32("assets/tunnels/layer 2006_1.png");
+	s_pMFX[1] = Image_Load32("assets/tunnels/layer 2006_2.png");
+	s_pMFX[2] = Image_Load32("assets/tunnels/layer 2006_3.png");
+	s_pMFX[3] = Image_Load32("assets/tunnels/layer 2006_4.png");
 	s_pTunnelFullDirt = Image_Load32("assets/tunnels/nytrik-TheYearWas_Overlay_LensDirt.png");
 	s_pTunnelVignette = Image_Load32("assets/tunnels/Vignette_CoolFilmLook.png");;
 	s_pTunnelVignette2 = Image_Load32("assets/tunnels/Vignette_Layer02_inverted.png");
-	if (nullptr == s_pNoooN || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2 || nullptr == s_pMFX)
+
+	const bool NoooN = nullptr == s_pNoooN[0] || nullptr == s_pNoooN[1] || nullptr == s_pNoooN[2] || nullptr == s_pNoooN[3];
+	const bool MFX = nullptr == s_pMFX[0] || nullptr == s_pMFX[1] || nullptr == s_pMFX[2] || nullptr == s_pMFX[3];
+
+	if (true == NoooN || true == MFX || nullptr == s_pTunnelFullDirt || nullptr == s_pTunnelVignette || nullptr == s_pTunnelVignette2)
 		return false;
 	
 	// landscape
 	s_pGodLayer = Image_Load32("assets/demo/nytrik-god-layer-720p.png"); 
 	s_pRevLogo = Image_Load32("assets/scape/revision-logo_white.png");
-	if ( nullptr == s_pGodLayer || nullptr == s_pRevLogo)
+	if (nullptr == s_pGodLayer || nullptr == s_pRevLogo)
 		return false;
 
 	// voxel ball
@@ -273,7 +294,7 @@ bool Demo_Create()
 	s_pCloseSpikeDirtRaker = Image_Load32("assets/closeup/raker-LensDirt5_invert.png");
 	s_pCloseSpikeVignetteForRaker = Image_Load32("assets/closeup/VignetteForRaker.png");
 	s_pCloseSpikeVignette = Image_Load32("assets/closeup/Vignette_CoolFilmLook.png");
-	s_pCloseSpike1961 = Image_Load32("assets/closeup/raker_textSmall.png");
+	s_pCloseSpike1961 = Image_Load32("assets/closeup/raker_textSmall.png"); // 624x115
 	if (nullptr == s_pCloseSpikeDirtRaker || nullptr == s_pCloseSpikeVignette || nullptr == s_pCloseSpikeVignetteForRaker || nullptr == s_pCloseSpike1961)
 		return false;
 
@@ -320,6 +341,40 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 
 		if (fadeToBlack > 0.f)
 			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+}
+
+// blend blood logos from zero to full ([0..4]) -- uses g_renderTarget[3]!
+static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
+{
+	VIZ_ASSERT(hullptr != pLogos);
+
+	uint32_t *pTarget = g_renderTarget[3];
+	const float factor = fmodf(blend, 1.f);
+	const uint8_t iFactor = uint8_t(255.f*factor);
+
+	// we're going to do this the stupid way (and not optimize for all but the last case because it'll be a smooth transition)
+	if (blend >= 0.f && blend <= 1.f)
+	{
+		memcpy(pTarget, pLogos[0], kOutputBytes);
+		Mix32(pTarget, pLogos[1], kOutputSize, iFactor);	
+	}
+	else if (blend > 1.f && blend <= 2.f)
+	{
+		memcpy(pTarget, pLogos[1], kOutputBytes);
+		Mix32(pTarget, pLogos[2], kOutputSize, iFactor);	
+	}
+	else if (blend > 2.f && blend <= 3.f)
+	{
+		memcpy(pTarget, pLogos[2], kOutputBytes);
+		Mix32(pTarget, pLogos[3], kOutputSize, iFactor);	
+	}
+	else if (blend >= 3.f)
+	{
+//		memcpy(pTarget, pLogos[3], kOutputBytes);
+		return pLogos[3];
+	}
+
+	return pTarget;
 }
 
 bool Demo_Draw(uint32_t *pDest, float timer, float delta)
@@ -461,7 +516,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 //				}
 
 				if (0 != Rocket::geti(trackShow1995))
-					MixOver32(pDest, s_pNoooN, kOutputSize);
+					MixOver32(pDest, BloodBlend(Rocket::getf(trackShow1995), s_pNoooN), kOutputSize);
 
 				Overlay32(pDest, s_pTunnelVignette, kOutputSize);
 			}
@@ -555,24 +610,32 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					// Moonraker
 					const float raker = Rocket::getf(trackCloseUpMoonraker);
 					const float rakerText = clampf(0.f, 2.f, Rocket::getf(trackCloseUpMoonrakerText));
-
+					
 					if (raker > 0.f)
 					{
 						MulSrc32(pDest, s_pCloseSpikeVignetteForRaker, kOutputSize);
 						SoftLight32AA(pDest, s_pCloseSpikeDirtRaker, kOutputSize, raker);
 						
-//						BlitSrc32A(pDest, s_pCloseSpikeRakerText, kResX, kResX, kResY, rakerText);
-//						SoftLight32A(pDest, s_pCloseSpikeRakerText, kOutputSize);
 						if (rakerText > 0.f && rakerText < 1.f)
 						{						
 							// this is shit slow, but it'll only last a short whole (FIXME: optimize for major release)
-							memset(g_renderTarget[2], 0, kOutputBytes);
-							BlitSrc32(g_renderTarget[2] + ((kResY-152)*kResX), s_pCloseSpike1961, kResX, 442, 152);
-							SoftLight32A(pDest, g_renderTarget[2], kOutputSize);
+							memset32(g_renderTarget[2], 0, kOutputSize);
+							BlitSrc32(g_renderTarget[2] + ((kResY-115)*kResX), s_pCloseSpike1961, kResX, 624, 115);
+							SoftLight32AA(pDest, g_renderTarget[2], kOutputSize, rakerText); // <- this would be the function to make work on arbitrarily sized bitmaps
 						}
 						else if (rakerText >= 1.f)
 						{
-							BlitSrc32(pDest + ((kResY-152)*kResX), s_pCloseSpike1961, kResX, 442, 152);
+							// just (possibly) blur and blit
+
+							const uint32_t *pText = s_pCloseSpike1961;
+							const float rakerBlur = clampf(0.f, 100.f, Rocket::getf(trackCloseUpMoonrakerTextBlur));
+							if (rakerBlur >= 1.f)
+							{
+								HorizontalBoxBlur32(g_renderTarget[3] /* just assuming this one is free */, pText, 624, 115, BoxBlurScale(rakerBlur));
+								pText = g_renderTarget[3];
+							}
+
+							BlitSrc32(pDest + ((kResY-115)*kResX), pText, kResX, 624, 115);
 						}
 						
 
@@ -592,15 +655,22 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			break;
 
 		case 8:
-			// Spike ball with title and group name (Bypass)
-			Spikey_Draw(pDest, timer, delta, false);
-			FadeFlash(pDest, fadeToBlack, fadeToWhite);
-			SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
-			Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
-			Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
-			MulSrc32A(pDest, s_pVignette06, kOutputSize);
-			MixOver32(pDest, s_pSpikeyArrested, kOutputSize);
-			Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
+			{
+				const int logoIdx = clampi(0, 4, Rocket::geti(trackSpikeDemoLogoIndex));
+
+				// Spike ball with title and group name (Bypass)
+				Spikey_Draw(pDest, timer, delta, false);
+				FadeFlash(pDest, fadeToBlack, fadeToWhite);
+				SoftLight32(pDest, s_pSpikeyBypass, kOutputSize);
+				Sub32(pDest, s_pSpikeyVignette2, kOutputSize);
+				Excl32(pDest, s_pSpikeyFullDirt, kOutputSize);
+				MulSrc32A(pDest, s_pVignette06, kOutputSize);
+
+				if (0 != logoIdx)
+					MixOver32(pDest, s_pSpikeyArrested[logoIdx-1], kOutputSize);
+				
+				Overlay32(pDest, s_pSpikeyVignette, kOutputSize);
+			}
 			break;
 
 		case 9:
@@ -610,7 +680,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
 				if (0 != Rocket::geti(trackShow2006))
-					MixOver32(pDest, s_pMFX, kOutputSize);
+					MixOver32(pDest, BloodBlend(Rocket::getf(trackShow2006), s_pMFX), kOutputSize);
 			}
 			break;
 
