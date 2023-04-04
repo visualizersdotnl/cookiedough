@@ -300,7 +300,7 @@
 			<key row="4704" value="768" interpolation="0"/>
 			<key row="4872" value="763" interpolation="1"/>
 			<key row="4904" value="760.15" interpolation="3"/>
-			<key row="4912" value="760" interpolation="0"/>
+			<key row="4928" value="760" interpolation="0"/>
 		</track>
 		<track name="starsTunnel:Blur">
 			<key row="0" value="0" interpolation="0"/>
