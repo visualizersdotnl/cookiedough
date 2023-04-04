@@ -399,14 +399,14 @@ bool Ball_Create()
 	if (nullptr == s_pBackgrounds[0] || nullptr == s_pBackgrounds[1])
 		return false;
 
+	// alloc. mix maps
+	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint8_t), kAlignTo));
+	s_pBeamMapMix  = static_cast<uint32_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint32_t), kAlignTo));
+
 	// load halo (for beams)
 	s_pHalo = Image_Load32("assets/ball/halo.png");
 	if (nullptr == s_pHalo)
 		return false;
-
-	// alloc. mix maps
-	s_heightMapMix = static_cast<uint8_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint8_t), kAlignTo));
-	s_pBeamMapMix = static_cast<uint32_t*>(mallocAligned(kMapSize*kMapSize*sizeof(uint32_t), kAlignTo));
 
 	// initialize sync. track(s)
 	trackBallBlur = Rocket::AddTrack("ball:Blur");
@@ -431,6 +431,7 @@ bool Ball_Create()
 void Ball_Destroy()
 {
 	freeAligned(s_heightMapMix);
+	freeAligned(s_pBeamMapMix);
 }
 
 void Ball_Draw(uint32_t *pDest, float time, float delta)
