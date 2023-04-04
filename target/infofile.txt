@@ -11,12 +11,13 @@
      -�--- -             -   -  - -- --�-- - ---�-- -  -   -      - --�-
       :                                                               :
 
-a retrosexual multimedia demonstration in co-operation with TPB
-created for Revision 2023
+a retrosexual multimedia demonstration in co-operation with TPB,
+called 'Arrested Development', created for Revision 2023
 
 system req.:
-  + for Intel nav. to '/x64' and run VS17.exe! (OSX Silicon & Intel versions builds will be released soon, please give us a few days)
-  + software rendering, no noteworthy GPU required
+  + semi-recent CPU with SSE4 and/or NEON (runs on a MacBook Air M2, but please throw all you have at it!)
+  + for Intel nav. to '/x64' and run VS17.exe! (OSX Silicon & Intel versions will be released soon, please give us a few days)
+  + 100% software rendering, no noteworthy GPU required
   + uses default audio device
   + does not use significant RAM or (any) disk space
   + native resolution: 1280x720
@@ -26,7 +27,7 @@ people involved:
   + jade (graphics)
   + nytrik (ideas, graphics, sync.)
   + superplek (programming, design, sync.)
-  + and introducing ernst hot formerly known as thorsten/purple (TPB legacy, creative support, Linux)
+  + and introducing Ernst Hot formerly known as thorsten/purple (TPB legacy, creative support, Linux)
 
 advisory board / additional:
   + alien (small TPB logo)
