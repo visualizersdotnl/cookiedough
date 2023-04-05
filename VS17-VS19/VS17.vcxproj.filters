@@ -127,6 +127,9 @@
     <ClCompile Include="..\code\satori-lumablur.cpp">
       <Filter>/code\filters &amp; blitters\not implemented</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lens.cpp">
+      <Filter>/code\filters &amp; blitters\not implemented</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\bilinear.h">
@@ -263,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="..\code\platform.h">
       <Filter>/code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\code\lens.h">
+      <Filter>/code\filters &amp; blitters\not implemented</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

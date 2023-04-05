@@ -49,6 +49,7 @@
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</OpenMPSupport>
       <OpenMPSupport Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</OpenMPSupport>
     </ClCompile>
+    <ClCompile Include="..\code\lens.cpp" />
     <ClCompile Include="..\code\random.cpp" />
     <ClCompile Include="..\code\rocket.cpp" />
     <ClCompile Include="..\code\satori-lumablur.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="..\code\boxblur.h" />
     <ClInclude Include="..\code\fast-cosine.h" />
     <ClInclude Include="..\code\fx-blitter.h" />
+    <ClInclude Include="..\code\lens.h" />
     <ClInclude Include="..\code\platform.h" />
     <ClInclude Include="..\code\q3-rsqrt.h" />
     <ClInclude Include="..\code\random.h" />

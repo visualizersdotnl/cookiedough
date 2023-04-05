@@ -346,7 +346,7 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 // blend blood logos from zero to full ([0..4]) -- uses g_renderTarget[3]!
 static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 {
-	VIZ_ASSERT(hullptr != pLogos);
+	VIZ_ASSERT(nullptr != pLogos);
 
 	uint32_t *pTarget = g_renderTarget[3];
 
@@ -369,7 +369,7 @@ static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 		memcpy(pTarget, pLogos[2], kOutputBytes);
 		Mix32(pTarget, pLogos[3], kOutputSize, iFactor);	
 	}
-	else if (blend > 3.f)
+	else if (blend >= 3.f)
 	{
 		return pLogos[3];
 	}
