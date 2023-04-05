@@ -1068,7 +1068,7 @@
 			<key value="3" row="4235" interpolation="0"/>
 			<key value="0" row="4448" interpolation="0"/>
 			<key value="0" row="4584" interpolation="0"/>
-			<key value="0" row="4704" interpolation="3"/>
+			<key value="0" row="4704" interpolation="1"/>
 			<key value="3" row="4716" interpolation="0"/>
 		</track>
 		<track name="demo:LensDirt">
@@ -1323,6 +1323,8 @@
 			<key value="0" row="0" interpolation="0"/>
 			<key value="4" row="2096" interpolation="3"/>
 			<key value="0" row="2099" interpolation="0"/>
+			<key value="0" row="3104" interpolation="3"/>
+			<key value="4" row="3136" interpolation="0"/>
 		</track>
 		<track name="shootingStar:Enabled">
 			<key value="0" row="0" interpolation="0"/>

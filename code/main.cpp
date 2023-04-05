@@ -21,6 +21,9 @@
 // this codebase was started as a simple experiment and doesn't have much to show for
 // modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
 
+// also, ramping up to Revision 2023, there will be bits and pieces that are just plain
+// sloppy, so it is for making demoscene productions, I suppose :)
+
 // OSX build:
 // - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
 // - uses CMake (only for OSX!)

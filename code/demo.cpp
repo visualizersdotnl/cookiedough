@@ -61,6 +61,7 @@ static uint32_t *s_pCredits[4] = { nullptr };
 constexpr auto kCredX = 1280;
 constexpr auto kCredY = 568;
 static uint32_t *s_pComatron[5] = { nullptr };
+static uint32_t* s_pSuperplek[5] = { nullptr };
 
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
@@ -207,6 +208,15 @@ bool Demo_Create()
 	s_pComatron[3] = Image_Load32("assets/credits/comatron_anim/comatron_4.png");
 	s_pComatron[4] = Image_Load32("assets/credits/comatron_anim/comatron_5.png");
 	for (auto *pImg : s_pComatron)
+		if (nullptr == pImg)
+			return false;
+
+	s_pSuperplek[0] = Image_Load32("assets/credits/animplek/animplek0.png");
+	s_pSuperplek[1] = Image_Load32("assets/credits/animplek/animplek1.png");
+	s_pSuperplek[2] = Image_Load32("assets/credits/animplek/animplek2.png");
+	s_pSuperplek[3] = Image_Load32("assets/credits/animplek/animplek3.png");
+	s_pSuperplek[4] = Image_Load32("assets/credits/animplek/animplek4.png");
+	for (auto *pImg : s_pSuperplek)
 		if (nullptr == pImg)
 			return false;
 
@@ -583,10 +593,10 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0 != iLogo)
 				{
 					const float logoBlend = clampf(0.f, 4.f, Rocket::getf(trackCreditLogoBlend));
-					if (2 == iLogo) // first one (Comatron) only (must be set likewise in Rocket sync.)
+					if (1 == iLogo || 2 == iLogo) // Superplek & Comatron (ordered after s_pCredits)
 					{
 						// credit logo blit (animated)
-						uint32_t *pCur = CreditBlend(logoBlend, s_pComatron);
+						uint32_t *pCur = CreditBlend(logoBlend, (1 == iLogo) ? s_pSuperplek : s_pComatron);
 
 						const float blurH = Rocket::getf(trackCreditLogoBlurH);
 						if (0.f != blurH)
