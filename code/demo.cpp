@@ -52,7 +52,7 @@ SyncTrack trackCloseUpMoonraker, trackCloseUpMoonrakerText, trackCloseUpMoonrake
 
 SyncTrack trackSpikeDemoLogoIndex;
 
-SyncTrack trackBloodEffectLogoBlend;
+SyncTrack trackBloodEffectLogoBlend, trackCreditLogoBlend;
 
 // --------------------
 
@@ -60,6 +60,7 @@ SyncTrack trackBloodEffectLogoBlend;
 static uint32_t *s_pCredits[4] = { nullptr };
 constexpr auto kCredX = 1280;
 constexpr auto kCredY = 568;
+static uint32_t *s_pComatron[5] = { nullptr };
 
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
@@ -184,6 +185,7 @@ bool Demo_Create()
 	trackCheapJoke = Rocket::AddTrack("demo:CheapGPU");
 
 	trackSpikeDemoLogoIndex = Rocket::AddTrack("demo:MainLogoIndex");
+	trackCreditLogoBlend = Rocket::AddTrack("demo:CreditAnimBlend");
 
 	// FIXME: this one might not belong in this file for but for compositing reasons it does
 	trackCloseUpMoonraker = Rocket::AddTrack("closeSpike:Moonraker");
@@ -196,6 +198,15 @@ bool Demo_Create()
 	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
 	s_pCredits[3] = Image_Load32("assets/credits/Credits_Tag_ErnstHot_outlined_new.png");
 	for (auto *pImg : s_pCredits)
+		if (nullptr == pImg)
+			return false;
+	
+	s_pComatron[0] = Image_Load32("assets/credits/comatron_anim/comatron_1.png");
+	s_pComatron[1] = Image_Load32("assets/credits/comatron_anim/comatron_2.png");
+	s_pComatron[2] = Image_Load32("assets/credits/comatron_anim/comatron_3.png");
+	s_pComatron[3] = Image_Load32("assets/credits/comatron_anim/comatron_4.png");
+	s_pComatron[4] = Image_Load32("assets/credits/comatron_anim/comatron_5.png");
+	for (auto *pImg : s_pComatron)
 		if (nullptr == pImg)
 			return false;
 
@@ -343,7 +354,7 @@ static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
 }
 
-// blend blood logos from zero to full ([0..4]) -- uses g_renderTarget[3]!
+// blend blood logos from zero to full ([0..3]) -- uses g_renderTarget[3]!
 static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 {
 	VIZ_ASSERT(nullptr != pLogos);
@@ -353,7 +364,7 @@ static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 	const float factor = fmodf(blend, 1.f);
 	const uint8_t iFactor = uint8_t(255.f*factor);
 
-	// we're going to do this the stupid way (and not optimize for all but the last case because it'll be a smooth transition)
+	// we're going to do this the stupid way
 	if (blend >= 0.f && blend < 1.f)
 	{
 		memcpy(pTarget, pLogos[0], kOutputBytes);
@@ -372,6 +383,46 @@ static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 	else if (blend >= 3.f)
 	{
 		return pLogos[3];
+	}
+
+	return pTarget;
+}
+
+// blend credit anim. logos from zero to full ([0..4]) -- uses g_renderTarget[3]!
+// FIXME: collapse with function above, it does exactly the same
+static uint32_t *CreditBlend(float blend, uint32_t *pLogos[5])
+{
+	VIZ_ASSERT(nullptr != pLogos);
+
+	uint32_t *pTarget = g_renderTarget[3];
+
+	const float factor = fmodf(blend, 1.f);
+	const uint8_t iFactor = uint8_t(255.f*factor);
+
+	// we're going to do this the stupid way
+	if (blend >= 0.f && blend < 1.f)
+	{
+		memcpy(pTarget, pLogos[0], kOutputBytes);
+		Mix32(pTarget, pLogos[1], kOutputSize, iFactor);	
+	}
+	else if (blend >= 1.f && blend < 2.f)
+	{
+		memcpy(pTarget, pLogos[1], kOutputBytes);
+		Mix32(pTarget, pLogos[2], kOutputSize, iFactor);	
+	}
+	else if (blend >= 2.f && blend < 3.f)
+	{
+		memcpy(pTarget, pLogos[2], kOutputBytes);
+		Mix32(pTarget, pLogos[3], kOutputSize, iFactor);	
+	}
+	else if (blend >= 3.f && blend < 4.f)
+	{
+		memcpy(pTarget, pLogos[3], kOutputBytes);
+		Mix32(pTarget, pLogos[4], kOutputSize, iFactor);	
+	}
+	else if (blend >= 4.f)
+	{
+		return pLogos[4];
 	}
 
 	return pTarget;
@@ -528,27 +579,52 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 			{
 				Plasma_Draw(pDest, timer, delta);
 
-				// credit logo blit
 				const int iLogo = clampi(0, 4, Rocket::geti(trackCreditLogo));
 				if (0 != iLogo)
 				{
-					uint32_t *pCur = s_pCredits[iLogo-1];
-
-					const float blurH = Rocket::getf(trackCreditLogoBlurH);
-					if (0.f != blurH)
+					const float logoBlend = clampf(0.f, 4.f, Rocket::getf(trackCreditLogoBlend));
+					if (2 == iLogo) // first one (Comatron) only (must be set likewise in Rocket sync.)
 					{
-						HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
-						pCur = g_renderTarget[0];
-					}
+						// credit logo blit (animated)
+						uint32_t *pCur = CreditBlend(logoBlend, s_pComatron);
 
-					const float blurV = Rocket::getf(trackCreditLogoBlurV);
-					if (0 != blurV)
+						const float blurH = Rocket::getf(trackCreditLogoBlurH);
+						if (0.f != blurH)
+						{
+							HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
+							pCur = g_renderTarget[0];
+						}
+
+						const float blurV = Rocket::getf(trackCreditLogoBlurV);
+						if (0 != blurV)
+						{
+							VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
+							pCur = g_renderTarget[0];
+						}
+
+						BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+					}
+					else
 					{
-						VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
-						pCur = g_renderTarget[0];
-					}
+						// credit logo blit (rest)
+						uint32_t *pCur = s_pCredits[iLogo-1];
 
-					BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+						const float blurH = Rocket::getf(trackCreditLogoBlurH);
+						if (0.f != blurH)
+						{
+							HorizontalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurH));
+							pCur = g_renderTarget[0];
+						}
+
+						const float blurV = Rocket::getf(trackCreditLogoBlurV);
+						if (0 != blurV)
+						{
+							VerticalBoxBlur32(g_renderTarget[0], pCur, kCredX, kCredY, BoxBlurScale(blurV));
+							pCur = g_renderTarget[0];
+						}
+
+						BlitSrc32A(pDest + ((kResY-kCredY)>>1)*kResX, pCur, kResX, kCredX, kCredY, clampf(0.f, 1.f, Rocket::getf(trackCreditLogoAlpha)));
+					}
 				}
 			}
 			break;
