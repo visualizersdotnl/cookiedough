@@ -336,7 +336,7 @@ bool Demo_Create()
 	if (nullptr == s_pRibbons)
 		return false;
 
-	// making fun of cheap competition machine
+	// making fun of competition machine
 	s_pGPUJoke = Image_Load32("assets/demo/GPU-joke.png");
 	if (nullptr == s_pGPUJoke)
 		return false;
