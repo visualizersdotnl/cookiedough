@@ -193,7 +193,7 @@ bool Demo_Create()
 	trackCloseUpMoonrakerText = Rocket::AddTrack("closeSpike:MoonrakerText");
 	trackCloseUpMoonrakerTextBlur = Rocket::AddTrack("closeSpike:MoonrakerBlur");
 
-	// load credits logos (1280x640)
+	// load credits logos (1280x568)
 	s_pCredits[0] = Image_Load32("assets/credits/Credits_Tag_Superplek_outlined.png");
 	s_pCredits[1] = Image_Load32("assets/credits/Credits_Tag_Comatron_Featuring_Celin_outlined.png");
 	s_pCredits[2] = Image_Load32("assets/credits/Credits_Tag_Jade_outlined.png");
@@ -399,7 +399,7 @@ static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 }
 
 // blend credit anim. logos from zero to full ([0..4]) -- uses g_renderTarget[3]!
-// FIXME: collapse with function above, it does exactly the same
+// FIXME: collapse with function above, it does exactly the same, except that the resolution is different
 static uint32_t *CreditBlend(float blend, uint32_t *pLogos[5])
 {
 	VIZ_ASSERT(nullptr != pLogos);
@@ -409,26 +409,29 @@ static uint32_t *CreditBlend(float blend, uint32_t *pLogos[5])
 	const float factor = fmodf(blend, 1.f);
 	const uint8_t iFactor = uint8_t(255.f*factor);
 
+	constexpr size_t kCreditImgSize = kCredX*kCredY;
+	constexpr size_t kCreditImgBytes = kCreditImgSize*sizeof(uint32_t);
+
 	// we're going to do this the stupid way
 	if (blend >= 0.f && blend < 1.f)
 	{
-		memcpy(pTarget, pLogos[0], kOutputBytes);
-		Mix32(pTarget, pLogos[1], kOutputSize, iFactor);	
+		memcpy(pTarget, pLogos[0], kCreditImgBytes);
+		Mix32(pTarget, pLogos[1], kCreditImgSize, iFactor);
 	}
 	else if (blend >= 1.f && blend < 2.f)
 	{
-		memcpy(pTarget, pLogos[1], kOutputBytes);
-		Mix32(pTarget, pLogos[2], kOutputSize, iFactor);	
+		memcpy(pTarget, pLogos[1], kCreditImgBytes);
+		Mix32(pTarget, pLogos[2], kCreditImgSize, iFactor);
 	}
 	else if (blend >= 2.f && blend < 3.f)
 	{
-		memcpy(pTarget, pLogos[2], kOutputBytes);
-		Mix32(pTarget, pLogos[3], kOutputSize, iFactor);	
+		memcpy(pTarget, pLogos[2], kCreditImgBytes);
+		Mix32(pTarget, pLogos[3], kCreditImgSize, iFactor);
 	}
 	else if (blend >= 3.f && blend < 4.f)
 	{
-		memcpy(pTarget, pLogos[3], kOutputBytes);
-		Mix32(pTarget, pLogos[4], kOutputSize, iFactor);	
+		memcpy(pTarget, pLogos[3], kCreditImgBytes);
+		Mix32(pTarget, pLogos[4], kCreditImgSize, iFactor);
 	}
 	else if (blend >= 4.f)
 	{
