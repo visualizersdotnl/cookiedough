@@ -349,28 +349,28 @@ static uint32_t *BloodBlend(float blend, uint32_t *pLogos[4])
 	VIZ_ASSERT(hullptr != pLogos);
 
 	uint32_t *pTarget = g_renderTarget[3];
+
 	const float factor = fmodf(blend, 1.f);
 	const uint8_t iFactor = uint8_t(255.f*factor);
 
 	// we're going to do this the stupid way (and not optimize for all but the last case because it'll be a smooth transition)
-	if (blend >= 0.f && blend <= 1.f)
+	if (blend >= 0.f && blend < 1.f)
 	{
 		memcpy(pTarget, pLogos[0], kOutputBytes);
 		Mix32(pTarget, pLogos[1], kOutputSize, iFactor);	
 	}
-	else if (blend > 1.f && blend <= 2.f)
+	else if (blend >= 1.f && blend < 2.f)
 	{
 		memcpy(pTarget, pLogos[1], kOutputBytes);
 		Mix32(pTarget, pLogos[2], kOutputSize, iFactor);	
 	}
-	else if (blend > 2.f && blend <= 3.f)
+	else if (blend >= 2.f && blend < 3.f)
 	{
 		memcpy(pTarget, pLogos[2], kOutputBytes);
 		Mix32(pTarget, pLogos[3], kOutputSize, iFactor);	
 	}
-	else if (blend >= 3.f)
+	else if (blend > 3.f)
 	{
-//		memcpy(pTarget, pLogos[3], kOutputBytes);
 		return pLogos[3];
 	}
 
@@ -515,8 +515,9 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 //					Excl32(pDest, g_renderTarget[0], kOutputSize);
 //				}
 
-				if (0 != Rocket::geti(trackShow1995))
-					MixOver32(pDest, BloodBlend(Rocket::getf(trackShow1995), s_pNoooN), kOutputSize);
+				const float show1995 = clampf(0.f, 3.f, Rocket::getf(trackShow1995));
+				if (show1995 > 0.f)
+					MixOver32(pDest, BloodBlend(show1995, s_pNoooN), kOutputSize);
 
 				Overlay32(pDest, s_pTunnelVignette, kOutputSize);
 			}
@@ -679,8 +680,9 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				Tunnel_Draw(pDest, timer, delta);
 				Sub32(pDest, s_pTunnelVignette2, kOutputSize);
 
-				if (0 != Rocket::geti(trackShow2006))
-					MixOver32(pDest, BloodBlend(Rocket::getf(trackShow2006), s_pMFX), kOutputSize);
+				const float show2006 = clampf(0.f, 3.f, Rocket::getf(trackShow2006));
+				if (show2006 > 0.f)
+					MixOver32(pDest, BloodBlend(show2006, s_pMFX), kOutputSize);
 			}
 			break;
 

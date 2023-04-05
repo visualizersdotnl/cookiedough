@@ -1063,12 +1063,12 @@
 		</track>
 		<track name="demo:Show1995">
 			<key row="0" value="0" interpolation="0"/>
-			<key row="4184" value="0" interpolation="2"/>
-			<key row="4200" value="2" interpolation="2"/>
-			<key row="4208" value="4" interpolation="0"/>
+			<key row="4184" value="0" interpolation="1"/>
+			<key row="4208" value="2" interpolation="3"/>
+			<key row="4216" value="3" interpolation="0"/>
+			<key row="4448" value="0" interpolation="0"/>
 			<key row="4584" value="0" interpolation="0"/>
-			<key row="4704" value="3" interpolation="2"/>
-			<key row="4720" value="4" interpolation="0"/>
+			<key row="4704" value="3" interpolation="0"/>
 		</track>
 		<track name="demo:LensDirt">
 			<key row="0" value="0" interpolation="0"/>
@@ -1076,9 +1076,14 @@
 		</track>
 		<track name="demo:Show2006">
 			<key row="0" value="0" interpolation="0"/>
-			<key row="4976" value="0" interpolation="2"/>
-			<key row="4992" value="2" interpolation="2"/>
-			<key row="5008" value="4" interpolation="0"/>
+			<key row="4184" value="0" interpolation="0"/>
+			<key row="4448" value="0" interpolation="0"/>
+			<key row="4584" value="0" interpolation="0"/>
+			<key row="4704" value="0" interpolation="0"/>
+			<key row="4976" value="0" interpolation="1"/>
+			<key row="5000" value="1" interpolation="0"/>
+			<key row="5056" value="1" interpolation="2"/>
+			<key row="5104" value="3" interpolation="0"/>
 			<key row="5224" value="4" interpolation="2"/>
 			<key row="5240" value="3" interpolation="0"/>
 		</track>
