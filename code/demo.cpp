@@ -61,7 +61,9 @@ static uint32_t *s_pCredits[4] = { nullptr };
 constexpr auto kCredX = 1280;
 constexpr auto kCredY = 568;
 static uint32_t *s_pComatron[5] = { nullptr };
-static uint32_t* s_pSuperplek[5] = { nullptr };
+static uint32_t *s_pSuperplek[5] = { nullptr };
+static uint32_t *s_pJadeNytrik[5] = { nullptr };
+static uint32_t *s_pErnstHot[5] = { nullptr }; 
 
 // vignette re-used (TPB-06)
 static uint32_t *s_pVignette06 = nullptr;
@@ -217,6 +219,24 @@ bool Demo_Create()
 	s_pSuperplek[3] = Image_Load32("assets/credits/animplek/animplek3.png");
 	s_pSuperplek[4] = Image_Load32("assets/credits/animplek/animplek4.png");
 	for (auto *pImg : s_pSuperplek)
+		if (nullptr == pImg)
+			return false;
+
+	s_pJadeNytrik[0] = Image_Load32("assets/credits/jade&nytrik/jade&nytrik0.png");
+	s_pJadeNytrik[1] = Image_Load32("assets/credits/jade&nytrik/jade&nytrik1.png");
+	s_pJadeNytrik[2] = Image_Load32("assets/credits/jade&nytrik/jade&nytrik2.png");
+	s_pJadeNytrik[3] = Image_Load32("assets/credits/jade&nytrik/jade&nytrik3.png");
+	s_pJadeNytrik[4] = Image_Load32("assets/credits/jade&nytrik/jade&nytrik4.png");
+	for (auto *pImg : s_pJadeNytrik)
+		if (nullptr == pImg)
+			return false;
+
+	s_pErnstHot[0] = Image_Load32("assets/credits/animhot0/animhot0.png");
+	s_pErnstHot[1] = Image_Load32("assets/credits/animhot0/animhot1.png");
+	s_pErnstHot[2] = Image_Load32("assets/credits/animhot0/animhot2.png");
+	s_pErnstHot[3] = Image_Load32("assets/credits/animhot0/animhot3.png");
+	s_pErnstHot[4] = Image_Load32("assets/credits/animhot0/animhot4.png");
+	for (auto *pImg : s_pErnstHot)
 		if (nullptr == pImg)
 			return false;
 
@@ -596,10 +616,34 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				if (0 != iLogo)
 				{
 					const float logoBlend = clampf(0.f, 4.f, Rocket::getf(trackCreditLogoBlend));
-					if (1 == iLogo || 2 == iLogo) // Superplek & Comatron (ordered after s_pCredits)
+					if (true) // (1 == iLogo || 2 == iLogo) // Superplek & Comatron (ordered after s_pCredits)
 					{
+						uint32_t **pLogos;
+						switch (iLogo-1) // again, ordered after s_pCredits
+						{
+						case 0:
+							pLogos = s_pSuperplek;
+							break;
+
+						case 1:
+							pLogos = s_pComatron;
+							break;
+
+						case 2:
+							pLogos = s_pJadeNytrik;
+							break;
+
+						case 3:
+							pLogos = s_pErnstHot;
+							break;
+
+						default:
+							pLogos = nullptr;
+							VIZ_ASSERT(false);
+						}
+
 						// credit logo blit (animated)
-						uint32_t *pCur = CreditBlend(logoBlend, (1 == iLogo) ? s_pSuperplek : s_pComatron);
+						uint32_t *pCur = CreditBlend(logoBlend, pLogos);
 
 						const float blurH = Rocket::getf(trackCreditLogoBlurH);
 						if (0.f != blurH)
