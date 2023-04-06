@@ -2,4 +2,4 @@
 - entry type: PC demo
 - group: Bypass ft. The Pimp Brigade
 - entry name: ARRESTED DEVELOPMENT
-- beamslide text: Has it been 9 years already since the last one? Anyway, no GPU required, also don't press ESC we'll exit quick enough. Rest in peace Michiel, this one is for you.
+- beamslide text: Has it been 9 years already since the last one? Anyway, no GPU required - also don't press ESC we'll exit quickly. Rest in peace Michiel, this one is for you.

@@ -678,6 +678,14 @@
 			<key value="2" row="8120" interpolation="1"/>
 			<key value="8" row="8152" interpolation="0"/>
 		</track>
+		<track name="sinusesTunnel:Hue">
+			<key value="0" row="0" interpolation="0"/>
+			<key value="44" row="7336" interpolation="0"/>
+		</track>
+		<track name="sinusesTunnel:Desaturation">
+			<key value="0" row="0" interpolation="0"/>
+			<key value="-2" row="7336" interpolation="0"/>
+		</track>
 		<track name="plasma:Speed">
 			<key value="1.33" row="2096" interpolation="0"/>
 			<key value="1.33" row="2158" interpolation="0"/>

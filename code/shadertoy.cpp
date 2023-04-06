@@ -67,6 +67,7 @@ SyncTrack trackSinusesRoll;
 SyncTrack trackSinusesSpeed;
 SyncTrack trackSinusesOffsX;
 SyncTrack trackSinusesGamma;
+SyncTrack trackSinusesHue, trackSinusesDesat;
 
 // Plasma sync.:
 SyncTrack trackPlasmaSpeed;
@@ -144,6 +145,8 @@ bool Shadertoy_Create()
 	trackSinusesSpeed = Rocket::AddTrack("sinusesTunnel:Speed");
 	trackSinusesOffsX = Rocket::AddTrack("sinusesTunnel:OffsX");
 	trackSinusesGamma = Rocket::AddTrack("sinusesTunnel:Gamma");
+	trackSinusesHue = Rocket::AddTrack("sinusesTunnel:Hue");
+	trackSinusesDesat = Rocket::AddTrack("sinusesTunnel:Desaturation");
 
 	// Plasma:
 	trackPlasmaSpeed = Rocket::AddTrack("plasma:Speed");
@@ -902,10 +905,17 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 	const float speed = Rocket::getf(trackSinusesSpeed);
 	const float offsX = Rocket::getf(trackSinusesOffsX);
 	const float gamma = Rocket::getf(trackSinusesGamma);
+	const float hue = Rocket::getf(trackSinusesHue);
+	const float desaturation = Rocket::getf(trackSinusesDesat);
+
 	constexpr float fog = 0.03f; // (FIXME: was 0.224f, parametrize!)
 
 	// teal like color (preferred)
-	const Vector3 diffColor(0.623529f, 0.5686274f, 0.f);
+//	const Vector3 diffColor(0.623529f, 0.5686274f, 0.f);
+
+	// Nytrik wants colors!
+	const Vector3 colorization = Shadertoy::MichielPal(hue);
+	const __m128 diffColor = Shadertoy::Desaturate(colorization, desaturation);
 
 	// gold-ish color
 //	const Vector3 diffColor(0.15f, 0.6f, 0.8f);
