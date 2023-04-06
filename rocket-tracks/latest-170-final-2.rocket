@@ -669,22 +669,27 @@
 		</track>
 		<track name="sinusesTunnel:Gamma">
 			<key value="2" row="0" interpolation="0"/>
-			<key value="4" row="7336" interpolation="1"/>
-			<key value="8" row="7440" interpolation="0"/>
-			<key value="8" row="7592" interpolation="0"/>
-			<key value="8" row="7864" interpolation="1"/>
+			<key value="1" row="7336" interpolation="1"/>
+			<key value="3.14" row="7440" interpolation="0"/>
+			<key value="3.14" row="7592" interpolation="3"/>
+			<key value="1" row="7864" interpolation="1"/>
 			<key value="2" row="7895" interpolation="1"/>
 			<key value="8" row="7960" interpolation="1"/>
-			<key value="2" row="8120" interpolation="1"/>
-			<key value="8" row="8152" interpolation="0"/>
+			<key value="2.14" row="8120" interpolation="2"/>
+			<key value="2.24" row="8152" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Hue">
 			<key value="0" row="0" interpolation="0"/>
-			<key value="44" row="7336" interpolation="0"/>
+			<key value="26" row="7336" interpolation="0"/>
 		</track>
 		<track name="sinusesTunnel:Desaturation">
 			<key value="0" row="0" interpolation="0"/>
-			<key value="-2" row="7336" interpolation="0"/>
+			<key value="0" row="7336" interpolation="0"/>
+			<key value="0" row="7440" interpolation="3"/>
+			<key value="-1.5" row="7568" interpolation="1"/>
+			<key value="0" row="7592" interpolation="0"/>
+			<key value="-0.5" row="7864" interpolation="0"/>
+			<key value="-0.6" row="8120" interpolation="0"/>
 		</track>
 		<track name="plasma:Speed">
 			<key value="1.33" row="2096" interpolation="0"/>
