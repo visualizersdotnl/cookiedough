@@ -1056,8 +1056,8 @@
 			<key value="1" row="2612" interpolation="2"/>
 			<key value="33" row="2615" interpolation="0"/>
 			<key value="0" row="2616" interpolation="0"/>
-			<key value="0" row="2876" interpolation="1"/>
-			<key value="16" row="2880" interpolation="2"/>
+			<key value="0" row="2872" interpolation="2"/>
+			<key value="24" row="2880" interpolation="3"/>
 			<key value="0" row="2896" interpolation="0"/>
 			<key value="0" row="3062" interpolation="3"/>
 			<key value="16" row="3136" interpolation="0"/>
@@ -1374,16 +1374,17 @@
 			<key value="0" row="2348" interpolation="3"/>
 			<key value="4" row="2352" interpolation="0"/>
 			<key value="4" row="2360" interpolation="2"/>
-			<key value="0" row="2365" interpolation="0"/>
+			<key value="0" row="2368" interpolation="0"/>
 			<key value="0" row="2612" interpolation="2"/>
 			<key value="1" row="2615" interpolation="0"/>
 			<key value="4" row="2616" interpolation="3"/>
 			<key value="0" row="2629" interpolation="0"/>
 			<key value="0" row="2876" interpolation="2"/>
-			<key value="3" row="2880" interpolation="2"/>
-			<key value="0" row="2884" interpolation="0"/>
-			<key value="0" row="3104" interpolation="3"/>
-			<key value="2.5" row="3120" interpolation="3"/>
+			<key value="4" row="2880" interpolation="2"/>
+			<key value="2" row="2884" interpolation="3"/>
+			<key value="0" row="2888" interpolation="0"/>
+			<key value="0" row="3104" interpolation="2"/>
+			<key value="2" row="3120" interpolation="3"/>
 			<key value="4" row="3132" interpolation="0"/>
 		</track>
 		<track name="shootingStar:Enabled">

@@ -943,7 +943,7 @@ static void RenderSinMap_2x2(uint32_t *pDest, float time)
 
 				float march = 1.f, total = 0.f;
 				for (int iStep = 0; march > 0.01f && iStep < 32; ++iStep)
-				{
+				{	
 					hit.x = origin.x + direction.x*total;
 					hit.y = origin.y + direction.y*total;
 					hit.z = origin.z + direction.z*total;
@@ -987,7 +987,7 @@ void Sinuses_Draw(uint32_t *pDest, float time, float delta)
 
 //
 // Prototype for 'Aura for Laura' cosine grid shader.
-// Preferably to be finished by a certain mr. Ernst Hot.
+// Preferably to be finished by a certain mr. Ernst Hot (but that didn't happen and we went into a totally different direction).
 //
 // In the end it ended up nothing like it, right now it's more like weird speaker design gone wrong.
 // Best viewed with values like 1.0, 0.2, 0.2, 0.1 respectively, for example.
