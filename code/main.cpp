@@ -182,7 +182,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// change path to target root
 #if !defined(CMAKE_BUILD)	
 	// probably Windows
-    std::filesystem::current_path("../");
+    std::filesystem::current_path("..");
 #else
     std::filesystem::current_path("../target");
 #endif
