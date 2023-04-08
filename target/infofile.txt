@@ -39,7 +39,7 @@ advisory board / additional:
   + raimo (boy wonder, don't ask)
 
 thank you / licensing / copyright bits:
-  + free to use (usually MIT license) library makers of all kinds (GNU Rocket, SDL2, BASS, SSE2NEON, visualizers.nl/njdewit technologies, TinyMT authors)
+  + free to use (MIT/CC or comparable license) libraries of all kinds (OpenMP, GNU Rocket, SDL2, BASS, SSE2NEON, visualizers.nl/njdewit technologies (my own company), TinyMT)
   + some textures come from previous The Pimp Brigade productions and are entirely ours to use
   + all NASA space travel commmunications samples come from NASA's website and fall under the Creative Commons license
   + vocals (by Celin) are 100% original and ours
