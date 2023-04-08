@@ -1,7 +1,0 @@
-FX Stacking from Bottom --> Top
-
-- BG / Effects ( render )
-- Greetings_Part1_BG_overlay.png ( Blendmode: Darken, Opacity: 50% )
-	- Greetings_Part2_BG_overlay.png ( Blendmode: Darken, Opacity: 50% ) ( time offset )
-- Bokeh_Lens_Dirt_51.png ( Blendmode: Softlight, Opacity 100% )
-- Vignette_CoolFilmLook.png ( Blendmode: Overlay, Opacity 100% )

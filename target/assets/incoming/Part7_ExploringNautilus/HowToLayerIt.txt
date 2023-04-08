@@ -1,8 +1,0 @@
-FX Stacking from Bottom --> Top
-
-- BG / Effects ( render )
-- Vignette.png ( Blendmode: Softlight )
-- GlassDirt_Distorted2.png ( Blendmode: Softlight )
-- JacquesCousteau1_Silhoette_RimMask ( Blendmode: Overlay )
-- JacquesCousteau1_Silhoette_ ( Blendmode: Normal )
-- JacquesCousteau_Text.png ( Blendmode: Normal )
