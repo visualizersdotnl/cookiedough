@@ -3,7 +3,7 @@
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro
 (demoscene) graphical effects. 
 
-CURRENT PROJECT BEING MADE W/IT: Revision 2023 demo, "Arrested development" by Bypass
+CURRENT PROJECT BEING MADE W/IT: Revision 2023 demo, "Arrested development" by Bypass - clean up planned afterwards.
 
 Supported platforms:
 - Win64/x64
@@ -29,7 +29,3 @@ the use of C++ mostly but it will be an 'as we go' process. It started as a pure
 
 Check /code/main.cpp for a list of third party libraries used and some more useful hints.
 
-** Has content from Comanche (videogame by Novalogic in the early 1990s).  
-** Has content from The Non-stop Ibiza Experience (demoscene, Orange).
-
-Said content will not be spread in the form of a release.
