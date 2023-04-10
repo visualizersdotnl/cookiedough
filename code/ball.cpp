@@ -276,8 +276,7 @@ static void vball_ray_no_beams(uint32_t *pDest, int curX, int curY, int dX, int 
 		lastColor = color;
 	}
 
-	while (lastDrawnHeight < kTargetResX)
-		pDest[lastDrawnHeight++] = 0;
+	// remainder cleared by earlier memset32()
 }
 
 static void vball_precalc()
@@ -323,29 +322,45 @@ static void vball(uint32_t *pDest, float time)
 
 	// select if has beams
 	void (*vball_ray_fn)(uint32_t *, int, int, int, int);
-	vball_ray_fn = Rocket::geti(trackBallHasBeams) != 0 ? &vball_ray_beams : &vball_ray_no_beams;
+	const bool hasBeams = Rocket::geti(trackBallHasBeams) != 0;
+	vball_ray_fn = hasBeams? &vball_ray_beams : &vball_ray_no_beams;
 
 	// move ray origin to fake hacky rotation 
 	const float timeScale = s_curRayLength*(0.25f/kMaxRayLength);
 	const float fMapDim = float(kMapSize);
 	const float fMapHalf = fMapDim*0.5f;
-	const int fromX = ftofp24(fMapDim*cosf(time*timeScale) + fMapHalf + Rocket::getf(trackBallRotateOffsX));
-	const int fromY = ftofp24(fMapDim*sinf(time*timeScale) + fMapHalf + Rocket::getf(trackBallRotateOffsY));
+	const int fromX = ftofp24(fMapDim*sinf(time*timeScale) + fMapHalf + Rocket::getf(trackBallRotateOffsX));
+	const int fromY = ftofp24(fMapDim*cosf(time*timeScale) + fMapHalf + Rocket::getf(trackBallRotateOffsY));
 
 	// FOV (full circle)
-	constexpr float fovAngle = kPI*2.f;
+	constexpr float fovAngle = k2PI;
 	constexpr float delta = fovAngle/(kTargetResY-1);
-//	float curAngle = 0.f;
 
 	// cast rays
-	#pragma omp parallel for schedule(static)
-	for (int iRay = 0; iRay < kTargetResY; ++iRay)
+	if (false == hasBeams)
 	{
-		float curAngle = iRay*delta;
-		float dX, dY;
-		voxel::calc_fandeltas(curAngle, dX, dY);
-		vball_ray_fn(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
-//		curAngle += delta;
+		// FIXME: temporary release fix: no threading and erase buffer first, that "fixes" a glitch bug
+		memset32(pDest, 0, kTargetSize);
+//		#pragma omp parallel for schedule(static)
+		for (int iRay = 0; iRay < kTargetResY; ++iRay)
+		{
+			const float curAngle = iRay*delta;
+			float dX, dY;
+			voxel::calc_fandeltas(curAngle, dX, dY);
+			vball_ray_fn(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
+		}
+	}
+	else
+	{
+		// FIXME: beam version works glitchless?
+		#pragma omp parallel for schedule(static)
+		for (int iRay = 0; iRay < kTargetResY; ++iRay)
+		{
+			const float curAngle = iRay*delta;
+			float dX, dY;
+			voxel::calc_fandeltas(curAngle, dX, dY);
+			vball_ray_fn(pDest + iRay*kTargetResX, fromX, fromY, ftofp24(dX), ftofp24(dY));
+		}
 	}
 }
 
