@@ -5,7 +5,7 @@
                     _/_  \_ \/\__/   \_\_  \/  __\/  __\
                    /  / _/  /  /  /  / __  /\__ \/\__ \
                   /  _  /  /  /  ___/  /  /  /  /  /  /
-                  �\___/�\_  /�\/   �\___/�\___/�\___/dip!
+                  �\___/�\_  /�\/   �\___/�\___/�\___/
       :                  /__/                                         .
       �:.                    a BYPASS PC release                      :
      -�--- -             -   -  - -- --�-- - ---�-- -  -   -      - --�-
@@ -15,7 +15,7 @@ a retrosexual multimedia demonstration in co-operation with TPB,
 called 'ARRESTED DEVELOPMENT', created for Revision 2023
 
 system req.:
-  + semi-recent CPU with SSE4 and/or NEON (runs on a MacBook Air M2, but please throw all you have at it!)
+  + semi-recent CPU *with* SSE4 and/or NEON (runs on a MacBook Air M2, but please throw all you have at it!)
   + for Intel go to '/x64' (working directory) and run 'VS17.exe' from that directory -- OSX Silicon/Intel/Linux version will be released soon, please give us a few days!
   + takes 3 to 5 seconds to start, also don't press escape when the music stops!
   + 100% software rendering, no noteworthy GPU required
@@ -36,7 +36,6 @@ advisory board / additional:
   + sh0ck/disaster area for his patience and help with the OSX Intel build
   + thec (ideas, support, catering, trigger finger training)
   + dascon (networking)
-  + dipswitch for the beauty on top of this file
   + raimo (boy wonder, don't ask)
 
 thank you / licensing / copyright bits:
