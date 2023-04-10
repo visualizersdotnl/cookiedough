@@ -16,7 +16,8 @@ called 'ARRESTED DEVELOPMENT', created for Revision 2023
 
 system req.:
   + semi-recent CPU with SSE4 and/or NEON (runs on a MacBook Air M2, but please throw all you have at it!)
-  + for Intel go to '/x64' (working directory) and run 'VS17_fullscreen.exe' from that directory (OSX Silicon/Intel & Linux version will be released soon, please give us a few days)
+  + for Intel go to '/x64' (working directory) and run 'VS17.exe' from that directory -- OSX Silicon/Intel/Linux version will be released soon, please give us a few days!
+  + takes 3 to 5 seconds to start, also don't press escape when the music stops!
   + 100% software rendering, no noteworthy GPU required
   + uses default audio device
   + uses max. 500MB RAM and no disk space is allocated during playback
