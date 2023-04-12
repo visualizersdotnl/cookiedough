@@ -1,21 +1,6 @@
 
-/*
-	:                                                               :
-	-÷---- - -÷- -  -   -                              - --÷-- - ----÷-
-	:                                                             ·:¦
-	.               ______      ___  ____  ____  ____               :
-				_/_  \_ \/\__/   \_\_  \/  __\/  __\
-				/  / _/  /  /  /  / __  /\__ \/\__ \
-				/  _  /  /  /  ___/  /  /  /  /  /  /
-				¯\___/¯\_  /¯\/   ¯\___/¯\___/¯\___/zS!
-	:                  /__/                                         .
-	¦:.                                                             :
-	-÷--- -             -   -  - -- --÷-- - ---÷-- -  -   -      - --÷-
-	:             BYPASS presents 'Arrested Development'            :
-	:        a retrosexual promotion in co-operation with TPB       :
-*/
-
 // codename: cookiedough (2009-2023)
+// release: Arrested Development by Bypass ft. TPB @ Revision 2023
 // property of njdewit technologies & visualizers.nl (http://www.visualizers.nl)
 
 // this codebase was started as a simple experiment and doesn't have much to show for
@@ -23,6 +8,8 @@
 
 // also, ramping up to Revision 2023, there will be bits and pieces that are just plain
 // sloppy, so it is for making demoscene productions, I suppose :)
+
+// competition version was 1080p, consumer grade version is 720p
 
 // OSX build:
 // - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
@@ -109,7 +96,7 @@
 
 const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = true;
+constexpr bool kFullScreen = false;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
