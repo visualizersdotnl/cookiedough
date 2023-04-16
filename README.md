@@ -3,12 +3,13 @@
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro
 (demoscene) graphical effects. 
 
-CURRENT PROJECT BEING MADE W/IT: Revision 2023 demo, "Arrested development" by Bypass - clean up planned afterwards.
+WARNING 1: current project being made is Revision 2023 demo, "Arrested development" by Bypass - clean up planned afterwards.
+WARNING 2: OSX build files aren't necessarily easy to get to work; read through 'main.cpp' and follow the crumbs, I'll fix that when I've got time (see issue list).
 
 Supported platforms:
-- Win64/x64
-- OSX/x64
-- OSX/Silicon
+- Win64/x64 (compiles out of the box with MSVC 2019 or higher)
+- OSX/x64 (compiles with effort)
+- OSX/Silicon (should compile with little effort)
 
 It shall henceforth be reffered to as 'cocktails with Kurt Bevacqua' (https://en.wikipedia.org/wiki/Kurt_Bevacqua).
 
