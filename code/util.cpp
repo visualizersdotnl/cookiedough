@@ -82,6 +82,32 @@ void memset32(void *pDest, uint32_t value, size_t numInts)
 
 #endif
 
+// FIXME: first naive nearest-neighbour implementation (only zooms in, extend with rotation and tiling (zoom out) later)
+void Zoom32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float scale)
+{
+	VIZ_ASSERT(scale <= 1.f);
+
+	const auto sOffsY = (yRes-(yRes*scale))/2.f;
+	const auto sOffsX = (xRes-(xRes*scale))/2.f;
+
+	for (int iY = 0; iY < int(yRes); ++iY)
+	{
+		const auto sY = sOffsY + iY*scale;
+
+		for (unsigned iX = 0; iX < xRes; ++iX)
+		{
+			const auto sX = sOffsX + iX*scale;
+
+			// calc. read & write indices
+			const auto sIndex = unsigned(sY*xRes + sX);
+			const auto wIndex = iY*xRes + iX;
+
+			const auto pixel = pSrc[sIndex];
+			pDest[wIndex] = pixel;
+		}
+	}
+}
+
 void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned int numPixels, uint8_t alpha)
 {
 	const __m128i zero = _mm_setzero_si128();

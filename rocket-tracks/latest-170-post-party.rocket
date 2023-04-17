@@ -1,0 +1,1493 @@
+<sync rows="11000">
+	<tracks>
+		<track name="demo:quit">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="10479" value="1"/>
+			<key interpolation="0" row="10544" value="1"/>
+		</track>
+		<track name="demo:Effect">
+			<key interpolation="0" row="0" value="2"/>
+			<key interpolation="0" row="1048" value="3"/>
+			<key interpolation="0" row="1992" value="1"/>
+			<key interpolation="0" row="2024" value="3"/>
+			<key interpolation="0" row="2096" value="5"/>
+			<key interpolation="0" row="2123" value="5"/>
+			<key interpolation="0" row="3144" value="8"/>
+			<key interpolation="0" row="4184" value="4"/>
+			<key interpolation="0" row="4448" value="9"/>
+			<key interpolation="0" row="4584" value="4"/>
+			<key interpolation="0" row="4704" value="4"/>
+			<key interpolation="0" row="4976" value="9"/>
+			<key interpolation="0" row="5240" value="6"/>
+			<key interpolation="0" row="6288" value="7"/>
+			<key interpolation="0" row="7336" value="10"/>
+			<key interpolation="0" row="8384" value="11"/>
+			<key interpolation="0" row="9407" value="12"/>
+			<key interpolation="0" row="9895" value="13"/>
+		</track>
+		<track name="demo:FadeToBlack">
+			<key interpolation="2" row="0" value="1"/>
+			<key interpolation="0" row="1048" value="0"/>
+			<key interpolation="3" row="1152" value="1"/>
+			<key interpolation="0" row="1168" value="0"/>
+			<key interpolation="2" row="1208" value="1"/>
+			<key interpolation="0" row="1224" value="0"/>
+			<key interpolation="3" row="1312" value="1"/>
+			<key interpolation="0" row="1320" value="0"/>
+			<key interpolation="2" row="1360" value="0"/>
+			<key interpolation="3" row="1376" value="0.628"/>
+			<key interpolation="0" row="1392" value="0.33"/>
+			<key interpolation="2" row="1400" value="0.66"/>
+			<key interpolation="0" row="1408" value="0"/>
+			<key interpolation="3" row="1472" value="0.628"/>
+			<key interpolation="0" row="1487" value="0"/>
+			<key interpolation="1" row="1544" value="1"/>
+			<key interpolation="0" row="1552" value="0"/>
+			<key interpolation="1" row="1668" value="0"/>
+			<key interpolation="3" row="1672" value="1"/>
+			<key interpolation="0" row="1696" value="0"/>
+			<key interpolation="3" row="1776" value="1"/>
+			<key interpolation="0" row="1784" value="0"/>
+			<key interpolation="3" row="1832" value="0.33"/>
+			<key interpolation="0" row="1840" value="0"/>
+			<key interpolation="3" row="1952" value="0"/>
+			<key interpolation="3" row="1992" value="0.5"/>
+			<key interpolation="3" row="2016" value="0"/>
+			<key interpolation="3" row="2064" value="0.33"/>
+			<key interpolation="0" row="2078" value="0"/>
+			<key interpolation="0" row="2096" value="0"/>
+			<key interpolation="2" row="2616" value="1"/>
+			<key interpolation="0" row="2672" value="0"/>
+			<key interpolation="2" row="3248" value="0.5"/>
+			<key interpolation="0" row="3272" value="0"/>
+			<key interpolation="3" row="3392" value="0.5"/>
+			<key interpolation="3" row="3408" value="0.8"/>
+			<key interpolation="0" row="3432" value="0"/>
+			<key interpolation="2" row="3536" value="0.5"/>
+			<key interpolation="3" row="3552" value="0.8"/>
+			<key interpolation="0" row="3568" value="0"/>
+			<key interpolation="2" row="3936" value="0.5"/>
+			<key interpolation="0" row="4055" value="0"/>
+			<key interpolation="3" row="4056" value="0.5"/>
+			<key interpolation="0" row="4096" value="0"/>
+			<key interpolation="2" row="4184" value="0.33"/>
+			<key interpolation="0" row="4312" value="0"/>
+			<key interpolation="2" row="4568" value="0"/>
+			<key interpolation="2" row="4584" value="1"/>
+			<key interpolation="0" row="4600" value="0"/>
+			<key interpolation="3" row="4680" value="0"/>
+			<key interpolation="3" row="4704" value="1"/>
+			<key interpolation="0" row="4736" value="0"/>
+			<key interpolation="3" row="4936" value="0"/>
+			<key interpolation="3" row="4976" value="1"/>
+			<key interpolation="0" row="5000" value="0"/>
+			<key interpolation="3" row="5376" value="0.1"/>
+			<key interpolation="0" row="5384" value="0"/>
+			<key interpolation="3" row="5496" value="0"/>
+			<key interpolation="3" row="5504" value="0.9"/>
+			<key interpolation="0" row="5520" value="0"/>
+			<key interpolation="3" row="5632" value="0.33"/>
+			<key interpolation="0" row="5656" value="0"/>
+			<key interpolation="3" row="5760" value="1"/>
+			<key interpolation="0" row="5776" value="0"/>
+			<key interpolation="3" row="5896" value="0.33"/>
+			<key interpolation="0" row="5920" value="0"/>
+			<key interpolation="3" row="6160" value="0"/>
+			<key interpolation="0" row="6287" value="0.66"/>
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="1" row="6464" value="0"/>
+			<key interpolation="3" row="6472" value="0.33"/>
+			<key interpolation="0" row="6543" value="0"/>
+			<key interpolation="0" row="6544" value="0"/>
+			<key interpolation="3" row="6992" value="0"/>
+			<key interpolation="0" row="7071" value="0.66"/>
+			<key interpolation="0" row="7072" value="0"/>
+			<key interpolation="2" row="7296" value="0"/>
+			<key interpolation="3" row="7320" value="0.5"/>
+			<key interpolation="0" row="7328" value="0"/>
+			<key interpolation="3" row="7592" value="1"/>
+			<key interpolation="0" row="7624" value="0"/>
+			<key interpolation="2" row="8120" value="0"/>
+			<key interpolation="3" row="8128" value="0.77"/>
+			<key interpolation="0" row="8152" value="0"/>
+			<key interpolation="3" row="8328" value="0"/>
+			<key interpolation="2" row="8376" value="0.5"/>
+			<key interpolation="3" row="8384" value="1"/>
+			<key interpolation="0" row="8400" value="0"/>
+			<key interpolation="2" row="8808" value="0"/>
+			<key interpolation="2" row="8880" value="1"/>
+			<key interpolation="0" row="8904" value="0"/>
+			<key interpolation="3" row="9407" value="0.5"/>
+			<key interpolation="0" row="9424" value="0"/>
+			<key interpolation="3" row="9744" value="0"/>
+			<key interpolation="3" row="9895" value="1"/>
+			<key interpolation="0" row="9904" value="0"/>
+			<key interpolation="3" row="10000" value="0"/>
+			<key interpolation="0" row="10303" value="1"/>
+			<key interpolation="0" row="10304" value="0"/>
+		</track>
+		<track name="demo:FadeToWhite">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="490" value="0"/>
+			<key interpolation="2" row="502" value="0.66"/>
+			<key interpolation="0" row="520" value="0"/>
+			<key interpolation="3" row="1048" value="1"/>
+			<key interpolation="1" row="1072" value="0.5"/>
+			<key interpolation="0" row="1080" value="0"/>
+			<key interpolation="1" row="1088" value="0.66"/>
+			<key interpolation="0" row="1096" value="0"/>
+			<key interpolation="3" row="1104" value="1"/>
+			<key interpolation="0" row="1128" value="0"/>
+			<key interpolation="3" row="1296" value="0.66"/>
+			<key interpolation="0" row="1312" value="0"/>
+			<key interpolation="3" row="1416" value="0.66"/>
+			<key interpolation="0" row="1432" value="0"/>
+			<key interpolation="3" row="1488" value="0.88"/>
+			<key interpolation="0" row="1504" value="0"/>
+			<key interpolation="2" row="1552" value="1"/>
+			<key interpolation="0" row="1584" value="0"/>
+			<key interpolation="3" row="1632" value="0.628"/>
+			<key interpolation="0" row="1640" value="0"/>
+			<key interpolation="3" row="1656" value="1"/>
+			<key interpolation="0" row="1672" value="0"/>
+			<key interpolation="3" row="1736" value="1"/>
+			<key interpolation="0" row="1744" value="0"/>
+			<key interpolation="1" row="1816" value="0"/>
+			<key interpolation="2" row="1824" value="0.66"/>
+			<key interpolation="0" row="1831" value="0"/>
+			<key interpolation="3" row="1936" value="1"/>
+			<key interpolation="0" row="1952" value="0"/>
+			<key interpolation="3" row="2024" value="1"/>
+			<key interpolation="0" row="2032" value="0"/>
+			<key interpolation="2" row="2064" value="0"/>
+			<key interpolation="3" row="2088" value="0.1"/>
+			<key interpolation="0" row="2095" value="0.66"/>
+			<key interpolation="0" row="2096" value="0"/>
+			<key interpolation="3" row="2612" value="0.628"/>
+			<key interpolation="0" row="2616" value="0"/>
+			<key interpolation="1" row="3128" value="0"/>
+			<key interpolation="1" row="3144" value="1"/>
+			<key interpolation="0" row="3160" value="0"/>
+			<key interpolation="2" row="3768" value="0"/>
+			<key interpolation="3" row="3784" value="0.6"/>
+			<key interpolation="0" row="3816" value="0"/>
+			<key interpolation="2" row="3897" value="0"/>
+			<key interpolation="2" row="3912" value="0.44"/>
+			<key interpolation="0" row="3936" value="0"/>
+			<key interpolation="1" row="4168" value="0"/>
+			<key interpolation="1" row="4184" value="1"/>
+			<key interpolation="0" row="4192" value="0"/>
+			<key interpolation="1" row="4432" value="0"/>
+			<key interpolation="1" row="4448" value="1"/>
+			<key interpolation="0" row="4464" value="0"/>
+			<key interpolation="3" row="5192" value="0"/>
+			<key interpolation="1" row="5239" value="1"/>
+			<key interpolation="0" row="5256" value="0"/>
+			<key interpolation="3" row="6024" value="1"/>
+			<key interpolation="0" row="6056" value="0"/>
+			<key interpolation="1" row="6272" value="0"/>
+			<key interpolation="3" row="6288" value="0.5"/>
+			<key interpolation="0" row="6304" value="0"/>
+			<key interpolation="3" row="6544" value="1"/>
+			<key interpolation="0" row="6576" value="0"/>
+			<key interpolation="0" row="6679" value="0"/>
+			<key interpolation="1" row="6680" value="1"/>
+			<key interpolation="3" row="6704" value="0.33"/>
+			<key interpolation="3" row="6792" value="0.5"/>
+			<key interpolation="2" row="6808" value="1"/>
+			<key interpolation="0" row="6840" value="0"/>
+			<key interpolation="0" row="6992" value="0"/>
+			<key interpolation="2" row="7064" value="0"/>
+			<key interpolation="3" row="7072" value="1"/>
+			<key interpolation="0" row="7104" value="0"/>
+			<key interpolation="3" row="7328" value="0"/>
+			<key interpolation="2" row="7336" value="1"/>
+			<key interpolation="0" row="7360" value="0"/>
+			<key interpolation="3" row="7600" value="1"/>
+			<key interpolation="0" row="7624" value="0"/>
+			<key interpolation="3" row="7864" value="0.77"/>
+			<key interpolation="0" row="7888" value="0"/>
+			<key interpolation="2" row="9200" value="0.88"/>
+			<key interpolation="0" row="9232" value="0"/>
+			<key interpolation="2" row="9360" value="0"/>
+			<key interpolation="0" row="9406" value="1"/>
+			<key interpolation="0" row="9407" value="0"/>
+		</track>
+		<track name="demo:CreditLogo">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="2096" value="2"/>
+			<key interpolation="0" row="2360" value="4"/>
+			<key interpolation="0" row="2616" value="3"/>
+			<key interpolation="0" row="2880" value="1"/>
+			<key interpolation="0" row="3144" value="0"/>
+		</track>
+		<track name="demo:CreditLogoAlpha">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="2096" value="0.5"/>
+			<key interpolation="0" row="2120" value="1"/>
+			<key interpolation="2" row="2336" value="1"/>
+			<key interpolation="2" row="2360" value="0"/>
+			<key interpolation="0" row="2392" value="1"/>
+			<key interpolation="3" row="2880" value="0.3"/>
+			<key interpolation="0" row="2896" value="1"/>
+			<key interpolation="0" row="2934" value="2"/>
+			<key interpolation="3" row="3016" value="1"/>
+			<key interpolation="2" row="3062" value="0.883765"/>
+			<key interpolation="0" row="3136" value="0"/>
+		</track>
+		<track name="demo:CreditLogoBlurH">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="2096" value="18"/>
+			<key interpolation="0" row="2104" value="0"/>
+			<key interpolation="3" row="2348" value="0"/>
+			<key interpolation="0" row="2351" value="20"/>
+			<key interpolation="0" row="2360" value="0"/>
+			<key interpolation="3" row="2448" value="10"/>
+			<key interpolation="2" row="2456" value="20"/>
+			<key interpolation="0" row="2488" value="0"/>
+			<key interpolation="2" row="2612" value="1"/>
+			<key interpolation="0" row="2615" value="33"/>
+			<key interpolation="0" row="2616" value="0"/>
+			<key interpolation="1" row="2876" value="0"/>
+			<key interpolation="2" row="2880" value="16"/>
+			<key interpolation="0" row="2896" value="0"/>
+			<key interpolation="3" row="3062" value="0"/>
+			<key interpolation="0" row="3136" value="16"/>
+		</track>
+		<track name="demo:CreditLogoBlurV">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="2096" value="12"/>
+			<key interpolation="3" row="2104" value="6"/>
+			<key interpolation="1" row="2112" value="3"/>
+			<key interpolation="0" row="2120" value="0"/>
+			<key interpolation="2" row="2200" value="8"/>
+			<key interpolation="2" row="2224" value="16"/>
+			<key interpolation="3" row="2232" value="8"/>
+			<key interpolation="3" row="2240" value="4"/>
+			<key interpolation="0" row="2248" value="0"/>
+			<key interpolation="0" row="2272" value="0"/>
+			<key interpolation="2" row="2360" value="16"/>
+			<key interpolation="3" row="2368" value="8"/>
+			<key interpolation="1" row="2376" value="4"/>
+			<key interpolation="0" row="2384" value="0"/>
+			<key interpolation="2" row="2488" value="16"/>
+			<key interpolation="3" row="2496" value="8"/>
+			<key interpolation="1" row="2504" value="4"/>
+			<key interpolation="0" row="2512" value="0"/>
+			<key interpolation="3" row="2592" value="8"/>
+			<key interpolation="0" row="2608" value="0"/>
+			<key interpolation="2" row="2616" value="16"/>
+			<key interpolation="3" row="2624" value="8"/>
+			<key interpolation="1" row="2632" value="4"/>
+			<key interpolation="0" row="2640" value="0"/>
+			<key interpolation="2" row="2720" value="8"/>
+			<key interpolation="0" row="2728" value="0"/>
+			<key interpolation="3" row="2752" value="8"/>
+			<key interpolation="0" row="2768" value="0"/>
+			<key interpolation="2" row="2880" value="16"/>
+			<key interpolation="3" row="2888" value="8"/>
+			<key interpolation="1" row="2896" value="4"/>
+			<key interpolation="0" row="2904" value="0"/>
+			<key interpolation="2" row="3008" value="12"/>
+			<key interpolation="0" row="3024" value="0"/>
+			<key interpolation="2" row="3032" value="6"/>
+			<key interpolation="0" row="3040" value="0"/>
+			<key interpolation="0" row="3778" value="0"/>
+		</track>
+		<track name="demo:DiscoGuys">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9920" value="0"/>
+			<key interpolation="0" row="9976" value="1"/>
+			<key interpolation="0" row="10304" value="0"/>
+		</track>
+		<track name="demo:DiscoGuy1">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="9920" value="0"/>
+			<key interpolation="0" row="9924" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy2">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9924" value="0"/>
+			<key interpolation="0" row="9928" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy3">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="9928" value="0"/>
+			<key interpolation="0" row="9932" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy4">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9932" value="0"/>
+			<key interpolation="0" row="9936" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy5">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="9936" value="0"/>
+			<key interpolation="0" row="9940" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy6">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9940" value="0"/>
+			<key interpolation="0" row="9944" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy7">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="9944" value="0"/>
+			<key interpolation="0" row="9948" value="1"/>
+		</track>
+		<track name="demo:DiscoGuy8">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9948" value="0"/>
+			<key interpolation="0" row="9951" value="1"/>
+		</track>
+		<track name="demo:Show1995">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="4200" value="0"/>
+			<key interpolation="0" row="4208" value="1"/>
+			<key interpolation="3" row="4235" value="1"/>
+			<key interpolation="0" row="4267" value="3"/>
+			<key interpolation="0" row="4448" value="0"/>
+			<key interpolation="0" row="4584" value="0"/>
+			<key interpolation="2" row="4704" value="0"/>
+			<key interpolation="0" row="4724" value="3"/>
+		</track>
+		<track name="demo:Dirt">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6288" value="3"/>
+			<key interpolation="0" row="6544" value="1"/>
+			<key interpolation="0" row="6680" value="1"/>
+			<key interpolation="0" row="6808" value="2"/>
+			<key interpolation="0" row="7072" value="2"/>
+			<key interpolation="0" row="7336" value="0"/>
+			<key interpolation="0" row="8120" value="1"/>
+		</track>
+		<track name="demo:Show2006">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="4184" value="0"/>
+			<key interpolation="0" row="4448" value="0"/>
+			<key interpolation="0" row="4584" value="0"/>
+			<key interpolation="0" row="4704" value="0"/>
+			<key interpolation="1" row="4992" value="0"/>
+			<key interpolation="0" row="5000" value="1"/>
+			<key interpolation="2" row="5056" value="1"/>
+			<key interpolation="0" row="5104" value="3"/>
+			<key interpolation="2" row="5224" value="4"/>
+			<key interpolation="0" row="5240" value="3"/>
+		</track>
+		<track name="demo:ScapeOverlay">
+			<key interpolation="2" row="0" value="0.88"/>
+			<key interpolation="2" row="936" value="1"/>
+			<key interpolation="0" row="1000" value="0"/>
+		</track>
+		<track name="demo:ScapeRev">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="968" value="0"/>
+			<key interpolation="0" row="1047" value="0.628"/>
+		</track>
+		<track name="demo:ScapeFade">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="992" value="0"/>
+			<key interpolation="0" row="1047" value="0.01"/>
+		</track>
+		<track name="demo:DistortTPB">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="9536" value="0"/>
+			<key interpolation="3" row="9560" value="0.05"/>
+			<key interpolation="2" row="9760" value="0"/>
+			<key interpolation="0" row="9895" value="0.02"/>
+		</track>
+		<track name="demo:DistortStrengthTPB">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="9536" value="2.39"/>
+			<key interpolation="2" row="9760" value="0"/>
+			<key interpolation="0" row="9895" value="3"/>
+		</track>
+		<track name="demo:BlurTPB">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="9520" value="0"/>
+			<key interpolation="3" row="9552" value="8"/>
+			<key interpolation="2" row="9560" value="24"/>
+			<key interpolation="0" row="9591" value="0"/>
+			<key interpolation="3" row="9760" value="1"/>
+			<key interpolation="0" row="9895" value="3"/>
+		</track>
+		<track name="demo:RibbonsX">
+			<key interpolation="1" row="9366" value="800"/>
+			<key interpolation="1" row="9408" value="0"/>
+			<key interpolation="0" row="9896" value="800"/>
+		</track>
+		<track name="demo:GreetSwitch">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="8384" value="0"/>
+			<key interpolation="0" row="8744" value="2"/>
+			<key interpolation="0" row="8880" value="1"/>
+			<key interpolation="0" row="9200" value="3"/>
+		</track>
+		<track name="demo:Cousteau">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6024" value="1"/>
+		</track>
+		<track name="demo:CousteauHorzBlur">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="5376" value="6.28"/>
+			<key interpolation="0" row="5384" value="0"/>
+			<key interpolation="2" row="5504" value="6.28"/>
+			<key interpolation="0" row="5520" value="0"/>
+			<key interpolation="2" row="5632" value="6.28"/>
+			<key interpolation="0" row="5656" value="0"/>
+			<key interpolation="3" row="5768" value="6.28"/>
+			<key interpolation="0" row="5792" value="0"/>
+			<key interpolation="3" row="5896" value="6.28"/>
+			<key interpolation="0" row="5920" value="0"/>
+			<key interpolation="3" row="6024" value="3.14"/>
+			<key interpolation="0" row="6048" value="0"/>
+			<key interpolation="2" row="6160" value="6.28"/>
+			<key interpolation="0" row="6184" value="0"/>
+			<key interpolation="1" row="6272" value="0"/>
+			<key interpolation="0" row="6288" value="10"/>
+		</track>
+		<track name="demo:WaterLove">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="7336" value="0"/>
+			<key interpolation="1" row="7376" value="0.33"/>
+			<key interpolation="3" row="7410" value="0.2"/>
+			<key interpolation="2" row="7864" value="0.34"/>
+			<key interpolation="3" row="7896" value="0.5"/>
+			<key interpolation="2" row="7920" value="0.2"/>
+			<key interpolation="0" row="8119" value="0.66"/>
+			<key interpolation="3" row="8120" value="0.34"/>
+			<key interpolation="2" row="8184" value="0.77"/>
+			<key interpolation="0" row="8312" value="1"/>
+		</track>
+		<track name="demo:LoveBlurHorZ">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="7336" value="10"/>
+			<key interpolation="0" row="7376" value="0"/>
+			<key interpolation="2" row="7592" value="20"/>
+			<key interpolation="0" row="7632" value="0"/>
+			<key interpolation="1" row="7672" value="0"/>
+			<key interpolation="3" row="7680" value="10"/>
+			<key interpolation="0" row="7688" value="0"/>
+			<key interpolation="1" row="7864" value="10"/>
+			<key interpolation="0" row="7896" value="0"/>
+			<key interpolation="1" row="7968" value="0"/>
+			<key interpolation="1" row="7976" value="10"/>
+			<key interpolation="0" row="7984" value="0"/>
+			<key interpolation="1" row="8097" value="0"/>
+			<key interpolation="1" row="8128" value="10"/>
+			<key interpolation="0" row="8152" value="0"/>
+			<key interpolation="2" row="8352" value="0"/>
+			<key interpolation="0" row="8383" value="10"/>
+		</track>
+		<track name="demo:CheapGPU">
+			<key interpolation="1" row="10304" value="0"/>
+			<key interpolation="0" row="10336" value="1"/>
+		</track>
+		<track name="demo:MainLogoIndex">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="3248" value="1"/>
+			<key interpolation="0" row="3272" value="2"/>
+			<key interpolation="0" row="3392" value="3"/>
+			<key interpolation="0" row="3544" value="4"/>
+		</track>
+		<track name="demo:CreditAnimBlend">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="2096" value="4"/>
+			<key interpolation="0" row="2099" value="0"/>
+			<key interpolation="3" row="2348" value="0"/>
+			<key interpolation="0" row="2352" value="4"/>
+			<key interpolation="2" row="2360" value="4"/>
+			<key interpolation="0" row="2365" value="0"/>
+			<key interpolation="2" row="2612" value="0"/>
+			<key interpolation="0" row="2615" value="1"/>
+			<key interpolation="3" row="2616" value="4"/>
+			<key interpolation="0" row="2629" value="0"/>
+			<key interpolation="2" row="2876" value="0"/>
+			<key interpolation="2" row="2880" value="3"/>
+			<key interpolation="0" row="2884" value="0"/>
+			<key interpolation="3" row="3104" value="0"/>
+			<key interpolation="3" row="3120" value="2.5"/>
+			<key interpolation="0" row="3132" value="4"/>
+		</track>
+		<track name="demo:LensDirt">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="4184" value="0"/>
+		</track>
+		<track name="demo:ScapeHUD">
+			<key interpolation="0" row="0" value="1"/>
+			<key interpolation="3" row="848" value="1"/>
+			<key interpolation="0" row="1000" value="0"/>
+		</track>
+		<track name="demo:FuckBlurV">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="1048" value="12"/>
+			<key interpolation="0" row="1064" value="0"/>
+			<key interpolation="3" row="1152" value="64"/>
+			<key interpolation="0" row="1168" value="0"/>
+			<key interpolation="3" row="1176" value="64"/>
+			<key interpolation="0" row="1192" value="0"/>
+			<key interpolation="3" row="1248" value="64"/>
+			<key interpolation="0" row="1264" value="0"/>
+			<key interpolation="3" row="1288" value="64"/>
+			<key interpolation="0" row="1304" value="0"/>
+			<key interpolation="3" row="1312" value="64"/>
+			<key interpolation="0" row="1328" value="0"/>
+			<key interpolation="3" row="1416" value="64"/>
+			<key interpolation="0" row="1432" value="0"/>
+			<key interpolation="3" row="1440" value="64"/>
+			<key interpolation="0" row="1456" value="0"/>
+			<key interpolation="3" row="1512" value="64"/>
+			<key interpolation="0" row="1528" value="0"/>
+			<key interpolation="3" row="1552" value="64"/>
+			<key interpolation="0" row="1568" value="0"/>
+			<key interpolation="3" row="1576" value="64"/>
+			<key interpolation="0" row="1592" value="0"/>
+			<key interpolation="3" row="1672" value="64"/>
+			<key interpolation="0" row="1688" value="0"/>
+			<key interpolation="3" row="1704" value="64"/>
+			<key interpolation="0" row="1720" value="0"/>
+			<key interpolation="3" row="1768" value="64"/>
+			<key interpolation="0" row="1784" value="0"/>
+			<key interpolation="3" row="1800" value="64"/>
+			<key interpolation="0" row="1816" value="0"/>
+			<key interpolation="3" row="1832" value="64"/>
+			<key interpolation="3" row="1848" value="96"/>
+			<key interpolation="0" row="1864" value="0"/>
+			<key interpolation="3" row="1936" value="64"/>
+			<key interpolation="0" row="1952" value="0"/>
+			<key interpolation="3" row="1968" value="64"/>
+			<key interpolation="0" row="1984" value="0"/>
+			<key interpolation="3" row="2032" value="16"/>
+			<key interpolation="2" row="2064" value="20"/>
+			<key interpolation="0" row="2079" value="30"/>
+			<key interpolation="0" row="2242" value="30"/>
+			<key interpolation="1" row="6272" value="0"/>
+			<key interpolation="0" row="6288" value="10"/>
+		</track>
+		<track name="demo::Cousteau">
+			<key interpolation="0" row="5240" value="0"/>
+			<key interpolation="0" row="6024" value="1"/>
+		</track>
+		<track name="demo:ScapeRevRot">
+			<key interpolation="0" row="984" value="0.4"/>
+			<key interpolation="0" row="7408" value="0"/>
+		</track>
+		<track name="demo:CreditLogoBlend"/>
+		<track name="demo:FullWarpTPB">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="9552" value="1"/>
+		</track>
+		<track name="twister:Speed">
+			<key interpolation="0" row="0" value="1"/>
+			<key interpolation="0" row="986" value="0"/>
+			<key interpolation="0" row="1011" value="0"/>
+			<key interpolation="0" row="1749" value="0"/>
+			<key interpolation="0" row="1992" value="128"/>
+			<key interpolation="0" row="10086" value="8"/>
+		</track>
+		<track name="twister::ShearSpeed">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="1992" value="0.1"/>
+			<key interpolation="0" row="2024" value="0.19"/>
+		</track>
+		<track name="twister:Blur">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="1992" value="33.14"/>
+			<key interpolation="0" row="2024" value="0"/>
+		</track>
+		<track name="voxelScape:Forward">
+			<key interpolation="1" row="0" value="0"/>
+			<key interpolation="0" row="1048" value="1000"/>
+		</track>
+		<track name="voxelScape:Tilt">
+			<key interpolation="3" row="0" value="-90"/>
+			<key interpolation="3" row="968" value="0"/>
+			<key interpolation="0" row="1048" value="-45"/>
+		</track>
+		<track name="voxelScape:WarpSpeed">
+			<key interpolation="2" row="0" value="0"/>
+			<key interpolation="2" row="536" value="0"/>
+			<key interpolation="1" row="968" value="0.75"/>
+			<key interpolation="3" row="1024" value="1.5"/>
+			<key interpolation="0" row="1047" value="6"/>
+		</track>
+		<track name="voxelScape:WarpStrength">
+			<key interpolation="2" row="0" value="0"/>
+			<key interpolation="2" row="536" value="0"/>
+			<key interpolation="2" row="968" value="0.11"/>
+			<key interpolation="3" row="1024" value="0.33"/>
+			<key interpolation="0" row="1047" value="0.66"/>
+			<key interpolation="0" row="1064" value="0.5"/>
+			<key interpolation="0" row="1080" value="0.66"/>
+			<key interpolation="0" row="1096" value="0.5"/>
+		</track>
+		<track name="ball:Blur">
+			<key interpolation="0" row="1048" value="2"/>
+			<key interpolation="0" row="1104" value="10"/>
+			<key interpolation="3" row="1152" value="10"/>
+			<key interpolation="0" row="1160" value="0"/>
+			<key interpolation="3" row="1296" value="5"/>
+			<key interpolation="2" row="1312" value="10"/>
+			<key interpolation="0" row="1328" value="5"/>
+			<key interpolation="2" row="1416" value="30"/>
+			<key interpolation="0" row="1432" value="3.5"/>
+			<key interpolation="2" row="1648" value="0"/>
+			<key interpolation="3" row="1672" value="12"/>
+			<key interpolation="0" row="1696" value="5"/>
+			<key interpolation="3" row="1736" value="32"/>
+			<key interpolation="0" row="1760" value="2"/>
+			<key interpolation="2" row="1936" value="3.5"/>
+			<key interpolation="3" row="2056" value="10"/>
+			<key interpolation="0" row="2096" value="33"/>
+		</track>
+		<track name="ball:Radius">
+			<key interpolation="0" row="1048" value="1280"/>
+			<key interpolation="0" row="1088" value="2000"/>
+			<key interpolation="3" row="1104" value="1800"/>
+			<key interpolation="3" row="1112" value="1750"/>
+			<key interpolation="3" row="1120" value="1800"/>
+			<key interpolation="3" row="1128" value="1750"/>
+			<key interpolation="3" row="1136" value="1800"/>
+			<key interpolation="3" row="1144" value="1750"/>
+			<key interpolation="3" row="1152" value="1800"/>
+			<key interpolation="3" row="1160" value="1750"/>
+			<key interpolation="3" row="1168" value="1800"/>
+			<key interpolation="3" row="1176" value="1750"/>
+			<key interpolation="3" row="1184" value="1800"/>
+			<key interpolation="3" row="1192" value="1750"/>
+			<key interpolation="3" row="1200" value="1800"/>
+			<key interpolation="3" row="1208" value="1750"/>
+			<key interpolation="3" row="1216" value="1800"/>
+			<key interpolation="3" row="1224" value="1750"/>
+			<key interpolation="3" row="1232" value="1800"/>
+			<key interpolation="3" row="1240" value="1750"/>
+			<key interpolation="3" row="1248" value="1800"/>
+			<key interpolation="3" row="1256" value="1750"/>
+			<key interpolation="3" row="1264" value="1800"/>
+			<key interpolation="3" row="1272" value="1750"/>
+			<key interpolation="3" row="1280" value="1800"/>
+			<key interpolation="3" row="1288" value="1750"/>
+			<key interpolation="3" row="1296" value="1800"/>
+			<key interpolation="3" row="1304" value="1750"/>
+			<key interpolation="3" row="1312" value="1800"/>
+			<key interpolation="3" row="1320" value="1750"/>
+			<key interpolation="3" row="1328" value="1800"/>
+			<key interpolation="3" row="1336" value="1750"/>
+			<key interpolation="3" row="1344" value="1800"/>
+			<key interpolation="3" row="1352" value="1750"/>
+			<key interpolation="3" row="1360" value="1800"/>
+			<key interpolation="3" row="1368" value="1750"/>
+			<key interpolation="3" row="1376" value="1800"/>
+			<key interpolation="3" row="1384" value="1750"/>
+			<key interpolation="3" row="1392" value="1800"/>
+			<key interpolation="3" row="1400" value="1750"/>
+			<key interpolation="0" row="1408" value="1800"/>
+			<key interpolation="0" row="1416" value="1280"/>
+			<key interpolation="0" row="1456" value="1800"/>
+			<key interpolation="0" row="1488" value="2200"/>
+			<key interpolation="0" row="1552" value="1200"/>
+			<key interpolation="0" row="1592" value="1800"/>
+			<key interpolation="3" row="1672" value="1920"/>
+			<key interpolation="3" row="1680" value="1850"/>
+			<key interpolation="3" row="1688" value="1920"/>
+			<key interpolation="3" row="1696" value="1850"/>
+			<key interpolation="3" row="1704" value="1920"/>
+			<key interpolation="3" row="1712" value="1850"/>
+			<key interpolation="3" row="1720" value="1920"/>
+			<key interpolation="3" row="1728" value="1850"/>
+			<key interpolation="3" row="1736" value="1920"/>
+			<key interpolation="3" row="1744" value="1850"/>
+			<key interpolation="3" row="1752" value="1920"/>
+			<key interpolation="3" row="1760" value="1850"/>
+			<key interpolation="3" row="1768" value="1920"/>
+			<key interpolation="3" row="1776" value="1850"/>
+			<key interpolation="3" row="1784" value="1920"/>
+			<key interpolation="3" row="1792" value="1850"/>
+			<key interpolation="3" row="1800" value="1920"/>
+			<key interpolation="3" row="1808" value="1850"/>
+			<key interpolation="3" row="1816" value="1920"/>
+			<key interpolation="3" row="1824" value="1850"/>
+			<key interpolation="3" row="1832" value="1920"/>
+			<key interpolation="3" row="1840" value="1850"/>
+			<key interpolation="3" row="1848" value="1920"/>
+			<key interpolation="3" row="1856" value="1850"/>
+			<key interpolation="3" row="1864" value="1920"/>
+			<key interpolation="3" row="1872" value="1850"/>
+			<key interpolation="3" row="1880" value="1920"/>
+			<key interpolation="3" row="1888" value="1850"/>
+			<key interpolation="3" row="1896" value="1920"/>
+			<key interpolation="3" row="1904" value="1850"/>
+			<key interpolation="3" row="1912" value="1920"/>
+			<key interpolation="3" row="1920" value="1850"/>
+			<key interpolation="3" row="1928" value="1920"/>
+			<key interpolation="3" row="1936" value="1850"/>
+			<key interpolation="0" row="2096" value="1920"/>
+		</track>
+		<track name="ball:RayLength">
+			<key interpolation="0" row="1048" value="384"/>
+			<key interpolation="0" row="1104" value="512"/>
+			<key interpolation="0" row="1416" value="512"/>
+			<key interpolation="0" row="1672" value="512"/>
+		</track>
+		<track name="ball:Spikes">
+			<key interpolation="0" row="1048" value="188"/>
+			<key interpolation="0" row="1088" value="100"/>
+			<key interpolation="0" row="1104" value="0"/>
+			<key interpolation="2" row="1280" value="0"/>
+			<key interpolation="3" row="1312" value="80"/>
+			<key interpolation="0" row="1328" value="0"/>
+			<key interpolation="2" row="1416" value="0"/>
+			<key interpolation="0" row="1448" value="200"/>
+			<key interpolation="3" row="1544" value="0"/>
+			<key interpolation="3" row="1576" value="200"/>
+			<key interpolation="0" row="1672" value="0"/>
+			<key interpolation="3" row="1936" value="0"/>
+			<key interpolation="3" row="1992" value="128"/>
+			<key interpolation="0" row="2096" value="128"/>
+			<key interpolation="0" row="4088" value="0"/>
+			<key interpolation="0" row="10480" value="0"/>
+		</track>
+		<track name="ball:HasBeams">
+			<key interpolation="0" row="1048" value="0"/>
+			<key interpolation="0" row="1104" value="1"/>
+			<key interpolation="0" row="1416" value="0"/>
+			<key interpolation="0" row="1672" value="1"/>
+		</track>
+		<track name="ball:BaseShapeIndex">
+			<key interpolation="0" row="1048" value="4"/>
+			<key interpolation="0" row="1104" value="1"/>
+			<key interpolation="0" row="1416" value="4"/>
+			<key interpolation="0" row="1544" value="4"/>
+			<key interpolation="0" row="1672" value="1"/>
+			<key interpolation="0" row="1832" value="1"/>
+		</track>
+		<track name="ball:Speed">
+			<key interpolation="0" row="1048" value="6.28"/>
+			<key interpolation="0" row="1104" value="3.14"/>
+			<key interpolation="0" row="1152" value="-3.14"/>
+			<key interpolation="0" row="1208" value="3.14"/>
+			<key interpolation="0" row="1416" value="4"/>
+			<key interpolation="0" row="1544" value="-3.14"/>
+			<key interpolation="0" row="1672" value="3.14"/>
+			<key interpolation="0" row="1832" value="-3.14"/>
+			<key interpolation="0" row="1936" value="2"/>
+			<key interpolation="0" row="2024" value="-4"/>
+			<key interpolation="0" row="10087" value="2"/>
+		</track>
+		<track name="ball:BeamAttenuation">
+			<key interpolation="0" row="1048" value="0"/>
+			<key interpolation="2" row="1104" value="4"/>
+			<key interpolation="0" row="1152" value="32"/>
+			<key interpolation="3" row="1672" value="32"/>
+			<key interpolation="2" row="1712" value="96"/>
+			<key interpolation="0" row="1728" value="64"/>
+			<key interpolation="3" row="1936" value="64"/>
+			<key interpolation="2" row="2064" value="16"/>
+			<key interpolation="0" row="2096" value="255"/>
+		</track>
+		<track name="ball:BeamAlphaMin">
+			<key interpolation="0" row="1048" value="196"/>
+			<key interpolation="3" row="1936" value="64"/>
+			<key interpolation="2" row="2095" value="255"/>
+			<key interpolation="0" row="2096" value="0"/>
+		</track>
+		<track name="ball:RotateOffsX">
+			<key interpolation="0" row="1048" value="0"/>
+			<key interpolation="0" row="1088" value="256"/>
+			<key interpolation="0" row="1104" value="0"/>
+			<key interpolation="0" row="1152" value="-256"/>
+			<key interpolation="0" row="1208" value="256"/>
+			<key interpolation="0" row="1312" value="400"/>
+			<key interpolation="0" row="1416" value="256"/>
+			<key interpolation="0" row="1488" value="512"/>
+			<key interpolation="0" row="1544" value="-256"/>
+			<key interpolation="0" row="1672" value="280"/>
+			<key interpolation="0" row="1736" value="-22"/>
+			<key interpolation="0" row="1776" value="-200"/>
+			<key interpolation="0" row="1832" value="800"/>
+			<key interpolation="0" row="1936" value="256"/>
+			<key interpolation="0" row="2024" value="-192"/>
+			<key interpolation="0" row="2096" value="0"/>
+		</track>
+		<track name="ball:RotateOffsY">
+			<key interpolation="0" row="1048" value="0"/>
+			<key interpolation="0" row="1088" value="-256"/>
+			<key interpolation="0" row="1104" value="0"/>
+			<key interpolation="0" row="1152" value="256"/>
+			<key interpolation="0" row="1208" value="-256"/>
+			<key interpolation="0" row="1312" value="100"/>
+			<key interpolation="0" row="1416" value="-256"/>
+			<key interpolation="0" row="1488" value="-512"/>
+			<key interpolation="0" row="1544" value="256"/>
+			<key interpolation="0" row="1672" value="-600"/>
+			<key interpolation="0" row="1736" value="666"/>
+			<key interpolation="0" row="1776" value="-256"/>
+			<key interpolation="0" row="1832" value="-256"/>
+			<key interpolation="0" row="1936" value="-256"/>
+			<key interpolation="0" row="2024" value="256"/>
+		</track>
+		<track name="ball:Beams1">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="1104" value="0.5"/>
+			<key interpolation="0" row="1416" value="1"/>
+			<key interpolation="3" row="1672" value="0.66"/>
+			<key interpolation="0" row="1712" value="1"/>
+			<key interpolation="3" row="1888" value="1"/>
+			<key interpolation="0" row="1992" value="0.66"/>
+			<key interpolation="0" row="2024" value="1"/>
+		</track>
+		<track name="ball:Beams2">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="1104" value="0"/>
+			<key interpolation="1" row="1144" value="0.66"/>
+			<key interpolation="0" row="1416" value="1"/>
+			<key interpolation="3" row="1672" value="0.75"/>
+			<key interpolation="0" row="1712" value="1"/>
+			<key interpolation="3" row="1888" value="1"/>
+			<key interpolation="1" row="1992" value="0"/>
+			<key interpolation="0" row="2024" value="1"/>
+		</track>
+		<track name="ball:Beams3">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="1104" value="1"/>
+			<key interpolation="0" row="1416" value="1"/>
+			<key interpolation="3" row="1672" value="0.5"/>
+			<key interpolation="0" row="1712" value="1"/>
+			<key interpolation="3" row="1888" value="1"/>
+			<key interpolation="0" row="1992" value="0.66"/>
+			<key interpolation="0" row="2024" value="1"/>
+		</track>
+		<track name="ball:BallLowBeams">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="1104" value="196"/>
+			<key interpolation="0" row="1416" value="128"/>
+			<key interpolation="0" row="1672" value="64"/>
+			<key interpolation="1" row="1712" value="200"/>
+			<key interpolation="0" row="1992" value="255"/>
+			<key interpolation="0" row="2024" value="0"/>
+		</track>
+		<track name="starsTunnel:stepU">
+			<key interpolation="0" row="4184" value="0.77"/>
+			<key interpolation="0" row="4584" value="0.88"/>
+			<key interpolation="0" row="4704" value="0.5"/>
+		</track>
+		<track name="starsTunnel:stepV">
+			<key interpolation="0" row="4184" value="0.77"/>
+			<key interpolation="0" row="4584" value="0.99"/>
+			<key interpolation="0" row="4704" value="0.5"/>
+		</track>
+		<track name="starsTunnel:Speed">
+			<key interpolation="0" row="4184" value="768"/>
+			<key interpolation="0" row="4352" value="80"/>
+			<key interpolation="0" row="4584" value="-768"/>
+			<key interpolation="0" row="4704" value="768"/>
+			<key interpolation="1" row="4872" value="763"/>
+			<key interpolation="3" row="4904" value="760.15"/>
+			<key interpolation="0" row="4928" value="760"/>
+		</track>
+		<track name="starsTunnel:Blur">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="4184" value="10"/>
+			<key interpolation="0" row="4208" value="0"/>
+			<key interpolation="1" row="4352" value="5"/>
+			<key interpolation="0" row="4432" value="1"/>
+			<key interpolation="3" row="4584" value="4"/>
+			<key interpolation="0" row="4600" value="0"/>
+			<key interpolation="3" row="4704" value="11"/>
+			<key interpolation="0" row="4720" value="0"/>
+			<key interpolation="3" row="4864" value="0"/>
+			<key interpolation="3" row="4872" value="8"/>
+			<key interpolation="3" row="4896" value="0"/>
+			<key interpolation="3" row="4904" value="1"/>
+			<key interpolation="3" row="4960" value="1.33"/>
+			<key interpolation="0" row="4975" value="6"/>
+			<key interpolation="0" row="4976" value="0"/>
+		</track>
+		<track name="starsTunnel:speedX"/>
+		<track name="starsTunnel:speedY">
+			<key interpolation="0" row="4872" value="600"/>
+		</track>
+		<track name="laura:Speed">
+			<key interpolation="0" row="8384" value="3.14"/>
+			<key interpolation="0" row="8544" value="1"/>
+			<key interpolation="0" row="8568" value="3.14"/>
+			<key interpolation="0" row="8880" value="-4.44"/>
+		</track>
+		<track name="laura:Yaw">
+			<key interpolation="3" row="8384" value="0.6"/>
+			<key interpolation="0" row="8424" value="0.22"/>
+			<key interpolation="0" row="8904" value="0.22"/>
+		</track>
+		<track name="laura:Pitch">
+			<key interpolation="0" row="8384" value="0.14"/>
+		</track>
+		<track name="laura:Roll">
+			<key interpolation="0" row="8384" value="0.01"/>
+			<key interpolation="1" row="8544" value="0.01"/>
+			<key interpolation="2" row="8552" value="0.009"/>
+			<key interpolation="0" row="8576" value="0"/>
+			<key interpolation="3" row="8720" value="0"/>
+			<key interpolation="0" row="8752" value="0.01"/>
+			<key interpolation="3" row="9173" value="0.01"/>
+			<key interpolation="0" row="9200" value="0"/>
+		</track>
+		<track name="laura:Hue">
+			<key interpolation="0" row="8384" value="24"/>
+			<key interpolation="2" row="8544" value="24"/>
+			<key interpolation="2" row="8560" value="26"/>
+			<key interpolation="0" row="8576" value="24"/>
+			<key interpolation="2" row="8720" value="24"/>
+			<key interpolation="2" row="8736" value="15"/>
+			<key interpolation="0" row="8752" value="24"/>
+			<key interpolation="2" row="9173" value="24"/>
+			<key interpolation="2" row="9187" value="15"/>
+			<key interpolation="0" row="9200" value="24"/>
+		</track>
+		<track name="laura:Saturate">
+			<key interpolation="2" row="8384" value="4"/>
+			<key interpolation="0" row="8424" value="0.5"/>
+			<key interpolation="2" row="8544" value="0.5"/>
+			<key interpolation="2" row="8560" value="2"/>
+			<key interpolation="0" row="8576" value="0.5"/>
+		</track>
+		<track name="nautilus:Roll">
+			<key interpolation="0" row="5240" value="0"/>
+			<key interpolation="0" row="5760" value="0.05"/>
+			<key interpolation="0" row="6024" value="-0.05"/>
+		</track>
+		<track name="nautilus:Blur">
+			<key interpolation="3" row="5240" value="12"/>
+			<key interpolation="0" row="5256" value="0"/>
+			<key interpolation="3" row="5504" value="33.14"/>
+			<key interpolation="3" row="5534" value="0"/>
+			<key interpolation="3" row="5760" value="12"/>
+			<key interpolation="3" row="5792" value="0"/>
+			<key interpolation="3" row="6025" value="12"/>
+			<key interpolation="3" row="6056" value="0"/>
+			<key interpolation="1" row="6200" value="0"/>
+			<key interpolation="1" row="6208" value="3"/>
+			<key interpolation="3" row="6216" value="0"/>
+			<key interpolation="1" row="6264" value="1"/>
+			<key interpolation="3" row="6287" value="20"/>
+		</track>
+		<track name="nautilus:Hue">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="5240" value="26"/>
+			<key interpolation="0" row="5504" value="72"/>
+			<key interpolation="0" row="5760" value="50"/>
+			<key interpolation="0" row="6024" value="18"/>
+		</track>
+		<track name="nautilus:Speed">
+			<key interpolation="0" row="5240" value="3.14"/>
+			<key interpolation="0" row="5504" value="3.14"/>
+			<key interpolation="0" row="6024" value="3.14"/>
+		</track>
+		<track name="nautilus:Desat">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="5504" value="0.63"/>
+			<key interpolation="0" row="5760" value="0.5"/>
+			<key interpolation="0" row="6024" value="0"/>
+		</track>
+		<track name="nautilus:FuckedVignette">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="5504" value="1"/>
+			<key interpolation="0" row="5775" value="0"/>
+		</track>
+		<track name="spike:Speed">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="317" value="34"/>
+			<key interpolation="2" row="3144" value="9.44"/>
+			<key interpolation="0" row="3247" value="9.55"/>
+			<key interpolation="0" row="3288" value="1"/>
+			<key interpolation="0" row="3390" value="-12.1"/>
+			<key interpolation="2" row="3408" value="-11"/>
+			<key interpolation="0" row="3504" value="-11.12"/>
+			<key interpolation="0" row="3536" value="6.28"/>
+			<key interpolation="2" row="3552" value="12"/>
+			<key interpolation="2" row="3616" value="11.9"/>
+			<key interpolation="0" row="3662" value="12.1"/>
+			<key interpolation="2" row="3664" value="9"/>
+			<key interpolation="0" row="3798" value="9.1"/>
+			<key interpolation="2" row="3800" value="9"/>
+			<key interpolation="0" row="3910" value="9.1"/>
+			<key interpolation="0" row="3912" value="12"/>
+			<key interpolation="0" row="3936" value="-9"/>
+			<key interpolation="2" row="4064" value="9"/>
+			<key interpolation="0" row="4183" value="9.13"/>
+			<key interpolation="0" row="6288" value="10"/>
+			<key interpolation="0" row="6432" value="10"/>
+			<key interpolation="0" row="6440" value="10"/>
+			<key interpolation="0" row="6448" value="10"/>
+			<key interpolation="0" row="6456" value="10"/>
+			<key interpolation="0" row="6544" value="-5"/>
+			<key interpolation="1" row="6680" value="9"/>
+			<key interpolation="0" row="6807" value="9.1"/>
+			<key interpolation="0" row="6808" value="11"/>
+			<key interpolation="3" row="7072" value="14.33"/>
+			<key interpolation="0" row="7335" value="14.15"/>
+		</track>
+		<track name="spike:Roll">
+			<key interpolation="0" row="3144" value="3.33"/>
+			<key interpolation="0" row="3288" value="1"/>
+			<key interpolation="0" row="3616" value="1"/>
+			<key interpolation="0" row="3664" value="6.24"/>
+			<key interpolation="0" row="3800" value="-1"/>
+			<key interpolation="0" row="3912" value="1.1"/>
+			<key interpolation="0" row="6288" value="4"/>
+			<key interpolation="0" row="6544" value="3"/>
+			<key interpolation="0" row="6680" value="33.33"/>
+			<key interpolation="0" row="6808" value="45"/>
+			<key interpolation="3" row="7072" value="33"/>
+			<key interpolation="2" row="7280" value="37"/>
+			<key interpolation="0" row="7328" value="33"/>
+		</track>
+		<track name="spike:Specular">
+			<key interpolation="0" row="3144" value="4"/>
+			<key interpolation="0" row="3664" value="22"/>
+			<key interpolation="0" row="3936" value="66"/>
+			<key interpolation="0" row="4064" value="1"/>
+			<key interpolation="0" row="4136" value="0"/>
+			<key interpolation="0" row="6288" value="8"/>
+			<key interpolation="0" row="6544" value="2"/>
+			<key interpolation="0" row="6680" value="22"/>
+			<key interpolation="0" row="6808" value="1"/>
+			<key interpolation="0" row="7072" value="3.14"/>
+		</track>
+		<track name="spike:Desaturation">
+			<key interpolation="0" row="3144" value="2"/>
+			<key interpolation="0" row="3616" value="1"/>
+			<key interpolation="0" row="3664" value="-1"/>
+			<key interpolation="0" row="3936" value="3"/>
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="3" row="6416" value="0.44"/>
+			<key interpolation="2" row="6448" value="2"/>
+			<key interpolation="0" row="6544" value="3.3"/>
+			<key interpolation="0" row="6680" value="1"/>
+			<key interpolation="2" row="6800" value="3"/>
+			<key interpolation="0" row="6808" value="2"/>
+			<key interpolation="0" row="7072" value="4"/>
+		</track>
+		<track name="spike:Hue">
+			<key interpolation="2" row="3144" value="14"/>
+			<key interpolation="2" row="3407" value="30"/>
+			<key interpolation="0" row="3408" value="20"/>
+			<key interpolation="0" row="3616" value="10"/>
+			<key interpolation="0" row="3664" value="66"/>
+			<key interpolation="0" row="3936" value="60"/>
+			<key interpolation="0" row="6288" value="33"/>
+			<key interpolation="2" row="6416" value="77"/>
+			<key interpolation="3" row="6448" value="66"/>
+			<key interpolation="2" row="6456" value="55"/>
+			<key interpolation="0" row="6544" value="55"/>
+			<key interpolation="0" row="6680" value="32"/>
+			<key interpolation="0" row="6808" value="30"/>
+			<key interpolation="0" row="7072" value="40"/>
+		</track>
+		<track name="spike:Gamma">
+			<key interpolation="0" row="3144" value="1"/>
+			<key interpolation="1" row="3288" value="0"/>
+			<key interpolation="0" row="3312" value="1"/>
+			<key interpolation="0" row="3408" value="1.33"/>
+			<key interpolation="1" row="3616" value="0"/>
+			<key interpolation="1" row="3624" value="1"/>
+			<key interpolation="1" row="3632" value="0"/>
+			<key interpolation="0" row="3640" value="1"/>
+			<key interpolation="2" row="3664" value="0"/>
+			<key interpolation="0" row="3679" value="0.8"/>
+			<key interpolation="2" row="3800" value="0.8"/>
+			<key interpolation="2" row="3815" value="0.2"/>
+			<key interpolation="2" row="3824" value="0.8"/>
+			<key interpolation="2" row="3832" value="0.2"/>
+			<key interpolation="0" row="3840" value="0.8"/>
+			<key interpolation="1" row="3904" value="1"/>
+			<key interpolation="1" row="3920" value="0"/>
+			<key interpolation="0" row="3936" value="1.4"/>
+			<key interpolation="1" row="4048" value="1"/>
+			<key interpolation="1" row="4064" value="0"/>
+			<key interpolation="0" row="4088" value="1"/>
+			<key interpolation="1" row="4136" value="1"/>
+			<key interpolation="0" row="4183" value="0"/>
+			<key interpolation="0" row="6288" value="1.66"/>
+			<key interpolation="3" row="6416" value="1.6"/>
+			<key interpolation="3" row="6432" value="1"/>
+			<key interpolation="3" row="6440" value="2"/>
+			<key interpolation="3" row="6448" value="1"/>
+			<key interpolation="3" row="6456" value="2"/>
+			<key interpolation="2" row="6544" value="0.66"/>
+			<key interpolation="0" row="6679" value="0.5"/>
+			<key interpolation="0" row="6680" value="2"/>
+			<key interpolation="0" row="6808" value="0.7"/>
+			<key interpolation="0" row="7072" value="0.9"/>
+		</track>
+		<track name="distSpike:Warmup">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="7072" value="3"/>
+		</track>
+		<track name="distSpike:xOffs">
+			<key interpolation="0" row="3144" value="0.88"/>
+			<key interpolation="0" row="3408" value="-0.77"/>
+			<key interpolation="0" row="3664" value="0"/>
+			<key interpolation="0" row="3936" value="-0.5"/>
+			<key interpolation="0" row="4064" value="0.5"/>
+		</track>
+		<track name="distSpike:yOffs">
+			<key interpolation="0" row="3144" value="0.2"/>
+			<key interpolation="0" row="3408" value="-0.2"/>
+			<key interpolation="0" row="3664" value="0"/>
+			<key interpolation="0" row="3936" value="-1"/>
+			<key interpolation="0" row="4064" value="-1"/>
+		</track>
+		<track name="distSpike:zOffs">
+			<key interpolation="0" row="3144" value="0.66"/>
+			<key interpolation="3" row="4032" value="0.66"/>
+			<key interpolation="0" row="4184" value="0.8"/>
+		</track>
+		<track name="closeSpike:xOffs">
+			<key interpolation="0" row="6288" value="0.314"/>
+			<key interpolation="0" row="6680" value="-0.02"/>
+			<key interpolation="2" row="6808" value="0.9"/>
+			<key interpolation="0" row="6904" value="0.22"/>
+			<key interpolation="0" row="7072" value="-0.6"/>
+		</track>
+		<track name="closeSpike:yOffs">
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="0" row="6544" value="-1"/>
+			<key interpolation="0" row="6680" value="0.1"/>
+			<key interpolation="0" row="6808" value="0"/>
+			<key interpolation="0" row="7072" value="-0.3"/>
+		</track>
+		<track name="closeSpike:zOffs">
+			<key interpolation="2" row="6288" value="1"/>
+			<key interpolation="1" row="6487" value="-0.5"/>
+			<key interpolation="0" row="6488" value="-1"/>
+			<key interpolation="0" row="6808" value="-1"/>
+			<key interpolation="0" row="7080" value="0"/>
+		</track>
+		<track name="closeSpike:zOffsScale">
+			<key interpolation="0" row="6288" value="2"/>
+			<key interpolation="0" row="6808" value="1"/>
+			<key interpolation="0" row="6864" value="10"/>
+		</track>
+		<track name="closeSpike:NormalGrain">
+			<key interpolation="2" row="6288" value="1"/>
+			<key interpolation="0" row="6487" value="0.1"/>
+			<key interpolation="0" row="6544" value="0.2"/>
+			<key interpolation="0" row="6680" value="1"/>
+			<key interpolation="2" row="6808" value="0.2"/>
+			<key interpolation="2" row="7079" value="0.22"/>
+			<key interpolation="0" row="7080" value="0.33"/>
+		</track>
+		<track name="closeSpike:Scale">
+			<key interpolation="0" row="0" value="1"/>
+			<key interpolation="0" row="6288" value="0.88"/>
+			<key interpolation="0" row="6544" value="0.96"/>
+			<key interpolation="0" row="6680" value="1.22"/>
+			<key interpolation="3" row="6808" value="0.66"/>
+			<key interpolation="2" row="7080" value="1"/>
+			<key interpolation="0" row="7336" value="0.33"/>
+		</track>
+		<track name="closeSpike:Rim">
+			<key interpolation="0" row="6288" value="1"/>
+			<key interpolation="0" row="6544" value="1"/>
+			<key interpolation="0" row="6680" value="0"/>
+			<key interpolation="0" row="6808" value="0"/>
+			<key interpolation="0" row="7080" value="1"/>
+		</track>
+		<track name="closeSpike:AspectMul">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6288" value="1"/>
+			<key interpolation="0" row="6544" value="1"/>
+			<key interpolation="0" row="6680" value="1"/>
+			<key interpolation="0" row="6808" value="1"/>
+			<key interpolation="0" row="7080" value="1"/>
+		</track>
+		<track name="closeSpike:MixBlurMap">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="4436" value="9"/>
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="0" row="6544" value="0"/>
+			<key interpolation="1" row="6808" value="0"/>
+			<key interpolation="2" row="6912" value="0.88"/>
+			<key interpolation="1" row="6936" value="0.22"/>
+			<key interpolation="3" row="7080" value="1"/>
+			<key interpolation="0" row="7336" value="0"/>
+		</track>
+		<track name="closeSpike:MixBlur">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="0" row="6544" value="0"/>
+			<key interpolation="3" row="6808" value="22"/>
+			<key interpolation="1" row="6872" value="1"/>
+			<key interpolation="0" row="7079" value="11"/>
+			<key interpolation="0" row="7080" value="20"/>
+		</track>
+		<track name="closeSpike:MixMapBlur">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6680" value="10"/>
+			<key interpolation="3" row="6808" value="1"/>
+			<key interpolation="0" row="6888" value="3"/>
+			<key interpolation="2" row="7080" value="20"/>
+			<key interpolation="3" row="7144" value="2.5"/>
+			<key interpolation="0" row="7336" value="0"/>
+		</track>
+		<track name="closeSpike:MixBlurOpacity">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6288" value="0"/>
+			<key interpolation="0" row="6544" value="0"/>
+			<key interpolation="1" row="6808" value="1"/>
+			<key interpolation="2" row="7080" value="0.5"/>
+			<key interpolation="3" row="7144" value="1"/>
+			<key interpolation="0" row="7336" value="0"/>
+		</track>
+		<track name="closeSpike:Moonraker">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6400" value="0"/>
+			<key interpolation="2" row="6544" value="0"/>
+			<key interpolation="3" row="6560" value="1"/>
+			<key interpolation="0" row="6808" value="0"/>
+		</track>
+		<track name="closeSpike:MoonrakerText">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6544" value="0"/>
+			<key interpolation="3" row="6624" value="0"/>
+			<key interpolation="0" row="6680" value="1"/>
+			<key interpolation="0" row="6808" value="0.628"/>
+		</track>
+		<track name="closeSpike:MoonrakerBlur">
+			<key interpolation="3" row="6752" value="0"/>
+			<key interpolation="0" row="6804" value="22"/>
+			<key interpolation="0" row="6808" value="22"/>
+		</track>
+		<track name="sinusesTunnel:Specular">
+			<key interpolation="0" row="7336" value="30"/>
+			<key interpolation="0" row="7592" value="10"/>
+			<key interpolation="0" row="7864" value="10"/>
+			<key interpolation="0" row="8120" value="10"/>
+		</track>
+		<track name="sinusesTunnel:Roll">
+			<key interpolation="3" row="7336" value="-3"/>
+			<key interpolation="3" row="7592" value="-0.66"/>
+			<key interpolation="3" row="7864" value="-2.5"/>
+			<key interpolation="0" row="8120" value="-0.9"/>
+		</track>
+		<track name="sinusesTunnel:Speed">
+			<key interpolation="0" row="1472" value="-3.14"/>
+			<key interpolation="0" row="7336" value="-5"/>
+			<key interpolation="0" row="7440" value="-1"/>
+			<key interpolation="0" row="7592" value="-5"/>
+			<key interpolation="0" row="7704" value="-1"/>
+			<key interpolation="0" row="7864" value="-5"/>
+			<key interpolation="0" row="7960" value="-1"/>
+			<key interpolation="0" row="8120" value="3.14"/>
+		</track>
+		<track name="sinusesTunnel:OffsX">
+			<key interpolation="0" row="7336" value="0"/>
+			<key interpolation="0" row="7864" value="0.33"/>
+			<key interpolation="0" row="8120" value="0"/>
+		</track>
+		<track name="sinusesTunnel:Gamma">
+			<key interpolation="0" row="0" value="2"/>
+			<key interpolation="2" row="7336" value="2.24"/>
+			<key interpolation="0" row="7440" value="3.14"/>
+			<key interpolation="0" row="7592" value="3.14"/>
+			<key interpolation="3" row="7856" value="3.14"/>
+			<key interpolation="3" row="7864" value="6.28"/>
+			<key interpolation="1" row="7895" value="2"/>
+			<key interpolation="1" row="7960" value="8"/>
+			<key interpolation="1" row="8120" value="2"/>
+			<key interpolation="0" row="8152" value="8"/>
+		</track>
+		<track name="sinusesTunnel:Hue">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="7336" value="51"/>
+			<key interpolation="0" row="7368" value="44"/>
+			<key interpolation="2" row="7440" value="51"/>
+			<key interpolation="0" row="7464" value="44"/>
+			<key interpolation="2" row="7592" value="51"/>
+			<key interpolation="0" row="7640" value="44"/>
+			<key interpolation="3" row="7704" value="51"/>
+			<key interpolation="0" row="7728" value="44"/>
+			<key interpolation="3" row="7864" value="46"/>
+			<key interpolation="0" row="7904" value="44"/>
+			<key interpolation="1" row="8120" value="51"/>
+			<key interpolation="0" row="8168" value="44"/>
+		</track>
+		<track name="sinusesTunnel:Desaturation">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="2" row="7336" value="-8"/>
+			<key interpolation="0" row="7368" value="-2"/>
+			<key interpolation="2" row="7440" value="3"/>
+			<key interpolation="0" row="7464" value="-2"/>
+			<key interpolation="2" row="7592" value="-8"/>
+			<key interpolation="0" row="7640" value="-2"/>
+			<key interpolation="2" row="7704" value="-8"/>
+			<key interpolation="0" row="7728" value="-2"/>
+			<key interpolation="2" row="7864" value="-8"/>
+			<key interpolation="0" row="7904" value="-2"/>
+			<key interpolation="2" row="7960" value="3"/>
+			<key interpolation="0" row="7984" value="-2"/>
+			<key interpolation="2" row="8120" value="3"/>
+			<key interpolation="0" row="8168" value="-2"/>
+		</track>
+		<track name="plasma:Speed">
+			<key interpolation="0" row="2096" value="1.33"/>
+			<key interpolation="0" row="2158" value="1.33"/>
+			<key interpolation="0" row="2253" value="0.1"/>
+			<key interpolation="0" row="2329" value="1.33"/>
+			<key interpolation="0" row="2766" value="0.1"/>
+			<key interpolation="0" row="2848" value="1.33"/>
+			<key interpolation="0" row="2976" value="0.1"/>
+			<key interpolation="0" row="3008" value="1.33"/>
+		</track>
+		<track name="plasma:Hue">
+			<key interpolation="0" row="2096" value="24"/>
+		</track>
+		<track name="plasma:Gamma">
+			<key interpolation="0" row="2096" value="2"/>
+		</track>
+		<track name="plasma:Desaturation">
+			<key interpolation="1" row="2256" value="0"/>
+			<key interpolation="3" row="2328" value="1"/>
+			<key interpolation="0" row="2336" value="0"/>
+			<key interpolation="3" row="2448" value="0"/>
+			<key interpolation="3" row="2456" value="0.5"/>
+			<key interpolation="3" row="2472" value="0.8"/>
+			<key interpolation="0" row="2488" value="0"/>
+			<key interpolation="3" row="2768" value="0"/>
+			<key interpolation="1" row="2848" value="1"/>
+			<key interpolation="0" row="2888" value="0"/>
+			<key interpolation="1" row="2976" value="0"/>
+			<key interpolation="3" row="2984" value="0.66"/>
+			<key interpolation="1" row="2992" value="1"/>
+			<key interpolation="0" row="3040" value="0"/>
+		</track>
+		<track name="tunnel:Boxy">
+			<key interpolation="3" row="4448" value="1"/>
+			<key interpolation="0" row="4584" value="0.5"/>
+			<key interpolation="2" row="4976" value="1"/>
+			<key interpolation="0" row="5240" value="0.6"/>
+		</track>
+		<track name="tunnel:FlowerScale">
+			<key interpolation="0" row="4448" value="0.2"/>
+			<key interpolation="0" row="4976" value="0.2"/>
+		</track>
+		<track name="tunnel:FlowerFreq">
+			<key interpolation="0" row="4448" value="4"/>
+			<key interpolation="0" row="4976" value="5"/>
+		</track>
+		<track name="tunnel:FlowerPhase">
+			<key interpolation="3" row="4448" value="0.5"/>
+			<key interpolation="0" row="4584" value="0.26"/>
+			<key interpolation="3" row="4976" value="-0.1"/>
+			<key interpolation="0" row="5240" value="-0.3"/>
+		</track>
+		<track name="tunnel:Speed">
+			<key interpolation="0" row="3023" value="5"/>
+			<key interpolation="0" row="4448" value="5.28"/>
+			<key interpolation="0" row="4976" value="4.66"/>
+		</track>
+		<track name="tunnel:Roll">
+			<key interpolation="0" row="4448" value="1"/>
+			<key interpolation="0" row="4976" value="0.66"/>
+		</track>
+		<track name="tunnel:Pitch">
+			<key interpolation="0" row="4448" value="1.4"/>
+			<key interpolation="2" row="4976" value="0.88"/>
+			<key interpolation="0" row="5240" value="0.81"/>
+		</track>
+		<track name="tunnel:Radius">
+			<key interpolation="1" row="4448" value="0.1"/>
+			<key interpolation="0" row="4464" value="6"/>
+			<key interpolation="1" row="4976" value="0.1"/>
+			<key interpolation="0" row="5024" value="6"/>
+			<key interpolation="0" row="5240" value="9"/>
+		</track>
+		<track name="tunnel:MulU">
+			<key interpolation="0" row="4448" value="1024"/>
+			<key interpolation="0" row="4976" value="1024"/>
+		</track>
+		<track name="tunnel:MulV">
+			<key interpolation="0" row="4448" value="64"/>
+			<key interpolation="0" row="4976" value="64"/>
+		</track>
+		<track name="tunnel:LitTiles">
+			<key interpolation="0" row="4448" value="1"/>
+			<key interpolation="0" row="4976" value="1"/>
+		</track>
+		<track name="tunnel:LitBlur">
+			<key interpolation="0" row="4448" value="3"/>
+			<key interpolation="2" row="4976" value="3"/>
+			<key interpolation="3" row="5232" value="6"/>
+			<key interpolation="0" row="5240" value="0"/>
+		</track>
+		<track name="tunnel:Fog1">
+			<key interpolation="0" row="4448" value="0"/>
+			<key interpolation="3" row="4464" value="0"/>
+			<key interpolation="0" row="4584" value="255"/>
+			<key interpolation="0" row="4976" value="0"/>
+			<key interpolation="2" row="5128" value="0"/>
+			<key interpolation="0" row="5240" value="255"/>
+		</track>
+		<track name="tunnel:Fog2">
+			<key interpolation="0" row="4448" value="64"/>
+			<key interpolation="0" row="4976" value="64"/>
+		</track>
+		<track name="shootingStar:Enabled">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="448" value="1"/>
+			<key interpolation="0" row="512" value="0"/>
+		</track>
+		<track name="shootingStar:X">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="448" value="1100"/>
+			<key interpolation="3" row="456" value="1100"/>
+			<key interpolation="0" row="504" value="100"/>
+		</track>
+		<track name="shootingStar:Y">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="448" value="10"/>
+			<key interpolation="3" row="456" value="10"/>
+			<key interpolation="0" row="504" value="300"/>
+		</track>
+		<track name="shootingStar:A">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="448" value="0"/>
+			<key interpolation="1" row="464" value="1"/>
+			<key interpolation="0" row="512" value="0"/>
+		</track>
+		<track name="shootingStar:Trail">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="3" row="448" value="1"/>
+			<key interpolation="0" row="464" value="10"/>
+			<key interpolation="0" row="5693" value="32"/>
+		</track>
+		<track name="sinusTunnel:OffsX">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="closeUp:Moonraker">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="6400" value="1"/>
+		</track>
+		<track name="coseSpike:MoonrakerBlur"/>
+	</tracks>
+	<bookmarks>
+		<bookmark row="86"/>
+		<bookmark row="417"/>
+		<bookmark row="648"/>
+		<bookmark row="776"/>
+		<bookmark row="1884"/>
+		<bookmark row="3367"/>
+		<bookmark row="4274"/>
+		<bookmark row="4436"/>
+		<bookmark row="4545"/>
+		<bookmark row="4832"/>
+		<bookmark row="5039"/>
+		<bookmark row="5534"/>
+		<bookmark row="7072"/>
+		<bookmark row="8428"/>
+		<bookmark row="9984"/>
+		<bookmark row="10012"/>
+		<bookmark row="10018"/>
+		<bookmark row="10061"/>
+	</bookmarks>
+</sync>

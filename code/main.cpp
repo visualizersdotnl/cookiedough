@@ -174,10 +174,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
     std::filesystem::current_path("../target");
 #endif
 
-	// check for SSE 4.1 / NEON
-	if (false == SDL_HasSSE41() && false == SDL_HasNEON())
+	// check for SSE 4.2 / NEON
+#if defined(FOR_ARM)
+	if (false == SDL_HasNEON())
+#elif defined(FOR_INTEL)
+	if (false == SDL_HasSSE42())
+#endif
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "Processor does not support SSE 4.1 instructions.", nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "SDL tells me your processor does not support SSE 4.2 (x64) or NEON (ARM) instructions.", nullptr);
 		return 1;
 	}
 

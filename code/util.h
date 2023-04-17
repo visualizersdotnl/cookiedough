@@ -87,6 +87,9 @@ VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 	while (numInts--) _mm_stream_si32(pInt++, value);
 }
 
+// function intended to slowly zoom in to backgrounds (an idea Nytrik had for Arrested Development)
+void Zoom32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float scale);
+
 // blend 32-bit color buffers
 void Mix32(uint32_t *pDest, const uint32_t *pSrc, unsigned numPixels, uint8_t alpha);
 

@@ -526,8 +526,8 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 
 						for (int iTrail = 0; iTrail < trail; ++iTrail)
 						{
-							xPos += xStep; // simply assuming we're going from right to left
-							yPos -= yStep; // and from top to bottom
+							xPos += xStep; // simply assuming we're going from right to left...
+							yPos -= yStep; // ... and from top to bottom
 							alpha -= alphaStep;
 
 							const unsigned offset = yPos*kResX + xPos;
@@ -577,9 +577,10 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 					SoftLight32(pDest, s_pBallVignette, kOutputSize);
 
 				FadeFlash(pDest, fadeToBlack, fadeToWhite);
-				
-				// I think it looks slightly better without this vignette on top
-				// MulSrc32A(pDest, s_pVignette06, kOutputSize);
+
+				// I'm unsure how this looks (might need tweaking), but let's just try it on the beams version to "grime" it up a little
+				if (true == Ball_HasBeams())				
+					MulSrc32A(pDest, s_pVignette06, kOutputSize);
 			}
 			break;
 
