@@ -177,6 +177,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// probably Windows
     std::filesystem::current_path("..");
 #else
+	// FIXME: this only works if the OSX version is in '/build' - for release it'd be in '/target/osx'
     std::filesystem::current_path("../target");
 #endif
 
