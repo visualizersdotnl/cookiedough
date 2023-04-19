@@ -8,6 +8,7 @@
 
 // also, ramping up to Revision 2023, there will be bits and pieces that are just plain
 // sloppy, so it is for making demoscene productions, I suppose :)
+// ^^ Should definitely be cleaned up; create a release or fork of the final first!
 
 // competition version was 1080p, consumer grade version is 720p
 
@@ -92,15 +93,20 @@
 #include "satori-lumablur.h"
 #include "boxblur.h"
 
-// -- display & audio config. --
+// -- debug, display & audio config. --
 
 const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = false;
+constexpr bool kFullScreen = true;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
+
+// #define DISPLAY_AVG_FPS
+
+// look for SYNC_PLAYER in the header to switch between editor and replay (release) mode
+// when running in editor mode, on (regular) exit, all Rocket tracks will be exported to '/target/sync'
 
 // -----------------------------
 
@@ -295,12 +301,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	char fpsString[256];
 	snprintf(fpsString, 256, "\n *** Rough avg. FPS: %f ***\n", avgFPS);
 
+#if defined(DISPLAY_AVG_FPS)
 #if defined(_WIN32)
 	OutputDebugString(fpsString);
 #else
 	printf("%s", fpsString);
 #endif
-
+#endif
 
 	return 0;
 }
