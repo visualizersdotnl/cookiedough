@@ -204,7 +204,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
     std::filesystem::current_path("..");
 #endif
 
-	printf("And today we'll be working from: %s\n", std::filesystem::current_path().c_str());
+	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::filesystem::current_path().c_str()));
 
 	// check for SSE 4.2 / NEON
 #if defined(FOR_ARM)
