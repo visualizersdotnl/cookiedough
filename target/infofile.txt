@@ -19,7 +19,7 @@ director's cut, 20/04/2023
 system req.:
   + semi-recent CPU *with* SSE 4.2 or if Silicon: NEON (runs on a MacBook Air M2, but please throw all you have at it!)
   + for Intel go to '/x64' (working directory) and run 'VS17.exe' from that directory
-  + for OSX (Silicon only, make your own OSX/Linux x64 build!) just run 'osx/cookiedough-silicon'
+  + for OSX (Silicon only, make your own OSX/Linux x64 build!) please run 'run-osx-silicon.sh' (need execution rights for libraries like BASS).
   + takes 3 to 5 seconds to start, also don't press escape when the music stops!
   + 100% software rendering, no noteworthy GPU required
   + uses default audio device
