@@ -907,28 +907,28 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 				}
 				else
 				{
-					// simpler version of the sh*t above (FIXME: this bugs, but I like how it looks)
-					memset32(pDest, 0xffffff, kOutputSize);
+					// some subtle re-use of the plasma marching effect
+					Plasma_Draw(pDest, timer, delta);
 
-					// ribbon to layer 
-					const auto ribX = clampi(0, kResX, Rocket::geti(trackRibbonsTPB));
-					MixSrc32S(pDest, s_pRibbons + ribX, kResX, kResY-1, 2160); // FIXME
-
-					// logo to layer
+					// logo to layer (FIXME: blit instead?)
+					memset32(g_renderTarget[0], 0xffffff, kOutputSize);
 					MixSrc32(g_renderTarget[0], g_pNytrikTPB, kOutputSize);
 
-					// blur logo
+					// blur logo (V)
 					float blurTPB = Rocket::getf(trackBlurTPB);
 					if (0.f != blurTPB)
 					{
 						blurTPB = BoxBlurScale(blurTPB);
-						HorizontalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blurTPB);
+						VerticalBoxBlur32(g_renderTarget[0], g_renderTarget[0], kResX, kResY, blurTPB);
 					}
 
 					// distort logo
 					const float distortTPB = Rocket::getf(trackDistortTPB);
 					const float distortStrengthTPB = Rocket::getf(trackDistortStrengthTPB);
-					TapeWarp32(pDest, g_renderTarget[0], kResX, kResY, distortStrengthTPB, distortTPB);
+					TapeWarp32(g_renderTarget[1], g_renderTarget[0], kResX, kResY, distortStrengthTPB, distortTPB);
+
+					// add logo on top of layer
+					MixOver32(pDest, g_renderTarget[1], kOutputSize);
 				}
 
 				// vignette

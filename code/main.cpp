@@ -14,10 +14,9 @@
 
 // OSX build:
 // - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
-// - uses CMake (only for OSX!)
+// - uses CMake
 
-// 32-bit build DISCONTINUED (as of August 2018), because:
-// - it's 2023 by now!
+// 32-bit build DISCONTINUED (as of August 2018)
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -36,7 +35,7 @@
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
-// - adv. instruction set: SSE2 for x86, not set for 64-bit (SSE2 is implied)
+// - adv. instruction set: SSE 4.2 / NEON
 // - uses C++20 (not really, but for OSX at least I'm using that standard)
 
 // important:
@@ -97,7 +96,7 @@
 
 const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = false;
+constexpr bool kFullScreen = true;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
