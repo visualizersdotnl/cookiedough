@@ -6,17 +6,16 @@
 // this codebase was started as a simple experiment and doesn't have much to show for
 // modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
 
-// also, ramping up to Revision 2023, there will be bits and pieces that are just plain
-// sloppy, so it is for making demoscene productions, I suppose :)
-// ^^ Should definitely be cleaned up; create a release or fork of the final first!
+// also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
+// but there's something Ryg once said about such code and I guess that's true to this day for most of us
 
-// competition version was 1080p, consumer grade version is 720p
+// misc. facts:
+// - competition version was 1080p, consumer grade version is 720p
+// - 32-bit build DISCONTINUED (as of August 2018)
 
-// OSX build:
-// - relies on: LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
-// - uses CMake
-
-// 32-bit build DISCONTINUED (as of August 2018)
+// OSX build (Windows one should be obvious):
+// - relies on (but not limited to): LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
+// - uses CMake and a script in '/target/osx'
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -28,6 +27,7 @@
 // - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
+// - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -39,7 +39,7 @@
 // - uses C++20 (not really, but for OSX at least I'm using that standard)
 
 // important:
-// - Wexecutables are built to target/<arch> -- run from that directory!
+// - executables are built to target/<arch> -- run from that directory!
 // - keep DLLs (for Windows, see above) up to date for each build
 // - (almost) always include main.h on top
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
@@ -52,8 +52,8 @@
 // - windowed mode and window title can be decided in main.cpp
 // - CRT leak check can be toggled in main.cpp
 // - module name specified in main.cpp (FIXME: you'll need to modify some code (commented, mostly) to get module playback to work again)    
-// - module rows-per-pattern in audio.cpp  
-// - module playback flags in audio.cpp
+//   + module rows-per-pattern in audio.cpp  
+//   + module playback flags in audio.cpp
 // - stream playback details, also: audio.cpp
 // - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
 // - when writing code that depends on a certain resolution it's wise to put a static_assert() along with it
@@ -99,13 +99,39 @@ const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 constexpr bool kFullScreen = true;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
-// static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
 constexpr bool kSilent = false; // when you're working on anything else than synchronization
 
+// enable this to receive derogatory comments
 // #define DISPLAY_AVG_FPS
 
-// look for SYNC_PLAYER in the header to switch between editor and replay (release) mode
-// when running in editor mode, on (regular) exit, all Rocket tracks will be exported to '/target/sync'
+/*
+	look for SYNC_PLAYER in the header to switch between editor and replay (release) mode
+	when running in editor mode, on (regular) exit, all Rocket tracks will be exported to '/target/sync'
+*/
+
+// -----------------------------
+
+/*
+	so as luck would have it, not only is statically linking a nightmare in OSX if you do things the Linux way, but the work dir. also
+	differs depending on if you launch from finder or for example the terminal; for this project I am unwilling to turn to XCode, so we'll
+	be doing it the dirty way instead
+*/
+
+#if defined(__APPLE__)
+
+#include <mach-o/dyld.h>
+#include <limits.h>
+
+static const std::string GetMacWorkDir()
+{
+	char pathBuf[PATH_MAX] = { 0 };
+	uint32_t bufSize = PATH_MAX;
+	_NSGetExecutablePath(pathBuf, &bufSize);
+	std::string fullPath(pathBuf);
+	return fullPath.substr(0, fullPath.find_last_of("\\/"));
+}
+
+#endif
 
 // -----------------------------
 
@@ -171,8 +197,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 		return 1;
 	}
 
-	// change path to target root
+	// change path to target root (which is a dirty affair on Mac)
+#if defined(__APPLE__)
+	std::filesystem::current_path(GetMacWorkDir() + "/..");
+#else
     std::filesystem::current_path("..");
+#endif
+
+	printf("And today we'll be working from: %s\n", std::filesystem::current_path().c_str());
 
 	// check for SSE 4.2 / NEON
 #if defined(FOR_ARM)

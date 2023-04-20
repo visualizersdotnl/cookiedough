@@ -18,7 +18,7 @@ Display::~Display()
 	SDL_DestroyTexture(m_texture);
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(m_window);
-}
+} 
 
 bool Display::Open(const std::string &title, unsigned int xRes, unsigned int yRes, bool fullScreen)
 {

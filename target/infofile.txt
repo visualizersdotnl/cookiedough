@@ -18,8 +18,8 @@ director's cut, 20/04/2023
 
 system req.:
   + semi-recent CPU *with* SSE 4.2 or if Silicon: NEON (runs on a MacBook Air M2, but please throw all you have at it!)
-  + for Intel go to '/x64' (working directory) and run 'VS17.exe' from that directory 
-  + for OSX (Silicon only, make your own OSX/Linux x64 build!) go to '/osx' (working directory) and run 'cookiedough-silicon'
+  + for Intel go to '/x64' (working directory) and run 'VS17.exe' from that directory
+  + for OSX (Silicon only, make your own OSX/Linux x64 build!) just run 'osx/cookiedough-silicon'
   + takes 3 to 5 seconds to start, also don't press escape when the music stops!
   + 100% software rendering, no noteworthy GPU required
   + uses default audio device
@@ -42,7 +42,8 @@ advisory board / additional:
   + raimo (boy wonder, don't ask)
 
 thank you / licensing / copyright bits:
-  + free to use (MIT/CC or comparable license) libraries of all kinds (OpenMP, GNU Rocket, SDL2, BASS, SSE2NEON, visualizers.nl/njdewit technologies (my own company), TinyMT)
+  + free to use (MIT/CC or comparable license) libraries of all kinds (OpenMP, GNU Rocket, SDL2, BASS, SSE2NEON, visualizers.nl/njdewit technologies (my own company), TinyMT and a few others, see repository)
+  + https://github.com/SCG82/macdylibbundler -- being too lazy to build a proper OSX application, this gathers all dynamic libraries, stashes them in a folder and patches the executable (like Go's vendor mode)
   + some textures come from previous The Pimp Brigade productions and are entirely ours to use
   + all NASA space travel commmunications samples come from NASA's website and fall under the Creative Commons license
   + vocals (by Celin) are 100% original and ours
