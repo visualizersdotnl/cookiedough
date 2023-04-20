@@ -392,11 +392,11 @@ bool Ball_Create()
 	
 	// load color maps
 	s_pColorMap[0] = Image_Load32("assets/ball/colormap_1k.jpg"); // used as base map when beams active
-	s_pColorMap[1] = Image_Load32("assets/ball/colormap_2_1k.jpg");  // used otherwise
+	s_pColorMap[1] = Image_Load32("assets/ball/colormap_2_1k.jpg"); // used otherwise
 	if (nullptr == s_pColorMap[0] || nullptr == s_pColorMap[1])
 		return false;
 
-	// load beam maps (pairs with 'assets/ball/*/colormap_1k.jpg')
+	// load beam maps (pairs with 'assets/ball/colormap_*.jpg')
 	s_pBeamMaps[0]= Image_Load32("assets/ball/beammap_1k_1.jpg");
 	s_pBeamMaps[1]= Image_Load32("assets/ball/beammap_1k_2.jpg");
 	s_pBeamMaps[2]= Image_Load32("assets/ball/beammap_1k_3-2.jpg");

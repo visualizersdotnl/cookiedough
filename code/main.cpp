@@ -52,8 +52,8 @@
 // where to configure what?
 // - windowed mode and window title can be decided in main.cpp
 // - CRT leak check can be toggled in main.cpp
-// - module name specified in main.cpp
-// - module rows-per-pattern in audio.cpp
+// - module name specified in main.cpp (FIXME: you'll need to modify some code (commented, mostly) to get module playback to work again)    
+// - module rows-per-pattern in audio.cpp  
 // - module playback flags in audio.cpp
 // - stream playback details, also: audio.cpp
 // - main resolution in main.h (adjust target and effect map sizes in shared-resources.h and fx-blitter.h)
@@ -97,7 +97,7 @@
 
 const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = true;
+constexpr bool kFullScreen = false;
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 // static const char *kStream = "assets/audio/development-only/comatron - to the moon - sync final.wav"; // SYNC. TEST STREAM
@@ -173,13 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	}
 
 	// change path to target root
-#if !defined(CMAKE_BUILD)	
-	// probably Windows
     std::filesystem::current_path("..");
-#else
-	// FIXME: this only works if the OSX version is in '/build' - for release it'd be in '/target/osx'
-    std::filesystem::current_path("../target");
-#endif
 
 	// check for SSE 4.2 / NEON
 #if defined(FOR_ARM)

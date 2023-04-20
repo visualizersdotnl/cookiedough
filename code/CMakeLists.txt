@@ -4,6 +4,8 @@ set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang" CACHE STRING "C compiler" FORCE)
 set (CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE STRING "C++ compiler" FORCE)
 
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/osx")
+
 set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3")
 
 set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -fopenmp=libomp")
