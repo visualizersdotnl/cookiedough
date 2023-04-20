@@ -39,8 +39,8 @@
 // - uses C++20 (not really, but for OSX at least I'm using that standard)
 
 // important:
-// - Windows: executables are built to target/x86/ or target/x64/ -- run from that directory!
-// - keep DLLs (see above) up to date for each build
+// - Wexecutables are built to target/<arch> -- run from that directory!
+// - keep DLLs (for Windows, see above) up to date for each build
 // - (almost) always include main.h on top
 // - there's kResX/kResY and soforth telling you about the size of the output buffer
 // - for other targets there are likewise constants
