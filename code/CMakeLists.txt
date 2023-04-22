@@ -6,7 +6,7 @@ set (CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE STRING "C++ c
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/osx")
 
-set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3")
+set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3 -ffast-math")
 
 set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -fopenmp=libomp")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
