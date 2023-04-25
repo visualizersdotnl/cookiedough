@@ -10,6 +10,8 @@ Supported platforms as of 20/04/2023:
 - OSX/x64 (builds with some effort, might be fixed soon)
 - OSX/Silicon (should build with little effort if you follow instructions)
 
+As of 26/04/2023 Linux should also be supported, thank you Erik Faye-Lund.
+
 For OSX preferably something like Visual Studio Code (using all the suggested extensions: C++, CMake, CMake tools, Makefile and
 perhaps a few more, Code will tell you what you need) which in turn through CMake will enable VSCode to build, run, debug and
 soforth. If VSCode is misbehaving, resort to LLDB on the command line or retain your sanity and use a Windows machine and MSVC
