@@ -62,7 +62,7 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 // - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*
 // - align addresses to 8 byte boundary
 
-#if (defined(_WIN64) && defined(_WIN32)) || defined(FOR_ARM)
+#if (defined(_WIN64) && defined(_WIN32)) || defined(FOR_ARM) || defined(__GNUC__)
 
 	// memcpy() has been optimized: http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx
 	#define memcpy_fast memcpy
