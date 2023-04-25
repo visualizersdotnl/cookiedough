@@ -26,4 +26,5 @@ target_compile_definitions(cookiedough PUBLIC
     >
 )
 
-target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -lBASS -lSDL2 -lIL -fopenmp=libomp)
+target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -fopenmp=libomp)
+target_link_libraries(cookiedough PUBLIC bass SDL2 IL)
