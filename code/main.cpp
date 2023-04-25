@@ -200,6 +200,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// change path to target root (which is a dirty affair on Mac)
 #if defined(__APPLE__)
 	std::filesystem::current_path(GetMacWorkDir() + "/..");
+#elif defined(__linux__)
+    std::filesystem::current_path(".");
 #else
     std::filesystem::current_path("..");
 #endif

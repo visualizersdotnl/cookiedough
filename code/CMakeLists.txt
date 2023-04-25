@@ -8,6 +8,9 @@ if (APPLE)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/osx")
 endif()
 
+if (LINUX)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/linux")
+endif()
 
 set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3 -ffast-math")
 set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -msse4.1")
@@ -37,6 +40,11 @@ target_compile_definitions(cookiedough PUBLIC
 
 if (APPLE)
     target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -fopenmp=libomp)
+endif()
+
+if (LINUX)
+    target_link_options(cookiedough PUBLIC -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-linux/x64 -fopenmp)
+    # $ORIGIN/lib/libmylib.so
 endif()
 
 target_link_libraries(cookiedough PUBLIC bass SDL2 IL)
