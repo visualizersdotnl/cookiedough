@@ -72,7 +72,7 @@ static inline float saturatef(float value)
 }
 
 // GLSL fract().
-static inline float fracf(float value) { return value - std::floorf(value); }
+static inline float fracf(float value) { return value - ::floorf(value); }
 
 // Scalar interpolation.
 template<typename T>
