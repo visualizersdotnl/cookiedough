@@ -10,7 +10,7 @@ endif()
 
 
 set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3 -ffast-math")
-set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions")
+set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -msse4.1")
 
 if (APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
