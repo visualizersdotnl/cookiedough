@@ -1,14 +1,23 @@
 cmake_minimum_required(VERSION 3.25)
 
 set (CMAKE_CXX_STANDARD 20)
-set (CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang" CACHE STRING "C compiler" FORCE)
-set (CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE STRING "C++ compiler" FORCE)
 
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/osx")
+if (APPLE)
+    set (CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang" CACHE STRING "C compiler" FORCE)
+    set (CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE STRING "C++ compiler" FORCE)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "../target/osx")
+endif()
+
 
 set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3 -ffast-math")
+set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions")
 
-set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -fopenmp=libomp")
+if (APPLE)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
+else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+endif()
+
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
@@ -26,5 +35,8 @@ target_compile_definitions(cookiedough PUBLIC
     >
 )
 
-target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -fopenmp=libomp)
+if (APPLE)
+    target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/bass24-osx/arm64 -fopenmp=libomp)
+endif()
+
 target_link_libraries(cookiedough PUBLIC bass SDL2 IL)
