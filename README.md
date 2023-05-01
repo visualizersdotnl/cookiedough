@@ -9,6 +9,7 @@ Supported platforms as of 20/04/2023:
 - Win64/x64 (builds out of the box with MSVC 2019 or higher)
 - OSX/x64 (builds with some effort, might be fixed soon)
 - OSX/Silicon (should build with little effort if you follow instructions)
+- Linux, courtesy of Erik 'Kusma' Faye-Lund
 
 As of 26/04/2023 Linux should also be supported, thank you Erik Faye-Lund.
 
