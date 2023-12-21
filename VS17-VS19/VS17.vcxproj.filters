@@ -281,10 +281,10 @@
     <Library Include="..\3rdparty\DevIL-SDK-x64-1.7.8\DevIL.lib">
       <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x86\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x86\SDL2.lib">
       <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x64\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x64\SDL2.lib">
       <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
     <Library Include="..\3rdparty\bass24-stripped\c\bass.lib">

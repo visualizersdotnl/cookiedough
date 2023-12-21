@@ -2,7 +2,7 @@
 // cookiedough -- *very* basic gamepad support (uses the first device detected)
 
 #include "main.h"
-#include "../3rdparty/SDL2-2.0.8/include/SDL.h"
+#include "../3rdparty/SDL2-2.28.5/include/SDL.h"
 #include "gamepad.h"
 
 static SDL_GameController *s_pPad = nullptr;

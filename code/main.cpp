@@ -76,7 +76,7 @@
 #endif
 
 #include <float.h>
-#include "../3rdparty/SDL2-2.0.8/include/SDL.h"
+#include "../3rdparty/SDL2-2.28.5/include/SDL.h"
 
 #include "display.h"
 #include "timer.h"
