@@ -4,6 +4,9 @@
 #pragma once
 
 #include "../3rdparty/SDL2-2.28.5/include/SDL.h"
+#include "../3rdparty/imgui-1.90/imgui.h"
+#include "../3rdparty/imgui-1.90/imgui_impl_sdl2.h"
+#include "../3rdparty/imgui-1.90/imgui_impl_sdlrenderer2.h"
 
 class Display
 {

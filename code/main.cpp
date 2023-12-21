@@ -29,6 +29,12 @@
 // - OpenMP
 // - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
 
+// third party: ImGui
+// - Tab to show/hide
+// - Currently only enabled in windowed mode
+// - ImGuiIsVisible() will tell you if you should be drawing ImGui widgets
+// - Currently included in main.h, so should be available everywhere you might need it. I think.
+
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
 // - use multi-threaded CRT (non-DLL)
@@ -96,10 +102,8 @@
 
 const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
 
-constexpr bool kFullScreen = true;
-
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
-constexpr bool kSilent = false; // when you're working on anything else than synchronization
+constexpr bool kSilent = true; // when you're working on anything else than synchronization
 
 // enable this to receive derogatory comments
 // #define DISPLAY_AVG_FPS
@@ -135,6 +139,13 @@ static const std::string GetMacWorkDir()
 
 // -----------------------------
 
+static bool s_showImGui = false;
+
+bool ImGuiIsVisible()
+{
+	return s_showImGui;
+}
+
 static std::string s_lastErr;
 
 void SetLastError(const std::string &description)
@@ -162,6 +173,9 @@ static bool HandleEvents()
 		default:
 			break;
 		}
+
+		if (!kFullScreen)
+			ImGui_ImplSDL2_ProcessEvent(&event);
 	}
 
 	return true;
@@ -277,10 +291,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						oldTime = newTime;
 						newTime = timer.Get();
 						const float delta = newTime-oldTime; // base delta on sys. time
+						
+						if (ImGui::IsKeyReleased(ImGui::GetKeyIndex(ImGuiKey_Tab)) && !kFullScreen)
+							s_showImGui = !s_showImGui;
+
+						if (!kFullScreen)
+						{
+							ImGui_ImplSDLRenderer2_NewFrame();
+							ImGui_ImplSDL2_NewFrame();
+							
+							ImGui::NewFrame();
+							
+							if (ImGuiIsVisible())
+								ImGui::Begin("I'm Imgui!");
+						}
 
 						const float audioTime = Audio_Get_Pos_In_Sec();
-						if (false == Demo_Draw(pDest, audioTime, delta*100.f))
+						if (false == Demo_Draw(pDest, audioTime, delta * 100.f))
 							break; // Rocket track says we're done
+
+						if (!kFullScreen)
+						{
+							if (ImGuiIsVisible())
+								ImGui::End();
+							
+							ImGui::Render();
+						}
 
 						display.Update(pDest);
 
