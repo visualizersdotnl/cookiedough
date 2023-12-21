@@ -44,6 +44,9 @@
     <Filter Include="/code\filters &amp; blitters\not implemented">
       <UniqueIdentifier>{1a77707a-91cd-49c5-a059-343f34ad714c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/3rdparty\/3rdParty/Imgui">
+      <UniqueIdentifier>{d035cfa2-397e-4d41-9065-509b1457e045}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
