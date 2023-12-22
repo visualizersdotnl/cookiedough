@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_demo.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_draw.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_tables.cpp" />
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_widgets.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_demo.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_draw.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_tables.cpp" />
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_widgets.cpp" />
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\device.c" />
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c" />
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Matrix44.cpp">
@@ -81,14 +81,14 @@
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imconfig.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_internal.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_rectpack.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_textedit.h" />
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_truetype.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imconfig.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_internal.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_rectpack.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_textedit.h" />
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_truetype.h" />
     <ClInclude Include="..\3rdparty\aspectratios.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h" />
@@ -168,7 +168,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\MyCookieDough\3rdparty\imgui-1.90\.editorconfig" />
+    <None Include="..\3rdparty\imgui-1.90\.editorconfig" />
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
   </ItemGroup>

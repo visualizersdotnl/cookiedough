@@ -133,25 +133,25 @@
     <ClCompile Include="..\code\lens.cpp">
       <Filter>/code\filters &amp; blitters\not implemented</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_demo.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_demo.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_draw.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_draw.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_tables.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_tables.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_widgets.cpp">
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_widgets.cpp">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
   </ItemGroup>
@@ -294,28 +294,28 @@
     <ClInclude Include="..\code\lens.h">
       <Filter>/code\filters &amp; blitters\not implemented</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imconfig.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imconfig.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_internal.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_internal.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_rectpack.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_rectpack.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_textedit.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_textedit.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_truetype.h">
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_truetype.h">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClInclude>
   </ItemGroup>
@@ -345,7 +345,7 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
-    <None Include="..\..\MyCookieDough\3rdparty\imgui-1.90\.editorconfig">
+    <None Include="..\3rdparty\imgui-1.90\.editorconfig">
       <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </None>
   </ItemGroup>
