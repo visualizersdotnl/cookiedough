@@ -19,6 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_demo.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_draw.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_tables.cpp" />
+    <ClCompile Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_widgets.cpp" />
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\device.c" />
     <ClCompile Include="..\3rdparty\rocket-stripped\lib\track.c" />
     <ClCompile Include="..\3rdparty\Std3DMath-stripped\Matrix44.cpp">
@@ -74,6 +81,14 @@
     <ClCompile Include="..\code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imconfig.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imgui_internal.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_rectpack.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_textedit.h" />
+    <ClInclude Include="..\..\MyCookieDough\3rdparty\imgui-1.90\imstb_truetype.h" />
     <ClInclude Include="..\3rdparty\aspectratios.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\base.h" />
     <ClInclude Include="..\3rdparty\rocket-stripped\lib\device.h" />
@@ -143,16 +158,17 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x64\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x64\SDL2.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x86\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x86\SDL2.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\MyCookieDough\3rdparty\imgui-1.90\.editorconfig" />
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
   </ItemGroup>
@@ -167,31 +183,32 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>VS17</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Cookiedough</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

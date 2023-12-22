@@ -41,8 +41,14 @@ constexpr size_t kOutputBytes = kOutputSize*sizeof(uint32_t);
 constexpr float kAspect = (float)kResY/kResX;
 constexpr float kOneOverAspect = 1.f/kAspect;
 
+constexpr bool kFullScreen = false;
+
 // set description on failure (reported on shutdown)
 void SetLastError(const std::string &description);
+
+// ImGui
+#include "../3rdparty/imgui-1.90/imgui.h"
+bool ImGuiIsVisible();
 
 // basic utilities (memory, graphics, ISSE et cetera)
 #include "util.h"
