@@ -25,6 +25,8 @@ namespace voxel
 
 	VIZ_INLINE void calc_fandeltas(float curAngle, float &dX, float &dY)
 	{
+		// FIXME: these should be more precise (and the inverse a reactant of that possibly), am I feeding bogus values
+		//        in the case where I needed to singlethread the initial pass in ball.cpp?
 		dX = cosf(curAngle); 
 		dY = sinf(curAngle);
 		return vnorm2D(dX, dY);

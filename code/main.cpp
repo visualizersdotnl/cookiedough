@@ -1,7 +1,8 @@
 
-// codename: cookiedough (2009-2023)
-// release: Arrested Development by Bypass ft. TPB @ Revision 2023
-// property of njdewit technologies & visualizers.nl (http://www.visualizers.nl)
+// codename: cookiedough (2009-2025)
+// 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
+// 2025 release: Radix equals Patrik by Replay, the design kings (TheParty.DK software competition entry)
+// property of njdewit technologies, Guillamne Werle, Patrik Neumann, Vincent Bijwaard and a few other motherf*ckers
 
 // this codebase was started as a simple experiment and doesn't have much to show for
 // modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
@@ -10,7 +11,8 @@
 // but there's something Ryg once said about such code and I guess that's true to this day for most of us
 
 // misc. facts:
-// - competition version was 1080p, consumer grade version is 720p
+// - 2023: competition version was 1080p, consumer grade version is 720p
+// - 2025: upgrade competition version to 4K? discuss with Chaos and Reza (rather CPU-bound, but customer grade should go up to 1080p)
 // - 32-bit build DISCONTINUED (as of August 2018)
 
 // OSX build (Windows one should be obvious):
@@ -68,6 +70,7 @@
 
 #include "main.h" // always include first!
 
+// FIXME: the f*ck is this header right here for then?
 #include <filesystem>
 
 #if defined(_WIN32)
@@ -94,7 +97,7 @@
 
 // -- debug, display & audio config. --
 
-const char *kTitle = "Bypass ft. TPB present 'ARRESTED DEVELOPMENT'";
+const char *kTitle = "REPLAY PC SOFTWARE COMPETITION DEMO 2025";
 
 constexpr bool kFullScreen = true;
 
@@ -199,23 +202,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// change path to target root (which is a dirty affair on Mac)
 #if defined(__APPLE__)
-	std::filesystem::current_path(GetMacWorkDir() + "/..");
+	std::__fs::filesystem::current_path(GetMacWorkDir() + "/..");
 #elif defined(__linux__)
     std::filesystem::current_path(".");
 #else
     std::filesystem::current_path("..");
 #endif
 
-	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::filesystem::current_path().c_str()));
+	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::__fs::filesystem::current_path().c_str()));
 
-	// check for SSE 4.2 / NEON
+	// check for SSE 4.2 / NEON 
 #if defined(FOR_ARM)
 	if (false == SDL_HasNEON())
 #elif defined(FOR_INTEL)
 	if (false == SDL_HasSSE42())
 #endif
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "SDL tells me your processor does not support SSE 4.2 (x64) or NEON (ARM) instructions.", nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, kTitle, "SDL tells me your processor does not support SSE 4.2 (x64) nor NEON (ARM) instructions.", nullptr);
 		return 1;
 	}
 

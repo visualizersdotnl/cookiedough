@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_OSX_DEPLOYMENT_TARGET 13.61)
 
 if (APPLE)
     set (CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang" CACHE STRING "C compiler" FORCE)

@@ -2,6 +2,9 @@
 # for now ignore Rocket tracks dumped into target folder
 target/*.track
 
+# apparently late 2024, this is also necessary
+CMakeFiles/
+
 # -- OSX files --
 .DS_Store
 .DS_Store?

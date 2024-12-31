@@ -872,7 +872,8 @@ VIZ_INLINE const Vector3 fSinPath(float time)
 	return { sine*2.f*kGoldenRatio - cosine*1.5f, cosine*3.14f + sine*kGoldenRatio, time };
 }
 
-// FIXME: try a SIMD version?
+// FIXME: try a SIMD version? 
+// FIXME: f*cking tevens, waarom de f*ck random welk en niet constant gebruiken, ben je f*cking goed bij je hoofd Niels?
 VIZ_INLINE float fSinMap(const Vector3 &point)
 {
 	float pZ = point.z;
