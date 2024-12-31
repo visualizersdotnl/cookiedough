@@ -26,7 +26,7 @@ We welcome all contributions from corporate, acaddemic and individual developers
 * All code must adhere to the existing C coding style (see below). While we are somewhat flexible in basic style, you will adhere to what is currently in place. Uncommented, complicated algorithmic constructs will be rejected.
 * All external pull requests must contain sufficient documentation in the pull request comments in order to be accepted.
 
-Software requirement: [clang-format](https://clang.llvm.org/docs/ClangFormat.html) version 12 or later.
+Software requirement: [clang-format](https://clang.llvm.org/docs/ClangFormat.html) version 18 or later.
 
 Use the command `$ clang-format -i *.[ch]` to enforce a consistent coding style.
 
@@ -295,7 +295,7 @@ level, e.g.:
     }
 ```
 
-If the case bock does not break, then it is strongly recommended to add a
+If the case block does not break, then it is strongly recommended to add a
 comment containing "fallthrough" to indicate it.  Modern compilers can also
 be configured to require such comment (see gcc `-Wimplicit-fallthrough`).
 

@@ -28,9 +28,8 @@ static __m128i s_fogGradientUnp[256];
 // -- voxel renderer --
 
 // adjust to map (FIXME: parametrize)
-constexpr float kMapViewLenScale = kAspect*0.5f; 
-constexpr int kMapViewHeight = 96;
-constexpr int kMapTilt = 120;
+constexpr float kMapViewLenScale = kAspect*0.5f; // FIXME: turn this into the closest integer (hardcoded) instead of "ftol()'ing" it
+constexpr int kMapViewHeight = 96;constexpr int kMapTilt = 120;
 constexpr int kMapScale = 160;
 
 // adjust to map resolution (1024x1024 or 2048x2048)
@@ -138,7 +137,7 @@ bool Tunnelscape_Create()
 {
 	// load maps
 	s_pHeightMap = Image_Load8("assets/scape/tscape-D7-edit.png");
-	s_pColorMap = Image_Load32("assets/scape/tscape-C7W-edit.png");
+	s_pColorMap = Image_Load32("assets/scape/tscape-C7W-edit.png"); 
 	if (s_pHeightMap == NULL || s_pColorMap == NULL)
 		return false;
 

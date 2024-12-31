@@ -1,6 +1,3 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/code",
-    "files.associations": {
-        "iosfwd": "cpp"
-    }
+    "cmake.sourceDirectory": "/Users/nielsjohandewit/Dev/visualizersdotnl/cookiedough/code"
 }

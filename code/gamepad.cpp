@@ -51,10 +51,10 @@ bool Gamepad_Update(PadState &state)
 			return false;
 		}
 
-		int iLeftX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX);
-		int iLeftY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY);
-		int iRightX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX);
-		int iRightY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY);
+		const int iLeftX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTX);
+		const int iLeftY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_LEFTY);
+		const int iRightX = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX);
+		const int iRightY = SDL_GameControllerGetAxis(s_pPad, SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY);
 
 		const float delta = 1.f;
 		state.leftX  = delta*ClampAxisDeadzone(iLeftX);

@@ -6,7 +6,7 @@
 const size_t kCosTabSize = 4096;
 constexpr size_t kCosTabAnd = kCosTabSize-1;
 constexpr int kCosTabSinPhase = kCosTabSize/4;
-extern float g_cosLUT[kCosTabSize];
+extern "C" float g_cosLUT[kCosTabSize];
 
 void CalculateCosLUT();
 
