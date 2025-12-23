@@ -46,9 +46,11 @@ constexpr bool kFullScreen = false;
 // set description on failure (reported on shutdown)
 void SetLastError(const std::string &description);
 
-// ImGui
-#include "../3rdparty/imgui-1.90/imgui.h"
-bool ImGuiIsVisible();
+#if !defined(SYNC_PLAYER)
+	// include ImGui (ALWAYS GUARD WITH !SYNC_PLAYER)
+	#include "../3rdparty/imgui-1.90/imgui.h"
+	bool ImGuiIsVisible();
+#endif
 
 // basic utilities (memory, graphics, ISSE et cetera)
 #include "util.h"

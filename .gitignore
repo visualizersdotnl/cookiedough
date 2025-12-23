@@ -5,6 +5,9 @@ target/*.track
 # apparently late 2024, this is also necessary
 CMakeFiles/
 
+# 'clangd' (VSCode)
+.cache/clangd/*
+
 # -- OSX files --
 .DS_Store
 .DS_Store?

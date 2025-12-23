@@ -1,8 +1,6 @@
 
 // codename: cookiedough (2009-2025)
 // 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
-// 2025 release: Radix equals Patrik by Replay, the design kings (TheParty.DK software competition entry)
-// property of njdewit technologies, Guillamne Werle, Patrik Neumann, Vincent Bijwaard and a few other motherf*ckers
 
 // this codebase was started as a simple experiment and doesn't have much to show for
 // modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
@@ -17,7 +15,11 @@
 
 // OSX build (Windows one should be obvious):
 // - relies on (but not limited to): LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
-// - uses CMake and a script in '/target/osx'
+// - build using CMake (works best usin CMake Tools, LLDB et cetera in VSCode -- ask Niels)
+
+// Linux build:
+// - graciously provided by Erik Faye-Lund
+// - I've never built it myself, but should be using similar dependencies as OSX, and likewise CMake-workflow
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -30,6 +32,7 @@
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
 // - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
+// - ImGui (FIXME: Complete)
 
 // third party: ImGui
 // - Tab to show/hide
@@ -78,6 +81,7 @@
 
 // FIXME: the f*ck is this header right here for then?
 #include <filesystem>
+#include <iostream>
 
 #if defined(_WIN32)
 	#include <windows.h>
@@ -103,7 +107,7 @@
 
 // -- debug, display & audio config. --
 
-const char *kTitle = "REPLAY PC SOFTWARE COMPETITION DEMO 2025";
+const char *kTitle = "Arrested Development (BPS ft. TPB)";
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 constexpr bool kSilent = true; // when you're working on anything else than synchronization
@@ -177,8 +181,10 @@ static bool HandleEvents()
 			break;
 		}
 
+#if !defined(SYNC_PLAYER)
 		if (!kFullScreen)
 			ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 	}
 
 	return true;
@@ -294,7 +300,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						oldTime = newTime;
 						newTime = timer.Get();
 						const float delta = newTime-oldTime; // base delta on sys. time
-						
+
+#if !defined(SYNC_PLAYER)
 						if (ImGui::IsKeyReleased(ImGui::GetKeyIndex(ImGuiKey_Tab)) && !kFullScreen)
 							s_showImGui = !s_showImGui;
 
@@ -306,13 +313,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 							ImGui::NewFrame();
 							
 							if (ImGuiIsVisible())
-								ImGui::Begin("I'm Imgui!");
+								ImGui::Begin("I'm ImGui!");
 						}
+#endif
 
 						const float audioTime = Audio_Get_Pos_In_Sec();
 						if (false == Demo_Draw(pDest, audioTime, delta * 100.f))
 							break; // Rocket track says we're done
 
+#if !defined(SYNC_PLAYER)
 						if (!kFullScreen)
 						{
 							if (ImGuiIsVisible())
@@ -320,6 +329,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 							
 							ImGui::Render();
 						}
+#endif
 
 						display.Update(pDest);
 
