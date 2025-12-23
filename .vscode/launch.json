@@ -5,23 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch",
-            "type": "cppdbg",
+            "name": "Debug",
+            "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/target/osx/cookiedough",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
+            "program": "/bin/true",
+            "args": []
+        },
+        {
+            "name": "Release",
+            "type": "lldb",
+            "request": "launch",
+            "program": "/bin/true",
+            "args": []
         },
         {
             "name": "(lldb) Attach",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "attach",
             "program": "${workspaceFolder}/target/osx/cookiedough",
-            "MIMode": "lldb"
         }
 
     ]

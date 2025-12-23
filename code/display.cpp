@@ -36,6 +36,21 @@ bool Display::Open(const std::string &title, unsigned int xRes, unsigned int yRe
 		m_texture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, xRes, yRes);
 		m_pitch = xRes*4;
 
+#if !defined(SYNC_PLAYER)
+		// initialize ImGui
+		if (!kFullScreen)
+		{
+			IMGUI_CHECKVERSION();
+			ImGui::CreateContext();
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+			ImGui::StyleColorsDark();
+
+			ImGui_ImplSDL2_InitForSDLRenderer(m_window, m_renderer);
+			ImGui_ImplSDLRenderer2_Init(m_renderer);
+		}
+#endif
+
 		if (nullptr != m_texture)
 		{
 			return true;
@@ -57,6 +72,11 @@ void Display::Update(const uint32_t *pPixels)
 		SDL_UpdateTexture(m_texture, nullptr, pPixels, m_pitch);
 		SDL_RenderCopy(m_renderer, m_texture, nullptr, nullptr);
 	}
+
+#if !defined(SYNC_PLAYER)
+	if (!kFullScreen)
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+#endif
 
 	SDL_RenderPresent(m_renderer);
 }

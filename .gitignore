@@ -5,6 +5,9 @@ target/*.track
 # apparently late 2024, this is also necessary
 CMakeFiles/
 
+# 'clangd' (VSCode)
+.cache/clangd/*
+
 # -- OSX files --
 .DS_Store
 .DS_Store?
@@ -39,7 +42,7 @@ gen-build-release/*
 [Rr]elease/
 [Rr]eleases/
 # x64/
-# target/x64/*.exe
+target/x64/*.exe
 target/x64/*.iobj
 target/x64/*.ipdb
 target/x64/*.map

@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "/Users/nielsjohandewit/Dev/visualizersdotnl/cookiedough/code"
+  "cmake.useCMakePresets": "always",
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "cmake.configureOnOpen": false
 }
