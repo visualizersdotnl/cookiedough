@@ -2,17 +2,12 @@
 
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly, to do some really retro (demoscene) graphical effects. 
 
-WARNING 1: last project being made was our Revision 2023 PC entry "Arrested Development" by Bypass - cleanup session planned after I branch off.
-WARNING 2: new project is a remake in 1080p of 'Fall equals winter' by Replay, intended for Revision 2025 PC demo competition
-WARNING 2: OSX build files aren't necessarily easy to get to work; read through 'code/main.cpp' and follow the bread crumbs; I'll fix that when I've got time (see issue list).
-WARNING 3: I've got it to work in VSCode with latest OSX and compilers et cetera (LLVM, Clang, use Brew, ...) on my MBP Air M2 again, checking this in..
-
-Supported platforms as of 20/04/2023:
-- Win64/x64 (builds out of the box with MSVC 2019 or higher)
-- OSX/x64 (builds with some effort, might be fixed soon)
-- OSX/Silicon (should build with little effort if you follow instructions)
-- Linux, courtesy of Erik 'Kusma' Faye-Lund (I tried to pysche you the f*ck out but you became a loyal friend and worht opponent, only losers pick lesser opposition)
- 
+Supported platforms as of 09/01/2026:
+- Win64/x64 (builds out of the box with MSVC 2019 or higher).
+- OSX/x64 (builds with some effort, might be fixed soon).
+- OSX/Silicon (should be set up to build and work with VSCode and the required plug-ins for C++, CMake and..).
+- Linux, courtesy of Erik 'Kusma' Faye-Lund (CMake).
+   
 For OSX preferably something like Visual Studio Code (using all the suggested extensions: C++, CMake, CMake tools, Makefile and
 perhaps a few more, Code will tell you what you need) which in turn through CMake will enable VSCode to build, run, debug and
 soforth. If VSCode is misbehaving, resort to LLDB on the command line or retain your sanity and use a Windows machine and MSVC
