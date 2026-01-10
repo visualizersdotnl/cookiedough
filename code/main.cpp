@@ -2,24 +2,24 @@
 // codename: cookiedough (2009-2025)
 // 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
 
-// this codebase was started as a simple experiment and doesn't have much to show for
-// modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
+// this codebase was started as a simple experiment and doesn't have much to show for,
+// in terms of modern C++, but I'm confident that can be retrofitted slowly as we progress
 
 // also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
 // but there's something Ryg once said about such code and I guess that's true to this day for most of us
 
 // misc. facts:
 // - 2023: competition version was 1080p, consumer grade version is 720p
-// - 2025: upgrade competition version to 4K? discuss with Chaos and Reza (rather CPU-bound, but customer grade should go up to 1080p)
 // - 32-bit build DISCONTINUED (as of August 2018)
 
 // OSX build (Windows one should be obvious):
 // - relies on (but not limited to): LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
 // - build using CMake (works best usin CMake Tools, LLDB et cetera in VSCode -- ask Niels)
+// - inspect CMakeLists.txt for details on dependencies, compiler flags et cetera
 
 // Linux build:
 // - graciously provided by Erik Faye-Lund
-// - I've never built it myself, but should be using similar dependencies as OSX, and likewise CMake-workflow
+// - I've never built it myself, but should be using similar dependencies as OSX and likewise CMake-workflow
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -32,13 +32,13 @@
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
 // - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
-// - ImGui (FIXME: Complete)
+// - ImGui (FIXME: add details / perhaps update?)
 
-// third party: ImGui
-// - Tab to show/hide
-// - Currently only enabled in windowed mode
+//  how to use ImGui integration:
+// - TAB to show/hide
+// - currently only enabled in windowed mode
 // - ImGuiIsVisible() will tell you if you should be drawing ImGui widgets
-// - Currently included in main.h, so should be available everywhere you might need it. I think.
+// - currently included in main.h, so should be available everywhere you might need it
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -79,9 +79,7 @@
 
 #include "main.h" // always include first!
 
-// FIXME: the f*ck is this header right here for then?
-#include <filesystem>
-#include <iostream>
+#include <filesystem> // FIXME: might only be necessary for OSX
 
 #if defined(_WIN32)
 	#include <windows.h>
@@ -133,13 +131,18 @@ constexpr bool kSilent = true; // when you're working on anything else than sync
 #include <mach-o/dyld.h>
 #include <limits.h>
 
-static const std::string GetMacWorkDir()
+static const std::string OSX_GetExecutableDirectory()
 {
+	// grab *actual* executable path
 	char pathBuf[PATH_MAX] = { 0 };
 	uint32_t bufSize = PATH_MAX;
 	_NSGetExecutablePath(pathBuf, &bufSize);
-	std::string fullPath(pathBuf);
-	return fullPath.substr(0, fullPath.find_last_of("\\/"));
+	
+	// strip executable name
+	const std::string fullPath(pathBuf);
+	const std::string exeDir = fullPath.substr(0, fullPath.find_last_of("/"));
+
+	return exeDir;
 }
 
 #endif
@@ -222,7 +225,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// change path to target root (which is a dirty affair on Mac)
 #if defined(__APPLE__)
-	std::__fs::filesystem::current_path(GetMacWorkDir() + "/..");
+	std::__fs::filesystem::current_path(OSX_GetExecutableDirectory() + "/..");
 #elif defined(__linux__)
     std::filesystem::current_path(".");
 #else

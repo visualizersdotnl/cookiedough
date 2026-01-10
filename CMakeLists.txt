@@ -3,32 +3,36 @@ cmake_minimum_required(VERSION 3.25)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_OSX_DEPLOYMENT_TARGET 13.61)
 
+# For some reason I've decided to stick with BREW-acquired LLVM/Clang on OSX (FIXME?)
 if (APPLE)
     set (CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang" CACHE STRING "C compiler" FORCE)
     set (CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE STRING "C++ compiler" FORCE)
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "target/osx")
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/target/osx")
 endif()
 
 if (LINUX)
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../target/linux")
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/target/linux")
 endif()
 
-set(CMAKE_C_FLAGS "-Wall -fno-exceptions -O3 -ffast-math")
-
+set(CMAKE_C_FLAGS "-Wall -Wno-unused -fno-exceptions")
+ 
+# Set common C++ flags
 if (APPLE)
-    set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions")
+    set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -fno-exceptions")
 else()
-    set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -msse4.1")
+    set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -msse4.1") # Assuming non-Apple means x64
 endif()
 
+# Append OpenMP support for C++
 if (APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp=libomp")
 else()
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
 
+# Specific debug or optimization (release) flags
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g3")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
@@ -46,16 +50,19 @@ target_compile_definitions(cookiedough PUBLIC
     >
 )
 
+# Set output name based on build type
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set_target_properties(cookiedough PROPERTIES OUTPUT_NAME cookiedebug)
 else()
     set_target_properties(cookiedough PROPERTIES OUTPUT_NAME cookiedough)
 endif()
 
+# OSX/arm64 specific link options
 if (APPLE)
     target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-osx/arm64 -fopenmp=libomp)
 endif()
 
+# Linux/x64 specific link options
 if (LINUX)
     target_link_options(cookiedough PUBLIC -L${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-linux/x64 -fopenmp)
     # $ORIGIN/lib/libmylib.so

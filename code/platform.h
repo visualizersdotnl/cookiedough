@@ -9,6 +9,7 @@
 #elif __GNUC__
 
 	#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+		#define SSE2NEON_SUPPRESS_WARNINGS
 		#include "../3rdparty/sse2neon-stripped/sse2neon.h"
 		#define FOR_ARM
 	#else // Most likely x64

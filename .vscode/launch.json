@@ -5,24 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "(lldb) CMake Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "/bin/true",
-            "args": []
-        },
-        {
-            "name": "Release",
-            "type": "lldb",
-            "request": "launch",
-            "program": "/bin/true",
+            "program": "${command:cmake.launchTargetPath}",
+            "cwd": "${command:cmake.launchTargetDirectory}",
             "args": []
         },
         {
             "name": "(lldb) Attach",
             "type": "lldb",
             "request": "attach",
-            "program": "${workspaceFolder}/target/osx/cookiedough",
+            "program": "${command:cmake.launchTargetPath}"
         }
 
     ]
