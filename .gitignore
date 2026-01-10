@@ -28,6 +28,9 @@ target/linux/cookiedough
 target/osx/cookiedebug
 target/osx/cookiedough
 
+# makefile
+Makefile
+
 # -- Visual Studio / Windows --
 
 # x64 executables et cetera
