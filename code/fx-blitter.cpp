@@ -33,12 +33,12 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 	uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
 
 	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < kFxMapResY-1; ++iY)
+	for (unsigned iY = 0; iY < kFxMapResY-1; ++iY)
 	{
 		const unsigned mapIndexY = iY*kFxMapResX;
 		const unsigned destIndexY = (iY*kFxMapDiv)*kResX;
 
-		for (int iX = 0; iX < kFxMapResX-1; ++iX)
+		for (unsigned iX = 0; iX < kFxMapResX-1; ++iX)
 		{
 			const unsigned iA = mapIndexY + iX;
 //			const unsigned iB = iA+1;
@@ -89,9 +89,9 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 
 void FxBlitter_DrawTestPattern(uint32_t* pDest)
 {
-	for (int iY = 0; iY < kFxMapResY; ++iY)
+	for (unsigned iY = 0; iY < kFxMapResY; ++iY)
 	{
-		for (int iX = 0; iX < kFxMapResX; ++iX)
+		for (unsigned iX = 0; iX < kFxMapResX; ++iX)
 		{
 			int color;
 			if (iY < kFxMapResY / 2)

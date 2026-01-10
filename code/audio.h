@@ -6,7 +6,7 @@
 
 #if !defined(_WIN32)
 	#define HWND void*
-	#include "../3rdparty/bass24-osx/bass.h"
+	#include "../3rdparty/bass24-osx/bass.h" // boldly using the OSX "version" for Linux as well
 #else
 	#include "../3rdparty/bass24-stripped/c/bass.h"
 #endif

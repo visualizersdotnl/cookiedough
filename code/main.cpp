@@ -1,25 +1,46 @@
 
-// codename: cookiedough (2009-2025)
-// 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
+/*
+	codename: cookiedough (2009-2023-)
+	- 2013 release: HOT STUFF by Megahawks INC. @ Outline 2013
+	- 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
 
-// this codebase was started as a simple experiment and doesn't have much to show for,
-// in terms of modern C++, but I'm confident that can be retrofitted slowly as we progress
+	this codebase was started as a simple experiment and doesn't have much to show for,
+	in terms of modern C/C++, but I'm confident that can be retrofitted slowly as we march on
 
-// also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
-// but there's something Ryg once said about such code and I guess that's true to this day for most of us
+	also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
+	but there's something Fabian Giesen once said about demo source code being disposable after the party, right? ;)
 
-// misc. facts:
-// - 2023: competition version was 1080p, consumer grade version is 720p
-// - 32-bit build DISCONTINUED (as of August 2018)
+	some say...
+	
+	... I lied about the competition version being 1080p, it was always 720p :-)
+    ... 32-bit build DISCONTINUED (as of August 2018)
 
-// OSX build (Windows one should be obvious):
-// - relies on (but not limited to): LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
-// - build using CMake (works best usin CMake Tools, LLDB et cetera in VSCode -- ask Niels)
-// - inspect CMakeLists.txt for details on dependencies, compiler flags et cetera
 
-// Linux build:
-// - graciously provided by Erik Faye-Lund
-// - I've never built it myself, but should be using similar dependencies as OSX and likewise CMake-workflow
+	builds:
+	
+	* Windows build (x64 only): Visual Studio 2019 or later
+
+	* OSX build (originally intended for Silicon only, but has worked for Intel as well):
+	  - relies on (but not limited to): LLVM supporting OpenMP, BASS 2.4, DevIL & SDL2 (use Homebrew to install)
+	  - BASS is supplied in /3rdparty and /target/osx for arm64, needs some tinkering to get the x64 version working
+	  - build using CMake / VSCode (install CMake, CMake Tools, MS' C++ extensions et cetera, VSCode will tell you)
+	  - inspect CMakeLists.txt for details on dependencies, compiler flags et cetera
+
+	* Linux build (should build both on x64 and ARM64):
+	  - graciously provided by Erik Faye-Lund
+	  - same dependencies as OSX build
+	  - if you install BASS to /usr/local/include and /lib it'll pick it up automatically at time of writing (10/01/2026)
+
+	to circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
+	what you'd typically do is bundle the .app with the required .dylibs and resources in /target/libs
+
+	Kusma did likewise for the Linux build (x64), so depending on if it's x64 or ARM64, the right BASS .so needs to be in /target/libs
+	however, the Linux build *does* expect you've got your DevIL and SDL2 shared libraries installed system-wide
+*/
+
+// I'd like: 
+// - transparent x64/ARM64 support for OSX and Linux (FIXME)
+// - to get rid of 'macdylibbundler' use (FIXME)
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -31,7 +52,6 @@
 // - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
-// - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
 // - ImGui (FIXME: add details / perhaps update?)
 
 //  how to use ImGui integration:
@@ -108,7 +128,9 @@
 const char *kTitle = "Arrested Development (BPS ft. TPB)";
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
-constexpr bool kSilent = true; // when you're working on anything else than synchronization
+
+// when you're working on anything else than synchronization/demonstration
+constexpr bool kSilent = false; 
 
 // enable this to receive derogatory comments
 // #define DISPLAY_AVG_FPS
@@ -121,9 +143,10 @@ constexpr bool kSilent = true; // when you're working on anything else than sync
 // -----------------------------
 
 /*
-	so as luck would have it, not only is statically linking a nightmare in OSX if you do things the Linux way, but the work dir. also
-	differs depending on if you launch from finder or for example the terminal; for this project I am unwilling to turn to XCode, so we'll
-	be doing it the dirty way instead
+	so as luck would have it, not only is statically linking a nightmare in OSX if you do things the Unix way, 
+	but the work dir. also *differs* depending on if you launch from finder or for example the terminal 
+	
+	for this project I am unwilling to turn to XCode, so we'll be doing it the 100% deterministic way instead
 */
 
 #if defined(__APPLE__)
@@ -226,13 +249,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// change path to target root (which is a dirty affair on Mac)
 #if defined(__APPLE__)
 	std::__fs::filesystem::current_path(OSX_GetExecutableDirectory() + "/..");
-#elif defined(__linux__)
-    std::filesystem::current_path(".");
-#else
+#else // Windows and Linux
     std::filesystem::current_path("..");
 #endif
 
-	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::__fs::filesystem::current_path().c_str()));
+	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::filesystem::current_path().c_str()));
 
 	// check for SSE 4.2 / NEON 
 #if defined(FOR_ARM)
@@ -316,7 +337,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 							ImGui::NewFrame();
 							
 							if (ImGuiIsVisible())
-								ImGui::Begin("I'm ImGui!");
+								ImGui::Begin("I'm ImGui!"); // dear lord Thorsten, that is a particularly wimpy introduction :D
 						}
 #endif
 

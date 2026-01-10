@@ -14,7 +14,7 @@ uint32_t *g_pXboxLogoTPB = nullptr;
 bool Shared_Create()
 {
 	// create linear grayscale gradient (unpacked)
-	for (int iPixel = 0; iPixel < kNumGradients; ++iPixel)
+	for (unsigned iPixel = 0; iPixel < kNumGradients; ++iPixel)
 	{
 		g_gradientUnp16[iPixel] = c2vISSE16(iPixel * 0x01010101);
 	}

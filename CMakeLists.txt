@@ -17,11 +17,8 @@ endif()
 set(CMAKE_C_FLAGS "-Wall -Wno-unused -fno-exceptions")
  
 # Set common C++ flags
-if (APPLE)
-    set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -fno-exceptions")
-else()
-    set(CMAKE_CXX_FLAGS "-Wall -fno-exceptions -msse4.1") # Assuming non-Apple means x64
-endif()
+# if I can differentiate between ARM and Intel here, reconsider adding '-msse4.1'
+set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -fno-exceptions -std=c++20")
 
 # Append OpenMP support for C++
 if (APPLE)
@@ -57,12 +54,14 @@ else()
     set_target_properties(cookiedough PROPERTIES OUTPUT_NAME cookiedough)
 endif()
 
-# OSX/arm64 specific link options
+# OSX/ARM64 specific link options
+# FIXME: adapt for Intel OSX (x64 libraries available as well in /3rdparty)
 if (APPLE)
     target_link_options(cookiedough PUBLIC -L/opt/homebrew/lib -L${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-osx/arm64 -rpath ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-osx/arm64 -fopenmp=libomp)
 endif()
 
 # Linux/x64 specific link options
+# FIXME: this works for Intel Linux, looking in /x64 first, but if you've got the ARM64 version of BASS in /usr/lib/ you'll be good for ARM64
 if (LINUX)
     target_link_options(cookiedough PUBLIC -L${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bass24-linux/x64 -fopenmp)
     # $ORIGIN/lib/libmylib.so

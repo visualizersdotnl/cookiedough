@@ -101,7 +101,7 @@ static void vtwister(uint32_t *pDest, float time)
 	const float shearSpeed = Rocket::getf(trackTwisterShearSpeed);
 
 	#pragma omp parallel for schedule(static)
-	for (int iRay = 0; iRay < kTargetResY; ++iRay)
+	for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float shearAngle = (float) iRay * (k2PI/(kTargetResY-1));
 

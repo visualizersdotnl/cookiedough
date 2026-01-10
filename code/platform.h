@@ -6,7 +6,7 @@
 	#define FOR_INTEL
 	#define DEBUG_TRAP __debugbreak();
 
-#elif __GNUC__
+#elif defined(__GNUC__) // traps both Linux and OSX for now
 
 	#if defined(__ARM_NEON) || defined(__ARM_NEON__)
 		#define SSE2NEON_SUPPRESS_WARNINGS

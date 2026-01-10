@@ -3,11 +3,8 @@
 
 #include "main.h"
 
-#if !_WIN64
-	#include "../3rdparty/DevIL-SDK-x86-1.7.8/include/IL/il.h"
-#else
-	#include "../3rdparty/DevIL-SDK-x64-1.7.8/include/IL/il.h"
-#endif
+// FIXME: lazily using the 1.7.8 x64 header for all platforms for now
+#include "../3rdparty/DevIL-SDK-x64-1.7.8/include/IL/il.h"
 
 #include "image.h"
 

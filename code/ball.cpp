@@ -358,7 +358,7 @@ static void vball(uint32_t *pDest, float time)
 		memset32(pDest, 0, kTargetSize);
 
 //		#pragma omp parallel for schedule(static)
-		for (int iRay = 0; iRay < kTargetResY; ++iRay)
+		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{
 			const float curAngle = iRay*delta;
 			float dX, dY;
@@ -370,7 +370,7 @@ static void vball(uint32_t *pDest, float time)
 	{
 		// FIXME: beam version works glitchless? OR AM I NOT JUST F*CKING SEEING IT?
 		#pragma omp parallel for schedule(static)
-		for (int iRay = 0; iRay < kTargetResY; ++iRay)
+		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{
 			const float curAngle = iRay*delta;
 			float dX, dY;
