@@ -4,7 +4,7 @@
 #include "main.h"
 #include "fx-blitter.h"
 
-uint32_t *g_pFxMap[4] = { nullptr };
+uint32_t *g_pFxMap[kNumFxMaps] = { nullptr };
 
 bool FxBlitter_Create()
 {
