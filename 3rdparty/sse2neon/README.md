@@ -1,17 +1,15 @@
 # sse2neon
-![Github Actions](https://github.com/DLTcollab/sse2neon/workflows/Github%20Actions/badge.svg?branch=master)
+![GitHub Actions](https://github.com/DLTcollab/sse2neon/workflows/GitHub%20Actions/badge.svg)
+![SSE Coverage](https://img.shields.io/endpoint?url=https://DLTcollab.github.io/sse2neon/badge/coverage.json)
 
 A C/C++ header file that converts Intel SSE intrinsics to Arm/Aarch64 NEON intrinsics.
 
 ## Introduction
 
-`sse2neon` is a translator of Intel SSE (Streaming SIMD Extensions) intrinsics
-to [Arm NEON](https://developer.arm.com/architectures/instruction-sets/simd-isas/neon),
-shortening the time needed to get an Arm working program that then can be used to
-extract profiles and to identify hot paths in the code.
-The header file `sse2neon.h` contains several of the functions provided by Intel
-intrinsic headers such as `<xmmintrin.h>`, only implemented with NEON-based counterparts
-to produce the exact semantics of the intrinsics.
+`sse2neon` translates Intel SSE (Streaming SIMD Extensions) intrinsics to [Arm NEON](https://developer.arm.com/architectures/instruction-sets/simd-isas/neon),
+enabling rapid porting of x86 SIMD code to Arm platforms.
+The header file `sse2neon.h` provides NEON-based implementations of functions from Intel intrinsic headers (e.g., `<xmmintrin.h>`),
+preserving the original semantics.
 
 ## Mapping and Coverage
 
@@ -26,22 +24,18 @@ Header file | Extension |
 `<nmmintrin.h>` | SSE4.2 |
 `<wmmintrin.h>` | AES  |
 
-`sse2neon` aims to support SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 and AES extension.
+`sse2neon` supports SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, and AES extensions.
 
-In order to deliver NEON-equivalent intrinsics for all SSE intrinsics used widely,
-please be aware that some SSE intrinsics exist a direct mapping with a concrete
-NEON-equivalent intrinsic. Others, unfortunately, lack a 1:1 mapping, meaning that
-their equivalents are built utilizing a number of NEON intrinsics.
+Some SSE intrinsics map directly to a single NEON intrinsic (e.g., `_mm_loadu_si128` → `vld1q_s32`),
+while others require multiple NEON instructions (e.g., `_mm_maddubs_epi16` uses 13 instructions).
 
-For example, SSE intrinsic `_mm_loadu_si128` has a direct NEON mapping (`vld1q_s32`),
-but SSE intrinsic `_mm_maddubs_epi16` has to be implemented with 13+ NEON instructions.
+See [perf-tier.md](perf-tier.md) for detailed performance tier classification of all intrinsics.
 
-### Floating-point compatibility
+### Floating-point Compatibility
 
-Some conversions require several NEON intrinsics, which may produce inconsistent results
-compared to their SSE counterparts due to differences in the arithmetic rules of IEEE-754.
+Some conversions produce different results than SSE due to IEEE-754 handling differences.
 
-Taking a possible conversion of `_mm_rsqrt_ps` as example:
+For example, `_mm_rsqrt_ps`:
 
 ```c
 __m128 _mm_rsqrt_ps(__m128 in)
@@ -55,118 +49,165 @@ __m128 _mm_rsqrt_ps(__m128 in)
 }
 ```
 
-The `_mm_rsqrt_ps` conversion will produce NaN if a source value is `0.0` (first INF for the
-reciprocal square root of `0.0`, then INF * `0.0` using `vmulq_f32`). In contrast,
-the SSE counterpart produces INF if a source value is `0.0`.
-As a result, additional treatments should be applied to ensure consistency between the conversion and its SSE counterpart.
+This NEON conversion returns NaN for input `0.0` because rsqrt(0) = INF, and the subsequent INF × 0 = NaN.
+The SSE intrinsic returns INF instead.
+Enable the compile-time precision flags below when exact SSE compatibility is required.
 
-## Requirement
+## Requirements
 
-Developers are advised to utilize sse2neon.h with GCC version 10 or higher, or Clang version 11 or higher. While sse2neon.h might be compatible with earlier versions, certain vector operation errors have been identified in those versions. For further details, refer to the discussion in issue [#622](https://github.com/DLTcollab/sse2neon/issues/622).
+**Architecture**: Little-endian ARM only. Big-endian ARM is not supported and will produce a compile-time error.
+
+**Compilers**:
+| Compiler | Minimum Version | Notes |
+|----------|-----------------|-------|
+| GCC | 10+ | Earlier versions have vector instruction bugs |
+| Clang | 11+ | Earlier versions have vector instruction bugs |
+| MSVC | 2019+ (v142) | ARM64 and ARM64EC targets supported |
+| Apple Clang | 12+ | macOS ARM64 (Apple Silicon) |
+
+Earlier GCC/Clang versions contain bugs in vector instruction generation that cause incorrect assembly output for certain NEON intrinsics (e.g., `rev16`, `rev32` with invalid operand combinations).
+
+[ARM64EC](https://learn.microsoft.com/en-us/windows/arm/arm64ec) is a hybrid ABI allowing ARM64 code to interoperate with x64 code.
 
 ## Usage
 
-- Put the file `sse2neon.h` in to your source code directory.
+1. Copy `sse2neon.h` into your source directory.
 
-- Locate the following SSE header files included in the code:
-```C
-#include <xmmintrin.h>
-#include <emmintrin.h>
-```
-  {p,t,s,n,w}mmintrin.h could be replaceable as well.
+2. Replace SSE headers with sse2neon:
+   ```C
+   // Before
+   #include <xmmintrin.h>
+   #include <emmintrin.h>
 
-- Replace them with:
-```C
-#include "sse2neon.h"
-```
+   // After
+   #include "sse2neon.h"
+   ```
+   This also replaces `{p,t,s,n,w}mmintrin.h`.
 
-- Explicitly specify platform-specific options to gcc/clang compilers.
-  * On ARMv8-A 64-bit targets, you should specify the following compiler option: (Remove `crypto` and/or `crc` if your architecture does not support cryptographic and/or CRC32 extensions)
-  ```shell
-  -march=armv8-a+fp+simd+crypto+crc
-  ```
-  * On ARMv8-A 32-bit targets, you should specify the following compiler option:
-  ```shell
-  -mfpu=neon-fp-armv8
-  ```
-  * On ARMv7-A targets, you need to append the following compiler option:
-  ```shell
-  -mfpu=neon
-  ```
+3. Add the appropriate compiler flags:
+   | Target | Compiler Flag |
+   |--------|---------------|
+   | ARMv8-A AArch64 | `-march=armv8-a+fp+simd+crypto+crc` |
+   | ARMv8-A AArch32 | `-mfpu=neon-fp-armv8` |
+   | ARMv7-A | `-mfpu=neon` |
+
+   Remove `+crypto` and/or `+crc` if unsupported by your target.
+
+4. For Windows ARM64EC (hybrid x64/ARM64 mode):
+   - `sse2neon.h` automatically skips `<intrin.h>` when `_M_ARM64EC` is detected
+   - This avoids type conflicts between MSVC's SSE union types and sse2neon's NEON types
+   - No manual configuration needed when using MSVC with ARM64EC target
+   - Note: sse2neon's `__m128` type is not ABI-compatible with x64 code; users needing
+     cross-ABI SIMD interop should use MSVC's softintrin instead
+
+5. (Optional) To reduce the header file size for your specific target architecture and accelerate compilation,
+   you can use the [unifdef](https://github.com/fanf2/unifdef) tool to remove unused conditional compilation paths.
+   For example, to generate a reduced version for AArch64:
+   ```shell
+   unifdef -DSSE2NEON_ARCH_AARCH64=1 -D__aarch64__=1\
+           -D__ARM_FEATURE_DIRECTED_ROUNDING=1 -D__ARM_FEATURE_FMA=1
+           -D__ARM_FEATURE_CRYPTO=1 -D__ARM_FEATURE_CRC32=1 -U__ARM_FEATURE_FRINT\
+           sse2neon.h > sse2neon_aarch64.h
+   ```
 
 ## Compile-time Configurations
 
-Though floating-point operations in NEON use the IEEE single-precision format, NEON does not fully comply to the IEEE standard when inputs or results are denormal or NaN values for minimizing power consumption as well as maximizing performance.
-Considering the balance between correctness and performance, `sse2neon` recognizes the following compile-time configurations:
-* `SSE2NEON_PRECISE_MINMAX`: Enable precise implementation of `_mm_min_{ps,pd}` and `_mm_max_{ps,pd}`. If you need consistent results such as handling with NaN values, enable it.
-* `SSE2NEON_PRECISE_DIV`: Enable precise implementation of `_mm_rcp_ps` and `_mm_div_ps` by additional Netwon-Raphson iteration for accuracy.
-* `SSE2NEON_PRECISE_SQRT`: Enable precise implementation of `_mm_sqrt_ps` and `_mm_rsqrt_ps` by additional Netwon-Raphson iteration for accuracy.
-* `SSE2NEON_PRECISE_DP`: Enable precise implementation of `_mm_dp_pd`. When the conditional bit is not set, the corresponding multiplication would not be executed.
-* `SSE2NEON_SUPPRESS_WARNINGS`: Set this macro to disable the warning which is emitted by default when optimizations are enabled.
+NEON trades IEEE-754 compliance for performance when handling denormals and NaNs.
+Define these macros as `1` before including `sse2neon.h` to enable precise (but slower) implementations:
 
-The above are turned off by default, and you should define the corresponding macro(s) as `1` before including `sse2neon.h` if you need the precise implementations.
+| Macro | Effect |
+|-------|--------|
+| `SSE2NEON_PRECISE_MINMAX` | Correct NaN handling in `_mm_min_{ps,pd}` and `_mm_max_{ps,pd}` |
+| `SSE2NEON_PRECISE_DIV` | Extra Newton-Raphson iteration for `_mm_rcp_ps` and `_mm_div_ps` |
+| `SSE2NEON_PRECISE_SQRT` | Extra Newton-Raphson iteration for `_mm_sqrt_ps` and `_mm_rsqrt_ps` |
+| `SSE2NEON_PRECISE_DP` | Conditional multiplication in `_mm_dp_pd` |
+| `SSE2NEON_UNDEFINED_ZERO` | Force zero for `_mm_undefined_{ps,pd,si128}` (MSVC already does this) |
+
+All precision flags are disabled by default to maximize performance.
+
+### Recommended Flag Combinations by Use Case
+
+| Use Case | Flags | Rationale |
+|----------|-------|-----------|
+| Graphics/Rendering | `MINMAX`, `SQRT` (+`DIV` if using `rcp`) | NaN handling and normalization; [Blender](https://github.com/blender/blender/blob/main/source/blender/blenlib/BLI_simd.hh) enables all three |
+| DSP/Audio | None (defaults) | Throughput over precision; inaudible differences |
+| Cryptography | None (defaults) | Integer-focused; FP precision irrelevant |
+| Scientific/Numerical | `MINMAX`, `SQRT`, `DP` | Reduces x86 divergence; see caveats below |
+| Game Physics | `MINMAX` | Prevents NaN propagation in collision detection |
+| Machine Learning | `MINMAX` for inference | NaN handling for determinism; training tolerates defaults |
+
+Flags use `SSE2NEON_PRECISE_` prefix (e.g., `MINMAX` → `SSE2NEON_PRECISE_MINMAX`).
+
+**Architecture notes**:
+- `DIV` flag affects `_mm_rcp*` (reciprocal approximation), not `_mm_div*` which uses native IEEE-754 division on ARMv8. Enable `DIV` on ARMv7 or when using reciprocal intrinsics.
+- For strict determinism, also define `SSE2NEON_UNDEFINED_ZERO=1`. Some divergences (FTZ/DAZ, NaN payloads) cannot be fully eliminated.
+
+Example configuration for graphics applications:
+```c
+#define SSE2NEON_PRECISE_MINMAX 1
+#define SSE2NEON_PRECISE_SQRT 1
+#include "sse2neon.h"
+```
+
+### Memory Allocation
+
+Memory from `_mm_malloc()` must be freed with `_mm_free()`, not `free()`. Mixing allocators causes heap corruption on Windows.
+
+### MONITOR/MWAIT Policy
+
+ARM has no userspace equivalent for x86 address-range monitoring.
+`_mm_monitor` is a no-op; `_mm_mwait` behavior is controlled by `SSE2NEON_MWAIT_POLICY`:
+
+| Value | Behavior |
+|-------|----------|
+| `0` (default) | `yield` - Safe everywhere, never blocks |
+| `1` | `wfe` - Event wait, may trap in EL0 |
+| `2` | `wfi` - Interrupt wait, may trap in EL0 |
+
+Policies 1/2 do not provide "wake on store" semantics and may trap on Linux/iOS/macOS.
+See `sse2neon.h` for detailed usage guidance.
 
 ## Run Built-in Test Suite
 
-`sse2neon` provides a unified interface for developing test cases. These test
-cases are located in `tests` directory, and the input data is specified at
-runtime. Use the following commands to perform test cases:
+Test cases are in the `tests` directory with runtime-specified input data.
+
 ```shell
-$ make check
+# Basic test run
+make check
+
+# Enable crypto and CRC features
+make FEATURE=crypto+crc check
+
+# Target specific CPU
+make ARCH_CFLAGS="-mcpu=cortex-a53 -mfpu=neon-vfpv4" check
 ```
 
-For running check with enabling features, you can use assign the features with `FEATURE` command.
-If `none` is assigned, then the command will be the same as simply calling `make check`.
-The following command enable `crypto` and `crc` features in the tests.
-```
-$ make FEATURE=crypto+crc check
-```
+### Cross-compilation Testing
 
-For running check on certain CPU, setting the mode of FPU, etc.,
-you can also assign the desired options with `ARCH_CFLAGS` command.
-If `none` is assigned, the command acts as same as calling `make check`.
-For instance, to run tests on Cortex-A53 with enabling ARM VFPv4 extension and NEON:
-```
-$ make ARCH_CFLAGS="-mcpu=cortex-a53 -mfpu=neon-vfpv4" check
-```
+Requires [QEMU](https://www.qemu.org/) for non-Arm hosts.
 
-### Running tests on hosts other than ARM platform
-
-For running tests on hosts other than ARM platform,
-you can specify GNU toolchain for cross compilation with `CROSS_COMPILE` command.
-[QEMU](https://www.qemu.org/) should be installed in advance.
-
-For ARMv8-A running in 64-bit mode type:
 ```shell
-$ make CROSS_COMPILE=aarch64-linux-gnu- check # ARMv8-A
+# ARMv8-A AArch64
+make CROSS_COMPILE=aarch64-linux-gnu- check
+
+# ARMv7-A
+make CROSS_COMPILE=arm-linux-gnueabihf- check
+
+# ARMv8-A AArch32
+make CROSS_COMPILE=arm-linux-gnueabihf- \
+     ARCH_CFLAGS="-mcpu=cortex-a32 -mfpu=neon-fp-armv8" check
 ```
 
-For ARMv7-A type:
-```shell
-$ make CROSS_COMPILE=arm-linux-gnueabihf- check # ARMv7-A
-```
+See [tests/README.md](tests/README.md) for details.
 
-For ARMv8-A running in 32-bit mode (A32 instruction set) type:
-```shell
-$ make \
-  CROSS_COMPILE=arm-linux-gnueabihf- \
-  ARCH_CFLAGS="-mcpu=cortex-a32 -mfpu=neon-fp-armv8" \
-  check 
-```
+### Optimization Caveats
 
-Check the details via [Test Suite for SSE2NEON](tests/README.md).
-
-### Optimization
-
-The SSE2NEON project is designed with performance-sensitive scenarios in mind, and as such, optimization options (e.g. `O1`, `O2`) can lead to misbehavior under specific circumstances. For example, frequent changes to the rounding mode or repeated calls to `_MM_SET_DENORMALS_ZERO_MODE()` may introduce unintended behavior.
-
-Enforcing no optimizations for specific intrinsics could solve these boundary cases but may negatively impact general performance. Therefore, we have decided to prioritize performance and shift the responsibility for handling such edge cases to developers.
-
-It is important to be aware of these potential pitfalls when enabling optimizations and ensure that your code accounts for these scenarios if necessary.
-
+Compiler optimizations (`-O1`, `-O2`, etc.) may cause unexpected behavior with frequent rounding mode changes or repeated `_MM_SET_DENORMALS_ZERO_MODE()` calls.
+The project prioritizes performance over these edge cases—developers should handle them explicitly when needed.
 
 ## Adoptions
-Here is a partial list of open source projects that have adopted `sse2neon` for Arm/Aarch64 support.
+
+Open source projects using `sse2neon` for Arm/Aarch64 support (partial list):
 * [Aaru Data Preservation Suite](https://www.aaru.app/) is a fully-featured software package to preserve all storage media from the very old to the cutting edge, as well as to give detailed information about any supported image file (whether from Aaru or not) and to extract the files from those images.
 * [aether-game-utils](https://github.com/johnhues/aether-game-utils) is a collection of cross platform utilities for quickly creating small game prototypes in C++.
 * [ALE](https://github.com/sc932/ALE), aka Assembly Likelihood Evaluation, is a tool for evaluating accuracy of assemblies without the need of a reference genome.
@@ -180,6 +221,7 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
 * [ART](https://github.com/dinosaure/art) is an implementation in OCaml of [Adaptive Radix Tree](https://db.in.tum.de/~leis/papers/ART.pdf) (ART).
 * [Async](https://github.com/romange/async) is a set of c++ primitives that allows efficient and rapid development in C++17 on GNU/Linux systems.
 * [avec](https://github.com/unevens/avec) is a little library for using SIMD instructions on both x86 and Arm.
+* [BARCH](https://github.com/tjizep/barch) is a low-memory, dynamically configurable, constant access time ordered cache similar to Valkey and Redis.
 * [BEAGLE](https://github.com/beagle-dev/beagle-lib) is a high-performance library that can perform the core calculations at the heart of most Bayesian and Maximum Likelihood phylogenetics packages.
 * [BitMagic](https://github.com/tlk00/BitMagic) implements compressed bit-vectors and containers (vectors) based on ideas of bit-slicing transform and Rank-Select compression, offering sets of method to architect your applications to use HPC techniques to save memory (thus be able to fit more data in one compute unit) and improve storage and traffic patterns when storing data vectors and models in files or object stores.
 * [bipartite\_motif\_finder](https://github.com/soedinglab/bipartite_motif_finder) as known as BMF (Bipartite Motif Finder) is an open source tool for finding co-occurences of sequence motifs in genomic sequences.
@@ -202,21 +244,25 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
 * [fsrc](https://github.com/elsamuko/fsrc) is capable of searching large codebases for text snippets.
 * [GDAL](https://gdal.org) is a translator library for raster and vector geospatial data formats that comes with a variety of useful command line utilities for data translation and processing.
 * [gmmlib](https://github.com/intel/gmmlib) is the Intel Graphics Memory Management Library that provides device specific and buffer management for the Intel Graphics Compute Runtime for OpenCL and the Intel Media Driver for VAAPI.
+* [gopher64](https://github.com/gopher64/gopher64) is an N64 emulator written in Rust.
 * [HISE](https://github.com/christophhart/HISE) is a cross-platform open source audio application for building virtual instruments, emphasizing on sampling, but includes some basic synthesis features for making hybrid instruments as well as audio effects.
 * [iqtree2](https://github.com/iqtree/iqtree2) is an efficient and versatile stochastic implementation to infer phylogenetic trees by maximum likelihood.
 * [indelPost](https://github.com/stjude/indelPost) is a Python library for indel processing via realignment and read-based phasing to resolve alignment ambiguities.
 * [IResearch](https://github.com/iresearch-toolkit/iresearch) is a cross-platform, high-performance document oriented search engine library written entirely in C++ with the focus on a pluggability of different ranking/similarity models.
+* [jak](https://github.com/open-goal/jak-project) aims to port the original Jak and Daxter and Jak II to PC.
 * [Kraken](https://github.com/Wabi-Studios/Kraken) is a 3D animation platform redefining animation composition, collaborative workflows, simulation engines, skeletal rigging systems, and look development from storyboard to final render.
 * [kram](https://github.com/alecazam/kram) is a wrapper to several popular encoders to and from PNG/[KTX](https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/) files with [LDR/HDR and BC/ASTC/ETC2](https://developer.arm.com/solutions/graphics-and-gaming/developer-guides/learn-the-basics/adaptive-scalable-texture-compression/single-page).
 * [Krita](https://invent.kde.org/graphics/krita) is a cross-platform application that offers an end-to-end solution for creating digital art files from scratch built on the KDE and Qt frameworks.
 * [libCML](https://github.com/belosthomas/libCML) is a SLAM library and scientific tool, which include a novel fast thread-safe graph map implementation.
 * [libhdfs3](https://github.com/ClickHouse/libhdfs3) is implemented based on native Hadoop RPC protocol and Hadoop Distributed File System (HDFS), a highly fault-tolerant distributed fs, data transfer protocol.
+* [libpll-2](https://github.com/xflouris/libpll-2) is a C library for Phylogenetic Likelihood.
 * [libpostal](https://github.com/openvenues/libpostal) is a C library for parsing/normalizing street addresses around the world using statistical NLP and open data.
 * [libscapi](https://github.com/cryptobiu/libscapi) stands for the "Secure Computation API", providing  reliable, efficient, and highly flexible cryptographic infrastructure.
 * [libstreamvbyte](https://github.com/wst24365888/libstreamvbyte) is a C++ implementation of [StreamVByte](https://arxiv.org/abs/1709.08990).
 * [libmatoya](https://github.com/matoya/libmatoya) is a cross-platform application development library, providing various features such as common cryptography tasks.
 * [Loosejaw](https://github.com/TheHolyDiver/Loosejaw) provides deep hybrid CPU/GPU digital signal processing.
 * [Madronalib](https://github.com/madronalabs/madronalib) enables efficient audio DSP on SIMD processors with readable and brief C++ code.
+* [MaxMath](https://github.com/MrUnbelievable92/MaxMath) is an extensive SIMD math library available to Unity developers.
 * [minimap2](https://github.com/lh3/minimap2) is a versatile sequence alignment program that aligns DNA or mRNA sequences against a large reference database.
 * [mixed-fem](https://github.com/tytrusty/mixed-fem) is an open source reference implementation of Mixed Variational Finite Elements for Implicit Simulation of Deformables.
 * [MMseqs2](https://github.com/soedinglab/MMseqs2) (Many-against-Many sequence searching) is a software suite to search and cluster huge protein and nucleotide sequence sets.
@@ -225,27 +271,33 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
 * [nanors](https://github.com/sleepybishop/nanors) is a tiny, performant implementation of [Reed-Solomon codes](https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction), capable of reaching multi-gigabit speeds on a single core.
 * [niimath](https://github.com/rordenlab/niimath) is a general image calculator with superior performance.
 * [NVIDIA GameWorks](https://developer.nvidia.com/gameworks-source-github) has been already used in a lot of games. These repositories are public on GitHub.
+* [NVIDIA MathLib](https://github.com/NVIDIA-RTX/MathLib) is a cross-platform header-only SSE/AVX/NEON-accelerated math library, designed for computer graphics.
 * [Nx Meta Platform Open Source Components](https://github.com/networkoptix/nx_open) are used to build all Powered-by-Nx products including Nx Witness Video Management System (VMS).
 * [ofxNDI](https://github.com/leadedge/ofxNDI) is an [openFrameworks](https://openframeworks.cc/) addon to allow sending and receiving images over a network using the [NewTek](https://en.wikipedia.org/wiki/NewTek) Network Device Protocol.
 * [OGRE](https://github.com/OGRECave/ogre) is a scene-oriented, flexible 3D engine written in C++ designed to make it easier and more intuitive for developers to produce games and demos utilising 3D hardware.
 * [Olive](https://github.com/olive-editor/olive) is a free non-linear video editor for Windows, macOS, and Linux.
 * [OpenColorIO](https://github.com/AcademySoftwareFoundation/OpenColorIO) a complete color management solution geared towards motion picture production with an emphasis on visual effects and computer animation.
 * [OpenXRay](https://github.com/OpenXRay/xray-16) is an improved version of the X-Ray engine, used in world famous S.T.A.L.K.E.R. game series by GSC Game World.
+* [Orkid](https://github.com/tweakoz/orkid) is a C++ flexible media presentation engine.
 * [parallel-n64](https://github.com/libretro/parallel-n64) is an optimized/rewritten Nintendo 64 emulator made specifically for [Libretro](https://www.libretro.com/).
 * [Pathfinder C++](https://github.com/floppyhammer/pathfinder-cpp) is a fast, practical, GPU-based rasterizer for fonts and vector graphics using Vulkan and C++.
 * [PFFFT](https://github.com/marton78/pffft) does 1D Fast Fourier Transforms, of single precision real and complex vectors.
+* [PhyML](https://github.com/stephaneguindon/phyml) uses modern statistical approaches to analyse alignments of nucleotide or amino acid sequences in a phylogenetic framework.
 * [pixaccess](https://github.com/oliverue/pixaccess) provides the abstractions for integer and float bitmaps, pixels, and aliased (nearest neighbor) and anti-aliased (bi-linearly interpolated) pixel access.
 * [PlutoSDR Firmware](https://github.com/seanstone/plutosdr-fw) is the customized firmware for the [PlutoSDR](https://wiki.analog.com/university/tools/pluto) that can be used to introduce fundamentals of Software Defined Radio (SDR) or Radio Frequency (RF) or Communications as advanced topics in electrical engineering in a self or instructor lead setting.
 * [PowerToys](https://github.com/microsoft/PowerToys) is a set of utilities for power users to tune and streamline their Windows experience for greater productivity.
+* [PVFMM](https://github.com/dmalhotra/pvfmm) is a library for solving certain types of elliptic partial differential equations.
 * [Pygame](https://www.pygame.org) is cross-platform and designed to make it easy to write multimedia software, such as games, in Python.
 * [R:RandomFieldsUtils](https://cran.r-project.org/web/packages/RandomFieldsUtils) provides various utilities might be used in spatial statistics and elsewhere. (CRAN)
 * [RAxML](https://github.com/stamatak/standard-RAxML) is tool for Phylogenetic Analysis and Post-Analysis of Large Phylogenies.
+* [REDUCE](https://github.com/reduce-algebra/reduce-algebra) is an interactive system for general algebraic computations, of interest to mathematicians, scientists, and engineers.
 * [ReHLDS](https://github.com/gennadykataev/rehlds) is fully compatible with latest Half-Life Dedicated Server (HLDS) with a lot of defects and (potential) bugs fixed.
 * [rkcommon](https://github.com/ospray/rkcommon) represents a common set of C++ infrastructure and CMake utilities used by various components of [Intel oneAPI Rendering Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/rendering-toolkit.html).
 * [RPCS3](https://github.com/RPCS3/rpcs3) is the world's first free and open-source PlayStation 3 emulator/debugger, written in C++.
 * [simd\_utils](https://github.com/JishinMaster/simd_utils) is a header-only library implementing common mathematical functions using SIMD intrinsics.
 * [Sire](https://github.com/OpenBioSim/sire) is a molecular modelling framework that provides extensive functionality to manipulate representations of biomolecular systems.
 * [SMhasher](https://github.com/rurban/smhasher) provides comprehensive Hash function quality and speed tests.
+* [SortMeRNA](https://github.com/sortmerna/sortmerna) is a local sequence alignment tool for filtering, mapping and clustering.
 * [SNN++](https://github.com/ianmkim/snnpp) implements a single layer non linear Spiking Neural Network for images classification and generation.
 * [Spack](https://github.com/spack/spack) is a multi-platform package manager that builds and installs multiple versions and configurations of software.
 * [SRA](https://github.com/ncbi/sra-tools) is a collection of tools and libraries for using data in the [INSDC Sequence Read Archives](https://www.ncbi.nlm.nih.gov/sra/docs/).
@@ -261,6 +313,7 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
 * [Winter](https://github.com/rosenthj/Winter) is the top rated chess engine from Switzerland and has competed at top invite only computer chess events.
 * [XEVE](https://github.com/mpeg5/xeve) (eXtra-fast Essential Video Encoder) is an open sourced and fast MPEG-5 EVC encoder.
 * [XMRig](https://github.com/xmrig/xmrig) is an open source CPU miner for [Monero](https://web.getmonero.org/) cryptocurrency.
+* [xpar](https://github.com/iczelia/xpar) is an error/erasure code system guarding data integrity.
 * [xsimd](https://github.com/xtensor-stack/xsimd) provides a unified means for using SIMD intrinsics and parallelized, optimized mathematical functions.
 * [YACL](https://github.com/secretflow/yasl) is a C++ library contains modules and utilities which [SecretFlow](https://github.com/secretflow) code depends on.
 
@@ -269,6 +322,7 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
   intrinsics on hardware which doesn't natively support them, such as calling SSE functions on ARM.
 * [CatBoost's sse2neon](https://github.com/catboost/catboost/blob/master/library/cpp/sse/sse2neon.h)
 * [ARM\_NEON\_2\_x86\_SSE](https://github.com/intel/ARM_NEON_2_x86_SSE)
+* [neon\_sim](https://github.com/zchrissirhcz/neon_sim): ARM NEON Intrinsics implementation in C
 * [AvxToNeon](https://github.com/kunpengcompute/AvxToNeon)
 * [sse2rvv](https://github.com/FeddrickAquino/sse2rvv): C header file that converts Intel SSE intrinsics to RISC-V Vector intrinsic.
 * [sse2msa](https://github.com/i-evi/sse2msa): A C/C++ header file that converts Intel SSE intrinsics to MIPS/MIPS64 MSA intrinsics.
@@ -293,6 +347,8 @@ Here is a partial list of open source projects that have adopted `sse2neon` for 
 * [C/C++ on NVIDIA Grace](https://nvidia.github.io/grace-cpu-benchmarking-guide/developer/languages/c-c++.html)
 * [Tune graphics-intensive games for Apple silicon](https://developer.apple.com/games/pathway/)
 * [Benchmarking and Testing of Qualcomm Snapdragon System-on-Chip for JPL Space Applications and Missions](https://ieeexplore.ieee.org/abstract/document/9843518)
+* [Spotlight: Petrobras Speeds Up Linear Solvers for Reservoir Simulation Using NVIDIA Grace CPU](https://developer.nvidia.com/blog/spotlight-petrobras-accelerates-linear-solvers-for-reservoir-simulation-using-nvidia-grace-cpu/)
+* [Application porting to Windows on Snapdragon, using the sse2neon header file](https://www.qualcomm.com/developer/blog/2024/10/applications-porting-windows-on-snapdragon-sse2neon-header-file-part-1)
 
 ## Licensing
 
