@@ -1,4 +1,4 @@
-a# cookiedough
+# cookiedough
 
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly...
 
