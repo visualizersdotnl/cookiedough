@@ -1,4 +1,4 @@
-# cookiedough
+a# cookiedough
 
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly...
 
@@ -7,7 +7,7 @@ This is an experiment I started on a slow Netbook (Intel) back in 2006, if I rec
 Supported platforms as of 09/01/2026:
 - Win64/x64 (builds out of the box with MSVC 2019 or higher) <- Currently possibly out of date; please fix!
 - OSX/Silicon (should be set up to build and work with VSCode and the required plug-ins for C++, CMake et cetera).
-- Linux/arm64+x64, courtesy of Erik 'Kusma' Faye-Lund & Niels J. de Wit (not very different to get going than OSX).
+- Linux/x64+ARM64, courtesy of Erik 'Kusma' Faye-Lund & Niels J. de Wit (not very different to get going than OSX).
 
 Possible with some tinkering (not actively maintained):
 - OSX/x64
