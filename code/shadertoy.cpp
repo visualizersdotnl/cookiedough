@@ -720,7 +720,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		}
 		else
 		{
-			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name 'warmup'
+			// render only specular, can be used for a transition as seen in Aura for Laura (hence the track name 'warmup')
 			RenderSpikeyMap_2x2_Distant_SpecularOnly(g_pFxMap[0], time, 1.f+warmup);
 			HorizontalBoxBlur32(g_pFxMap[0], g_pFxMap[0], kFxMapResX, kFxMapResY, BoxBlurScale(1.f+warmup));
 			Fx_Blit_2x2(pDest, g_pFxMap[0]);
