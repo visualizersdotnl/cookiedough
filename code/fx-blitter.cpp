@@ -24,7 +24,7 @@ void FxBlitter_Destroy()
 }
 
 // 2x2 blit (2 pixels per SSE write)
-// FIXME: render to bigger map (X+1, Y+1) instead of copy hack below
+// FIXME: why is that pixel copy hack in here, you should just interpolate over a correct range instead
 void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
 	const __m128i zero = _mm_setzero_si128();
