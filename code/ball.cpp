@@ -340,21 +340,6 @@ static void vball(uint32_t *pDest, float time)
 	if (false == hasBeams)
 	{
 		// FIXME: temporary release fix: no threading and erase buffer first, that "fixes" a glitch bug
-
-		/* FIXME/NL/superplek^bps: 
-			wat er uiteindelijk gebeurt is dat er een kruis ontstaat om de middelaxis van de framebuffer wat ergens gek is
-			maar wellicht als je het hier niet kunt vinden valt te herleiden naar de polar blit functie in, well, you guessed..
-
-			kijk, al die f*cking float math amounts to all kinds of rounding error en zowel realtime als in precalc. zit er nogal
-			wat van in, dus ik kan me prima voorstellen dat zoiets simpels als een rounding mode (evt. tijdelijk) aanpassen de
-			oplossing is of dat je gewoon alles fixed point moet gaan doen, Amiga-style, zoals je met wel meer van die primitives
-			in dit project hebt (span fillers et cetera - Niels B. - so not me - take a look at this please!)
-
-			##GITHUB: add issue, remove comment
-		*/
-
-		// FIXME/NL: op zich moet die fill routine die hele buffer vullen, dus dat erasen, laat dat eerst eens
-		//           weg zodra je op land weer de juiste SDK hebt (the f*ck did Thorsten do...)
 		memset32(pDest, 0, kTargetSize);
 
 //		#pragma omp parallel for schedule(static)
@@ -368,7 +353,7 @@ static void vball(uint32_t *pDest, float time)
 	}
 	else
 	{
-		// FIXME: beam version works glitchless? OR AM I NOT JUST F*CKING SEEING IT?
+		// FIXME: beam version works glitchless or is it just not visible due to beams saturating it the result?
 		#pragma omp parallel for schedule(static)
 		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{
