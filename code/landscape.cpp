@@ -169,7 +169,7 @@ static void vscape(uint32_t *pDest, float time, float delta)
 	constexpr float rayY = kMapSize*kMapViewLenScale;
 
 	#pragma omp parallel for schedule(static)
-	for (int iRay = 0; iRay < kResX; ++iRay)
+	for (unsigned iRay = 0; iRay < kResX; ++iRay)
 	{
 		// FIXME: subpixel accuracy adj.
 

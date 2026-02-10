@@ -10,7 +10,7 @@ void CalculateCosLUT()
 {
 	float angle = 0.f;
 	const float angleStep = k2PI/kCosTabSize;
-	for (auto iStep = 0; iStep < kCosTabSize; ++iStep)
+	for (unsigned iStep = 0; iStep < kCosTabSize; ++iStep)
 	{
 		g_cosLUT[iStep] = cosf(angle);
 		angle += angleStep;

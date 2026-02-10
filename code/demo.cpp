@@ -1,6 +1,5 @@
 
 // cookiedough 2023 -- Bypass featuring TPB. presents 'Arrested Development'
-// cookiedough 2024-2025 - Bypass versus TPB. 'Cafe del Mar 1979' (FIXME: tentative title, but sounds reasonably absurd so I love it)
 
 #include "main.h"
 // #include <windows.h> // for audio.h
@@ -759,7 +758,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 						
 						if (rakerText > 0.f && rakerText < 1.f)
 						{						
-							// this is shit slow, but it'll only last a short whole (FIXME: optimize for major release)
+							// this is shit slow, but it'll only last a short while (FIXME: optimize for major release)
 							memset32(g_renderTarget[2], 0, kOutputSize);
 							BlitSrc32(g_renderTarget[2] + ((kResY-115)*kResX), s_pCloseSpike1961, kResX, 624, 115);
 							SoftLight32AA(pDest, g_renderTarget[2], kOutputSize, rakerText); // <- this would be the function to make work on arbitrarily sized bitmaps

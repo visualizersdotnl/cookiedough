@@ -112,7 +112,7 @@ void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false *
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < kOutputSize>>2; ++iPixel)
+	for (unsigned iPixel = 0; iPixel < kOutputSize>>2; ++iPixel)
 	{
 		auto mapIndex = iPixel<<3;
 		__m128i A = Fetch32(pRead+mapIndex+0, pSrc, kTargetResX);
@@ -130,7 +130,7 @@ void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false 
 	int *pRead = (!inverse) ? s_pMap : s_pInvMap;
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < kOutputSize; ++iPixel)
+	for (unsigned iPixel = 0; iPixel < kOutputSize; ++iPixel)
 	{
 		auto mapIndex = iPixel<<1;
 		const __m128i srcColor  = Fetch16(pRead+mapIndex, pSrc, kTargetResX);
@@ -148,7 +148,7 @@ void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = fal
 	__m128i *pDest128 = reinterpret_cast<__m128i*>(pDest);
 
 	#pragma omp parallel for schedule(static)
-	for (int iPixel = 0; iPixel < kFxMapSize>>2; ++iPixel)
+	for (unsigned iPixel = 0; iPixel < kFxMapSize>>2; ++iPixel)
 	{
 		auto mapIndex = iPixel<<3;
 		__m128i A = Fetch32(pRead+mapIndex+0, pSrc, kFxMapResX);

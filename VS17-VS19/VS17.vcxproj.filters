@@ -44,6 +44,9 @@
     <Filter Include="/code\filters &amp; blitters\not implemented">
       <UniqueIdentifier>{1a77707a-91cd-49c5-a059-343f34ad714c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="/3rdparty\/3rdParty/imgui-1.90">
+      <UniqueIdentifier>{d035cfa2-397e-4d41-9065-509b1457e045}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\ball.cpp">
@@ -129,6 +132,27 @@
     </ClCompile>
     <ClCompile Include="..\code\lens.cpp">
       <Filter>/code\filters &amp; blitters\not implemented</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_demo.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_draw.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_tables.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\imgui-1.90\imgui_widgets.cpp">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +294,30 @@
     <ClInclude Include="..\code\lens.h">
       <Filter>/code\filters &amp; blitters\not implemented</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imconfig.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdl2.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_impl_sdlrenderer2.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imgui_internal.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_rectpack.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_textedit.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdparty\imgui-1.90\imstb_truetype.h">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\3rdparty\bassmod20\c\BASSMOD.lib">
@@ -281,10 +329,10 @@
     <Library Include="..\3rdparty\DevIL-SDK-x64-1.7.8\DevIL.lib">
       <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x86\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x86\SDL2.lib">
       <Filter>/3rdparty\/3rdparty-x86</Filter>
     </Library>
-    <Library Include="..\3rdparty\SDL2-2.0.8\lib\x64\SDL2.lib">
+    <Library Include="..\3rdparty\SDL2-2.28.5\lib\x64\SDL2.lib">
       <Filter>/3rdparty\/3rdparty-x64</Filter>
     </Library>
     <Library Include="..\3rdparty\bass24-stripped\c\bass.lib">
@@ -297,6 +345,9 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
+    <None Include="..\3rdparty\imgui-1.90\.editorconfig">
+      <Filter>/3rdparty\/3rdParty/imgui-1.90</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\target\infofile.txt">

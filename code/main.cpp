@@ -1,23 +1,46 @@
 
-// codename: cookiedough (2009-2025)
-// 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
-// 2025 release: Radix equals Patrik by Replay, the design kings (TheParty.DK software competition entry)
-// property of njdewit technologies, Guillamne Werle, Patrik Neumann, Vincent Bijwaard and a few other motherf*ckers
+/*
+	codename: cookiedough (2009-2023-)
+	- 2013 release: HOT STUFF by Megahawks INC. @ Outline 2013
+	- 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
 
-// this codebase was started as a simple experiment and doesn't have much to show for
-// modern handling of C++, but I'm confident that can be retrofitted slowly as we progress
+	this codebase was started as a simple experiment and doesn't have much to show for,
+	in terms of modern C/C++, but I'm confident that can be retrofitted slowly as we march on
 
-// also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
-// but there's something Ryg once said about such code and I guess that's true to this day for most of us
+	also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
+	but there's something Fabian Giesen once said about demo source code being disposable after the party, right? ;)
 
-// misc. facts:
-// - 2023: competition version was 1080p, consumer grade version is 720p
-// - 2025: upgrade competition version to 4K? discuss with Chaos and Reza (rather CPU-bound, but customer grade should go up to 1080p)
-// - 32-bit build DISCONTINUED (as of August 2018)
+	some say...
+	
+	... I lied about the competition version being 1080p, it was always 720p :-)
+    ... 32-bit build DISCONTINUED (as of August 2018)
 
-// OSX build (Windows one should be obvious):
-// - relies on (but not limited to): LLVM supporting OpenMP, DevIL & SDL2 (use Homebrew to install)
-// - uses CMake and a script in '/target/osx'
+
+	builds:
+	
+	* Windows build (x64 only): Visual Studio 2019 or later
+
+	* OSX build (originally intended for Silicon only, but has worked for Intel as well):
+	  - relies on (but not limited to): LLVM supporting OpenMP, BASS 2.4, DevIL & SDL2 (use Homebrew to install)
+	  - BASS is supplied in /3rdparty and /target/osx for arm64, needs some tinkering to get the x64 version working
+	  - build using CMake / VSCode (install CMake, CMake Tools, MS' C++ extensions et cetera, VSCode will tell you)
+	  - inspect CMakeLists.txt for details on dependencies, compiler flags et cetera
+
+	* Linux build (should build both on x64 and ARM64):
+	  - graciously provided by Erik Faye-Lund
+	  - same dependencies as OSX build
+	  - if you install BASS to /usr/local/include and /lib it'll pick it up automatically at time of writing (10/01/2026)
+
+	to circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
+	what you'd typically do is bundle the .app with the required .dylibs and resources in /target/libs
+
+	Kusma did likewise for the Linux build (x64), so depending on if it's x64 or ARM64, the right BASS .so needs to be in /target/libs
+	however, the Linux build *does* expect you've got your DevIL and SDL2 shared libraries installed system-wide
+*/
+
+// I'd like: 
+// - transparent x64/ARM64 support for OSX and Linux (FIXME)
+// - to get rid of 'macdylibbundler' use (FIXME)
 
 // third party:
 // - GNU Rocket by Erik Faye-Lund & contributors (last updated 27/07/2018)
@@ -29,7 +52,13 @@
 // - sse-intrincs-test by Alfred Klomp (http://www.alfredklomp.com/programming/sse-intrinsics/)
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
-// - To circle around making a grown up OSX application: https://github.com/SCG82/macdylibbundler
+// - ImGui (FIXME: add details / perhaps update?)
+
+//  how to use ImGui integration:
+// - TAB to show/hide
+// - currently only enabled in windowed mode
+// - ImGuiIsVisible() will tell you if you should be drawing ImGui widgets
+// - currently included in main.h, so should be available everywhere you might need it
 
 // compiler settings for Visual C++:
 // - GNU Rocket depends on ws2_32.lib
@@ -70,8 +99,7 @@
 
 #include "main.h" // always include first!
 
-// FIXME: the f*ck is this header right here for then?
-#include <filesystem>
+#include <filesystem> // FIXME: might only be necessary for OSX
 
 #if defined(_WIN32)
 	#include <windows.h>
@@ -79,7 +107,7 @@
 #endif
 
 #include <float.h>
-#include "../3rdparty/SDL2-2.0.8/include/SDL.h"
+#include "../3rdparty/SDL2-2.28.5/include/SDL.h"
 
 #include "display.h"
 #include "timer.h"
@@ -97,12 +125,12 @@
 
 // -- debug, display & audio config. --
 
-const char *kTitle = "REPLAY PC SOFTWARE COMPETITION DEMO 2025";
-
-constexpr bool kFullScreen = true;
+const char *kTitle = "Arrested Development (BPS ft. TPB)";
 
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
-constexpr bool kSilent = false; // when you're working on anything else than synchronization
+
+// when you're working on anything else than synchronization/demonstration
+constexpr bool kSilent = false; 
 
 // enable this to receive derogatory comments
 // #define DISPLAY_AVG_FPS
@@ -115,9 +143,10 @@ constexpr bool kSilent = false; // when you're working on anything else than syn
 // -----------------------------
 
 /*
-	so as luck would have it, not only is statically linking a nightmare in OSX if you do things the Linux way, but the work dir. also
-	differs depending on if you launch from finder or for example the terminal; for this project I am unwilling to turn to XCode, so we'll
-	be doing it the dirty way instead
+	so as luck would have it, not only is statically linking a nightmare in OSX if you do things the Unix way, 
+	but the work dir. also *differs* depending on if you launch from finder or for example the terminal 
+	
+	for this project I am unwilling to turn to XCode, so we'll be doing it the 100% deterministic way instead
 */
 
 #if defined(__APPLE__)
@@ -125,18 +154,30 @@ constexpr bool kSilent = false; // when you're working on anything else than syn
 #include <mach-o/dyld.h>
 #include <limits.h>
 
-static const std::string GetMacWorkDir()
+static const std::string OSX_GetExecutableDirectory()
 {
+	// grab *actual* executable path
 	char pathBuf[PATH_MAX] = { 0 };
 	uint32_t bufSize = PATH_MAX;
 	_NSGetExecutablePath(pathBuf, &bufSize);
-	std::string fullPath(pathBuf);
-	return fullPath.substr(0, fullPath.find_last_of("\\/"));
+	
+	// strip executable name
+	const std::string fullPath(pathBuf);
+	const std::string exeDir = fullPath.substr(0, fullPath.find_last_of("/"));
+
+	return exeDir;
 }
 
 #endif
 
 // -----------------------------
+
+static bool s_showImGui = false;
+
+bool ImGuiIsVisible()
+{
+	return s_showImGui;
+}
 
 static std::string s_lastErr;
 
@@ -165,6 +206,11 @@ static bool HandleEvents()
 		default:
 			break;
 		}
+
+#if !defined(SYNC_PLAYER)
+		if (!kFullScreen)
+			ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
 	}
 
 	return true;
@@ -202,14 +248,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 
 	// change path to target root (which is a dirty affair on Mac)
 #if defined(__APPLE__)
-	std::__fs::filesystem::current_path(GetMacWorkDir() + "/..");
-#elif defined(__linux__)
-    std::filesystem::current_path(".");
-#else
+	std::__fs::filesystem::current_path(OSX_GetExecutableDirectory() + "/..");
+#else // Windows and Linux
     std::filesystem::current_path("..");
 #endif
 
-	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::__fs::filesystem::current_path().c_str()));
+	printf("And today we'll be working from: %s\n", reinterpret_cast<const char *>(std::filesystem::current_path().c_str()));
 
 	// check for SSE 4.2 / NEON 
 #if defined(FOR_ARM)
@@ -281,9 +325,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 						newTime = timer.Get();
 						const float delta = newTime-oldTime; // base delta on sys. time
 
+#if !defined(SYNC_PLAYER)
+						if (ImGui::IsKeyReleased(ImGui::GetKeyIndex(ImGuiKey_Tab)) && !kFullScreen)
+							s_showImGui = !s_showImGui;
+
+						if (!kFullScreen)
+						{
+							ImGui_ImplSDLRenderer2_NewFrame();
+							ImGui_ImplSDL2_NewFrame();
+							
+							ImGui::NewFrame();
+							
+							if (ImGuiIsVisible())
+								ImGui::Begin("I'm ImGui!"); // dear lord Thorsten, that is a particularly wimpy introduction :D
+						}
+#endif
+
 						const float audioTime = Audio_Get_Pos_In_Sec();
-						if (false == Demo_Draw(pDest, audioTime, delta*100.f))
+						if (false == Demo_Draw(pDest, audioTime, delta * 100.f))
 							break; // Rocket track says we're done
+
+#if !defined(SYNC_PLAYER)
+						if (!kFullScreen)
+						{
+							if (ImGuiIsVisible())
+								ImGui::End();
+							
+							ImGui::Render();
+						}
+#endif
 
 						display.Update(pDest);
 

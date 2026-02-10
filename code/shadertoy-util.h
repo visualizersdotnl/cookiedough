@@ -16,8 +16,10 @@
 #pragma once
 
 // SIMD versions of log(), exp(), sin(), cos()
+
 #define USE_SSE2
 #include "../3rdparty/sse_mathfun.h"
+#undef USE_SSE2
 
 // blitter(s) to output resolution
 #include "fx-blitter.h"

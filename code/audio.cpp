@@ -22,7 +22,7 @@ static BASS_INFO s_bassInf;
 
 bool Audio_Create(unsigned int iDevice, const std::string &musicPath, HWND hWnd, bool silent)
 {
-	VIZ_ASSERT(iDevice == -1); // || iDevice < Audio_GetDeviceCount());
+	VIZ_ASSERT(iDevice == unsigned(-1)); // || iDevice < Audio_GetDeviceCount());
 
 #if defined(_WIN32)
 	VIZ_ASSERT(hWnd != NULL);

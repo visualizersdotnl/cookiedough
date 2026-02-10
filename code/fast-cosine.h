@@ -20,7 +20,7 @@ CKD_INLINE static float fastcosf(double x)
 	constexpr auto phaseScale = 1.f/k2PI;
 	const auto phase = 1.0 + x*phaseScale;
 
-	const auto phaseAsInt = *reinterpret_cast<const unsigned long long *>(&phase);
+	const auto phaseAsInt = std::bit_cast<unsigned long long>(phase); // *reinterpret_cast<const unsigned long long *>(&phase);
 	const int exponent = (phaseAsInt >> 52) - 1023;
 
 	constexpr auto fractBits = 32 - kFastCosTabLog2Size;

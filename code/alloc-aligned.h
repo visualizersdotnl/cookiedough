@@ -18,7 +18,7 @@ inline void  freeAligned(void* address);
 
 	inline void* mallocAligned(size_t size, size_t align) 
 	{ 
-		void* address;
+		void* address = nullptr;
 		posix_memalign(&address, align, size);
 		return address;
 	}
