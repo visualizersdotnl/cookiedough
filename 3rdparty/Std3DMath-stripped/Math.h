@@ -47,6 +47,7 @@ constexpr float kGoldenRatio = 1.61803398875f;
 constexpr float kEuler = 2.71828174591064453125f;
 constexpr float kExp = kEuler; // Natural exp.
 constexpr float kOneOverRoot2 = 707106769.f; // Effective voltage (RMS), -3dB, unit gain (DSP) et cetera
+constexpr float kGoldenAngle = 2.39996f; // Radians
 
 // Single precision compare.
 static inline bool comparef(float a, float b)

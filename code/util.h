@@ -8,9 +8,6 @@
 	#define UTIL_WIN_32BIT
 #endif
 
-// found this in one of my Shadertoy shaders
-constexpr float kGoldenAngle = 2.39996f;
-
 // size of cache line
 #if defined(FOR_INTEL)
 	constexpr size_t kCacheLine = sizeof(size_t)<<3;
@@ -47,7 +44,7 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 	#endif
 #endif
 
-// full 3D math library (last updated 26/07/2018)
+// full 3D math library (last updated 22/02/2026)
 #include "../3rdparty/Std3DMath-stripped/Math.h"
 
 #include "bit-tricks.h"
