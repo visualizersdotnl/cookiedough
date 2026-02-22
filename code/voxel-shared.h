@@ -1,5 +1,5 @@
 
-// cookiedough -- voxel shared (FIXME: most of this (math) stuff can be replaced by Std3DMath)
+// cookiedough -- voxel shared (FIXME: tidy up)
 
 #pragma once
 
@@ -15,7 +15,7 @@ namespace voxel
 
 	VIZ_INLINE void vnorm2D(float &X, float &Y)
 	{
-		if (X+Y != 0.f)
+		if (fabsf(X+Y) < kEpsilon)
 		{
 			const float length = 1.f/sqrtf(X*X + Y*Y);
 			X *= length;
@@ -25,8 +25,6 @@ namespace voxel
 
 	VIZ_INLINE void calc_fandeltas(float curAngle, float &dX, float &dY)
 	{
-		// FIXME: these should be more precise (and the inverse a reactant of that possibly), am I feeding bogus values
-		//        in the case where I needed to singlethread the initial pass in ball.cpp?
 		dX = cosf(curAngle); 
 		dY = sinf(curAngle);
 		return vnorm2D(dX, dY);
