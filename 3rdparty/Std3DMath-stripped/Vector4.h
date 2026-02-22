@@ -102,7 +102,7 @@ public:
 	void Normalize()
 	{
 		const float length = Length();
-		if (length > 0.f)
+		if (length > kEpsilon)
 		{
 			*this *= 1.f/length;
 		}

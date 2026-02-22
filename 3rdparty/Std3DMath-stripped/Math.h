@@ -1,11 +1,11 @@
 
 /*
 	C++ math primitives for 3D rendering.
-	(c) visualizers.nl
+	(c) visualizers.nl/njdewit tech./Stockton North
 
 	Please check README.md for more information.
 
-	Added, fixed and/or modified (backport to main branch):
+	19/10/2018 (software rendering project):
 	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
 	- Added Matrix44::FromArray33().
 	- Forced 16-byte alignment for Vector4 & Vector3 (padded) by unionizing with __m128 (SSE/SIMD).
@@ -19,9 +19,13 @@
 	- Fixed clampf().
 	- Fixed lerpf(), smoothstepf() & smootherstepf().
 
-	Added after integrating fixes on 19/10/2018:
-	- Little typo in smoothstepf().
-	- Added weighted average.
+	08/10/2026:
+	- Added Euler's number (kEuler/kExp).
+	- Added hermite spline interpolation for Vector2, Vector3, Quaternion.
+	- Misc. fixes (see Github issues and changes).
+	- Working on intersection tests.
+
+	For further fixes & improvements: see Github issues.
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
@@ -37,15 +41,12 @@
 constexpr float kPI = 3.1415926535897932384626433832795f;
 constexpr float kHalfPI = kPI*0.5f;
 constexpr float k2PI = 2.f*kPI;
-constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
+constexpr float kEpsilon = FLT_EPSILON;
+// constexpr float kEpsilon = 5.96e-08f; // Max. error for single precision (32-bit).
 constexpr float kGoldenRatio = 1.61803398875f;
-
-// Generic floating point random.
-// Has poor distribution due to rand() being 16-bit, so don't use it when proper distribution counts.
-static inline float randf(float range)
-{
-	return range*((float) rand() / float(RAND_MAX));
-}
+constexpr float kEuler = 2.71828174591064453125f;
+constexpr float kExp = kEuler; // Natural exp.
+constexpr float kOneOverRoot2 = 707106769.f; // Effective voltage (RMS), -3dB, unit gain (DSP) et cetera
 
 // Single precision compare.
 static inline bool comparef(float a, float b)
@@ -71,8 +72,8 @@ static inline float saturatef(float value)
 	return std::max<float>(0.f, std::min<float>(1.f, value));
 }
 
-// GLSL fract().
-static inline float fracf(float value) { return value - ::floorf(value); }
+// GLSL frac().
+static inline float fracf(float value) { return value - std::truncf(value); }
 
 // Scalar interpolation.
 template<typename T>
@@ -92,21 +93,18 @@ static inline float smoothstepf(float a, float b, float t)
 // Source: http://en.wikipedia.org/wiki/Smoothstep
 static inline float smootherstepf(float a, float b, float t)
 {
-	t = t*t*t*(t*(t * 6.f-15.f) + 10.f);
+	t = t*t*t*(t*(t*6.f - 15.f) + 10.f);
 	return lerpf<float>(a, b, t);
 }
-
-// Weighted average (type of low-pass).
-static inline float lowpassf(float from, float to, float factor)
-{
-	return ((from * (factor-1.f)) + to)/factor;
-}
-
 
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+
 #include "Quaternion.h"
 #include "Matrix44.h"
+
+#include "Intersect.h"
+// #include "Hermite.h"
 
 #endif // STD_3D_MATH

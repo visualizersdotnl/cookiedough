@@ -23,6 +23,8 @@ public:
 		return A.x*B.x + A.y*B.y + A.z*B.z;
 	}
 
+	// AxB != BxA
+	// Important properties: signed area between two vectors & magnitude related to sin(theta)
 	S3D_INLINE static const Vector3 Cross(const Vector3 &A, const Vector3 &B)
 	{
 		return Vector3(
@@ -50,14 +52,14 @@ public:
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar), padding(0.f) {}
 
+	explicit Vector3(__m128 _vSSE) :
+		vSSE(_vSSE) {}
+
 	Vector3(float x, float y, float z) :
 		x(x), y(y), z(z), padding(0.f) {}
 
  	Vector3(const Vector2 &vec2D, float z = 1.f) :
 		x(vec2D.x), y(vec2D.y), z(z), padding(0.f) {}
-
-	explicit Vector3(__m128 _vSSE) :
-		vSSE(_vSSE) {}
 
 	const Vector3 operator +(const Vector3 &B) const { return Add(*this, B); }
 	const Vector3 operator +(float B)          const { return Add(*this, Vector3(B)); }
@@ -112,7 +114,7 @@ public:
 	void Normalize()
 	{
 		const float length = Length();
-		if (length > 0.f)
+		if (length > kEpsilon)
 		{
 			*this *= 1.f/length;
 		}
@@ -133,12 +135,12 @@ public:
 		return acosf(Dot(*this, B));
 	}
 
+	// Project A (this) onto B (refresher: https://www.youtube.com/watch?v=DfIsa7ArxSo)
+	// Easy to remember: like casting a shadow onto B, where the dot product is the magnitude or 'component'
 	const Vector3 Project(const Vector3 &B) const
 	{
-		// A1 = |A|*cosAng=A*(B/|B|)
-		// A' = (B/|B|)*(A1)
 		const Vector3 unitB = B.Normalized();
-		return B.Normalized() * Dot(*this, unitB);
+		return unitB * Dot(*this, unitB);
 	}
 
 	const Vector3 Reflect(const Vector3 &normal) const
@@ -159,12 +161,12 @@ public:
 	}
 
 	// A few basic refraction indices.
-	static const float kRefractVacuum;
-	static const float kRefractAir;
-	static const float kRefractWater;	
-	static const float kRefractGlass;
-	static const float kRefractPlastic;
-	static const float kRefractDiamond;
+	static constexpr float kRefractVacuum = 0.f;
+	static constexpr float kRefractAir = 1.0003f;
+	static constexpr float kRefractWater = 1.3333f;
+	static constexpr float kRefractGlass = 1.5f;
+	static constexpr float kRefractPlastic = 1.49f; // PMMA (acrylic, plexiglas, lucite, perspex), Source: Wikipedia
+	static constexpr float kRefractDiamond = 2.417f;
 
 	S3D_INLINE const Vector3 Perpendicular(const Vector3 &B) const
 	{
