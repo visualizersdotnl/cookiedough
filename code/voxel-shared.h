@@ -15,7 +15,7 @@ namespace voxel
 
 	VIZ_INLINE void vnorm2D(float &X, float &Y)
 	{
-		if (fabsf(X+Y) < kEpsilon)
+		if (fabsf(X+Y) > kEpsilon)
 		{
 			const float length = 1.f/sqrtf(X*X + Y*Y);
 			X *= length;
