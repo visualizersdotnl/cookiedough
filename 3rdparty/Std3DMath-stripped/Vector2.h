@@ -23,7 +23,7 @@ public:
 		return A.x*B.x + A.y*B.y;
 	}
 
-	// AxB !+= BxA
+	// AxB != BxA
 	// In 2D, the result is the signed magnitude of the imaginary perpendicular vector
 	// This is at the root of essentials like triangle rasterization and volume clipping (overlaps with what's done in RayTriangleIntersect())
 	static float Cross(const Vector2 &A, const Vector2 &B)

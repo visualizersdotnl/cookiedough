@@ -9,23 +9,21 @@
 
 		q = [x, y, z, w] = [axis*sin(angle/2), cos(angle/2)]
 
-	Where the vector part (x,y,z) describes the axis of rotation and the scalar part (w).
-
 	Important rules:
+	- We always assume on interface level that a quaternion is unit length, ergo: it is a rotation.
 	- Multiplying quaternions (or rotations) isn't commutative, ergo A*B != B*A.
 	- Multiplication is (generally) associative, however, so A*(B*C) == (A*B)*C.
-	- Quaternion is derived from Vector4 but as it has it's own operators you can not
-	  use Vector4's without some sort of (implicit) casting. This should gaurantee that
-	  if a quaternion is only modifed through it's own interface, it's always unit length.
-	- When performing many successive multiplications it's wise to re-normalize periodically
-	  to counteract numerical drift.
+	- When performing successive multiplication, re-normalize periodically to counteract numerical drift.
+	- Quaternion *is* derived from Vector4, but as it has it's own operators you can not use Vector4's without
+	  being explicit; this should gaurantee that when the quaternion is modified through it's own interface
+	  it will always be unit length.
 
-	Have a look at Slerp() to see how it's still easy to do vector algebra :-)
+	To do (FIXME):
+	- Hermite (see Hermite.h/Hermite.cpp) interpolation.
 
-	This class is not complete, please implement:
-	- Hermite (cubic) interpolation.
-
-	Good (basic) ref.: https://lisyarus.github.io/blog/posts/introduction-to-quaternions.html
+	References:
+	- https://lisyarus.github.io/blog/posts/introduction-to-quaternions.html
+	- http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 */
  
 #pragma once
@@ -36,6 +34,8 @@ public:
 	static const Quaternion Identity();
 	static const Quaternion AxisAngle(const Vector3 &axis, float angle);
 	static const Quaternion YawPitchRoll(float yaw, float pitch, float roll);
+
+	static const Quaternion Nlerp(const Quaternion &from, const Quaternion &to, float T);
 	static const Quaternion Slerp(const Quaternion &from, const Quaternion &to, float T);
 
 public:
@@ -60,8 +60,8 @@ public:
 			w*B.w - x*B.x - y*B.y - z*B.z));
 	}
 
-	private:
-	// Private for now as it alters magnitude.
+private: 
+	// These remain private for now, as they can alter magnitude
 	const Quaternion operator *(float B) const 
 	{ 
 		return Vector4::Mul(*this, Vector4(B)); 
@@ -70,6 +70,18 @@ public:
 	Quaternion& operator *=(float B) { return *this = *this * B; }
 
 public:
+	float Angle() const
+	{
+		// Remember: w = cos(angle/2)
+		return acosf(w)*2.f; 
+	}
+
+	// Two quaternions are perpendicular if their vector parts are perpendicular (axis dot product is zero)
+	bool Perpendicular(const Quaternion &B) const
+	{
+		return fabsf(x*B.x + y*B.y + z*B.z) < kEpsilon;
+	}
+
 	const Quaternion Normalized() const
 	{
 		return Vector4::Normalized();
@@ -80,8 +92,6 @@ public:
 		return Quaternion(Vector4(-x, -y, -z, w));
 	}
 
-	const Quaternion Inverse() const
-	{
-		return Normalized().Conjugate();
-	}
+	// Practical alias
+	const Quaternion Inverse() const { return Conjugate(); }
 };

@@ -4,28 +4,7 @@
 	(c) visualizers.nl/njdewit tech./Stockton North
 
 	Please check README.md for more information.
-
-	19/10/2018 (software rendering project):
-	- Fixed issue raised by Marco Foco (see for ex. Vector3::Add()).
-	- Added Matrix44::FromArray33().
-	- Forced 16-byte alignment for Vector4 & Vector3 (padded) by unionizing with __m128 (SSE/SIMD).
-	- kPI et cetera are now 'constexpr'.
-	- I'm dead tired of MSVC not inlining what it could and should, so I'm going to force a few, look for S3D_INLINE.
-	- Removed empty constructors (put it back for Vector3) & destructors, except for Vector4.
-	- Added "2*kPI".
-	- Added an actual Multiplied()/Multiply() function on Vector3 and Vector4 as I really needed it more often.
-	- Fix: used Scale() function instead of Mul() when multiplying vector by scalar.
-	- Added fracf().
-	- Fixed clampf().
-	- Fixed lerpf(), smoothstepf() & smootherstepf().
-
-	08/10/2026:
-	- Added Euler's number (kEuler/kExp).
-	- Added hermite spline interpolation for Vector2, Vector3, Quaternion.
-	- Misc. fixes (see Github issues and changes).
-	- Working on intersection tests.
-
-	For further fixes & improvements: see Github issues.
+	For issues, fixes & improvements: see Github issue list (https://github.com/visualizersdotnl/Std3DMath/issues)
 
 	Pay attention to:
 	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
@@ -48,6 +27,9 @@ constexpr float kEuler = 2.71828174591064453125f;
 constexpr float kExp = kEuler; // Natural exp.
 constexpr float kOneOverRoot2 = 707106769.f; // Effective voltage (RMS), -3dB, unit gain (DSP) et cetera
 constexpr float kGoldenAngle = 2.39996f; // Radians
+
+// Useful to consider when to *stop* iterating, or when to consider two angles equal (e.g. for quaternions)
+constexpr float kAngleEpsilon = 0.001f; // Radians (~0.057 degrees)
 
 // Single precision compare.
 static inline bool comparef(float a, float b)
