@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Math.h"
-#include "Vector3.h"
+
 class Quaternion : public Vector4
 {
 public:
