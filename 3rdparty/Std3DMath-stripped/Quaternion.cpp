@@ -10,8 +10,8 @@
 /* static */ const Quaternion Quaternion::AxisAngle(const Vector3 &axis, float angle)
 {
 	const Vector3 unitAxis = axis.Normalized();
-	angle *= 0.5f;
-	return Quaternion(Vector4(unitAxis*sinf(angle), cosf(angle)));
+	const float halfAngle = angle*0.5f;
+	return Quaternion(Vector4(unitAxis*sinf(halfAngle), cosf(halfAngle)));
 }
 
 /* static */ const Quaternion Quaternion::YawPitchRoll(float yaw, float pitch, float roll)
@@ -53,4 +53,36 @@
 	const Vector4 vBasis = (B - A*dot).Normalized(); 
 
 	return A*cosf(theta) + vBasis*sinf(theta);
+}
+
+/* static */ const Vector3 Quaternion::Log(const Quaternion &quaternion, float epsilon)
+{
+	const float lengthSq = quaternion.x*quaternion.x + quaternion.y*quaternion.y + quaternion.z*quaternion.z;
+	if (lengthSq < epsilon)
+	{
+		// Avoid division by zero, return the vector part as-is	
+		return Vector3(quaternion.x, quaternion.y, quaternion.z); 
+	}
+
+	const float length = sqrtf(lengthSq);
+	const float halfAngle = atan2f(length, quaternion.w);
+	const Vector3 axisNormalized = Vector3(quaternion.x, quaternion.y, quaternion.z)*(1.f/length); // Yes, I'm saving a sqrtf()
+
+	// Encoded: the direction of this rotation is the normalized axis (identity), and it's magnitude represents the half-angle
+	return halfAngle*axisNormalized;
+}
+
+/* static */ const Quaternion Quaternion::Exp(const Vector3 &vector, float epsilon)
+{
+	// This expands what'd be the result of Log(), that's it, they're each other's inverse
+	const float halfAngleSq = vector.LengthSq();
+	if (halfAngleSq < epsilon)
+	{
+		// Just return the small vector and a scalar part of sin(0), which is a good enough approximation for small angles and avoids division by zero
+		return Quaternion(Vector4(vector.x, vector.y, vector.z, 1.f).Normalized());
+	}
+
+	const float halfAngle = sqrtf(halfAngleSq);
+	const float axisScale = sinf(halfAngle)/halfAngle;
+	return Quaternion(Vector4(vector*axisScale, cosf(halfAngle)));
 }

@@ -31,48 +31,42 @@ constexpr float kGoldenAngle = 2.39996f; // Radians
 // Useful to consider when to *stop* iterating, or when to consider two angles equal (e.g. for quaternions)
 constexpr float kAngleEpsilon = 0.001f; // Radians (~0.057 degrees)
 
-// Single precision compare.
+// Single precision compare
 static inline bool comparef(float a, float b)
 {
 	return fabsf(a-b) < kEpsilon;
 }
 
-// GLSL-style clamp.
+// GLSL-style clamp
 static inline float clampf(float min, float max, float value)
 {
-	if (value < min)
-		return min;
-
-	if (value > max)
-		return max;
-
-	return value;
+	return std::max<float>(min, std::min<float>(max, value));
 }
 
-// HLSL saturate().
+// HLSL-style saturate()
 static inline float saturatef(float value)
 {
 	return std::max<float>(0.f, std::min<float>(1.f, value));
 }
 
-// GLSL frac().
+// GLSL-style frac()
 static inline float fracf(float value) { return value - std::truncf(value); }
 
-// Scalar interpolation.
+// Scalar linear interpolation
 template<typename T>
 static inline const T lerpf(const T &a, const T &b, float t)
 {
 	return a + (b-a)*t;
 }
 
-// Bezier smoothstep.
+// Bezier smoothstep
 static inline float smoothstepf(float a, float b, float t)
 {
 	t = t*t * (3.f - 2.f*t);
 	return lerpf<float>(a, b, t);
 }
 
-// Ken Perlin's take on Smoothstep.
+// Ken Perlin's take on Smoothstep
 // Source: http://en.wikipedia.org/wiki/Smoothstep
 static inline float smootherstepf(float a, float b, float t)
 {
@@ -88,6 +82,6 @@ static inline float smootherstepf(float a, float b, float t)
 #include "Matrix44.h"
 
 #include "Intersect.h"
-// #include "Hermite.h"
+#include "Hermite.h"
 
 #endif // STD_3D_MATH
