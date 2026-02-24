@@ -74,7 +74,7 @@ public:
 
 	S3D_INLINE float LengthSq() const
 	{
-		return fabsf(Dot(*this, *this));
+		return Dot(*this, *this);
 	}
 
 	S3D_INLINE float Length() const

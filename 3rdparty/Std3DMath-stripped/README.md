@@ -13,7 +13,7 @@ Please take heed:
 - Not overly complete nor intended to be; I add & refactor on demand.
 - Aligned with Intel SIMD registers for practical convenience, making either Intel x64 or for ex. SSE2NEON.h a prerequisite (for now).
 - Resides in global namespace (change if necessary) with the exception of function groups (like intersection tests).
-- Library uses standard assert(), though not religiously so.
+- Library uses standard assert(), though not religiously so (so when asked for a normal or a direction: don't pass a point).
 - Warning: has Intel-specific header dependency (will be fixed!).
 
 I usually just copy a whatever is recent and dump it in a third party folder of a project instead of using a proper Git submodule.

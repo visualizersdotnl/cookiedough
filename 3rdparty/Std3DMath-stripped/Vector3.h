@@ -96,7 +96,7 @@ public:
 
 	S3D_INLINE float LengthSq() const 
 	{ 
-		return fabsf(Dot(*this, *this)); 
+		return Dot(*this, *this); 
 	}
 
 	S3D_INLINE float Length() const
@@ -149,11 +149,11 @@ public:
 		return *this - normal*R;
 	}
 
-	// Refraction according to Snell's law.
-	// Note that 'etaRatio' is the ratio between both surface refraction indices.
+	// Refraction according to Snell's law
+	// Note: 'etaRatio' is the ratio between both surface refraction indices
 	const Vector3 Refract(const Vector3 &normal, float etaRatio) const
 	{
-		const Vector3 &incident = *this;
+		const Vector3 incident = Normalized();
 		const float dirCos = Dot(incident*-1.f, normal);
 		const float cosT2 = 1.f - etaRatio*etaRatio*(1.f - dirCos*dirCos); 
 		const Vector3 refracted = incident*etaRatio + normal*(etaRatio*dirCos - sqrtf(fabsf(cosT2)));

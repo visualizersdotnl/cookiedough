@@ -52,11 +52,11 @@ public:
 	static const Quaternion Exp(const Vector3 &vector, float epsilon = kAngleEpsilon*kAngleEpsilon); 
 
 	static const Vector3 ScaledAngleAxis(const Quaternion &quaternion) { 
-		return Log(quaternion)*2.f; 
+		return Log(quaternion)*2.f; // Compensate for half-angle
 	}
 
 	static const Quaternion ScaledAngleAxis(const Vector3 &vector) { 
-		return Exp(vector*0.5f); 
+		return Exp(vector*0.5f); // Compensate for full angle
 	}
 
 public:
@@ -82,7 +82,7 @@ public:
 	}
 
 private: 
-	// These remain private for now, as they can alter magnitude
+	// These remain private (for now) as they serve to alter magnitude
 	const Quaternion operator *(float B) const 
 	{ 
 		return Vector4::Mul(*this, Vector4(B)); 
