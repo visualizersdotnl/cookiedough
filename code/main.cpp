@@ -1,6 +1,6 @@
 
 /*
-	codename: cookiedough (2009-2023-?)
+	codename: cookiedough (2006-2023-?)
 	- 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
 
 	this codebase was started as a simple experiment and doesn't have much to show for,
