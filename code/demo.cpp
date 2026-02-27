@@ -2,9 +2,7 @@
 // cookiedough 2023 -- Bypass featuring TPB. presents 'Arrested Development'
 
 #include "main.h"
-// #include <windows.h> // for audio.h
 #include "demo.h"
-// #include "audio.h"
 #include "rocket.h"
 #include "image.h"
 
@@ -12,8 +10,6 @@
 #include "boxblur.h"
 #include "polar.h"
 #include "fx-blitter.h"
-#include "satori-lumablur.h"
-#include "lens.h"
 
 // effects
 #include "ball.h"

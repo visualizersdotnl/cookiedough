@@ -1,7 +1,6 @@
 
 /*
-	codename: cookiedough (2009-2023-)
-	- 2013 release: HOT STUFF by Megahawks INC. @ Outline 2013
+	codename: cookiedough (2009-2023-?)
 	- 2023 release: Arrested Development by Bypass ft. TPB @ Revision 2023
 
 	this codebase was started as a simple experiment and doesn't have much to show for,
@@ -10,13 +9,7 @@
 	also after Revision 2023 recently, there are bits and pieces that are just plain sloppy, 
 	but there's something Fabian Giesen once said about demo source code being disposable after the party, right? ;)
 
-	some say...
-	
-	... I lied about the competition version being 1080p, it was always 720p :-)
-    ... 32-bit build DISCONTINUED (as of August 2018)
-
-
-	builds:
+	builds (all 64-bit, 32-bit discountinued in 2018):
 	
 	* Windows build (x64 only): Visual Studio 2019 or later
 
@@ -53,6 +46,7 @@
 // - sse2neon by a whole bunch of people (see sse2neon.h)
 // - OpenMP
 // - ImGui (FIXME: add details / perhaps update?)
+// - Std3DMath is of my own making
 
 //  how to use ImGui integration:
 // - TAB to show/hide
@@ -60,14 +54,14 @@
 // - ImGuiIsVisible() will tell you if you should be drawing ImGui widgets
 // - currently included in main.h, so should be available everywhere you might need it
 
-// compiler settings for Visual C++:
+// compiler settings for Visual C++ (last checked by me in 2023):
 // - GNU Rocket depends on ws2_32.lib
 // - use multi-threaded CRT (non-DLL)
 // - disable C++ exceptions
 // - fast floating point model (i.e. single precision, also steer clear of expensive ftol())
 // - use multi-byte character set (i.e. no _UNICODE)
 // - adv. instruction set: SSE 4.2 / NEON
-// - uses C++20 (not really, but for OSX at least I'm using that standard)
+// - C++20 (at least that's the standard fed to the compiler)
 
 // important:
 // - executables are built to target/<arch> -- run from that directory!
@@ -120,7 +114,6 @@
 // filters & blitters
 #include "polar.h"
 #include "fx-blitter.h"
-#include "satori-lumablur.h"
 #include "boxblur.h"
 
 // -- debug, display & audio config. --
@@ -283,7 +276,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	utilInit &= Shared_Create();
 	utilInit &= Polar_Create();
 	utilInit &= FxBlitter_Create();
-	utilInit &= SatoriLumaBlur_Create();
 	utilInit &= BoxBlur_Create();
 
 	Gamepad_Create();
@@ -379,7 +371,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	Shared_Destroy();
 	Polar_Destroy();
 	FxBlitter_Destroy();
-	SatoriLumaBlur_Destroy();
 	BoxBlur_Destroy();
 
 	SDL_Quit();
