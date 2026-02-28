@@ -5,10 +5,6 @@
 
 	Please check README.md for more information.
 	For issues, fixes & improvements: see Github issue list (https://github.com/visualizersdotnl/Std3DMath/issues)
-
-	Pay attention to:
-	- Added cast operator (const) to __m128 on Vector3/Vector4 (don't backport, or do it in a portable fashion).
-	- Problem: lerpf() doesn't work on vector types because they do a dot() when using the asterisk operator.
 */
 
 #if !defined(STD_3D_MATH)
