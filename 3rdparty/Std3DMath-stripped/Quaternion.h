@@ -143,6 +143,15 @@ public:
 			: *this * -1.f; // Flip components
 	}
 
+	// Returns rotational difference (B'*A) as a vector
+	S3D_INLINE const Vector3 Diff(const Quaternion &B) const
+	{
+	 	// Quaternion::ScaledAngleAxis((Q1.Inverse()*Q0).Abs());
+		const Quaternion bInv = B.Conjugate(); // B.Inverse()
+		return ScaledAngleAxis((bInv*(*this)).Abs());
+		
+	}
+
 	S3D_INLINE const Quaternion Nlerp(const Quaternion &to, float t) const { return Nlerp(*this, to, t); }
 	S3D_INLINE const Quaternion Slerp(const Quaternion &to, float t) const { return Slerp(*this, to, t); }
 };

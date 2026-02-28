@@ -1,15 +1,15 @@
 
 /*
-    Hermite spline functions.
+    Hermite spline functions (camera paths, animation, rotation, geometry).
 
     The Hermite spline has the right properties in terms of continuity and determinism (passes through the control points) for
     many applications, and by using the Catmull-Rom approach we can use 4 points and take their central differences so you need 
     not bother with these velocity vectors yourself, unless you want to.
 
-    This technique lends itself well to camera paths, animation (rotations), geometry.
-
-    But there's more, and I highly recommend watching Freya's video(s) if you haven't already, she explains it better
-    than I can in a few comments.
+    These functions are designed to calculate both position and velocity (first derivative); I'm banking on any proper optimizing
+    C++ compiler to do away with redundant calculations entirely if this output isn't used. In case you need raw performance
+    I'd suggest lifting these calculations into a tight custom loop, because there's more that can be eliminated and cached,
+    especially for quaternions.
 
     - Youtube video on splines by Freya Holmér: https://youtu.be/jvPPXbo87ds (*)
     - The Orange Duck on implementing this for quaternions: https://theorangeduck.com/page/cubic-interpolation-quaternions
@@ -17,8 +17,8 @@
     (*) She also made one that completely demystifies this to what it actually is: nesting linear interpolation to higher order.
 
     FIXME: 
-    - Simplified versions that don't calculate (angular) velocity vectors
     - Potential overshoot
+    - Wrap 'take rotational difference' (?)
 */
 
 #pragma once
@@ -43,8 +43,6 @@ namespace Std3DMath
              3.f*t*t - 4.f*t + 1.f, 
              3.f*t*t - 2.f*t };
     }
-
-    // Vectors
 
     template<typename T>
     S3D_INLINE static const std::array<T, 2> Hermite_Vec(const T &P0, const T &P1, const T &V1, const T &V2, float t)
@@ -82,10 +80,15 @@ namespace Std3DMath
         return CatmullRom_Vec<Vector3>(P0, P1, P2, P3, t);
     }
 
-    // Quaternions
+    // What happens for quaternions isn't much different from pure vector algebra.
+
+    // The calculation is already written so that it first calculates the position relative to zero and then 
+    // adds the origin to translate it back to where it should be.
     
-    // What happens here isn't much different from pure vector algebra: it just uses a different intermediate representation
-    // and we do not add or subtract quaternions: we multiply them in a certain order to get from A to B
+    // This means we can use rotational differences between quaternions transformed to vector space
+    // to do the meat of the calculation and then once transformed back to a quaternion use multiplication
+    // to apply the correct amount of rotation to the origin (since multiplying quaternion A with B is what
+    // adding vector B to A is, in this context).
 
     S3D_INLINE static const std::tuple<Quaternion, Vector3> Hermite_Quat(
         const Quaternion &Q0, const Quaternion &Q1, const Vector3 &V1, const Vector3 &V2, float t)
@@ -94,7 +97,7 @@ namespace Std3DMath
         const auto q = Hermite_Vel(t);
 
         // Take absolute (curtailed to one hemisphere) rotational difference (Q1'*Q0) in angle-axis (vector) form
-        const Vector3 vQ1Q0 = Quaternion::ScaledAngleAxis((Q1.Inverse()*Q0).Abs());
+        const Vector3 vQ1Q0 = Q0.Diff(Q1);
         
         return {
             Quaternion::ScaledAngleAxis(vQ1Q0*w[0] + V1*w[1] + V2*w[2]) * Q0,
@@ -106,9 +109,9 @@ namespace Std3DMath
         const Quaternion &Q0, const Quaternion &Q1, const Quaternion &Q2, const Quaternion &Q3, float t) 
     {
         // Take all rotational differences
-        const Vector3 vQ1Q0 = Quaternion::ScaledAngleAxis((Q1.Inverse()*Q0).Abs());
-        const Vector3 vQ2Q1 = Quaternion::ScaledAngleAxis((Q2.Inverse()*Q1).Abs());
-        const Vector3 vQ3Q2 = Quaternion::ScaledAngleAxis((Q3.Inverse()*Q2).Abs());
+        const Vector3 vQ1Q0 = Q0.Diff(Q1);
+        const Vector3 vQ2Q1 = Q1.Diff(Q2);
+        const Vector3 vQ3Q2 = Q2.Diff(Q3);
         
         // Take their central differences
         const Vector3 V1 = (vQ1Q0 - vQ2Q1)*0.5f;
