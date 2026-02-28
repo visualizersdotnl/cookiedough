@@ -13,9 +13,9 @@ public:
 	S3D_INLINE static const Vector3 Mul(const Vector3 &A, const Vector3 &B) { return {A.x*B.x, A.y*B.y, A.z*B.z}; }
 	S3D_INLINE static const Vector3 Div(const Vector3 &A, const Vector3 &B) { return {A.x/B.x, A.y/B.y, A.z/B.z}; }
 
-	S3D_INLINE static const Vector3 Scale(const Vector3 &A, float B)
+	S3D_INLINE static const Vector3 Scale(const Vector3 &A, float b)
 	{
-		return { A.x*B, A.y*B, A.z*B };
+		return { A.x*b, A.y*b, A.z*b };
 	}
 
 	S3D_INLINE static float Dot(const Vector3 &A, const Vector3 &B)
@@ -62,22 +62,22 @@ public:
 		x(vec2D.x), y(vec2D.y), z(z), padding(0.f) {}
 
 	const Vector3 operator +(const Vector3 &B) const { return Add(*this, B); }
-	const Vector3 operator +(float B)          const { return Add(*this, Vector3(B)); }
+	const Vector3 operator +(float b)          const { return Add(*this, Vector3(b)); }
 	const Vector3 operator -(const Vector3 &B) const { return Sub(*this, B); }
-	const Vector3 operator -(float B)          const { return Sub(*this, Vector3(B)); }
+	const Vector3 operator -(float b)          const { return Sub(*this, Vector3(b)); }
 	const float   operator *(const Vector3 &B) const { return Dot(*this, B); }
-	const Vector3 operator *(float B)          const { return Scale(*this, B); }
+	const Vector3 operator *(float b)          const { return Scale(*this, b); }
 	const Vector3 operator /(const Vector3 &B) const { return Div(*this, B); }
-	const Vector3 operator /(float B)          const { return Div(*this, Vector3(B)); }
+	const Vector3 operator /(float b)          const { return Div(*this, Vector3(b)); }
 	const Vector3 operator %(const Vector3 &B) const { return Cross(*this, B); }
 
 	Vector3& operator +=(const Vector3 &B) { return *this = *this + B; }
-	Vector3& operator +=(float B)          { return *this = *this + B; }
+	Vector3& operator +=(float b)          { return *this = *this + b; }
 	Vector3& operator -=(const Vector3 &B) { return *this = *this - B; }
-	Vector3& operator -=(float B)          { return *this = *this - B; }
-	Vector3& operator *=(float B)          { return *this = *this * B; }
+	Vector3& operator -=(float b)          { return *this = *this - b; }
+	Vector3& operator *=(float b)          { return *this = *this * b; }
 	Vector3& operator /=(const Vector3 &B) { return *this = *this / B; }
-	Vector3& operator /=(float B)          { return *this = *this / B; }
+	Vector3& operator /=(float b)          { return *this = *this / b; }
 
 	bool operator ==(const Vector3 &B) const
 	{
@@ -104,14 +104,14 @@ public:
 		return sqrtf(Dot(*this, *this));
 	}
 	
-	const Vector3 Normalized() const
+	S3D_INLINE const Vector3 Normalized() const
 	{
 		auto result = *this;
 		result.Normalize();
 		return result;
 	}
 
-	void Normalize()
+	S3D_INLINE void Normalize()
 	{
 		const float length = Length();
 		if (length > kEpsilon)
@@ -120,12 +120,12 @@ public:
 		}
 	}
 
-	const Vector3 Multiplied(const Vector3 &B) const
+	S3D_INLINE const Vector3 Multiplied(const Vector3 &B) const
 	{
 		return Mul(*this, B);
 	}
 
-	void Multiply(const Vector3 &B)
+	S3D_INLINE void Multiply(const Vector3 &B)
 	{
 		*this = Mul(*this, B);
 	}
@@ -137,13 +137,13 @@ public:
 
 	// Project A (this) onto B (refresher: https://www.youtube.com/watch?v=DfIsa7ArxSo)
 	// Easy to remember: like casting a shadow onto B, where the dot product is the magnitude or 'component'
-	const Vector3 Project(const Vector3 &B) const
+	S3D_INLINE const Vector3 Project(const Vector3 &B) const
 	{
 		const Vector3 unitB = B.Normalized();
 		return unitB * Dot(*this, unitB);
 	}
 
-	const Vector3 Reflect(const Vector3 &normal) const
+	S3D_INLINE const Vector3 Reflect(const Vector3 &normal) const
 	{		
 		const float R = 2.f*Dot(*this, normal);
 		return *this - normal*R;

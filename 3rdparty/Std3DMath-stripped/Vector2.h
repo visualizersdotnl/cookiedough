@@ -41,21 +41,21 @@ public:
 		x(x), y(y) {}
 
 	const Vector2 operator +(const Vector2 &B) const { return Add(*this, B); }
-	const Vector2 operator +(float B)          const { return Add(*this, Vector2(B)); }
+	const Vector2 operator +(float b)          const { return Add(*this, Vector2(b)); }
 	const Vector2 operator -(const Vector2 &B) const { return Sub(*this, B); }
-	const Vector2 operator -(float B)          const { return Sub(*this, Vector2(B)); }
+	const Vector2 operator -(float b)          const { return Sub(*this, Vector2(b)); }
 	const float   operator *(const Vector2 &B) const { return Dot(*this, B); }
-	const Vector2 operator *(float B)          const { return Scale(*this, B); }
+	const Vector2 operator *(float b)          const { return Scale(*this, b); }
 	const Vector2 operator /(const Vector2 &B) const { return Div(*this, B); }
-	const Vector2 operator /(float B)          const { return Div(*this, Vector2(B)); }
+	const Vector2 operator /(float b)          const { return Div(*this, Vector2(b)); }
 
 	Vector2& operator +=(const Vector2 &B) { return *this = *this + B; }
-	Vector2& operator +=(float B)          { return *this = *this + B; }
+	Vector2& operator +=(float b)          { return *this = *this + b; }
 	Vector2& operator -=(const Vector2 &B) { return *this = *this - B; }
-	Vector2& operator -=(float B)          { return *this = *this - B; }
-	Vector2& operator *=(float B)          { return *this = *this * B; }
+	Vector2& operator -=(float b)          { return *this = *this - b; }
+	Vector2& operator *=(float b)          { return *this = *this * b; }
 	Vector2& operator /=(const Vector2 &B) { return *this = *this / B; }
-	Vector2& operator /=(float B)          { return *this = *this / B; }
+	Vector2& operator /=(float b)          { return *this = *this / b; }
 
 	bool operator ==(const Vector2 &B) const
 	{
@@ -82,14 +82,14 @@ public:
 		return sqrtf(Dot(*this, *this));
 	}
 	
-	const Vector2 Normalized() const
+	S3D_INLINE const Vector2 Normalized() const
 	{
 		auto result = *this;
 		result.Normalize();
 		return result;
 	}
 
-	void Normalize()
+	S3D_INLINE void Normalize()
 	{
 		const float length = Length();
 		if (length > kEpsilon)
@@ -110,7 +110,7 @@ public:
 		return unitB * Dot(*this, unitB);
 	}
 
-	const Vector2 Reflect(const Vector2 &normal) const
+	S3D_INLINE const Vector2 Reflect(const Vector2 &normal) const
 	{
 		const float R = 2.f*Dot(*this, normal);
 		return *this - normal*R;

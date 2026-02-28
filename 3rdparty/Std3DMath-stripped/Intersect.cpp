@@ -4,7 +4,6 @@
 	Intersection test functions.
 */
 
-#include "Intersect.h"
 #include "Math.h"
 
 namespace Std3DMath
@@ -52,7 +51,7 @@ namespace Std3DMath
 	// FIXME: make it optional to pass back U and V (using std::optional<T>)
 	bool RayTriangleIntersect(/* const */ Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
 	{
-		assert(-1.f == ray.T);
+		assert(-1.f == ray.t);
 
 		// Two triangle edges
 		const Vector3 BA = V1-V0;
@@ -97,10 +96,10 @@ namespace Std3DMath
 			return false;
 
 		// We're inside the triangle (within barycentric bounds): solve for T
-		const float T = invDet*(CA*vQ);
+		const float t = invDet*(CA*vQ);
 		if (T > kEpsilon)
 		{
-			ray.T = T;
+			ray.t = t;
 			return true;
 		}
 
@@ -111,7 +110,7 @@ namespace Std3DMath
 	// Naive implementation as reference (code never reached so eliminated *but* evaluated)
 	static bool RayTriangleIntersect_Naive(/* const */ Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
 	{
-		assert(-1.f == ray.T);
+		assert(-1.f == ray.t);
 
 		// Calculate triangle (plane) normal (predominant CCW order assumed)
 		const Vector3 BA = V1-V0;
@@ -135,11 +134,11 @@ namespace Std3DMath
 		}
 
 		// Solve for T (distance ray to V0/plane) and we've got our intersection point
-		const float T = (faceNormal*(V0-ray.origin)) / rayPlaneDet;
-		if (T <= kEpsilon)
+		const float t = (faceNormal*(V0-ray.origin)) / rayPlaneDet;
+		if (t <= kEpsilon)
 			return false; // Behind origin
 
-		const Vector3 intersect = ray.origin + T*ray.direction; // On plane
+		const Vector3 intersect = ray.origin + t*ray.direction; // On plane
 
 		// Calculate third edge and intersection deltas
 		const Vector3 AC = V0-V2;
@@ -155,7 +154,7 @@ namespace Std3DMath
 
 		if (isInsideBA && isInsideCB && isInsideAC)
 		{
-			ray.T = T;
+			ray.t = t;
 			return true;
 		}
 		

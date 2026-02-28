@@ -1,5 +1,4 @@
 
-#include "Quaternion.h"
 #include "Math.h"
 
 /* static */ const Quaternion Quaternion::Identity()
@@ -33,21 +32,25 @@
 		halfCosYaw*halfCosPitch*halfCosRoll + halfCosYaw*halfSinPitch*halfSinRoll));
 }
 
-/* static */ const Quaternion Quaternion::Nlerp(const Quaternion &A, const Quaternion &B, float T)
+/*
+
+static const Quaternion Quaternion::Nlerp(const Quaternion &A, const Quaternion &B, float t)
 {
 	// Nlerp is faster than Slerp, but doesn't maintain constant angular velocity and isn't as accurate (especially for large angles)
-	return lerpf<Vector4>(A, B, T).Normalized();
+	return lerpf<Vector4>(A, B, t).Normalized();
 }
 
-/* static */ const Quaternion Quaternion::Slerp(const Quaternion &A, const Quaternion &B, float T)
+*/
+
+/* static */ const Quaternion Quaternion::Slerp(const Quaternion &A, const Quaternion &B, float t)
 {
 	const float dot = clampf(-1.f, 1.f, Dot(A, B)); // Clamp to acos() domain
 	if (dot > 0.9995f)
 		// If the quaternions are too close, use linear interpolation and normalize the result to avoid precision issues
-		return Nlerp(A, B, T); 
+		return Nlerp(A, B, t); 
 
 	const float angle = acosf(dot); // Angle between A and B
-	const float theta = angle*T;    // Angle between A and result
+	const float theta = angle*t;    // Angle between A and result
 
 	// Create a vector orthogonal to A in the plane of A and B, then normalize it to get the second basis vector
 	const Vector4 vBasis = (B - A*dot).Normalized(); 

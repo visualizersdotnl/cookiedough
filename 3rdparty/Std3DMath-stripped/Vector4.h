@@ -1,6 +1,6 @@
 
 /*
-	4D (homogenous) vector.
+	4D vector.
 */
 
 #pragma once
@@ -13,9 +13,9 @@ public:
 	S3D_INLINE static const Vector4 Mul(const Vector4 &A, const Vector4 &B) { return {A.x*B.x, A.y*B.y, A.z*B.z, A.w*B.w}; }
 	S3D_INLINE static const Vector4 Div(const Vector4 &A, const Vector4 &B) { return {A.x/B.x, A.y/B.y, A.z/B.z, A.w/B.w}; }
 
-	S3D_INLINE static const Vector4 Scale(const Vector4 &A, float B)
+	S3D_INLINE static const Vector4 Scale(const Vector4 &A, float b)
 	{
-		return { A.x*B, A.y*B, A.z*B, A.w*B };
+		return { A.x*b, A.y*b, A.z*b, A.w*b };
 	}
 
 	S3D_INLINE static float Dot(const Vector4 &A, const Vector4 &B)
@@ -51,21 +51,21 @@ public:
 		x(vec3D.x), y(vec3D.y), z(vec3D.z), w(w) {}
 
 	const Vector4 operator +(const Vector4 &B) const { return Add(*this, B); }
-	const Vector4 operator +(float B)          const { return Add(*this, Vector4(B)); }
+	const Vector4 operator +(float b)          const { return Add(*this, Vector4(b)); }
 	const Vector4 operator -(const Vector4 &B) const { return Sub(*this, B); }
-	const Vector4 operator -(float B)          const { return Sub(*this, Vector4(B)); }
+	const Vector4 operator -(float b)          const { return Sub(*this, Vector4(b)); }
 	const float   operator *(const Vector4 &B) const { return Dot(*this, B); }
-	const Vector4 operator *(float B)          const { return Scale(*this, B); }
+	const Vector4 operator *(float b)          const { return Scale(*this, b); }
 	const Vector4 operator /(const Vector4 &B) const { return Div(*this, B); }
-	const Vector4 operator /(float B)          const { return Div(*this, Vector4(B)); }
+	const Vector4 operator /(float b)          const { return Div(*this, Vector4(b)); }
 
 	Vector4& operator +=(const Vector4 &B) { return *this = *this + B; }
-	Vector4& operator +=(float B)          { return *this = *this + B; }
+	Vector4& operator +=(float b)          { return *this = *this + b; }
 	Vector4& operator -=(const Vector4 &B) { return *this = *this - B; }
-	Vector4& operator -=(float B)          { return *this = *this - B; }
-	Vector4& operator *=(float B)          { return *this = *this * B; }
+	Vector4& operator -=(float b)          { return *this = *this - b; }
+	Vector4& operator *=(float b)          { return *this = *this * b; }
 	Vector4& operator /=(const Vector4 &B) { return *this = *this / B; }
-	Vector4& operator /=(float B)          { return *this = *this / B; }
+	Vector4& operator /=(float b)          { return *this = *this / b; }
 
 	bool operator ==(const Vector4 &B) const
 	{
@@ -92,14 +92,14 @@ public:
 		return sqrtf(LengthSq());
 	}
 	
-	const Vector4 Normalized() const
+	S3D_INLINE const Vector4 Normalized() const
 	{
 		auto result = *this;
 		result.Normalize();
 		return result;
 	}
 
-	void Normalize()
+	S3D_INLINE void Normalize()
 	{
 		const float length = Length();
 		if (length > kEpsilon)
@@ -108,7 +108,7 @@ public:
 		}
 	}
 
-	const Vector4 Multiplied(const Vector4 &B) const
+	S3D_INLINE const Vector4 Multiplied(const Vector4 &B) const
 	{
 		return Mul(*this, B);
 	}
