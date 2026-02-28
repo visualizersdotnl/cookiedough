@@ -1,18 +1,15 @@
 
 /*
-	4x4 matrix.
+	Row-major 4x4 matrix.
 
-	Uses column-major layout (translation lives in the bottom-left corner).
-	This model reflects the one used by many 3D APIs.
-	However, row-major is potentially nicer for (SIMD) CPU transform.
+	- Layout lends itself well to fast transformations (see Transform3()/Transform4()).
+	- Translation (3D) lives in last column.
+	- Ideally matrix use is restricted to storage of a (linear) transformation.
+	- Use quaternions (Quaternion) to store and manipulate rotations.
 
-	- Assumes left-handed coordinate system.
-	- Consider using Quaternion for rotations, as it saves memory & cycles.
-
-	To do:
-	- Unionize Vector4s with floats.
+	FIXME:
+	- Unionize Vector4 array with floats.
 	- Implement affine inverse.
-	- Optimize; seemingly simple operations may end up being too costly.
 */
 
 #pragma once
@@ -54,15 +51,13 @@ public:
 
 	const Matrix44 Transpose() const;
 
-	// Invert orthogonal matrix (euclidian transform; may rotate, translate, reflect).
-	const Matrix44 OrthoInverse() const;
-
-	// Invert affine matrix (may also scale, shear).
+	// Suitable for *most* cases: this inverts the 3x3 part and rotates/inverts the translation column.
+	// Obvious outlier: a projection matrix.
 	const Matrix44 AffineInverse() const;
 
-	// General inverse (prefixed to encourage use of specific inverse).
+	// General inverse.
 	// Rule of thumb: use when bottom row isn't (0, 0, 0, 1).
-	const Matrix44 GeneralInverse() const;
+	const Matrix44 Inverse() const;
 	
 	// operator: V' = M*V
 	const Vector3 operator *(const Vector3 &B) const { return Transform4(B); }

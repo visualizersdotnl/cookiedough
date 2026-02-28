@@ -4,7 +4,7 @@
 #include "main.h"
 #include "fx-blitter.h"
 
-uint32_t *g_pFxMap[4] = { nullptr };
+uint32_t *g_pFxMap[kNumFxMaps] = { nullptr };
 
 bool FxBlitter_Create()
 {
@@ -24,7 +24,7 @@ void FxBlitter_Destroy()
 }
 
 // 2x2 blit (2 pixels per SSE write)
-// FIXME: render to bigger map (X+1, Y+1) instead of copy hack below
+// FIXME: why is that pixel copy hack in here, you should just interpolate over a correct range instead
 void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
 	const __m128i zero = _mm_setzero_si128();
@@ -33,12 +33,12 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 	uint64_t *pCopy = reinterpret_cast<uint64_t*>(pDest);
 
 	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < kFxMapResY-1; ++iY)
+	for (unsigned iY = 0; iY < kFxMapResY-1; ++iY)
 	{
 		const unsigned mapIndexY = iY*kFxMapResX;
 		const unsigned destIndexY = (iY*kFxMapDiv)*kResX;
 
-		for (int iX = 0; iX < kFxMapResX-1; ++iX)
+		for (unsigned iX = 0; iX < kFxMapResX-1; ++iX)
 		{
 			const unsigned iA = mapIndexY + iX;
 //			const unsigned iB = iA+1;
@@ -89,9 +89,9 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 
 void FxBlitter_DrawTestPattern(uint32_t* pDest)
 {
-	for (int iY = 0; iY < kFxMapResY; ++iY)
+	for (unsigned iY = 0; iY < kFxMapResY; ++iY)
 	{
-		for (int iX = 0; iX < kFxMapResX; ++iX)
+		for (unsigned iX = 0; iX < kFxMapResX; ++iX)
 		{
 			int color;
 			if (iY < kFxMapResY / 2)

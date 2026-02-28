@@ -14,6 +14,7 @@
 #pragma once
 
 constexpr unsigned kFxMapDiv = 2;
+constexpr size_t kNumFxMaps = 4;
 
 constexpr size_t kFxMapResX = kResX/kFxMapDiv;
 constexpr size_t kFxMapResY = kResY/kFxMapDiv;
@@ -21,8 +22,8 @@ constexpr size_t kFxMapResY = kResY/kFxMapDiv;
 constexpr size_t kFxMapSize = kFxMapResX*kFxMapResY;
 constexpr size_t kFxMapBytes = kFxMapSize*sizeof(uint32_t);
 
-// useful to have a few of these for stuff like a blur pass that likes a separate dest. buffer
-extern uint32_t *g_pFxMap[4];
+// FIXME: this is just asking for trouble, even for late 1990s standards
+extern uint32_t *g_pFxMap[kNumFxMaps];
 
 bool FxBlitter_Create();
 void FxBlitter_Destroy();

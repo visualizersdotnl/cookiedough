@@ -39,6 +39,7 @@ VIZ_INLINE unsigned int bsamp8(
 {
 	// forcing signed integers here to keep the arithmetic "correct"
 	// in practice though, for x86, only the shift instructions differ (arithmetic, not logical)
+	// FIXME: ^ I decuded this from dated MSVC disassembly, test it for x64 and ARM64 (use Godbolt)
 	const int S0 = pTexture[U0+V0];
 	const int S1 = pTexture[U1+V0];
 	const int S2 = pTexture[U0+V1];

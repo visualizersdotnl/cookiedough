@@ -23,6 +23,14 @@ public:
 		return A.x*B.x + A.y*B.y;
 	}
 
+	// AxB != BxA
+	// In 2D, the result is the signed magnitude of the imaginary perpendicular vector
+	// This is at the root of essentials like triangle rasterization and volume clipping (overlaps with what's done in RayTriangleIntersect())
+	static float Cross(const Vector2 &A, const Vector2 &B)
+	{
+		return A.x*B.y - B.x*A.y;
+	}
+
 public:
 	float x, y;
 	
@@ -33,21 +41,21 @@ public:
 		x(x), y(y) {}
 
 	const Vector2 operator +(const Vector2 &B) const { return Add(*this, B); }
-	const Vector2 operator +(float B)          const { return Add(*this, Vector2(B)); }
+	const Vector2 operator +(float b)          const { return Add(*this, Vector2(b)); }
 	const Vector2 operator -(const Vector2 &B) const { return Sub(*this, B); }
-	const Vector2 operator -(float B)          const { return Sub(*this, Vector2(B)); }
+	const Vector2 operator -(float b)          const { return Sub(*this, Vector2(b)); }
 	const float   operator *(const Vector2 &B) const { return Dot(*this, B); }
-	const Vector2 operator *(float B)          const { return Scale(*this, B); }
+	const Vector2 operator *(float b)          const { return Scale(*this, b); }
 	const Vector2 operator /(const Vector2 &B) const { return Div(*this, B); }
-	const Vector2 operator /(float B)          const { return Div(*this, Vector2(B)); }
+	const Vector2 operator /(float b)          const { return Div(*this, Vector2(b)); }
 
 	Vector2& operator +=(const Vector2 &B) { return *this = *this + B; }
-	Vector2& operator +=(float B)          { return *this = *this + B; }
+	Vector2& operator +=(float b)          { return *this = *this + b; }
 	Vector2& operator -=(const Vector2 &B) { return *this = *this - B; }
-	Vector2& operator -=(float B)          { return *this = *this - B; }
-	Vector2& operator *=(float B)          { return *this = *this * B; }
+	Vector2& operator -=(float b)          { return *this = *this - b; }
+	Vector2& operator *=(float b)          { return *this = *this * b; }
 	Vector2& operator /=(const Vector2 &B) { return *this = *this / B; }
-	Vector2& operator /=(float B)          { return *this = *this / B; }
+	Vector2& operator /=(float b)          { return *this = *this / b; }
 
 	bool operator ==(const Vector2 &B) const
 	{
@@ -74,17 +82,17 @@ public:
 		return sqrtf(Dot(*this, *this));
 	}
 	
-	const Vector2 Normalized() const
+	S3D_INLINE const Vector2 Normalized() const
 	{
 		auto result = *this;
 		result.Normalize();
 		return result;
 	}
 
-	void Normalize()
+	S3D_INLINE void Normalize()
 	{
 		const float length = Length();
-		if (length > 0.f)
+		if (length > kEpsilon)
 		{
 			*this *= 1.f/length;
 		}
@@ -95,13 +103,14 @@ public:
 		return acosf(Dot(*this, B));
 	}
 
+	// Project A (this) onto B
 	const Vector2 Project(const Vector2 &B) const
 	{
 		const Vector2 unitB = B.Normalized();
-		return B.Normalized() * Dot(*this, unitB);
+		return unitB * Dot(*this, unitB);
 	}
 
-	const Vector2 Reflect(const Vector2 &normal) const
+	S3D_INLINE const Vector2 Reflect(const Vector2 &normal) const
 	{
 		const float R = 2.f*Dot(*this, normal);
 		return *this - normal*R;

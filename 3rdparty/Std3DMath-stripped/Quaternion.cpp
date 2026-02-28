@@ -9,28 +9,83 @@
 /* static */ const Quaternion Quaternion::AxisAngle(const Vector3 &axis, float angle)
 {
 	const Vector3 unitAxis = axis.Normalized();
-	angle *= 0.5f;
-	return Quaternion(Vector4(unitAxis*sinf(angle), cosf(angle)));
+	const float halfAngle = angle*0.5f;
+	return Quaternion(Vector4(unitAxis*sinf(halfAngle), cosf(halfAngle)));
 }
 
-/* static */ const Quaternion Quaternion::Slerp(const Quaternion &A, const Quaternion &B, float T)
+/* static */ const Quaternion Quaternion::YawPitchRoll(float yaw, float pitch, float roll)
 {
-	float dot = Dot(A, B);
+	// Look up directional cosines if you want to know how this works
+	const float halfYaw = yaw*0.5f, halfPitch = pitch*0.5f, halfRoll = roll*0.5f;
+	const float halfCosYaw   = cosf(halfYaw);
+	const float halfSinYaw   = sinf(halfYaw);
+	const float halfCosPitch = cosf(halfPitch);
+	const float halfSinPitch = sinf(halfPitch);
+	const float halfCosRoll  = cosf(halfRoll);
+	const float halfSinRoll  = sinf(halfRoll);
+
+	// Remember: the scalar part (w) is stored last in Vector4 (let the compiler take out duplicate multiplies)
+	return Quaternion(Vector4(
+		halfCosYaw*halfCosPitch*halfSinRoll - halfSinYaw*halfSinPitch*halfCosRoll,
+		halfCosYaw*halfSinPitch*halfCosRoll + halfSinYaw*halfCosPitch*halfSinRoll,
+		halfSinYaw*halfCosPitch*halfCosRoll - halfCosYaw*halfSinPitch*halfSinRoll,
+		halfCosYaw*halfCosPitch*halfCosRoll + halfCosYaw*halfSinPitch*halfSinRoll));
+}
+
+/*
+
+static const Quaternion Quaternion::Nlerp(const Quaternion &A, const Quaternion &B, float t)
+{
+	// Nlerp is faster than Slerp, but doesn't maintain constant angular velocity and isn't as accurate (especially for large angles)
+	return lerpf<Vector4>(A, B, t).Normalized();
+}
+
+*/
+
+/* static */ const Quaternion Quaternion::Slerp(const Quaternion &A, const Quaternion &B, float t)
+{
+	const float dot = clampf(-1.f, 1.f, Dot(A, B)); // Clamp to acos() domain
 	if (dot > 0.9995f)
+		// If the quaternions are too close, use linear interpolation and normalize the result to avoid precision issues
+		return Nlerp(A, B, t); 
+
+	const float angle = acosf(dot); // Angle between A and B
+	const float theta = angle*t;    // Angle between A and result
+
+	// Create a vector orthogonal to A in the plane of A and B, then normalize it to get the second basis vector
+	const Vector4 vBasis = (B - A*dot).Normalized(); 
+
+	return A*cosf(theta) + vBasis*sinf(theta);
+}
+
+/* static */ const Vector3 Quaternion::Log(const Quaternion &quaternion, float epsilon)
+{
+	const float lengthSq = quaternion.x*quaternion.x + quaternion.y*quaternion.y + quaternion.z*quaternion.z;
+	if (lengthSq < epsilon)
 	{
-		// Very small angle: interpolate linearly.
-		return lerpf<Vector4>(A, B, T).Normalized();
+		// Avoid division by zero, return the vector part as-is	
+		return Vector3(quaternion.x, quaternion.y, quaternion.z); 
 	}
 
-	// Clamp to acos() domain.
-	dot = clampf(-1.f, 1.f, dot);
+	const float length = sqrtf(lengthSq);
+	const float halfAngle = atan2f(length, quaternion.w);
+	const Vector3 axisNormalized = Vector3(quaternion.x, quaternion.y, quaternion.z)*(1.f/length); // Yes, I'm saving a sqrtf()
 
-	float theta = acosf(dot);
-	float phi = theta*T;
+	// Encoded: the direction of this rotation is the normalized axis (identity), and it's magnitude represents the half-angle
+	return halfAngle*axisNormalized;
+}
 
-	// Orthonormal basis.
-	Vector4 basis = B - A*dot;
-	basis.Normalize();
+/* static */ const Quaternion Quaternion::Exp(const Vector3 &vector, float epsilon)
+{
+	// This expands what'd be the result of Log(), that's it, they're each other's inverse
+	const float halfAngleSq = vector.LengthSq();
+	if (halfAngleSq < epsilon)
+	{
+		// Just return the small vector and a scalar part of sin(0), which is a good enough approximation for small angles and avoids division by zero
+		return Quaternion(Vector4(vector.x, vector.y, vector.z, 1.f).Normalized());
+	}
 
-	return A*cosf(phi) + basis*sinf(phi);
+	const float halfAngle = sqrtf(halfAngleSq);
+	const float axisScale = sinf(halfAngle)/halfAngle;
+	return Quaternion(Vector4(vector*axisScale, cosf(halfAngle)));
 }

@@ -1,0 +1,19 @@
+ARCH := $(firstword $(subst -, ,$(shell $(CC) -dumpmachine)))
+ifeq ($(ARCH),x86_64)
+else ifeq ($(ARCH),aarch64)
+else ifneq ($(findstring $(ARCH),arm),)
+ARCH := armhf
+else
+ARCH := x86
+endif
+
+FLAGS = -Os -I.. -L../../libs/$(ARCH) -lbass -lm -Wl,--as-needed,-rpath,'$$ORIGIN/../../libs/$(ARCH)'
+FLAGS += $(foreach pkg,$(PACKAGES),`pkg-config $(pkg) --cflags --libs`)
+
+.PHONY: all clean
+
+%: %.c %.ui
+	$(CC) $*.c $(FLAGS) -export-dynamic -o $@
+
+%: %.c
+	$(CC) $*.c $(FLAGS) -o $@

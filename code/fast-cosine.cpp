@@ -1,5 +1,5 @@
 
-// cookiedough -- fast (co)sine (by Kusma/Excess)
+// cookiedough -- fast (co)sine (by or at least lifted from Kusma/Excess)
 
 #include "main.h"
 
