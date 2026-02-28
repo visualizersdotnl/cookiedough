@@ -114,8 +114,8 @@ namespace Std3DMath
         const Vector3 vQ3Q2 = Q2.Diff(Q3);
         
         // Take their central differences
-        const Vector3 V1 = (vQ1Q0 - vQ2Q1)*0.5f;
-        const Vector3 V2 = (vQ2Q1 - vQ3Q2)*0.5f;
+        const Vector3 V1 = (vQ1Q0 + vQ2Q1)*0.5f;
+        const Vector3 V2 = (vQ2Q1 + vQ3Q2)*0.5f;
 
         return Hermite_Quat(Q1, Q2, V1, V2, t);
     }
