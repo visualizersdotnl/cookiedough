@@ -131,7 +131,7 @@ namespace Std3DMath
 
         return {
             Quaternion(vQuat.Normalized()),
-            Quaternion::ScaledAngleAxis(Q1.Conjugate()*Quaternion(vVel)) // Return as angular velocity
+            Quaternion::ScaledAngleAxis(Q1.Inverse()*Quaternion(vVel)) // Return as angular velocity
         };
     }
 }

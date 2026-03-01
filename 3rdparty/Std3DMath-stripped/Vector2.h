@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "Dependencies.h"
 class Vector2
 {
 public:
@@ -13,12 +14,12 @@ public:
 	S3D_INLINE static const Vector2 Mul(const Vector2 &A, const Vector2 &B) { return {A.x*B.x, A.y*B.y}; }
 	S3D_INLINE static const Vector2 Div(const Vector2 &A, const Vector2 &B) { return {A.x/B.x, A.y/B.y}; }
 
-	static const Vector2 Scale(const Vector2 &A, float B)
+	S3D_INLINE static const Vector2 Scale(const Vector2 &A, float B)
 	{
 		return { A.x*B, A.y*B };
 	}
 
-	static float Dot(const Vector2 &A, const Vector2 &B)
+	S3D_INLINE static float Dot(const Vector2 &A, const Vector2 &B)
 	{
 		return A.x*B.x + A.y*B.y;
 	}
@@ -26,7 +27,7 @@ public:
 	// AxB != BxA
 	// In 2D, the result is the signed magnitude of the imaginary perpendicular vector
 	// This is at the root of essentials like triangle rasterization and volume clipping (overlaps with what's done in RayTriangleIntersect())
-	static float Cross(const Vector2 &A, const Vector2 &B)
+	S3D_INLINE static float Cross(const Vector2 &A, const Vector2 &B)
 	{
 		return A.x*B.y - B.x*A.y;
 	}

@@ -11,9 +11,9 @@
 
 	Important rules:
 	- We always assume on interface level *only* that a quaternion is unit length, ergo: it is a rotation.
+	- Re-normalize periodically to counteract numerical drift.
 	- Multiplying quaternions (or rotations) isn't commutative, ergo A*B != B*A.
 	- Multiplication is (generally) associative, however, so A*(B*C) == (A*B)*C.
-	- When performing successive multiplication, re-normalize periodically to counteract numerical drift.
 	- Quaternion *is* derived from Vector4, but as it has it's own operators you can not use Vector4's without
 	  being explicit; this should gaurantee that when the quaternion is modified through it's own interface
 	  it will always be unit length.
@@ -117,12 +117,13 @@ public:
 	}
 
 	// The conjugate *is* the inverse of a unit quaternion
+	// But, beware: in many cases Inverse() is safer as it effectively re-normalizes (cumulative operations cause drift)
 	S3D_INLINE const Quaternion Conjugate() const
 	{
 		return Quaternion(Vector4(-x, -y, -z, w));
 	}
 
-	// Can be used to for ex. calculate rotational difference between A and B (= A.Inverse()*B)
+	// Safe 
 	const Quaternion Inverse() const 
 	{
 		const float normSq = x*x + y*y + z*z + w*w;
@@ -147,7 +148,7 @@ public:
 	S3D_INLINE const Vector3 Diff(const Quaternion &B) const
 	{
 	 	// Quaternion::ScaledAngleAxis((Q1.Inverse()*Q0).Abs());
-		const Quaternion bInv = B.Conjugate(); // B.Inverse()
+		const Quaternion bInv = B.Inverse();
 		return ScaledAngleAxis((bInv*(*this)).Abs());
 	}
 

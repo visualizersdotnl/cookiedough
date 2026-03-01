@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "Dependencies.h"
 class Vector4
 {
 public:
@@ -113,7 +114,7 @@ public:
 		return Mul(*this, B);
 	}
 
-	void Multiply(const Vector4 &B)
+	S3D_INLINE void Multiply(const Vector4 &B)
 	{
 		*this = Mul(*this, B);
 	}
