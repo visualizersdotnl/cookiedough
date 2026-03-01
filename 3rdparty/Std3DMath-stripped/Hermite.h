@@ -17,8 +17,7 @@
     (*) She also made one that completely demystifies this to what it actually is: nesting linear interpolation to higher order.
 
     FIXME: 
-    - Potential overshoot
-    - Wrap 'take rotational difference' (?)
+    - Implement overshoot-free form (see issue list for article)
 */
 
 #pragma once
@@ -60,9 +59,13 @@ namespace Std3DMath
     template<typename T>
     S3D_INLINE static const std::array<T, 2> CatmullRom_Vec(const T &P0, const T &P1, const T &P2, const T &P3, float t)
     {
+        const T vP1P0 = P1-P0;
+        const T vP2P1 = P2-P1;
+        const T vP3P2 = P3-P2;
+
         // Central differences (est. tangent vectors)
-        const T V1 = ((P1-P0)+(P2-P1))*0.5f;
-        const T V2 = ((P2-P1)+(P3-P2))*0.5f;
+        const T V1 = (vP1P0+vP2P1)*0.5f;
+        const T V2 = (vP2P1+vP3P2)*0.5f;
         
         return Hermite_Vec<T>(P1, P2, V1, V2, t);
     }
@@ -118,5 +121,17 @@ namespace Std3DMath
         const Vector3 V2 = (vQ2Q1 + vQ3Q2)*0.5f;
 
         return Hermite_Quat(Q1, Q2, V1, V2, t);
+    }
+
+    // Linear approximation, works for small continuous unrolled rotations (https://theorangeduck.com/page/unrolling-rotations)
+    S3D_INLINE static const std::tuple<Quaternion, Vector3> CatmullRom_Quat_Lin(
+        const Quaternion &Q0, const Quaternion &Q1, const Quaternion &Q2, const Quaternion &Q3, float t)
+    {
+        const auto [ vQuat, vVel ] = CatmullRom_Vec<Vector4>(Q0, Q1, Q2, Q3, t);
+
+        return {
+            Quaternion(vQuat.Normalized()),
+            Quaternion::ScaledAngleAxis(Q1.Conjugate()*Quaternion(vVel)) // Return as angular velocity
+        };
     }
 }

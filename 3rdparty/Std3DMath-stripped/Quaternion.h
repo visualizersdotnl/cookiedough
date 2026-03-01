@@ -149,7 +149,6 @@ public:
 	 	// Quaternion::ScaledAngleAxis((Q1.Inverse()*Q0).Abs());
 		const Quaternion bInv = B.Conjugate(); // B.Inverse()
 		return ScaledAngleAxis((bInv*(*this)).Abs());
-		
 	}
 
 	S3D_INLINE const Quaternion Nlerp(const Quaternion &to, float t) const { return Nlerp(*this, to, t); }
