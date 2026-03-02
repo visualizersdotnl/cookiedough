@@ -11,7 +11,7 @@
 
 #include "platform.h"
 
-// FIXMEL don't equate WIN32 with MSVC
+// FIXME: don't equate WIN32 with MSVC
 #if defined(_WIN32) 
 	// ignore:
 	#pragma warning(disable:4530)   // unwind semantics missing
