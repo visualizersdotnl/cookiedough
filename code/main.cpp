@@ -265,7 +265,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int nCmdShow)
 	// initialize fast (co)sine
 	InitializeFastCosine();
 
-#if defined(FOR_INTEL) && defined(_WIN32)
+#if defined(FOR_INTEL)
 	// set simplest rounding mode, since we do a fair bit of ftol()
 	_controlfp(_MCW_RC, _RC_CHOP);
 #endif
