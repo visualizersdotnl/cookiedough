@@ -1,11 +1,11 @@
 
-// cookiedough -- basic utilities
+// cookiedough -- basic utilities: from assertions to color conversions 
 
 #include "main.h"
 // #include "util.h"
 #include "bilinear.h"
 
-#if !defined(_WIN64) && defined(_WIN32)
+#if 0
 
 // memcpy_fast()
 // - approx. twice faster than it's CRT counterpart on a 2009 netbook with 1.66GHz Intel Atom CPU
@@ -51,34 +51,6 @@ void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes)
 
 	_mm_empty();
 }
-
-/*
-void memset32(void *pDest, uint32_t value, size_t numInts)
-{
-	// must be a multiple of 16 bytes -- use memset() for general purpose
-	VIZ_ASSERT(!(numInts & 3));
-
-	// an 8-byte boundary gaurantees correctly aligned writes
-	VIZ_ASSERT(!(reinterpret_cast<uint32_t>(pDest) & 7));
-
-	__asm
-	{
-		mov       edi, pDest
-		movq      mm0, value
-		punpckldq mm0, mm0
-		mov       ecx, numInts
-		shr       ecx, 2
-	_loop:
-		movntq    [edi], mm0
-		movntq    [edi+8], mm0
-		add       edi, 16
-		dec       ecx
-		jnz       _loop
-	}		
-
-	_mm_empty();
-}
-*/
 
 #endif
 

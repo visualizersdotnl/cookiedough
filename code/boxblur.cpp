@@ -12,19 +12,13 @@
 #include "main.h"
 // #include "boxblur.h"
 
-static uint32_t *s_pTempBuf = nullptr;
-
 bool BoxBlur_Create()
 {
-//	s_pTempBuf = static_cast<uint32_t *>(mallocAligned(kOutputSize, kAlignTo));
-
-	return true;
+	return true;	
 }
 
 void BoxBlur_Destroy() 
 {
-	freeAligned(s_pTempBuf);
-	s_pTempBuf = nullptr;
 }
 
 // -- helper functions --
@@ -260,10 +254,6 @@ void BoxBlur32(
 	float strength)
 {
 	VIZ_ASSERT(xRes <= kResX && yRes <= kResY);
-
-	// FIXME: what kind of nasty bug was this covering for?
-//	HorizontalBoxBlur32(s_pTempBuf, pSrc, xRes, yRes, strength);
-//	VerticalBoxBlur32(pDest, s_pTempBuf, xRes, yRes, strength);
 
 	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
 	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);

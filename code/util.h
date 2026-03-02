@@ -1,18 +1,16 @@
 
-// cookiedough -- basic utilities
+// cookiedough -- basic utilities: from assertions to color conversions 
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#if !defined(_WIN64) && defined(_WIN32)
-	#define UTIL_WIN_32BIT
-#endif
-
 // size of cache line
 #if defined(FOR_INTEL)
+	// generally this holds true for x86/x64
 	constexpr size_t kCacheLine = sizeof(size_t)<<3;
 #elif defined(FOR_ARM)
-	constexpr size_t kCacheLine = 128; // for Apple Silicon (M-series)
+	// If it's ARM, we're banking on Apple Silicon (M-series), for which this is true
+	constexpr size_t kCacheLine = 128; 
 #endif
 
 constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
@@ -24,9 +22,10 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 	#define VIZ_ASSERT(condition)
 #endif
 
-// Windows+GCC inline macro (bruteforce in Windows, normal otherwise)
-// FIXME: I've obviously done something stupid by adding 'static', no idea why, but I'll try to phase it out using CKD_INLINE
-#ifdef  _WIN32
+// Windows+GCC inline macro (bruteforce for Windows+MSVC, normal otherwise)
+// The "old" VIZ_INLINE functions depend on the tag (VIZ_INLINE) flagging them as static, this is not ideal but it's legacy
+// Please use CKD_INLINE from here on out (02/03/2026)
+#if defined(_WIN32) && defined(MSCV)
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 		#define CKD_INLINE
@@ -55,23 +54,10 @@ constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
 #include "fast-cosine.h"
 #include "synth-math-easings.h"
 
-// memcpy_fast() & memset32() are optimized versions of memcpy() and memset()
-// - *only* intended for copying large batches (restrictions apply), explicitly *bypassing the write cache*
-// - align addresses to 8 byte boundary
+// I used to have a specific big-block fast memcpy() without write cache but I'm ditching that 
+#define memcpy_fast memcpy
 
-#if (defined(_WIN64) && defined(_WIN32)) || defined(FOR_ARM) || defined(__GNUC__)
-
-	// memcpy() has been optimized: http://blogs.msdn.com/b/vcblog/archive/2009/11/02/visual-c-code-generation-in-visual-studio-2010.aspx
-	#define memcpy_fast memcpy
-
-#else
-
-// only for multiples of 64 bytes
-void memcpy_fast(void *pDest, const void *pSrc, size_t numBytes); 
-
-#endif
-
-// only use for clearing (larger) buffers et cetera since it doesn't affect write cache (streaming stores)
+// only use for clearing (larger) buffers (does not cache writes)
 VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 {
 	// must be a multiple of 16 bytes -- use memset() for general purpose

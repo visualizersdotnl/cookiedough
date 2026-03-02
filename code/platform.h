@@ -6,6 +6,10 @@
 	#define FOR_INTEL
 	#define DEBUG_TRAP __debugbreak();
 
+	#if defined (_MSC_VER)
+		#define MSVC // use for anything MSVC-specific
+	#endif
+
 #elif defined(__GNUC__) // traps both Linux and OSX for now
 
 	#if defined(__ARM_NEON) || defined(__ARM_NEON__)
@@ -27,3 +31,5 @@
 	#include <emmintrin.h> // 2, 3
 	#include <smmintrin.h> // 4
 #endif
+
+

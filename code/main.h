@@ -11,9 +11,9 @@
 
 #include "platform.h"
 
-#if defined(_WIN32)
+#if defined(MSVC)
 	// ignore:
-	#pragma warning(disable:4530)   // unwind semantics missing
+	#pragma warning(disable:4530) // unwind semantics missing
 #endif
 
 // CRT & STL

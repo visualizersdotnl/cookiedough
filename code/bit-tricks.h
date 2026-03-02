@@ -21,8 +21,6 @@ VIZ_INLINE unsigned RoundPow2_32(unsigned value)
 	return value+1;
 }
 
-#ifdef _WIN64
-
 VIZ_INLINE size_t RoundPow2_64(size_t value)
 {
 	--value;
@@ -35,9 +33,7 @@ VIZ_INLINE size_t RoundPow2_64(size_t value)
 	return value+1;
 }
 
-#endif
-
-#if defined(_WIN32) // FIXME: should check for MSVC, really
+#if defined(MSVC)
 	#pragma warning(disable:4146) // unary minus operator applied, result still unsigned (IsZero())
 #endif
 

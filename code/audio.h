@@ -5,8 +5,9 @@
 #define _AUDIO_H_
 
 #if !defined(_WIN32)
+	// Assuming OSX/Linux
 	#define HWND void*
-	#include "../3rdparty/bass24-osx/bass.h" // boldly using the OSX "version" for Linux as well
+	#include "../3rdparty/bass24-osx/bass.h" // doesn't really matter which BASS header file we use between OSX and Linux
 #else
 	#include "../3rdparty/bass24-stripped/c/bass.h"
 #endif
