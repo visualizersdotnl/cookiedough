@@ -5,7 +5,7 @@ This is an experiment I started on a slow Netbook (Intel) back in 2006, if I rec
 ... to do some really retro (demoscene) graphical effects. 
 
 Supported platforms as of 09/01/2026:
-- Win64/x64 (builds out of the box with MSVC 2019 or higher) <- Currently possibly out of date; please fix!
+- Win64/x64 (builds out of the box with MSVC 2019 or higher) <- MSVC project out of date as of 02/03/26
 - OSX/Silicon (should be set up to build and work with VSCode and the required plug-ins for C++, CMake et cetera).
 - Linux/x64+ARM64, courtesy of Erik 'Kusma' Faye-Lund & Niels J. de Wit (not very different to get going than OSX).
 
