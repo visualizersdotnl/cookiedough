@@ -1,13 +1,14 @@
 
 // cookiedough -- box blur filter (32-bit only, for now)
 
-// this code was written in 2007 at Javeline, a former employer of mine
-// has been cleaned up considerably, but it does contain a slight weight bias flaw (commented), and probably 1 or 2 more quirks
+// I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
+// but I should: https://github.com/visualizersdotnl/cookiedough/issues/16
 
-// 01/02/2023: 
-// - vertical pass is a bit cache-unfriendly, optimize (ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
-// - get rid of the gratuitous redundancy (lots of duplicate code)
-// - review SIMD: the kernel overflows > 255 pixels span
+// issues:
+// - overflow with kernels > 256 pixels wide (review ISSE arithmetic)
+// - solve vertical pass by transposing to an from a scratch buffer ((ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
+//   ^ keeping the actual blur logic in 1 place only
+// - bias flaw?
 
 #include "main.h"
 // #include "boxblur.h"
@@ -141,16 +142,7 @@ void HorizontalBoxBlur32(
 	}
 }
 
-// -- (suboptimal) vertical implementation --
-
-// straight copy of HorizontalBoxBlur32(), but simply reading & writing vertically:
-// - you'd think this is absolutely terrible for cache and sure it violates the 64 and 128 bytes respectively
-//   of the modern Intel and Apple M1/M2 cache line
-// - but the level 1 cache on an average Ryzen is 64KB and at least 128KB on the Apple M, so, if the buffers aren't all that huge 
-//   (which they are not), even in HD, 1920 pixels is 7,5KB per line; so for now, based on this, I won't optimize this
-// - on a 486SX or so in the past you'd get into trouble as it had only 8KB which fit just enough for 256, but then you had more in L1 and
-//   that generally ruined the party; by now memory is just so much faster and cache in abudance
-// - and it's threaded as well
+// -- vertical implementation (suboptimal copy of horizontal version which is plain cache-unfriendly) --
 
 void VerticalBoxBlur32(
 	uint32_t *pDest,
