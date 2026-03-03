@@ -27,6 +27,9 @@ void FxBlitter_Destroy()
 // FIXME: why is that pixel copy hack in here, you should just interpolate over a correct range instead
 void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 {
+	VIZ_ASSERT_ALIGNED(pSrc);
+	VIZ_ASSERT_ALIGNED(pDest);
+
 	const __m128i zero = _mm_setzero_si128();
 	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
 

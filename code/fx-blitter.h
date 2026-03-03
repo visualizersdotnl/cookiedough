@@ -5,10 +5,6 @@
 	IMPORTANT:
 	- assumes output resolution for blit destination
 	- buffers must be 16-byte aligned
-
-	FIXME:
-	- test more, it's 23:20 and I'm tired
-	- missing a pixel on the side and on the bottom
 */
 
 #pragma once

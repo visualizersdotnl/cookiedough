@@ -23,6 +23,8 @@ constexpr size_t kAlignTo = 16;
 	#define VIZ_ASSERT(condition)
 #endif
 
+#define VIZ_ASSERT_ALIGNED(buffer) VIZ_ASSERT(0 == (std::bit_cast<size_t>(buffer) & (kAlignTo-1)));
+
 // Windows+GCC inline macro (bruteforce for Windows+MSVC, normal otherwise)
 // The "old" VIZ_INLINE functions depend on the tag (VIZ_INLINE) flagging them as static, this is not ideal but it's legacy
 // Please use CKD_INLINE from here on out (02/03/2026)
