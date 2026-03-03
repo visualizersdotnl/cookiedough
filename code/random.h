@@ -1,23 +1,26 @@
 
-/* GR-1: random number generator(s) -- (C) Tasty Chips Electronics */
+// cookiedough -- Mersenne-Twister random generator
+
+// FIXME (see Github issue): 
+// - this isn't thread-safe (pulled from the GR-1 codebase)
+// - as of 03/03/2026 that's not an issue, but it can be given the heavy OpenMP parallelization
 
 #if !defined(RANDOM_H)
 #define RANDOM_H
 
-#include <stdint.h>
+#include "../3rdparty/tinymt/tinymt32.h"
+#include "../3rdparty/tinymt/tinymt64.h"
 
 void initialize_random_generator();
 
-/* 
-	32-bit Mersenne-Twister random functions. 
+// these return between epsilon and one, never zero
+float mt_rand_norm_f();
+double mt_rand_norm();
 
-	mt_randf()   -- Returns a random value between not 0 but epsilon and 1 (convenient in case you want to divide).
-	mt_randu32() -- 32-bit unsigned random integer.
-	mt_rand32()  -- See below.
-*/
-
-float mt_randf();
 uint32_t mt_randu32();
 int32_t mt_rand32();
+
+uint64_t mt_randu64();
+int64_t mt_rand64();
 
 #endif // RANDOM_H

@@ -13,7 +13,8 @@
 	constexpr size_t kCacheLine = 128; 
 #endif
 
-constexpr size_t kAlignTo = 16; // Good for (I)SSE, should work for NEON too
+// Good for (I)SSE and x64 in general, should work for NEON too
+constexpr size_t kAlignTo = 16; 
 
 // assert macro (not so much an evangelism for this project, but it's available)
 #ifdef _DEBUG
