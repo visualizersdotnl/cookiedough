@@ -189,18 +189,18 @@ VIZ_INLINE __m128i vminISSE(__m128i A, __m128i B)
 //	return _mm_add_epi16(_mm_and_si128(mask, A), _mm_andnot_si128(mask, B));
 }
 
-// simple floating point to 24:8 fixed point conversion
-VIZ_INLINE int ftofp24(float value) { 
+// simple floating point to 24:8 fixed point conversion (signed)
+CKD_INLINE static int ftofp24(float value) { 
 	return (int) (value*256.f); 
 }
 
-// arbitrary floating point to integer conversion
-VIZ_INLINE int ftofp(float value, float multiplier) { 
-	return (int) (value*multiplier); 
+template <typename T>
+CKD_INLINE static T ftofp(float value, unsigned leftShiftBit) {
+	return T(value*float(1<<leftShiftBit));
 }
 
 // integer clamp (for curtailing Rocket parameters et cetera)
-VIZ_INLINE int clampi(int min, int max, int value) {
+CKD_INLINE static int clampi(int min, int max, int value) {
 	return std:: max<int>(min, std::min<int>(max, value));
 }
 

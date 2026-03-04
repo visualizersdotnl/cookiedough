@@ -59,19 +59,22 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
 	VIZ_ASSERT_NORM(radius);
 //	radius *= (xRes-1)/2.f;
+
+	// WIP
 	radius = 8.f;
 
 	VIZ_ASSERT(numPasses > 0);
 	
-//	numPasses = 3;
+	// WIP
+	numPasses = 2;
 
 	const unsigned iSpan = unsigned(radius);
 
 	// calculate sum divider and alpha
 	const float scale = 1.f/(2.f*radius + 1.f);
 	const float alpha = radius-iSpan;
-	const int iAlpha = ftofp24(alpha);
-	const int iScale = ftofp(scale, float(1 << 22)); // 10:22
+//	const int iAlpha = ftofp24(alpha);
+	const unsigned iScale = ftofp<unsigned>(scale, 22); // 10:22
 
 	for (unsigned iY = 0; iY < yRes; ++iY)
 	{
