@@ -48,7 +48,7 @@ constexpr size_t kAlignTo = 16;
 #endif
 
 // full 3D math library (last updated 22/02/2026)
-#include "../3rdparty/Std3DMath-stripped/Math.h"
+#include "Std3DMath-stripped/Math.h"
 
 #include "bit-tricks.h"
 #include "alloc-aligned.h"
