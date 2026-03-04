@@ -4,11 +4,12 @@
 // 04/03/2026: implementing new blur, to do/don't forget:
 // - [x] implement and test floating point horizontal blur prototype
 // - [x] use fixed point arithmetic
-// - [ ] implement passes to approx. gaussian look
+// - [x] implement passes to approx. gaussian look
 // - [ ] use 10:22 SIMD fixed point calculations
 // - [ ] retain reference impl.
 // - [ ] honour number of passes
 // - [ ] implement cache-optimized version that uses two horizontal blur + transpose passes to do a full blur
+// - [ ] plug OpenMP back in (try to make sure OpenMP respects the approx. L1 cache granularity)
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
@@ -60,6 +61,10 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 //	radius *= (xRes-1)/2.f;
 	radius = 8.f;
 
+	VIZ_ASSERT(numPasses > 0);
+	
+//	numPasses = 3;
+
 	const unsigned iSpan = unsigned(radius);
 
 	// calculate sum divider and alpha
@@ -70,120 +75,123 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 	for (unsigned iY = 0; iY < yRes; ++iY)
 	{
-		auto destIndex = iY*xRes;
-		const uint32_t *pSrcLine = pSrc + destIndex;
-
-		float 
-			sumA = 0.f,
-			sumR = 0.f, 
-			sumG = 0.f, 
-			sumB = 0.f;
-
-		unsigned
-			iSumA = 0,
-			iSumR = 0,
-			iSumG = 0,
-			iSumB = 0;
-
-		unsigned tail = 0, head = 0;
-
-		// calculate sum at first pixel (median)
-		for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+		for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 		{
-			const uint32_t pixel = pSrcLine[head];
-			sumA += GetA(pixel);
-			sumR += GetR(pixel);
-			sumG += GetG(pixel);
-			sumB += GetB(pixel);
-			iSumA += pixel >> 24;
-			iSumR += (pixel >> 16) & 0xff;
-			iSumG += (pixel >> 8) & 0xff;
-			iSumB += pixel & 0xff;
-			++head;
-		}
+			auto destIndex = iY*xRes;
+			const uint32_t *pSrcLine = pSrc + destIndex;
 
-		const uint32_t subPixel = MixPixels32(0, pSrcLine[head], alpha);
-		sumA += GetA(subPixel);
-		sumR += GetR(subPixel);
-		sumG += GetG(subPixel);
-		sumB += GetB(subPixel);
-		iSumA += subPixel >> 24;
-		iSumR += (subPixel >> 16) & 0xff;
-		iSumG += (subPixel >> 8) & 0xff;
-		iSumB += subPixel & 0xff;
+			float 
+				sumA = 0.f,
+				sumR = 0.f, 
+				sumG = 0.f, 
+				sumB = 0.f;
 
-		float curScale = scale*0.5f;
-		const float dScale = (scale*0.5f)/iSpan;
+			unsigned
+				iSumA = 0,
+				iSumR = 0,
+				iSumG = 0,
+				iSumB = 0;
 
-		// work up to full kernel
-		for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
-		{
-			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-			curScale += dScale;
-			++destIndex;
+			unsigned tail = 0, head = 0;
 
-			const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
-			sumA += GetA(addHead);
-			sumR += GetR(addHead);
-			sumG += GetG(addHead);
-			sumB += GetB(addHead);
-			iSumA += addHead >> 24;
-			iSumR += (addHead >> 16) & 0xff;
-			iSumG += (addHead >> 8) & 0xff;
-			iSumB += addHead & 0xff;
-			++head;
-		}
+			// calculate sum at first pixel (median)
+			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+			{
+				const uint32_t pixel = pSrcLine[head];
+				sumA += GetA(pixel);
+				sumR += GetR(pixel);
+				sumG += GetG(pixel);
+				sumB += GetB(pixel);
+				iSumA += pixel >> 24;
+				iSumR += (pixel >> 16) & 0xff;
+				iSumG += (pixel >> 8) & 0xff;
+				iSumB += pixel & 0xff;
+				++head;
+			}
 
-		// normalize
-		curScale = scale;
+			const uint32_t subPixel = MixPixels32(0, pSrcLine[head], alpha);
+			sumA += GetA(subPixel);
+			sumR += GetR(subPixel);
+			sumG += GetG(subPixel);
+			sumB += GetB(subPixel);
+			iSumA += subPixel >> 24;
+			iSumR += (subPixel >> 16) & 0xff;
+			iSumG += (subPixel >> 8) & 0xff;
+			iSumB += subPixel & 0xff;
 
-		// full sliding window
-		for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
-		{
-//			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-			pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
-			++destIndex;
+			float curScale = scale*0.5f;
+			const float dScale = (scale*0.5f)/iSpan;
 
-			const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
-			sumA += GetA(addHead);
-			sumR += GetR(addHead);
-			sumG += GetG(addHead);
-			sumB += GetB(addHead);
-			iSumA += addHead >> 24;
-			iSumR += (addHead >> 16) & 0xff;
-			iSumG += (addHead >> 8) & 0xff;
-			iSumB += addHead & 0xff;
-			++head;
+			// work up to full kernel
+			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+			{
+				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+				curScale += dScale;
+				++destIndex;
 
-			const uint32_t subTail = MixPixels32(pSrcLine[tail], pSrcLine[tail+1], alpha);
-			sumA -= GetA(subTail);
-			sumR -= GetR(subTail);
-			sumG -= GetG(subTail);
-			sumB -= GetB(subTail);
-			iSumA -= subTail >> 24;
-			iSumR -= (subTail >> 16) & 0xff;
-			iSumG -= (subTail >> 8) & 0xff;
-			iSumB -= subTail & 0xff;
-			++tail;
-		}
+				const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				sumA += GetA(addHead);
+				sumR += GetR(addHead);
+				sumG += GetG(addHead);
+				sumB += GetB(addHead);
+				iSumA += addHead >> 24;
+				iSumR += (addHead >> 16) & 0xff;
+				iSumG += (addHead >> 8) & 0xff;
+				iSumB += addHead & 0xff;
+				++head;
+			}
 
-		// work back down to median
-		for (unsigned int iPixel = 0; iPixel < iSpan; ++iPixel)
-		{
-			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-			curScale -= dScale;
-			++destIndex;
+			// normalize
+			curScale = scale;
 
-			const uint32_t subTail = MixPixels32(pSrcLine[tail+1], pSrcLine[tail], alpha);
-			sumA -= GetA(subTail);
-			sumR -= GetR(subTail);
-			sumG -= GetG(subTail);
-			sumB -= GetB(subTail);
-			iSumA -= subTail >> 24;
-			iSumR -= (subTail >> 16) & 0xff;
-			iSumG -= (subTail >> 8) & 0xff;
-			iSumB -= subTail & 0xff;
-			++tail;
+			// full sliding window
+			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
+			{
+//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
+				++destIndex;
+
+				const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				sumA += GetA(addHead);
+				sumR += GetR(addHead);
+				sumG += GetG(addHead);
+				sumB += GetB(addHead);
+				iSumA += addHead >> 24;
+				iSumR += (addHead >> 16) & 0xff;
+				iSumG += (addHead >> 8) & 0xff;
+				iSumB += addHead & 0xff;
+				++head;
+
+				const uint32_t subTail = MixPixels32(pSrcLine[tail], pSrcLine[tail+1], alpha);
+				sumA -= GetA(subTail);
+				sumR -= GetR(subTail);
+				sumG -= GetG(subTail);
+				sumB -= GetB(subTail);
+				iSumA -= subTail >> 24;
+				iSumR -= (subTail >> 16) & 0xff;
+				iSumG -= (subTail >> 8) & 0xff;
+				iSumB -= subTail & 0xff;
+				++tail;
+			}
+
+			// work back down to median
+			for (unsigned int iPixel = 0; iPixel < iSpan; ++iPixel)
+			{
+				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+				curScale -= dScale;
+				++destIndex;
+
+				const uint32_t subTail = MixPixels32(pSrcLine[tail+1], pSrcLine[tail], alpha);
+				sumA -= GetA(subTail);
+				sumR -= GetR(subTail);
+				sumG -= GetG(subTail);
+				sumB -= GetB(subTail);
+				iSumA -= subTail >> 24;
+				iSumR -= (subTail >> 16) & 0xff;
+				iSumG -= (subTail >> 8) & 0xff;
+				iSumB -= subTail & 0xff;
+				++tail;
+			}
 		}
 	}
 }
