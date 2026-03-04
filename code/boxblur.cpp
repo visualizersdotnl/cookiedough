@@ -5,9 +5,11 @@
 // but I should: https://github.com/visualizersdotnl/cookiedough/issues/16
 
 // issues:
+// - ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/
 // - overflow with kernels > 256 pixels wide (review ISSE arithmetic)
-// - solve vertical pass by transposing to an from a scratch buffer ((ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/)
-//   ^ keeping the actual blur logic in 1 place only
+// - process in blocks of N lines (go with something that'd more or less fit in L1 cache size)
+// - add the option to process these passes a few times over, each extra pass approximates gaussian distr. further
+// - what Ryg suggests for a full blur is simply this: horizontal pass (X), transpose, horizonal pass (Y), transpose
 // - bias flaw?
 
 #include "main.h"
