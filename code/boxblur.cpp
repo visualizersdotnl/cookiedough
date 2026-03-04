@@ -1,18 +1,22 @@
 
-// cookiedough -- box blur filter (32-bit only, for now)
+// cookiedough -- optimized 32-bit box blur (suitable for gaussian approximation)
 
-// I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
-// but I should: https://github.com/visualizersdotnl/cookiedough/issues/16
+// 04/03/2026: implementing new blur, to do/don't forget:
+// - [x] implement and test floating point horizontal blur prototype
+// - [x] use fixed point arithmetic
+// - [ ] implement passes to approx. gaussian look
+// - [ ] use 10:22 SIMD fixed point calculations
+// - [ ] retain reference impl.
+// - [ ] honour number of passes
+// - [ ] implement cache-optimized version that uses two horizontal blur + transpose passes to do a full blur
 
-// issues:
-// - ref. https://fgiesen.wordpress.com/2012/08/01/fast-blurs-2/
-// - overflow with kernels > 256 pixels wide (review ISSE arithmetic)
-// - process in blocks of N lines (go with something that'd more or less fit in L1 cache size)
-// - add the option to process these passes a few times over, each extra pass approximates gaussian distr. further
-// - what Ryg suggests for a full blur is simply this: horizontal pass (X), transpose, horizonal pass (Y), transpose
-// - bias flaw?
+// about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
+// - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
+// - it has unnecessary limitations: fixed kernel size, odd and overflow-prone fixed point arithmetic
+// - it has a cache-unfriendly naive vertical pass
 
 #include "main.h"
+#include "util.h"
 // #include "boxblur.h"
 
 bool BoxBlur_Create()
@@ -24,7 +28,167 @@ void BoxBlur_Destroy()
 {
 }
 
-// -- helper functions --
+CKD_INLINE static float GetA(uint32_t color) { return (color >> 24); }
+CKD_INLINE static float GetR(uint32_t color) { return (color >> 16) & 0xff; }
+CKD_INLINE static float GetG(uint32_t color) { return (color >>  8) & 0xff; }
+CKD_INLINE static float GetB(uint32_t color) { return (color >>  0) & 0xff; }
+
+CKD_INLINE static uint32_t ftoc(float A, float R, float G, float B) {
+	A = clampf(0.f, 255.f, A);
+	R = clampf(0.f, 255.f, R);
+	G = clampf(0.f, 255.f, G);
+	B = clampf(0.f, 255.f, B);
+	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
+}
+
+CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, unsigned iScale) {
+	A = unsigned(iScale*uint64_t(A)>>22);
+	R = unsigned(iScale*uint64_t(R)>>22);
+	G = unsigned(iScale*uint64_t(G)>>22);
+	B = unsigned(iScale*uint64_t(B)>>22);
+	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
+}
+
+void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+{
+	// buffers must be a multiple of 4x4 pixels (realistic and prevents us drowning in useless edge cases)
+	VIZ_ASSERT(xRes > 3 && (xRes & 3) == 0);
+	VIZ_ASSERT(yRes > 3 && (yRes & 3) == 0);
+
+	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
+	VIZ_ASSERT_NORM(radius);
+//	radius *= (xRes-1)/2.f;
+	radius = 8.f;
+
+	const unsigned iSpan = unsigned(radius);
+
+	// calculate sum divider and alpha
+	const float scale = 1.f/(2.f*radius + 1.f);
+	const float alpha = radius-iSpan;
+	const int iAlpha = ftofp24(alpha);
+	const int iScale = ftofp(scale, float(1 << 22)); // 10:22
+
+	for (unsigned iY = 0; iY < yRes; ++iY)
+	{
+		auto destIndex = iY*xRes;
+		const uint32_t *pSrcLine = pSrc + destIndex;
+
+		float 
+			sumA = 0.f,
+			sumR = 0.f, 
+			sumG = 0.f, 
+			sumB = 0.f;
+
+		unsigned
+			iSumA = 0,
+			iSumR = 0,
+			iSumG = 0,
+			iSumB = 0;
+
+		unsigned tail = 0, head = 0;
+
+		// calculate sum at first pixel (median)
+		for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+		{
+			const uint32_t pixel = pSrcLine[head];
+			sumA += GetA(pixel);
+			sumR += GetR(pixel);
+			sumG += GetG(pixel);
+			sumB += GetB(pixel);
+			iSumA += pixel >> 24;
+			iSumR += (pixel >> 16) & 0xff;
+			iSumG += (pixel >> 8) & 0xff;
+			iSumB += pixel & 0xff;
+			++head;
+		}
+
+		const uint32_t subPixel = MixPixels32(0, pSrcLine[head], alpha);
+		sumA += GetA(subPixel);
+		sumR += GetR(subPixel);
+		sumG += GetG(subPixel);
+		sumB += GetB(subPixel);
+		iSumA += subPixel >> 24;
+		iSumR += (subPixel >> 16) & 0xff;
+		iSumG += (subPixel >> 8) & 0xff;
+		iSumB += subPixel & 0xff;
+
+		float curScale = scale*0.5f;
+		const float dScale = (scale*0.5f)/iSpan;
+
+		// work up to full kernel
+		for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+		{
+			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+			curScale += dScale;
+			++destIndex;
+
+			const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+			sumA += GetA(addHead);
+			sumR += GetR(addHead);
+			sumG += GetG(addHead);
+			sumB += GetB(addHead);
+			iSumA += addHead >> 24;
+			iSumR += (addHead >> 16) & 0xff;
+			iSumG += (addHead >> 8) & 0xff;
+			iSumB += addHead & 0xff;
+			++head;
+		}
+
+		// normalize
+		curScale = scale;
+
+		// full sliding window
+		for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
+		{
+//			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+			pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
+			++destIndex;
+
+			const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+			sumA += GetA(addHead);
+			sumR += GetR(addHead);
+			sumG += GetG(addHead);
+			sumB += GetB(addHead);
+			iSumA += addHead >> 24;
+			iSumR += (addHead >> 16) & 0xff;
+			iSumG += (addHead >> 8) & 0xff;
+			iSumB += addHead & 0xff;
+			++head;
+
+			const uint32_t subTail = MixPixels32(pSrcLine[tail], pSrcLine[tail+1], alpha);
+			sumA -= GetA(subTail);
+			sumR -= GetR(subTail);
+			sumG -= GetG(subTail);
+			sumB -= GetB(subTail);
+			iSumA -= subTail >> 24;
+			iSumR -= (subTail >> 16) & 0xff;
+			iSumG -= (subTail >> 8) & 0xff;
+			iSumB -= subTail & 0xff;
+			++tail;
+		}
+
+		// work back down to median
+		for (unsigned int iPixel = 0; iPixel < iSpan; ++iPixel)
+		{
+			pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+			curScale -= dScale;
+			++destIndex;
+
+			const uint32_t subTail = MixPixels32(pSrcLine[tail+1], pSrcLine[tail], alpha);
+			sumA -= GetA(subTail);
+			sumR -= GetR(subTail);
+			sumG -= GetG(subTail);
+			sumB -= GetB(subTail);
+			iSumA -= subTail >> 24;
+			iSumR -= (subTail >> 16) & 0xff;
+			iSumG -= (subTail >> 8) & 0xff;
+			iSumB -= subTail & 0xff;
+			++tail;
+		}
+	}
+}
+
+// -- 2007 blur: helper functions --
 
 // convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
@@ -60,7 +224,7 @@ VIZ_INLINE uint32_t Div(__m128i accumulator, __m128i weightDiv)
 	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_mulhi_epu16(accumulator, weightDiv), _mm_setzero_si128()));
 }
 
-// -- horizontal implementation --
+// -- 2007 blur: horizontal implementation --
 
 void HorizontalBoxBlur32(
 	uint32_t *pDest,
@@ -144,7 +308,7 @@ void HorizontalBoxBlur32(
 	}
 }
 
-// -- vertical implementation (suboptimal copy of horizontal version which is plain cache-unfriendly) --
+// -- 2007 blur: vertical implementation (suboptimal copy of horizontal version which is plain cache-unfriendly) --
 
 void VerticalBoxBlur32(
 	uint32_t *pDest,

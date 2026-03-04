@@ -1,5 +1,5 @@
 
-// cookiedough -- old Javeline-era box blur filter (32-bit only, for now)
+// cookiedough -- optimized 32-bit box blur (suitable for gaussian approximation)
 
 #ifndef _BOX_BLUR_H_
 #define _BOX_BLUR_H_
@@ -7,10 +7,13 @@
 bool BoxBlur_Create();
 void BoxBlur_Destroy();
 
+void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses);
+
+// -- 2007 blur (FIXME: retire, still used by Arrested Development code) --
+
 // use [1..100] and multiply it by this value to feed as 'strength'
 // this way you can conveniently define no blur as zero in Rocket and use [1..100] to define strength a bit more intuitively
 constexpr float kBoxBlurScale = 0.01f;
-
 
 float VIZ_INLINE BoxBlurScale(float strength) 
 {

@@ -4,7 +4,7 @@
 #include "main.h"
 // #include "sincos-lut.h"
 
-alignas(16) float g_cosLUT[kCosTabSize];
+alignas(kAlignTo) float g_cosLUT[kCosTabSize];
 
 void CalculateCosLUT()
 {

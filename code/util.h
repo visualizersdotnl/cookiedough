@@ -23,7 +23,8 @@ constexpr size_t kAlignTo = 16;
 	#define VIZ_ASSERT(condition)
 #endif
 
-#define VIZ_ASSERT_ALIGNED(buffer) VIZ_ASSERT(0 == (std::bit_cast<size_t>(buffer) & (kAlignTo-1)));
+#define VIZ_ASSERT_ALIGNED(buffer) VIZ_ASSERT(0 == (std::bit_cast<size_t>(buffer) & (kAlignTo-1)))
+#define VIZ_ASSERT_NORM(value) VIZ_ASSERT(value >= 0.f && value <= 1.f)
 
 // Windows+GCC inline macro (bruteforce for Windows+MSVC, normal otherwise)
 // The "old" VIZ_INLINE functions depend on the tag (VIZ_INLINE) flagging them as static, this is not ideal but it's legacy
@@ -168,7 +169,7 @@ VIZ_INLINE __m128i MixPixels32(__m128i A, __m128i B, float alpha)
 	return color;
 }
 
-// mix 2 32-bit pixels by alpha
+// mix 2 32-bit pixels by alpha (don't use in loops)
 VIZ_INLINE uint32_t MixPixels32(uint32_t A, uint32_t B, float alpha)
 {
 	const __m128i zero = _mm_setzero_si128();
@@ -189,10 +190,14 @@ VIZ_INLINE __m128i vminISSE(__m128i A, __m128i B)
 }
 
 // simple floating point to 24:8 fixed point conversion
-VIZ_INLINE int ftofp24(float value) { return (int) (value*256.f); }
+VIZ_INLINE int ftofp24(float value) { 
+	return (int) (value*256.f); 
+}
 
 // arbitrary floating point to integer conversion
-VIZ_INLINE int ftofp(float value, float multiplier) { return (int) (value*multiplier); }
+VIZ_INLINE int ftofp(float value, float multiplier) { 
+	return (int) (value*multiplier); 
+}
 
 // integer clamp (for curtailing Rocket parameters et cetera)
 VIZ_INLINE int clampi(int min, int max, int value) {
