@@ -5,11 +5,12 @@
 // - [x] implement and test floating point horizontal blur prototype
 // - [x] use fixed point arithmetic
 // - [x] implement passes to approx. gaussian look
+// - [ ] iterate (horz. passes) over chunks that fit in L1 cache (kCacheL1)
+// - [ ] plug OpenMP back in and try to make it respect that exact chunk granularity
 // - [ ] use 10:22 SIMD fixed point calculations
-// - [ ] plug OpenMP back in (try to make sure OpenMP respects the L1 cache, kCacheL1)
-// - [ ] implement cache-optimized version that uses two horizontal blur + transpose passes to do a full blur
+// - [ ] implement optimized version that uses two horizontal blur + transpose passes to do a full blur
 // - [ ] implement 2007 blur with this (until 'Arrested Development' is phased out / parked in another branch)
-// - [ ] clean up / retain reference impl.
+// - [ ] clean up (retain reference impl.)
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
