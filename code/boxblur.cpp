@@ -223,7 +223,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	}
 }
 
-// -- 2007 blur: helper functions --
+// -- 2007 blur --
 
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
@@ -257,8 +257,6 @@ VIZ_INLINE uint32_t Div(__m128i accumulator, __m128i weightDiv)
 {
 	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_mulhi_epu16(accumulator, weightDiv), _mm_setzero_si128()));
 }
-
-// -- 2007 blur: horizontal implementation --
 
 void HorizontalBoxBlur32(
 	uint32_t *pDest,
@@ -341,8 +339,6 @@ void HorizontalBoxBlur32(
 		}
 	}
 }
-
-// -- 2007 blur: vertical implementation (suboptimal copy of horizontal version which is plain cache-unfriendly) --
 
 void VerticalBoxBlur32(
 	uint32_t *pDest,
@@ -436,8 +432,6 @@ void VerticalBoxBlur32(
 	}
 }
 
-// -- what it says on the tin --
-
 void BoxBlur32(
 	uint32_t *pDest,
 	const uint32_t *pSrc,
@@ -445,8 +439,6 @@ void BoxBlur32(
 	unsigned int yRes,
 	float strength)
 {
-	VIZ_ASSERT(xRes <= kResX && yRes <= kResY);
-
 	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
 	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
 }
