@@ -6,15 +6,15 @@
 // - [x] use fixed point arithmetic
 // - [x] implement passes to approx. gaussian look
 // - [ ] use 10:22 SIMD fixed point calculations
-// - [ ] retain reference impl.
-// - [ ] honour number of passes
+// - [ ] plug OpenMP back in (try to make sure OpenMP respects the L1 cache)
 // - [ ] implement cache-optimized version that uses two horizontal blur + transpose passes to do a full blur
-// - [ ] plug OpenMP back in (try to make sure OpenMP respects the approx. L1 cache granularity)
+// - [ ] implement 2007 blur with this (until 'Arrested Development' is phased out / parked in another branch)
+// - [ ] clean up / retain reference impl.
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
 // - it has unnecessary limitations: fixed kernel size, odd and overflow-prone fixed point arithmetic
-// - it has a cache-unfriendly naive vertical pass
+// - it has a cache-unfriendly naive vertical pass  (though it's potentially not that bad for relatively small images)
 
 #include "main.h"
 #include "util.h"
@@ -28,6 +28,8 @@ bool BoxBlur_Create()
 void BoxBlur_Destroy() 
 {
 }
+
+// -- 2026 blur: ref. helper --
 
 CKD_INLINE static float GetA(uint32_t color) { return (color >> 24); }
 CKD_INLINE static float GetR(uint32_t color) { return (color >> 16) & 0xff; }
@@ -50,6 +52,10 @@ CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, 
 	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
 }
 
+// -- 2026 blur: horizontal pass --
+
+alignas(kAlignTo) static unsigned s_iSpanScales[kResX/2];
+
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
 	// buffers must be a multiple of 4x4 pixels (realistic and prevents us drowning in useless edge cases)
@@ -69,6 +75,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	numPasses = 2;
 
 	const unsigned iSpan = unsigned(radius);
+	VIZ_ASSERT(iSpan < kResX/2);
 
 	// calculate sum divider and alpha
 	const float scale = 1.f/(2.f*radius + 1.f);
@@ -76,8 +83,16 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 //	const int iAlpha = ftofp24(alpha);
 	const unsigned iScale = ftofp<unsigned>(scale, 22); // 10:22
 
+	// calculate span scales
+	const float halfScale = scale*0.5f;
+	const float dScale = (scale*0.5f)/iSpan;
+	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
+		s_iSpanScales[iPixel] = ftofp<unsigned>(halfScale + iPixel*dScale, 22);
+
+	// Y
 	for (unsigned iY = 0; iY < yRes; ++iY)
 	{
+		// X
 		for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 		{
 			auto destIndex = iY*xRes;
@@ -128,7 +143,8 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// work up to full kernel
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
-				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel]);
 				curScale += dScale;
 				++destIndex;
 
@@ -150,6 +166,12 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// full sliding window
 			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
 			{
+				// SIMD path (more or less):
+				// - unpack to or have ARGB sum in 2 registers, since we need 64-bit wiggle room
+				// - perform fixed point div. by kernel width
+				// - pack it all back up and write to memory
+				// - perform 2 read 2 pixels & interpolate and add/subtract them to accumulators
+
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
 				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
 				++destIndex;
@@ -178,9 +200,10 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			}
 
 			// work back down to median
-			for (unsigned int iPixel = 0; iPixel < iSpan; ++iPixel)
+			for (unsigned int iPixel = iSpan; iPixel > 0; --iPixel)
 			{
-				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel-1]);
 				curScale -= dScale;
 				++destIndex;
 
@@ -201,7 +224,6 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 // -- 2007 blur: helper functions --
 
-// convert 28:4 fixed point weight to 16-bit divisor
 VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
 {
 	return ((65536*256)/weight)>>4;
