@@ -32,4 +32,17 @@
 	#include <smmintrin.h> // 4
 #endif
 
+// size of cache line
+#if defined(FOR_INTEL)
+	// generally this holds true for x86/x64
+	constexpr size_t kCacheLine = sizeof(size_t)<<3;
+#elif defined(FOR_ARM)
+	// If it's ARM, we're banking on Apple Silicon (M), for which this is true
+	constexpr size_t kCacheLine = 128; 
+#endif
 
+// Good for (I)SSE and x64 in general, should work for ARM/NEON too
+constexpr size_t kAlignTo = 16; 
+
+// Fair lowest common denominator for Intel x64 & Apple Silicon (low-power cores)
+constexpr size_t kCacheL1 = 65536; // 64KB
