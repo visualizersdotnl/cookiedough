@@ -6,7 +6,7 @@
 // - [x] use fixed point arithmetic
 // - [x] implement passes to approx. gaussian look
 // - [ ] use 10:22 SIMD fixed point calculations
-// - [ ] plug OpenMP back in (try to make sure OpenMP respects the L1 cache)
+// - [ ] plug OpenMP back in (try to make sure OpenMP respects the L1 cache, kCacheL1)
 // - [ ] implement cache-optimized version that uses two horizontal blur + transpose passes to do a full blur
 // - [ ] implement 2007 blur with this (until 'Arrested Development' is phased out / parked in another branch)
 // - [ ] clean up / retain reference impl.
