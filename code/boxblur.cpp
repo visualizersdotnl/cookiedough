@@ -1,20 +1,19 @@
 
 // cookiedough -- optimized 32-bit multi-pass (gaussian approximation) blur
 
-// 06/03/2026 - implementing new blur:
-// - implement horizontal, vertical and full blur using 1 single horizontal blur function that operates on cache-friendly scratch memory
-// - versions need slightly different logic: horizontal is straightforward, vertical and full require some transpose gymnastics
-// - implement it all using ISSE (keep the ref. implementation) and tie in OpenMP
-// - goal: OpenMP dispatches each L1-sized chunk
+// 06/03/2026:
+// - [x] horizontal SIMD-optimized blur pass works perfectly
+// - move horizontal blur pass into a function that blurs a L1-cache sized chunk into the scratch buffer(s) for all passes required
+// - use read/write/copy logistics (see below) to implement horizontal, vertical and full blur optimally using the one horizontal pass
+// - dispatch OpenMP to parallelize each L1-cache sized chunk
 // - implement 2007 blur using this one
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
 // - it has unnecessary limitations: kernel size, odd and overflow-prone fixed point arithmetic
-// - it has a cache-unfriendly naive vertical pass  (though it's potentially not that bad for relatively small images)
+// - it has a cache-unfriendly naive vertical pass (though it's potentially not that bad for relatively small images)
 
 #include "main.h"
-#include "util.h"
 // #include "boxblur.h"
 
 static uint32_t *s_pScratch[2] =  { nullptr };
@@ -52,11 +51,11 @@ CKD_INLINE static uint32_t ftoc(float A, float R, float G, float B) {
 }
 
 // ref.
-CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, unsigned iScale) {
-	A = unsigned(iScale*uint64_t(A)>>22);
-	R = unsigned(iScale*uint64_t(R)>>22);
-	G = unsigned(iScale*uint64_t(G)>>22);
-	B = unsigned(iScale*uint64_t(B)>>22);
+CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, int64_t iScale) {
+	A = unsigned(iScale*int64_t(A)>>22);
+	R = unsigned(iScale*int64_t(R)>>22);
+	G = unsigned(iScale*int64_t(G)>>22);
+	B = unsigned(iScale*int64_t(B)>>22);
 	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
 }
 
@@ -73,15 +72,29 @@ CKD_INLINE static __m128i iAdd(__m128i iSum, __m128i iAlpha, __m128i A, __m128i 
 CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
 {
 	// sum -= lerp(tail[0], tail[1], alpha)
-	return _mm_add_epi32(
+	return _mm_sub_epi32(
 		iSum,
-		_mm_sub_epi32(
+		_mm_add_epi32(
 			A,
 			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 8)));
 }
 
-// FIXME: size up!
-alignas(kAlignTo) static unsigned s_iSpanScales[kResX/2];
+CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
+{
+	const __m128i low64  = _mm_unpacklo_epi32(iSum, _mm_setzero_si128()); // | A | R | 
+	const __m128i high64 = _mm_unpackhi_epi32(iSum, _mm_setzero_si128()); // | G | B |
+	
+	const __m128i broadcast = iScale; // _mm_set1_epi64x(iScale);
+
+	// divide by kernel size, then the horizontal-add sums it back to a single register: | A | R | G | B |
+	return _mm_hadd_epi32(
+		_mm_srli_epi64(_mm_mul_epu32(low64, broadcast), 22),
+		_mm_srli_epi64(_mm_mul_epu32(high64, broadcast), 22));
+}
+
+// FIXME: size up
+// alignas(kAlignTo) static int64_t s_iSpanScales[kResX/2];
+alignas(kAlignTo) static __m128i s_iSpanScales[kResX/2];
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
@@ -107,14 +120,15 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// calculate sum divider and alpha
 	const float scale = 1.f/(2.f*radius + 1.f);
 	const float alpha = radius-iSpan;
-	const unsigned iScale = ftofp<unsigned>(scale, 22); // 10:22
+//	const int64_t iScale = ftofp<int64_t>(scale, 22); // 10:22
+	const __m128i iScale = _mm_set1_epi64x(ftofp<int64_t>(scale, 22)); // 10:22
 	const __m128i iAlpha = _mm_cvtsi32_si128(ftofp24(alpha)*0x01010101);
 
 	// calculate span scales
 	const float halfScale = scale*0.5f;
 	const float dScale = halfScale/iSpan;
 	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
-		s_iSpanScales[iPixel] = ftofp<unsigned>(halfScale + iPixel*dScale, 22);
+		s_iSpanScales[iPixel] = _mm_set1_epi64x(ftofp<int64_t>(halfScale + iPixel*dScale, 22));
 
 	// Y
 	for (unsigned iY = 0; iY < yRes; ++iY)
@@ -126,17 +140,17 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			auto destIndex = iY*xRes;
 			const uint32_t *pSrcLine = pSrc + destIndex;
 
-			float 
-				sumA = 0.f,
-				sumR = 0.f, 
-				sumG = 0.f, 
-				sumB = 0.f;
+//			float 
+//				sumA = 0.f,
+//				sumR = 0.f, 
+//				sumG = 0.f, 
+//				sumB = 0.f;
 
-			unsigned
-				iSumA = 0,
-				iSumR = 0,
-				iSumG = 0,
-				iSumB = 0;
+//			unsigned
+//				iSumA = 0,
+//				iSumR = 0,
+//				iSumG = 0,
+//				iSumB = 0;
 
 			__m128i iSum = _mm_setzero_si128();
 
@@ -145,41 +159,41 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// calculate sum at first pixel (median)
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
-				const uint32_t pixel = pSrcLine[head];
+//				const uint32_t pixel = pSrcLine[head];
 
-				sumA += GetA(pixel);
-				sumR += GetR(pixel);
-				sumG += GetG(pixel);
-				sumB += GetB(pixel);
+//				sumA += GetA(pixel);
+//				sumR += GetR(pixel);
+//				sumG += GetG(pixel);
+//				sumB += GetB(pixel);
 
-				iSumA += pixel >> 24;
-				iSumR += (pixel >> 16) & 0xff;
-				iSumG += (pixel >> 8) & 0xff;
-				iSumB += pixel & 0xff;
+//				iSumA += pixel >> 24;
+//				iSumR += (pixel >> 16) & 0xff;
+//				iSumG += (pixel >> 8) & 0xff;
+//				iSumB += pixel & 0xff;
 
 				iSum = _mm_add_epi32(iSum, c2vISSE32(pSrcLine[head]));
 
 				++head;
 			}
 
-			const uint32_t subPixel = cblend(0, pSrcLine[head], alpha);
+//			const uint32_t subPixel = cblend(0, pSrcLine[head], alpha);
 
-			sumA += GetA(subPixel);
-			sumR += GetR(subPixel);
-			sumG += GetG(subPixel);
-			sumB += GetB(subPixel);
+//			sumA += GetA(subPixel);
+//			sumR += GetR(subPixel);
+//			sumG += GetG(subPixel);
+//			sumB += GetB(subPixel);
 
-			iSumA += subPixel >> 24;
-			iSumR += (subPixel >> 16) & 0xff;
-			iSumG += (subPixel >> 8) & 0xff;
-			iSumB += subPixel & 0xff;
+//			iSumA += subPixel >> 24;
+//			iSumR += (subPixel >> 16) & 0xff;
+//			iSumG += (subPixel >> 8) & 0xff;
+//			iSumB += subPixel & 0xff;
 
 			iSum = _mm_add_epi32(
 				iSum,
 				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pSrcLine[head]), iAlpha), 8));
 
-			float curScale = scale*0.5f;
-			const float dScale = (scale*0.5f)/iSpan;
+//			float curScale = scale*0.5f;
+//			const float dScale = (scale*0.5f)/iSpan;
 
 			__m128i 
 				headA, headB,
@@ -190,21 +204,23 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel]);
-				curScale += dScale;
+//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel]);
+//				curScale += dScale;
+
+				pDest[destIndex] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel]));
 				++destIndex;
 
-				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
+//				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
 
-				sumA += GetA(addHead);
-				sumR += GetR(addHead);
-				sumG += GetG(addHead);
-				sumB += GetB(addHead);
+//				sumA += GetA(addHead);
+//				sumR += GetR(addHead);
+//				sumG += GetG(addHead);
+//				sumB += GetB(addHead);
 
-				iSumA += addHead >> 24;
-				iSumR += (addHead >> 16) & 0xff;
-				iSumG += (addHead >> 8) & 0xff;
-				iSumB += addHead & 0xff;
+//				iSumA += addHead >> 24;
+//				iSumR += (addHead >> 16) & 0xff;
+//				iSumG += (addHead >> 8) & 0xff;
+//				iSumB += addHead & 0xff;
 				
 				headB = c2vISSE32(pSrcLine[head+2]);
 				iSum = iAdd(iSum, iAlpha, headA, headB);
@@ -214,33 +230,30 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			}
 
 			// normalize
-			curScale = scale;
+//			curScale = scale;
 
 			tailA = c2vISSE32(pSrcLine[tail]);
 
 			// full sliding window
 			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
 			{
-				// SIMD path to calculate dest. pixel (more or less):
-				// - unpack to or have ARGB sum in 2 registers, since we need 64-bit wiggle room
-				// - perform fixed point div. by kernel width
-				// - pack it all back up and write to dest.
-
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
+//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
+
+				pDest[destIndex] = v2cISSE32(iDiv(iSum, iScale));
 				++destIndex;
 
-				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
+//				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
 
-				sumA += GetA(addHead);
-				sumR += GetR(addHead);
-				sumG += GetG(addHead);
-				sumB += GetB(addHead);
+//				sumA += GetA(addHead);
+//				sumR += GetR(addHead);
+//				sumG += GetG(addHead);
+//				sumB += GetB(addHead);
 
-				iSumA += addHead >> 24;
-				iSumR += (addHead >> 16) & 0xff;
-				iSumG += (addHead >> 8) & 0xff;
-				iSumB += addHead & 0xff;
+//				iSumA += addHead >> 24;
+//				iSumR += (addHead >> 16) & 0xff;
+//				iSumG += (addHead >> 8) & 0xff;
+//				iSumB += addHead & 0xff;
 
 				headB = c2vISSE32(pSrcLine[head+2]);
 				iSum = iAdd(iSum, iAlpha, headA, headB);
@@ -248,17 +261,17 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 				++head;
 
-				const uint32_t subTail = cblend(pSrcLine[tail], pSrcLine[tail+1], alpha);
+//				const uint32_t subTail = cblend(pSrcLine[tail], pSrcLine[tail+1], alpha);
 
-				sumA -= GetA(subTail);
-				sumR -= GetR(subTail);
-				sumG -= GetG(subTail);
-				sumB -= GetB(subTail);
+//				sumA -= GetA(subTail);
+//				sumR -= GetR(subTail);
+//				sumG -= GetG(subTail);
+//				sumB -= GetB(subTail);
 
-				iSumA -= subTail >> 24;
-				iSumR -= (subTail >> 16) & 0xff;
-				iSumG -= (subTail >> 8) & 0xff;
-				iSumB -= subTail & 0xff;
+//				iSumA -= subTail >> 24;
+//				iSumR -= (subTail >> 16) & 0xff;
+//				iSumG -= (subTail >> 8) & 0xff;
+//				iSumB -= subTail & 0xff;
 				
 				tailB = c2vISSE32(pSrcLine[tail+1]);
 				iSum = iSub(iSum, iAlpha, tailA, tailB);
@@ -271,21 +284,23 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			for (unsigned int iPixel = iSpan; iPixel > 0; --iPixel)
 			{
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel-1]);
-				curScale -= dScale;
+//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel-1]);
+//				curScale -= dScale;
+
+				pDest[destIndex] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel-1]));
 				++destIndex;
 
-				const uint32_t subTail = cblend(pSrcLine[tail+1], pSrcLine[tail], alpha);
+//				const uint32_t subTail = cblend(pSrcLine[tail+1], pSrcLine[tail], alpha);
 
-				sumA -= GetA(subTail);
-				sumR -= GetR(subTail);
-				sumG -= GetG(subTail);
-				sumB -= GetB(subTail);
+//				sumA -= GetA(subTail);
+//				sumR -= GetR(subTail);
+//				sumG -= GetG(subTail);
+//				sumB -= GetB(subTail);
 
-				iSumA -= subTail >> 24;
-				iSumR -= (subTail >> 16) & 0xff;
-				iSumG -= (subTail >> 8) & 0xff;
-				iSumB -= subTail & 0xff;
+//				iSumA -= subTail >> 24;
+//				iSumR -= (subTail >> 16) & 0xff;
+//				iSumG -= (subTail >> 8) & 0xff;
+//				iSumB -= subTail & 0xff;
 
 				tailB = c2vISSE32(pSrcLine[tail+1]);
 				iSum = iSub(iSum, iAlpha, tailA, tailB);
