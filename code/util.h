@@ -35,7 +35,7 @@
 	#endif
 #endif
 
-// full 3D math library (last updated 22/02/2026)
+// full C++ math library (last updated March 2026)
 #include "Std3DMath-stripped/Math.h"
 
 #include "bit-tricks.h"
@@ -118,52 +118,60 @@ void BlitAdd32A(uint32_t *pDest, const uint32_t *pSrc, unsigned destResX, unsign
 void Fade32(uint32_t *pDest, unsigned int numPixels, uint32_t RGB, uint8_t alpha);
 
 // convert 32-bit color to unpacked (16-bit) ISSE vector
-VIZ_INLINE __m128i c2vISSE16(uint32_t color) 
-{ 
-	return  _mm_unpacklo_epi8(
-		_mm_cvtsi32_si128(color), _mm_setzero_si128()); 
+CKD_INLINE static __m128i c2vISSE16(uint32_t color) { 
+	return _mm_unpacklo_epi8(_mm_cvtsi32_si128(color), _mm_setzero_si128()); 
 }
 
 // convert 32-bit color to unpacked (32-bit) ISSE vector
-VIZ_INLINE __m128i c2vISSE32(uint32_t color) 
-{ 
-	return  _mm_cvtepu8_epi32(_mm_cvtsi32_si128(color));
+CKD_INLINE static __m128i c2vISSE32(uint32_t color) { 
+	return _mm_cvtepu8_epi32(_mm_cvtsi32_si128(color));
 }
 
 // unpack to floats (SSE 4.1)
-VIZ_INLINE __m128 c2vfISSE(uint32_t color) 
+CKD_INLINE static __m128 c2vfISSE(uint32_t color) 
 { 
 	return  
-		_mm_cvtepi32_ps(
-			_mm_cvtepu8_epi32(_mm_cvtsi32_si128(color))
-			); 
+		_mm_cvtepi32_ps(_mm_cvtepu8_epi32(_mm_cvtsi32_si128(color))); 
 }
 
-// convert unpacked (16-bit) ISSE vector to 32-bit color
-// this is *not* the fast way to do it, so either call it sparingly, or just for tests
-VIZ_INLINE uint32_t v2cISSE16(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); }
+// 32-bit color <-> (I)SSE utility functions
+// - fine for regular loads, preparatory work, edge cases and one-offs
+// - please do not use the blends inside innerloops if you can help it (or at the very least label it with a FIXME)
+// - the blends waste register bandwidth and perform an expensive ftol() for the floating point alpha
 
-// version of v2cISSE16() for 32-bit vectors
-VIZ_INLINE uint32_t v2cISSE32(__m128i color) { return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_packus_epi32(color, _mm_setzero_si128()), _mm_setzero_si128())); }
+// convert unpacked (16-bit) ISSE vector to 32-bit color (2 pack instructions!)
+CKD_INLINE static uint32_t v2cISSE16(__m128i color) { 
+	return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); 
+}
 
-// mix 2 unpacked 32-bit pixels by alpha
-VIZ_INLINE __m128i MixPixels32(__m128i A, __m128i B, float alpha)
+// version of v2cISSE16() for 32-bit vectors (3 pack instructions!)
+CKD_INLINE static uint32_t v2cISSE32(__m128i color) { 
+	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_packus_epi32(color, _mm_setzero_si128()), _mm_setzero_si128())); 
+}
+
+// blend unpacked (16-bit) pixels
+CKD_INLINE static __m128i vblendf(__m128i A, __m128i B, float alpha)
 {
-	const uint32_t iAlpha =  uint32_t(alpha*255.f)*0x01010101; // FIXME: expensive (float-to-long)
-	const __m128i zero = _mm_setzero_si128();
-	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(iAlpha), zero);
+	VIZ_ASSERT(alpha >= 0.f && alpha <= 255.f);
+	const uint32_t iAlpha =  uint32_t(alpha*255.f)*0x01010101;
+	const __m128i alphaUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(iAlpha), _mm_setzero_si128());
 	const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(B, A));
 	const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(A, 8), delta), 8);
 	return color;
 }
 
-// mix 2 32-bit pixels by alpha (don't use in loops)
-VIZ_INLINE uint32_t MixPixels32(uint32_t A, uint32_t B, float alpha)
-{
-	const __m128i zero = _mm_setzero_si128();
-	const __m128i vB = _mm_unpacklo_epi8(_mm_cvtsi32_si128(B), zero);
-	const __m128i vA = _mm_unpacklo_epi8(_mm_cvtsi32_si128(A), zero);
-	return v2cISSE16(MixPixels32(vA, vB, alpha));
+// blend packed pixels, return unpacked (16-bit)
+CKD_INLINE static __m128i c2vblendf(uint32_t A, uint32_t B, float alpha) {
+	return vblendf(
+			_mm_unpacklo_epi8(_mm_cvtsi32_si128(A), _mm_setzero_si128()),
+			_mm_unpacklo_epi8(_mm_cvtsi32_si128(B), _mm_setzero_si128()),
+			alpha
+	);
+}
+
+// blend packed pixels
+CKD_INLINE static uint32_t cblendf(uint32_t A, uint32_t B, float alpha) {
+	return v2cISSE16(c2vblendf(A, B, alpha));
 }
 
 // ISSE vector (16-bit) minimum

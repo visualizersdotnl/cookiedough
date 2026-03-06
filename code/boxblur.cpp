@@ -61,6 +61,8 @@ CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, 
 // FIXME: size up!
 alignas(kAlignTo) static unsigned s_iSpanScales[kResX/2];
 
+
+
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
 	// buffers must be a multiple of 4x4 pixels (realistic and prevents us drowning in useless edge cases)
@@ -116,32 +118,43 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumG = 0,
 				iSumB = 0;
 
+			__m128i iSum = _mm_setzero_si128();
+
 			unsigned tail = 0, head = 0;
 
 			// calculate sum at first pixel (median)
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
 				const uint32_t pixel = pSrcLine[head];
+
 				sumA += GetA(pixel);
 				sumR += GetR(pixel);
 				sumG += GetG(pixel);
 				sumB += GetB(pixel);
+
 				iSumA += pixel >> 24;
 				iSumR += (pixel >> 16) & 0xff;
 				iSumG += (pixel >> 8) & 0xff;
 				iSumB += pixel & 0xff;
+
+				iSum = _mm_add_epi32(iSum, c2vISSE32(pSrcLine[head]));
+
 				++head;
 			}
 
-			const uint32_t subPixel = MixPixels32(0, pSrcLine[head], alpha);
+			const uint32_t subPixel = cblendf(0, pSrcLine[head], alpha);
+
 			sumA += GetA(subPixel);
 			sumR += GetR(subPixel);
 			sumG += GetG(subPixel);
 			sumB += GetB(subPixel);
+
 			iSumA += subPixel >> 24;
 			iSumR += (subPixel >> 16) & 0xff;
 			iSumG += (subPixel >> 8) & 0xff;
 			iSumB += subPixel & 0xff;
+
+			iSum = _mm_add_epi32(iSum, vblendf(_mm_setzero_si128(), c2vISSE16(pSrcLine[head]), alpha));
 
 			float curScale = scale*0.5f;
 			const float dScale = (scale*0.5f)/iSpan;
@@ -154,7 +167,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				curScale += dScale;
 				++destIndex;
 
-				const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				const uint32_t addHead = cblendf(pSrcLine[head+1], pSrcLine[head+2], alpha);
 				sumA += GetA(addHead);
 				sumR += GetR(addHead);
 				sumG += GetG(addHead);
@@ -163,6 +176,9 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumR += (addHead >> 16) & 0xff;
 				iSumG += (addHead >> 8) & 0xff;
 				iSumB += addHead & 0xff;
+
+				iSum = _mm_add_epi32(iSum, c2vblendf(pSrcLine[head+1], pSrcLine[head+2], alpha));
+
 				++head;
 			}
 
@@ -172,36 +188,47 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// full sliding window
 			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
 			{
-				// SIMD path (more or less):
+				// SIMD path to calculate dest. pixel (more or less):
 				// - unpack to or have ARGB sum in 2 registers, since we need 64-bit wiggle room
 				// - perform fixed point div. by kernel width
-				// - pack it all back up and write to memory (ignore write cache)
-				// - perform 2 read 2 pixels & interpolate and add/subtract them to accumulators
+				// - pack it all back up and write to dest.
 
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
 				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
 				++destIndex;
 
-				const uint32_t addHead = MixPixels32(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				const uint32_t addHead = cblendf(pSrcLine[head+1], pSrcLine[head+2], alpha);
+
 				sumA += GetA(addHead);
 				sumR += GetR(addHead);
 				sumG += GetG(addHead);
 				sumB += GetB(addHead);
+
 				iSumA += addHead >> 24;
 				iSumR += (addHead >> 16) & 0xff;
 				iSumG += (addHead >> 8) & 0xff;
 				iSumB += addHead & 0xff;
+				
+				// optimize: perform single 64-bit load and go from there, have unpacked integer alpha ready
+				iSum = _mm_add_epi32(iSum, c2vblendf(pSrcLine[head+1], pSrcLine[head+2], alpha));
+
 				++head;
 
-				const uint32_t subTail = MixPixels32(pSrcLine[tail], pSrcLine[tail+1], alpha);
+				const uint32_t subTail = cblendf(pSrcLine[tail], pSrcLine[tail+1], alpha);
+
 				sumA -= GetA(subTail);
 				sumR -= GetR(subTail);
 				sumG -= GetG(subTail);
 				sumB -= GetB(subTail);
+
 				iSumA -= subTail >> 24;
 				iSumR -= (subTail >> 16) & 0xff;
 				iSumG -= (subTail >> 8) & 0xff;
 				iSumB -= subTail & 0xff;
+
+				// optimize: perform single 64-bit load and go from there, have unpacked integer alpha ready
+				iSum = _mm_sub_epi32(iSum, c2vblendf(pSrcLine[tail], pSrcLine[tail+1], alpha));
+
 				++tail;
 			}
 
@@ -213,15 +240,20 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				curScale -= dScale;
 				++destIndex;
 
-				const uint32_t subTail = MixPixels32(pSrcLine[tail+1], pSrcLine[tail], alpha);
+				const uint32_t subTail = cblendf(pSrcLine[tail+1], pSrcLine[tail], alpha);
+
 				sumA -= GetA(subTail);
 				sumR -= GetR(subTail);
 				sumG -= GetG(subTail);
 				sumB -= GetB(subTail);
+
 				iSumA -= subTail >> 24;
 				iSumR -= (subTail >> 16) & 0xff;
 				iSumG -= (subTail >> 8) & 0xff;
 				iSumB -= subTail & 0xff;
+
+				iSum = _mm_sub_epi32(iSum, c2vblendf(pSrcLine[tail], pSrcLine[tail+1], alpha));
+
 				++tail;
 			}
 		}
