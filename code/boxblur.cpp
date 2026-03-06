@@ -1,7 +1,7 @@
 
 // cookiedough -- optimized 32-bit multi-pass (gaussian approximation) blur
 
-// 06/03/2026: implementing new blur:
+// 06/03/2026 - implementing new blur:
 // - implement horizontal, vertical and full blur using 1 single horizontal blur function that operates on cache-friendly scratch memory
 // - versions need slightly different logic: horizontal is straightforward, vertical and full require some transpose gymnastics
 // - once it all works: implement it all using ISSE (keep the ref. implementation) and tie in OpenMP (OpenMP iterates over each 'batch')
@@ -9,13 +9,13 @@
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
-// - it has unnecessary limitations: fixed kernel size, odd and overflow-prone fixed point arithmetic
+// - it has unnecessary limitations: kernel size, odd and overflow-prone fixed point arithmetic
 // - it has a cache-unfriendly naive vertical pass  (though it's potentially not that bad for relatively small images)
 
 #include "main.h"
 // #include "boxblur.h"
 
-static uint32_t *s_pScratch[2] = nullptr;
+static uint32_t *s_pScratch[2] =  { nullptr };
 
 bool BoxBlur_Create()
 {
@@ -233,7 +233,7 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// idea (lift as much common logic out of horizontal):
 	// - transpose N columns to scratch buffer
 	// - perform horizontal blur on scratch buffer
-	// - write from scratch buffer to dest. image (uncached writes)
+	// - transpose from scratch buffer to dest. image (uncached writes)
 	// - repeat
 	// - factor in multiple passes
 }
