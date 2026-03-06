@@ -169,10 +169,12 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				++destIndex;
 
 				const uint32_t addHead = cblendf(pSrcLine[head+1], pSrcLine[head+2], alpha);
+
 				sumA += GetA(addHead);
 				sumR += GetR(addHead);
 				sumG += GetG(addHead);
 				sumB += GetB(addHead);
+
 				iSumA += addHead >> 24;
 				iSumR += (addHead >> 16) & 0xff;
 				iSumG += (addHead >> 8) & 0xff;

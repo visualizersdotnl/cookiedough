@@ -61,7 +61,7 @@ namespace Shadertoy
 		Y = rotY;
 	}
 
-	// vector interpolate - use this instead of lerpf() (which, see /3rdparty/Std3DMath/Math.h, does not work as intended)
+	// vector interpolate - use this instead of lerpf() 
 	VIZ_INLINE __m128 vLerp4(__m128 A, __m128 B, float factor)
 	{
 		const __m128 alphaUnp = _mm_set1_ps(factor);
