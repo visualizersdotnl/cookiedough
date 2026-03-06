@@ -144,13 +144,13 @@ CKD_INLINE static uint32_t v2cISSE16(__m128i color) {
 	return _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128())); 
 }
 
-// version of v2cISSE16() for 32-bit vectors (3 pack instructions!)
+// version of v2cISSE16() for 32-bit vectors (FIXME: isn't there a better way (inverse of _mm_cvtepu8_epi32()?)
 CKD_INLINE static uint32_t v2cISSE32(__m128i color) { 
 	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_packus_epi32(color, _mm_setzero_si128()), _mm_setzero_si128())); 
 }
 
 // blend unpacked (16-bit) pixels
-CKD_INLINE static __m128i vblendf(__m128i A, __m128i B, float alpha)
+CKD_INLINE static __m128i vblend16(__m128i A, __m128i B, float alpha)
 {
 	VIZ_ASSERT(alpha >= 0.f && alpha <= 255.f);
 	const uint32_t iAlpha =  uint32_t(alpha*255.f)*0x01010101;
@@ -161,8 +161,8 @@ CKD_INLINE static __m128i vblendf(__m128i A, __m128i B, float alpha)
 }
 
 // blend packed pixels, return unpacked (16-bit)
-CKD_INLINE static __m128i c2vblendf(uint32_t A, uint32_t B, float alpha) {
-	return vblendf(
+CKD_INLINE static __m128i c2vblend16(uint32_t A, uint32_t B, float alpha) {
+	return vblend16(
 			_mm_unpacklo_epi8(_mm_cvtsi32_si128(A), _mm_setzero_si128()),
 			_mm_unpacklo_epi8(_mm_cvtsi32_si128(B), _mm_setzero_si128()),
 			alpha
@@ -170,19 +170,21 @@ CKD_INLINE static __m128i c2vblendf(uint32_t A, uint32_t B, float alpha) {
 }
 
 // blend packed pixels
-CKD_INLINE static uint32_t cblendf(uint32_t A, uint32_t B, float alpha) {
-	return v2cISSE16(c2vblendf(A, B, alpha));
+CKD_INLINE static uint32_t cblend(uint32_t A, uint32_t B, float alpha) {
+	return v2cISSE16(c2vblend16(A, B, alpha));
 }
 
-// ISSE vector (16-bit) minimum
-VIZ_INLINE __m128i vminISSE(__m128i A, __m128i B)
-{
-	// SSE4
-	return _mm_min_epu16(A, B);
+// ISSE vector minimum
+CKD_INLINE static __m128i vminISSE16(__m128i A, __m128i B) {
+	return _mm_min_epu16(A, B); // SSE4
 
 	// SSE2
 //	const __m128i mask = _mm_cmplt_epi16(A, B);
 //	return _mm_add_epi16(_mm_and_si128(mask, A), _mm_andnot_si128(mask, B));
+}
+
+CKD_INLINE static __m128i vminISSE32(__m128i A, __m128i B) {
+	return _mm_min_epi32(A, B); // SSE4
 }
 
 // simple floating point to 24:8 fixed point conversion (signed)

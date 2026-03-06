@@ -4,7 +4,8 @@
 // 06/03/2026 - implementing new blur:
 // - implement horizontal, vertical and full blur using 1 single horizontal blur function that operates on cache-friendly scratch memory
 // - versions need slightly different logic: horizontal is straightforward, vertical and full require some transpose gymnastics
-// - once it all works: implement it all using ISSE (keep the ref. implementation) and tie in OpenMP (OpenMP iterates over each 'batch')
+// - implement it all using ISSE (keep the ref. implementation) and tie in OpenMP
+// - goal: OpenMP dispatches each L1-sized chunk
 // - implement 2007 blur using this one
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
@@ -13,13 +14,14 @@
 // - it has a cache-unfriendly naive vertical pass  (though it's potentially not that bad for relatively small images)
 
 #include "main.h"
+#include "util.h"
 // #include "boxblur.h"
 
 static uint32_t *s_pScratch[2] =  { nullptr };
 
 bool BoxBlur_Create()
 {
-	// especially with multiple passes this may not fit in L1 cache but the read/write pattern is still very sequential, avoiding penalties
+	// for multiple blur passes I'll flip-flop between these, which should keep the L1 cache occupied
 	s_pScratch[0] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
 	s_pScratch[1] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
 
@@ -58,10 +60,28 @@ CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, 
 	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
 }
 
+CKD_INLINE static __m128i iAdd(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
+{
+	// sum += lerp(head[1], head[2], alpha)
+	return _mm_add_epi32(
+		iSum,
+		_mm_add_epi32(
+			A,
+			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 8)));
+}
+
+CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
+{
+	// sum -= lerp(tail[0], tail[1], alpha)
+	return _mm_add_epi32(
+		iSum,
+		_mm_sub_epi32(
+			A,
+			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 8)));
+}
+
 // FIXME: size up!
 alignas(kAlignTo) static unsigned s_iSpanScales[kResX/2];
-
-
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
@@ -87,8 +107,8 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// calculate sum divider and alpha
 	const float scale = 1.f/(2.f*radius + 1.f);
 	const float alpha = radius-iSpan;
-//	const int iAlpha = ftofp24(alpha);
 	const unsigned iScale = ftofp<unsigned>(scale, 22); // 10:22
+	const __m128i iAlpha = _mm_cvtsi32_si128(ftofp24(alpha)*0x01010101);
 
 	// calculate span scales
 	const float halfScale = scale*0.5f;
@@ -142,7 +162,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				++head;
 			}
 
-			const uint32_t subPixel = cblendf(0, pSrcLine[head], alpha);
+			const uint32_t subPixel = cblend(0, pSrcLine[head], alpha);
 
 			sumA += GetA(subPixel);
 			sumR += GetR(subPixel);
@@ -154,13 +174,19 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			iSumG += (subPixel >> 8) & 0xff;
 			iSumB += subPixel & 0xff;
 
-			// optimize: should just become a single load-multiply-add
-			iSum = _mm_add_epi32(iSum, vblendf(_mm_setzero_si128(), c2vISSE16(pSrcLine[head]), alpha));
+			iSum = _mm_add_epi32(
+				iSum,
+				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pSrcLine[head]), iAlpha), 8));
 
 			float curScale = scale*0.5f;
 			const float dScale = (scale*0.5f)/iSpan;
 
+			__m128i 
+				headA, headB,
+				tailA, tailB;
+
 			// work up to full kernel
+			headA = c2vISSE32(pSrcLine[head+1]);
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
@@ -168,7 +194,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				curScale += dScale;
 				++destIndex;
 
-				const uint32_t addHead = cblendf(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
 
 				sumA += GetA(addHead);
 				sumR += GetR(addHead);
@@ -179,14 +205,18 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumR += (addHead >> 16) & 0xff;
 				iSumG += (addHead >> 8) & 0xff;
 				iSumB += addHead & 0xff;
-
-				iSum = _mm_add_epi32(iSum, c2vblendf(pSrcLine[head+1], pSrcLine[head+2], alpha));
+				
+				headB = c2vISSE32(pSrcLine[head+2]);
+				iSum = iAdd(iSum, iAlpha, headA, headB);
+				headA = headB;
 
 				++head;
 			}
 
 			// normalize
 			curScale = scale;
+
+			tailA = c2vISSE32(pSrcLine[tail]);
 
 			// full sliding window
 			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
@@ -200,7 +230,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
 				++destIndex;
 
-				const uint32_t addHead = cblendf(pSrcLine[head+1], pSrcLine[head+2], alpha);
+				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
 
 				sumA += GetA(addHead);
 				sumR += GetR(addHead);
@@ -211,13 +241,14 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumR += (addHead >> 16) & 0xff;
 				iSumG += (addHead >> 8) & 0xff;
 				iSumB += addHead & 0xff;
-				
-				// optimize: perform single 64-bit load and go from there, have unpacked integer alpha ready
-				iSum = _mm_add_epi32(iSum, c2vblendf(pSrcLine[head+1], pSrcLine[head+2], alpha));
+
+				headB = c2vISSE32(pSrcLine[head+2]);
+				iSum = iAdd(iSum, iAlpha, headA, headB);
+				headA = headB;
 
 				++head;
 
-				const uint32_t subTail = cblendf(pSrcLine[tail], pSrcLine[tail+1], alpha);
+				const uint32_t subTail = cblend(pSrcLine[tail], pSrcLine[tail+1], alpha);
 
 				sumA -= GetA(subTail);
 				sumR -= GetR(subTail);
@@ -228,9 +259,10 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumR -= (subTail >> 16) & 0xff;
 				iSumG -= (subTail >> 8) & 0xff;
 				iSumB -= subTail & 0xff;
-
-				// optimize: perform single 64-bit load and go from there, have unpacked integer alpha ready
-				iSum = _mm_sub_epi32(iSum, c2vblendf(pSrcLine[tail], pSrcLine[tail+1], alpha));
+				
+				tailB = c2vISSE32(pSrcLine[tail+1]);
+				iSum = iSub(iSum, iAlpha, tailA, tailB);
+				tailA = tailB;
 
 				++tail;
 			}
@@ -243,7 +275,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				curScale -= dScale;
 				++destIndex;
 
-				const uint32_t subTail = cblendf(pSrcLine[tail+1], pSrcLine[tail], alpha);
+				const uint32_t subTail = cblend(pSrcLine[tail+1], pSrcLine[tail], alpha);
 
 				sumA -= GetA(subTail);
 				sumR -= GetR(subTail);
@@ -255,7 +287,9 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				iSumG -= (subTail >> 8) & 0xff;
 				iSumB -= subTail & 0xff;
 
-				iSum = _mm_sub_epi32(iSum, c2vblendf(pSrcLine[tail], pSrcLine[tail+1], alpha));
+				tailB = c2vISSE32(pSrcLine[tail+1]);
+				iSum = iSub(iSum, iAlpha, tailA, tailB);
+				tailA = tailB;
 
 				++tail;
 			}
@@ -272,7 +306,6 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// - repeat
 	// - factor in multiple passes
 }
-
 
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
