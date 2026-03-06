@@ -1,16 +1,11 @@
 
-// cookiedough -- optimized 32-bit box blur (suitable for gaussian approximation)
+// cookiedough -- optimized 32-bit multi-pass (gaussian approximation) blur
 
-// 04/03/2026: implementing new blur, to do/don't forget:
-// - [x] implement and test floating point horizontal blur prototype
-// - [x] use fixed point arithmetic
-// - [x] implement passes to approx. gaussian look
-// - [ ] iterate (horz. passes) over chunks that fit in L1 cache (kCacheL1)
-// - [ ] plug OpenMP back in and try to make it respect that exact chunk granularity
-// - [ ] use 10:22 SIMD fixed point calculations
-// - [ ] implement optimized version that uses two horizontal blur + transpose passes to do a full blur
-// - [ ] implement 2007 blur with this (until 'Arrested Development' is phased out / parked in another branch)
-// - [ ] clean up (retain reference impl.)
+// 06/03/2026: implementing new blur:
+// - implement horizontal, vertical and full blur using 1 single horizontal blur function that operates on cache-friendly scratch memory
+// - versions need slightly different logic: horizontal is straightforward, vertical and full require some transpose gymnastics
+// - once it all works: implement it all using ISSE (keep the ref. implementation) and tie in OpenMP (OpenMP iterates over each 'batch')
+// - implement 2007 blur using this one
 
 // about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
 // - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
@@ -18,25 +13,34 @@
 // - it has a cache-unfriendly naive vertical pass  (though it's potentially not that bad for relatively small images)
 
 #include "main.h"
-#include "util.h"
 // #include "boxblur.h"
+
+static uint32_t *s_pScratch[2] = nullptr;
 
 bool BoxBlur_Create()
 {
+	// especially with multiple passes this may not fit in L1 cache but the read/write pattern is still very sequential, avoiding penalties
+	s_pScratch[0] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
+	s_pScratch[1] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
+
 	return true;	
 }
 
 void BoxBlur_Destroy() 
 {
+	freeAligned(s_pScratch[0]);
+	freeAligned(s_pScratch[1]);
 }
 
-// -- 2026 blur: ref. helper --
+// -- 2026 blur --
 
+// ref.
 CKD_INLINE static float GetA(uint32_t color) { return (color >> 24); }
 CKD_INLINE static float GetR(uint32_t color) { return (color >> 16) & 0xff; }
 CKD_INLINE static float GetG(uint32_t color) { return (color >>  8) & 0xff; }
 CKD_INLINE static float GetB(uint32_t color) { return (color >>  0) & 0xff; }
 
+// ref.
 CKD_INLINE static uint32_t ftoc(float A, float R, float G, float B) {
 	A = clampf(0.f, 255.f, A);
 	R = clampf(0.f, 255.f, R);
@@ -45,6 +49,7 @@ CKD_INLINE static uint32_t ftoc(float A, float R, float G, float B) {
 	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
 }
 
+// ref.
 CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, unsigned iScale) {
 	A = unsigned(iScale*uint64_t(A)>>22);
 	R = unsigned(iScale*uint64_t(R)>>22);
@@ -53,8 +58,7 @@ CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, 
 	return uint8_t(A) << 24 | uint8_t(R) << 16 | uint8_t(G) << 8 | uint8_t(B); 
 }
 
-// -- 2026 blur: horizontal pass --
-
+// FIXME: size up!
 alignas(kAlignTo) static unsigned s_iSpanScales[kResX/2];
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
@@ -86,16 +90,17 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 	// calculate span scales
 	const float halfScale = scale*0.5f;
-	const float dScale = (scale*0.5f)/iSpan;
+	const float dScale = halfScale/iSpan;
 	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 		s_iSpanScales[iPixel] = ftofp<unsigned>(halfScale + iPixel*dScale, 22);
 
 	// Y
 	for (unsigned iY = 0; iY < yRes; ++iY)
 	{
-		// X
-		for (unsigned iPass = 0; iPass < numPasses; ++iPass)
+		// idea: if you have multiple passes and use both L1-sized scratch buffers (double buffering style) you'll roll cleanly with the cache
+//		for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 		{
+			// X
 			auto destIndex = iY*xRes;
 			const uint32_t *pSrcLine = pSrc + destIndex;
 
@@ -170,7 +175,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				// SIMD path (more or less):
 				// - unpack to or have ARGB sum in 2 registers, since we need 64-bit wiggle room
 				// - perform fixed point div. by kernel width
-				// - pack it all back up and write to memory
+				// - pack it all back up and write to memory (ignore write cache)
 				// - perform 2 read 2 pixels & interpolate and add/subtract them to accumulators
 
 //				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
@@ -221,6 +226,27 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			}
 		}
 	}
+}
+
+void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+{
+	// idea (lift as much common logic out of horizontal):
+	// - transpose N columns to scratch buffer
+	// - perform horizontal blur on scratch buffer
+	// - write from scratch buffer to dest. image (uncached writes)
+	// - repeat
+	// - factor in multiple passes
+}
+
+
+void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+{
+	// idea (lift as much common logic out of horizontal):
+	// - fill scratch buffer to fit (N lines)
+	// - perform horizontal blur on scratch buffer
+	// - transpose from scratch buffer to dest. image (uncached writes)
+	// - repeat / factor in multiple passes
+	// - do this entire process twice, and you'll have effectively blurred, transposed, blurred and transposed back
 }
 
 // -- 2007 blur --

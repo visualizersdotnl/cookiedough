@@ -1,5 +1,5 @@
 
-// cookiedough -- optimized 32-bit box blur (suitable for gaussian approximation)
+// cookiedough -- optimized 32-bit multi-pass (gaussian approximation) blur
 
 #ifndef _BOX_BLUR_H_
 #define _BOX_BLUR_H_
@@ -8,6 +8,8 @@ bool BoxBlur_Create();
 void BoxBlur_Destroy();
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses);
+void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses);
+void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 
 // -- 2007 blur (FIXME: retire, still used by Arrested Development code) --
 
@@ -15,7 +17,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 // this way you can conveniently define no blur as zero in Rocket and use [1..100] to define strength a bit more intuitively
 constexpr float kBoxBlurScale = 0.01f;
 
-float VIZ_INLINE BoxBlurScale(float strength) 
+CKD_INLINE static float BoxBlurScale(float strength) 
 {
 	if (strength != 0.f)
 		strength = clampf(1.f, 100.f, strength)*kBoxBlurScale;
