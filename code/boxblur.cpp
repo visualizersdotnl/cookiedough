@@ -154,6 +154,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			iSumG += (subPixel >> 8) & 0xff;
 			iSumB += subPixel & 0xff;
 
+			// optimize: should just become a single load-multiply-add
 			iSum = _mm_add_epi32(iSum, vblendf(_mm_setzero_si128(), c2vISSE16(pSrcLine[head]), alpha));
 
 			float curScale = scale*0.5f;
