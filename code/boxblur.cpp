@@ -112,7 +112,7 @@ static const uint32_t *HorzBlur32(uint32_t *pDest, uint32_t *pScratch, const uin
 	const __m128i iScale = _mm_set1_epi64x(ftofp<int64_t>(scale, 22)); // 10:22
 	const __m128i iAlpha = _mm_cvtsi32_si128(ftofp24(alpha)*0x01010101);
 
-	// calculate span scales (FIXME: not thread safe)
+	// calculate span scales
 	const float halfScale = scale*0.5f;
 	const float dScale = halfScale/iSpan;
 	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
