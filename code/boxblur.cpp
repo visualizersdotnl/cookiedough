@@ -4,33 +4,28 @@
 // 06/03/2026:
 // - [x] horizontal SIMD-optimized blur pass works perfectly
 // - [x] move horizontal blur pass into a function that blurs a L1-cache sized chunk into the scratch buffer(s) for all passes required
-// - [ ] use read/write/copy logistics (see below) to implement horizontal, vertical and full blur optimally using the one horizontal pass
-// - [ ] use OpenMP to parallelize processing of each chunk
+// - [x] use OpenMP split loop up into parallel chunks
+// - [/] implement horizontal/vertical/full pass
 // - [ ] implement 2007 blur using this one
 
 #include "main.h"
 // #include "boxblur.h"
 
-static uint32_t *s_pScratch[2] =  { nullptr };
+constexpr size_t kMaxRes = 2048;
+constexpr size_t kScratchSize = kMaxRes*kMaxRes;
 
-constexpr size_t kScratchSize = kCacheL1/sizeof(uint32_t);
+static uint32_t *s_pScratch = nullptr;
 
 bool BoxBlur_Create()
 {
-	// for multiple blur passes I'll flip-flop between these, which should keep the L1 cache occupied
-	s_pScratch[0] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
-	s_pScratch[1] = (uint32_t *) mallocAligned(kCacheL1, kAlignTo);
-
+	s_pScratch = (uint32_t *) mallocAligned(kScratchSize*sizeof(uint32_t), kAlignTo);
 	return true;	
 }
 
 void BoxBlur_Destroy() 
 {
-	freeAligned(s_pScratch[0]);
-	freeAligned(s_pScratch[1]);
+	freeAligned(s_pScratch);
 }
-
-// -- 2026 blur --
 
 // ref.
 CKD_INLINE static float GetA(uint32_t color) { return (color >> 24); }
@@ -89,27 +84,26 @@ CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
 		_mm_srli_epi64(_mm_mul_epu32(high64, broadcast), 22));
 }
 
-// FIXME: size up / not thread-safe
-// alignas(kAlignTo) static int64_t s_iSpanScales[kResX/2];
-alignas(kAlignTo) static __m128i s_iSpanScales[kResX/2];
+// alignas(kAlignTo) static thread_local int64_t s_iSpanScales[kMaxRes/2];
+alignas(kAlignTo) static thread_local __m128i s_iSpanScales[kMaxRes/2];
 
-// horizontal blur pass to scratch buffer (used to implement each variant)
-static const uint32_t *Blur32(const uint32_t *pSrc, unsigned xRes, unsigned numLines, float radius, unsigned numPasses)
+// horizontal blur pass (used to implement each variant)
+static const uint32_t *HorzBlur32(uint32_t *pDest, uint32_t *pScratch, const uint32_t *pSrc, unsigned xRes, unsigned numLines, float radius, unsigned numPasses)
 {
 	VIZ_ASSERT_ALIGNED(pSrc);
-	VIZ_ASSERT(xRes*numLines < kScratchSize);
+	VIZ_ASSERT(xRes <= kMaxRes && numLines <= kMaxRes);
+//	VIZ_ASSERT(xRes*numLines < kScratchSize);
 	VIZ_ASSERT_NORM(radius);
-	VIZ_ASSERT(numPasses > 0);
 
 	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
 //	radius *= (xRes-1)/2.f;
 	
 	// WIP
 	radius = 8.f;
-	numPasses = 2;
+	numPasses = 3;
 
 	const unsigned iSpan = unsigned(radius);
-	VIZ_ASSERT(iSpan < kResX/2);
+	VIZ_ASSERT(iSpan < kMaxRes/2);
 
 	// calculate sum divider and alpha
 	const float scale = 1.f/(2.f*radius + 1.f);
@@ -125,7 +119,7 @@ static const uint32_t *Blur32(const uint32_t *pSrc, unsigned xRes, unsigned numL
 		s_iSpanScales[iPixel] = _mm_set1_epi64x(ftofp<int64_t>(halfScale + iPixel*dScale, 22));
 
 	const uint32_t *pRead  = pSrc;
-	uint32_t *pWrite = s_pScratch[0];
+	uint32_t *pWrite       = pDest;
 
 	for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 	{
@@ -274,39 +268,56 @@ static const uint32_t *Blur32(const uint32_t *pSrc, unsigned xRes, unsigned numL
 				tailA = tailB;
 				++tail;
 			}
-
 		}
 
-		// rotate scratch buffers
-		const unsigned index = iPass & 1;
-		pRead  = s_pScratch[iPass];
-		pWrite = s_pScratch[!iPass];
+		pRead = pWrite;
+		pWrite = (0 == (iPass & 1))
+			? pScratch
+			: pDest;
 	}
 
-	return pWrite;	
+	return pRead;
 }
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
+	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
+
+	// as optimal as it gets without injecting parallelism straight into HorzBlur32() which would defeat the design
+	#pragma omp parallel
+	{
+		const int iThread    = omp_get_thread_num();
+		const int numThreads = omp_get_num_threads();
+
+		const unsigned rowsPerThread = (yRes + numThreads-1)/numThreads;
+
+		const unsigned yStart = iThread*rowsPerThread;
+		const unsigned yEnd = std::min(yStart+rowsPerThread, yRes);
+
+		const unsigned numLines = yEnd-yStart;
+		const unsigned offset = yStart*xRes;
+
+		const uint32_t *pResult = HorzBlur32(
+			pDest+offset,
+			s_pScratch+offset,
+			pSrc+offset,
+			xRes,
+			yEnd-yStart,
+			radius,
+			numPasses);
+
+		if (0 == (numPasses & 1))
+			// FIXME: use streaming writes here (MOVNTQ)
+			memcpy(pDest+offset, s_pScratch+offset, sizeof(uint32_t)*numLines*xRes);
+	}
 }
 
 void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
-	// idea (lift as much common logic out of horizontal):
-	// - transpose N columns to scratch buffer
-	// - perform horizontal blur on scratch buffer
-	// - transpose from scratch buffer to dest. image (uncached writes)
-	// - repeat
-	// - factor in multiple passes
+	// idea: transpose -> blur -> transpose (uncached writes)
 }
 
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
-	// idea (lift as much common logic out of horizontal):
-	// - find a way around this, because you don't need to perform that first copy: fill scratch buffer to fit (N lines)
-	// - perform horizontal blur on scratch buffer
-	// - transpose from scratch buffer to dest. image (uncached writes)
-	//   ^ can do this in the last pass of the horizontal pass in-place, but for I guess it's easier to separate it at first
-	// - repeat / factor in multiple passes
-	// - do this entire process twice, and you'll have effectively blurred, transposed, blurred and transposed back
+	// idea: two sequential blur->transpose passes
 }
