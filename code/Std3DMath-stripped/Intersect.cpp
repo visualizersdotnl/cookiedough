@@ -97,7 +97,7 @@ namespace Std3DMath
 
 		// We're inside the triangle (within barycentric bounds): solve for T
 		const float t = invDet*(CA*vQ);
-		if (T > kEpsilon)
+		if (t > kEpsilon)
 		{
 			ray.t = t;
 			return true;
@@ -138,7 +138,7 @@ namespace Std3DMath
 		if (t <= kEpsilon)
 			return false; // Behind origin
 
-		const Vector3 intersect = ray.origin + t*ray.direction; // On plane
+		const Vector3 intersect = ray.origin + ray.direction*t; // On plane
 
 		// Calculate third edge and intersection deltas
 		const Vector3 AC = V0-V2;

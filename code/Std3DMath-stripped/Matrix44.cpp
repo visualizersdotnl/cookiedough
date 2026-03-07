@@ -101,7 +101,7 @@
 
 /* static */ const Matrix44 Matrix44::RotationYawPitchRoll(float yaw, float pitch, float roll)
 {
-	return Matrix44::Rotation(Quaternion::YawPitchRoll((yaw, pitch, roll)));
+	return Matrix44::Rotation(Quaternion::YawPitchRoll(yaw, pitch, roll));
 }
 
 /* static */ const Matrix44 Matrix44::View(const Vector3 &from, const Vector3 &to, const Vector3 &up)

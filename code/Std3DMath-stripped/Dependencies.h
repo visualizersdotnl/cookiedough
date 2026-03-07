@@ -17,7 +17,5 @@
 #include <array>
 #include <tuple>
 
-#if defined(_WIN32) // No Win32? Try SSE2NEON for ex.
-	// Firstly to align Vector3/Vector4, and enable SIMD on some of these primitives.
-	#include <xmmintrin.h>
-#endif
+// CKD-specific
+#include "../platform.h"

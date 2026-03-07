@@ -62,7 +62,7 @@
 	const Vector3 axisNormalized = Vector3(quaternion.x, quaternion.y, quaternion.z)*(1.f/length); // Yes, I'm saving a sqrtf()
 
 	// Encoded: the direction of this rotation is the normalized axis (identity), and it's magnitude represents the half-angle
-	return halfAngle*axisNormalized;
+	return axisNormalized*halfAngle;
 }
 
 /* static */ const Quaternion Quaternion::Exp(const Vector3 &vector, float epsilon)

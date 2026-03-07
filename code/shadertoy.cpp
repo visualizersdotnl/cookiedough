@@ -21,7 +21,7 @@
 #include "image.h"
 #include "bilinear.h"
 #include "shadertoy-util.h"
-#include "boxblur.h"
+#include "deprecated/boxblur.h"
 #include "rocket.h"
 #include "polar.h"
 

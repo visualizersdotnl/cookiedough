@@ -6,7 +6,7 @@
 #include "image.h"
 #include "cspan.h"
 #include "bilinear.h"
-#include "boxblur.h"
+#include "deprecated/boxblur.h"
 #include "polar.h"
 #include "rocket.h"
 

@@ -3,20 +3,17 @@
 
 // 06/03/2026:
 // - [x] horizontal SIMD-optimized blur pass works perfectly
-// - move horizontal blur pass into a function that blurs a L1-cache sized chunk into the scratch buffer(s) for all passes required
-// - use read/write/copy logistics (see below) to implement horizontal, vertical and full blur optimally using the one horizontal pass
-// - dispatch OpenMP to parallelize each L1-cache sized chunk
-// - implement 2007 blur using this one
-
-// about the 2007 blur (don't use it, it's just here for 'Arrested Development'):
-// - I wrote this blur in my Javeline days in 2007 and I haven't seriously tended to it since
-// - it has unnecessary limitations: kernel size, odd and overflow-prone fixed point arithmetic
-// - it has a cache-unfriendly naive vertical pass (though it's potentially not that bad for relatively small images)
+// - [x] move horizontal blur pass into a function that blurs a L1-cache sized chunk into the scratch buffer(s) for all passes required
+// - [ ] use read/write/copy logistics (see below) to implement horizontal, vertical and full blur optimally using the one horizontal pass
+// - [ ] use OpenMP to parallelize processing of each chunk
+// - [ ] implement 2007 blur using this one
 
 #include "main.h"
 // #include "boxblur.h"
 
 static uint32_t *s_pScratch[2] =  { nullptr };
+
+constexpr size_t kScratchSize = kCacheL1/sizeof(uint32_t);
 
 bool BoxBlur_Create()
 {
@@ -92,30 +89,23 @@ CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
 		_mm_srli_epi64(_mm_mul_epu32(high64, broadcast), 22));
 }
 
-// FIXME: size up
+// FIXME: size up / not thread-safe
 // alignas(kAlignTo) static int64_t s_iSpanScales[kResX/2];
 alignas(kAlignTo) static __m128i s_iSpanScales[kResX/2];
 
-void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+// horizontal blur pass to scratch buffer (used to implement each variant)
+static const uint32_t *Blur32(const uint32_t *pSrc, unsigned xRes, unsigned numLines, float radius, unsigned numPasses)
 {
-	// expect aligned buffers so we've got the freedom to use 128-bit load & store
-	VIZ_ASSERT_ALIGNED(pDest);
 	VIZ_ASSERT_ALIGNED(pSrc);
-
-	// buffers must be a multiple of 4x4 pixels (realistic and prevents us drowning in useless edge cases)
-	VIZ_ASSERT(xRes > 3 && (xRes & 3) == 0);
-	VIZ_ASSERT(yRes > 3 && (yRes & 3) == 0);
+	VIZ_ASSERT(xRes*numLines < kScratchSize);
+	VIZ_ASSERT_NORM(radius);
+	VIZ_ASSERT(numPasses > 0);
 
 	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
-	VIZ_ASSERT_NORM(radius);
 //	radius *= (xRes-1)/2.f;
-
-	// WIP
-	radius = 8.f;
-
-	VIZ_ASSERT(numPasses > 0);
 	
 	// WIP
+	radius = 8.f;
 	numPasses = 2;
 
 	const unsigned iSpan = unsigned(radius);
@@ -128,33 +118,23 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	const __m128i iScale = _mm_set1_epi64x(ftofp<int64_t>(scale, 22)); // 10:22
 	const __m128i iAlpha = _mm_cvtsi32_si128(ftofp24(alpha)*0x01010101);
 
-	// calculate span scales
+	// calculate span scales (FIXME: not thread safe)
 	const float halfScale = scale*0.5f;
 	const float dScale = halfScale/iSpan;
 	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 		s_iSpanScales[iPixel] = _mm_set1_epi64x(ftofp<int64_t>(halfScale + iPixel*dScale, 22));
 
-	// Y
-	for (unsigned iY = 0; iY < yRes; ++iY)
+	const uint32_t *pRead  = pSrc;
+	uint32_t *pWrite = s_pScratch[0];
+
+	for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 	{
-		// idea: if you have multiple passes and use both L1-sized scratch buffers (double buffering style) you'll roll cleanly with the cache
-//		for (unsigned iPass = 0; iPass < numPasses; ++iPass)
+		// Y
+		for (unsigned iY = 0; iY < numLines; ++iY)
 		{
 			// X
-			auto destIndex = iY*xRes;
-			const uint32_t *pSrcLine = pSrc + destIndex;
-
-//			float 
-//				sumA = 0.f,
-//				sumR = 0.f, 
-//				sumG = 0.f, 
-//				sumB = 0.f;
-
-//			unsigned
-//				iSumA = 0,
-//				iSumR = 0,
-//				iSumG = 0,
-//				iSumB = 0;
+			auto writeIdx = iY*xRes;
+			const uint32_t *pLine = pRead + writeIdx;
 
 			__m128i iSum = _mm_setzero_si128();
 
@@ -163,30 +143,24 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// calculate sum at first pixel (median)
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
-//				const uint32_t pixel = pSrcLine[head];
-
+//				const uint32_t pixel = pLine[head];
 //				sumA += GetA(pixel);
 //				sumR += GetR(pixel);
 //				sumG += GetG(pixel);
 //				sumB += GetB(pixel);
-
 //				iSumA += pixel >> 24;
 //				iSumR += (pixel >> 16) & 0xff;
 //				iSumG += (pixel >> 8) & 0xff;
 //				iSumB += pixel & 0xff;
-
-				iSum = _mm_add_epi32(iSum, c2vISSE32(pSrcLine[head]));
-
+				iSum = _mm_add_epi32(iSum, c2vISSE32(pLine[head]));
 				++head;
 			}
 
-//			const uint32_t subPixel = cblend(0, pSrcLine[head], alpha);
-
+//			const uint32_t subPixel = cblend(0, pLine[head], alpha);
 //			sumA += GetA(subPixel);
 //			sumR += GetR(subPixel);
 //			sumG += GetG(subPixel);
 //			sumB += GetB(subPixel);
-
 //			iSumA += subPixel >> 24;
 //			iSumR += (subPixel >> 16) & 0xff;
 //			iSumG += (subPixel >> 8) & 0xff;
@@ -194,7 +168,7 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 			iSum = _mm_add_epi32(
 				iSum,
-				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pSrcLine[head]), iAlpha), 8));
+				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pLine[head]), iAlpha), 8));
 
 //			float curScale = scale*0.5f;
 //			const float dScale = (scale*0.5f)/iSpan;
@@ -203,30 +177,28 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 				headA, headB,
 				tailA, tailB;
 
-			// work up to full kernel
-			headA = c2vISSE32(pSrcLine[head+1]);
+			// work up to full kernel size
+			headA = c2vISSE32(pLine[head+1]);
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
-//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel]);
+//				pWrite[writeIdx] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+//				pWrite[writeIdx] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel]);
 //				curScale += dScale;
 
-				pDest[destIndex] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel]));
-				++destIndex;
+				pWrite[writeIdx] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel]));
+				++writeIdx;
 
-//				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
-
+//				const uint32_t addHead = cblend(pSrcLine[head+1], pLine[head+2], alpha);
 //				sumA += GetA(addHead);
 //				sumR += GetR(addHead);
 //				sumG += GetG(addHead);
 //				sumB += GetB(addHead);
-
 //				iSumA += addHead >> 24;
 //				iSumR += (addHead >> 16) & 0xff;
 //				iSumG += (addHead >> 8) & 0xff;
 //				iSumB += addHead & 0xff;
 				
-				headB = c2vISSE32(pSrcLine[head+2]);
+				headB = c2vISSE32(pLine[head+2]);
 				iSum = iAdd(iSum, iAlpha, headA, headB);
 				headA = headB;
 
@@ -236,84 +208,86 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 			// normalize
 //			curScale = scale;
 
-			tailA = c2vISSE32(pSrcLine[tail]);
-
 			// full sliding window
-			for (unsigned int iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
+			tailA = c2vISSE32(pLine[tail]);
+			for (unsigned iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
 			{
-//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
+//				pWrite[writeIdx] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+//				pWrite[writeIdx] = itoc(iSumA, iSumR, iSumG, iSumB, iScale);
 
-				pDest[destIndex] = v2cISSE32(iDiv(iSum, iScale));
-				++destIndex;
+				pWrite[writeIdx] = v2cISSE32(iDiv(iSum, iScale));
+				++writeIdx;
 
-//				const uint32_t addHead = cblend(pSrcLine[head+1], pSrcLine[head+2], alpha);
-
+//				const uint32_t addHead = cblend(pLine[head+1], pLine[head+2], alpha);
 //				sumA += GetA(addHead);
 //				sumR += GetR(addHead);
 //				sumG += GetG(addHead);
 //				sumB += GetB(addHead);
-
 //				iSumA += addHead >> 24;
 //				iSumR += (addHead >> 16) & 0xff;
 //				iSumG += (addHead >> 8) & 0xff;
 //				iSumB += addHead & 0xff;
 
-				headB = c2vISSE32(pSrcLine[head+2]);
+				headB = c2vISSE32(pLine[head+2]);
 				iSum = iAdd(iSum, iAlpha, headA, headB);
 				headA = headB;
-
 				++head;
 
-//				const uint32_t subTail = cblend(pSrcLine[tail], pSrcLine[tail+1], alpha);
-
+//				const uint32_t subTail = cblend(pLine[tail], pLine[tail+1], alpha);
 //				sumA -= GetA(subTail);
 //				sumR -= GetR(subTail);
 //				sumG -= GetG(subTail);
 //				sumB -= GetB(subTail);
-
 //				iSumA -= subTail >> 24;
 //				iSumR -= (subTail >> 16) & 0xff;
 //				iSumG -= (subTail >> 8) & 0xff;
 //				iSumB -= subTail & 0xff;
 				
-				tailB = c2vISSE32(pSrcLine[tail+1]);
+				tailB = c2vISSE32(pLine[tail+1]);
 				iSum = iSub(iSum, iAlpha, tailA, tailB);
 				tailA = tailB;
-
 				++tail;
 			}
 
 			// work back down to median
-			for (unsigned int iPixel = iSpan; iPixel > 0; --iPixel)
+			for (unsigned iPixel = iSpan; iPixel > 0; --iPixel)
 			{
-//				pDest[destIndex] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
-//				pDest[destIndex] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel-1]);
+//				pWrite[writeIdx] = ftoc(sumA*curScale, sumR*curScale, sumG*curScale, sumB*curScale);
+//				pWrite[writeIdx] = itoc(iSumA, iSumR, iSumG, iSumB, s_iSpanScales[iPixel-1]);
 //				curScale -= dScale;
 
-				pDest[destIndex] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel-1]));
-				++destIndex;
+				pWrite[writeIdx] = v2cISSE32(iDiv(iSum, s_iSpanScales[iPixel-1]));
+				++writeIdx;
 
-//				const uint32_t subTail = cblend(pSrcLine[tail+1], pSrcLine[tail], alpha);
-
+//				const uint32_t subTail = cblend(pLine[tail+1], pLine[tail], alpha);
 //				sumA -= GetA(subTail);
 //				sumR -= GetR(subTail);
 //				sumG -= GetG(subTail);
 //				sumB -= GetB(subTail);
-
 //				iSumA -= subTail >> 24;
 //				iSumR -= (subTail >> 16) & 0xff;
 //				iSumG -= (subTail >> 8) & 0xff;
 //				iSumB -= subTail & 0xff;
 
-				tailB = c2vISSE32(pSrcLine[tail+1]);
+				tailB = c2vISSE32(pLine[tail+1]);
 				iSum = iSub(iSum, iAlpha, tailA, tailB);
 				tailA = tailB;
-
 				++tail;
 			}
+
 		}
+
+		// rotate scratch buffers
+		const unsigned index = iPass & 1;
+		pRead  = s_pScratch[iPass];
+		pWrite = s_pScratch[!iPass];
 	}
+
+	return pWrite;	
+}
+
+void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+{
 }
 
 void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
@@ -335,224 +309,4 @@ void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 	//   ^ can do this in the last pass of the horizontal pass in-place, but for I guess it's easier to separate it at first
 	// - repeat / factor in multiple passes
 	// - do this entire process twice, and you'll have effectively blurred, transposed, blurred and transposed back
-}
-
-// -- 2007 blur --
-
-VIZ_INLINE uint32_t WeightToDiv(unsigned int weight)
-{
-	return ((65536*256)/weight)>>4;
-}
-
-// add pixel to accumulator
-VIZ_INLINE void Add(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
-{
-	__m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
-//	const __m128i alphaUnp = _mm_shufflelo_epi16(pixelUnp, 0xff);
-//	pixelUnp = _mm_srli_epi16(_mm_mullo_epi16(pixelUnp, alphaUnp), 8);
-	accumulator = _mm_adds_epu16(accumulator, remainder);
-	remainder = _mm_srli_epi16(pixelUnp, remainderShift);
-	accumulator = _mm_adds_epu16(accumulator, _mm_subs_epu16(pixelUnp, remainder));
-}
-
-// subtract pixel from accumulator
-VIZ_INLINE void Sub(__m128i &accumulator, __m128i &remainder, uint32_t pixel, unsigned int remainderShift)
-{
-	__m128i pixelUnp = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pixel), _mm_setzero_si128());
-//	const __m128i alphaUnp = _mm_shufflelo_epi16(pixelUnp, 0xff);
-//	pixelUnp = _mm_srli_epi16(_mm_mullo_epi16(pixelUnp, alphaUnp), 8);
-	accumulator = _mm_subs_epu16(accumulator, remainder);
-	remainder = _mm_srli_epi16(pixelUnp, remainderShift);
-	accumulator = _mm_subs_epu16(accumulator, _mm_subs_epu16(pixelUnp, remainder));
-}
-
-// divide accumulator by weight, pack it, and return pixel
-VIZ_INLINE uint32_t Div(__m128i accumulator, __m128i weightDiv)
-{
-	return _mm_cvtsi128_si32(_mm_packus_epi16(_mm_mulhi_epu16(accumulator, weightDiv), _mm_setzero_si128()));
-}
-
-void HorizontalBoxBlur32(
-	uint32_t *pDest,
-	const uint32_t *pSrc,
-	unsigned int xRes,
-	unsigned int yRes,
-	float strength)
-{
-//	VIZ_ASSERT(pDest != pSrc);
-
-	// calculate actual kernel span
-	const float fKernelSpan = strength*255.f;
-	unsigned kernelSpan = unsigned(fKernelSpan);
-	kernelSpan = clampi(1, 255, kernelSpan);
-
-	// derive edge details (even-sized kernels have subpixel edges)
-	const bool subEdges = (kernelSpan & 1) == 0;
-	const unsigned int edgeSpan = kernelSpan >> 1;
-	const unsigned int remainderShift = 1 + (!subEdges*7);
-	const unsigned int kernelMedian = edgeSpan + !subEdges;
-
-	// calculate divisors for edge passes
-	static __m128i edgeDivs[256];
-	VIZ_ASSERT(kernelMedian < 256);
-	const unsigned int startWeight = (kernelMedian << 4) + (subEdges<<3); // FIXME: 0.5 weight bias during pre-pass
-	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
-	{
-		edgeDivs[iDiv] = _mm_set1_epi16(WeightToDiv(curWeight));
-		curWeight += 16;
-	}
-
-	// full pass length & divisor
-	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
-	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
-
-	// ready, set, blur!
-	#pragma omp parallel for schedule(static)
-	for (int iY = 0; iY < int(yRes); ++iY)
-	{
-		auto destIndex = iY*xRes;
-		const uint32_t *pSrcLine = pSrc + destIndex;
-
-		unsigned int addPos = 0;
-		unsigned int subPos = 0;
-		
-		__m128i accumulator  = _mm_setzero_si128();
-		__m128i addRemainder = _mm_setzero_si128();
-		__m128i subRemainder = _mm_setzero_si128();
-		
-		// pre-read: bring accumulator op to edge weight
-		for (unsigned int iX = 0; iX < edgeSpan; ++iX)
-		{
-			Add(accumulator, addRemainder, pSrcLine[addPos++], remainderShift);
-		}
-
-		// pre-pass: up to full weight
-		for (unsigned int iX = 0; iX < kernelMedian; ++iX)
-		{
-			Add(accumulator, addRemainder, pSrcLine[addPos++], remainderShift);
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX]);
-		}
-		
-		// main pass
-		for (unsigned int iX = 0; iX < fullPassLen; ++iX)
-		{
-			Add(accumulator, addRemainder, pSrcLine[addPos++], remainderShift);
-			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			pDest[destIndex++] = Div(accumulator, fullDiv);
-		}
-
-		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
-		if (subEdges)
-			accumulator = _mm_adds_epu16(accumulator, addRemainder);
-		
-		// post-pass: back to median weight
-		for (unsigned int iX = edgeSpan; iX > 0; --iX)
-		{
-			Sub(accumulator, subRemainder, pSrcLine[subPos++], remainderShift);
-			pDest[destIndex++] = Div(accumulator, edgeDivs[iX-1]);
-		}
-	}
-}
-
-void VerticalBoxBlur32(
-	uint32_t *pDest,
-	const uint32_t *pSrc,
-	unsigned int xRes,
-	unsigned int yRes,
-	float strength)
-{
-//	VIZ_ASSERT(pDest != pSrc);
-
-	// calculate actual kernel span
-	const float fKernelSpan = strength*255.f;
-	unsigned kernelSpan = unsigned(fKernelSpan);
-	kernelSpan = clampi(1, 255, kernelSpan);
-
-	// derive edge details (even-sized kernels have subpixel edges)
-	const bool subEdges = (kernelSpan & 1) == 0;
-	const unsigned int edgeSpan = kernelSpan >> 1;
-	const unsigned int remainderShift = 1 + ((!subEdges)*7);
-	const unsigned int kernelMedian = edgeSpan + !subEdges;
-
-	// calculate divisors for edge passes
-	static __m128i edgeDivs[256];
-	VIZ_ASSERT(kernelMedian < 256);
-	const unsigned int startWeight = (kernelMedian << 4) + (subEdges << 3);
-	for (unsigned int curWeight = startWeight, iDiv = 0; iDiv < kernelMedian; ++iDiv)
-	{
-		edgeDivs[iDiv] = _mm_set1_epi16(WeightToDiv(curWeight));
-		curWeight += 16;
-	}
-
-	// full pass length & divisor
-	const unsigned int fullPassLen = yRes - (kernelMedian+edgeSpan);
-	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
-
-	// ready, set, blur!
-	#pragma omp parallel for schedule(static)
-	for (int iX = 0; iX < int(xRes); ++iX)
-	{
-		auto destIndex = iX;
-		unsigned addPos = iX;
-		unsigned subPos = iX;
-
-		__m128i accumulator  = _mm_setzero_si128();
-		__m128i addRemainder = _mm_setzero_si128();
-		__m128i subRemainder = _mm_setzero_si128();
-		
-		// pre-read: bring accumulator op to edge weight
-		for (unsigned int iY = 0; iY < edgeSpan; ++iY)
-		{
-			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
-			addPos += xRes;
-		}
-
-		// pre-pass: up to full weight
-		for (unsigned int iY = 0; iY < kernelMedian; ++iY)
-		{
-			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
-			addPos += xRes;
-
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY]);
-			destIndex += xRes;
-		}
-		
-		// main pass
-		for (unsigned int iY = 0; iY < fullPassLen; ++iY)
-		{
-			Add(accumulator, addRemainder, pSrc[addPos], remainderShift);
-			addPos += xRes;
-
-			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
-			subPos += xRes;
-
-			pDest[destIndex] = Div(accumulator, fullDiv);
-			destIndex += xRes;
-		}
-		
-		// add additive remainder if needed (subtractive remainder is taken care of by Sub())
-		if (subEdges)
-			accumulator = _mm_adds_epu16(accumulator, addRemainder);
-
-		// post-pass: back to median weight
-		for (unsigned int iY = edgeSpan; iY > 0; --iY)
-		{
-			Sub(accumulator, subRemainder, pSrc[subPos], remainderShift);
-			subPos += xRes;	
-
-			pDest[destIndex] = Div(accumulator, edgeDivs[iY-1]);
-			destIndex += xRes;
-		}
-	}
-}
-
-void BoxBlur32(
-	uint32_t *pDest,
-	const uint32_t *pSrc,
-	unsigned int xRes,
-	unsigned int yRes,
-	float strength)
-{
-	HorizontalBoxBlur32(pDest, pSrc, xRes, yRes, strength);
-	VerticalBoxBlur32(pDest, pDest, xRes, yRes, strength);
 }

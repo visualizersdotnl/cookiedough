@@ -11,7 +11,7 @@
 #include "cspan.h"
 #include "bilinear.h"
 #include "polar.h"
-#include "boxblur.h"
+#include "deprecated/boxblur.h"
 #include "voxel-shared.h"
 #include "rocket.h"
 

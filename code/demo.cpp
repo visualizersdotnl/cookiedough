@@ -8,6 +8,7 @@
 
 // filters & blitters
 #include "boxblur.h"
+#include "deprecated/boxblur.h"
 #include "polar.h"
 #include "fx-blitter.h"
 
