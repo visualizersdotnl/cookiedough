@@ -81,8 +81,8 @@ CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i 
 
 CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
 {
-	const __m128i low64  = _mm_unpacklo_epi32(iSum, _mm_setzero_si128()); // | A | R | 
-	const __m128i high64 = _mm_unpackhi_epi32(iSum, _mm_setzero_si128()); // | G | B |
+	const __m128i low64  = _mm_unpacklo_epi32(iSum, _mm_setzero_si128()); // | A | 0 | R | 0 |
+	const __m128i high64 = _mm_unpackhi_epi32(iSum, _mm_setzero_si128()); // | G | 0 | B | 0 |
 	
 	const __m128i broadcast = iScale; // _mm_set1_epi64x(iScale);
 
@@ -98,6 +98,10 @@ alignas(kAlignTo) static __m128i s_iSpanScales[kResX/2];
 
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
+	// expect aligned buffers so we've got the freedom to use 128-bit load & store
+	VIZ_ASSERT_ALIGNED(pDest);
+	VIZ_ASSERT_ALIGNED(pSrc);
+
 	// buffers must be a multiple of 4x4 pixels (realistic and prevents us drowning in useless edge cases)
 	VIZ_ASSERT(xRes > 3 && (xRes & 3) == 0);
 	VIZ_ASSERT(yRes > 3 && (yRes & 3) == 0);
@@ -325,9 +329,10 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
 	// idea (lift as much common logic out of horizontal):
-	// - fill scratch buffer to fit (N lines)
+	// - find a way around this, because you don't need to perform that first copy: fill scratch buffer to fit (N lines)
 	// - perform horizontal blur on scratch buffer
 	// - transpose from scratch buffer to dest. image (uncached writes)
+	//   ^ can do this in the last pass of the horizontal pass in-place, but for I guess it's easier to separate it at first
 	// - repeat / factor in multiple passes
 	// - do this entire process twice, and you'll have effectively blurred, transposed, blurred and transposed back
 }
