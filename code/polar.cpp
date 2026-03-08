@@ -1,6 +1,11 @@
 
-// cookiedough -- polar blits (FIXME: tons of code duplication))
+// cookiedough -- polar blits 
 
+// FIXME:
+// - [ ] optimize bilinear sampling (right now it just feeds a function that wasn't designed for this scenario)
+// - [ ] try doing this tiled (lift loop out of Transpose32())
+// - [ ] fix excess code duplication
+ 
 #include "main.h"
 // #include "polar.h"
 #include "bilinear.h"
