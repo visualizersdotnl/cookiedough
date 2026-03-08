@@ -217,6 +217,10 @@ static void Transpose32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, un
 	VIZ_ASSERT_ALIGNED(pDest);
 	VIZ_ASSERT_ALIGNED(pSrc);
 
+	// 4x4 only, thank you
+	VIZ_ASSERT(0 == (xRes & 3));
+	VIZ_ASSERT(0 == (yRes & 3));
+
 	// 4KB per tile (friendly for old and new alike)
 	const unsigned tileSize = 32; 
 
