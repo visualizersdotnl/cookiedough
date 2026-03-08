@@ -75,8 +75,10 @@ void HorizontalBoxBlur32(
 	const unsigned int fullPassLen = xRes - (kernelMedian+edgeSpan);
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
+	const bool parallelize = xRes*yRes*sizeof(uint32_t) > kCacheL1;
+
 	// ready, set, blur!
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) if (parallelize)
 	for (int iY = 0; iY < int(yRes); ++iY)
 	{
 		auto destIndex = iY*xRes;
@@ -157,8 +159,10 @@ void VerticalBoxBlur32(
 	const unsigned int fullPassLen = yRes - (kernelMedian+edgeSpan);
 	const __m128i fullDiv = _mm_set1_epi16(WeightToDiv(kernelSpan << 4));
 
+	const bool parallelize = xRes*yRes*sizeof(uint32_t) > kCacheL1;
+
 	// ready, set, blur!
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) if (parallelize)
 	for (int iX = 0; iX < int(xRes); ++iX)
 	{
 		auto destIndex = iX;

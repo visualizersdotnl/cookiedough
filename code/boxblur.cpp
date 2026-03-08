@@ -109,6 +109,9 @@ static void HorzBlur32(
 		// even (2): scratch -> dest. -> scratch -> dest vs. uneven (3): dest. -> scratch -> dest.
 		std::swap(pDest, pScratch);
 
+	// only parallelize if it remotely makes sense, thank you
+	const bool parallelize = xRes*yRes*sizeof(uint32_t) > kCacheL1;
+
 	for (unsigned iPass = 0; iPass < numPasses; ++iPass)
 	{
 		unsigned colStride = xRes, rowStride = 1;
@@ -121,7 +124,7 @@ static void HorzBlur32(
 		}
 
 		// Y
-		#pragma omp parallel for schedule(static)
+		#pragma omp parallel for schedule(static) if (parallelize)
 		for (unsigned iY = 0; iY < yRes; ++iY)
 		{
 			// X (calculated here for potential OpenMP-parallelization)
