@@ -44,7 +44,7 @@ CKD_INLINE static __m128i iAdd(__m128i iSum, __m128i iAlpha, __m128i A, __m128i 
 		iSum,
 		_mm_add_epi32(
 			A,
-			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 8)));
+			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
 }
 
 CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
@@ -54,7 +54,7 @@ CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i 
 		iSum,
 		_mm_add_epi32(
 			A,
-			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 8)));
+			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
 }
 
 CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
@@ -84,11 +84,7 @@ static void HorzBlur32(
 	VIZ_ASSERT_NORM(radius);
 
 	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
-//	radius *= (xRes-1)/2.f;
-	
-	// WIP
-	radius = 8.f;
-	numPasses = 2;
+	radius *= (xRes-1)/2.f;
 
 	const unsigned iSpan = unsigned(radius);
 	VIZ_ASSERT(iSpan < kMaxRes/2);
@@ -97,7 +93,7 @@ static void HorzBlur32(
 	const float scale = 1.f/(2.f*radius + 1.f);
 	const float alpha = radius-iSpan;
 	const __m128i iScale = _mm_set1_epi64x(ftofp<int64_t>(scale, 22)); // 10:22
-	const __m128i iAlpha = _mm_cvtsi32_si128(ftofp24(alpha)*0x01010101);
+	const __m128i iAlpha = _mm_set1_epi32(uint32_t(65536.f*alpha));
 
 	// calculate span scales
 	const float halfScale = scale*0.5f;
@@ -142,7 +138,7 @@ static void HorzBlur32(
 
 			iSum = _mm_add_epi32(
 				iSum,
-				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pLine[head]), iAlpha), 8));
+				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pLine[head]), iAlpha), 16));
 
 			__m128i 
 				headA, headB,
@@ -211,7 +207,21 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 
 void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
-	// FIXME: implement
+	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
+
+	// FIXME: this is now just a parallelized transpose which can be written in a more compact and optimal way
+	HorzBlur32(
+		s_pScratch[1], s_pScratch[0], pSrc, 
+		xRes, yRes,
+		1, yRes,
+		0.f, 1);
+	
+	// vertrical blur -> transpose back
+	HorzBlur32(
+		pDest, s_pScratch[0], s_pScratch[1], 
+		yRes, xRes,
+		1, xRes,
+		radius, numPasses);
 }
 
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
