@@ -255,12 +255,12 @@ static void Transpose32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, un
 					const __m128 C1 = _mm_movehl_ps(T2, T0);   // | R01 | R11 | R21 | R31 |
 					const __m128 C2 = _mm_movelh_ps(T1, T3);   // | R02 | R12 | R22 | R32 |
 					const __m128 C3 = _mm_movehl_ps(T3, T1);   // | R03 | R13 | R23 | R33 |
-
-					// and store (therefore being rows in the transposed buffers)
-                    _mm_store_ps((float*) &pDest[(tX + 0) * yRes + tY], C0);
-                    _mm_store_ps((float*) &pDest[(tX + 1) * yRes + tY], C1);
-                    _mm_store_ps((float*) &pDest[(tX + 2) * yRes + tY], C2);
-                    _mm_store_ps((float*) &pDest[(tX + 3) * yRes + tY], C3);
+					
+					// and store them as columns
+					_mm_store_ps((float*) &pDest[(tX+0)*yRes + tY], C0);
+					_mm_store_ps((float*) &pDest[(tX+1)*yRes + tY], C1);
+					_mm_store_ps((float*) &pDest[(tX+2)*yRes + tY], C2);
+					_mm_store_ps((float*) &pDest[(tX+3)*yRes + tY], C3);
                 }
 			}
         }
