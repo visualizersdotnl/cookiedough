@@ -125,6 +125,7 @@ static void HorzBlur32(
 		}
 
 		// Y
+		#pragma omp parallel for schedule(static)
 		for (unsigned iY = 0; iY < yRes; ++iY)
 		{
 			// X (calculated here for potential OpenMP-parallelization)
@@ -201,31 +202,16 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
 
-	// as optimal as it gets without injecting parallelism straight into HorzBlur32() which would defeat the design
-	#pragma omp parallel
-	{
-		const int iThread    = omp_get_thread_num();
-		const int numThreads = omp_get_num_threads();
-
-		const unsigned rowsPerThread = (yRes + numThreads-1)/numThreads;
-
-		const unsigned yStart = iThread*rowsPerThread;
-		const unsigned yEnd = std::min(yStart+rowsPerThread, yRes);
-
-		const unsigned numLines = yEnd-yStart;
-		const unsigned offset = yStart*xRes;
-
-		HorzBlur32(
-			pDest+offset, s_pScratch[0]+offset, pSrc+offset,
-			xRes, yEnd-yStart,
-			xRes, 1,			
-			radius, numPasses);
-	}
+	HorzBlur32(
+		pDest, s_pScratch[0], pSrc,
+		xRes, yRes,
+		xRes, 1,			
+		radius, numPasses);
 }
 
 void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
-	// idea: transpose -> blur -> transpose (uncached writes)
+	// FIXME: implement
 }
 
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
