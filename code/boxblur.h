@@ -7,6 +7,9 @@
 bool BoxBlur_Create();
 void BoxBlur_Destroy();
 
+// use for 'numPasses' if you want a *good* baseline Gaussian blur approximation
+constexpr unsigned kGauss = 3;
+
 // Important: buffers must be aligned (use mallocAligned() w/kAlignTo)
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses);
 void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses);

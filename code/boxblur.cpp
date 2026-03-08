@@ -5,7 +5,12 @@
 // - [x] horizontal SIMD-optimized blur pass works perfectly
 // - [x] move horizontal blur pass into a function that blurs a L1-cache sized chunk into the scratch buffer(s) for all passes required
 // - [x] use OpenMP split loop up into parallel chunks
-// - [/] implement horizontal/vertical/full pass
+// - [x] implement horizontal/vertical/full pass
+
+// 08/03/2026:
+// - it is entirely possible to implement a 3-pass (neat approximation level) version that does *not* need the, honestly quite large
+//   scratch buffers; however the inner loop will be significantly heavier in terms of variable, register, instruction and cache pressure
+//   so for now I simply hide behind my readily available RAM
 
 #include "main.h"
 // #include "boxblur.h"
@@ -197,6 +202,58 @@ static void HorzBlur32(
 	}
 }
 
+// cache-friendly parallelized transpose ('pasroto.zip', a very much belated thank you Niklas Beisert)
+static void Transpose32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes)
+{
+	VIZ_ASSERT_ALIGNED(pDest);
+	VIZ_ASSERT_ALIGNED(pSrc);
+
+	// 4KB per tile (friendly for old and new alike)
+	const unsigned tileSize = 32; 
+
+	// only parallelize if it remotely makes sense, thank you
+	const bool parallelize = xRes*yRes*sizeof(uint32_t) > kCacheL1;
+
+	// for each tile
+    #pragma omp parallel for collapse(2) schedule(static) if (parallelize)
+    for (unsigned iY = 0; iY < yRes; iY += tileSize)
+	{
+        for (unsigned iX = 0; iX < xRes; iX += tileSize)
+		{
+			// process tile in 4x4 blocks (load/store full 128-bit wide registers)
+			for (unsigned tY = iY; tY < iY + tileSize && tY < yRes; tY += 4)
+			{
+                for (unsigned tX = iX; tX < iX + tileSize && tX < xRes; tX += 4)
+                {
+                    // load rows (remember: type don't matter, we are just moving data)
+                    const __m128 R0 = _mm_load_ps((float*) &pSrc[(tY+0)*xRes + tX]);
+                    const __m128 R1 = _mm_load_ps((float*) &pSrc[(tY+1)*xRes + tX]);
+                    const __m128 R2 = _mm_load_ps((float*) &pSrc[(tY+2)*xRes + tX]);
+                    const __m128 R3 = _mm_load_ps((float*) &pSrc[(tY+3)*xRes + tX]);
+
+					// transpose as 4x4 matrix
+                    const __m128 T0 = _mm_unpacklo_ps(R0, R1); // | R00 | R10 | R01 | R11 |
+                    const __m128 T1 = _mm_unpackhi_ps(R0, R1); // | R02 | R12 | R03 | R13 |
+                    const __m128 T2 = _mm_unpacklo_ps(R2, R3); // | R20 | R30 | R21 | R31 |
+                    const __m128 T3 = _mm_unpackhi_ps(R2, R3); // | R22 | R32 | R23 | R33 |
+					
+					// grab column vectors
+					const __m128 C0 = _mm_movelh_ps(T0, T2);   // | R00 | R10 | R20 | R30 |
+					const __m128 C1 = _mm_movehl_ps(T2, T0);   // | R01 | R11 | R21 | R31 |
+					const __m128 C2 = _mm_movelh_ps(T1, T3);   // | R02 | R12 | R22 | R32 |
+					const __m128 C3 = _mm_movehl_ps(T3, T1);   // | R03 | R13 | R23 | R33 |
+
+					// and store (therefore being rows in the transposed buffers)
+                    _mm_store_ps((float*) &pDest[(tX + 0) * yRes + tY], C0);
+                    _mm_store_ps((float*) &pDest[(tX + 1) * yRes + tY], C1);
+                    _mm_store_ps((float*) &pDest[(tX + 2) * yRes + tY], C2);
+                    _mm_store_ps((float*) &pDest[(tX + 3) * yRes + tY], C3);
+                }
+			}
+        }
+	}
+}
+
 void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
@@ -212,14 +269,15 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
 
-	// FIXME: this is now just a parallelized transpose which can be written in a more compact and optimal way
-	HorzBlur32(
-		s_pScratch[1], s_pScratch[0], pSrc, 
-		xRes, yRes,
-		1, yRes,
-		0.f, 1);
-	
-	// vertrical blur -> transpose back
+	// disclaimer: an alternative approach is to split this entire process into chunks where strips that fit within L1 are split
+	// into chunks and processed in parallel from start to end that way; the speed gain here however, especially given that a
+	// blur pass is often a relatively minor part of the entire frame, is marginal to a degree it does not warrant the
+	// existence and upkeep of the path 
+
+	// fast tiled parallel transpose
+	Transpose32(s_pScratch[1], pSrc, xRes, yRes);
+
+	// vertical blur -> transpose back
 	HorzBlur32(
 		pDest, s_pScratch[0], s_pScratch[1], 
 		yRes, xRes,
@@ -238,7 +296,7 @@ void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 		1, yRes,
 		radius, numPasses);
 	
-	// vertrical blur -> transpose back
+	// vertical blur -> transpose back
 	HorzBlur32(
 		pDest, s_pScratch[0], s_pScratch[1], 
 		yRes, xRes,
