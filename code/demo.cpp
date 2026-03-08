@@ -476,7 +476,18 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 	// (WIP) new blur test
 
 	memset32(pDest, 0, kResX*kResY);
-	BoxBlur_Horz32(pDest, s_pSuperplek[0], 1280, 568, 0.1f, 1);
+
+	const float strength = 6.28f;
+
+//	HorizontalBoxBlur32(pDest, s_pSuperplek[0], 1280, 568, BoxBlurScale(10.f));
+//	BoxBlur_Horz32(pDest, s_pSuperplek[0], 1280, 568, strength, 0.f, 1);
+
+//	VerticalBoxBlur32(pDest, s_pSuperplek[0], 1280, 568, BoxBlurScale(10.f));
+	BoxBlur_Vert32(pDest, s_pSuperplek[0], 1280, 568, strength, 0.25f, 3);
+
+//	BoxBlur32(pDest, s_pSuperplek[0], 1280, 568, BoxBlurScale(10.f));
+//	BoxBlur_32(pDest, s_pSuperplek[0], 1280, 568, strength, 0.1f, kGauss);
+
 	return true;
 
 	//

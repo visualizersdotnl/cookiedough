@@ -13,7 +13,7 @@
 //   so for now I simply hide behind my readily available RAM
 
 #include "main.h"
-// #include "boxblur.h"
+#include "boxblur.h"
 
 constexpr size_t kMaxRes = 2048;
 constexpr size_t kScratchSize = kMaxRes*kMaxRes;
@@ -44,22 +44,26 @@ CKD_INLINE static uint32_t itoc(unsigned A, unsigned R, unsigned G, unsigned B, 
 
 CKD_INLINE static __m128i iAdd(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
 {
-	// sum += lerp(head[1], head[2], alpha)
+//	return _mm_add_epi32(iSum, B);
+
+// sum += lerp(head[1], head[2], alpha)
 	return _mm_add_epi32(
 		iSum,
 		_mm_add_epi32(
 			A,
-			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
+			_mm_srai_epi32(_mm_mullo_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
 }
 
 CKD_INLINE static __m128i iSub(__m128i iSum, __m128i iAlpha, __m128i A, __m128i B)
 {
-	// sum -= lerp(tail[0], tail[1], alpha)
+//	return _mm_sub_epi32(iSum, A);
+
+// sum -= lerp(tail[0], tail[1], alpha)
 	return _mm_sub_epi32(
 		iSum,
 		_mm_add_epi32(
 			A,
-			_mm_srai_epi32(_mm_mul_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
+			_mm_srai_epi32(_mm_mullo_epi32(_mm_sub_epi32(B, A), iAlpha), 16)));
 }
 
 CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
@@ -73,42 +77,47 @@ CKD_INLINE static __m128i iDiv(__m128i iSum, __m128i iScale)
 		_mm_srli_epi64(_mm_mul_epu32(GB64, iScale), 22));
 }
 
-// alignas(kAlignTo) static thread_local int64_t s_iSpanScales[kMaxRes/2];
-alignas(kAlignTo) static thread_local __m128i s_iSpanScales[kMaxRes/2];
+// maximum for 10:22 kernel, minus a little slack
+constexpr size_t kMaxRadius = 500;
+
+// alignas(kAlignTo) static int64_t s_iSpanScales_[kMaxRadius];
+alignas(kAlignTo) static __m128i s_iSpanScales[kMaxRadius];
 
 // workhorse: horizontal blur pass(es) with optional write transpose
 static void HorzBlur32(
 	uint32_t *pDest, uint32_t *pScratch, const uint32_t *pSrc, 
 	unsigned xRes, unsigned yRes, 
 	unsigned writeStrideCol, unsigned writeStrideRow,
-	float radius, unsigned numPasses)
+	float strength, float gain, unsigned numPasses)
 {
+	VIZ_ASSERT_ALIGNED(pDest);
+	VIZ_ASSERT_ALIGNED(pScratch);
 	VIZ_ASSERT_ALIGNED(pSrc);
+
 	VIZ_ASSERT(xRes <= kMaxRes && yRes <= kMaxRes);
-//	VIZ_ASSERT(xRes*numLines < kScratchSize);
-	VIZ_ASSERT_NORM(radius);
 
-	// transform radius to pixels (reserve room for 1 subpixel edge on either side)
-	radius *= (xRes-1)/2.f;
-
+	VIZ_ASSERT(strength >= 0.f && strength <= 100.f); // [0..100]
+	strength *= 0.01f;
+	const float radius = std::min<float>(kMaxRadius, strength*((xRes-2)/2));
 	const unsigned iSpan = unsigned(radius);
-	VIZ_ASSERT(iSpan < kMaxRes/2);
 
-	// calculate sum divider and alpha
-	const float scale = 1.f/(2.f*radius + 1.f);
+	VIZ_ASSERT_NORM(gain);
+
+	// calculate sum (kernel) divider and alpha
+	const float scale = 1.f/((2.f-gain)*radius + 1.f);
 	const float alpha = radius-iSpan;
 	const __m128i iScale = _mm_set1_epi64x(ftofp<int64_t>(scale, 22)); // 10:22
-	const __m128i iAlpha = _mm_set1_epi32(uint32_t(65536.f*alpha));
+	const __m128i iAlpha = _mm_set1_epi32(int32_t(65536.f*alpha));
 
-	// calculate span scales
+	// calculate span side scales (ramp)
 	const float halfScale = scale*0.5f;
 	const float dScale = halfScale/iSpan;
 	for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 		s_iSpanScales[iPixel] = _mm_set1_epi64x(ftofp<int64_t>(halfScale + iPixel*dScale, 22));
 
-	const bool evenNumPasses = 0 == (numPasses & 1);
-
 	const uint32_t *pRead = pSrc;
+
+	const bool evenNumPasses = 0 == (numPasses & 1);
 
 	if (true == evenNumPasses)
 		// even (2): scratch -> dest. -> scratch -> dest vs. uneven (3): dest. -> scratch -> dest.
@@ -146,7 +155,7 @@ static void HorzBlur32(
 
 			iSum = _mm_add_epi32(
 				iSum,
-				_mm_srai_epi32(_mm_mul_epu32(c2vISSE32(pLine[head]), iAlpha), 16));
+				_mm_srai_epi32(_mm_mullo_epi32(c2vISSE32(pLine[head]), iAlpha), 16));
 
 			__m128i 
 				headA, headB,
@@ -254,7 +263,7 @@ static void Transpose32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, un
 	}
 }
 
-void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float gain, unsigned numPasses)
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
 
@@ -262,10 +271,10 @@ void BoxBlur_Horz32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 		pDest, s_pScratch[0], pSrc,
 		xRes, yRes,
 		xRes, 1,			
-		radius, numPasses);
+		strength, gain, numPasses);
 }
 
-void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float gain, unsigned numPasses)
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
 
@@ -282,10 +291,10 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 		pDest, s_pScratch[0], s_pScratch[1], 
 		yRes, xRes,
 		1, xRes,
-		radius, numPasses);
+		strength, gain, numPasses);
 }
 
-void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float radius, unsigned numPasses)
+void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float gain, unsigned numPasses)
 {
 	VIZ_ASSERT(xRes > 0 && yRes > 0 && numPasses > 0);
 
@@ -294,12 +303,12 @@ void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned y
 		s_pScratch[1], s_pScratch[0], pSrc, 
 		xRes, yRes,
 		1, yRes,
-		radius, numPasses);
+		strength, gain, numPasses);
 	
 	// vertical blur -> transpose back
 	HorzBlur32(
 		pDest, s_pScratch[0], s_pScratch[1], 
 		yRes, xRes,
 		1, xRes,
-		radius, numPasses);
+		strength, gain, numPasses);
 }
