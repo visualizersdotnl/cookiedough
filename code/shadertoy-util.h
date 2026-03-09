@@ -73,29 +73,28 @@ namespace Shadertoy
 	{
 		// results taught me that this, incurring float-to-long penalty, is not faster anymore
 //		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
-
+		
 		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
-	// use this instead of Normalize()/Normalized() on Vector3
-	VIZ_INLINE void vFastNorm3(Vector3 &vector)
+	CKD_INLINE static void vNorm3(Vector3 &vector)
 	{
-		// same as for vFastLen3()
-//		const float oneOverLen = Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+		// this function is only (to be) used in calculations that by design are numerically sane
+		VIZ_ASSERT(vector.Length() > kEpsilon);
 
-		const float oneOverLen = 1.f/vFastLen3(vector);
-		vector.x *= oneOverLen;
-		vector.y *= oneOverLen;
-		vector.z *= oneOverLen;
+//		const float oneOverLen = 1.f/vector.Length();
+//		vector.x *= oneOverLen;
+//		vector.y *= oneOverLen;
+//		vector.z *= oneOverLen;
+
+		// broadcasted 1.f/vector.Length()
+		const __m128 oneOverLen = _mm_rsqrt_ps(_mm_dp_ps(vector.vSSE, vector.vSSE, 0xff));
+		vector.vSSE = _mm_mul_ps(vector.vSSE, oneOverLen);		
 	}
 
-	// because Normalize() contains a branch (as of 05/08/2018) and multiplying with a scalar won't inline properly
-	VIZ_INLINE void vNorm3(Vector3 &vector)
-	{
-		const float oneOverLen = 1.f/vector.Length();
-		vector.x *= oneOverLen;
-		vector.y *= oneOverLen;
-		vector.z *= oneOverLen;
+	// FIXME: deprecated
+	CKD_INLINE static void vFastNorm3(Vector3 &vector) {
+		return vNorm3(vector);
 	}
 
 	// -- UVs (coordinates are returned 1:1, so you need to reapply aspect ratio correction if necessary!) --
