@@ -262,7 +262,7 @@ namespace Shadertoy
 		H = _mm_mul_ps(H, oneOverLenH);		
 
 //		return powf(std::max<float>(0.f, normal*H), power);		
-		const __m128 projExp =_mm_dp_ps(normal.vSSE, H, 0xff);
+		const __m128 projExp = _mm_dp_ps(normal.vSSE, H, 0xff);
 
 		// the exp_ps() implementation only pays off if we do this for all 4 lanes, so I'll take it into scalar territory (for now)
 		const float cosAng = projExp[0]; // partial access, won't hurt much
