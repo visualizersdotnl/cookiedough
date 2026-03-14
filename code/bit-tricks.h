@@ -4,6 +4,17 @@
 #ifndef _BIT_TRICKS_H_
 #define _BIT_TRICKS_H_
 
+CKD_INLINE static uint32_t NonZeroMask32(int32_t value)
+{
+	// SHIFTRIGHT -> XOR -> AND
+	return -((value >> 31) ^ 1) & 0x7FFFFFFF;
+}
+
+// works for IEEE floats too if you look to clamp a scalar since the sign bit is in the same place
+CKD_INLINE static uint32_t NonZeroMask32f(float value) {
+	return NonZeroMask32(int32_t(value));
+}
+
 CKD_INLINE static const bool IsPow2(unsigned value)
 {
 	return value != 0 && !(value & (value - 1));

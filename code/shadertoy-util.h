@@ -77,7 +77,7 @@ namespace Shadertoy
 		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 	}
 
-	CKD_INLINE static void vNorm3(Vector3 &vector)
+	CKD_INLINE static void vNorm4(Vector3 &vector)
 	{
 		// this function is only (to be) used in calculations that by design are numerically sane
 		VIZ_ASSERT(vector.Length() > kEpsilon);
@@ -92,9 +92,14 @@ namespace Shadertoy
 		vector.vSSE = _mm_mul_ps(vector.vSSE, oneOverLen);		
 	}
 
+	CKD_INLINE static void vNorm3(Vector3 &vector) {
+		// this is not a problem because outside of irregular use, a Vector3 is always [x, y, z, 0] (by Std3DMath design)
+		vNorm4(vector);
+	}
+
 	// FIXME: deprecated
 	CKD_INLINE static void vFastNorm3(Vector3 &vector) {
-		return vNorm3(vector);
+		vNorm3(vector);
 	}
 
 	// -- UVs (coordinates are returned 1:1, so you need to reapply aspect ratio correction if necessary!) --
@@ -246,8 +251,28 @@ namespace Shadertoy
 	// specular calc. (traditional)
 	VIZ_INLINE float Specular(const Vector3 &origin, const Vector3 &position, const Vector3 &normal, const Vector3 &lightDir, float power)
 	{
-		const Vector3 V = (origin-position).Normalized();
-		const Vector3 H = (lightDir+V).Normalized();
-		return powf(std::max<float>(0.f, normal*H), power);
+//		const Vector3 V = (origin-position).Normalized();
+		__m128 V = _mm_sub_ps(origin.vSSE, position.vSSE);
+		const __m128 oneOverLenV = _mm_rsqrt_ps(_mm_dp_ps(V, V, 0xff));
+		V = _mm_mul_ps(V, oneOverLenV);		
+
+//		const Vector3 H = (lightDir+V).Normalized();
+		__m128 H = _mm_add_ps(lightDir.vSSE, V);
+		const __m128 oneOverLenH = _mm_rsqrt_ps(_mm_dp_ps(H, H, 0xff));
+		H = _mm_mul_ps(H, oneOverLenH);		
+
+//		return powf(std::max<float>(0.f, normal*H), power);		
+		const __m128 projExp =_mm_dp_ps(normal.vSSE, H, 0xff);
+
+		// the exp_ps() implementation only pays off if we do this for all 4 lanes, so I'll take it into scalar territory (for now)
+		const float cosAng = projExp[0]; // partial access, won't hurt much
+
+		// since we're chiefly raymarching we're not dealing with a lot of negative values by design, so let the branch predictor have at it
+		const auto signBit = std::bit_cast<int32_t>(cosAng) >> 31;
+		return (0 != signBit)
+			? powf(cosAng, power)
+			: 0.f;
+
+		// branchless: const uint32_t mask = NonZeroMask32f)cosAng), et cetera
 	}
 } 
