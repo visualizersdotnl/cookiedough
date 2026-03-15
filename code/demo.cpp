@@ -473,6 +473,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 	Rocket::Boost();
 #endif
 
+#if 0
 	// (WIP) new blur test
 
 	memset32(pDest, 0, kResX*kResY);
@@ -489,8 +490,7 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 //	BoxBlur_32(pDest, s_pSuperplek[0], 1280, 568, strength, 0.1f, kGauss);
 
 	return true;
-
-	//
+#endif 
 
 	// get fade/flash amounts
 	const float fadeToBlack = Rocket::getf(trackFadeToBlack);

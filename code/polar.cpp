@@ -1,10 +1,221 @@
 
-// cookiedough -- polar blits 
+// cookiedough -- polar blits (WIP: 2026 optim.)
 
 // FIXME:
-// - [ ] optimize bilinear sampling (right now it just feeds a function that wasn't designed for this scenario)
-// - [ ] try doing this tiled (lift loop out of Transpose32())
-// - [ ] fix excess code duplication
+// - [/] test entirity of 'Arrested Dev.'
+// - [ ] take out/optimize bilinear fetches
+ 
+#include "main.h"
+#include "bilinear.h"
+#include "fx-blitter.h"
+#include "shared-resources.h"
+
+static int *s_pMap        = nullptr;
+static int *s_pInvMap     = nullptr;
+static int *s_pMap2x2     = nullptr;
+static int *s_pInvMap2x2  = nullptr;
+
+static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned srcResY, unsigned destResX, unsigned destResY)
+{
+	// ensure we can handle 4x4 blocks due to tiled blits
+	static_assert(0 == (kResX&3));
+	static_assert(0 == (kResY&3));
+
+	const float halfResX = destResX/2.f;
+	const float halfResY = destResY/2.f;
+
+	unsigned iPixel = 0;
+	const float maxDist = sqrtf(halfResX*halfResX + halfResY*halfResY);
+	for (float Y = -halfResY; Y < halfResY; Y += 1.f)
+	{
+		for (float X = -halfResX + kEpsilon; X < halfResX; X += 1.f)
+		{
+			const float distance = sqrtf(X*X + Y*Y) / maxDist;
+			float theta = atan2f(Y, X);
+			theta += kPI;
+			theta /= kPI*2.f;
+			const float U    = distance*(srcResX-1.f);      
+			const float invU = (1.f-distance) * (srcResX-1.f); 
+			const float V    = theta * (srcResY-1.f);          
+
+			if (U >= srcResX-1.f)
+				pDest[iPixel] = ((srcResX-2)<<8) | 0xff;
+			else
+				pDest[iPixel] = ftofp24(U);
+    
+			if (invU >= srcResX-1.f)
+				pInvDest[iPixel] = ((srcResX-2)<<8) | 0xff;
+			else
+				pInvDest[iPixel] = ftofp24(invU);
+
+			if (V >= srcResY-1.f)
+				pInvDest[iPixel+1] = pDest[iPixel+1] = ((srcResY-2)<<8) | 0xff;
+			else
+				pInvDest[iPixel+1] = pDest[iPixel+1] = ftofp24(V);
+
+			iPixel += 2;
+		}
+	}
+}
+
+bool Polar_Create()
+{
+	s_pMap       = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kAlignTo));
+	s_pInvMap    = static_cast<int*>(mallocAligned(kOutputSize*sizeof(int)*2, kAlignTo));
+	s_pMap2x2    = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kAlignTo));
+	s_pInvMap2x2 = static_cast<int*>(mallocAligned(kFxMapSize*sizeof(int)*2, kAlignTo));
+
+	CalculateMaps(s_pMap, s_pInvMap, kTargetResX, kTargetResY, kResX, kResY);
+	CalculateMaps(s_pMap2x2, s_pInvMap2x2, kFxMapResX, kFxMapResY, kFxMapResX, kFxMapResY);
+
+	return true;
+}
+
+void Polar_Destroy() 
+{
+	freeAligned(s_pMap);
+	freeAligned(s_pInvMap);
+	freeAligned(s_pMap2x2);
+	freeAligned(s_pInvMap2x2);
+}
+
+VIZ_INLINE __m128i Fetch32(const int *pRead, const uint32_t *pSrc, const unsigned targetResX)
+{
+	const int U = pRead[0];
+	const int V = pRead[1];
+
+	const unsigned int U0 = U >> 8;
+	const unsigned int V0 = (V >> 8) * targetResX;
+	const unsigned int fracU = (U & 0xff) * 0x01010101;
+	const unsigned int fracV = (V & 0xff) * 0x01010101;
+
+	return bsamp32_32(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
+}
+
+VIZ_INLINE __m128i Fetch16(const int *pRead, const uint32_t *pSrc, const unsigned targetResX)
+{
+	const int U = pRead[0];
+	const int V = pRead[1];
+
+	const unsigned int U0 = U >> 8;
+	const unsigned int V0 = (V >> 8) * targetResX;
+	const unsigned int fracU = (U & 0xff) * 0x01010101;
+	const unsigned int fracV = (V & 0xff) * 0x01010101;
+
+	return bsamp32_16(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
+	}
+
+template <unsigned xRes>
+CKD_INLINE static void Polar_Blit_Tile(uint32_t *pDest, const uint32_t *pSrc, const int *pRead, size_t tileSize, unsigned tY, unsigned tX)
+{
+	unsigned tileOffs = tY*xRes + tX;
+
+	for (unsigned iY = tY; iY < tY + tileSize; ++iY)
+	{
+		uint32_t* pDLine = pDest + tileOffs;
+		const int* pMLine = pRead + (tileOffs<<1);
+
+		for (unsigned iX = 0; iX < tileSize; iX += 4)
+		{
+			const __m128i A = Fetch32(pMLine + (iX+0)*2, pSrc, xRes);
+			const __m128i B = Fetch32(pMLine + (iX+1)*2, pSrc, xRes);
+			const __m128i C = Fetch32(pMLine + (iX+2)*2, pSrc, xRes);
+			const __m128i D = Fetch32(pMLine + (iX+3)*2, pSrc, xRes);
+
+			const __m128i AB = _mm_packus_epi32(A, B);
+			const __m128i CD = _mm_packus_epi32(C, D);
+
+			_mm_stream_si128(reinterpret_cast<__m128i*>(pDLine + iX), _mm_packus_epi16(AB, CD));
+		}
+
+		tileOffs += xRes;
+	}
+}
+
+void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
+{
+	if (false == inverse) {
+		const size_t tileSize = 32;
+		#pragma omp parallel for collapse(2) schedule(guided, 4) // Each iteration becomes smaller, effectively decreasing granularity towards the centre (highest cache miss area)
+		for (unsigned tY = 0; tY < kResY; tY += tileSize)
+			for (unsigned tX = 0; tX < kResX; tX += tileSize)
+				Polar_Blit_Tile<kTargetResX>(pDest, pSrc, s_pMap, tileSize, tY, tX);
+	}
+	else {
+		const size_t tileSize = 16; // Sacrificy granularity a bit hoping we stay in L1/L2 at the cost of some loop/ALU pressure
+		#pragma omp parallel for collapse(2) schedule(static)
+		for (unsigned tY = 0; tY < kResY; tY += tileSize)
+			for (unsigned tX = 0; tX < kResX; tX += tileSize)
+				Polar_Blit_Tile<kTargetResX>(pDest, pSrc, s_pInvMap, tileSize, tY, tX);
+		
+	}
+
+	CKD_FLANDERS(_mm_sfence();)
+}
+
+
+CKD_INLINE static void Polar_Blit_TileA(uint32_t *pDest, const uint32_t *pSrc, const int *pRead, size_t tileSize, unsigned tY, unsigned tX)
+{
+	unsigned tileOffs = tY*kTargetResX + tX;
+
+	for (unsigned iY = tY; iY < tY + tileSize; ++iY)
+	{
+		uint32_t* pDLine = pDest + tileOffs;
+		const int* pMLine = pRead + (tileOffs<<1);
+
+		for (unsigned iX = 0; iX < tileSize; ++iX)
+		{
+			const __m128i srcColor = Fetch16(pMLine + (iX<<1), pSrc, kTargetResX);
+			const __m128i alphaUnp = _mm_shufflelo_epi16(srcColor, 0xff);
+			const __m128i destColor = _mm_unpacklo_epi8(_mm_cvtsi32_si128(pDLine[iX]), _mm_setzero_si128());
+			const __m128i delta = _mm_mullo_epi16(alphaUnp, _mm_sub_epi16(srcColor, destColor));
+			const __m128i color = _mm_srli_epi16(_mm_add_epi16(_mm_slli_epi16(destColor, 8), delta), 8);
+			pDLine[iX] = _mm_cvtsi128_si32(_mm_packus_epi16(color, _mm_setzero_si128()));
+		}
+
+		tileOffs += kTargetResX;
+	}
+}
+
+void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
+{
+	if (false == inverse) {
+		const size_t tileSize = 32;
+		#pragma omp parallel for collapse(2) schedule(guided, 4)
+		for (unsigned tY = 0; tY < kResY; tY += tileSize)
+			for (unsigned tX = 0; tX < kResX; tX += tileSize)
+				Polar_Blit_TileA(pDest, pSrc, s_pMap, tileSize, tY, tX);
+	}
+	else {
+		const size_t tileSize = 16;
+		#pragma omp parallel for collapse(2) schedule(static)
+		for (unsigned tY = 0; tY < kResY; tY += tileSize)
+			for (unsigned tX = 0; tX < kResX; tX += tileSize)
+				Polar_Blit_TileA(pDest, pSrc, s_pInvMap, tileSize, tY, tX);
+	}
+}
+
+void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
+{
+	if (false == inverse) {
+		const size_t tileSize = 32;
+		#pragma omp parallel for collapse(2) schedule(guided, 4)
+		for (unsigned tY = 0; tY < kFxMapResY; tY += tileSize)
+			for (unsigned tX = 0; tX < kFxMapResX; tX += tileSize)
+				Polar_Blit_Tile<kFxMapResX>(pDest, pSrc, s_pMap2x2, tileSize, tY, tX);
+	}
+	else {
+		const size_t tileSize = 16;
+		#pragma omp parallel for collapse(2) schedule(static)
+			for (unsigned tY = 0; tY < kFxMapResY; tY += tileSize)
+				for (unsigned tX = 0; tX < kFxMapResX; tX += tileSize)
+					Polar_Blit_Tile<kFxMapResX>(pDest, pSrc, s_pInvMap2x2, tileSize, tY, tX);
+	}
+}
+
+#if 0
+
+// cookiedough -- polar blits 
  
 #include "main.h"
 // #include "polar.h"
@@ -165,3 +376,5 @@ void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = fal
 		pDest128[iPixel] = _mm_packus_epi16(AB, CD);
 	}
 }
+
+#endif

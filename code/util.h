@@ -21,17 +21,21 @@
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 		#define CKD_INLINE
+		#define CKD_FLANDERS(vow) vow
 	#else
 		#define VIZ_INLINE static __forceinline
 		#define CKD_INLINE __forceinline
+		#define CKD_FLANDERS(vow) 
 	#endif
 #elif defined(__GNUC__)
 	#ifdef _DEBUG
 		#define VIZ_INLINE static
 		#define CKD_INLINE
+		#define CKD_FLANDERS(vow) vow
 	#else
 		#define VIZ_INLINE static __inline 
 		#define CKD_INLINE __inline
+		#define CKD_FLANDERS(vow) 
 	#endif
 #endif
 

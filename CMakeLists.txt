@@ -37,8 +37,9 @@ project(cookiedough)
 
 file(GLOB CKD_SOURCEFILES code/*.cpp code/Std3DMath-stripped/*.cpp code/deprecated/*.cpp)
 file(GLOB ROCKET_SOURCEFILES 3rdparty/rocket-stripped/lib/*.c)
-
-add_executable(cookiedough ${CKD_SOURCEFILES} ${ROCKET_SOURCEFILES})
+file(GLOB IMGUI_SOURCEFILES 3rdparty/imgui-1.90/*.cpp)
+    
+add_executable(cookiedough ${CKD_SOURCEFILES} ${ROCKET_SOURCEFILES} ${IMGUI_SOURCEFILES})
 
 target_compile_definitions(cookiedough PUBLIC
 	CMAKE_BUILD=1 
