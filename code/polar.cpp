@@ -142,7 +142,7 @@ void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false *
 				Polar_Blit_Tile<kTargetResX>(pDest, pSrc, s_pMap, tileSize, tY, tX);
 	}
 	else {
-		const size_t tileSize = 16; // Sacrificy granularity a bit hoping we stay in L1/L2 at the cost of some loop/ALU pressure
+		const size_t tileSize = 16; // Smaller tiles hoping we stay in L1/L2 at the cost of some extra overhead
 		#pragma omp parallel for collapse(2) schedule(static)
 		for (unsigned tY = 0; tY < kResY; tY += tileSize)
 			for (unsigned tX = 0; tX < kResX; tX += tileSize)
