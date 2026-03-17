@@ -47,7 +47,8 @@ public:
 		__m128 vSSE;
 	};
 
-	Vector3() {}
+	Vector3() :
+		padding(0.f) {} // This makes sense when Vector3 calculations are part scalar part vectorized (example: dot product)
 	
 	explicit Vector3(float scalar) : 
 		x(scalar), y(scalar), z(scalar), padding(0.f) {}

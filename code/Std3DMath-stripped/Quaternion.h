@@ -26,9 +26,6 @@
  
 #pragma once
 
-#include "Dependencies.h"
-#include "Math.h"
-
 class Quaternion : public Vector4
 {
 public:

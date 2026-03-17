@@ -251,7 +251,11 @@ namespace Shadertoy
 	// specular calc. (traditional)
 	VIZ_INLINE float Specular(const Vector3 &origin, const Vector3 &position, const Vector3 &normal, const Vector3 &lightDir, float power)
 	{
-//		const Vector3 V = (origin-position).Normalized();
+//	 	const Vector3 V = (origin-position).Normalized();
+//		const Vector3 H = (lightDir+V).Normalized();
+//		return powf(std::max<float>(0.f, normal*H), power);		
+
+//	 	const Vector3 V = (origin-position).Normalized();
 		__m128 V = _mm_sub_ps(origin.vSSE, position.vSSE);
 		const __m128 oneOverLenV = _mm_rsqrt_ps(_mm_dp_ps(V, V, 0xff));
 		V = _mm_mul_ps(V, oneOverLenV);		
@@ -265,10 +269,10 @@ namespace Shadertoy
 		const __m128 projExp = _mm_dp_ps(normal.vSSE, H, 0xff);
 
 		// the exp_ps() implementation only pays off if we do this for all 4 lanes, so I'll take it into scalar territory (for now)
-		const float cosAng = projExp[0]; // partial access, won't hurt much
+		const float cosAng = projExp[0];
 
 		// since we're chiefly raymarching we're not dealing with a lot of negative values by design, so let the branch predictor have at it
-		const auto signBit = std::bit_cast<int32_t>(cosAng) >> 31;
+		const auto signBit = std::bit_cast<uint32_t>(cosAng) >> 31;
 		return (0 != signBit)
 			? powf(cosAng, power)
 			: 0.f;
