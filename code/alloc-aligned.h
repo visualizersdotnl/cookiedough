@@ -1,5 +1,5 @@
 
-// cookiedough -- Win32 & Posix aligned alloc. & free
+// cookiedough -- Win32/MSVC & Posix/GCC aligned alloc. & free
 
 #ifndef _ALLOC_ALIGNED_H_
 #define _ALLOC_ALIGNED_H_
@@ -9,7 +9,7 @@
 // inline void* mallocAligned(size_t size, size_t align);
 // inline void  freeAligned(void* address);
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(MSVC)
 
 __forceinline static void* mallocAligned(size_t size, size_t align) { 
 	return _aligned_malloc(size, align); }
