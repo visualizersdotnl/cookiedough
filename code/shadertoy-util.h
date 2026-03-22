@@ -71,10 +71,12 @@ namespace Shadertoy
 
 	VIZ_INLINE float vFastLen3(const Vector3 &vector)
 	{
-		// results taught me that this, incurring float-to-long penalty, is not faster anymore
 //		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
-		
-		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+//		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
+
+		float length;
+		_mm_store_ss(&length, _mm_sqrt_ss(_mm_dp_ps(vector.vSSE, vector.vSSE, 0xff)));
+		return length;
 	}
 
 	CKD_INLINE static void vNorm4(Vector3 &vector)
@@ -214,6 +216,7 @@ namespace Shadertoy
 	}
 
 	// IQ's palette function (simplified)
+	// FIXME: SIMD
 	VIZ_INLINE const Vector3 CosPalSimple(float index, const Vector3 &bias, float cosScale, const Vector3 &frequency, float phase)
 	{
 		Vector3 cosines = (frequency*index + phase)*k2PI;
@@ -224,6 +227,7 @@ namespace Shadertoy
 	}
 
 	// IQ's palette function (simplified)
+	// FIXME: SIMD
 	VIZ_INLINE const Vector3 CosPalSimplest(float index, float cosScale, const Vector3 &frequency, float phase)
 	{
 		Vector3 cosines = (frequency*index + phase)*k2PI;
