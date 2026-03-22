@@ -265,7 +265,8 @@ namespace Shadertoy
 		const __m128 projExp = _mm_dp_ps(normal.vSSE, H, 0xff);
 
 		// the exp_ps() implementation only pays off if we do this for all 4 lanes, so I'll take it into scalar territory (for now)
-		const float cosAng = projExp[0];
+		float cosAng;
+		_mm_store_ss(&cosAng, projExp);
 
 		// since we're chiefly raymarching we're not dealing with a lot of negative values by design, so let the branch predictor have at it
 		const auto signBit = std::bit_cast<uint32_t>(cosAng) >> 31;
