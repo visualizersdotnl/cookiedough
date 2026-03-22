@@ -7,7 +7,13 @@
 	#define DEBUG_TRAP __debugbreak();
 
 	#if defined (_MSC_VER)
-		#define MSVC // use for anything MSVC-specific
+
+		// we're compiling with MSVC (use anywhere necessary)
+		#define MSVC 
+
+		// tell MSVC to shut up about it's well-intentioned safer CRT functions
+		#define _CRT_SECURE_NO_WARNINGS
+
 	#endif
 
 #elif defined(__GNUC__) // traps both Linux and OSX for now

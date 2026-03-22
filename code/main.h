@@ -4,8 +4,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define _CRT_SECURE_NO_WARNINGS // tell MSVC to shut up about it's well-intentioned *_s() functions
-
 // Rocket: def. for sync. replay (instead of edit) mode
 // #define SYNC_PLAYER
 
