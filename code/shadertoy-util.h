@@ -252,10 +252,6 @@ namespace Shadertoy
 	VIZ_INLINE float Specular(const Vector3 &origin, const Vector3 &position, const Vector3 &normal, const Vector3 &lightDir, float power)
 	{
 //	 	const Vector3 V = (origin-position).Normalized();
-//		const Vector3 H = (lightDir+V).Normalized();
-//		return powf(std::max<float>(0.f, normal*H), power);		
-
-//	 	const Vector3 V = (origin-position).Normalized();
 		__m128 V = _mm_sub_ps(origin.vSSE, position.vSSE);
 		const __m128 oneOverLenV = _mm_rsqrt_ps(_mm_dp_ps(V, V, 0xff));
 		V = _mm_mul_ps(V, oneOverLenV);		
@@ -276,7 +272,5 @@ namespace Shadertoy
 		return (0 != signBit)
 			? powf(cosAng, power)
 			: 0.f;
-
-		// branchless: const uint32_t mask = NonZeroMask32f)cosAng), et cetera
 	}
 } 

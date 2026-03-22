@@ -4,15 +4,13 @@
 #ifndef _BIT_TRICKS_H_
 #define _BIT_TRICKS_H_
 
-CKD_INLINE static uint32_t NonZeroMask32(int32_t value)
+CKD_INLINE static unsigned NonZeroMask32(int value)
 {
-	// SHIFTRIGHT -> XOR -> AND
-	return -((value >> 31) ^ 1) & 0x7FFFFFFF;
+	return -((value >> 31) ^ 1) & 0x7fffffff;
 }
 
-// works for IEEE floats too if you look to clamp a scalar since the sign bit is in the same place
 CKD_INLINE static uint32_t NonZeroMask32f(float value) {
-	return NonZeroMask32(int32_t(value));
+	return NonZeroMask32(std::bit_cast<int32_t>(value));
 }
 
 CKD_INLINE static const bool IsPow2(unsigned value)
