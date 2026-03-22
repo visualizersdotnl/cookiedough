@@ -193,6 +193,8 @@ void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false 
 			for (unsigned tX = 0; tX < kResX; tX += tileSize)
 				Polar_Blit_TileA(pDest, pSrc, s_pInvMap, tileSize, tY, tX);
 	}
+
+	CKD_FLANDERS(_mm_sfence();)
 }
 
 void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
@@ -211,4 +213,6 @@ void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = fal
 				for (unsigned tX = 0; tX < kFxMapResX; tX += tileSize)
 					Polar_Blit_Tile<kFxMapResX>(pDest, pSrc, s_pInvMap2x2, tileSize, tY, tX);
 	}
+
+	CKD_FLANDERS(_mm_sfence();)
 }
