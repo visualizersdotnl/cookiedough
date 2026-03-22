@@ -116,7 +116,7 @@ static void tscape(uint32_t *pDest, float time)
 
 	const auto fpFromY = ftofp24(fromY);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) // static is fine for most landscapes
 	for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float mapX = iRay*mapStepX;
@@ -174,9 +174,10 @@ void Tunnelscape_Draw(uint32_t *pDest, float time, float delta)
 	const float blur = Rocket::getf(trackStarsBlur);
 	if (0.f != blur)
 	{
+		// FIXME: use the new blur, this is especially "bad" for performance
 		const float scaledBlur = BoxBlurScale(blur);
 
-		// Twice, and not efficiently, but to come closer to non-linearity! (FIXME: optimize)
+		// Twice, and not efficiently, but to come closer to non-linearity!
 		BoxBlur32(pDest, pDest, kResX, kResY, scaledBlur);
 		BoxBlur32(pDest, pDest, kResX, kResY, scaledBlur);
 	}

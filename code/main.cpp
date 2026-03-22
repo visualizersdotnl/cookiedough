@@ -123,7 +123,7 @@ const char *kTitle = "Arrested Development (BPS ft. TPB)";
 static const char *kStream = "assets/audio/comatron - to the moon - final.wav";
 
 // when you're working on anything else than synchronization/demonstration
-constexpr bool kSilent = true; 
+constexpr bool kSilent = false; 
 
 // enable this to receive derogatory comments
 // #define DISPLAY_AVG_FPS

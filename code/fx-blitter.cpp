@@ -1,5 +1,5 @@
 
-// cookiedough -- old school 2x2+4x4 map interpolation blitters plus buffers to use (for heavier effects)
+// cookiedough -- old school 2x2+4x4 map bilinear blitters plus buffers to use (for heavier effects)
 
 #include "main.h"
 #include "fx-blitter.h"

@@ -1,5 +1,5 @@
 
-// cookiedough -- old school 2x2 interpolating blitter plus buffer to use (for heavier effects)
+// cookiedough -- old school 2x2 bilinear blitter plus buffer to use (for heavier effects)
 
 /*
 	IMPORTANT:

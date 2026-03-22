@@ -188,6 +188,7 @@ static void vball_ray_beams(uint32_t *pDest, int curX, int curY, int dX, int dY)
 	constexpr unsigned mulG = unsigned(0.7152f*65536.f);
 	constexpr unsigned mulB = unsigned(0.2126f*65536.f);
 
+	// FIXME: this is obviously a pre-Revision hack, do this in fixed point please
 	const unsigned luminosity = ((beamR*mulR) >> 16) + ((beamG*mulG) >> 16) + ((beamB*mulB) >> 16);
 	const float fLuminosity = float(luminosity);
 
@@ -292,20 +293,17 @@ static void vball_precalc()
 		// sine goes from 0 to 1 back to 0 for [0..kPI] so as to fold it around half a sphere
 		s_heightProj[iAngle] = unsigned(radius*sinf(angStepSin*iAngle));    
 
-		// cosine goes from 1 down to -1, effectively culling
 		const float cosine = cosf(angStepCos*iAngle);
 		if (cosine >= 0.f)
 		{
-			// doing this calc. here prevents banding
+			// scale by a few geometrical constants (there's no scientific basis for this, don't worry)
 			s_heightProjNorm[iAngle][0] = int(255.f*powf(cosine, kGoldenRatio));
 			s_heightProjNorm[iAngle][1] = int(255.f*powf(cosine, kGoldenAngle));
 			s_heightProjNorm[iAngle][2] = int(255.f*powf(cosine, kPI));
 		}
 		else
-		{
-			// lighting calc. does not take kindly to negative (signed)
+			// backface cull
 			s_heightProjNorm[iAngle][0] = s_heightProjNorm[iAngle][1] = s_heightProjNorm[iAngle][2] = 0; 
-		}
 	}
 }
 
@@ -339,10 +337,10 @@ static void vball(uint32_t *pDest, float time)
 	// cast rays
 	if (false == hasBeams)
 	{
-		// FIXME: temporary release fix: no threading and erase buffer first, that "fixes" a glitch bug
+		// FIXME: temporary release fix: no threading and erase buffer first, that "fixes" a glitch bug (issue @ Github)
 		memset32(pDest, 0, kTargetSize);
 
-//		#pragma omp parallel for schedule(static)
+//		#pragma omp parallel for schedule(dynamic)
 		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{
 			const float curAngle = iRay*delta;
@@ -354,7 +352,7 @@ static void vball(uint32_t *pDest, float time)
 	else
 	{
 		// FIXME: beam version works glitchless or is it just not visible due to beams saturating it the result?
-		#pragma omp parallel for schedule(static)
+		#pragma omp parallel for schedule(dynamic)
 		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{
 			const float curAngle = iRay*delta;

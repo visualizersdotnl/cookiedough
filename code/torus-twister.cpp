@@ -100,7 +100,7 @@ static void vtwister(uint32_t *pDest, float time)
 	const float speed = Rocket::getf(trackTwisterSpeed);
 	const float shearSpeed = Rocket::getf(trackTwisterShearSpeed);
 
-	#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static) // dynamic isn't that appropriate given the usual geometry (and thus calc. load) of a twister
 	for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 	{
 		const float shearAngle = (float) iRay * (k2PI/(kTargetResY-1));
