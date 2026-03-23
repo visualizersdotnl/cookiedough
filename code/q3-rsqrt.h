@@ -2,7 +2,7 @@
 // cookiedough -- the infamous rsqrtf() approximation
 
 /*
-	not all that useful anymore overall and definitely not for visually accuracy (it's horrible when for ex. calculating normals for lighting)
+	not all that useful anymore overall and definitely not for visual accuracy (it's horrible when for ex. calculating normals for lighting)
 	
 	- conceptual explanation: https://betterexplained.com/articles/understanding-quakes-fast-inverse-square-root/
 	- kept around for nostalgia (fits this project)
