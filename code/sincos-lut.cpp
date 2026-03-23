@@ -1,18 +1,16 @@
 
-// cookiedough -- LUT sinus/cosinus
+// cookiedough -- LUT sinus/cosinus (interpolated)
 
 #include "main.h"
 // #include "sincos-lut.h"
 
-alignas(kAlignTo) float g_cosLUT[kCosTabSize];
+alignas(kAlignTo) float g_cosLUT[kCosTabSize+1];
 
 void CalculateCosLUT()
 {
-	float angle = 0.f;
-	const float angleStep = k2PI/kCosTabSize;
-	for (unsigned iStep = 0; iStep < kCosTabSize; ++iStep)
-	{
-		g_cosLUT[iStep] = cosf(angle);
-		angle += angleStep;
-	}
+	for (unsigned iCos = 0; iCos < kCosTabSize; ++iCos)
+		g_cosLUT[iCos] = cosf(float(iCos)*(k2PI/kCosTabSize));
+
+	// close loop (guard)
+	g_cosLUT[kCosTabSize] = g_cosLUT[0];
 }

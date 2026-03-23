@@ -1,33 +1,32 @@
 
-// cookiedough -- LUT sinus/cosinus
+// cookiedough -- LUT sinus/cosinus (interpolated)
 
 #pragma once
 
-constexpr size_t kCosTabSize = 4096;
-constexpr size_t kCosTabAnd = kCosTabSize-1;
+constexpr unsigned kCosTabSize = 2048;
+constexpr unsigned kCosTabAnd = kCosTabSize-1;
 constexpr int kCosTabSinPhase = kCosTabSize/4;
 
-extern "C" float g_cosLUT[kCosTabSize];
+extern "C" float g_cosLUT[kCosTabSize+1];
 
 void CalculateCosLUT();
 
-VIZ_INLINE int tocosindex(float angle) {
+CKD_INLINE static int64_t tocosindex(float angle) {
 	angle *= (1.f/k2PI)*kCosTabSize;
-	return (int) angle;
+	angle *= 65536.f; // 16-bit fraction
+	return int64_t(angle); // FIXME: possible truncation issue for small negative values
 }
 
-VIZ_INLINE float lutcosf(int index) { 
-	return g_cosLUT[index&kCosTabAnd];  
+CKD_INLINE static float lutcosf(int64_t packedIndex) 
+{ 
+	const int index = (packedIndex>>16)&kCosTabAnd;
+	return lerpf<float>(g_cosLUT[index], g_cosLUT[index+1], float(packedIndex&65535)*(1.f/65536.f));
 }
 
-VIZ_INLINE float lutsinf(int index) { 
-	return lutcosf(int(kCosTabSinPhase)+index); 
+CKD_INLINE static float lutsinf(int64_t packedIndex) 
+{ 
+	return lutcosf(int64_t((kCosTabSinPhase<<16)+packedIndex)); 
 }
 
-VIZ_INLINE float lutcosf(float angle) {
-	return lutcosf(tocosindex(angle)); 
-}
-
-VIZ_INLINE float lutsinf(float angle) { 
-	return lutsinf(tocosindex(angle)); 
-}
+CKD_INLINE static float lutcosf(float angle) { return lutcosf(tocosindex(angle)); }
+CKD_INLINE static float lutsinf(float angle) { return lutsinf(tocosindex(angle)); }

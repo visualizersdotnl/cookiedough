@@ -222,7 +222,7 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 	time = time*speed;
 
-	const int cosIndex = tocosindex(time*0.314f*0.5f);
+	const auto cosIndex = tocosindex(time*0.314f*0.5f);
 	const float dirCos = lutcosf(cosIndex);
 	const float dirSin = lutsinf(cosIndex);
 
@@ -878,7 +878,7 @@ VIZ_INLINE float fSinMap(const Vector3 &point)
 	float pZ = point.z;
 
 	const float zMod = pZ*0.314f;
-	const int cosIndex = tocosindex(zMod);
+	const auto cosIndex = tocosindex(zMod);
 	const float pathCosine = lutcosf(cosIndex);
 	const float pathSine = lutcosf(cosIndex+kCosTabSinPhase)*kGoldenRatio;
 	float pX = point.x-(pathSine*2.f - pathCosine*1.5f);
