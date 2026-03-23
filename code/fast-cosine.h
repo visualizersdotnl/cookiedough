@@ -1,5 +1,9 @@
 
-// cookiedough -- fast (co)sine
+// cookiedough -- fast (co)sine (use with care!)
+
+// important: 
+// - uses linear domain, not angular (rad.), so [0..1] equals [0..2PI]
+// - quality degrades for large numbers, optimized for phase locked loops
 
 #pragma once
 
@@ -10,32 +14,40 @@ extern double g_fastCosTab[kFastCosTabSize+1];
 
 void InitializeFastCosine();
 
-// [0..1] equals [0..2PI]
 CKD_INLINE static float fastcosf(double x)
 {
-	// Cosine is symmetrical around 0, let's get rid of negative values
-	x = fabs(x); 
+	// ignore sign since cos(-x) = cos(x)
+	x = fabs(x);
 
-	// Convert [0..k2PI] to [1..2]
-	constexpr auto phaseScale = 1.f/k2PI;
+	// shift input to radians, offset by 1 to hopefully sit in IEEE754 mantissa normalized range [1..2]
+	constexpr double phaseScale = 1.f/k2PI;
 	const auto phase = 1.0 + x*phaseScale;
 
-	const auto phaseAsInt = std::bit_cast<unsigned long long>(phase); // *reinterpret_cast<const unsigned long long *>(&phase);
-	const int exponent = (phaseAsInt >> 52) - 1023;
+	// [ sign | exponent (11-bit) | mantissa (52-bit) ]
+	const uint64_t phaseBits = std::bit_cast<uint64_t>(phase); 
 
-	constexpr auto fractBits = 32 - kFastCosTabLog2Size;
-	constexpr auto fractScale = 1 << fractBits;
-	constexpr auto fractMask = fractScale - 1;
+	// extract exponent and remove bias
+	const int exponent = int(phaseBits>>52)-1023; 
 
-	const auto significand = (unsigned int)((phaseAsInt << exponent) >> (52 - 32));
-	const auto index = significand >> fractBits;
-	const int fract = significand & fractMask;
+	// reconstruct a 32-bit wrapped fixed-point value,
+	// then split into table index (high bits) and interpolation fraction (low bits)
+	constexpr unsigned fractBits  = 32 - kFastCosTabLog2Size; // e.g. 22 bits
+	constexpr unsigned fractScale = 1u << fractBits;
+	constexpr unsigned fractMask  = fractScale - 1;
 
-	const auto left = g_fastCosTab[index];
-	const auto right = g_fastCosTab[index+1];
+	// approximate linear (throw out lower bits, that's where we stand to lose accuracy)
+	const uint32_t significand = uint32_t((phaseBits<<exponent) >> (52-32));
 
-	const auto fractMix = fract*(1.0/fractScale);
-	return float(left + (right-left) * fractMix);
+	// retrieve table index & sample LUT
+    const unsigned index = significand>>fractBits;  
+    const double left  = g_fastCosTab[index];
+    const double right = g_fastCosTab[index+1];
+
+	// interpolate, back to single prec., return
+	const double t = double(significand&fractMask) * (1.0/fractScale);
+    return float(left + (right-left)*t);
 }
 
-CKD_INLINE static float fastsinf(double x) { return fastcosf(x-0.25); }
+CKD_INLINE static float fastsinf(double x) {
+	return fastcosf(x-0.25); 
+}
