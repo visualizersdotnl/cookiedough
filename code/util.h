@@ -11,7 +11,7 @@
 	#define VIZ_ASSERT(condition)
 #endif
 
-#define VIZ_ASSERT_ALIGNED(buffer) VIZ_ASSERT(0 == (std::bit_cast<size_t>(buffer) & (kAlignTo-1)))
+#define VIZ_ASSERT_ALIGNED(buffer) VIZ_ASSERT((nullptr != buffer) && 0 == (std::bit_cast<size_t>(buffer) & (kAlignTo-1)))
 #define VIZ_ASSERT_NORM(value) VIZ_ASSERT(value >= 0.f && value <= 1.f)
 
 // Windows+GCC inline macro (bruteforce for Windows+MSVC, normal otherwise)
