@@ -5,7 +5,7 @@
 #include "rocket.h"
 #include "audio.h"
 
-const char *kHost = "localhost";
+static const char *kHost = "localhost";
 
 static sync_device *s_hRocket = nullptr;
 
