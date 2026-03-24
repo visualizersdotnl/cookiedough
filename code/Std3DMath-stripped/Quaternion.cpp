@@ -16,7 +16,7 @@
 /* static */ const Quaternion Quaternion::YawPitchRoll(float yaw, float pitch, float roll)
 {
 	// Look up directional cosines if you want to know how this works
-	const float halfYaw = yaw*0.5f, halfPitch = pitch*0.5f, halfRoll = roll*0.5f;
+	const float halfYaw      = yaw*0.5f, halfPitch = pitch*0.5f, halfRoll = roll*0.5f;
 	const float halfCosYaw   = cosf(halfYaw);
 	const float halfSinYaw   = sinf(halfYaw);
 	const float halfCosPitch = cosf(halfPitch);
