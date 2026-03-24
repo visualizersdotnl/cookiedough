@@ -19,8 +19,11 @@
 	#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
+template<unsigned numIter>
 CKD_INLINE static float Q3_rsqrtf(float x)
 {
+	static_assert(numIter > 0);
+
 	const float half = 0.5f*x;
 
 	// hint: the integer reinterpretation behaves roughly like log₂(x), so this line approximates x⁻¹ᐟ² in log space
@@ -29,9 +32,11 @@ CKD_INLINE static float Q3_rsqrtf(float x)
 	// this is the constant that makes a single Newton iteration converge fairly well
 	iX = 0x5f3759df - (iX>>1); 
 
-	// reinterpret back and iterate once (multiple would improve it a bit)
+	// reinterpret back and iterate at least once (multiple would improve it a bit)
 	x = std::bit_cast<float>(iX);   
-	x = x*(1.5f - half*x*x); 
+
+	for (unsigned i = 0; i < numIter; ++i)
+		x = x*(1.5f - half*x*x); 
 
 	return x;
 }

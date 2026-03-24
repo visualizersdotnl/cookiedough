@@ -1090,7 +1090,7 @@ void RenderLaura_2x2(uint32_t *pDest, float time)
 //					2.73f);
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf(specular+diffuse)), Shadertoy::ExpFog(distance, 0.001f)),
+					_mm_mul_ps(diffColor, _mm_set1_ps(diffuse+specular)), _mm_set1_ps(Q3_rsqrtf<1>(specular+diffuse)), Shadertoy::ExpFog(distance, 0.001f)),
 					1.44f);
 			}
 
