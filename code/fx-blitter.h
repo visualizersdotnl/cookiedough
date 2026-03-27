@@ -24,6 +24,6 @@ extern uint32_t *g_pFxMap[kNumFxMaps];
 bool FxBlitter_Create();
 void FxBlitter_Destroy();
 
-void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc);
+void Fx_Blit_2x2(uint32_t* pDest, const uint32_t* pSrc);
 
 void FxBlitter_DrawTestPattern(uint32_t* pDest);

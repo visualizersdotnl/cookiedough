@@ -25,7 +25,7 @@ void FxBlitter_Destroy()
 
 // 2x2 blit (2 pixels per SSE write)
 // FIXME: why is that pixel copy hack in here, you should just interpolate over a correct range instead
-void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
+void Fx_Blit_2x2(uint32_t* pDest, const uint32_t* pSrc)
 {
 	VIZ_ASSERT_ALIGNED(pSrc);
 	VIZ_ASSERT_ALIGNED(pDest);
@@ -47,7 +47,8 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 //			const unsigned iB = iA+1;
 			const unsigned iC = iA+kFxMapResX;
 //			const unsigned iD = iC+1;
-
+			
+			// this shouldn't be too bad cache-wise; these addresses are apart but otherwise completely sequential
 			const __m128i colA = c2vISSE32(pSrc[iA]);
 			const __m128i colB = c2vISSE32(pSrc[iA+1]);
 			const __m128i colC = c2vISSE32(pSrc[iC]);
@@ -64,11 +65,11 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 
 			for (int iPixel = 0; iPixel < 2; ++iPixel)
 			{
-				__m128i step = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(fromY1, fromY0), 16), divisor);
-				__m128i color = fromY0;
-				__m128i A = _mm_srli_epi32(color, 16); 
-				__m128i B = _mm_srli_epi32(_mm_add_epi32(color, step), 16); 
-				__m128i AB = _mm_packus_epi32(A, B);
+				const __m128i step = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(fromY1, fromY0), 16), divisor);
+				const __m128i color = fromY0;
+				const __m128i A = _mm_srli_epi32(color, 16); 
+				const __m128i B = _mm_srli_epi32(_mm_add_epi32(color, step), 16); 
+				const __m128i AB = _mm_packus_epi32(A, B);
 
 				pCopy[destIndex] = _mm_cvtsi128_si64(_mm_packus_epi16(AB, zero));
 				destIndex += kResX>>1;
@@ -78,13 +79,13 @@ void Fx_Blit_2x2(uint32_t* pDest, uint32_t* pSrc)
 			}
 		}
 
-		// Border: copy last 2 pixels for both dest. columns
+		// FIXME: copy last 2 pixels for both dest. columns
 		const auto destIndex = (destIndexY + ((kFxMapResX-2)*kFxMapDiv))>>1;
 		pCopy[destIndex+1] = pCopy[destIndex];
 		pCopy[destIndex+1+(kResX>>1)] = pCopy[destIndex+(kResX>>1)];
 	}
 
-	// Copy last 2 dest. rows
+	// FIXME: copy last 2 dest. rows
 	auto srcIndex = (kResY-4)*kResX;
 	auto destIndex = srcIndex + kResX*2;
 	memcpy(pDest+destIndex, pDest+srcIndex, kResX*2*sizeof(uint32_t));
