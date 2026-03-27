@@ -474,6 +474,10 @@ bool Demo_Draw(uint32_t *pDest, float timer, float delta)
 #endif
 
 #if 0
+	Nautilus_Draw(pDest, 0.f, 0.f);
+//	FxBlitter_DrawTestPattern(pDest);
+	return true;
+
 	// (WIP) new blur test
 
 	memset32(pDest, 0, kResX*kResY);

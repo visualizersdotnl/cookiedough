@@ -60,7 +60,7 @@ VIZ_INLINE void memset32(void *pDest, int value, size_t numInts)
 	VIZ_ASSERT(!(numInts & 3));
 
 	// an 8-byte boundary gaurantees correctly aligned writes
-	VIZ_ASSERT(!(reinterpret_cast<size_t>(pDest) & 7));
+	VIZ_ASSERT(!(std::bit_cast<size_t>(pDest) & 7));
 
 	int *pInt = static_cast<int*>(pDest);
 	while (numInts--) _mm_stream_si32(pInt++, value);

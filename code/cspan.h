@@ -19,7 +19,7 @@ VIZ_INLINE void cspan(
 	// this effectively aligns each 16-bit delta and keeps the uneven 16-bit values zero
 
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(32768 / length);
+	const __m128i divisor = _mm_set1_epi16(65536/length);
 	__m128i from = _mm_unpacklo_epi8(_mm_cvtsi32_si128(A), zero);
 	const __m128i to =  _mm_unpacklo_epi8(_mm_cvtsi32_si128(B), zero);
 	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(to, from), zero);
@@ -118,7 +118,7 @@ VIZ_INLINE void cspanISSE16_noclip(
 	VIZ_ASSERT(length > 0);
 
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(32768 / length);
+	const __m128i divisor = _mm_set1_epi16(65536/length);
 	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
 	const __m128i step = _mm_madd_epi16(delta, divisor);
 	A = _mm_unpacklo_epi16(A, zero);

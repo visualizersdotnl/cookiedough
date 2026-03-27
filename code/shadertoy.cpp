@@ -176,6 +176,7 @@ bool Shadertoy_Create()
 	if (nullptr == s_pFDTunnelTex || nullptr == s_pFDTunnelTexHighlights)
 		return false;
 
+	// IMPORTANT: these *must* be kFxMapRes size!
 	s_pSpikeBlurMaps[0] = Image_Load32("assets/shadertoy/close-up-blur-map-1.png");
 	s_pSpikeBlurMaps[1] = Image_Load32("assets/shadertoy/close-up-blur-map-2.png");
 	if (nullptr == s_pSpikeBlurMaps[0] || nullptr == s_pSpikeBlurMaps[1])
@@ -418,7 +419,7 @@ VIZ_INLINE float fSpikey1(const Vector3 &position)
 {
 	constexpr float scale = kGoldenAngle*0.1f;
 	const float radius = 1.35f + scale*lutcosf(fSpike_global.y*position.y - fSpike_global.x) + scale*lutcosf(fSpike_global.z*position.x + fSpike_global.x);
-	return Shadertoy::vFastLen3(position) - radius; // return position.Length() - radius;
+	return Shadertoy::vFastLen3(position) - radius; 
 }
 
 VIZ_INLINE float fSpikey2(const Vector3 &position) 
@@ -510,7 +511,8 @@ static void RenderSpikeyMap_2x2_Close(uint32_t *pDest, float time)
 				}
 
 				colors[iColor] = Shadertoy::GammaAdj(Shadertoy::vLerp4(
-					_mm_mul_ps(_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, kGoldenRatio*0.1f)),
+					_mm_mul_ps(
+						_mm_add_ps(diffColor, _mm_set1_ps(specular)), _mm_set1_ps(diffuse)), _mm_set1_ps(1.f), Shadertoy::ExpFog(distance, kGoldenRatio*0.1f)), 
 						gamma);
 			}
 
@@ -666,6 +668,7 @@ void Spikey_Draw(uint32_t *pDest, float time, float delta, bool close /* = true 
 		// and now we'll be performing a little trick to make things more interesting
 		const float mbOpacity = saturatef(Rocket::getf(trackCloseMixBlurOpacity));
 
+		// if the following causes grief, immediately check if the maps (s_pSpikeBlurMaps[]) are still the sam res. as kFxMapRes
 		if (mbOpacity > 0.f)
 		{
 			// grab remaining Rocket parameters

@@ -71,7 +71,6 @@ namespace Shadertoy
 
 	VIZ_INLINE float vFastLen3(const Vector3 &vector)
 	{
-//		return 1.f/Q3_rsqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 //		return sqrtf(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 
 		float length;
@@ -256,6 +255,10 @@ namespace Shadertoy
 	VIZ_INLINE float Specular(const Vector3 &origin, const Vector3 &position, const Vector3 &normal, const Vector3 &lightDir, float power)
 	{
 //	 	const Vector3 V = (origin-position).Normalized();
+//		const Vector3 H = (lightDir+V).Normalized();
+//		return powf(std::max<float>(0.f, normal*H), power);		
+
+//	 	const Vector3 V = (origin-position).Normalized();
 		__m128 V = _mm_sub_ps(origin.vSSE, position.vSSE);
 		const __m128 oneOverLenV = _mm_rsqrt_ps(_mm_dp_ps(V, V, 0xff));
 		V = _mm_mul_ps(V, oneOverLenV);		
@@ -274,7 +277,7 @@ namespace Shadertoy
 
 		// since we're chiefly raymarching we're not dealing with a lot of negative values by design, so let the branch predictor have at it
 		const auto signBit = std::bit_cast<uint32_t>(cosAng) >> 31;
-		return (0 != signBit)
+		return (0 == signBit)
 			? powf(cosAng, power)
 			: 0.f;
 	}
