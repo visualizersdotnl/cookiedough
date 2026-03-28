@@ -1,8 +1,6 @@
 
 // cookiedough -- optimized 32-bit multi-pass (gaussian approximation) blur
 
-#if defined(ARRESTED_DEV_LEGACY)
-
 #ifndef _BOX_BLUR_H_
 #define _BOX_BLUR_H_
 
@@ -22,5 +20,3 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 void BoxBlur_32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsigned yRes, float strength, float gain, unsigned numPasses);
 
 #endif // _BOX_BLUR_H_
-
-#endif // ARRESTED_DEV_LEGACY

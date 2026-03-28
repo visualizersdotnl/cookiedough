@@ -1,6 +1,8 @@
 
 // cookiedough -- deprecated 2007 box blur implementation 
 
+#if defined(ARRESTED_DEV_LEGACY)
+
 #ifndef _BOX_BLUR_H_DEPRECATED
 #define _BOX_BLUR_H_DEPRECATED
 
@@ -39,3 +41,5 @@ void BoxBlur32(
 	float strength);
 
 #endif // _BOX_BLUR_H_DEPRECATED
+
+#endif // ARRESTED_DEV_LEGACY
