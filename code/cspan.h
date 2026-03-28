@@ -27,12 +27,12 @@ VIZ_INLINE void cspan(
 	const __m128i preStep = _mm_madd_epi16(delta, _mm_mullo_epi16(divisor, _mm_set1_epi16(preSteps)));
 	const __m128i step = _mm_madd_epi16(delta, divisor);
 	from = _mm_unpacklo_epi16(from, zero);
-	from = _mm_slli_epi32(from, 15);
+	from = _mm_slli_epi32(from, 16);
 	from = _mm_add_epi32(from, preStep);
 
 	while (drawLength--)
 	{
-		__m128i color = _mm_srli_epi32(from, 15);
+		__m128i color = _mm_srli_epi32(from, 16);
 		color = _mm_packs_epi32(color, zero);
 		color = _mm_packus_epi16(color, zero);
 		*pDest = _mm_cvtsi128_si32(color);
@@ -122,11 +122,11 @@ VIZ_INLINE void cspanISSE16_noclip(
 	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
 	const __m128i step = _mm_madd_epi16(delta, divisor);
 	A = _mm_unpacklo_epi16(A, zero);
-	A = _mm_slli_epi32(A, 15);
+	A = _mm_slli_epi32(A, 16);
 
 	while (length--)
 	{
-		__m128i color = _mm_srli_epi32(A, 15);
+		__m128i color = _mm_srli_epi32(A, 16);
 		color = _mm_packs_epi32(color, zero);
 		color = _mm_packus_epi16(color, zero);
 		*pDest = _mm_cvtsi128_si32(color);
@@ -147,15 +147,17 @@ VIZ_INLINE void cspanISSE16_noclip_4(
 	A = _mm_unpacklo_epi16(A, zero);
 	A = _mm_slli_epi32(A, 15);
 		
-	const __m128i pixel1 = _mm_srli_epi32(A, 15); 
+	const __m128i pixelA = _mm_srli_epi32(A, 15); 
 	A = _mm_add_epi32(A, step);
-	const __m128i pixel2 = _mm_srli_epi32(A, 15); 
+	const __m128i pixelB = _mm_srli_epi32(A, 15); 
 	A = _mm_add_epi32(A, step);
-	const __m128i AB = _mm_packs_epi32(pixel1, pixel2);
-	const __m128i pixel3 = _mm_srli_epi32(A, 15); 
+	const __m128i pixelC = _mm_srli_epi32(A, 15); 
 	A = _mm_add_epi32(A, step);
-	const __m128i pixel4 = _mm_srli_epi32(A, 15);
-	const __m128i CD = _mm_packs_epi32(pixel3, pixel4);
+	const __m128i pixelD = _mm_srli_epi32(A, 15);
+
+	const __m128i AB = _mm_packs_epi32(pixelA, pixelB);
+	const __m128i CD = _mm_packs_epi32(pixelC, pixelD);
+
 	*reinterpret_cast<__m128i*>(pDest) = _mm_packus_epi16(AB, CD);
 }
 
