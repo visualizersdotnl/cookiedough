@@ -22,7 +22,7 @@ CKD_INLINE static float lutcosf(float angle) {
 
 #if defined(ARRESTED_DEV_LEGACY)
 
-// yes, I had *this* wrong earlier (you don't really notice that fast when workoing with abstract effects)
+// yes, I had *this* wrong earlier (you don't really notice that fast when working with abstract effects)
 CKD_INLINE static float lutsinf(float angle) {
 	return lutcosf(angle + kPI*0.5f);
 }
