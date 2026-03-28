@@ -4,6 +4,10 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+// def. for 'Arrested Development' (Revision 2023), it will/can be used to retain legacy bugs for correct rendering
+// obviously this goes out the window as soon as I branch off for Revision 2027
+#define ARRESTED_DEV_LEGACY
+
 // Rocket: def. for sync. replay (instead of edit) mode
 // #define SYNC_PLAYER
 

@@ -2,7 +2,7 @@
 // cookiedough -- fast (co)sine (use with care!)
 
 // important: 
-// - uses linear domain, not angular (rad.), so [0..1] equals [0..2PI]
+// - linear domain [-1..1] (for PLLs)
 // - quality degrades for large numbers, optimized for phase locked loops
 
 #pragma once
@@ -19,7 +19,7 @@ CKD_INLINE static float fastcosf(double x)
 	// ignore sign since cos(-x) = cos(x)
 	x = fabs(x);
 
-	// shift input to radians, offset by 1 to hopefully sit in IEEE754 mantissa normalized range [1..2]
+	// shift to radians, offset by 1 to hopefully sit in IEEE754 mantissa normalized range [1..2]
 	constexpr double phaseScale = 1.f/k2PI;
 	const auto phase = 1.0 + x*phaseScale;
 

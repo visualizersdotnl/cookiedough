@@ -379,11 +379,11 @@ void Demo_Destroy()
 
 static void FadeFlash(uint32_t *pDest, float fadeToBlack, float fadeToWhite)
 {
-		if (fadeToWhite > 0.f)
-			Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
+	if (fadeToWhite > 0.f)
+		Fade32(pDest, kOutputSize, 0xffffff, uint8_t(fadeToWhite*255.f));
 
-		if (fadeToBlack > 0.f)
-			Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
+	if (fadeToBlack > 0.f)
+		Fade32(pDest, kOutputSize, 0, uint8_t(fadeToBlack*255.f));
 }
 
 // blend blood logos from zero to full ([0..3]) -- uses g_renderTarget[3]!

@@ -223,9 +223,9 @@ static void RenderPlasmaMap(uint32_t *pDest, float time)
 
 	time = time*speed;
 
-	const auto cosIndex = tocosindex(time*0.314f*0.5f);
-	const float dirCos = lutcosf(cosIndex);
-	const float dirSin = lutsinf(cosIndex);
+	const auto angle = time*0.314f*0.5f;
+	const float dirCos = lutcosf(angle);
+	const float dirSin = lutsinf(angle);
 
 	#pragma omp parallel for schedule(dynamic)
 	for (unsigned iY = 0; iY < kFxMapResY; ++iY)
@@ -881,11 +881,10 @@ VIZ_INLINE float fSinMap(const Vector3 &point)
 	float pZ = point.z;
 
 	const float zMod = pZ*0.314f;
-	const auto cosIndex = tocosindex(zMod);
-	const float pathCosine = lutcosf(cosIndex);
-	const float pathSine = lutcosf(cosIndex+kCosTabSinPhase)*kGoldenRatio;
-	float pX = point.x-(pathSine*2.f - pathCosine*1.5f);
-	float pY = point.y-(pathCosine*3.14f + pathSine);
+	const float pathCos = lutcosf(zMod);
+	const float pathCos2 = lutcosf(zMod+(k2PI/4.f))*kGoldenRatio;
+	float pX = point.x-(pathCos2*2.f - pathCos*1.5f);
+	float pY = point.y-(pathCos*3.14f + pathCos2);
 
 	float aX = pX*0.315f*1.25f + lutsinf(pZ*(0.814f*1.25f));
 	float aY = pY*0.315f*1.25f + lutsinf(pX*(0.814f*1.25f));
