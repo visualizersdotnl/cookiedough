@@ -4,10 +4,8 @@
 #pragma once
 
 #include "Std3DMath-stripped/Math.h"
-constexpr unsigned kCosTabSize = 2048;
-constexpr unsigned kCosTabAnd = kCosTabSize-1;
-constexpr int kCosTabSinPhase = kCosTabSize/4;
 
+constexpr unsigned kCosTabSize = 2048;
 extern "C" float g_cosLUT[kCosTabSize+1];
 
 void CalculateCosLUT();
@@ -15,7 +13,7 @@ void CalculateCosLUT();
 CKD_INLINE static float lutcosf(float angle) {
 	angle = fabsf(angle); // prevent rounding asymmery for small negative angles
 	angle *= (1.f/k2PI)*kCosTabSize;
-	const int index = int(angle)&kCosTabAnd;
+	const int index = int(angle)&(kCosTabSize-1);
 //	return g_cosLUT[index];
 	return lerpf<float>(g_cosLUT[index], g_cosLUT[index+1], fracf(angle));
 }
