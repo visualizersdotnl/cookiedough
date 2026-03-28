@@ -141,7 +141,7 @@ VIZ_INLINE void cspanISSE16_noclip_4(
 	__m128i A, __m128i B) // colors, unpacked to 16-bit	
 {
 	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi16(8192);
+	const __m128i divisor = _mm_set1_epi16(8192); // 32768/4
 	const __m128i delta = _mm_unpacklo_epi16(_mm_sub_epi16(B, A), zero);
 	const __m128i step = _mm_madd_epi16(delta, divisor);
 	A = _mm_unpacklo_epi16(A, zero);
