@@ -11,7 +11,7 @@ extern "C" float g_cosLUT[kCosTabSize+1];
 void CalculateCosLUT();
 
 CKD_INLINE static float lutcosf(float angle) {
-	angle = fabsf(angle); // prevent rounding asymmery for small negative angles
+	angle = fabsf(angle); // prevent rounding asymmetry for small negative angles
 	angle *= (1.f/k2PI)*kCosTabSize;
 	const int index = int(angle)&(kCosTabSize-1);
 //	return g_cosLUT[index];
