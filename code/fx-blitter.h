@@ -14,6 +14,9 @@ constexpr size_t kNumFxMaps = 4;
 constexpr size_t kFxMapResX = (kResX/kFxMapDiv)+4; // add 4 pixels guard band for blit implementation (no edge cases)
 constexpr size_t kFxMapResY = (kResY/kFxMapDiv)+4; // 4 pixels because effects depend on these being multiples of 4
 
+static_assert(0 == (kFxMapResX & 3));
+static_assert(0 == (kFxMapResY & 3));
+
 constexpr size_t kFxMapSize = kFxMapResX*kFxMapResY;
 constexpr size_t kFxMapBytes = kFxMapSize*sizeof(uint32_t);
 
