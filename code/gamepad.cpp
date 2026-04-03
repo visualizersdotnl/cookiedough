@@ -28,12 +28,12 @@ void Gamepad_Destroy()
 	}
 }
 
-inline float ClampAxisDeadzone(int input)
+CKD_INLINE static float ClampAxisDeadzone(int input)
 {
 	// as described in SDL_gamecontroller.h (version 2.0.8)
-	const int docDeadZone = 8000;
+	constexpr int docDeadZone = 8000;
 
-	return (input > docDeadZone || input < -docDeadZone) ? input / (float) SDL_JOYSTICK_AXIS_MAX : 0.f;
+	return (input > docDeadZone || input < -docDeadZone) ? input/float(SDL_JOYSTICK_AXIS_MAX) : 0.f;
 }
 
 bool Gamepad_Update(PadState &state)
