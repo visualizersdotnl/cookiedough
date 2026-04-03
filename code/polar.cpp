@@ -3,7 +3,7 @@
 
 // FIXME:
 // - [/] test entirity of 'Arrested Dev.'
-// - [ ] take out/optimize bilinear fetches
+// - [ ] take out/optimize generic bilinear fetches
  
 #include "main.h"
 #include "bilinear.h"
@@ -103,7 +103,7 @@ VIZ_INLINE __m128i Fetch16(const int *pRead, const uint32_t *pSrc, const unsigne
 	const unsigned int fracV = (V & 0xff) * 0x01010101;
 
 	return bsamp32_16(pSrc, U0, V0, U0+1, V0+targetResX, fracU, fracV);
-	}
+}
 
 template <unsigned xRes>
 CKD_INLINE static void Polar_Blit_Tile(uint32_t *pDest, const uint32_t *pSrc, const int *pRead, size_t tileSize, unsigned tY, unsigned tX)
@@ -136,13 +136,13 @@ void Polar_Blit(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false *
 {
 	if (false == inverse) {
 		const size_t tileSize = 32;
-		#pragma omp parallel for collapse(2) schedule(guided, 4) // Each iteration becomes smaller, effectively decreasing granularity towards the centre (highest cache miss area)
+		#pragma omp parallel for collapse(2) schedule(static) // FIXME: measure -> schedule(guided, 4)
 		for (unsigned tY = 0; tY < kResY; tY += tileSize)
 			for (unsigned tX = 0; tX < kResX; tX += tileSize)
 				Polar_Blit_Tile<kTargetResX>(pDest, pSrc, s_pMap, tileSize, tY, tX);
 	}
 	else {
-		const size_t tileSize = 16; // Smaller tiles hoping we stay in L1/L2 at the cost of some extra overhead
+		const size_t tileSize = 16; // anticipating more read cache misses
 		#pragma omp parallel for collapse(2) schedule(static)
 		for (unsigned tY = 0; tY < kResY; tY += tileSize)
 			for (unsigned tX = 0; tX < kResX; tX += tileSize)
@@ -200,14 +200,14 @@ void Polar_BlitA(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false 
 void Polar_Blit_2x2(uint32_t *pDest, const uint32_t *pSrc, bool inverse /* = false */)
 {
 	if (false == inverse) {
-		const size_t tileSize = 32;
-		#pragma omp parallel for collapse(2) schedule(guided, 4)
+		const size_t tileSize = 64; // kFxMapRes is about half the size, so double up default tile size
+		#pragma omp parallel for collapse(2) schedule(static) // FIXME: measure -> schedule(guided, 4)
 		for (unsigned tY = 0; tY < kFxMapResY; tY += tileSize)
 			for (unsigned tX = 0; tX < kFxMapResX; tX += tileSize)
 				Polar_Blit_Tile<kFxMapResX>(pDest, pSrc, s_pMap2x2, tileSize, tY, tX);
 	}
 	else {
-		const size_t tileSize = 16;
+		const size_t tileSize = 32; // anticipating more read cache misses
 		#pragma omp parallel for collapse(2) schedule(static)
 			for (unsigned tY = 0; tY < kFxMapResY; tY += tileSize)
 				for (unsigned tX = 0; tX < kFxMapResX; tX += tileSize)
