@@ -18,6 +18,7 @@ CMakeFiles/
 
 # cache
 .cache/clangd/*
+CMakeCache.txt
 
 # build output
 build/*
