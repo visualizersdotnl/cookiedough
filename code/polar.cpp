@@ -32,7 +32,7 @@ static void CalculateMaps(int *pDest, int *pInvDest, unsigned srcResX, unsigned 
 		{
 			const float distance = sqrtf(X*X + Y*Y) / maxDist;
 			float theta = atan2f(Y, X);
-			theta += kPI;
+			theta += kPI; // add bias to zero
 			theta /= kPI*2.f;
 			const float U    = distance*(srcResX-1.f);      
 			const float invU = (1.f-distance) * (srcResX-1.f); 

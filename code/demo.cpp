@@ -19,6 +19,9 @@
 #include "tunnelscape.h"
 #include "shadertoy.h"
 
+// 3D engine (doesn't that sound 'delightfully 1997')
+#include "retro3D/retro3D.h"
+
 // for this production:
 static_assert(kResX == 1280 && kResY == 720);
 
