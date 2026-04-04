@@ -1,9 +1,11 @@
+
 // cookiedough -- old school 2x2 bilinear blitter plus buffer to use (for heavier effects)
 
 /*
 	IMPORTANT:
 	- assumes output resolution for blit destination
 	- buffers must be 16-byte aligned
+	- 4 pixels guard band is necessary both for the blitter(s) and effects
 */
 
 #pragma once

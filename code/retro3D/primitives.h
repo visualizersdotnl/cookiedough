@@ -6,18 +6,31 @@
 
 namespace retro3D
 {
-    struct Face 
-    {
-        unsigned iA;
-        unsigned iB;
-        unsigned iC;
-    };
+	// triangle indices
+	struct Face 
+	{
+		unsigned iA;
+		unsigned iB;
+		unsigned iC;
+	};
 
-    struct Vertex
-    {
-        Vector3 position;
-        uint32_t ARGB;
-    };
+	// std. textured polygon vertex
+	struct Vertex
+	{
+		Vector3 position;
+		uint32_t ARGB;
+		Vector2 UV;
+	};
+
+	// triangle filler vertex (post projection)
+	struct Projected
+	{
+		int iX, iY;
+		float projZ;
+		uint32_t ARGB;
+		Vector2 UV;
+	};
 }
 
 #endif // CKD_RETRO3D_PRIMITIVES
+ 

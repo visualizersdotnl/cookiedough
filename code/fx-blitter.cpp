@@ -2,6 +2,7 @@
 // cookiedough -- old school 2x2 map bilinear blitters plus buffers to use (for heavier effects)
 
 #include "main.h"
+#include "util.h"
 #include "fx-blitter.h"
 
 uint32_t *g_pFxMap[kNumFxMaps] = { nullptr };
@@ -23,64 +24,54 @@ void FxBlitter_Destroy()
 	freeAligned(g_pFxMap[0]);
 }
 
-// 2x2 blit (2 pixels per SSE write)
 void Fx_Blit_2x2(uint32_t* pDest, const uint32_t* pSrc)
 {
-	VIZ_ASSERT_ALIGNED(pSrc);
 	VIZ_ASSERT_ALIGNED(pDest);
-
-	const __m128i zero = _mm_setzero_si128();
-	const __m128i divisor = _mm_set1_epi32(65536/kFxMapDiv);
-
-	int64_t *pCopy = reinterpret_cast<int64_t*>(pDest);
+	VIZ_ASSERT_ALIGNED(pSrc);
 
 	#pragma omp parallel for schedule(static)
 	for (unsigned iY = 0; iY < kFxMapResY-4; ++iY)
 	{
-		const unsigned mapIndexY = iY*kFxMapResX;
-		const unsigned destIndexY = (iY*kFxMapDiv)*kResX;
+		const __m128i *pSrcRow0 = reinterpret_cast<const __m128i*>(&pSrc[iY*kFxMapResX]);
+		const __m128i *pSrcRow1 = reinterpret_cast<const __m128i*>(&pSrc[(iY+1)*kFxMapResX]);
 
-		for (unsigned iX = 0; iX < kFxMapResX-4; ++iX)
+		__m128i* pDstTop = reinterpret_cast<__m128i*>(&pDest[(iY<<1)*kResX]);
+		__m128i* pDstBot = reinterpret_cast<__m128i*>(&pDest[((iY<<1)+1)*kResX]);
+
+		for (unsigned iX = 0; iX < (kFxMapResX-4)/4; ++iX)
 		{
-			const unsigned iA = mapIndexY + iX;
-//			const unsigned iB = iA+1;
-			const unsigned iC = iA+kFxMapResX;
-//			const unsigned iD = iC+1;
+			// load quad pixels
+			const __m128i r0c0 = _mm_load_si128(pSrcRow0+iX); 
+			const __m128i r1c0 = _mm_load_si128(pSrcRow1+iX);
+			
+			// fetch next 4 pixels to get right hand neighbours for interpolation (this is where the guard band allows for a full extra 128-bit load)
+			const __m128i r0c1 = _mm_load_si128(reinterpret_cast<const __m128i*>(&pSrc[iY*kFxMapResX + (iX<<2) + 1]));
+			const __m128i r1c1 = _mm_load_si128(reinterpret_cast<const __m128i*>(&pSrc[(iY+1)*kFxMapResX + (iX<<2) + 1]));
 
-			auto destIndex = destIndexY + (iX*kFxMapDiv);
-			destIndex >>= 1;
+			// avg. horz. top/bottom rows
+			const __m128i avgH0 = _mm_avg_epu8(r0c0, r0c1);
+			const __m128i avgH1 = _mm_avg_epu8(r1c0, r1c1);
 
-			// FIXME: optimize SIMD
+			// vertical avg.
+			const __m128i avgV0 = _mm_avg_epu8(r0c0, r1c0);
+			const __m128i avgCenter = _mm_avg_epu8(avgH0, avgH1);
 
-			const __m128i colA32 = c2vISSE32(pSrc[iA]);
-			const __m128i colB32 = c2vISSE32(pSrc[iA+1]);
-			const __m128i colC32 = c2vISSE32(pSrc[iC]);
-			const __m128i colD32 = c2vISSE32(pSrc[iC+1]);
+			// unpack/interleave into dest. pairs
+			const __m128i dstTopL = _mm_unpacklo_epi32(r0c0, avgH0);
+			const __m128i dstTopR = _mm_unpackhi_epi32(r0c0, avgH0);
+			
+			const __m128i dstBotL = _mm_unpacklo_epi32(avgV0, avgCenter);
+			const __m128i dstBotR = _mm_unpackhi_epi32(avgV0, avgCenter);
 
-			const __m128i dX = _mm_madd_epi16(_mm_sub_epi32(colB32, colA32), divisor);
-			const __m128i dY = _mm_madd_epi16(_mm_sub_epi32(colD32, colC32), divisor);
-
-			__m128i X = _mm_slli_epi32(colA32, 16);
-			__m128i Y = _mm_slli_epi32(colC32, 16);
-
-			for (int iPixel = 0; iPixel < 2; ++iPixel)
-			{
-				const __m128i dA = _mm_madd_epi16(_mm_srli_epi32(_mm_sub_epi32(Y, X), 16), divisor);
-				const __m128i A = _mm_srli_epi32(X, 16); 
-				const __m128i B = _mm_srli_epi32(_mm_add_epi32(A, dA), 16); 
-				const __m128i AB = _mm_packus_epi32(A, B);
-				const __m128i C = _mm_packus_epi16(AB, zero);
-
-				_mm_stream_si64(pCopy+destIndex, _mm_cvtsi128_si64(C));				
-				destIndex += kResX>>1;
-
-				X = _mm_add_epi32(X, dX);
-				Y = _mm_add_epi32(Y, dY);
-			}
+			// store 8 pixels per row (4 x 128-bit stores)
+			_mm_store_si128(pDstTop + (iX<<1),  dstTopL);
+			_mm_store_si128(pDstTop + (iX<<1)+1,dstTopR);
+			_mm_store_si128(pDstBot + (iX<<1),  dstBotL);
+			_mm_store_si128(pDstBot + (iX<<1)+1,dstBotR);
 		}
 	}
-
-	CKD_FLANDERS(_mm_sfence();)
+ 
+	CKD_FLANDERS(_mm_sfence());
 }
 
 void FxBlitter_DrawTestPattern(uint32_t* pDest)
