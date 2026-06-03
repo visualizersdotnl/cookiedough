@@ -29,7 +29,8 @@ static __m128i s_fogGradientUnp[256];
 
 // adjust to map (FIXME: parametrize)
 constexpr float kMapViewLenScale = kAspect*0.5f; // FIXME: turn this into the closest integer (hardcoded) instead of "ftol()'ing" it
-constexpr int kMapViewHeight = 96;constexpr int kMapTilt = 120;
+constexpr int kMapViewHeight = 96;
+constexpr int kMapTilt = 120;
 constexpr int kMapScale = 160;
 
 // adjust to map resolution (1024x1024 or 2048x2048)
