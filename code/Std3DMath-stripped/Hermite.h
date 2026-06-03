@@ -78,7 +78,7 @@ namespace Std3DMath
     }
 
     S3D_INLINE static const std::array<Vector3, 2> CatmullRom_Vec3(
-        const Vector2 &P0, const Vector3 &P1, const Vector3 &P2, const Vector3 &P3, float t) 
+        const Vector3 &P0, const Vector3 &P1, const Vector3 &P2, const Vector3 &P3, float t) 
     {
         return CatmullRom_Vec<Vector3>(P0, P1, P2, P3, t);
     }
