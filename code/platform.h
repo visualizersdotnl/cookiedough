@@ -51,4 +51,5 @@
 constexpr size_t kAlignTo = 16; 
 
 // Fair lowest common denominator for Intel x64 & Apple Silicon (low-power cores)
+// FIXME: isn't 32KB more likely for modern Intel x64?
 constexpr size_t kCacheL1 = 65536; // 64KB
