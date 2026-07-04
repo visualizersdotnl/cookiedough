@@ -351,7 +351,8 @@ static void vball(uint32_t *pDest, float time)
 	}
 	else
 	{
-		// FIXME: beam version works glitchless or is it just not visible due to beams saturating it the result?
+		// FIXME: beam version works glitchless or is it just not visible due to beams saturating the result?
+		// FIXME: I really wonder if throwing "all" threads at this is worth the overhead -> measure
 		#pragma omp parallel for schedule(dynamic)
 		for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 		{

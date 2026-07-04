@@ -160,8 +160,8 @@ CKD_INLINE static void Polar_Blit_TileA(uint32_t *pDest, const uint32_t *pSrc, c
 
 	for (unsigned iY = tY; iY < tY + tileSize; ++iY)
 	{
-		uint32_t* pDLine = pDest + tileOffs;
-		const int* pMLine = pRead + (tileOffs<<1);
+		uint32_t *pDLine = pDest + tileOffs;
+		const int *pMLine = pRead + (tileOffs<<1);
 
 		for (unsigned iX = 0; iX < tileSize; ++iX)
 		{

@@ -117,6 +117,7 @@ static void tscape(uint32_t *pDest, float time)
 
 	const auto fpFromY = ftofp24(fromY);
 
+	// FIXME: I really wonder if throwing "all" threads at this is worth the overhead -> measure
 	#pragma omp parallel for schedule(static) // static is fine for most landscapes
 	for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 	{

@@ -100,6 +100,7 @@ static void vtwister(uint32_t *pDest, float time)
 	const float speed = Rocket::getf(trackTwisterSpeed);
 	const float shearSpeed = Rocket::getf(trackTwisterShearSpeed);
 
+	// FIXME: I really wonder if throwing "all" threads at this is worth the overhead -> measure
 	#pragma omp parallel for schedule(static) // dynamic isn't that appropriate given the usual geometry (and thus calc. load) of a twister
 	for (unsigned iRay = 0; iRay < kTargetResY; ++iRay)
 	{
