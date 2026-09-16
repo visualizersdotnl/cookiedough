@@ -8,7 +8,7 @@
 
 #include "image.h"
 
-static std::vector<void*> s_pGC;
+static std::vector<void*> s_GC;
 
 bool Image_Create()
 {
@@ -17,14 +17,14 @@ bool Image_Create()
 	ilEnable(IL_ORIGIN_SET);
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 
-	s_pGC.clear();
+	s_GC.clear();
 
 	return true;
 }
 
 void Image_Destroy() 
 {
-	for (auto* pImage : s_pGC)
+	for (auto* pImage : s_GC)
 		freeAligned(pImage);
 }
 
@@ -64,7 +64,7 @@ static void *Image_Load(const std::string &path, bool isGrayscale, unsigned *pNu
 	ilDeleteImages(1, &image);
 
 	if (false == noGC)
-		s_pGC.push_back(pPixels);
+		s_GC.push_back(pPixels);
 
 	if (nullptr != pNumPixels)
 		*pNumPixels = width*height;
