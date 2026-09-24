@@ -50,6 +50,10 @@
 // Good for (I)SSE and x64 in general, should work for ARM/NEON too
 constexpr size_t kAlignTo = 16; 
 
-// Fair lowest common denominator for Intel x64 & Apple Silicon (low-power cores)
-// FIXME: isn't 32KB more likely for modern Intel x64?
-constexpr size_t kCacheL1 = 65536; // 64KB
+// Fair lowest common denominator
+#if defined(FOR_INTEL)
+	constexpr size_t kCacheL1 = 32768; // 32KB, which in 2026 is still realistic for most consumer Intel/AMD CPUs
+#elif defined(FOR_ARM)
+	// Assumption: this is an Apple Silicon (M-series) target
+	constexpr size_t kCacheL1 = 65536; // 64KB, which is the size for the first gen. Silicon's low power cores
+#endif
