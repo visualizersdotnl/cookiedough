@@ -2,7 +2,7 @@
 
 This is an experiment I started on a slow Netbook (Intel) back in 2006, if I recall correctly...
 
-... to do some really retro (demoscene) graphical effects. 
+... and is now a proof of concept of the holy trinity of software rendering for the demoscene: SIMD, OpenMP and tiling.
 
 Supported platforms as of 09/01/2026:
 - Win64/x64 (builds out of the box with MSVC 2019 or higher) <- MSVC project out of date as of 02/03/26
