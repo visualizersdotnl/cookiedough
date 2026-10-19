@@ -149,7 +149,7 @@ static void HorzBlur32(
 
 			unsigned tail = 0, head = 0;
 
-			// calculate sum at first pixel (median)
+			// calculate sum at first pixel (median, 'the wild pixels, the wild pixels')
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 				iSum = _mm_add_epi32(iSum, c2vISSE32(pLine[head++]));
 
@@ -161,7 +161,7 @@ static void HorzBlur32(
 				headA, headB,
 				tailA, tailB;
 
-			// work up to full kernel size
+			// work up to full kernel size (the rippin')
 			headA = c2vISSE32(pLine[head+1]);
 			for (unsigned iPixel = 0; iPixel < iSpan; ++iPixel)
 			{
@@ -175,7 +175,7 @@ static void HorzBlur32(
 				++head;
 			}
 
-			// full sliding window
+			// full sliding window (and the tearing!)
 			tailA = c2vISSE32(pLine[tail]);
 			for (unsigned iPixel = 0; iPixel < xRes - iSpan*2; ++iPixel)
 			{
@@ -287,11 +287,12 @@ void BoxBlur_Vert32(uint32_t *pDest, const uint32_t *pSrc, unsigned xRes, unsign
 	// blur pass is often a relatively minor part of the entire frame, is marginal to a degree it does not warrant the
 	// existence and upkeep of the path 
 
-	// fast tiled parallel transpose
+	// fast tiled parallel transpose (the rippin')
 	Transpose32(s_pScratch[1], pSrc, xRes, yRes);
 
-	// vertical blur -> transpose back
-	HorzBlur32(
+	// vertical blur -> transpose back (the tearin')
+	HorzBlur32
+	(
 		pDest, s_pScratch[0], s_pScratch[1], 
 		yRes, xRes,
 		1, xRes,

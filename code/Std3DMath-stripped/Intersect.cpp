@@ -8,13 +8,13 @@
 
 namespace Std3DMath
 {
-	float DistancePointToLine(const Vector3 &lineDir, const Vector3 &lineOrigin, const Vector3 &point, Vector3 &outPoint)
+	float DistancePointToRay(const Ray &ray, const Vector3 point, Vector3 &outPoint)
 	{
-		const Vector3 toLine = point - lineOrigin;
-		const Vector3 projected = toLine.Project(lineDir); // Will normalize lineDir, which I'd rather assert on top since the name infers it
+		const Vector3 toLine = point - ray.origin;
+		const Vector3 projected = toLine.Project(ray.direction); // Will normalize lineDir, which I'd rather assert on top since the name infers it
 
 		// This is what you're usually after: closest point on the actual line
-		outPoint = lineOrigin + projected;
+		outPoint = ray.origin + projected;
 		
 		// And this is literally how far we're removed from it (FIXME: a lot of practical cases can work with the squared distance)
 		return (toLine-projected).Length();
@@ -48,11 +48,9 @@ namespace Std3DMath
 	}
 
 	// Using Möller–Trumbore algorithm (see https://cadxfem.org/inf/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf)
-	// FIXME: make it optional to pass back U and V (using std::optional<T>)
-	bool RayTriangleIntersect(/* const */ Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
+	// FIXME: make it optional to pass back U and V
+	float RayTriangleIntersect(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
 	{
-		assert(-1.f == ray.t);
-
 		// Two triangle edges
 		const Vector3 BA = V1-V0;
 		const Vector3 CA = V2-V0;
@@ -78,7 +76,7 @@ namespace Std3DMath
 		{
 			// Perpendicular?
 			if (fabsf(rayPlaneDet) < kEpsilon)
-				return false;
+				return kNoIntersect;
 		}
 
 		const float invDet = 1.f/rayPlaneDet;
@@ -87,31 +85,25 @@ namespace Std3DMath
 		// Calculate/evaluate U
 		const float U = invDet*(vT*vDet);
 		if (U < 0.f || U > 1.f)
-			return false;
+			return kNoIntersect;
 
 		// ... now V
 		const Vector3 vQ = Vector3::Cross(vT, BA);
 		const float V = invDet*(ray.direction*vQ);
-		if (V < 0.f || U+V > 1.f) // <- Remember, barycentrics form a weighted sum
-			return false;
+		if (V < 0.f || U+V > 1.f) // <- Remember, barycentrics form a weighted sum (ratios!)
+			return kNoIntersect;
 
 		// We're inside the triangle (within barycentric bounds): solve for T
 		const float t = invDet*(CA*vQ);
-		if (t > kEpsilon)
-		{
-			ray.t = t;
-			return true;
-		}
-
-		// It's a line intersection
-		return false;
+		
+		return (t > kEpsilon) 
+			? t 
+			: kNoIntersect /* Line intersection a best */;
 	}
 
 	// Naive implementation as reference (code never reached so eliminated *but* evaluated)
-	static bool RayTriangleIntersect_Naive(/* const */ Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
+	static float RayTriangleIntersect_Naive(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
 	{
-		assert(-1.f == ray.t);
-
 		// Calculate triangle (plane) normal (predominant CCW order assumed)
 		const Vector3 BA = V1-V0;
 		const Vector3 CB = V2-V1;
@@ -124,19 +116,19 @@ namespace Std3DMath
 		{
 			// Perpendicular or behind?
 			if (rayPlaneDet < kEpsilon)
-				return false;
+				return kNoIntersect;
 		}
 		else 
 		{
 			// Perpendicular?
 			if (fabsf(rayPlaneDet) < kEpsilon)
-				return false;
+				return kNoIntersect;
 		}
 
 		// Solve for T (distance ray to V0/plane) and we've got our intersection point
 		const float t = (faceNormal*(V0-ray.origin)) / rayPlaneDet;
 		if (t <= kEpsilon)
-			return false; // Behind origin
+			return kNoIntersect; // Behind origin
 
 		const Vector3 intersect = ray.origin + ray.direction*t; // On plane
 
@@ -152,12 +144,6 @@ namespace Std3DMath
 		const bool isInsideCB = Vector3::Cross(CB, dVB)*faceNormal > 0.f;
 		const bool isInsideAC = Vector3::Cross(AC, dVC)*faceNormal > 0.f;
 
-		if (isInsideBA && isInsideCB && isInsideAC)
-		{
-			ray.t = t;
-			return true;
-		}
-		
-		return false;
+		return (isInsideBA && isInsideCB && isInsideAC) ? t : kNoIntersect;
 	}
 }
