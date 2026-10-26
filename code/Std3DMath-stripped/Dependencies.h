@@ -19,3 +19,6 @@
 
 // CKD-specific
 #include "../platform.h"
+
+// SIMD wrapper (FIXME: still depends on SSE2NEON.h for ARM/Silicon!)
+typedef __m128 S3D_F128;

@@ -4,7 +4,6 @@
 
 	FIXME:
 	- Add 'vector from point on line to closest point to other line'.
-	- Add 'is point in triangle' (using half-space (barycentric) check).
 	- Add ray-AABB.
 */
 
@@ -48,4 +47,7 @@ namespace Std3DMath
 	}
 
 	float RayTriangleIntersect(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided);
+
+	// Zero checks barycentric U+V, must be a sum [0..1] in case of intersection.
+	const std::tuple<float, float> RayTriangleBary(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided);
 }

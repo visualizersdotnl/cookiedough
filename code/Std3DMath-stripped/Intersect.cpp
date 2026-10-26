@@ -48,7 +48,6 @@ namespace Std3DMath
 	}
 
 	// Using Möller–Trumbore algorithm (see https://cadxfem.org/inf/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf)
-	// FIXME: make it optional to pass back U and V
 	float RayTriangleIntersect(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
 	{
 		// Two triangle edges
@@ -99,6 +98,28 @@ namespace Std3DMath
 		return (t > kEpsilon) 
 			? t 
 			: kNoIntersect /* Line intersection a best */;
+	}
+
+	// Function returns the barycentric U and V straight up, up to you to evaluate their validity.
+	const std::tuple<float, float> RayTriangleBary(const Ray &ray, const Vector3 &V0, const Vector3 &V1, const Vector3 &V2, bool doubleSided)
+	{
+		// Edges
+		const Vector3 BA = V1-V0;
+		const Vector3 CA = V2-V0;
+
+		// Det.
+		const Vector3 vDet = Vector3::Cross(ray.direction, CA);
+		const float rayPlaneDet = BA*vDet;
+
+		const float invDet = 1.f/rayPlaneDet;
+		const Vector3 vT = V0-ray.origin; // Basis
+
+		// U+V (unchecked)
+		const float U = invDet*(vT*vDet);
+		const Vector3 vQ = Vector3::Cross(vT, BA);
+		const float V = invDet*(ray.direction*vQ);
+
+		return { U, V };
 	}
 
 	// Naive implementation as reference (code never reached so eliminated *but* evaluated)

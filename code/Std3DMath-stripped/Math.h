@@ -5,6 +5,8 @@
 
 	Please check README.md for more information.
 	For issues, fixes & improvements: see Github issue list (https://github.com/visualizersdotnl/Std3DMath/issues)
+
+	FIXME: rename _vSSE to 'V128' (21/10/26)
 */
 
 #if !defined(STD_3D_MATH)

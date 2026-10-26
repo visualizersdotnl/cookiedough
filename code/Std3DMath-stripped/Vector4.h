@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "Dependencies.h"
 class Vector4
 {
 public:
@@ -24,8 +25,7 @@ public:
 	}
 
 public:
-	// 03/08/2018 - Added for Bevacqua.
-	operator __m128() const { return vSSE; }
+	operator S3D_F128() const { return vSSE; }
 
 	union
 	{
@@ -33,7 +33,7 @@ public:
 			float x, y, z, w;
 		};
 
-		__m128 vSSE;
+		S3D_F128 vSSE;
 	};
 	
 	Vector4() {}
@@ -43,6 +43,9 @@ public:
 
 	explicit Vector4(float x, float y, float z) :
 		x(x), y(y), z(z), w(1.f) {}
+
+	explicit Vector4(S3D_F128 _vSSE) :
+		vSSE(_vSSE) {}
 
 	Vector4(float x, float y, float z, float w) :
 		x(x), y(y), z(z), w(w) {}
